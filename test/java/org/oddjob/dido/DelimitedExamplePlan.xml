@@ -1,0 +1,12 @@
+<lines>
+ <is>
+  <delimited name='person'>
+   <is>
+    <field name='name'/>
+    <field name='age'/>
+    <field name='city'/>
+   </is>
+  </delimited>
+ </is>
+</lines>
+        

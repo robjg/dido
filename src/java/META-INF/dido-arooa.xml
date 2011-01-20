@@ -1,0 +1,24 @@
+<arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa">
+	<components>
+		<arooa:bean-defs>
+		 <definitions>
+			<arooa:bean-def element='lines'
+			    className='org.oddjob.dido.stream.Lines'/>
+			<arooa:bean-def element='delimited'
+			    className='org.oddjob.dido.text.Delimited'/>
+			<arooa:bean-def element='field'
+			    className='org.oddjob.dido.text.Field'/>
+			<arooa:bean-def element='text'
+			    className='org.oddjob.dido.text.Text'/>
+			<arooa:bean-def element='date'
+			    className='org.oddjob.dido.text.DateField'/>
+			<arooa:bean-def element='number'
+			    className='org.oddjob.dido.text.NumberField'/>
+			<arooa:bean-def element='case'
+			    className='org.oddjob.dido.other.Case'/>
+			<arooa:bean-def element='when'
+			    className='org.oddjob.dido.other.When'/>
+		 </definitions>
+		</arooa:bean-defs>
+	</components>
+</arooa:descriptor>

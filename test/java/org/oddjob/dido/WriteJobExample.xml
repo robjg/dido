@@ -1,0 +1,28 @@
+<oddjob xmlns:dido='http://rgordon.co.uk/oddjob/dido'>
+    <job>
+        <dido:write>
+            <plan>
+                <dido:plan>
+                    <configuration>
+                        <arooa:configuration
+                            xmlns:arooa='http://rgordon.co.uk/oddjob/arooa'
+                            resource="org/oddjob/dido/DelimitedExamplePlan.xml"/>
+                    </configuration>
+                </dido:plan>
+            </plan>
+            <bindings>
+                <dido:bean-binding node='person'>
+                    <type>
+                        <class-for name='org.oddjob.dido.Person'/>
+                    </type>
+                </dido:bean-binding>
+            </bindings>
+            <output>
+                <buffer id='results'/>
+            </output>
+            <beans>
+                <value value='${beans}'/>
+            </beans>
+        </dido:write>
+    </job>
+</oddjob>

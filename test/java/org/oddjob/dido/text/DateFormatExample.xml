@@ -1,0 +1,13 @@
+<lines>
+ <is>
+  <delimited name='employee' delimiter="|">
+   <is>
+    <field>
+     <is>
+      <date format="dd/MM/yy HH:mm" name="clockOut"/>
+     </is>
+    </field>
+   </is>
+  </delimited>
+ </is>
+</lines>

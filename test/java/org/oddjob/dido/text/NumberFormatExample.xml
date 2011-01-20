@@ -1,0 +1,13 @@
+<lines>
+ <is>
+  <delimited name='employee' delimiter="|">
+   <is>
+    <field>
+     <is>
+      <number format="$#,###,##0.00" name="salary"/>
+     </is>
+    </field>
+   </is>
+  </delimited>
+ </is>
+</lines>
