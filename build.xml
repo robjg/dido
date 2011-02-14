@@ -18,7 +18,6 @@
 
 		<property name="oddjob.src"          value="../oddjob"/>
 		<property name="oddjob.home"          value="../oddjob"/>
-		<property name="arooa.src"          value="../arooa"/>
 		
 		<echo message="--------------------------------------------------------------"/>
 		<echo message="            ${Name} ${build.version}                                "/>
@@ -75,9 +74,6 @@
 			<fileset dir="${oddjob.src}/lib">
 				<include name="*.jar"/>
 			</fileset>
-			<fileset dir="${arooa.src}/lib">
-				<include name="*.jar"/>
-			</fileset>
 		</path>
 
 		<path id="test-classpath">
@@ -88,10 +84,6 @@
 				<include name="*.jar"/>
 			</fileset>
 			<fileset dir="${oddjob.src}/opt/lib">
-				<include name="*.jar"/>
-			</fileset>
-			<pathelement path="${arooa.src}/build/test" />
-			<fileset dir="${arooa.src}/test/lib">
 				<include name="*.jar"/>
 			</fileset>
 		</path>
@@ -278,7 +270,7 @@
 	<!-- =================================================================== -->
 	<target name="dist-bin" depends="jar">
 		
-		<property name="to.opt.lib" value="${to.dir}/opt/lib"/>
+		<property name="to.opt.lib" value="${dist.bin.dir}/opt/lib"/>
 		
 		<!-- And now the jars -->
 		<copy todir="${to.opt.lib}">
