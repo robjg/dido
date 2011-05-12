@@ -14,6 +14,16 @@ import org.oddjob.dido.stream.StreamIn;
  * @oddjob.description A Job that can read data from a file or 
  * some other input.  
  * 
+ * @oddjob.example
+ * 
+ * Reading a delimited file.
+ * 
+ * {@oddjob.xml.resource org/oddjob/dido/ReadJobExample.xml}
+ * 
+ * The plan is 
+ * 
+ * {@oddjob.xml.resource org/oddjob/dido/DelimitedExamplePlan.xml}
+ * 
  * @author rob
  *
  */
@@ -21,7 +31,7 @@ public class DataReadJob implements Runnable {
 
     /**
      * @oddjob.property
-     * @oddjob.description Guide for reading the data. This is the
+     * @oddjob.description The plan for reading the data. This is the
      * root node of a structure of data nodes.
      * @oddjob.required Yes.
      */	

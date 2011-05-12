@@ -11,6 +11,10 @@ import org.oddjob.dido.WhereNextIn;
 import org.oddjob.dido.WhereNextOut;
 
 /**
+ * @oddjob.description Specify alternative data plans depending on a 
+ * data value.
+ * <p>
+ * See also {@link When}.
  * 
  * @author rob
  *

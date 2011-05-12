@@ -13,7 +13,7 @@
             <bindings>
                 <dido:bean-binding node='person'>
                     <type>
-                        <class-for name='org.oddjob.dido.Person'/>
+                        <class name='org.oddjob.dido.Person'/>
                     </type>
                 </dido:bean-binding>
             </bindings>

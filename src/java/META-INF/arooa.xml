@@ -1,22 +1,15 @@
-<arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa">
+<arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
+        prefix="dido" namespace="http://rgordon.co.uk/oddjob/dido">
 	<values>
-		<arooa:bean-defs prefix="dido" namespace="http://rgordon.co.uk/oddjob/dido">
-		 <definitions>
-			<arooa:bean-def element='plan'
-			    className='org.oddjob.dido.DataPlanType'/>
-			<arooa:bean-def element='bean-binding'
-			    className='org.oddjob.dido.bio.BeanBindingBean'/>
-		 </definitions>
-		</arooa:bean-defs>
+		<arooa:bean-def element='plan'
+		    className='org.oddjob.dido.DataPlanType'/>
+		<arooa:bean-def element='bean-binding'
+		    className='org.oddjob.dido.bio.BeanBindingBean'/>
 	</values>
 	<components>
-		<arooa:bean-defs prefix="dido" namespace="http://rgordon.co.uk/oddjob/dido">
-		 <definitions>
-			<arooa:bean-def element='read'
-			    className='org.oddjob.dido.DataReadJob'/>
-			<arooa:bean-def element='write'
-			    className='org.oddjob.dido.DataWriteJob'/>
-		 </definitions>
-		</arooa:bean-defs>
+    	<arooa:bean-def element='read'
+    	    className='org.oddjob.dido.DataReadJob'/>
+    	<arooa:bean-def element='write'
+    	    className='org.oddjob.dido.DataWriteJob'/>
 	</components>
 </arooa:descriptor>
