@@ -1,0 +1,31 @@
+<arooa:descriptor xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
+        prefix="poi" namespace="http://rgordon.co.uk/oddjob/poi">
+	<components>
+		<arooa:bean-def element='book'
+		    className='org.oddjob.poi.DataBook'/>
+		<arooa:bean-def element='sheet'
+		    className='org.oddjob.poi.DataSheet'/>
+		<arooa:bean-def element='quick-rows'
+		    className='org.oddjob.poi.QuickRows'/>
+		<arooa:bean-def element='rows'
+		    className='org.oddjob.poi.DataRows'/>
+		<arooa:bean-def element='boolean'
+		    className='org.oddjob.poi.BooleanCell'/>
+		<arooa:bean-def element='date'
+		    className='org.oddjob.poi.DateCell'/>
+		<arooa:bean-def element='numeric'
+		    className='org.oddjob.poi.NumericCell'/>
+		<arooa:bean-def element='text'
+		    className='org.oddjob.poi.TextCell'/>
+		<arooa:bean-def element='numeric-formula'
+		    className='org.oddjob.poi.NumericFormulaCell'/>
+		<arooa:bean-def element='text-formula'
+		    className='org.oddjob.poi.TextFormulaCell'/>
+		<arooa:bean-def element='blank'
+		    className='org.oddjob.poi.BlankCell'/>
+	</components>
+	<values>
+		<arooa:bean-def element='style'
+		    className='org.oddjob.poi.StyleBean'/>
+	</values>
+</arooa:descriptor>

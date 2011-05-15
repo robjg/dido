@@ -1,0 +1,10 @@
+<poi:book xmlns:poi="http://rgordon.co.uk/oddjob/poi">
+	<is>
+		<poi:sheet>
+			<is>
+				<poi:quick-rows autoWidth="true" autoFilter="true"
+					name="person" />
+			</is>
+		</poi:sheet>
+	</is>
+</poi:book>

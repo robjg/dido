@@ -1,0 +1,25 @@
+<poi:book xmlns:poi="http://rgordon.co.uk/oddjob/poi">
+	<styles>
+		<poi:style key="heading" bold="true" colour="RED"/>
+		<poi:style key="date" format="m/d/yy hh:mm" />
+		<poi:style key="percentage" format="#0.00%" />
+	</styles>
+	<is>
+		<poi:sheet>
+			<is>
+				<poi:rows withHeadings="true" headingsStyle="heading" 
+						autoWidth="true" autoFilter="true" name="person">
+					<is>
+						<poi:text name="name" title="Name" />
+						<poi:date name="dateOfBirth" title="Date Of Birth" style="date" />
+						<poi:numeric name="salary" title="Salary" id='salery' />
+						<poi:numeric-formula name="bonus" title="Bonus"
+							formula="${salery.reference}*${percentage.reference}" />
+						<poi:numeric name="percentage" title="Percentage" id='percentage'
+								style="percentage" value='0.1'/>
+					</is>
+				</poi:rows>
+			</is>
+		</poi:sheet>
+	</is>
+</poi:book>
