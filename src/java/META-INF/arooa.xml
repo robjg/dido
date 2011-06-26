@@ -11,5 +11,7 @@
     	    className='org.oddjob.dido.DataReadJob'/>
     	<arooa:bean-def element='write'
     	    className='org.oddjob.dido.DataWriteJob'/>
+        <arooa:bean-def element='match'
+            className='org.oddjob.dido.match.MatchJob'/>
 	</components>
 </arooa:descriptor>

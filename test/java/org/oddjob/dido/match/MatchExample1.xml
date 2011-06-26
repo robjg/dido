@@ -1,0 +1,30 @@
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <dido:match xmlns:dido="http://rgordon.co.uk/oddjob/dido" 
+                        id="match" sorted="${sorted}"
+                        keyProperties="id" 
+                        valueProperties="type, quantity, colour">                
+                    <inX>
+                        <value value="${listX}"/>
+                    </inX>
+                    <inY>
+                        <value value="${listY}"/>
+                    </inY>
+                    <out>
+                        <list/>
+                    </out>                    
+                </dido:match>
+                <bean-report>
+                    <beans>
+                        <value value="${match.out}"/>
+                    </beans>
+                    <output>
+                        <buffer id="results"/>
+                    </output>
+                </bean-report>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>

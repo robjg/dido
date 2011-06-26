@@ -35,6 +35,10 @@ public class ComparersByPropertyOrType implements BeanComparerProvider {
 		this.comparersByProperty = comparersByProperty;
 	}
 	
+	public ComparersByPropertyOrType() {
+		this(null, null);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> Comparer<T> comparerFor(String property, Class<T> type) {

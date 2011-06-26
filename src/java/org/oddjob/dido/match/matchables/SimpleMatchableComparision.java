@@ -19,7 +19,7 @@ public class SimpleMatchableComparision implements MatchableComparison {
 	
 	private int equal;
 			
-	public SimpleMatchableComparision(Iterable<Comparison> comparisons) {
+	public SimpleMatchableComparision(Iterable<? extends Comparison> comparisons) {
 			
 		for (Comparison comparison : comparisons) {
 			this.comparisons.add(comparison);

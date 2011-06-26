@@ -1,6 +1,8 @@
 package org.oddjob.dido.match.comparers;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.oddjob.dido.match.Comparer;
 import org.oddjob.dido.match.Comparison;
@@ -22,52 +24,66 @@ implements HierarchicalComparer<Iterable<?>>{
 	}
 	
 	@Override
-	public Comparison compare(Iterable<?> x, Iterable<?> y) {
+	public MultiItemComparison compare(Iterable<?> x, Iterable<?> y) {
 		if (x == null || y == null) {
 			return null;
 		}
-		
-		Iterator<?> iterX = x.iterator();
-		Iterator<?> iterY = y.iterator();
+				
+		List<Object> yCopy = new ArrayList<Object>();
+		for (Object o : y) {
+			yCopy.add(o);
+		}
 		
 		int same = 0;
 		int different = 0;
 		int xsMissing = 0;
 		int ysMissing = 0;
 
-		while (iterX.hasNext() && iterY.hasNext()) {
-			Object eX = iterX.next();
-			Object eY = iterY.next();
+		int xCount = 0;
+		int yCount = yCopy.size();
+		
+		for (Object eX : x) {
 			
-			if (eX == null && eY == null) {
-				++same;
+			if (!yCopy.isEmpty()) {
+				
+				boolean found = false;
+				
+				for (Iterator<Object> itY = yCopy.iterator(); itY.hasNext(); ) {
+					
+					Object eY = itY.next();
+					
+					@SuppressWarnings("unchecked")
+					Comparer<Object> comparer = (Comparer<Object>) 
+						comparers.comparerFor(eX.getClass());
+					
+					Comparison eComparison = 
+						comparer.compare(eX, eY);
+					
+					if (eComparison.isEqual()) {
+						itY.remove();
+						found = true;
+						break;
+					}
+				}
+				
+				if (found) {
+					++same;
+				}
+				else {
+					++different;
+				}			
 			}
-			if (eX != null || eY != null) {
-				++different;
-			}
-
-			@SuppressWarnings("unchecked")
-			Comparer<Object> comparer = (Comparer<Object>) 
-				comparers.comparerFor(eX.getClass());
 			
-			Comparison eComparison = 
-				comparer.compare(eX, eY);
-			if (eComparison.isEqual()) {
-				++same;
-			}
-			else {
-				++different;
-			}
+			++xCount;
 		}
 		
-		while (iterX.hasNext()) {
-			iterX.next();
-			++ysMissing;
+		if (yCount > xCount) {
+			xsMissing = yCount - xCount;
 		}
 		
-		while (iterY.hasNext()) {
-			iterY.next();
-			++xsMissing;
+		if (xCount > yCount) {
+			ysMissing = xCount - yCount;
+			different -= ysMissing;
 		}
 		
 		return new MultiItemComparison(

@@ -39,12 +39,12 @@ public class DefaultMatchableComparer implements MatchableComparer {
 
 		List<Comparison> comparisons = new ArrayList<Comparison>();		
 
-		MatchableIterable<?> compares = 
+		MatchableIterable<?> values = 
 			new MatchableIterable<Object>(
 				x.getMetaData().getValueProperties(), 
 				x.getValues(), y.getValues());
 	
-		for (MatchableIterable.MatchableSet<?> set : compares) {
+		for (MatchableIterable.MatchableSet<?> set : values) {
 
 			Object valueX = set.getValueX();
 			Object valueY = set.getValueY();

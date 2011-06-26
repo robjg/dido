@@ -30,9 +30,13 @@ public class MatchableIterable<T> implements Iterable<MatchableSet<T>> {
 	public Iterator<MatchableSet<T>> iterator() {
 		return new Iterator<MatchableSet<T>>() {
 			
-			Iterator<String> namesIterator = propertyNames.iterator();
-			Iterator<? extends T> xIterator = valuesX.iterator();
-			Iterator<? extends T> yIterator = valuesY.iterator();
+			final Iterator<String> namesIterator = propertyNames.iterator();
+			
+			final Iterator<? extends T> xIterator = 
+				(valuesX == null ? null : valuesX.iterator());
+			
+			final Iterator<? extends T> yIterator =
+				(valuesY == null ? null : valuesY.iterator());
 			
 			@Override
 			public boolean hasNext() {
@@ -40,9 +44,15 @@ public class MatchableIterable<T> implements Iterable<MatchableSet<T>> {
 			}
 			@Override
 			public MatchableSet<T> next() {
+				
 				final String name = namesIterator.next();
-				final T x = xIterator.next();
-				final T y = yIterator.next();
+				
+				final T x = 
+					(xIterator == null ? null : xIterator.next());
+				
+				final T y = 
+					(yIterator == null ? null : yIterator.next());
+					
 				return new MatchableSet<T>() {
 					
 					@Override

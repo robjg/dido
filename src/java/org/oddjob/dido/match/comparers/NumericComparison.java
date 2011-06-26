@@ -46,12 +46,10 @@ public class NumericComparison implements Comparison {
 		if (percentage != null) {
 			builder.append(" (");
 			if (percentageFormat == null) {
-				builder.append(String.valueOf(percentage.doubleValue()));
+				percentageFormat = "0.0";
 			}
-			else {
-				builder.append(new DecimalFormat(
-						percentageFormat).format(percentage.doubleValue()));
-			}
+			builder.append(new DecimalFormat(
+					percentageFormat).format(percentage.doubleValue()));
 			builder.append("%)");
 		}
 		this.summaryText = builder.toString();

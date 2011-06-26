@@ -34,7 +34,7 @@ public class MultiItemComparison implements Comparison {
 
 	@Override
 	public boolean isEqual() {
-		return xsMissing > 0 || ysMissing > 0 || different > 0;
+		return different == 0 && xsMissing == 0 && ysMissing == 0;
 	}
 	
 	@Override
