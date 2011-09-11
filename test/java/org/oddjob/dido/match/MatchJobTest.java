@@ -6,7 +6,7 @@ import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
 import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.xml.XMLConfiguration;
-import org.oddjob.state.JobState;
+import org.oddjob.state.ParentState;
 
 public class MatchJobTest extends TestCase {
 
@@ -42,8 +42,8 @@ public class MatchJobTest extends TestCase {
 		
 		oddjob.run();
 		
-		assertEquals(JobState.COMPLETE, 
-				oddjob.lastJobStateEvent().getJobState());
+		assertEquals(ParentState.COMPLETE, 
+				oddjob.lastStateEvent().getState());
 		
 		String results = new OddjobLookup(
 				oddjob).lookup("results", String.class);
@@ -63,8 +63,8 @@ public class MatchJobTest extends TestCase {
 		
 		oddjob.run();
 		
-		assertEquals(JobState.COMPLETE, 
-				oddjob.lastJobStateEvent().getJobState());
+		assertEquals(ParentState.COMPLETE, 
+				oddjob.lastStateEvent().getState());
 		
 		String results = new OddjobLookup(
 				oddjob).lookup("results", String.class);
@@ -84,8 +84,8 @@ public class MatchJobTest extends TestCase {
 		
 		oddjob.run();
 		
-		assertEquals(JobState.COMPLETE, 
-				oddjob.lastJobStateEvent().getJobState());
+		assertEquals(ParentState.COMPLETE, 
+				oddjob.lastStateEvent().getState());
 		
 		String results = new OddjobLookup(
 				oddjob).lookup("results", String.class);
@@ -105,8 +105,8 @@ public class MatchJobTest extends TestCase {
 		
 		oddjob.run();
 		
-		assertEquals(JobState.COMPLETE, 
-				oddjob.lastJobStateEvent().getJobState());
+		assertEquals(ParentState.COMPLETE, 
+				oddjob.lastStateEvent().getState());
 		
 		String results = new OddjobLookup(
 				oddjob).lookup("results", String.class);
