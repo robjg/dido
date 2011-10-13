@@ -18,7 +18,11 @@
                 </dido:bean-binding>
             </bindings>
             <output>
-                <buffer id='results'/>
+                <identify id='results'>
+                    <value>
+                        <buffer/>
+                    </value>
+                </identify>
             </output>
             <beans>
                 <value value='${beans}'/>

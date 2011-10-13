@@ -22,7 +22,11 @@
                         <value value="${match.out}"/>
                     </beans>
                     <output>
-                        <buffer id="results"/>
+                        <identify id="results">
+                            <value>
+                                <buffer/>
+                            </value>
+                        </identify>
                     </output>
                 </bean-report>
             </jobs>
