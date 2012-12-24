@@ -45,6 +45,7 @@ public class DateFieldTest extends TestCase {
 		fruitBinding.setType(Employee.class);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void testReadWrite() throws ArooaConversionException {
 		
 		String EOL = System.getProperty("line.separator");

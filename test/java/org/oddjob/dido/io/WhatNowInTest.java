@@ -8,12 +8,10 @@ import junit.framework.TestCase;
 import org.oddjob.dido.DataDriver;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.MockBoundedDataNode;
 import org.oddjob.dido.MockDataIn;
 import org.oddjob.dido.MockDataNode;
-import org.oddjob.dido.WhereNext;
 import org.oddjob.dido.WhereNextIn;
 
 
@@ -24,7 +22,7 @@ public class WhatNowInTest extends TestCase {
 		Middle child = new Middle();
 		
 		@Override
-		public WhereNext<DataNode<DataIn, ?, ?, ?>, DataIn> in(
+		public WhereNextIn<DataIn> in(
 				DataIn data) throws DataException {
 			Middle[] children = { child };
 			
@@ -41,7 +39,7 @@ public class WhatNowInTest extends TestCase {
 		Leaf[] children = { new Leaf("One"), new Leaf("Two") };
 				
 		@Override
-		public WhereNext<DataNode<DataIn, ?, ?, ?>, DataIn> in(
+		public WhereNextIn<DataIn> in(
 				DataIn data) throws DataException {
 			
 			if (count == 0) {
@@ -94,7 +92,7 @@ public class WhatNowInTest extends TestCase {
 		}
 		
 		@Override
-		public WhereNext<DataNode<DataIn, ?, ?, ?>, DataIn> in(
+		public WhereNextIn<DataIn> in(
 				DataIn data) throws DataException {
 			return new WhereNextIn<DataIn>();
 		}

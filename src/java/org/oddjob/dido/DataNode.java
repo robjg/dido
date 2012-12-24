@@ -33,11 +33,7 @@ public interface DataNode<
 	 * 
 	 * @throws DataException
 	 */
-	public 
-	WhereNext<
-		DataNode<PROVIDE_IN, ?, ?, ?>, 
-		PROVIDE_IN>
-	in(ACCEPT_IN din) 
+	public WhereNextIn<PROVIDE_IN> in(ACCEPT_IN din) 
 	throws DataException;
 
 	/**
@@ -57,11 +53,7 @@ public interface DataNode<
 	 * 
 	 * @throws DataException
 	 */
-	public 
-	WhereNext<
-		DataNode<?, ?, PROVIDE_OUT, ?>, 
-		PROVIDE_OUT> 
-	out(ACCEPT_OUT dout)
+	public WhereNextOut<PROVIDE_OUT> out(ACCEPT_OUT dout)
 	throws DataException;
 	
 	/**

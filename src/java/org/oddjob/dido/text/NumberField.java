@@ -6,9 +6,7 @@ import java.text.ParseException;
 import org.oddjob.dido.AbstractStencil;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.WhereNext;
 import org.oddjob.dido.WhereNextIn;
 import org.oddjob.dido.WhereNextOut;
 
@@ -23,7 +21,7 @@ extends AbstractStencil<Number, TextIn, DataIn, TextOut, DataOut>{
 	}
 	
 	@Override
-	public WhereNext<DataNode<DataIn, ?, ?, ?>, DataIn> in(TextIn din)
+	public WhereNextIn<DataIn> in(TextIn din)
 			throws DataException {
 
 		String number = din.getText().trim();
@@ -50,7 +48,7 @@ extends AbstractStencil<Number, TextIn, DataIn, TextOut, DataOut>{
 	}
 	
 	@Override
-	public WhereNext<DataNode<?, ?, DataOut, ?>, DataOut> out(TextOut dout)
+	public WhereNextOut<DataOut> out(TextOut dout)
 			throws DataException {
 		
 		Number value = getValue();

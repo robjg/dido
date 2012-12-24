@@ -1,10 +1,5 @@
 package org.oddjob.dido;
 
-import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataNode;
-import org.oddjob.dido.DataOut;
-import org.oddjob.dido.WhereNext;
 
 public class MockDataNode<
 	ACCEPT_IN extends DataIn, PROVIDE_IN extends DataIn,
@@ -19,9 +14,8 @@ implements DataNode<
 	}
 	
 	@Override
-	public WhereNext<
-			DataNode<PROVIDE_IN,?,?,?>, PROVIDE_IN> 
-	in(ACCEPT_IN data) throws DataException {
+	public WhereNextIn<PROVIDE_IN> in(ACCEPT_IN data) 
+	throws DataException {
 		throw new RuntimeException("Unexpected from " + getClass());
 	}
 	
@@ -31,8 +25,7 @@ implements DataNode<
 	}
 	
 	@Override
-	public WhereNext<
-			DataNode<?,?,PROVIDE_OUT,?>, PROVIDE_OUT> 
+	public WhereNextOut<PROVIDE_OUT> 
 	out(ACCEPT_OUT outgoing) throws DataException {
 		throw new RuntimeException("Unexpected from " + getClass());
 	}

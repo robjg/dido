@@ -25,4 +25,11 @@ extends WhereNext<
 		super(down, childData);
 	}
 	
+	public DataNode<PROVIDE_IN, ?, ?, ?>[] getChildren() {
+		return (DataNode<PROVIDE_IN, ?, ?, ?>[]) super.getChildren();
+	}
+	
+	public PROVIDE_IN getChildData() {
+		return super.getChildData();
+	}	
 }

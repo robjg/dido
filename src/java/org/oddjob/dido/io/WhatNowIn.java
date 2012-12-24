@@ -11,6 +11,7 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataNode;
 import org.oddjob.dido.SupportsChildren;
 import org.oddjob.dido.WhereNext;
+import org.oddjob.dido.WhereNextIn;
 
 /**
  * An internal class that tracks where a reader is in the parser tree.
@@ -102,7 +103,7 @@ abstract class NewBaseWhatNowIn extends WhatNowIn {
 	
 	protected <ACCEPTS_IN extends DataIn, PROVIDES_IN extends DataIn> 
 	WhatNowIn whatThen(
-			WhereNext<DataNode<PROVIDES_IN, ?, ?, ?>, PROVIDES_IN> where) {
+			WhereNextIn<PROVIDES_IN> where) {
 		if (where == null) {
 			return null;
 		}
@@ -133,8 +134,7 @@ abstract class NewBaseWhatNowIn extends WhatNowIn {
 	protected <ACCEPTS_IN extends DataIn, PROVIDES_IN extends DataIn> 
 	WhatNowIn _currentIn() throws DataException {
 		 
-		WhereNext<DataNode<PROVIDES_IN, ?, ?, ?>, 
-			PROVIDES_IN> whereNext =
+		WhereNextIn<PROVIDES_IN> whereNext =
 			((DataNode<ACCEPTS_IN, PROVIDES_IN, ?, ?>) getCurrent()).in(
 				(ACCEPTS_IN) getData());
 

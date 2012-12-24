@@ -9,12 +9,10 @@ import org.apache.log4j.Logger;
 import org.oddjob.dido.DataDriver;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.MockBoundedDataNode;
 import org.oddjob.dido.MockDataNode;
 import org.oddjob.dido.MockDataOut;
-import org.oddjob.dido.WhereNext;
 import org.oddjob.dido.WhereNextOut;
 
 
@@ -25,7 +23,7 @@ public class WhatNowOutTest extends TestCase {
 		Middle child = new Middle();
 		
 		@Override
-		public WhereNext<DataNode<?, ?, DataOut, ?>, DataOut> out(
+		public WhereNextOut<DataOut> out(
 				DataOut outgoing) throws DataException {
 			
 			Middle[] children = { child };
@@ -48,7 +46,7 @@ public class WhatNowOutTest extends TestCase {
 		Leaf[] children = { new Leaf("One"), new Leaf("Two") };
 		
 		@Override
-		public WhereNext<DataNode<?, ?, DataOut, ?>, DataOut> out(
+		public WhereNextOut<DataOut> out(
 				DataOut outgoing) throws DataException {
 			
 			if (count++ == 0) {
@@ -102,7 +100,7 @@ public class WhatNowOutTest extends TestCase {
 		}
 		
 		@Override
-		public WhereNext<DataNode<?, ?, DataOut, ?>, DataOut> out(
+		public WhereNextOut<DataOut> out(
 				DataOut outgoing) throws DataException {
 			return new WhereNextOut<DataOut>();
 		}
@@ -298,7 +296,7 @@ public class WhatNowOutTest extends TestCase {
 		}
 		
 		@Override
-		public WhereNext<DataNode<?, ?, FlushingOut, ?>, FlushingOut> out(
+		public WhereNextOut<FlushingOut> out(
 				FlushingOut outgoing) throws DataException {
 			logger.info("Out " + name);
 			

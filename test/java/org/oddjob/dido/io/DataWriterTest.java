@@ -16,7 +16,6 @@ import org.oddjob.dido.MockBoundedDataNode;
 import org.oddjob.dido.MockDataNode;
 import org.oddjob.dido.Stencil;
 import org.oddjob.dido.SupportsChildren;
-import org.oddjob.dido.WhereNext;
 import org.oddjob.dido.WhereNextOut;
 import org.oddjob.dido.stream.Lines;
 import org.oddjob.dido.stream.LinesIn;
@@ -157,7 +156,7 @@ public class DataWriterTest extends TestCase {
 		Middle child = new Middle();
 		
 		@Override
-		public WhereNext<DataNode<?, ?, TextOut, ?>, TextOut> out(
+		public WhereNextOut<TextOut> out(
 				TextOut outgoing) throws DataException {
 			
 			results.add("Root out.");
@@ -217,7 +216,7 @@ public class DataWriterTest extends TestCase {
 		}
 		
 		@Override
-		public WhereNext<DataNode<?, ?, TextOut, ?>, TextOut> out(
+		public WhereNextOut<TextOut> out(
 				TextOut outgoing) throws DataException {
 			
 			results.add("Middle out.");
@@ -261,7 +260,7 @@ public class DataWriterTest extends TestCase {
 		}
 		
 		@Override
-		public WhereNext<DataNode<?, ?, TextOut, ?>, TextOut> out(
+		public WhereNextOut<TextOut> out(
 				TextOut outgoing) throws DataException {
 			results.add("Leaf " + name + " out.");
 			

@@ -2,10 +2,6 @@ package org.oddjob.dido;
 
 import junit.framework.TestCase;
 
-import org.oddjob.dido.AbstractParentStencil;
-import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataNode;
-import org.oddjob.dido.WhereNext;
 import org.oddjob.dido.stream.StreamIn;
 import org.oddjob.dido.stream.StreamOut;
 import org.oddjob.dido.text.TextIn;
@@ -22,13 +18,13 @@ public class AbstractParentStencilTest extends TestCase {
 			}
 
 			@Override
-			public WhereNext<DataNode<StreamIn, ?, ?, ?>, StreamIn> in(
+			public WhereNextIn<StreamIn> in(
 					DataIn data) throws DataException {
 				throw new RuntimeException("Unexpected.");
 			}
 
 			@Override
-			public WhereNext<DataNode<?, ?, StreamOut, ?>, StreamOut> out(
+			public WhereNextOut<StreamOut> out(
 					DataOut data) throws DataException {
 				throw new RuntimeException("Unexpected.");
 			}
@@ -49,13 +45,13 @@ public class AbstractParentStencilTest extends TestCase {
 			}
 			
 			@Override
-			public WhereNext<DataNode<TextIn, ?, ?, ?>, TextIn> in(
+			public WhereNextIn<TextIn> in(
 					StreamIn data) throws DataException {
 				throw new RuntimeException("Unexpected");
 			}
 			
 			@Override
-			public WhereNext<DataNode<?, ?, TextOut, ?>, TextOut> out(
+			public WhereNextOut<TextOut> out(
 					StreamOut outgoing) throws DataException {
 				throw new RuntimeException("Unexpected");
 			}
