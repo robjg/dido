@@ -7,7 +7,7 @@ import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.dido.DataNode;
-import org.oddjob.dido.Stencil;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.SupportsChildren;
 import org.oddjob.dido.io.ClassMorphic;
 import org.oddjob.dido.io.DataLinkIn;
@@ -121,7 +121,7 @@ implements BindingIn, BindingOut, ArooaSessionAware {
 		void build(DataNode<?, ?, ?, ?> node, LinkableIn link) {
 			
 			String name = node.getName();
-			if (node instanceof Stencil && 
+			if (node instanceof ValueNode && 
 					name != null && 
 					overview.hasWriteableProperty(name)) {
 				link.setControlIn(node, new PropertyDispatch(name));
@@ -152,7 +152,7 @@ implements BindingIn, BindingOut, ArooaSessionAware {
 			
 			DataNode<?, ?, ?, ?> node = event.getNode();
 			
-			setter.setValue(((Stencil<?>) node).value());
+			setter.setValue(((ValueNode<?>) node).value());
 			
 			return null;
 		}

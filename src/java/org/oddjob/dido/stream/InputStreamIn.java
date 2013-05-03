@@ -7,6 +7,7 @@ import java.io.LineNumberReader;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
+import org.oddjob.dido.UnsupportedeDataInException;
 
 /**
  * A {@link DataIn} from an {@link InputStream}.
@@ -39,4 +40,18 @@ public class InputStreamIn implements StreamIn, LinesIn {
 		return inputStream;
 	}
 	
+	@Override
+	public <T extends DataIn> T provideIn(Class<T> type) 
+	throws UnsupportedeDataInException{
+		
+		if (type.isAssignableFrom(StreamIn.class)) {
+			return type.cast(this);
+		}
+		
+		if (type.isAssignableFrom(LinesIn.class)) {
+			return type.cast(this);
+		}
+
+		throw new UnsupportedeDataInException(this.getClass(), type);
+	}
 }

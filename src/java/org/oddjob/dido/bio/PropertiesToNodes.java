@@ -7,7 +7,7 @@ import org.oddjob.arooa.reflect.ArooaPropertyException;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.dido.DataNode;
-import org.oddjob.dido.Stencil;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.SupportsChildren;
 import org.oddjob.dido.io.DataLinkOut;
 import org.oddjob.dido.io.LinkOutEvent;
@@ -42,7 +42,7 @@ public class PropertiesToNodes implements BindingOut {
 	private void build(DataNode<?, ?, ?, ?> node, LinkableOut link, BeanOverview overview) {
 
 		String name = node.getName();
-		if (node instanceof Stencil && 
+		if (node instanceof ValueNode && 
 				name != null && 
 				overview.hasReadableProperty(name)) {
 			link.setLinkOut(node, new PropertyRetrieval(name));
@@ -73,7 +73,7 @@ public class PropertiesToNodes implements BindingOut {
 		public boolean dataOut(LinkOutEvent event, Object bean) {
 			DataNode<?, ?, ?, ?> node = event.getNode();
 
-			setStencilValue((Stencil<?>) node, bean);
+			setStencilValue((ValueNode<?>) node, bean);
 			
 			return true;
 		}
@@ -83,7 +83,7 @@ public class PropertiesToNodes implements BindingOut {
 			// Nothing to do.
 		}
 		
-		private <T> void setStencilValue(Stencil<T> stencil, Object bean) {
+		private <T> void setStencilValue(ValueNode<T> stencil, Object bean) {
 			try {
 				T value = getter.getValue(bean, stencil.getType());				
 				stencil.value(value);

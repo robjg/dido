@@ -11,7 +11,7 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.MockDataNode;
-import org.oddjob.dido.Stencil;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.SupportsChildren;
 import org.oddjob.dido.io.ClassMorphic;
 import org.oddjob.dido.io.DataLinkIn;
@@ -153,7 +153,7 @@ public class BeanBindingBeanTest extends TestCase {
 
 	private class OurStencilNode 
 	extends MockDataNode<DataIn, DataIn, DataOut, DataOut>
-	implements Stencil<String> {
+	implements ValueNode<String> {
 		
 		private final String name;
 		

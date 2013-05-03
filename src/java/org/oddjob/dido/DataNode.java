@@ -24,7 +24,7 @@ public interface DataNode<
 	 * 
 	 * @return
 	 */
-	String getName();
+	public String getName();
 	
 	/**
 	 * Reads data into the value.

@@ -13,7 +13,7 @@ package org.oddjob.dido;
  *
  * @param <T>
  */
-public interface Stencil<T> {
+public interface ValueNode<T> {
 
 	/**
 	 * Get the value just read or to be written.

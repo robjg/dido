@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.io.DataLinkOut;
-import org.oddjob.dido.io.DataReader;
+import org.oddjob.dido.io.DataReaderImpl;
 import org.oddjob.dido.io.DataWriter;
 import org.oddjob.dido.io.LinkOutEvent;
 import org.oddjob.dido.other.Case;
@@ -51,7 +51,7 @@ public class CaseTest extends TestCase {
 		
 		StringTextIn textIn = new StringTextIn("1John");
 		
-		DataReader<TextIn> reader = new DataReader<TextIn>(test, textIn);
+		DataReaderImpl<TextIn> reader = new DataReaderImpl<TextIn>(test, textIn);
 		
 		reader.read();
 		
@@ -59,7 +59,7 @@ public class CaseTest extends TestCase {
 		
 		textIn = new StringTextIn("2Apple");
 		
-		reader = new DataReader<TextIn>(test, textIn);
+		reader = new DataReaderImpl<TextIn>(test, textIn);
 		
 		reader.read();
 		

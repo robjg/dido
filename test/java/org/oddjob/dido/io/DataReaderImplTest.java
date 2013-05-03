@@ -9,7 +9,7 @@ import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataPlan;
-import org.oddjob.dido.Stencil;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.stream.InputStreamIn;
 import org.oddjob.dido.stream.Lines;
 import org.oddjob.dido.stream.LinesIn;
@@ -20,7 +20,7 @@ import org.oddjob.dido.text.TextIn;
 import org.oddjob.dido.text.TextOut;
 
 
-public class DataReaderTest extends TestCase {
+public class DataReaderImplTest extends TestCase {
 
 	StringBuffer result = new StringBuffer();
 	
@@ -41,8 +41,8 @@ public class DataReaderTest extends TestCase {
 			else {
 				result.append(name);
 			}
-			if (node instanceof Stencil<?>) {
-				Object value = ((Stencil<?>) node).value();
+			if (node instanceof ValueNode<?>) {
+				Object value = ((ValueNode<?>) node).value();
 				if (value != null) {
 					result.append('=');
 					result.append(value.toString());
@@ -93,8 +93,8 @@ public class DataReaderTest extends TestCase {
 		InputStreamIn dataIn = 
 			new InputStreamIn(new ByteArrayInputStream(text.getBytes()));
 		
-		DataReader<LinesIn> reader = 
-			new DataReader<LinesIn>(
+		DataReaderImpl<LinesIn> reader = 
+			new DataReaderImpl<LinesIn>(
 					new DataPlan<LinesIn, TextIn, LinesOut, TextOut>(
 							new StandardArooaSession(), lines),
 					dataIn);
@@ -121,6 +121,5 @@ public class DataReaderTest extends TestCase {
 		
 		reader.removeListener(printer);
 	}
-	
 	
 }

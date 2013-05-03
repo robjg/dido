@@ -8,7 +8,7 @@ import org.oddjob.arooa.utils.ListSetterHelper;
 
 /**
  * Base functionality for being a node that {@link SupportsChildren}
- * and is a {@link Stencil}.
+ * and is a {@link ValueNode}.
  * 
  * @author rob
  *

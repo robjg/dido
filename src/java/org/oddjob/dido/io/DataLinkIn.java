@@ -1,7 +1,7 @@
 package org.oddjob.dido.io;
 
 import org.oddjob.dido.DataNode;
-import org.oddjob.dido.Stencil;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.stream.Lines;
 
 
@@ -15,7 +15,7 @@ public interface DataLinkIn {
 
 	/**
 	 * Called by a {@link LinkableIn} after a {@link DataNode} has been
-	 * visited. If the {@linkplain DataNode} is a {@link Stencil} that has
+	 * visited. If the {@linkplain DataNode} is a {@link ValueNode} that has
 	 * no children, the stencil will have it's value populated.
 	 * 
 	 * @param event

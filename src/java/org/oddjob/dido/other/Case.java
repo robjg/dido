@@ -6,7 +6,7 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.Stencil;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.WhereNextIn;
 import org.oddjob.dido.WhereNextOut;
 
@@ -59,7 +59,7 @@ implements Changeable<TYPE>{
 		
 		descriminator.in(data);
 		
-		this.value = ((Stencil<TYPE>) descriminator).value();
+		this.value = ((ValueNode<TYPE>) descriminator).value();
 		
 		DataNode<IN, ?, OUT, ?>[] chosen = evaluate();
 		
@@ -133,7 +133,7 @@ implements Changeable<TYPE>{
 			return new WhereNextOut<OUT>();
 		}
 		else {
-			((Stencil<TYPE>) descriminator).value(value);
+			((ValueNode<TYPE>) descriminator).value(value);
 			
 			descriminator.out(data);
 			
@@ -176,7 +176,7 @@ implements Changeable<TYPE>{
 	
 	@Override
 	public void changeValue(TYPE value) {
-		((Stencil<TYPE>) childrenToArray()[0]).value(value);
+		((ValueNode<TYPE>) childrenToArray()[0]).value(value);
 	}
 
 }

@@ -14,7 +14,7 @@ import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataPlan;
 import org.oddjob.dido.MockBoundedDataNode;
 import org.oddjob.dido.MockDataNode;
-import org.oddjob.dido.Stencil;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.SupportsChildren;
 import org.oddjob.dido.WhereNextOut;
 import org.oddjob.dido.stream.Lines;
@@ -49,8 +49,8 @@ public class DataWriterTest extends TestCase {
 			else {
 				result.append(name);
 			}
-			if (node instanceof Stencil<?>) {
-				Object value = ((Stencil<?>) node).value();
+			if (node instanceof ValueNode<?>) {
+				Object value = ((ValueNode<?>) node).value();
 				if (value != null) {
 					result.append('=');
 					result.append(value.toString());

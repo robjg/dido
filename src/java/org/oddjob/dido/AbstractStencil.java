@@ -1,7 +1,7 @@
 package org.oddjob.dido;
 
 /**
- * Base class for an object that is a {@link Stencil}. Also contains
+ * Base class for an object that is a {@link ValueNode}. Also contains
  * support for {@link DataNode}s but that isn't expressed in the interface
  * because the signature would bet really messy.
  * 
@@ -12,7 +12,7 @@ package org.oddjob.dido;
 abstract public class AbstractStencil<T, 
 		ACCEPTS_IN extends DataIn, CHILD_IN extends DataIn, 
 		ACCEPTS_OUT extends DataOut, CHILD_OUT extends DataOut> 
-implements Stencil<T>,
+implements ValueNode<T>,
 		DataNode<ACCEPTS_IN, CHILD_IN, 
 			ACCEPTS_OUT, CHILD_OUT> {
 	

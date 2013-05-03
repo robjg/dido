@@ -2,6 +2,7 @@ package org.oddjob.dido.stream;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
+import org.oddjob.dido.DataInProvider;
 
 /**
  * Provider of a line of text.
@@ -9,7 +10,7 @@ import org.oddjob.dido.DataIn;
  * @author rob
  *
  */
-public interface LinesIn extends DataIn {
+public interface LinesIn extends DataIn, DataInProvider {
 
 	/**
 	 * Read a line of text.

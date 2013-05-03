@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.oddjob.arooa.utils.ListSetterHelper;
 import org.oddjob.dido.bio.BindingIn;
-import org.oddjob.dido.io.DataReader;
+import org.oddjob.dido.io.DataReaderImpl;
 import org.oddjob.dido.stream.InputStreamIn;
 import org.oddjob.dido.stream.StreamIn;
 
@@ -69,7 +69,7 @@ public class DataReadJob implements Runnable {
 
 		StreamIn in = new InputStreamIn(input);
 		
-		DataReader<StreamIn> reader = new DataReader<StreamIn>(plan, in);
+		DataReaderImpl<StreamIn> reader = new DataReaderImpl<StreamIn>(plan, in);
 		
 		for (BindingIn binding : bindings) {
 			binding.bindTo(plan.getTopNode(), reader);
