@@ -6,18 +6,22 @@ import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
+import org.oddjob.dido.DataInProvider;
 import org.oddjob.dido.DataNode;
-import org.oddjob.dido.ValueNode;
+import org.oddjob.dido.Layout;
 import org.oddjob.dido.SupportsChildren;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.io.ClassMorphic;
 import org.oddjob.dido.io.DataLinkIn;
 import org.oddjob.dido.io.DataLinkOut;
+import org.oddjob.dido.io.DataReader;
 import org.oddjob.dido.io.LinkInControl;
 import org.oddjob.dido.io.LinkInEvent;
 import org.oddjob.dido.io.LinkOutEvent;
 import org.oddjob.dido.io.LinkableIn;
 import org.oddjob.dido.io.LinkableOut;
 import org.oddjob.dido.io.Nodes;
+import org.oddjob.dido.layout.ChildReader;
 
 /**
  * @oddjob.description Provide a binding to bean of the given type. 
@@ -29,7 +33,7 @@ import org.oddjob.dido.io.Nodes;
  *
  */
 public class BeanBindingBean 
-implements BindingIn, BindingOut, ArooaSessionAware {
+implements BindingIn, BindingOut, DataBindingIn, ArooaSessionAware {
 
 	private static final Logger logger = Logger.getLogger(BeanBindingBean.class);
 	
@@ -224,6 +228,25 @@ implements BindingIn, BindingOut, ArooaSessionAware {
 			// Nothing to do.
 		}
 	}	
+	
+	
+	private DataReader childReader;
+	
+	@Override
+	public Object process(Layout node, DataInProvider dataIn) {
+		
+		if (childReader == null) {
+			
+			childReader = new ChildReader(node.childLayouts(), dataIn);
+			
+			
+			
+		}
+		
+		return null;
+	}
+	
+	
 	
 	public String getNode() {
 		return node;
