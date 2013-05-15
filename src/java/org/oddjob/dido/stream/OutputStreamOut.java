@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.oddjob.dido.DataException;
+import org.oddjob.dido.DataOut;
+import org.oddjob.dido.UnsupportedeDataOutException;
 
 
 public class OutputStreamOut implements StreamOut, LinesOut {
@@ -55,5 +57,17 @@ public class OutputStreamOut implements StreamOut, LinesOut {
 			throw new DataException(e);
 		}
 		return true;
+	}
+	
+	@Override
+	public <T extends DataOut> T provideOut(Class<T> type)
+			throws UnsupportedeDataOutException {
+		
+		if (type.isAssignableFrom(StreamOut.class)) {
+			return type.cast(this);
+		}
+		else {
+			throw new UnsupportedeDataOutException(getClass(), type);
+		}
 	}
 }

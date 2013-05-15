@@ -5,7 +5,8 @@ import java.io.ByteArrayInputStream;
 import junit.framework.TestCase;
 
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.bio.DataBindingIn;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.bio.DataBinding;
 import org.oddjob.dido.bio.ValueBinding;
 import org.oddjob.dido.stream.InputStreamIn;
 import org.oddjob.dido.stream.LinesLayout;
@@ -23,7 +24,7 @@ public class DataReaderSimpleTest extends TestCase {
 		
 		LinesLayout node = new LinesLayout();
 		
-		DataBindingIn bin = new ValueBinding();
+		DataBinding bin = new ValueBinding();
 		
 		node.bind(bin);
 		

@@ -11,6 +11,7 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataPlan;
+import org.oddjob.dido.DataReader;
 
 /**
  * Read data in.
@@ -21,7 +22,7 @@ import org.oddjob.dido.DataPlan;
  */
 public class DataReaderImpl<ACCEPTS_IN extends DataIn> 
 extends AbstractNodeWalker implements DataReader, LinkableIn {
-	private static final Logger logger = Logger.getLogger(DataWriter.class);
+	private static final Logger logger = Logger.getLogger(DataWriterImpl.class);
 
 	private final Map<DataNode<?, ?, ?, ?>, DataLinkIn> links =
 		new HashMap<DataNode<?, ?, ?, ?>, DataLinkIn>();

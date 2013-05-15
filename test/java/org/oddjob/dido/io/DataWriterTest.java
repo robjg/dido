@@ -98,8 +98,8 @@ public class DataWriterTest extends TestCase {
 		OutputStreamOut dataOut = 
 			new OutputStreamOut(output);
 		
-		DataWriter<LinesOut> writer = 
-			new DataWriter<LinesOut>(
+		DataWriterImpl<LinesOut> writer = 
+			new DataWriterImpl<LinesOut>(
 					new DataPlan<LinesIn, TextIn, LinesOut, TextOut>(
 							new StandardArooaSession(), lines), 
 					dataOut);
@@ -285,8 +285,8 @@ public class DataWriterTest extends TestCase {
 			}
 		};
 		
-		DataWriter<TextOut> writer = 
-			new DataWriter<TextOut>(
+		DataWriterImpl<TextOut> writer = 
+			new DataWriterImpl<TextOut>(
 					new DataPlan<TextIn, TextIn, TextOut, TextOut>(
 							new StandardArooaSession(), root), 
 					dataOut);

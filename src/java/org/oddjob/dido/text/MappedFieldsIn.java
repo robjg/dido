@@ -3,8 +3,12 @@ package org.oddjob.dido.text;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.oddjob.dido.DataIn;
+import org.oddjob.dido.DataInProvider;
+import org.oddjob.dido.UnsupportedeDataInException;
+
 public class MappedFieldsIn
-implements FieldsIn {
+implements FieldsIn, DataInProvider {
 
 	private Map<String, Integer> headerToColumn;
 	
@@ -53,8 +57,7 @@ implements FieldsIn {
 				return column;
 			}
 		}
-		else {
-		
+		else {		
 			nextColumn = headerColumn.intValue();
 			return nextColumn++;
 		}
@@ -66,5 +69,16 @@ implements FieldsIn {
 			return null;
 		}
 		return values[column - 1];
+	}
+	
+	@Override
+	public <T extends DataIn> T provideIn(Class<T> type)
+	throws UnsupportedeDataInException {
+		if (type.isAssignableFrom(FieldsIn.class)) {
+			return type.cast(this);
+		}
+		else {
+			throw new UnsupportedeDataInException(this.getClass(), type);
+		}
 	}
 }

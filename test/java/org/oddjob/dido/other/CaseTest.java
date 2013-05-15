@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.io.DataLinkOut;
 import org.oddjob.dido.io.DataReaderImpl;
-import org.oddjob.dido.io.DataWriter;
+import org.oddjob.dido.io.DataWriterImpl;
 import org.oddjob.dido.io.LinkOutEvent;
 import org.oddjob.dido.other.Case;
 import org.oddjob.dido.other.When;
@@ -105,7 +105,7 @@ public class CaseTest extends TestCase {
 			}
 		};
 		
-		DataWriter<TextOut> writer = new DataWriter<TextOut>(test, textOut);
+		DataWriterImpl<TextOut> writer = new DataWriterImpl<TextOut>(test, textOut);
 
 		writer.setLinkOut(when1, new DataLinkOut() {
 			

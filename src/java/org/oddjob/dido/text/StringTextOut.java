@@ -1,9 +1,12 @@
 package org.oddjob.dido.text;
 
 import org.oddjob.dido.DataException;
+import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataOutProvider;
+import org.oddjob.dido.UnsupportedeDataOutException;
 
 
-abstract public class StringTextOut implements TextOut {
+public class StringTextOut implements TextOut, DataOutProvider {
 
 	public static final char PAD_CHARACTER = ' ';
 	
@@ -45,10 +48,31 @@ abstract public class StringTextOut implements TextOut {
 	}
 	
 	@Override
-	abstract public boolean flush() throws DataException;
+	public boolean flush() throws DataException {
+		return false;
+	}
+	
+	@Override
+	public int length() {
+		return buffer.length();
+	}
+	
+	@Override
+	public <T extends DataOut> T provideOut(Class<T> type)
+	throws UnsupportedeDataOutException {
+		
+		if (type.isAssignableFrom(TextOut.class)) {
+			return type.cast(this);
+		}
+		else {
+			throw new UnsupportedeDataOutException(getClass(), type);
+		}
+	}
 	
 	@Override
 	public String toString() {
 		return buffer.toString();
 	}
+	
+	
 }

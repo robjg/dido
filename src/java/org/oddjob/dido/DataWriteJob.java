@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.oddjob.arooa.utils.ListSetterHelper;
 import org.oddjob.dido.bio.BindingOut;
 import org.oddjob.dido.io.ConfigurationType;
-import org.oddjob.dido.io.DataWriter;
+import org.oddjob.dido.io.DataWriterImpl;
 import org.oddjob.dido.stream.OutputStreamOut;
 import org.oddjob.dido.stream.StreamOut;
 
@@ -80,7 +80,7 @@ public class DataWriteJob implements Runnable {
 
 		StreamOut out = new OutputStreamOut(output);
 		
-		DataWriter<StreamOut> writer = new DataWriter<StreamOut>(plan, out,
+		DataWriterImpl<StreamOut> writer = new DataWriterImpl<StreamOut>(plan, out,
 				configurationType);
 		
 		for (BindingOut binding : bindings) {

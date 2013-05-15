@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import junit.framework.TestCase;
 
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.xml.XMLConfiguration;
 import org.oddjob.dido.DataException;
@@ -167,14 +168,14 @@ public class WhenTest extends TestCase {
 	{
 		personBinding.setArooaSession(session);
 		personBinding.setNode("people");
-		personBinding.setType(Person.class);
+		personBinding.setType(new SimpleArooaClass(Person.class));
 	}
 	
 	BeanBindingBean fruitBinding = new BeanBindingBean(); 
 	{
 		fruitBinding.setArooaSession(session);
 		fruitBinding.setNode("fruit");
-		fruitBinding.setType(Fruit.class);
+		fruitBinding.setType(new SimpleArooaClass(Fruit.class));
 	}
 	
 	public void testDelimitedReadWrite() throws ArooaConversionException {

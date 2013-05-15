@@ -2,19 +2,22 @@ package org.oddjob.dido.bio;
 
 import org.apache.log4j.Logger;
 import org.oddjob.arooa.ArooaSession;
+import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.life.ArooaSessionAware;
-import org.oddjob.arooa.life.SimpleArooaClass;
+import org.oddjob.arooa.reflect.ArooaClass;
+import org.oddjob.arooa.reflect.ArooaPropertyException;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
+import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataInProvider;
 import org.oddjob.dido.DataNode;
+import org.oddjob.dido.DataOutProvider;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.SupportsChildren;
 import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.io.ClassMorphic;
 import org.oddjob.dido.io.DataLinkIn;
 import org.oddjob.dido.io.DataLinkOut;
-import org.oddjob.dido.io.DataReader;
 import org.oddjob.dido.io.LinkInControl;
 import org.oddjob.dido.io.LinkInEvent;
 import org.oddjob.dido.io.LinkOutEvent;
@@ -22,6 +25,7 @@ import org.oddjob.dido.io.LinkableIn;
 import org.oddjob.dido.io.LinkableOut;
 import org.oddjob.dido.io.Nodes;
 import org.oddjob.dido.layout.ChildReader;
+import org.oddjob.dido.layout.LayoutWalker;
 
 /**
  * @oddjob.description Provide a binding to bean of the given type. 
@@ -33,7 +37,7 @@ import org.oddjob.dido.layout.ChildReader;
  *
  */
 public class BeanBindingBean 
-implements BindingIn, BindingOut, DataBindingIn, ArooaSessionAware {
+implements BindingIn, BindingOut, DataBinding, ArooaSessionAware {
 
 	private static final Logger logger = Logger.getLogger(BeanBindingBean.class);
 	
@@ -54,7 +58,7 @@ implements BindingIn, BindingOut, DataBindingIn, ArooaSessionAware {
      * @oddjob.description The bean class type.
      * @oddjob.required Yes.
      */
-	private Class<?> type;
+	private ArooaClass type;
 	
 	/**
 	 * The current bean.
@@ -83,11 +87,11 @@ implements BindingIn, BindingOut, DataBindingIn, ArooaSessionAware {
 			throw new IllegalArgumentException("Failed to find " + node);
 		}
 
-		logger.debug("Binding " + node + " to instances of " + type.getName());
+		logger.debug("Binding " + node + " to instances of " + type.toString());
 		linkable.setControlIn(bindTo, new BeanFactory());
 		
 		if (bindTo instanceof ClassMorphic) {
-			((ClassMorphic) bindTo).beFor(new SimpleArooaClass(type));
+			((ClassMorphic) bindTo).beFor(type);
 		}
 		
 		new DispatchBuilder().build(bindTo, linkable);
@@ -97,13 +101,8 @@ implements BindingIn, BindingOut, DataBindingIn, ArooaSessionAware {
 		
 		@Override
 		public LinkInControl dataIn(LinkInEvent event) {
-			try {
-				bean = type.newInstance();
-			} catch (InstantiationException e) {
-				throw new RuntimeException(e);
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException(e);
-			}
+			
+			bean = type.newInstance();
 			
 			return new LinkInControl() {
 				
@@ -120,7 +119,7 @@ implements BindingIn, BindingOut, DataBindingIn, ArooaSessionAware {
 	}
 	
 	class DispatchBuilder {
-		BeanOverview overview = accessor.getBeanOverview(type);
+		BeanOverview overview = type.getBeanOverview(accessor);
 		
 		void build(DataNode<?, ?, ?, ?> node, LinkableIn link) {
 			
@@ -195,16 +194,15 @@ implements BindingIn, BindingOut, DataBindingIn, ArooaSessionAware {
 			throw new IllegalArgumentException("Failed to find " + node);
 		}
 		
-		logger.debug("Binding " + node + " to instances of " + type.getName());
+		logger.debug("Binding " + node + " to instances of " + type.toString());
 		linkable.setLinkOut(bindTo, new BeanAcceptor());
 		
 		if (bindTo instanceof ClassMorphic) {
-			((ClassMorphic) bindTo).beFor(new SimpleArooaClass(type));
+			((ClassMorphic) bindTo).beFor(type);
 		}
 		
 		PropertiesToNodes propertyBinding = 
-			new PropertiesToNodes(new SimpleArooaClass(type), 
-					accessor);
+			new PropertiesToNodes(type, accessor);
 		
 		propertyBinding.bindTo(bindTo, linkable);
 		
@@ -214,13 +212,8 @@ implements BindingIn, BindingOut, DataBindingIn, ArooaSessionAware {
 		
 		@Override
 		public boolean dataOut(LinkOutEvent event, Object bean) {
-			if (type.isInstance(bean)) {
 				BeanBindingBean.this.bean = bean;
 				return true;
-			}
-			else {
-				return false;
-			}
 		}		
 		
 		@Override
@@ -228,24 +221,150 @@ implements BindingIn, BindingOut, DataBindingIn, ArooaSessionAware {
 			// Nothing to do.
 		}
 	}	
-	
-	
-	private DataReader childReader;
-	
-	@Override
-	public Object process(Layout node, DataInProvider dataIn) {
+
+	private class ChildNodeBinding implements DataBinding {
+
+		private final Layout node;
 		
-		if (childReader == null) {
+		public ChildNodeBinding(Layout node) {
+			this.node = node;
+		}
+		
+		
+		@Override
+		public Object process(Layout node, DataInProvider dataIn, 
+				boolean revisit) {
 			
-			childReader = new ChildReader(node.childLayouts(), dataIn);
+			if (revisit) {
+				return null;
+			}
 			
+			accessor.setSimpleProperty(bean, node.getName(), 
+					((ValueNode<?>) node).value());
 			
+			return null;
+		}
+		
+		@Override
+		public boolean process(Object value, 
+				Layout node, DataOutProvider dataOut) 
+		throws DataException {
+			
+			ValueNode<?> valueNode = (ValueNode<?>) node;
+			
+			processInferType(value, valueNode, dataOut);
+			
+			return false;
+		}
+		
+		public <T> void processInferType(Object value, 
+				ValueNode<T> valueNode, DataOutProvider dataOut) 
+		throws DataException {
+
+			Class<T> type = valueNode.getType();
+			
+			try {
+				Object fieldValue = accessor.getProperty(value, 
+						node.getName(), type);
+				
+				valueNode.value(type.cast(fieldValue));
+				
+			} catch (ArooaPropertyException e) {
+				throw new DataException(e);
+			} catch (ArooaConversionException e) {
+				throw new DataException(e);
+			}
 			
 		}
 		
-		return null;
+		@Override
+		public void close() {
+			node.bind(null);
+		}
 	}
 	
+	private interface ProcessorIn {
+		public void process(Layout node);
+	}
+
+	private class HeaderProcessorIn implements ProcessorIn {
+		
+		private BeanOverview overview;
+		
+		@Override
+		public void process(Layout node) {
+			
+			new LayoutWalker() {
+				
+				@Override
+				protected boolean onLayout(final Layout layout) {
+					
+					final String nodeName = layout.getName();
+					
+					if (nodeName != null && 
+							overview.hasReadableProperty(nodeName)) {
+						
+						layout.bind(new ChildNodeBinding(layout));
+					
+						return false;
+					}
+					else {
+
+						return true;
+					}
+				}
+			}.walk(node);
+			
+			processorIn = new BodyProcessor();
+			processorIn.process(node);
+		}
+	}
+	
+	private class BodyProcessor implements ProcessorIn {
+		
+		@Override
+		public void process(Layout node) {
+			
+			bean = type.newInstance();
+		}
+	}
+	
+	
+	private ProcessorIn processorIn;
+		
+	@Override
+	public Object process(Layout node, DataInProvider dataIn,
+			boolean revisit) throws DataException {
+		
+		if (revisit) {
+			return null;
+		}
+		
+		if (processorIn == null) {
+			processorIn = new HeaderProcessorIn();
+		}
+		
+		processorIn.process(node);
+	
+		new ChildReader(node.childLayouts(), dataIn).read();
+	
+		return bean;
+	}
+	
+	@Override
+	public void close() {
+		processorIn = null;
+	}
+	
+	@Override
+	public boolean process(Object value, Layout node, DataOutProvider dataOut) {
+		
+		if (type != null && !type.forClass().isInstance(value)) {
+			return false;
+		}
+		
+		return true;
+	}
 	
 	
 	public String getNode() {
@@ -256,11 +375,11 @@ implements BindingIn, BindingOut, DataBindingIn, ArooaSessionAware {
 		this.node = node;
 	}
 
-	public Class<?> getType() {
+	public ArooaClass getType() {
 		return type;
 	}
 
-	public void setType(Class<?> type) {
+	public void setType(ArooaClass type) {
 		this.type = type;
 	}	
 }

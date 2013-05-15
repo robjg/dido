@@ -336,8 +336,8 @@ public class WhatNowOutTest extends TestCase {
 		
 		FlushingOut flushing = new FlushingOut("0");
 		
-		DataWriter<FlushingOut> test = 
-			new DataWriter<FlushingOut>(root, flushing);
+		DataWriterImpl<FlushingOut> test = 
+			new DataWriterImpl<FlushingOut>(root, flushing);
 		
 		test.write(new Object());
 		

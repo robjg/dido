@@ -1,8 +1,10 @@
 package org.oddjob.dido.text;
 
 import org.oddjob.dido.DataException;
+import org.oddjob.dido.DataOut;
+import org.oddjob.dido.UnsupportedeDataOutException;
 
-
+ 
 public class MockFieldsOut implements FieldsOut {
 
 	@Override
@@ -17,6 +19,12 @@ public class MockFieldsOut implements FieldsOut {
 	
 	@Override
 	public boolean flush() throws DataException {
+		throw new RuntimeException("Unexpected from " + getClass());
+	}
+	
+	@Override
+	public <T extends DataOut> T provideOut(Class<T> type)
+			throws UnsupportedeDataOutException {
 		throw new RuntimeException("Unexpected from " + getClass());
 	}
 }

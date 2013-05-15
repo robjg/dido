@@ -2,10 +2,10 @@ package org.oddjob.dido;
 
 import java.util.List;
 
-import org.oddjob.dido.bio.DataBindingIn;
+import org.oddjob.dido.bio.DataBinding;
 
 
-public interface Layout extends ReaderFactory {
+public interface Layout extends DataReaderFactory, DataWriterFactory {
 
 	/**
 	 * The name of the node. May be null.
@@ -19,10 +19,11 @@ public interface Layout extends ReaderFactory {
 	 * 
 	 * @param bin
 	 */
-	public void bind(DataBindingIn bin);
+	public void bind(DataBinding bindings);
 	
-	public void reset();
 	
 	public List<Layout> childLayouts();
 	
+	
+	public void close();
 }

@@ -9,6 +9,7 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.xml.XMLConfiguration;
 import org.oddjob.dido.DataPlanType;
@@ -42,7 +43,7 @@ public class DateFieldTest extends TestCase {
 	{
 		fruitBinding.setArooaSession(session);
 		fruitBinding.setNode("employee");
-		fruitBinding.setType(Employee.class);
+		fruitBinding.setType(new SimpleArooaClass(Employee.class));
 	}
 	
 	@SuppressWarnings("unchecked")

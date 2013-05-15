@@ -1,6 +1,5 @@
-package org.oddjob.dido.io;
+package org.oddjob.dido;
 
-import org.oddjob.dido.DataException;
 
 public interface DataReader {
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.ArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.dido.DataIn;
@@ -72,7 +73,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
-		test.setType(Fruit.class);
+		test.setType(new SimpleArooaClass(Fruit.class));
 		test.setNode("fruit");
 		
 		OurNode root = new OurNode("fruit");
@@ -112,7 +113,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
-		test.setType(Fruit.class);
+		test.setType(new SimpleArooaClass(Fruit.class));
 		test.setNode("fruit");
 		
 		OurNode root = new OurNode("fruit");
@@ -195,7 +196,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
-		test.setType(Fruit.class);
+		test.setType(new SimpleArooaClass(Fruit.class));
 		test.setNode("fruit");
 		
 		OurStencilNode typeNode = new OurStencilNode("type");
@@ -232,7 +233,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
-		test.setType(Fruit.class);
+		test.setType(new SimpleArooaClass(Fruit.class));
 		test.setNode("fruit");
 		
 		OurStencilNode typeNode = new OurStencilNode("type", "apple");
@@ -283,7 +284,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
-		test.setType(Basket.class);
+		test.setType(new SimpleArooaClass(Basket.class));
 		test.setNode("basket");
 		
 		OurStencilNode costNode = new OurStencilNode("cost");
@@ -319,7 +320,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
-		test.setType(Basket.class);
+		test.setType(new SimpleArooaClass(Basket.class));
 		test.setNode("basket");
 		
 		OurStencilNode costNode = new OurStencilNode("cost", "12.47");
@@ -375,7 +376,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
-		test.setType(Fruit.class);
+		test.setType(new SimpleArooaClass(Fruit.class));
 		test.setNode("fruit");
 		
 		OurStencilNode typeNode = new OurStencilNode("type");
@@ -414,7 +415,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
-		test.setType(Fruit.class);
+		test.setType(new SimpleArooaClass(Fruit.class));
 		test.setNode("fruit");
 		
 		OurStencilNode typeNode = new OurStencilNode("type", "apple");

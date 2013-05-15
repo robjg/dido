@@ -2,9 +2,12 @@ package org.oddjob.dido.stream;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataInProvider;
+import org.oddjob.dido.DataOutProvider;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.LayoutBase;
 import org.oddjob.dido.UnsupportedeDataInException;
-import org.oddjob.dido.io.DataReader;
+import org.oddjob.dido.UnsupportedeDataOutException;
 
 public class LinesLayout extends LayoutBase<String> {
 
@@ -54,7 +57,14 @@ public class LinesLayout extends LayoutBase<String> {
 	}
 	
 	@Override
-	public void reset() {
+	public DataWriter writerFor(DataOutProvider dataOutProvider)
+			throws UnsupportedeDataOutException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void close() {
 		reader = null;
 		value(null);
 	}

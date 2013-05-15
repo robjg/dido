@@ -7,6 +7,7 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.xml.XMLConfiguration;
 import org.oddjob.dido.DataPlan;
@@ -51,7 +52,7 @@ public class TextExampleTest extends TestCase {
 	{
 		fruitBinding.setArooaSession(session);
 		fruitBinding.setNode("fruit");
-		fruitBinding.setType(Fruit.class);
+		fruitBinding.setType(new SimpleArooaClass(Fruit.class));
 	}
 	
 	public void testFixedReadWrite() throws ArooaConversionException {

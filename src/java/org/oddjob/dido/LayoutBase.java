@@ -3,14 +3,14 @@ package org.oddjob.dido;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oddjob.dido.bio.DataBindingIn;
-import org.oddjob.dido.io.DataReader;
+import org.oddjob.dido.bio.DataBinding;
 import org.oddjob.dido.layout.ChildReader;
+import org.oddjob.dido.layout.ChildWriter;
 
 
 abstract public class LayoutBase<T> implements Layout, ValueNode<T> {
 
-	private DataBindingIn bin;
+	private DataBinding bin;
 	
 	private String name;
 	
@@ -45,24 +45,47 @@ abstract public class LayoutBase<T> implements Layout, ValueNode<T> {
 	}
 	
 	@Override
-	public void bind(DataBindingIn bin) {
+	public void bind(DataBinding bin) {
 		this.bin = bin;
 	}
 	
-	protected DataBindingIn binding() {
+	protected DataBinding binding() {
 		return bin;
 	}
 	
-	protected DataReader downOurOutReader(final DataInProvider din) {
+	protected DataReader downOurOutReader(final DataInProvider dataIn) {
 		
 		if (binding() == null) {
-			return new ChildReader(childLayouts(), din);
+			return new ChildReader(childLayouts(), dataIn);
 		}
 		else {
 			return new DataReader() {
+				
+				boolean revisit = false;
+				
 				@Override
 				public Object read() throws DataException {
-					return bin.process(LayoutBase.this, din);
+					try {
+						return bin.process(LayoutBase.this, dataIn, revisit);
+					}
+					finally {
+						revisit = true;
+					}
+				}
+			};
+		}
+	}
+	
+	protected DataWriter downOrOutWriter(final DataOutProvider dataOut) {
+		
+		if (binding() == null) {
+			return new ChildWriter(childLayouts(), dataOut);
+		}
+		else {
+			return new DataWriter() {
+				@Override
+				public boolean write(Object value) throws DataException {
+					return bin.process(value, LayoutBase.this, dataOut);
 				}
 			};
 		}

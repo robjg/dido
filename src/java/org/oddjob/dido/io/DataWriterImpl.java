@@ -10,6 +10,7 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataPlan;
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Selectable;
 import org.oddjob.dido.SupportsChildren;
 
@@ -20,9 +21,9 @@ import org.oddjob.dido.SupportsChildren;
  *
  * @param <ACCEPTS_OUT> The type of {@link DataOut} this writer accepts.
  */
-public class DataWriter<ACCEPTS_OUT extends DataOut> extends AbstractNodeWalker
-implements LinkableOut {
-	private static final Logger logger = Logger.getLogger(DataWriter.class);
+public class DataWriterImpl<ACCEPTS_OUT extends DataOut> extends AbstractNodeWalker
+implements LinkableOut, DataWriter {
+	private static final Logger logger = Logger.getLogger(DataWriterImpl.class);
 	
 	private final Map<DataNode<?, ?, ?, ?>, DataLinkOut> links =
 		new HashMap<DataNode<?, ?, ?, ?>, DataLinkOut>();
@@ -34,14 +35,14 @@ implements LinkableOut {
 	
 	private final ConfigurationStrategy configurationStrategy;
 	
-	public DataWriter(DataNode<?, ?, ACCEPTS_OUT, ?> root,
+	public DataWriterImpl(DataNode<?, ?, ACCEPTS_OUT, ?> root,
 			ACCEPTS_OUT dataOut) {
 		this.whats.push(new WhatNowOut(root, dataOut));
 		this.configurationStrategy = ConfigurationType.NEVER;
 		this.session = null;
 	}
 	
-	public DataWriter(DataPlan<?, ?, ACCEPTS_OUT, ?> root, 
+	public DataWriterImpl(DataPlan<?, ?, ACCEPTS_OUT, ?> root, 
 			ACCEPTS_OUT dataOut) {
 		this(root, dataOut, ConfigurationType.INITIAL);
 	}
@@ -52,7 +53,7 @@ implements LinkableOut {
 	 * @param origin
 	 * @param dataOut
 	 */
-	public DataWriter(DataPlan<?, ?, ACCEPTS_OUT, ?> origin, 
+	public DataWriterImpl(DataPlan<?, ?, ACCEPTS_OUT, ?> origin, 
 			ACCEPTS_OUT dataOut,
 			ConfigurationStrategy configurationStrategy) {
 		this.whats.push(new WhatNowOut(origin.getTopNode(), dataOut));
@@ -71,7 +72,7 @@ implements LinkableOut {
 	 * 
 	 * @throws DataException
 	 */
-	public void write(Object bean) throws DataException {
+	public boolean write(Object bean) throws DataException {
 		
 		if (bean == null) {
 			logger.debug("Completing structure at depth " + whats.size());
@@ -121,7 +122,7 @@ implements LinkableOut {
 				
 				if (now.after()) {					
 					if (bean != null) {
-						return;
+						return true;
 					}
 				}
 				else {
@@ -134,6 +135,8 @@ implements LinkableOut {
 				now.writerComplete();
 			}
 		}		
+		
+		return false;
 	}
 
 	public void complete() throws DataException {

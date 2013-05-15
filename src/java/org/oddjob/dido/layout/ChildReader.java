@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataInProvider;
-import org.oddjob.dido.ReaderFactory;
-import org.oddjob.dido.io.DataReader;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataReaderFactory;
 
 /**
  * 
@@ -14,13 +14,13 @@ import org.oddjob.dido.io.DataReader;
  */
 public class ChildReader implements DataReader {
 
-	private final Iterator<? extends ReaderFactory> iterator;
+	private final Iterator<? extends DataReaderFactory> iterator;
 	
 	private final DataInProvider dataIn;
 	
 	private DataReader current;
 	
-	public ChildReader(Iterable<? extends ReaderFactory> children,
+	public ChildReader(Iterable<? extends DataReaderFactory> children,
 			DataInProvider dataIn) {
 		iterator = children.iterator();
 		this.dataIn = dataIn;

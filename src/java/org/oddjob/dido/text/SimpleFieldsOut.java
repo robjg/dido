@@ -7,17 +7,53 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 
-abstract class BaseFieldsOut implements FieldsOut {
+public class SimpleFieldsOut implements FieldsOut {
 
+	private Map<Integer, String> headings;
+	
 	private Map<Integer, String> values;
 	
-	private final FieldsWriter writer;
-
-	public BaseFieldsOut(FieldsWriter writer) {
-		this.writer = writer; 
+	private int maxColumn;
+			
+	public SimpleFieldsOut() {
+		this(null);
 	}
 	
-	protected void setValue(int column, String value) {
+	public SimpleFieldsOut(String[] headings) {
+
+		if (headings != null) {
+			
+			for (String heading : headings) {
+				
+				writeHeading(heading, 0);
+			}
+		}
+	}
+	
+	@Override
+	public int writeHeading(String heading, int column) {
+		
+		if (column < 1) {
+			column = maxColumn + 1;
+		}
+		if (column > maxColumn) {
+			maxColumn = column;
+		}
+		
+		if (heading != null) {			
+			if (headings == null) {				
+				headings = new HashMap<Integer, String>();
+			}
+			
+			headings.put(column, heading);
+		}
+		
+		return column;
+	}
+	
+	@Override
+	public void setColumn(int column, String value) {
+		
 		if (column < 1) {
 			throw new IllegalArgumentException("Column is " + column);
 		}
@@ -30,26 +66,15 @@ abstract class BaseFieldsOut implements FieldsOut {
 	}
 	
 	@Override
-	abstract public int writeHeading(String heading, int column);
-	
-	@Override
-	abstract public void setColumn(int column, String value);
-	
-	@Override
 	public boolean flush() throws DataException {
-		if (values != null) {
-			writer.write(toArray(values));
-			values = null;
-			return true;
-		}
-		return false;
-	}
-	
-	public interface FieldsWriter {
-		public void write(String[] values) throws DataException;
+		return true;
 	}
 	
 	private static String[] toArray(Map<Integer, String> things) {
+		if (things == null) {
+			return null;
+		}
+		
 		int size = 0;
 		for (int i : things.keySet() ) {
 			if (i > size) {
@@ -66,6 +91,18 @@ abstract class BaseFieldsOut implements FieldsOut {
 		}
 		
 		return a;
+	}
+	
+	public String[] headings() {
+		return toArray(headings);
+	}
+	
+	public String[] values() {
+		return toArray(values);
+	}
+	
+	public void clear() {
+		values = null;
 	}
 	
 	@Override

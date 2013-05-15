@@ -10,7 +10,7 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataNode;
 import org.oddjob.dido.WhereNextIn;
 import org.oddjob.dido.WhereNextOut;
-import org.oddjob.dido.io.DataWriter;
+import org.oddjob.dido.io.DataWriterImpl;
 import org.oddjob.dido.stream.Lines;
 import org.oddjob.dido.stream.LinesOut;
 import org.oddjob.dido.stream.OutputStreamOut;
@@ -174,7 +174,7 @@ public class DelimitedTest extends TestCase {
 				
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-		DataWriter<LinesOut> writer = new DataWriter<LinesOut>(lines, 
+		DataWriterImpl<LinesOut> writer = new DataWriterImpl<LinesOut>(lines, 
 			new OutputStreamOut(output));
 		
 		a.setValue("a");

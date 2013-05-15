@@ -7,6 +7,7 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.xml.XMLConfiguration;
 import org.oddjob.dido.DataPlanType;
@@ -44,7 +45,7 @@ public class NumberFieldTest extends TestCase {
 	{
 		fruitBinding.setArooaSession(session);
 		fruitBinding.setNode("employee");
-		fruitBinding.setType(Employee.class);
+		fruitBinding.setType(new SimpleArooaClass(Employee.class));
 	}
 	
 	public void testReadWrite() throws ArooaConversionException {
