@@ -3,19 +3,19 @@ package org.oddjob.dido.text;
 import java.util.regex.Pattern;
 
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataInProvider;
-import org.oddjob.dido.DataOutProvider;
+import org.oddjob.dido.DataIn;
+import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.LayoutBase;
 import org.oddjob.dido.UnsupportedeDataInException;
 import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.layout.LayoutValueNode;
 import org.oddjob.dido.stream.LinesIn;
 import org.oddjob.dido.stream.LinesOut;
 
 
 public class DelimitedLayout 
-extends LayoutBase<String[]> {
+extends LayoutValueNode<String[]> {
 
 	public static final String DEFAULT = ",";
 	
@@ -102,7 +102,7 @@ extends LayoutBase<String[]> {
 			}
 			fieldsIn.setValues(fields);
 			
-			nextReader = downOurOutReader(fieldsIn);
+			nextReader = nextReaderFor(fieldsIn);
 			
 			return read();
 		}
@@ -110,13 +110,13 @@ extends LayoutBase<String[]> {
 	
 
 	@Override
-	public DataReader readerFor(DataInProvider dataInProvider)
+	public DataReader readerFor(DataIn dataIn)
 	throws UnsupportedeDataInException {
 		
 		if (reader == null) {
 			
 			reader = new HeaderReader(
-					dataInProvider.provideIn(LinesIn.class));
+					dataIn.provideIn(LinesIn.class));
 		}
 
 		return reader;
@@ -224,10 +224,10 @@ extends LayoutBase<String[]> {
 	
 	
 	@Override
-	public DataWriter writerFor(DataOutProvider dataOutProvider)
+	public DataWriter writerFor(DataOut dataOut)
 	throws UnsupportedeDataOutException {
 
-		LinesOut linesOut = dataOutProvider.provideOut(LinesOut.class);
+		LinesOut linesOut = dataOut.provideOut(LinesOut.class);
 
 		return new DelimitedWriter(linesOut);
 	}

@@ -9,9 +9,9 @@ import org.oddjob.arooa.reflect.ArooaPropertyException;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataInProvider;
+import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataNode;
-import org.oddjob.dido.DataOutProvider;
+import org.oddjob.dido.DataOut;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.SupportsChildren;
 import org.oddjob.dido.ValueNode;
@@ -232,7 +232,7 @@ implements BindingIn, BindingOut, DataBinding, ArooaSessionAware {
 		
 		
 		@Override
-		public Object process(Layout node, DataInProvider dataIn, 
+		public Object process(Layout node, DataIn dataIn, 
 				boolean revisit) {
 			
 			if (revisit) {
@@ -247,7 +247,7 @@ implements BindingIn, BindingOut, DataBinding, ArooaSessionAware {
 		
 		@Override
 		public boolean process(Object value, 
-				Layout node, DataOutProvider dataOut) 
+				Layout node, DataOut dataOut) 
 		throws DataException {
 			
 			ValueNode<?> valueNode = (ValueNode<?>) node;
@@ -258,7 +258,7 @@ implements BindingIn, BindingOut, DataBinding, ArooaSessionAware {
 		}
 		
 		public <T> void processInferType(Object value, 
-				ValueNode<T> valueNode, DataOutProvider dataOut) 
+				ValueNode<T> valueNode, DataOut dataOut) 
 		throws DataException {
 
 			Class<T> type = valueNode.getType();
@@ -333,7 +333,7 @@ implements BindingIn, BindingOut, DataBinding, ArooaSessionAware {
 	private ProcessorIn processorIn;
 		
 	@Override
-	public Object process(Layout node, DataInProvider dataIn,
+	public Object process(Layout node, DataIn dataIn,
 			boolean revisit) throws DataException {
 		
 		if (revisit) {
@@ -357,7 +357,7 @@ implements BindingIn, BindingOut, DataBinding, ArooaSessionAware {
 	}
 	
 	@Override
-	public boolean process(Object value, Layout node, DataOutProvider dataOut) {
+	public boolean process(Object value, Layout node, DataOut dataOut) {
 		
 		if (type != null && !type.forClass().isInstance(value)) {
 			return false;

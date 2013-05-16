@@ -3,9 +3,10 @@ package org.oddjob.dido.layout;
 import java.util.Iterator;
 
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataOutProvider;
+import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.DataWriterFactory;
+import org.oddjob.dido.ValueNode;
 
 /**
  * 
@@ -16,13 +17,16 @@ public class ChildWriter implements DataWriter {
 
 	private final Iterator<? extends DataWriterFactory> iterator;
 	
-	private final DataOutProvider dataOut;
+	private final DataOut dataOut;
+	
+	private final ValueNode<?> valueNode;
 	
 	private DataWriter current;
 	
 	public ChildWriter(Iterable<? extends DataWriterFactory> children,
-			DataOutProvider dataOut) {
+			ValueNode<?> parent, DataOut dataOut) {
 		iterator = children.iterator();
+		this.valueNode = parent;
 		this.dataOut = dataOut;
 	}	
 	
@@ -34,6 +38,10 @@ public class ChildWriter implements DataWriter {
 		}
 		
 		if (current == null) {
+			
+			if (valueNode != null && dataOut.hasData()) {
+				writeDataWithInferredType(valueNode);
+			}
 			return false;
 		}
 
@@ -44,5 +52,9 @@ public class ChildWriter implements DataWriter {
 			current = null;
 			return write(value);
 		}
+	}
+	
+	private <T> void writeDataWithInferredType(ValueNode<T> valueNode) {
+		valueNode.value(dataOut.toValue(valueNode.getType()));
 	}
 }

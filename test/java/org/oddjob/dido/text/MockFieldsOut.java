@@ -27,4 +27,12 @@ public class MockFieldsOut implements FieldsOut {
 			throws UnsupportedeDataOutException {
 		throw new RuntimeException("Unexpected from " + getClass());
 	}
+	@Override
+	public boolean hasData() {
+		throw new RuntimeException("Unexpected from " + getClass());
+	}
+	@Override
+	public <T> T toValue(Class<T> type) {
+		throw new RuntimeException("Unexpected from " + getClass());
+	}
 }

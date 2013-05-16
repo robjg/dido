@@ -13,6 +13,7 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.MockBoundedDataNode;
 import org.oddjob.dido.MockDataNode;
 import org.oddjob.dido.MockDataOut;
+import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.WhereNextOut;
 
 
@@ -278,6 +279,23 @@ public class WhatNowOutTest extends TestCase {
 			++flushed;
 			logger.info("Flushed " + name);
 			return true;
+		}
+		
+		@Override
+		public boolean hasData() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		@Override
+		public <T extends DataOut> T provideOut(Class<T> type)
+				throws UnsupportedeDataOutException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		@Override
+		public <T> T toValue(Class<T> type) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 	

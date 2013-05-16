@@ -1,22 +1,24 @@
-package org.oddjob.dido;
+package org.oddjob.dido.layout;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.oddjob.dido.DataException;
+import org.oddjob.dido.DataIn;
+import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.Layout;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.bio.DataBinding;
-import org.oddjob.dido.layout.ChildReader;
-import org.oddjob.dido.layout.ChildWriter;
 
 
-abstract public class LayoutBase<T> implements Layout, ValueNode<T> {
+abstract public class LayoutNode implements Layout {
 
-	private DataBinding bin;
+	private DataBinding binding;
 	
 	private String name;
 	
-	/** The stencils value. */
-	private T value;
-
 	private final List<Layout> children = 
 			new ArrayList<Layout>();		
 	
@@ -30,30 +32,20 @@ abstract public class LayoutBase<T> implements Layout, ValueNode<T> {
 	}
 
 	@Override
-	public T value() {
-		return value;
-	}
-	
-	@Override
-	public void value(T value) {
-		this.value = value;
-	}
-	
-	@Override
 	public List<Layout> childLayouts() {
 		return children;
 	}
 	
 	@Override
-	public void bind(DataBinding bin) {
-		this.bin = bin;
+	public void bind(DataBinding binding) {
+		this.binding = binding;
 	}
 	
 	protected DataBinding binding() {
-		return bin;
+		return binding;
 	}
 	
-	protected DataReader downOurOutReader(final DataInProvider dataIn) {
+	protected DataReader nextReaderFor(final DataIn dataIn) {
 		
 		if (binding() == null) {
 			return new ChildReader(childLayouts(), dataIn);
@@ -66,7 +58,7 @@ abstract public class LayoutBase<T> implements Layout, ValueNode<T> {
 				@Override
 				public Object read() throws DataException {
 					try {
-						return bin.process(LayoutBase.this, dataIn, revisit);
+						return binding.process(LayoutNode.this, dataIn, revisit);
 					}
 					finally {
 						revisit = true;
@@ -76,16 +68,18 @@ abstract public class LayoutBase<T> implements Layout, ValueNode<T> {
 		}
 	}
 	
-	protected DataWriter downOrOutWriter(final DataOutProvider dataOut) {
+	protected DataWriter downOrOutWriter(final DataOut dataOut) {
 		
 		if (binding() == null) {
-			return new ChildWriter(childLayouts(), dataOut);
+			return new ChildWriter(childLayouts(), 
+					((this instanceof ValueNode) ? (ValueNode<?>) this : null), 
+					dataOut);
 		}
 		else {
 			return new DataWriter() {
 				@Override
 				public boolean write(Object value) throws DataException {
-					return bin.process(value, LayoutBase.this, dataOut);
+					return binding.process(value, LayoutNode.this, dataOut);
 				}
 			};
 		}

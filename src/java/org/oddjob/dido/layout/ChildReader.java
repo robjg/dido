@@ -3,7 +3,7 @@ package org.oddjob.dido.layout;
 import java.util.Iterator;
 
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataInProvider;
+import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataReaderFactory;
 
@@ -16,12 +16,12 @@ public class ChildReader implements DataReader {
 
 	private final Iterator<? extends DataReaderFactory> iterator;
 	
-	private final DataInProvider dataIn;
+	private final DataIn dataIn;
 	
 	private DataReader current;
 	
 	public ChildReader(Iterable<? extends DataReaderFactory> children,
-			DataInProvider dataIn) {
+			DataIn dataIn) {
 		iterator = children.iterator();
 		this.dataIn = dataIn;
 	}	

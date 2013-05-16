@@ -1,9 +1,8 @@
 package org.oddjob.dido.text;
 
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.DataOutProvider;
 
-public interface FieldsOut extends DataOut, DataOutProvider {
+public interface FieldsOut extends DataOut {
 
 	/**
 	 * Write a heading. The heading will only be written

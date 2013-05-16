@@ -4,11 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataInProvider;
 import org.oddjob.dido.UnsupportedeDataInException;
 
 public class MappedFieldsIn
-implements FieldsIn, DataInProvider {
+implements FieldsIn {
 
 	private Map<String, Integer> headerToColumn;
 	

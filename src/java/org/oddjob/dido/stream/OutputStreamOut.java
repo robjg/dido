@@ -70,4 +70,17 @@ public class OutputStreamOut implements StreamOut, LinesOut {
 			throw new UnsupportedeDataOutException(getClass(), type);
 		}
 	}
+	
+	@Override
+	public boolean hasData() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public <T> T toValue(Class<T> type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

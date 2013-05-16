@@ -115,4 +115,14 @@ public class SimpleFieldsOut implements FieldsOut {
 			throw new UnsupportedeDataOutException(getClass(), type);
 		}
 	}
+
+	@Override
+	public boolean hasData() {
+		return values != null;
+	}
+	
+	@Override
+	public <T> T toValue(Class<T> type) {
+		return type.cast(values());
+	}
 }

@@ -5,7 +5,6 @@ import junit.framework.TestCase;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.UnsupportedeDataInException;
 import org.oddjob.dido.bio.ValueBinding;
 
 public class FieldLayoutTest extends TestCase {

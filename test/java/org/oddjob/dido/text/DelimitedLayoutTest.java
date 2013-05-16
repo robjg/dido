@@ -38,6 +38,16 @@ public class DelimitedLayoutTest extends TestCase {
 		public boolean flush() throws DataException {
 			throw new RuntimeException("Unexpected!");
 		}
+		@Override
+		public boolean hasData() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		@Override
+		public <T> T toValue(Class<T> type) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 	
 	public void testVerySimpleNoChild() throws DataException {

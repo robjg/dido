@@ -24,9 +24,9 @@ public class DataReaderSimpleTest extends TestCase {
 		
 		LinesLayout node = new LinesLayout();
 		
-		DataBinding bin = new ValueBinding();
+		DataBinding binding = new ValueBinding();
 		
-		node.bind(bin);
+		node.bind(binding);
 		
 		DataReader reader = node.readerFor(in);
 		

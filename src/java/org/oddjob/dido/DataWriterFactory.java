@@ -3,6 +3,6 @@ package org.oddjob.dido;
 
 public interface DataWriterFactory {
 
-	DataWriter writerFor(DataOutProvider dataOutProvider)
+	DataWriter writerFor(DataOut dataOut)
 	throws UnsupportedeDataOutException;
 }

@@ -17,7 +17,7 @@ public interface Layout extends DataReaderFactory, DataWriterFactory {
 	/**
 	 * 
 	 * 
-	 * @param bin
+	 * @param binding
 	 */
 	public void bind(DataBinding bindings);
 	

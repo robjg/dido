@@ -1,7 +1,7 @@
 Dido-0.0.1
 =============
 
-Dido stands for Data-In/Data-Out and is a new framemork for reading and 
+Dido stands for Data-In/Data-Out and is a  framework for reading and 
 writing data. It is designed to be used within Oddjob.
 
 This code must be considered experimental at this stage.
@@ -14,8 +14,7 @@ In this release:
 
 To do
 -----
-- Need header/trailer. (March 2011) 
+- Need header/trailer. (June 2013) 
 - Need row count. 
-- Need sharing registry with creator (Feb 2011).
-- Something capable of simple comparisons of beans. (End June 2011).
+- Need sharing registry with creator (June 2013).
 

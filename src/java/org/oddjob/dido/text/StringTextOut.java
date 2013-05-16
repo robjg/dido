@@ -2,11 +2,10 @@ package org.oddjob.dido.text;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.DataOutProvider;
 import org.oddjob.dido.UnsupportedeDataOutException;
 
 
-public class StringTextOut implements TextOut, DataOutProvider {
+public class StringTextOut implements TextOut {
 
 	public static final char PAD_CHARACTER = ' ';
 	
@@ -74,5 +73,13 @@ public class StringTextOut implements TextOut, DataOutProvider {
 		return buffer.toString();
 	}
 	
+	@Override
+	public boolean hasData() {
+		return buffer.length() > 0;
+	}
 	
+	@Override
+	public <T> T toValue(Class<T> type) {
+		return type.cast(buffer.toString());
+	}
 }

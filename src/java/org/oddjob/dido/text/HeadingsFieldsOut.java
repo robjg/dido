@@ -34,4 +34,15 @@ public class HeadingsFieldsOut extends BaseFieldsOut {
 				"Can't set columns during begin phase.");
 	}
 	
+	@Override
+	public boolean hasData() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public <T> T toValue(Class<T> type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

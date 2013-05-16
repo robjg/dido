@@ -10,6 +10,10 @@ package org.oddjob.dido;
  */
 public interface DataOut {
 
+	<T extends DataOut> T provideOut(Class<T> type) 
+	throws UnsupportedeDataOutException;
+	
+	
 	/**
 	 * Write data back up the hierarchy. Should be called after 
 	 * 
@@ -18,4 +22,9 @@ public interface DataOut {
 	 * @throws DataException
 	 */
 	public boolean flush() throws DataException;
+
+
+	public boolean hasData();
+	
+	public <T> T toValue(Class<T> type);
 }

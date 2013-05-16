@@ -1,11 +1,10 @@
 package org.oddjob.dido.text;
 
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataInProvider;
 import org.oddjob.dido.UnsupportedeDataInException;
 
 
-public class StringTextIn implements TextIn, DataInProvider {
+public class StringTextIn implements TextIn {
 
 	private final String text;
 	

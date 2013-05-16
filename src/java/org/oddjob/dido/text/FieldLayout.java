@@ -1,17 +1,17 @@
 package org.oddjob.dido.text;
 
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataInProvider;
-import org.oddjob.dido.DataOutProvider;
+import org.oddjob.dido.DataIn;
+import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.LayoutBase;
 import org.oddjob.dido.UnsupportedeDataInException;
 import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.layout.LayoutValueNode;
 
 
 public class FieldLayout 
-extends LayoutBase<String> {
+extends LayoutValueNode<String> {
 
 	private String title;
 	
@@ -50,7 +50,7 @@ extends LayoutBase<String> {
 
 			value(field);
 			
-			nextReader = downOurOutReader(in);
+			nextReader = nextReaderFor(in);
 			
 			return read();
 		}
@@ -62,10 +62,10 @@ extends LayoutBase<String> {
 	
 	
 	@Override
-	public DataReader readerFor(DataInProvider dataInProvider)
+	public DataReader readerFor(DataIn dataIn)
 	throws UnsupportedeDataInException {
 	
-		FieldsIn in = dataInProvider.provideIn(FieldsIn.class);
+		FieldsIn in = dataIn.provideIn(FieldsIn.class);
 		
 		if (!initialised) {
 			String title = getTitle();
@@ -113,6 +113,7 @@ extends LayoutBase<String> {
 
 			if (nextWriter == null) {
 				
+				value(null);
 				textOut = new StringTextOut();
 				nextWriter = downOrOutWriter(textOut);
 			}
@@ -120,26 +121,24 @@ extends LayoutBase<String> {
 			if (nextWriter.write(value)) {
 				return true;
 			}
-			else {
-				writer = null;
-				
-				if (textOut.length() > 0) {
-					value(textOut.toString());
-				}
-				
+			
+			
+			if (value() != null ) {
 				outgoing.setColumn(column, value());
-				
-				return false;
-			}
+			}	
+			
+			writer = null;
+
+			return false;
 		}
 	}
 	
 
 	@Override
-	public DataWriter writerFor(DataOutProvider dataOutProvider)
+	public DataWriter writerFor(DataOut dataOut)
 			throws UnsupportedeDataOutException {
 		
-		FieldsOut out = dataOutProvider.provideOut(FieldsOut.class);
+		FieldsOut out = dataOut.provideOut(FieldsOut.class);
 		
 		if (writer == null) {
 			

@@ -1,15 +1,16 @@
 package org.oddjob.dido.bio;
 
-import org.oddjob.dido.DataInProvider;
-import org.oddjob.dido.DataOutProvider;
+import org.oddjob.dido.DataIn;
+import org.oddjob.dido.DataOut;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.ValueNode;
 
 public class ValueBinding implements DataBinding {
 
 	@Override
-	public Object process(Layout node, DataInProvider dataInProvider, 
+	public Object process(Layout node, DataIn dataIn, 
 			boolean revist) {
+
 		if (revist) {
 			return null;
 		}
@@ -24,10 +25,13 @@ public class ValueBinding implements DataBinding {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean process(Object value, Layout node, DataOutProvider dataOut) {
+	public boolean process(Object value, Layout node, DataOut dataOut) {
+		
 		if (node instanceof ValueNode) {
+			
 			ValueNode<Object> valueNode = (ValueNode<Object>) node;
 			valueNode.value(value);
+			
 			return false;
 		}
 		else {
