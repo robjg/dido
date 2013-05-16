@@ -2,7 +2,7 @@ package org.oddjob.dido;
 
 import java.util.List;
 
-import org.oddjob.dido.bio.DataBinding;
+import org.oddjob.dido.bio.Binding;
 
 
 public interface Layout extends DataReaderFactory, DataWriterFactory {
@@ -19,7 +19,7 @@ public interface Layout extends DataReaderFactory, DataWriterFactory {
 	 * 
 	 * @param binding
 	 */
-	public void bind(DataBinding bindings);
+	public void bind(Binding bindings);
 	
 	
 	public List<Layout> childLayouts();

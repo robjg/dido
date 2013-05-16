@@ -5,7 +5,7 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.ValueNode;
 
-public class ValueBinding implements DataBinding {
+public class ValueBinding implements Binding {
 
 	@Override
 	public Object process(Layout node, DataIn dataIn, 

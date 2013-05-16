@@ -186,7 +186,7 @@ extends LayoutValueNode<String[]> {
 			
 			if (nextWriter == null) {
 
-				nextWriter = downOrOutWriter(fieldsOut);
+				nextWriter = nextWriterFor(fieldsOut);
 			}
 			
 			if (nextWriter.write(value)) {

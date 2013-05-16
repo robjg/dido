@@ -37,7 +37,7 @@ import org.oddjob.dido.layout.LayoutWalker;
  *
  */
 public class BeanBindingBean 
-implements BindingIn, BindingOut, DataBinding, ArooaSessionAware {
+implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 
 	private static final Logger logger = Logger.getLogger(BeanBindingBean.class);
 	
@@ -222,7 +222,7 @@ implements BindingIn, BindingOut, DataBinding, ArooaSessionAware {
 		}
 	}	
 
-	private class ChildNodeBinding implements DataBinding {
+	private class ChildNodeBinding implements Binding {
 
 		private final Layout node;
 		

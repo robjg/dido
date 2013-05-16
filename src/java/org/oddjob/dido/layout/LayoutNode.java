@@ -10,12 +10,12 @@ import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.ValueNode;
-import org.oddjob.dido.bio.DataBinding;
+import org.oddjob.dido.bio.Binding;
 
 
 abstract public class LayoutNode implements Layout {
 
-	private DataBinding binding;
+	private Binding binding;
 	
 	private String name;
 	
@@ -37,11 +37,11 @@ abstract public class LayoutNode implements Layout {
 	}
 	
 	@Override
-	public void bind(DataBinding binding) {
+	public void bind(Binding binding) {
 		this.binding = binding;
 	}
 	
-	protected DataBinding binding() {
+	protected Binding binding() {
 		return binding;
 	}
 	
@@ -68,7 +68,7 @@ abstract public class LayoutNode implements Layout {
 		}
 	}
 	
-	protected DataWriter downOrOutWriter(final DataOut dataOut) {
+	protected DataWriter nextWriterFor(final DataOut dataOut) {
 		
 		if (binding() == null) {
 			return new ChildWriter(childLayouts(), 

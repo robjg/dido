@@ -115,7 +115,7 @@ extends LayoutValueNode<String> {
 				
 				value(null);
 				textOut = new StringTextOut();
-				nextWriter = downOrOutWriter(textOut);
+				nextWriter = nextWriterFor(textOut);
 			}
 			
 			if (nextWriter.write(value)) {

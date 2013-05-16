@@ -5,7 +5,7 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.Layout;
 
-public interface DataBinding {
+public interface Binding {
 
 	public Object process(Layout node, DataIn dataIn, 
 			boolean revist)

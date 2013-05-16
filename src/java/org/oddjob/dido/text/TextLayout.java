@@ -90,7 +90,7 @@ extends LayoutValueNode<String> {
 				if (nextWriter == null) {
 					
 					value(null);
-					nextWriter = downOrOutWriter(nextOut);
+					nextWriter = nextWriterFor(nextOut);
 				}
 				
 				if (nextWriter.write(object)) {
