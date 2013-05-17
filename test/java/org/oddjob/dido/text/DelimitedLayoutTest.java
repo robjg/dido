@@ -8,13 +8,15 @@ import junit.framework.TestCase;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.MockDataOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.bio.ValueBinding;
 import org.oddjob.dido.stream.LinesOut;
 
 public class DelimitedLayoutTest extends TestCase {
 
-	private class OurLinesOut implements LinesOut {
+	private class OurLinesOut extends MockDataOut
+	implements LinesOut {
 		
 		private List<String> results = new ArrayList<String>();
 		
@@ -32,21 +34,6 @@ public class DelimitedLayoutTest extends TestCase {
 		@Override
 		public void writeLine(String text) throws DataException {
 			results.add(text);
-		}
-		
-		@Override
-		public boolean flush() throws DataException {
-			throw new RuntimeException("Unexpected!");
-		}
-		@Override
-		public boolean hasData() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-		@Override
-		public <T> T toValue(Class<T> type) {
-			// TODO Auto-generated method stub
-			return null;
 		}
 	}
 	

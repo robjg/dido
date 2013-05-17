@@ -29,5 +29,5 @@ public interface Binding {
 			Layout node, DataOut dataOut)
 	throws DataException;
 	
-	public void close();
+	public void reset();
 }

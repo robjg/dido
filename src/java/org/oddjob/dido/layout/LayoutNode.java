@@ -36,6 +36,15 @@ abstract public class LayoutNode implements Layout {
 		return children;
 	}
 	
+	protected void addOrRemoveChild(int index, Layout child) {
+		if (child == null) {
+			children.remove(index);
+		}
+		else {
+			children.add(index, child);
+		}
+	}
+	
 	@Override
 	public void bind(Binding binding) {
 		this.binding = binding;

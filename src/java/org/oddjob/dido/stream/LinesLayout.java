@@ -5,16 +5,23 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.Layout;
 import org.oddjob.dido.UnsupportedeDataInException;
 import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.layout.LayoutValueNode;
 import org.oddjob.dido.text.StringTextIn;
+import org.oddjob.dido.text.StringTextOut;
+import org.oddjob.dido.text.TextOut;
 
 public class LinesLayout extends LayoutValueNode<String> {
 
 	@Override
 	public Class<String> getType() {
 		return String.class;
+	}
+	
+	public void setOf(int index, Layout child) {
+		addOrRemoveChild(index, child);
 	}
 	
 	@Override
@@ -63,8 +70,39 @@ public class LinesLayout extends LayoutValueNode<String> {
 	@Override
 	public DataWriter writerFor(DataOut dataOut)
 			throws UnsupportedeDataOutException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		final LinesOut linesOut = dataOut.provideOut(LinesOut.class);
+		
+		return new DataWriter() {
+
+			DataWriter nextWriter;
+			
+			TextOut textOut;
+			
+			@Override
+			public boolean write(Object value) throws DataException {
+				
+				if (nextWriter == null) {
+					
+					textOut = new StringTextOut();
+					
+					nextWriter = nextWriterFor(textOut);
+							
+				}
+				
+				if (nextWriter.write(value)) {
+					return true;
+				}
+				
+				if (textOut.hasData()) {
+					linesOut.writeLine(textOut.toValue(String.class));
+				}
+
+				nextWriter = null;
+				
+				return false;
+			}
+		};
 	}
 	
 	@Override

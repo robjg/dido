@@ -40,6 +40,6 @@ public class ValueBinding implements Binding {
 	}
 	
 	@Override
-	public void close() {
+	public void reset() {
 	}
 }

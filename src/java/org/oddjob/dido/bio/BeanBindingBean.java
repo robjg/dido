@@ -1,5 +1,8 @@
 package org.oddjob.dido.bio;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
@@ -25,6 +28,7 @@ import org.oddjob.dido.io.LinkableIn;
 import org.oddjob.dido.io.LinkableOut;
 import org.oddjob.dido.io.Nodes;
 import org.oddjob.dido.layout.ChildReader;
+import org.oddjob.dido.layout.ChildWriter;
 import org.oddjob.dido.layout.LayoutWalker;
 
 /**
@@ -64,6 +68,8 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 	 * The current bean.
 	 */
 	private Object bean;
+	
+	private final List<Runnable> resets = new ArrayList<Runnable>();
 	
 	@Override
 	public void setArooaSession(ArooaSession session) {
@@ -278,21 +284,22 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 		}
 		
 		@Override
-		public void close() {
+		public void reset() {
 			node.bind(null);
 		}
 	}
 	
-	private interface ProcessorIn {
+	private interface BindingLayoutProcessor {
 		public void process(Layout node);
 	}
 
-	private class HeaderProcessorIn implements ProcessorIn {
-		
-		private BeanOverview overview;
+	private class HeaderProcessorIn implements BindingLayoutProcessor {
 		
 		@Override
 		public void process(Layout node) {
+			
+			final BeanOverview overview = 
+					type.getBeanOverview(accessor);
 			
 			new LayoutWalker() {
 				
@@ -306,6 +313,13 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 						
 						layout.bind(new ChildNodeBinding(layout));
 					
+						resets.add(new Runnable() {
+							@Override
+							public void run() {
+								layout.bind(null);
+							}
+						});
+						
 						return false;
 					}
 					else {
@@ -315,12 +329,12 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 				}
 			}.walk(node);
 			
-			processorIn = new BodyProcessor();
-			processorIn.process(node);
+			processor = new MainProcessorIn();
+			processor.process(node);
 		}
 	}
 	
-	private class BodyProcessor implements ProcessorIn {
+	private class MainProcessorIn implements BindingLayoutProcessor {
 		
 		@Override
 		public void process(Layout node) {
@@ -330,7 +344,7 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 	}
 	
 	
-	private ProcessorIn processorIn;
+	private BindingLayoutProcessor processor;
 		
 	@Override
 	public Object process(Layout node, DataIn dataIn,
@@ -340,11 +354,11 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 			return null;
 		}
 		
-		if (processorIn == null) {
-			processorIn = new HeaderProcessorIn();
+		if (processor == null) {
+			processor = new HeaderProcessorIn();
 		}
 		
-		processorIn.process(node);
+		processor.process(node);
 	
 		new ChildReader(node.childLayouts(), dataIn).read();
 	
@@ -352,21 +366,85 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 	}
 	
 	@Override
-	public void close() {
-		processorIn = null;
+	public void reset() {
+		processor = null;
+		for (Runnable reset : resets) {
+			reset.run();
+		}
+		resets.clear();
+	}
+	
+	private class HeaderProcessorOut implements BindingLayoutProcessor {
+			
+		@Override
+		public void process(Layout node) {
+			
+			final BeanOverview overview = 
+					accessor.getClassName(bean).getBeanOverview(accessor);
+			
+			new LayoutWalker() {
+				
+				@Override
+				protected boolean onLayout(final Layout layout) {
+					
+					final String nodeName = layout.getName();
+					
+					if (nodeName != null && 
+							overview.hasWriteableProperty(nodeName)) {
+						
+						layout.bind(new ChildNodeBinding(layout));
+					
+						resets.add(new Runnable() {
+							@Override
+							public void run() {
+								layout.bind(null);
+							}
+						});
+						
+						return false;
+					}
+					else {
+
+						return true;
+					}
+				}
+			}.walk(node);
+			
+			processor = new MainProcessorOut();
+			processor.process(node);
+		}
+	}
+	
+	private class MainProcessorOut implements BindingLayoutProcessor {
+		
+		@Override
+		public void process(Layout node) {
+			logger.info("Binding daata to " + node.getName());
+		}
 	}
 	
 	@Override
-	public boolean process(Object value, Layout node, DataOut dataOut) {
+	public boolean process(Object value, Layout node, DataOut dataOut) throws DataException {
 		
 		if (type != null && !type.forClass().isInstance(value)) {
 			return false;
 		}
 		
-		return true;
+		this.bean = value;
+		
+		if (processor == null) {
+			processor = new HeaderProcessorOut();
+		}
+		
+		processor.process(node);
+	
+		new ChildWriter(node.childLayouts(), 
+				node instanceof ValueNode ? (ValueNode<?>) node : null, 
+				dataOut).write(value);
+		
+		return false;
 	}
-	
-	
+		
 	public String getNode() {
 		return node;
 	}
