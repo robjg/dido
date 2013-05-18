@@ -16,6 +16,12 @@ abstract public class LayoutWalker {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param layout
+	 * 
+	 * @return true to walk children, false to not walk children.
+	 */
 	abstract protected boolean onLayout(Layout layout);
 	
 	

@@ -22,7 +22,7 @@ public class MockLayout implements Layout {
 	}
 	
 	@Override
-	public void close() {
+	public void reset() {
 		throw new RuntimeException("Unexpected from " + getClass());
 	}
 	

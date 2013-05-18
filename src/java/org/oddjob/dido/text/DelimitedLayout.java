@@ -7,15 +7,19 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.Headed;
+import org.oddjob.dido.Layout;
+import org.oddjob.dido.Morphicness;
 import org.oddjob.dido.UnsupportedeDataInException;
 import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.io.ClassMorphic;
 import org.oddjob.dido.layout.LayoutValueNode;
 import org.oddjob.dido.stream.LinesIn;
 import org.oddjob.dido.stream.LinesOut;
 
 
-public class DelimitedLayout 
-extends LayoutValueNode<String[]> {
+public class DelimitedLayout extends LayoutValueNode<String[]>
+implements Headed, ClassMorphic {
 
 	public static final String DEFAULT = ",";
 	
@@ -34,7 +38,10 @@ extends LayoutValueNode<String[]> {
 		return String[].class;
 	}
 
-
+	public void setOf(int index, Layout child) {
+		addOrRemoveChild(index, child);
+	}
+	
 	class HeaderReader implements DataReader {
 		
 		private final LinesIn linesIn;
@@ -116,14 +123,14 @@ extends LayoutValueNode<String[]> {
 		if (reader == null) {
 			
 			reader = new HeaderReader(
-					dataIn.provideIn(LinesIn.class));
+					dataIn.provide(LinesIn.class));
 		}
 
 		return reader;
 	}
 	
 	@Override
-	public void close() {
+	public void reset() {
 		reader = null;
 	}
 	
@@ -200,24 +207,18 @@ extends LayoutValueNode<String[]> {
 					value(fieldsOut.values());
 				}
 				
-				try {
-					if (value() != null) {					
+				if (value() != null) {					
 						
-						if (lineWriter == null) {
-							lineWriter = new MaybeWriteHeadings(fieldsOut);
-						}
-						
-						lineWriter.write(linesOut);
-						
-						return true;
+					if (lineWriter == null) {
+						lineWriter = new MaybeWriteHeadings(fieldsOut);
 					}
-					else {
-						return false;
-					}
+				
+					lineWriter.write(linesOut);
 				}
-				finally {
-					fieldsOut.clear();
-				}
+				
+				fieldsOut.clear();
+
+				return false;
 			}
 		}
 	}
@@ -227,12 +228,37 @@ extends LayoutValueNode<String[]> {
 	public DataWriter writerFor(DataOut dataOut)
 	throws UnsupportedeDataOutException {
 
-		LinesOut linesOut = dataOut.provideOut(LinesOut.class);
+		LinesOut linesOut = dataOut.provide(LinesOut.class);
 
 		return new DelimitedWriter(linesOut);
 	}
 	
-	
+	@Override
+	public Runnable beFor(Morphicness morphicness) {
+		if (childLayouts().size() > 0) {
+			return new Runnable() {
+				@Override
+				public void run() {
+				}
+			};
+		}
+		
+		for (String name : morphicness.getNames()) {
+			
+			FieldLayout layout = new FieldLayout();
+			layout.setName(name);
+			layout.setTitle(morphicness.titleFor(name));
+			addOrRemoveChild(childLayouts().size(), layout);
+		}
+		
+		return new Runnable() {
+			
+			@Override
+			public void run() {
+				childLayouts().clear();
+			}
+		};
+	}
 
 	private String[] parseDelimited(String line) {
 		
@@ -270,6 +296,7 @@ extends LayoutValueNode<String[]> {
 		return delimiter;
 	}
 	
+	@Override
 	public String[] getHeadings() {
 		return headings;
 	}

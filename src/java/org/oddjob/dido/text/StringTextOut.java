@@ -57,10 +57,10 @@ public class StringTextOut implements TextOut {
 	}
 	
 	@Override
-	public <T extends DataOut> T provideOut(Class<T> type)
+	public <T extends DataOut> T provide(Class<T> type)
 	throws UnsupportedeDataOutException {
 		
-		if (type.isAssignableFrom(TextOut.class)) {
+		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
 		else {

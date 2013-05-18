@@ -27,7 +27,7 @@ public class LinesLayout extends LayoutValueNode<String> {
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws UnsupportedeDataInException {
 		
-		final LinesIn linesIn = dataIn.provideIn(LinesIn.class);
+		final LinesIn linesIn = dataIn.provide(LinesIn.class);
 
 		return new DataReader() {
 			
@@ -71,7 +71,7 @@ public class LinesLayout extends LayoutValueNode<String> {
 	public DataWriter writerFor(DataOut dataOut)
 			throws UnsupportedeDataOutException {
 		
-		final LinesOut linesOut = dataOut.provideOut(LinesOut.class);
+		final LinesOut linesOut = dataOut.provide(LinesOut.class);
 		
 		return new DataWriter() {
 
@@ -106,7 +106,7 @@ public class LinesLayout extends LayoutValueNode<String> {
 	}
 	
 	@Override
-	public void close() {
+	public void reset() {
 		value(null);
 	}
 }

@@ -65,7 +65,7 @@ extends LayoutValueNode<String> {
 	public DataReader readerFor(DataIn dataIn)
 	throws UnsupportedeDataInException {
 	
-		FieldsIn in = dataIn.provideIn(FieldsIn.class);
+		FieldsIn in = dataIn.provide(FieldsIn.class);
 		
 		if (!initialised) {
 			String title = getTitle();
@@ -138,7 +138,7 @@ extends LayoutValueNode<String> {
 	public DataWriter writerFor(DataOut dataOut)
 			throws UnsupportedeDataOutException {
 		
-		FieldsOut out = dataOut.provideOut(FieldsOut.class);
+		FieldsOut out = dataOut.provide(FieldsOut.class);
 		
 		if (writer == null) {
 			
@@ -170,7 +170,7 @@ extends LayoutValueNode<String> {
 	
 	
 	@Override
-	public void close() {
+	public void reset() {
 		reader = null;
 		writer = null;
 	}

@@ -5,17 +5,21 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.oddjob.arooa.ArooaSession;
+import org.oddjob.arooa.beanutils.MagicBeanClassCreator;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.arooa.reflect.ArooaClass;
 import org.oddjob.arooa.reflect.ArooaPropertyException;
 import org.oddjob.arooa.reflect.BeanOverview;
+import org.oddjob.arooa.reflect.BeanView;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.Headed;
 import org.oddjob.dido.Layout;
+import org.oddjob.dido.MorphicnessFactory;
 import org.oddjob.dido.SupportsChildren;
 import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.io.ClassMorphic;
@@ -64,6 +68,8 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
      */
 	private ArooaClass type;
 	
+	private BeanView beanView;
+	
 	/**
 	 * The current bean.
 	 */
@@ -97,7 +103,9 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 		linkable.setControlIn(bindTo, new BeanFactory());
 		
 		if (bindTo instanceof ClassMorphic) {
-			((ClassMorphic) bindTo).beFor(type);
+			((ClassMorphic) bindTo).beFor(
+					new MorphicnessFactory(accessor).readMorphicnessFor(
+							type, beanView));
 		}
 		
 		new DispatchBuilder().build(bindTo, linkable);
@@ -204,7 +212,9 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 		linkable.setLinkOut(bindTo, new BeanAcceptor());
 		
 		if (bindTo instanceof ClassMorphic) {
-			((ClassMorphic) bindTo).beFor(type);
+			((ClassMorphic) bindTo).beFor(
+					new MorphicnessFactory(accessor).writeMorphicnessFor(
+							type, beanView));
 		}
 		
 		PropertiesToNodes propertyBinding = 
@@ -355,6 +365,20 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 		}
 		
 		if (processor == null) {
+			
+			if (type == null) {
+				
+				derriveTypeFromLayout(node);
+				
+			}
+			
+			if (node instanceof ClassMorphic) {
+				Runnable reset = ((ClassMorphic) node).beFor(
+						new MorphicnessFactory(accessor).writeMorphicnessFor(
+								type, beanView));
+				resets.add(reset);
+			}
+			
 			processor = new HeaderProcessorIn();
 		}
 		
@@ -433,6 +457,25 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 		this.bean = value;
 		
 		if (processor == null) {
+			if (type == null) {
+
+				type = accessor.getClassName(value);
+				
+				resets.add(new Runnable() {
+					@Override
+					public void run() {
+						type = null;
+					}
+				});
+			}
+			
+			if (node instanceof ClassMorphic) {
+				Runnable reset = ((ClassMorphic) node).beFor(
+						new MorphicnessFactory(accessor).writeMorphicnessFor(
+								type, beanView));
+				resets.add(reset);
+			}
+			
 			processor = new HeaderProcessorOut();
 		}
 		
@@ -445,6 +488,58 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 		return false;
 	}
 		
+	private void derriveTypeFromLayout(Layout layout) throws DataException {
+		
+		final MagicBeanClassCreator classCreator = 
+				new MagicBeanClassCreator("BeanBinding");
+
+		List<Layout> children = layout.childLayouts();
+		
+		if (children.size() > 0) {
+			
+			new LayoutWalker() {				
+				@Override
+				protected boolean onLayout(Layout layout) {
+					if (layout.childLayouts().size() == 0 && 
+							layout.getName() != null &&
+							layout instanceof ValueNode) {
+						
+						classCreator.addProperty(layout.getName(), 
+								((ValueNode<?>) layout).getType());
+					}
+					
+					return true;
+				}
+			}.walk(layout);
+			
+		}
+		else if (layout instanceof Headed) {
+			
+			String[] headings = ((Headed) layout).getHeadings();
+			
+			if (headings == null) {
+				throw new DataException("No headings to create type");
+			}
+			
+			for (String heading: headings) {
+
+				classCreator.addProperty(heading, String.class);
+			}			
+		}
+		else {
+				throw new DataException("No type provided and it is not derivable.");
+		}
+		
+		type = classCreator.create();
+		
+		resets.add(new Runnable() {
+			@Override
+			public void run() {
+				type = null;
+			}
+		});
+	}
+	
 	public String getNode() {
 		return node;
 	}
@@ -459,5 +554,13 @@ implements BindingIn, BindingOut, Binding, ArooaSessionAware {
 
 	public void setType(ArooaClass type) {
 		this.type = type;
+	}
+
+	public BeanView getBeanView() {
+		return beanView;
+	}
+
+	public void setBeanView(BeanView beanView) {
+		this.beanView = beanView;
 	}	
 }

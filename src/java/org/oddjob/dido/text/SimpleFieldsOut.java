@@ -106,9 +106,9 @@ public class SimpleFieldsOut implements FieldsOut {
 	}
 	
 	@Override
-	public <T extends DataOut> T provideOut(Class<T> type)
+	public <T extends DataOut> T provide(Class<T> type)
 			throws UnsupportedeDataOutException {
-		if (FieldsOut.class.isAssignableFrom(type)) {
+		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
 		else {

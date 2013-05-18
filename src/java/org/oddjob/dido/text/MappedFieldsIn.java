@@ -71,9 +71,9 @@ implements FieldsIn {
 	}
 	
 	@Override
-	public <T extends DataIn> T provideIn(Class<T> type)
+	public <T extends DataIn> T provide(Class<T> type)
 	throws UnsupportedeDataInException {
-		if (type.isAssignableFrom(FieldsIn.class)) {
+		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
 		else {

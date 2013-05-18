@@ -287,7 +287,7 @@ public class WhatNowOutTest extends TestCase {
 			return false;
 		}
 		@Override
-		public <T extends DataOut> T provideOut(Class<T> type)
+		public <T extends DataOut> T provide(Class<T> type)
 				throws UnsupportedeDataOutException {
 			// TODO Auto-generated method stub
 			return null;

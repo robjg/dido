@@ -21,7 +21,7 @@ public class DelimitedLayoutTest extends TestCase {
 		private List<String> results = new ArrayList<String>();
 		
 		@Override
-		public <T extends DataOut> T provideOut(Class<T> type)
+		public <T extends DataOut> T provide(Class<T> type)
 				throws UnsupportedeDataOutException {
 			if (LinesOut.class.isAssignableFrom(type)) {
 				return type.cast(this);

@@ -60,10 +60,10 @@ public class OutputStreamOut implements StreamOut, LinesOut {
 	}
 	
 	@Override
-	public <T extends DataOut> T provideOut(Class<T> type)
+	public <T extends DataOut> T provide(Class<T> type)
 			throws UnsupportedeDataOutException {
 		
-		if (type.isAssignableFrom(StreamOut.class)) {
+		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
 		else {
@@ -73,14 +73,16 @@ public class OutputStreamOut implements StreamOut, LinesOut {
 	
 	@Override
 	public boolean hasData() {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException();
 	}
 	
 	@Override
 	public <T> T toValue(Class<T> type) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
+	}
+	
+	public void close() throws IOException {
+		outputStream.close();
 	}
 	
 }

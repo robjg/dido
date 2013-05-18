@@ -6,20 +6,21 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.oddjob.arooa.life.SimpleArooaClass;
-import org.oddjob.arooa.reflect.ArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
+import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.MockDataNode;
-import org.oddjob.dido.ValueNode;
-import org.oddjob.dido.SupportsChildren;
-import org.oddjob.dido.io.ClassMorphic;
-import org.oddjob.dido.io.DataLinkIn;
-import org.oddjob.dido.io.DataLinkOut;
-import org.oddjob.dido.io.LinkInControl;
-import org.oddjob.dido.io.LinkInEvent;
-import org.oddjob.dido.io.LinkOutEvent;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.MockDataOut;
+import org.oddjob.dido.UnsupportedeDataInException;
+import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.stream.LinesIn;
+import org.oddjob.dido.stream.LinesLayout;
+import org.oddjob.dido.stream.LinesOut;
+import org.oddjob.dido.text.DelimitedLayout;
+import org.oddjob.dido.text.FieldLayout;
+import org.oddjob.dido.text.TextLayout;
 
 public class BeanBindingBeanTest extends TestCase {
 
@@ -36,78 +37,62 @@ public class BeanBindingBeanTest extends TestCase {
 		}
 	}
 	
-	private class OurNode extends MockDataNode<DataIn, DataIn, DataOut, DataOut> {
+	private class OurLinesOut extends MockDataOut
+	implements LinesOut {
 		
-		private final String name;
+		private List<String> results = new ArrayList<String>();
 		
-		 public OurNode(String name) {
-			 this.name = name;
+		@Override
+		public <T extends DataOut> T provide(Class<T> type)
+				throws UnsupportedeDataOutException {
+			if (type.isAssignableFrom(LinesOut.class)) {
+				return type.cast(this);
+			}
+			else {
+				throw new UnsupportedeDataOutException(getClass(), type);
+			}
 		}
 		
 		@Override
-		public String getName() {
-			return name;
+		public void writeLine(String text) throws DataException {
+			results.add(text);
 		}
 	}
 	
-	private class OurLinkableOut extends MockLinkableOut {
-		
-		private List<DataLinkOut> links = new ArrayList<DataLinkOut>();
-		
-		@Override
-		public void setLinkOut(DataNode<?, ?, ?, ?> node, DataLinkOut link) {
-			if (node == null) {
-				throw new NullPointerException("node.");
-			}
-			if (link == null) {
-				throw new NullPointerException("link.");
-			}
-			links.add(link);
-		}
-	}
-	
-	
-	public void testBindOutNoChild() {
-		
-		StandardArooaSession session = new StandardArooaSession();
-		
-		BeanBindingBean test = new BeanBindingBean();
-		test.setArooaSession(session);
-		test.setType(new SimpleArooaClass(Fruit.class));
-		test.setNode("fruit");
-		
-		OurNode root = new OurNode("fruit");
-		
-		OurLinkableOut linkable = new OurLinkableOut();
-		
-		test.bindTo(root, linkable);
-		
-		assertEquals(1, linkable.links.size());
-		
-		boolean control = linkable.links.get(0).dataOut(
-				new LinkOutEvent(linkable, root), new Fruit());
-		
-		assertTrue(control);
-		
-	}
-	
-	private class OurLinkableIn extends MockLinkableIn {
-		
-		private List<DataLinkIn> links = new ArrayList<DataLinkIn>();
+	private class OurLinesIn 
+	implements LinesIn {
 
+		final String[] lines;
+		
+		int i = 0;
+		
+		public OurLinesIn(String[] lines) {
+			this.lines = lines;
+		}
+		
 		@Override
-		public void setControlIn(DataNode<?, ?, ?, ?> node, DataLinkIn link) {
-			if (node == null) {
-				throw new NullPointerException("node.");
+		public <T extends DataIn> T provide(Class<T> type)
+				throws UnsupportedeDataInException {
+			if (type.isAssignableFrom(LinesIn.class)) {
+				return type.cast(this);
 			}
-			if (link == null) {
-				throw new NullPointerException("link.");
+			else {
+				throw new UnsupportedeDataInException(getClass(), type);
 			}
-			links.add(link);
+		}
+		
+		@Override
+		public String readLine() throws DataException {
+			if (i >= lines.length) {
+				return null;
+			}
+			else {
+				return lines[i++];
+			}
 		}
 	}
 	
-	public void testBindInNoChild() {
+	public void testBindOutNoChild() throws DataException {
 		
 		StandardArooaSession session = new StandardArooaSession();
 		
@@ -116,81 +101,54 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setType(new SimpleArooaClass(Fruit.class));
 		test.setNode("fruit");
 		
-		OurNode root = new OurNode("fruit");
+		LinesLayout root = new LinesLayout();
+		root.setName("fruit");
 		
-		OurLinkableIn linkable = new OurLinkableIn();
+		root.bind(test);
 		
-		test.bindTo(root, linkable);
+		OurLinesOut dataOut = new OurLinesOut();
 		
-		assertEquals(1, linkable.links.size());
+		DataWriter writer = root.writerFor(dataOut);
 		
-		LinkInControl control = linkable.links.get(0).dataIn(
-				new LinkInEvent(linkable, root));
+		assertFalse(writer.write("Apples"));
 		
-		Object o = control.getDataObject();
+		assertEquals(0, dataOut.results.size());
+		
+		test.reset();
+	}
+	
+	public void testBindInNoChild() throws DataException {
+		
+		StandardArooaSession session = new StandardArooaSession();
+		
+		BeanBindingBean test = new BeanBindingBean();
+		test.setArooaSession(session);
+		test.setType(new SimpleArooaClass(Fruit.class));
+		test.setNode("fruit");
+		
+		LinesLayout root = new LinesLayout();
+		root.setName("fruit");
+		
+		root.bind(test);
+		
+		OurLinesIn dataIn = new OurLinesIn(
+				new String[] {"Apples", "Pears"});
+		
+		DataReader reader = root.readerFor(dataIn);
+		
+		Object o = reader.read();
 		
 		assertNotNull(o);
 		assertEquals(Fruit.class, o.getClass());		
+		
+		assertNotNull(reader.read());
+		assertNull(reader.read());
+		
+		test.reset();
 	}
 	
-	private class OurParentNode extends OurNode implements SupportsChildren {
-		
-		private DataNode<?, ?, ?, ?>[] children;
-		
-		public OurParentNode(String name, DataNode<?, ?, ?, ?>... children) {
-			super(name);
-			this.children = children;
-		}
-		
-		void setChildren(DataNode<?, ?, ?, ?>[] children) {
-			this.children = children;
-		}
-		
-		@Override
-		public DataNode<?, ?, ?, ?>[] childrenToArray() {
-			return children;
-		}
-	}
-
-	private class OurStencilNode 
-	extends MockDataNode<DataIn, DataIn, DataOut, DataOut>
-	implements ValueNode<String> {
-		
-		private final String name;
-		
-		private String value;
-		
-		 public OurStencilNode(String name) {
-			 this.name = name;
-		}
-		
-		 public OurStencilNode(String name, String value) {
-			 this.name = name;
-			 this.value = value;
-		}
-		 
-		@Override
-		public Class<String> getType() {
-			return String.class;
-		}
-		 
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public String value() {
-			return value;
-		}
-
-		@Override
-		public void value(String value) {
-			this.value = value;
-		}
-	}
 	
-	public void testBindOutWithChilden() {
+	public void testBindOutWithChilden() throws DataException {
 		
 		StandardArooaSession session = new StandardArooaSession();
 		
@@ -198,36 +156,32 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Fruit.class));
 		test.setNode("fruit");
+
+		TextLayout typeNode = new TextLayout();
+		typeNode.setName("type");
 		
-		OurStencilNode typeNode = new OurStencilNode("type");
+		LinesLayout lines = new LinesLayout();
+		lines.setName("fruit");
+		lines.setOf(0, typeNode);
 		
-		OurParentNode root = new OurParentNode("fruit",
-				typeNode,
-				new OurStencilNode("colour"));
-		
-		OurLinkableOut linkable = new OurLinkableOut();
-		
-		test.bindTo(root, linkable);
-		
-		assertEquals(2, linkable.links.size());
+		lines.bind(test);
 		
 		Fruit fruit = new Fruit();
 		fruit.setType("apple");
 		
-		boolean control = linkable.links.get(0).dataOut(new LinkOutEvent(
-				linkable, root), fruit);
+		OurLinesOut dataOut = new OurLinesOut();
 		
-		assertTrue(control);
-		assertEquals(null, typeNode.value());
+		DataWriter writer = lines.writerFor(dataOut);
 		
-		control = linkable.links.get(1).dataOut(new LinkOutEvent(
-				linkable, typeNode), fruit);
+		assertFalse(writer.write(fruit));
+				
+		assertEquals("apple", dataOut.results.get(0));
+		assertEquals(1, dataOut.results.size());
 		
-		assertTrue(control);
-		assertEquals("apple", typeNode.value());
+		test.reset();
 	}
 
-	public void testBindInWithChildren() {
+	public void testBindInWithChildren() throws DataException {
 		
 		StandardArooaSession session = new StandardArooaSession();
 		
@@ -236,33 +190,30 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setType(new SimpleArooaClass(Fruit.class));
 		test.setNode("fruit");
 		
-		OurStencilNode typeNode = new OurStencilNode("type", "apple");
+		OurLinesIn dataIn = new OurLinesIn(new String[] { "apple" });
 		
-		OurParentNode root = new OurParentNode("fruit",
-				typeNode,
-				new OurStencilNode("colour", "red"));
+		TextLayout typeNode = new TextLayout();
+		typeNode.setName("type");
 		
-		OurLinkableIn linkable = new OurLinkableIn();
+		LinesLayout root = new LinesLayout();
+		root.setName("fruit");
+		root.setOf(0, typeNode);
 		
-		test.bindTo(root, linkable);
+		root.bind(test);
 		
-		assertEquals(2, linkable.links.size());
+		DataReader reader = root.readerFor(dataIn);
 		
-		LinkInControl control = linkable.links.get(0).dataIn(
-				new LinkInEvent(linkable, root));
+		Object result = reader.read();
 		
-		Object o = control.getDataObject();
+		assertNotNull(result);
 		
-		assertNotNull(o);
-		
-		Fruit fruit = (Fruit) o;
-		
-		assertEquals(null, fruit.getType());
-		
-		control = linkable.links.get(1).dataIn(
-				new LinkInEvent(linkable, typeNode));
+		Fruit fruit = (Fruit) result;
 		
 		assertEquals("apple", fruit.getType());
+		
+		assertNull(reader.read());
+		
+		test.reset();
 	}
 	
 	public static class Basket {
@@ -278,7 +229,7 @@ public class BeanBindingBeanTest extends TestCase {
 		}
 	}
 	
-	public void testBindOutWithTypeConversion() {
+	public void testBindOutWithTypeConversion() throws DataException {
 		
 		StandardArooaSession session = new StandardArooaSession();
 		
@@ -287,34 +238,37 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setType(new SimpleArooaClass(Basket.class));
 		test.setNode("basket");
 		
-		OurStencilNode costNode = new OurStencilNode("cost");
+		TextLayout costNode = new TextLayout();
+		costNode.setName("cost");
 		
-		OurParentNode root = new OurParentNode("basket",
-				costNode);
+		LinesLayout root = new LinesLayout();
+		root.setName("basket");
+		root.setOf(0, costNode);
 		
-		OurLinkableOut linkable = new OurLinkableOut();
+		root.bind(test);
 		
-		test.bindTo(root, linkable);
+		OurLinesOut dataOut = new OurLinesOut();
 		
-		assertEquals(2, linkable.links.size());
+		DataWriter writer = root.writerFor(dataOut);
 		
 		Basket basket = new Basket();
 		basket.setCost(12.47);
 		
-		boolean control = linkable.links.get(0).dataOut(new LinkOutEvent(
-				linkable, root), basket);
+		assertFalse(writer.write(basket));
 		
-		assertTrue(control);
-		assertEquals(null, costNode.value());
+		basket.setCost(5.23);
 		
-		control = linkable.links.get(1).dataOut(new LinkOutEvent(
-				linkable, costNode), basket);
+		assertFalse(writer.write(basket));
 		
-		assertTrue(control);
-		assertEquals("12.47", costNode.value());		
+		assertEquals("12.47", dataOut.results.get(0));
+		assertEquals("5.23", dataOut.results.get(1));
+		assertEquals(2, dataOut.results.size());
+		
+		test.reset();
+		
 	}
 	
-	public void testBindInWithTypeConversion() {
+	public void testBindInWithTypeConversion() throws DataException {
 		
 		StandardArooaSession session = new StandardArooaSession();
 		
@@ -323,54 +277,40 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setType(new SimpleArooaClass(Basket.class));
 		test.setNode("basket");
 		
-		OurStencilNode costNode = new OurStencilNode("cost", "12.47");
+		TextLayout costNode = new TextLayout();
+		costNode.setName("cost");
 		
-		OurParentNode root = new OurParentNode("basket",
-				costNode);
+		LinesLayout root = new LinesLayout();
+		root.setName("basket");
+		root.setOf(0, costNode);
+				
+		root.bind(test);
 		
-		OurLinkableIn linkable = new OurLinkableIn();
+		OurLinesIn dataIn = new OurLinesIn(new String[] { "12.47", "5.23" });
 		
-		test.bindTo(root, linkable);
+		DataReader reader = root.readerFor(dataIn);
 		
-		assertEquals(2, linkable.links.size());
+		Object result = reader.read();
 		
-		LinkInControl control = linkable.links.get(0).dataIn(
-				new LinkInEvent(linkable, root));
+		assertNotNull(reader);
 		
-		Object o = control.getDataObject();
-		
-		assertNotNull(o);
-		
-		Basket basket = (Basket) o;
-		
-		assertEquals(0.0, basket.getCost());
-		
-		control = linkable.links.get(1).dataIn(
-				new LinkInEvent(linkable, costNode));
+		Basket basket = (Basket) result;
 		
 		assertEquals(12.47, basket.getCost());
+		
+		result = reader.read();
+		
+		basket = (Basket) result;
+		
+		assertEquals(5.23, basket.getCost());
+		
+		result = reader.read();
+		
+		assertNull(result);
 	}
 	
-	private class OurMorphicNode extends OurParentNode 
-	implements ClassMorphic {
-
-		ArooaClass arooaClass;
-		
-		private DataNode<?, ?, ?, ?>[] children;
-		
-		public OurMorphicNode(String name, DataNode<?, ?, ?, ?>... children) {
-			super(name);
-			this.children = children;
-		}
-		
-		@Override
-		public void beFor(ArooaClass arooaClass) {
-			setChildren(children);
-			this.arooaClass = arooaClass;
-		}
-	}
 	
-	public void testBindOutMorphic() {
+	public void testBindOutMorphic() throws DataException {
 		
 		StandardArooaSession session = new StandardArooaSession();
 		
@@ -379,37 +319,37 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setType(new SimpleArooaClass(Fruit.class));
 		test.setNode("fruit");
 		
-		OurStencilNode typeNode = new OurStencilNode("type");
+		FieldLayout typeNode = new FieldLayout();
+		typeNode.setName("type");
 		
-		OurMorphicNode root = new OurMorphicNode("fruit",
-				typeNode,
-				new OurStencilNode("colour"));
+		DelimitedLayout root = new DelimitedLayout();
+		root.setOf(0, typeNode);
 		
-		OurLinkableOut linkable = new OurLinkableOut();
+		root.bind(test);
 		
-		test.bindTo(root, linkable);
+		OurLinesOut dataOut = new OurLinesOut();
 		
-		assertEquals(Fruit.class, root.arooaClass.forClass());
-		
-		assertEquals(2, linkable.links.size());
-		
+		DataWriter writer = root.writerFor(dataOut);
+				
 		Fruit fruit = new Fruit();
 		fruit.setType("apple");
 		
-		boolean control = linkable.links.get(0).dataOut(new LinkOutEvent(
-				linkable, root), fruit);
+		assertFalse(writer.write(fruit));
 		
-		assertTrue(control);
-		assertEquals(null, typeNode.value());
+		assertEquals("apple", dataOut.results.get(0));
+		assertEquals(1, dataOut.results.size());
 		
-		control = linkable.links.get(1).dataOut(new LinkOutEvent(
-				linkable, typeNode), fruit);
+		fruit.setType("pear");
 		
-		assertTrue(control);
-		assertEquals("apple", typeNode.value());
+		assertFalse(writer.write(fruit));
+		
+		assertEquals("pear", dataOut.results.get(1));
+		assertEquals(2, dataOut.results.size());
+		
+		test.reset();
 	}
 
-	public void testBindInMorphic() {
+	public void testBindInMorphic() throws DataException {
 		
 		StandardArooaSession session = new StandardArooaSession();
 		
@@ -418,34 +358,30 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setType(new SimpleArooaClass(Fruit.class));
 		test.setNode("fruit");
 		
-		OurStencilNode typeNode = new OurStencilNode("type", "apple");
+		DelimitedLayout root = new DelimitedLayout();
 		
-		OurMorphicNode root = new OurMorphicNode("fruit",
-				typeNode,
-				new OurStencilNode("colour", "red"));
+		root.bind(test);
 		
-		OurLinkableIn linkable = new OurLinkableIn();
+		OurLinesIn dataIn = new OurLinesIn(new String[] 
+				{ "apple,27" , "pear,42" });
 		
-		test.bindTo(root, linkable);
-		
-		assertEquals(Fruit.class, root.arooaClass.forClass());
-		
-		assertEquals(2, linkable.links.size());
-		
-		LinkInControl control = linkable.links.get(0).dataIn(
-				new LinkInEvent(linkable, root));
-		
-		Object o = control.getDataObject();
-		
-		assertNotNull(o);
+		DataReader reader = root.readerFor(dataIn);
+
+		Object o = reader.read();
 		
 		Fruit fruit = (Fruit) o;
-		
-		assertEquals(null, fruit.getType());
-		
-		control = linkable.links.get(1).dataIn(
-				new LinkInEvent(linkable, typeNode));
-		
+				
 		assertEquals("apple", fruit.getType());
+		
+		o = reader.read();
+		
+		fruit = (Fruit) o;
+				
+		assertEquals("pear", fruit.getType());
+		
+		assertNull(reader.read());
+		
+		test.reset();
 	}
+	
 }

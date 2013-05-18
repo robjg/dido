@@ -23,7 +23,7 @@ public class MockFieldsOut implements FieldsOut {
 	}
 	
 	@Override
-	public <T extends DataOut> T provideOut(Class<T> type)
+	public <T extends DataOut> T provide(Class<T> type)
 			throws UnsupportedeDataOutException {
 		throw new RuntimeException("Unexpected from " + getClass());
 	}

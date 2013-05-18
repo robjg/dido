@@ -41,17 +41,13 @@ public class InputStreamIn implements StreamIn, LinesIn {
 	}
 	
 	@Override
-	public <T extends DataIn> T provideIn(Class<T> type) 
+	public <T extends DataIn> T provide(Class<T> type) 
 	throws UnsupportedeDataInException{
 		
-		if (type.isAssignableFrom(StreamIn.class)) {
+		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
 		
-		if (type.isAssignableFrom(LinesIn.class)) {
-			return type.cast(this);
-		}
-
 		throw new UnsupportedeDataInException(this.getClass(), type);
 	}
 }

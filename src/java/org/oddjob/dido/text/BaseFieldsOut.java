@@ -69,7 +69,7 @@ abstract class BaseFieldsOut implements FieldsOut {
 	}
 	
 	@Override
-	public <T extends DataOut> T provideOut(Class<T> type)
+	public <T extends DataOut> T provide(Class<T> type)
 			throws UnsupportedeDataOutException {
 		if (FieldsOut.class.isAssignableFrom(type)) {
 			return type.cast(this);

@@ -1,11 +1,11 @@
 package org.oddjob.dido.io;
 
-import org.oddjob.arooa.reflect.ArooaClass;
 import org.oddjob.dido.DataNode;
+import org.oddjob.dido.Morphicness;
 
 /**
  * A thing, generally a {@link DataNode} that 
- * uses a Class to dynamically create it's structure. 
+ * can dynamically create it's structure. 
  * 
  * 
  * @author rob
@@ -13,5 +13,5 @@ import org.oddjob.dido.DataNode;
  */
 public interface ClassMorphic {
 
-	public void beFor(ArooaClass arooaClass);
+	public Runnable beFor(Morphicness morphicness);
 }

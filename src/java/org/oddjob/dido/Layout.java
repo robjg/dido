@@ -25,5 +25,5 @@ public interface Layout extends DataReaderFactory, DataWriterFactory {
 	public List<Layout> childLayouts();
 	
 	
-	public void close();
+	public void reset();
 }
