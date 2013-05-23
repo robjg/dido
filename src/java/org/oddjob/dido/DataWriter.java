@@ -4,7 +4,7 @@ public interface DataWriter {
 
 	/**
 	 * 
-	 * @param value
+	 * @param object
 	 * 
 	 * @return Is more data required. If true then any calling node should
 	 * return to client code to be given a new value. If false calling code
@@ -13,5 +13,5 @@ public interface DataWriter {
 	 * 
 	 * @throws DataException
 	 */
-	public boolean write(Object value) throws DataException;
+	public boolean write(Object object) throws DataException;
 }

@@ -6,12 +6,8 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.UnsupportedeDataInException;
 import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.layout.LayoutValueNode;
-import org.oddjob.dido.text.StringTextIn;
-import org.oddjob.dido.text.StringTextOut;
-import org.oddjob.dido.text.TextOut;
 
 public class LinesLayout extends LayoutValueNode<String> {
 
@@ -25,7 +21,7 @@ public class LinesLayout extends LayoutValueNode<String> {
 	}
 	
 	@Override
-	public DataReader readerFor(DataIn dataIn) throws UnsupportedeDataInException {
+	public DataReader readerFor(DataIn dataIn) throws DataException {
 		
 		final LinesIn linesIn = dataIn.provide(LinesIn.class);
 
@@ -46,9 +42,7 @@ public class LinesLayout extends LayoutValueNode<String> {
 					
 					value(line);
 					
-					StringTextIn textIn = new StringTextIn(line);
-							
-					nextReader = nextReaderFor(textIn);
+					nextReader = nextReaderFor(linesIn);
 				}							
 				
 				Object next = nextReader.read();
@@ -77,16 +71,14 @@ public class LinesLayout extends LayoutValueNode<String> {
 
 			DataWriter nextWriter;
 			
-			TextOut textOut;
-			
 			@Override
 			public boolean write(Object value) throws DataException {
 				
 				if (nextWriter == null) {
 					
-					textOut = new StringTextOut();
+					value(null);
 					
-					nextWriter = nextWriterFor(textOut);
+					nextWriter = nextWriterFor(linesOut);
 							
 				}
 				
@@ -94,8 +86,10 @@ public class LinesLayout extends LayoutValueNode<String> {
 					return true;
 				}
 				
-				if (textOut.hasData()) {
-					linesOut.writeLine(textOut.toValue(String.class));
+				String text = value();
+				
+				if (text != null) {
+					linesOut.writeLine(text);
 				}
 
 				nextWriter = null;

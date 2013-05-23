@@ -11,11 +11,6 @@ import org.oddjob.dido.DataNode;
 import org.oddjob.dido.MockDataNode;
 import org.oddjob.dido.WhereNextIn;
 import org.oddjob.dido.WhereNextOut;
-import org.oddjob.dido.stream.InputStreamIn;
-import org.oddjob.dido.stream.Lines;
-import org.oddjob.dido.stream.OutputStreamOut;
-import org.oddjob.dido.stream.StreamIn;
-import org.oddjob.dido.stream.StreamOut;
 import org.oddjob.dido.text.TextIn;
 import org.oddjob.dido.text.TextOut;
 
@@ -32,7 +27,7 @@ public class LinesTest extends TestCase {
 		
 		InputStream input = new ByteArrayInputStream(lines.getBytes());
 
-		InputStreamIn data = new InputStreamIn(input);
+		LinesIn data = new StreamLinesIn(input);
 		
 		Lines test = new Lines();
 		
@@ -70,8 +65,8 @@ public class LinesTest extends TestCase {
 		
 		InputStream input = new ByteArrayInputStream(lines.getBytes());
 
-		InputStreamIn data = new InputStreamIn(input);
-		
+		LinesIn data = new StreamLinesIn(input);
+				
 		Lines test = new Lines();
 		
 		DataNode<TextIn, ?, TextOut, ?> child = 
@@ -108,8 +103,8 @@ public class LinesTest extends TestCase {
 		
 		InputStream input = new ByteArrayInputStream(new byte[0]);
 
-		InputStreamIn data = new InputStreamIn(input);
-		
+		LinesIn data = new StreamLinesIn(input);
+				
 		Lines test = new Lines();
 		
 		WhereNextIn<TextIn> where = test.in(data);
@@ -123,7 +118,7 @@ public class LinesTest extends TestCase {
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-		OutputStreamOut data = new OutputStreamOut(output);
+		StreamLinesOut data = new StreamLinesOut(output);
 		
 		Lines test = new Lines();
 		
@@ -163,7 +158,7 @@ public class LinesTest extends TestCase {
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-		OutputStreamOut data = new OutputStreamOut(output);
+		StreamLinesOut data = new StreamLinesOut(output);
 		
 		Lines test = new Lines();
 		

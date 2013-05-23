@@ -25,12 +25,12 @@ public class ValueBinding implements Binding {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean process(Object value, Layout node, DataOut dataOut) {
+	public boolean process(Object object, Layout node, DataOut dataOut) {
 		
 		if (node instanceof ValueNode) {
 			
 			ValueNode<Object> valueNode = (ValueNode<Object>) node;
-			valueNode.value(value);
+			valueNode.value(object);
 			
 			return false;
 		}

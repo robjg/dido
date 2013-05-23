@@ -1,14 +1,13 @@
 package org.oddjob.dido.other;
 
-import org.oddjob.dido.AbstractParent;
-import org.oddjob.dido.BoundedDataNode;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.Layout;
 import org.oddjob.dido.ValueNode;
-import org.oddjob.dido.WhereNextIn;
-import org.oddjob.dido.WhereNextOut;
+import org.oddjob.dido.layout.LayoutNode;
 
 /**
  * @oddjob.description Specify alternative data plans depending on a 
@@ -19,143 +18,126 @@ import org.oddjob.dido.WhereNextOut;
  * @author rob
  *
  * @param <TYPE>
- * @param <IN>
- * @param <OUT>
  */
-public class Case <TYPE, IN extends DataIn, OUT extends DataOut>
-extends AbstractParent<IN, IN, OUT, OUT>
+public class Case<TYPE>
+extends LayoutNode
 implements Changeable<TYPE>{
 
 	private TYPE value;
 	
-	private boolean initialised;
-	
-	public void initialise(IN in) {
-		DataNode<IN, ?, OUT, ?>[] children = childrenToArray();
-		
-		if (children.length < 1) {
-			throw new NullPointerException();
-		}
-		
-		for (int i = 0; i < children.length; ++i) {
-			
-			if (children[i] instanceof BoundedDataNode<?, ?, ?, ?>) {
-				((BoundedDataNode<IN, ?, OUT, ?>) children[i]).begin(in);
-			}
-		}
+	public void setOf(int index, Layout child) {
+		addOrRemoveChild(index, child);
 	}
 	
 	@Override
-	public WhereNextIn<IN> in(IN data) throws DataException {
+	public DataReader readerFor(final DataIn dataIn) throws DataException {
+		
+		final Layout descriminator = childLayouts().get(0);
+		
+		return new DataReader() {
 
-		if (!initialised) {
-			initialise(data);
-			initialised = true;
-		}
-		
-		DataNode<IN, ?, OUT, ?>[] children = childrenToArray();
-		
-		DataNode<IN, ?, OUT, ?> descriminator = children[0];
-		
-		descriminator.in(data);
-		
-		this.value = ((ValueNode<TYPE>) descriminator).value();
-		
-		DataNode<IN, ?, OUT, ?>[] chosen = evaluate();
-		
-		if (chosen == null) {
-			return new WhereNextIn<IN>();
-		}
-		else {
-			return new WhereNextIn<IN>(chosen, data);
-		}
+			DataReader nextReader;
+			
+			@Override
+			public Object read() throws DataException {
+				
+				if (nextReader == null) {
+					
+					DataReader descriminatorReader = descriminator.readerFor(dataIn);
+					
+					descriminatorReader.read();
+					
+					Case.this.value = ((ValueNode<TYPE>) descriminator).value();
+					
+					Layout chosen = evaluate();
+					
+					if (chosen == null) {
+						throw new DataException("No option to read [" + 
+								Case.this.value + "]");
+					}
+	
+					nextReader = chosen.readerFor(dataIn);
+				}
+				
+				Object value = nextReader.read();
+				if (value == null) {
+					nextReader = null;
+				}
+				
+				return value;
+			}
+		};
 	}
 	
-	private DataNode<IN, ?, OUT, ?>[] evaluate() {
-		DataNode<IN, ?, OUT, ?>[] children = childrenToArray();
-		
-		DataNode<IN, ?, OUT, ?>[] result = (DataNode<IN, ?, OUT, ?>[])
-			new DataNode[1];
-		
-		for (int i = 1; i < children.length; ++i) {
-			DataNode<IN, ?, OUT, ?> child = children[i];
+	private Layout evaluate() {
+				
+		for (int i = 1; i < childLayouts().size(); ++i) {
+
+			Layout child = childLayouts().get(i);
 			
 			if (((CaseCondition<TYPE>) child).evaluate(value)) {
-				result[0] = child;
-				return result;
+				return child;
 			}
 		}
+		
 		return null;
 	}
 	
 	@Override
-	public void complete(IN in) {
-		
-		for (DataNode<IN, ?, OUT, ?> child : childrenToArray()) {
-			if (child instanceof BoundedDataNode<?, ?, ?, ?>) {
-				((BoundedDataNode<IN, ?, OUT, ?>) child).end(in);
-			}
-		}
-		
-		initialised = false;
-	}
+	public DataWriter writerFor(final DataOut dataOut) throws DataException {
 	
-	public void initialise(OUT out) {
-		DataNode<IN, ?, OUT, ?>[] children = childrenToArray();
+		final Layout descriminator = childLayouts().get(0);
 		
-		if (children.length < 1) {
-			throw new NullPointerException();
-		}
-		
-		for (int i = 0; i < children.length; ++i) {
+		return new DataWriter() {
 			
-			if (children[i] instanceof BoundedDataNode<?, ?, ?, ?>) {
-				((BoundedDataNode<IN, ?, OUT, ?>) children[i]).end(out);
+			DataWriter nextWriter;
+			
+			@Override
+			public boolean write(Object object) throws DataException {
+				
+				if (nextWriter == null) {
+					
+					Layout chosen = evaluateOut();
+					
+					if (chosen == null) {
+						return false;
+					}
+					else {
+						((ValueNode<TYPE>) descriminator).value(
+								value);
+						
+						DataWriter descriminatorWriter = 
+								descriminator.writerFor(dataOut);
+						
+						descriminatorWriter.write(object);
+						
+						nextWriter = chosen.writerFor(dataOut);
+					}
+				}
+				
+				if (nextWriter.write(object)) {
+					
+					return true;
+				}
+
+				nextWriter = null;
+				
+				return false;
 			}
-		}
-	}
-	
-	@Override
-	public WhereNextOut<OUT> out(OUT data) throws DataException {
+		};
 		
-		if (!initialised) {
-			initialise(data);
-			initialised = true;
-		}
-		
-		DataNode<IN, ?, OUT, ?>[] children = childrenToArray();
-		
-		DataNode<IN, ?, OUT, ?> descriminator = children[0];
-		
-		DataNode<IN, ?, OUT, ?>[] chosen = evaluateOut();
-		
-		if (chosen == null) {
-			return new WhereNextOut<OUT>();
-		}
-		else {
-			((ValueNode<TYPE>) descriminator).value(value);
-			
-			descriminator.out(data);
-			
-			return new WhereNextOut<OUT>(chosen, data);
-		}
 	}
 
-	private DataNode<IN, ?, OUT, ?>[] evaluateOut() {
-		DataNode<IN, ?, OUT, ?>[] children = childrenToArray();
+	private Layout evaluateOut() {
 		
-		DataNode<IN, ?, OUT, ?>[] result = (DataNode<IN, ?, OUT, ?>[])
-			new DataNode[1];
-		
-		for (int i = 1; i < children.length; ++i) {
-			DataNode<IN, ?, OUT, ?> child = children[i];
+		for (int i = 1; i < childLayouts().size(); ++i) {
+			Layout child = childLayouts().get(i);
 			
 			TYPE value = ((CaseCondition<TYPE>) child).evaluateOut();
 			
 			if (value != null) {
-				result[0] = child;
 				this.value = value;
-				return result;
+				return child;
 			}
 			
 		}
@@ -163,20 +145,12 @@ implements Changeable<TYPE>{
 	}
 	
 	@Override
-	public void complete(OUT out) {
-		
-		for (DataNode<IN, ?, OUT, ?> child : childrenToArray()) {
-			if (child instanceof BoundedDataNode<?, ?, ?, ?>) {
-				((BoundedDataNode<IN, ?, OUT, ?>) child).end(out);
-			}
-		}
-		
-		initialised = false;
+	public void reset() {
 	}
 	
 	@Override
 	public void changeValue(TYPE value) {
-		((ValueNode<TYPE>) childrenToArray()[0]).value(value);
+		((ValueNode<TYPE>) childLayouts().get(0)).value(value);
 	}
 
 }

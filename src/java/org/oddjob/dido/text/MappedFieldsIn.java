@@ -73,11 +73,11 @@ implements FieldsIn {
 	@Override
 	public <T extends DataIn> T provide(Class<T> type)
 	throws UnsupportedeDataInException {
+
 		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
-		else {
-			throw new UnsupportedeDataInException(this.getClass(), type);
-		}
+		
+		throw new UnsupportedeDataInException(this.getClass(), type);
 	}
 }

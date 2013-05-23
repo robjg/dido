@@ -1,6 +1,5 @@
 package org.oddjob.dido.bio;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -9,17 +8,16 @@ import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.MockDataOut;
 import org.oddjob.dido.UnsupportedeDataInException;
-import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.stream.ListLinesOut;
 import org.oddjob.dido.stream.LinesIn;
 import org.oddjob.dido.stream.LinesLayout;
-import org.oddjob.dido.stream.LinesOut;
 import org.oddjob.dido.text.DelimitedLayout;
 import org.oddjob.dido.text.FieldLayout;
+import org.oddjob.dido.text.StringTextIn;
+import org.oddjob.dido.text.TextIn;
 import org.oddjob.dido.text.TextLayout;
 
 public class BeanBindingBeanTest extends TestCase {
@@ -37,34 +35,13 @@ public class BeanBindingBeanTest extends TestCase {
 		}
 	}
 	
-	private class OurLinesOut extends MockDataOut
-	implements LinesOut {
-		
-		private List<String> results = new ArrayList<String>();
-		
-		@Override
-		public <T extends DataOut> T provide(Class<T> type)
-				throws UnsupportedeDataOutException {
-			if (type.isAssignableFrom(LinesOut.class)) {
-				return type.cast(this);
-			}
-			else {
-				throw new UnsupportedeDataOutException(getClass(), type);
-			}
-		}
-		
-		@Override
-		public void writeLine(String text) throws DataException {
-			results.add(text);
-		}
-	}
 	
 	private class OurLinesIn 
 	implements LinesIn {
 
 		final String[] lines;
 		
-		int i = 0;
+		int i = -1;
 		
 		public OurLinesIn(String[] lines) {
 			this.lines = lines;
@@ -73,21 +50,25 @@ public class BeanBindingBeanTest extends TestCase {
 		@Override
 		public <T extends DataIn> T provide(Class<T> type)
 				throws UnsupportedeDataInException {
+			
 			if (type.isAssignableFrom(LinesIn.class)) {
 				return type.cast(this);
 			}
-			else {
-				throw new UnsupportedeDataInException(getClass(), type);
+			
+			if (type.isAssignableFrom(TextIn.class)) {
+				return type.cast(new StringTextIn(lines[i]));
 			}
+			
+			throw new UnsupportedeDataInException(getClass(), type);
 		}
 		
 		@Override
 		public String readLine() throws DataException {
-			if (i >= lines.length) {
+			if (i == lines.length - 1) {
 				return null;
 			}
 			else {
-				return lines[i++];
+				return lines[++i];
 			}
 		}
 	}
@@ -106,13 +87,14 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		root.bind(test);
 		
-		OurLinesOut dataOut = new OurLinesOut();
+		ListLinesOut dataOut = new ListLinesOut();
 		
 		DataWriter writer = root.writerFor(dataOut);
 		
 		assertFalse(writer.write("Apples"));
 		
-		assertEquals(0, dataOut.results.size());
+		List<String> results = dataOut.getLines();
+		assertEquals(0, results.size());
 		
 		test.reset();
 	}
@@ -169,14 +151,16 @@ public class BeanBindingBeanTest extends TestCase {
 		Fruit fruit = new Fruit();
 		fruit.setType("apple");
 		
-		OurLinesOut dataOut = new OurLinesOut();
+		ListLinesOut dataOut = new ListLinesOut();
 		
 		DataWriter writer = lines.writerFor(dataOut);
 		
 		assertFalse(writer.write(fruit));
 				
-		assertEquals("apple", dataOut.results.get(0));
-		assertEquals(1, dataOut.results.size());
+		List<String> results = dataOut.getLines();
+
+		assertEquals("apple", results.get(0));
+		assertEquals(1, results.size());
 		
 		test.reset();
 	}
@@ -247,7 +231,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		root.bind(test);
 		
-		OurLinesOut dataOut = new OurLinesOut();
+		ListLinesOut dataOut = new ListLinesOut();
 		
 		DataWriter writer = root.writerFor(dataOut);
 		
@@ -260,9 +244,11 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		assertFalse(writer.write(basket));
 		
-		assertEquals("12.47", dataOut.results.get(0));
-		assertEquals("5.23", dataOut.results.get(1));
-		assertEquals(2, dataOut.results.size());
+		List<String> results = dataOut.getLines();
+		
+		assertEquals("12.47", results.get(0));
+		assertEquals("5.23", results.get(1));
+		assertEquals(2, results.size());
 		
 		test.reset();
 		
@@ -327,7 +313,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		root.bind(test);
 		
-		OurLinesOut dataOut = new OurLinesOut();
+		ListLinesOut dataOut = new ListLinesOut();
 		
 		DataWriter writer = root.writerFor(dataOut);
 				
@@ -336,15 +322,17 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		assertFalse(writer.write(fruit));
 		
-		assertEquals("apple", dataOut.results.get(0));
-		assertEquals(1, dataOut.results.size());
+		List<String> results = dataOut.getLines();
+		
+		assertEquals("apple", results.get(0));
+		assertEquals(1, results.size());
 		
 		fruit.setType("pear");
 		
 		assertFalse(writer.write(fruit));
 		
-		assertEquals("pear", dataOut.results.get(1));
-		assertEquals(2, dataOut.results.size());
+		assertEquals("pear", results.get(1));
+		assertEquals(2, results.size());
 		
 		test.reset();
 	}

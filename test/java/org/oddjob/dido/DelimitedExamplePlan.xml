@@ -1,12 +1,12 @@
-<lines>
- <is>
+<lines xmlns='oddjob:dido'>
+ <of>
   <delimited name='person'>
-   <is>
+   <of>
     <field name='name'/>
     <field name='age'/>
     <field name='city'/>
-   </is>
+   </of>
   </delimited>
- </is>
+ </of>
 </lines>
         

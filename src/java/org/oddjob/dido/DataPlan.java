@@ -2,17 +2,14 @@ package org.oddjob.dido;
 
 import org.oddjob.arooa.ArooaSession;
 
-public class DataPlan<
-	ACCEPT_IN extends DataIn, PROVIDE_IN extends DataIn,
-	ACCEPT_OUT extends DataOut, PROVIDE_OUT extends DataOut> {
+public class DataPlan {
 
 	private final ArooaSession session;
 	
-	private final DataNode
-	<ACCEPT_IN, PROVIDE_IN, ACCEPT_OUT, PROVIDE_OUT> topNode;
+	private final Layout topNode;
 
 	public DataPlan(ArooaSession session,
-			DataNode<ACCEPT_IN, PROVIDE_IN, ACCEPT_OUT, PROVIDE_OUT> topNode) {
+			Layout topNode) {
 		this.session = session;
 		this.topNode = topNode;
 	}
@@ -21,7 +18,7 @@ public class DataPlan<
 		return session;
 	}
 
-	public DataNode<ACCEPT_IN, PROVIDE_IN, ACCEPT_OUT, PROVIDE_OUT> getTopNode() {
+	public Layout getTopNode() {
 		return topNode;
 	}
 }

@@ -2,31 +2,28 @@ package org.oddjob.dido.other;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import junit.framework.TestCase;
 
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
-import org.oddjob.arooa.xml.XMLConfiguration;
+import org.oddjob.arooa.types.ImportType;
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataPlanType;
-import org.oddjob.dido.DataPlan;
 import org.oddjob.dido.DataReadJob;
 import org.oddjob.dido.DataWriteJob;
-import org.oddjob.dido.WhereNextOut;
+import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
-import org.oddjob.dido.stream.StreamIn;
-import org.oddjob.dido.stream.StreamOut;
-import org.oddjob.dido.text.Field;
-import org.oddjob.dido.text.FieldsIn;
-import org.oddjob.dido.text.FieldsOut;
-import org.oddjob.dido.text.HeadingsFieldsOut;
-import org.oddjob.dido.text.MappedFieldsOut;
+import org.oddjob.dido.bio.ValueBinding;
+import org.oddjob.dido.text.FieldLayout;
+import org.oddjob.dido.text.SimpleFieldsOut;
 
 public class WhenTest extends TestCase {
 
@@ -80,86 +77,59 @@ public class WhenTest extends TestCase {
 	
 	public void testWritingSequenceTheory() throws DataException {
 		
-		Field on = new Field();
-		on.setValue("1");
+		FieldLayout on = new FieldLayout();
+		on.bind(new ValueBinding());
 		
-		Field child = new Field();
-		child.setValue("apple");
+		FieldLayout child = new FieldLayout();
+		child.bind(new ValueBinding());
 		
-		When<FieldsIn, FieldsOut> test = 
-			new When<FieldsIn, FieldsOut>();
+		When test = 
+			new When();
 		test.setValue("1");
-		test.setIs(0, child);
+		test.setOf(0, child);
 				
-		HeadingsFieldsOut headingsOut = new HeadingsFieldsOut(
-				new MappedFieldsOut.FieldsWriter() {
-					@Override
-					public void write(String[] values) {
-						throw new RuntimeException("Unexpected.");
-					}
-		}, false);
+		SimpleFieldsOut fieldsOut = new SimpleFieldsOut();
 
+		DataWriter writer = on.writerFor(fieldsOut);
+
+		writer.write("1");
+
+		writer = test.writerFor(fieldsOut);
 		
-		on.begin(headingsOut);
+		writer.write("apple");
 		
-		test.begin(headingsOut);
-		
-		final AtomicReference<String[]> ref = new AtomicReference<String[]>();
-		
-		MappedFieldsOut dataOut = new MappedFieldsOut(
-				new MappedFieldsOut.FieldsWriter() {
-					@Override
-					public void write(String[] values) {
-						ref.set(values);
-					}
-		});
-		
-		// null won't be written out.
-		on.out(dataOut);
-		
-		WhereNextOut<FieldsOut> whereNext = test.out(dataOut);
-		assertEquals(child, whereNext.getChildren()[0]);
-		assertNotNull(whereNext);
-		
-		child.out(dataOut);
-		
-		dataOut.flush();
-		
-		on.complete(dataOut);
-		child.complete(dataOut);
-		test.complete(dataOut);
-		
-		assertEquals(2, ref.get().length);
-		assertEquals("1", ref.get()[0]);
-		assertEquals("apple", ref.get()[1]);
+		String[] values = fieldsOut.values();
+		assertEquals(2, values.length);
+		assertEquals("1", values[0]);
+		assertEquals("apple", values[1]);
 	}
 	
 	String delimitedConfig = 
-		"<lines>" +
-		" <is>" +
+		"<lines xmlns='oddjob:dido'>" +
+		" <of>" +
 		"  <delimited>" +
-		"   <is>" +
+		"   <of>" +
 		"    <case>" +
-		"     <is>" +
-		"      <field id='descriminator' column='1'/>" +
+		"     <of>" +
+		"      <field name='descriminator' column='1'/>" +
 		"      <when name='people' value='1'>" +
-		"       <is>" +
+		"       <of>" +
 		"        <field name='name' column='2'/>" +
 		"        <field name='city' column='3'/>" +
-		"       </is>" +
+		"       </of>" +
 		"      </when>" +
 		"      <when name='fruit' value='2'>" +
-		"       <is>" +
+		"       <of>" +
 		"        <field name='variety' column='2'/>" +
 	    "        <field name='type' column='3'/>" +
 	    "        <field name='colour' column='4'/>" +
-	    "       </is>" +
+	    "       </of>" +
 	    "      </when>" +
-		"     </is>" +
+		"     </of>" +
 		"    </case>" +
-		"   </is>" +
+		"   </of>" +
 		"  </delimited>" +
-		" </is>" +
+		" </of>" +
 		"</lines>";
 		
 	StandardArooaSession session = new StandardArooaSession();
@@ -178,7 +148,7 @@ public class WhenTest extends TestCase {
 		fruitBinding.setType(new SimpleArooaClass(Fruit.class));
 	}
 	
-	public void testDelimitedReadWrite() throws ArooaConversionException {
+	public void testDelimitedReadWrite() throws ArooaConversionException, IOException {
 		
 		String data = 
 			"1,John,London" + EOL +
@@ -186,19 +156,28 @@ public class WhenTest extends TestCase {
 			"2,Cox,Apple,Red" + EOL +
 			"2,Granny Smith,Apple,Green" + EOL;
 	
-		DataPlanType definition = new DataPlanType();
-		definition.setArooaSession(session);
-		definition.setConfiguration(new XMLConfiguration("XML", delimitedConfig));
+		ImportType importType = new ImportType();
+		importType.setArooaSession(new StandardArooaSession(
+				new ClassPathDescriptorFactory(
+						).createDescriptor(getClass().getClassLoader())));
+		importType.setXml(delimitedConfig);
+		
+		Layout layout = (Layout) importType.toObject();
 		
 		DataReadJob readJob = new DataReadJob();
-		readJob.setPlan((DataPlan<StreamIn, ?, ?, ?>) definition.toValue());
-		readJob.setBindings(0, personBinding);
-		readJob.setBindings(1, fruitBinding);
+		readJob.setPlan(layout);
+		readJob.setBindings("people", personBinding);
+		readJob.setBindings("fruit", fruitBinding);
 		readJob.setInput(new ByteArrayInputStream(data.getBytes()));
+		
+		Collection<Object> results = new ArrayList<Object>();
+		
+		readJob.setBeans(results);
 		
 		readJob.run();
 		
-		Object[] beans = readJob.getBeans();
+		Object[] beans = results.toArray();
+		
 		assertEquals(4, beans.length);
 		
 		Person person1 = (Person) beans[0];
@@ -220,9 +199,9 @@ public class WhenTest extends TestCase {
 		assertEquals("Green", fruit2.getColour());
 				
 		DataWriteJob writeJob = new DataWriteJob();
-		writeJob.setPlan((DataPlan<?, ?, StreamOut, ?>) definition.toValue());
-		writeJob.setBindings(0, personBinding);
-		writeJob.setBindings(1, fruitBinding);		
+		writeJob.setPlan(layout);
+		writeJob.setBindings("people", personBinding);
+		writeJob.setBindings("fruit", fruitBinding);		
 		
 		writeJob.setBeans(Arrays.asList(beans));
 		
@@ -235,11 +214,15 @@ public class WhenTest extends TestCase {
 		assertEquals(data, new String(output.toByteArray()));
 	}
 	
-	public void testDelimitedWriteRead() throws ArooaConversionException {
+	public void testDelimitedWriteRead() throws ArooaConversionException, IOException {
 		
-		DataPlanType definition = new DataPlanType();
-		definition.setArooaSession(session);
-		definition.setConfiguration(new XMLConfiguration("XML", delimitedConfig));
+		ImportType importType = new ImportType();
+		importType.setArooaSession(new StandardArooaSession(
+				new ClassPathDescriptorFactory(
+						).createDescriptor(getClass().getClassLoader())));
+		importType.setXml(delimitedConfig);
+		
+		Layout layout = (Layout) importType.toObject();
 		
 		Person person1 = new Person();
 		person1.setName("John");
@@ -260,9 +243,9 @@ public class WhenTest extends TestCase {
 		fruit2.setColour("Green");
 		
 		DataWriteJob writeJob = new DataWriteJob();
-		writeJob.setPlan((DataPlan<?, ?, StreamOut, ?>) definition.toValue());
-		writeJob.setBindings(0, personBinding);
-		writeJob.setBindings(1, fruitBinding);		
+		writeJob.setPlan(layout);
+		writeJob.setBindings("people", personBinding);
+		writeJob.setBindings("fruit", fruitBinding);		
 		
 		List<Object> beans = new ArrayList<Object>();
 		beans.add(person1);
@@ -279,14 +262,14 @@ public class WhenTest extends TestCase {
 		writeJob.run();
 		
 		DataReadJob readJob = new DataReadJob();
-		readJob.setPlan((DataPlan<StreamIn, ?, ?, ?>) definition.toValue());
-		readJob.setBindings(0, personBinding);
-		readJob.setBindings(1, fruitBinding);
+		readJob.setPlan(layout);
+		readJob.setBindings("people", personBinding);
+		readJob.setBindings("fruit", fruitBinding);
 		readJob.setInput(new ByteArrayInputStream(output.toByteArray()));
-		
+		readJob.setBeans(new ArrayList<Object>());
 		readJob.run();
 		
-		Object[] results = readJob.getBeans();
+		Object[] results = readJob.getBeans().toArray();
 		assertEquals(4, results.length);
 		
 		person1 = (Person) results[0];
@@ -305,30 +288,30 @@ public class WhenTest extends TestCase {
 	}
 	
 	String fixedConfig = 
-		"<lines xmlns:dido='http://rgordon.co.uk/oddjob/dido'>" +
-		" <is>" +
+		"<lines xmlns='oddjob:dido'>" +
+		" <of>" +
 		"  <case>" +
-		"   <is>" +
+		"   <of>" +
 		"    <text from='0' length='1'/>" +
 		"    <when name='people' value='1'>" +
-		"     <is>" +
+		"     <of>" +
 		"      <text name='name' from='1' length='7'/>" +
 	    "      <text name='city' from='8' length='12'/>" +
-	    "     </is>" +
+	    "     </of>" +
 	    "    </when>" +
 		"    <when name='fruit' value='2'>" +
-		"     <is>" +
+		"     <of>" +
 		"      <text name='variety' from='1' length='12'/>" +
 	    "      <text name='type' from='13' length='12'/>" +
 	    "      <text name='colour' from='25' length='9'/>" +
-	    "     </is>" +
+	    "     </of>" +
 		"    </when>" +
-		"   </is>" +
+		"   </of>" +
 		"  </case>" +
-		" </is>" +
+		" </of>" +
 		"</lines>";
 		
-	public void testFixedReadWrite() throws ArooaConversionException {
+	public void testFixedReadWrite() throws ArooaConversionException, IOException {
 		
 		String data = 
 			"1John   London      " + EOL +
@@ -338,19 +321,24 @@ public class WhenTest extends TestCase {
 			"2Cox         Apple       Red      " + EOL +
 			"2Granny SmithApple       Green    " + EOL;
 	
-		DataPlanType definition = new DataPlanType();
-		definition.setArooaSession(session);
-		definition.setConfiguration(new XMLConfiguration("XML", fixedConfig));
+		ImportType importType = new ImportType();
+		importType.setArooaSession(new StandardArooaSession(
+				new ClassPathDescriptorFactory(
+						).createDescriptor(getClass().getClassLoader())));
+		importType.setXml(fixedConfig);
+		
+		Layout layout = (Layout) importType.toObject();
 		
 		DataReadJob readJob = new DataReadJob();
-		readJob.setPlan((DataPlan<StreamIn, ?, ?, ?>) definition.toValue());
-		readJob.setBindings(0, personBinding);
-		readJob.setBindings(1, fruitBinding);
+		readJob.setPlan(layout);
+		readJob.setBindings("people", personBinding);
+		readJob.setBindings("fruit", fruitBinding);
 		readJob.setInput(new ByteArrayInputStream(data.getBytes()));
+		readJob.setBeans(new ArrayList<Object>());
 		
 		readJob.run();
 		
-		Object[] beans = readJob.getBeans();
+		Object[] beans = readJob.getBeans().toArray();
 		assertEquals(4, beans.length);
 		
 		Person person1 = (Person) beans[0];
@@ -372,9 +360,9 @@ public class WhenTest extends TestCase {
 		assertEquals("Green", fruit2.getColour());
 				
 		DataWriteJob writeJob = new DataWriteJob();
-		writeJob.setPlan((DataPlan<?, ?, StreamOut, ?>) definition.toValue());
-		writeJob.setBindings(0, personBinding);
-		writeJob.setBindings(1, fruitBinding);		
+		writeJob.setPlan(layout);
+		writeJob.setBindings("people", personBinding);
+		writeJob.setBindings("fruit", fruitBinding);		
 		
 		writeJob.setBeans(Arrays.asList(beans));
 		
@@ -388,38 +376,38 @@ public class WhenTest extends TestCase {
 		
 	}
 
-	public void testMixedExample() throws ArooaConversionException {
+	public void testMixedExample() throws ArooaConversionException, IOException {
 		
 		String xml = 
-			"<lines>" +
-			" <is>" +
+			"<lines xmlns='oddjob:dido'>" +
+			" <of>" +
 			"  <case>" +
-			"   <is>" +
-			"    <text id='descriminator' from='0' length='1'/>" +
+			"   <of>" +
+			"    <text name='descriminator' from='0' length='1'/>" +
 			"    <when name='people' value='1'>" +
-			"     <is>" +
+			"     <of>" +
 			"      <text name='name' from='1' length='7'/>" +
 		    "      <text name='city' from='8' length='12'/>" +
-		    "     </is>" +
+		    "     </of>" +
 		    "    </when>" +
 			"    <when name='fruit' value='2'>" +
-			"     <is>" +
+			"     <of>" +
 			"      <text name='all' from='1'>" +
-			"       <is>" +
+			"       <of>" +
 			"        <delimited>" +
-			"         <is>" +
+			"         <of>" +
 			"          <field name='variety' column='1'/>" +
 		    "          <field name='type' column='2'/>" +
 		    "          <field name='colour' column='3'/>" +
-		    "         </is>" +
+		    "         </of>" +
 			"        </delimited>" +
-			"       </is>" +
+			"       </of>" +
 			"      </text>" +
-		    "     </is>" +
+		    "     </of>" +
 			"    </when>" +
-			"   </is>" +
+			"   </of>" +
 			"  </case>" +
-			" </is>" +
+			" </of>" +
 			"</lines>";
 			
 			
@@ -430,19 +418,23 @@ public class WhenTest extends TestCase {
 			"2Granny Smith,Apple,Green" + EOL;
 	
 		
-		DataPlanType definition = new DataPlanType();
-		definition.setArooaSession(session);
-		definition.setConfiguration(new XMLConfiguration("XML", xml));
+		ImportType importType = new ImportType();
+		importType.setArooaSession(new StandardArooaSession(
+				new ClassPathDescriptorFactory(
+						).createDescriptor(getClass().getClassLoader())));
+		importType.setXml(xml);
+		
+		Layout layout = (Layout) importType.toObject();
 		
 		DataReadJob readJob = new DataReadJob();
-		readJob.setPlan((DataPlan<StreamIn, ?, ?, ?>) definition.toValue());
-		readJob.setBindings(0, personBinding);
-		readJob.setBindings(1, fruitBinding);
+		readJob.setPlan(layout);
+		readJob.setBindings("people", personBinding);
+		readJob.setBindings("fruit", fruitBinding);
 		readJob.setInput(new ByteArrayInputStream(data.getBytes()));
 		
 		readJob.run();
 		
-		Object[] beans = readJob.getBeans();
+		Object[] beans = readJob.getBeans().toArray();
 		assertEquals(4, beans.length);
 		
 		Person person1 = (Person) beans[0];
@@ -464,9 +456,9 @@ public class WhenTest extends TestCase {
 		assertEquals("Green", fruit2.getColour());
 				
 		DataWriteJob writeJob = new DataWriteJob();
-		writeJob.setPlan((DataPlan<?, ?, StreamOut, ?>) definition.toValue());
-		writeJob.setBindings(0, personBinding);
-		writeJob.setBindings(1, fruitBinding);
+		writeJob.setPlan(layout);
+		writeJob.setBindings("people", personBinding);
+		writeJob.setBindings("fruit", fruitBinding);
 		
 		writeJob.setBeans(Arrays.asList(beans));
 		

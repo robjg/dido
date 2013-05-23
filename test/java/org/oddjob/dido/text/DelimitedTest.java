@@ -7,12 +7,16 @@ import java.util.concurrent.atomic.AtomicReference;
 import junit.framework.TestCase;
 
 import org.oddjob.dido.DataException;
+import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataNode;
+import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.Layout;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.WhereNextIn;
 import org.oddjob.dido.WhereNextOut;
-import org.oddjob.dido.io.DataWriterImpl;
-import org.oddjob.dido.stream.Lines;
-import org.oddjob.dido.stream.LinesOut;
+import org.oddjob.dido.bio.Binding;
+import org.oddjob.dido.stream.LinesLayout;
 import org.oddjob.dido.stream.OutputStreamOut;
 
 
@@ -149,41 +153,67 @@ public class DelimitedTest extends TestCase {
 		textOut.flush();
 	}
 	
+	private class OurBinding implements Binding {
+		
+		private final String value;
+		
+		public OurBinding(String value) {
+			this.value = value;
+		}
+		
+		@Override
+		public Object process(Layout node, DataIn dataIn, boolean revist)
+				throws DataException {
+			throw new RuntimeException("Unexpected.");
+		}
+		
+		@SuppressWarnings("unchecked")
+		@Override
+		public boolean process(Object object, Layout node, DataOut dataOut)
+				throws DataException {
+			
+			((ValueNode<String>) node).value(value);
+			
+			return false;
+		}
+		
+		@Override
+		public void reset() {
+		}
+	}
 	
 	public void testWriteDataAndHeadings() throws DataException, IOException {
 		
-		Lines lines = new Lines();
+		LinesLayout lines = new LinesLayout();
 
-		Delimited delimited = new Delimited();
+		DelimitedLayout delimited = new DelimitedLayout();
 		delimited.setWithHeadings(true);
 
-		Field a = new Field();
+		FieldLayout a = new FieldLayout();
 		a.setTitle("fieldA");
 		
-		Field b = new Field();
+		FieldLayout b = new FieldLayout();
 		b.setTitle("fieldB");
 		
-		Field c = new Field();
+		FieldLayout c = new FieldLayout();
 		c.setTitle("fieldC");
 		
-		delimited.setIs(0, a);
-		delimited.setIs(1, b);
-		delimited.setIs(2, c);		
+		delimited.setOf(0, a);
+		delimited.setOf(1, b);
+		delimited.setOf(2, c);		
 		
-		lines.setIs(0, delimited);
+		lines.setOf(0, delimited);
 				
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-		DataWriterImpl<LinesOut> writer = new DataWriterImpl<LinesOut>(lines, 
-			new OutputStreamOut(output));
+		DataWriter writer = lines.writerFor(new OutputStreamOut(output));
 		
-		a.setValue("a");
-		b.setValue("b");
-		c.setValue("c");
+		a.bind(new OurBinding("a"));
+		b.bind(new OurBinding("b"));
+		c.bind(new OurBinding("c"));
 		
 		writer.write(new Object());
 		writer.write(new Object());
-		writer.complete();
 		
 		output.close();
 		

@@ -14,7 +14,7 @@ public interface Binding {
 	/**
 	 * Process a value into the out.
 	 * 
-	 * @param value The value to be written.
+	 * @param object The value to be written.
 	 * @param node The node that this binding is bound to.
 	 * @param dataOut The data that will be written to.
 	 * 
@@ -25,7 +25,7 @@ public interface Binding {
 	 * 
 	 * @throws DataException
 	 */
-	public boolean process(Object value, 
+	public boolean process(Object object, 
 			Layout node, DataOut dataOut)
 	throws DataException;
 	

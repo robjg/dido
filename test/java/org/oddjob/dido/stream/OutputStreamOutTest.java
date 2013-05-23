@@ -3,10 +3,9 @@ package org.oddjob.dido.stream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.oddjob.dido.DataException;
-import org.oddjob.dido.stream.OutputStreamOut;
-
 import junit.framework.TestCase;
+
+import org.oddjob.dido.DataException;
 
 
 public class OutputStreamOutTest extends TestCase {
@@ -17,15 +16,13 @@ public class OutputStreamOutTest extends TestCase {
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
-		OutputStreamOut test = new OutputStreamOut(out);
+		StreamLinesOut test = new StreamLinesOut(out);
 		
-		test.write("Apple");
-		test.newLine();
+		test.writeLine("Apple");
 		
 		test.flush();
 	
-		test.write("Orange");
-		test.newLine();
+		test.writeLine("Orange");
 		
 		test.flush();
 		

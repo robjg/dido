@@ -1,12 +1,13 @@
 package org.oddjob.dido;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.oddjob.arooa.utils.ListSetterHelper;
-import org.oddjob.dido.bio.BindingIn;
-import org.oddjob.dido.io.DataReaderImpl;
+import org.apache.log4j.Logger;
+import org.oddjob.dido.bio.Binding;
+import org.oddjob.dido.layout.BindingHelper;
 import org.oddjob.dido.stream.InputStreamIn;
 import org.oddjob.dido.stream.StreamIn;
 
@@ -29,20 +30,21 @@ import org.oddjob.dido.stream.StreamIn;
  */
 public class DataReadJob implements Runnable {
 
+	private static final Logger logger = Logger.getLogger(DataReadJob.class);
     /**
      * @oddjob.property
      * @oddjob.description The plan for reading the data. This is the
      * root node of a structure of data nodes.
      * @oddjob.required Yes.
      */	
-	private DataPlan<StreamIn, ?, ?, ?> plan;
+	private Layout plan;
 	
     /**
      * @oddjob.property
      * @oddjob.description The beans read in.
      * @oddjob.required R/O.
      */	
-	private Object[] beans;
+	private Collection<Object> beans;
 	
     /**
      * @oddjob.property
@@ -56,7 +58,7 @@ public class DataReadJob implements Runnable {
      * @oddjob.description Bindings between beans and data in.
      * @oddjob.required Yes.
      */	
-	private List<BindingIn> bindings = new ArrayList<BindingIn>();
+	private Map<String, Binding> bindings = new HashMap<String, Binding>();
 	
 	@Override
 	public void run() {
@@ -66,48 +68,59 @@ public class DataReadJob implements Runnable {
 		if (input == null) {
 			throw new NullPointerException("No Input.");
 		}
-
-		StreamIn in = new InputStreamIn(input);
-		
-		DataReaderImpl<StreamIn> reader = new DataReaderImpl<StreamIn>(plan, in);
-		
-		for (BindingIn binding : bindings) {
-			binding.bindTo(plan.getTopNode(), reader);
+		if (beans == null) {
+			logger.info("No destination for beans!");
 		}
 		
-		List<Object> beans = new ArrayList<Object>();
+		StreamIn in = new InputStreamIn(input);
 		
+		Layout root = plan;
+		root.reset();
+		
+		BindingHelper bindingHelper = new BindingHelper(root);
+		for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
+			Binding binding = entry.getValue();
+			binding.reset();
+			bindingHelper.bind(entry.getKey(), binding);
+		}
+
 		try {
+			DataReader reader = root.readerFor(in);
+			
 			while (true) {				
 				Object bean = reader.read();
 				if (bean== null) {
 					break;
 				}
-				beans.add(bean);
+				if (beans != null) {
+					beans.add(bean);
+				}
 			}
 		}
 		catch (RuntimeException e) {
 			throw e;
 		}
-		catch (Exception e) {
+		catch (DataException e) {
 			throw new RuntimeException(e);
 		}
 		
-		this.beans = beans.toArray();
 	}
 	
 	
-	public Object[] getBeans() {
+	public Collection<Object> getBeans() {
 		return beans;
 	}
 
+	public void setBeans(Collection<Object> beans) {
+		this.beans = beans;
+	}
 
-	public DataPlan<StreamIn, ?, ?, ?> getPlan() {
+	public Layout getPlan() {
 		return plan;
 	}
 
 
-	public void setPlan(DataPlan<StreamIn, ?, ?, ?> definition) {
+	public void setPlan(Layout definition) {
 		this.plan = definition;
 	}
 
@@ -121,11 +134,16 @@ public class DataReadJob implements Runnable {
 		this.input = input;
 	}
 	
-	public void setBindings(int index, BindingIn binding) {
-		new ListSetterHelper<BindingIn>(bindings).set(index, binding);		
+	public void setBindings(String name, Binding binding) {
+		if (binding == null) {
+			bindings.remove(name);
+		}
+		else {
+			bindings.put(name, binding);
+		}
 	}
 	
-	public BindingIn getBindings(int index) {
-		return bindings.get(index);
+	public Binding getBindings(String name) {
+		return bindings.get(name);
 	}
 }

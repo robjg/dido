@@ -1,13 +1,13 @@
-<lines>
- <is>
+<lines xmlns='oddjob:dido'>
+ <of>
   <delimited name='employee' delimiter="|">
-   <is>
+   <of>
     <field>
-     <is>
+     <of>
       <date format="dd/MM/yy HH:mm" name="clockOut"/>
-     </is>
+     </of>
     </field>
-   </is>
+   </of>
   </delimited>
- </is>
+ </of>
 </lines>

@@ -6,15 +6,16 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import org.oddjob.arooa.utils.DateHelper;
-import org.oddjob.dido.AbstractStencil;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.WhereNextIn;
-import org.oddjob.dido.WhereNextOut;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.layout.LayoutValueNode;
+import org.oddjob.dido.layout.NullReader;
 
 public class DateField 
-extends AbstractStencil<Date, TextIn, DataIn, TextOut, DataOut>{
+extends LayoutValueNode<Date>{
 
 	private String format;
 	
@@ -25,14 +26,16 @@ extends AbstractStencil<Date, TextIn, DataIn, TextOut, DataOut>{
 		return Date.class;
 	}
 	
+
 	@Override
-	public WhereNextIn<DataIn> in(TextIn din)
-			throws DataException {
+	public DataReader readerFor(DataIn dataIn) throws DataException {
+		
+		final TextIn din = dataIn.provide(TextIn.class);
 
 		String date = din.getText().trim();
 		
 		if (date.length() == 0) {
-			return null;
+			return new NullReader();
 		}
 		
 		TimeZone tz = TimeZone.getDefault(); 
@@ -56,36 +59,63 @@ extends AbstractStencil<Date, TextIn, DataIn, TextOut, DataOut>{
 			throw new DataException(e);
 		}
 		
-		return new WhereNextIn<DataIn>();
+		return nextReaderFor(null);
 	}
 	
+	
 	@Override
-	public WhereNextOut<DataOut> out(TextOut dout)
-			throws DataException {
+	public DataWriter writerFor(DataOut dataOut) throws DataException {
+
+		final TextOut dout = dataOut.provide(TextOut.class);
 		
-		Date value = getValue();
-		
-		if (value == null) {
-			return null;
-		}
-		
-		TimeZone tz = TimeZone.getDefault(); 
-		if (timeZone != null) {
-			tz = TimeZone.getTimeZone(timeZone);
-		}
+		return new DataWriter() {
+			
+			DataWriter nextWriter;
+			
+			@Override
+			public boolean write(Object object) throws DataException {
 				
-		if (format == null) {
-			dout.append(DateHelper.formatDateTime(value));
-		}
-		else {
-			SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-			dateFormat.setTimeZone(tz);
-			dout.append(dateFormat.format(value));
-		}
-		
-		return new WhereNextOut<DataOut>();
+				if (nextWriter == null) {
+					
+					value(null);
+					
+					nextWriter = nextWriterFor(null);
+				}
+				
+				if (nextWriter.write(object)) {
+					return true;
+				}
+				
+				nextWriter = null;
+
+				Date value = value();
+				if (value == null) {
+					return false;
+				}
+				
+				TimeZone tz = TimeZone.getDefault(); 
+				if (timeZone != null) {
+					tz = TimeZone.getTimeZone(timeZone);
+				}
+						
+				if (format == null) {
+					dout.append(DateHelper.formatDateTime(value));
+				}
+				else {
+					SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+					dateFormat.setTimeZone(tz);
+					dout.append(dateFormat.format(value));
+				}
+				
+				return false;
+			}
+		};
 	}
 
+	@Override
+	public void reset() {
+	}
+	
 	public String getFormat() {
 		return format;
 	}

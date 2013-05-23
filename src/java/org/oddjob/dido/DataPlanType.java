@@ -20,7 +20,7 @@ import org.oddjob.arooa.types.ValueFactory;
  *
  */
 public class DataPlanType 
-implements ValueFactory<DataPlan<?, ?, ?, ?>>, 
+implements ValueFactory<DataPlan>, 
 		ArooaSessionAware {
 
 	private ArooaSession session;
@@ -44,9 +44,8 @@ implements ValueFactory<DataPlan<?, ?, ?, ?>>,
 		this.session = session;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public DataPlan<?, ?, ?, ?> toValue() throws ArooaConversionException {
+	public DataPlan toValue() throws ArooaConversionException {
 		if (configuration == null) {
 			throw new NullPointerException("No Configuration.");
 		}
@@ -70,9 +69,9 @@ implements ValueFactory<DataPlan<?, ?, ?, ?>>,
 			throw new RuntimeException(e);
 		}
 		
-		return new DataPlan<DataIn, DataIn, DataOut, DataOut>(
+		return new DataPlan(
 				handle.getDocumentContext().getSession(), 
-				(DataNode<DataIn, DataIn, DataOut, DataOut>) parser.getRoot());
+				(Layout) parser.getRoot());
 	}
 	
 	public void setConfiguration(ArooaConfiguration configuration) {

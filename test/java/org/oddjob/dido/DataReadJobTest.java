@@ -9,7 +9,7 @@ import org.oddjob.arooa.reflect.ArooaPropertyException;
 import org.oddjob.arooa.xml.XMLConfiguration;
 import org.oddjob.state.ParentState;
 
-public class ReadJobTest extends TestCase {
+public class DataReadJobTest extends TestCase {
 
 	public void testInOddjob() throws ArooaPropertyException, ArooaConversionException {
 		

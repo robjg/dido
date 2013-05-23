@@ -10,7 +10,6 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Headed;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.Morphicness;
-import org.oddjob.dido.UnsupportedeDataInException;
 import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.io.ClassMorphic;
 import org.oddjob.dido.layout.LayoutValueNode;
@@ -118,7 +117,7 @@ implements Headed, ClassMorphic {
 
 	@Override
 	public DataReader readerFor(DataIn dataIn)
-	throws UnsupportedeDataInException {
+	throws DataException {
 		
 		if (reader == null) {
 			
@@ -193,6 +192,8 @@ implements Headed, ClassMorphic {
 			
 			if (nextWriter == null) {
 
+				value(null);
+				
 				nextWriter = nextWriterFor(fieldsOut);
 			}
 			

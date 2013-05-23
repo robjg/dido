@@ -1,14 +1,13 @@
 package org.oddjob.dido;
 
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.oddjob.arooa.utils.ListSetterHelper;
-import org.oddjob.dido.bio.BindingOut;
+import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.io.ConfigurationType;
-import org.oddjob.dido.io.DataWriterImpl;
+import org.oddjob.dido.layout.BindingHelper;
 import org.oddjob.dido.stream.OutputStreamOut;
 import org.oddjob.dido.stream.StreamOut;
 
@@ -35,7 +34,7 @@ public class DataWriteJob implements Runnable {
      * root node of a structure of data nodes.
      * @oddjob.required Yes.
      */	
-	private DataPlan<?, ?, StreamOut, ?> plan;
+	private Layout plan;
 	
     /**
      * @oddjob.property
@@ -56,7 +55,7 @@ public class DataWriteJob implements Runnable {
      * @oddjob.description Bindings between beans and data out.
      * @oddjob.required Yes.
      */	
-	private List<BindingOut> bindings = new ArrayList<BindingOut>();
+	private Map<String, Binding> bindings = new HashMap<String, Binding>();
 	
     /**
      * @oddjob.property
@@ -80,21 +79,25 @@ public class DataWriteJob implements Runnable {
 
 		StreamOut out = new OutputStreamOut(output);
 		
-		DataWriterImpl<StreamOut> writer = new DataWriterImpl<StreamOut>(plan, out,
-				configurationType);
+		Layout root = plan;
+		root.reset();
 		
-		for (BindingOut binding : bindings) {
-			binding.bindTo(plan.getTopNode(), writer);
+		BindingHelper bindingHelper = new BindingHelper(root);
+		for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
+			Binding binding = entry.getValue();
+			binding.reset();
+			bindingHelper.bind(entry.getKey(), binding);
 		}
 		
 		try {
+			DataWriter writer = root.writerFor(out);
+			
 			for (Object bean : beans) {
 				
 				writer.write(bean);
 				
 				++beanCount;
 			}
-			writer.complete();
 			
 			output.close();
 		}
@@ -112,12 +115,12 @@ public class DataWriteJob implements Runnable {
 	}
 
 
-	public DataPlan<?, ?, StreamOut, ?> getPlan() {
+	public Layout getPlan() {
 		return plan;
 	}
 
 
-	public void setPlan(DataPlan<?, ?, StreamOut, ?> definition) {
+	public void setPlan(Layout definition) {
 		this.plan = definition;
 	}
 
@@ -131,12 +134,17 @@ public class DataWriteJob implements Runnable {
 		this.output = output;
 	}
 	
-	public void setBindings(int index, BindingOut binding) {
-		new ListSetterHelper<BindingOut>(bindings).set(index, binding);		
+	public void setBindings(String name, Binding binding) {
+		if (binding == null) {
+			bindings.remove(name);
+		}
+		else {
+			bindings.put(name, binding);
+		}
 	}
 	
-	public BindingOut getBindings(int index) {
-		return bindings.get(index);
+	public Binding getBindings(String name) {
+		return bindings.get(name);
 	}
 
 	public String getName() {

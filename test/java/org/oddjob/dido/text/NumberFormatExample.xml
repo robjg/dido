@@ -1,13 +1,13 @@
-<lines>
- <is>
+<lines xmlns="oddjob:dido">
+ <of>
   <delimited name='employee' delimiter="|">
-   <is>
+   <of>
     <field>
-     <is>
+     <of>
       <number format="$#,###,##0.00" name="salary"/>
-     </is>
+     </of>
     </field>
-   </is>
+   </of>
   </delimited>
- </is>
+ </of>
 </lines>

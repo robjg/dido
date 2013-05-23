@@ -1,20 +1,18 @@
 package org.oddjob.dido.other;
 
-import org.oddjob.dido.AbstractParent;
-import org.oddjob.dido.BoundedDataNode;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.Layout;
 import org.oddjob.dido.Selectable;
-import org.oddjob.dido.WhereNextIn;
-import org.oddjob.dido.WhereNextOut;
+import org.oddjob.dido.layout.LayoutNode;
 
 
-public class When<ACCEPTS_IN extends DataIn, ACCEPTS_OUT extends DataOut> 
-extends AbstractParent<ACCEPTS_IN, ACCEPTS_IN, ACCEPTS_OUT, ACCEPTS_OUT>
+public class When 
+extends LayoutNode
 implements
-		BoundedDataNode<ACCEPTS_IN, ACCEPTS_IN, ACCEPTS_OUT, ACCEPTS_OUT>,
 		Selectable,
 		CaseCondition<String> {
 
@@ -22,60 +20,26 @@ implements
 	
 	private boolean selected;
 	
-	public void begin(ACCEPTS_IN in) {
-		DataNode<ACCEPTS_IN, ?, ACCEPTS_OUT, ?>[] children = childrenToArray();
-		
-		for (DataNode<ACCEPTS_IN, ?, ACCEPTS_OUT, ?> child : children) {
-			if (child instanceof BoundedDataNode<?, ?, ?, ?>) {
-				((BoundedDataNode<ACCEPTS_IN, ?, ACCEPTS_OUT, ?>) child).begin(in);
-			}
-		}
+	public void setOf(int index, Layout child) {
+		addOrRemoveChild(index, child);
 	}
 	
 	@Override
-	public WhereNextIn<ACCEPTS_IN> in(ACCEPTS_IN data) throws DataException {
-
-		return new WhereNextIn<ACCEPTS_IN>(childrenToArray(), data);
+	public DataReader readerFor(DataIn dataIn) throws DataException {
+		return nextReaderFor(dataIn);
 	}
 	
-	public void end(ACCEPTS_IN in) {
-		DataNode<ACCEPTS_IN, ?, ACCEPTS_OUT, ?>[] children = childrenToArray();
-		
-		for (DataNode<ACCEPTS_IN, ?, ACCEPTS_OUT, ?> child : children) {
-			if (child instanceof BoundedDataNode<?, ?, ?, ?>) {
-				((BoundedDataNode<ACCEPTS_IN, ?, ACCEPTS_OUT, ?>) child).end(in);
-			}
-		}
-	}
-	
-
-	public void begin(ACCEPTS_OUT out) {
-		DataNode<ACCEPTS_IN, ?, ACCEPTS_OUT, ?>[] children = childrenToArray();
-		
-		for (DataNode<ACCEPTS_IN, ?, ACCEPTS_OUT, ?> child : children) {
-			if (child instanceof BoundedDataNode<?, ?, ?, ?>) {
-				((BoundedDataNode<ACCEPTS_IN, ?, ACCEPTS_OUT, ?>) child).begin(out);
-			}
-		}		
-	}
 	
 	@Override
-	public WhereNextOut<ACCEPTS_OUT> out(ACCEPTS_OUT data) throws DataException {
+	public DataWriter writerFor(DataOut dataOut) throws DataException {
 		
-		// Reset for next time.
 		selected = false;
 		
-		return new WhereNextOut<ACCEPTS_OUT>(childrenToArray(), data);
+		return nextWriterFor(dataOut);
 	}
-	
-	public void end(ACCEPTS_OUT out) {
-		DataNode<ACCEPTS_IN, ?, ACCEPTS_OUT, ?>[] children = childrenToArray();
-		
-		for (DataNode<ACCEPTS_IN, ?, ACCEPTS_OUT, ?> child : children) {
-			if (child instanceof BoundedDataNode<?, ?, ?, ?>) {
-				((BoundedDataNode<ACCEPTS_IN, ?, ACCEPTS_OUT, ?>) child).end(out);
-			}
-		}		
+
+	@Override
+	public void reset() {
 	}
 		
 	@Override

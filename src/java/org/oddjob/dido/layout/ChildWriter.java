@@ -39,7 +39,7 @@ public class ChildWriter implements DataWriter {
 		
 		if (current == null) {
 			
-			if (valueNode != null && dataOut.hasData()) {
+			if (valueNode != null) {
 				writeDataWithInferredType(valueNode);
 			}
 			return false;

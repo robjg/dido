@@ -5,7 +5,7 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.UnsupportedeDataInException;
+import org.oddjob.dido.Layout;
 import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.layout.LayoutValueNode;
 
@@ -24,9 +24,13 @@ extends LayoutValueNode<String> {
 		return String.class;
 	}
 	
+	public void setOf(int index, Layout child) {
+		addOrRemoveChild(index, child);
+	}
+	
 	@Override
 	public DataReader readerFor(DataIn dataIn)
-			throws UnsupportedeDataInException {
+			throws DataException {
 		
 		TextIn textIn = dataIn.provide(TextIn.class);
 		

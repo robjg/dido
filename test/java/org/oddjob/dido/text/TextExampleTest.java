@@ -2,21 +2,21 @@ package org.oddjob.dido.text;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
 
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
-import org.oddjob.arooa.xml.XMLConfiguration;
-import org.oddjob.dido.DataPlan;
-import org.oddjob.dido.DataPlanType;
+import org.oddjob.arooa.types.ImportType;
 import org.oddjob.dido.DataReadJob;
 import org.oddjob.dido.DataWriteJob;
+import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
-import org.oddjob.dido.stream.StreamIn;
-import org.oddjob.dido.stream.StreamOut;
 
 public class TextExampleTest extends TestCase {
 
@@ -55,7 +55,7 @@ public class TextExampleTest extends TestCase {
 		fruitBinding.setType(new SimpleArooaClass(Fruit.class));
 	}
 	
-	public void testFixedReadWrite() throws ArooaConversionException {
+	public void testFixedReadWrite() throws ArooaConversionException, IOException {
 		
 		String EOL = System.getProperty("line.separator");
 				
@@ -65,20 +65,23 @@ public class TextExampleTest extends TestCase {
 			"Cox           Apple     Red         " + EOL +
 			"Granny Smith  Apple     Green       " + EOL;
 	
-		DataPlanType definition = new DataPlanType();
-		definition.setArooaSession(session);
-		definition.setConfiguration(new XMLConfiguration(
-				"org/oddjob/dido/text/FixedWidthExample.xml",
-				getClass().getClassLoader()));
+		ImportType importType = new ImportType();
+		importType.setArooaSession(new StandardArooaSession(
+				new ClassPathDescriptorFactory(
+						).createDescriptor(getClass().getClassLoader())));
+		importType.setResource("org/oddjob/dido/text/FixedWidthExample.xml");
 		
+		Layout layout = (Layout) importType.toObject();
+				
 		DataReadJob readJob = new DataReadJob();
-		readJob.setPlan((DataPlan<StreamIn, ?, ?, ?>) definition.toValue());
-		readJob.setBindings(0, fruitBinding);
+		readJob.setPlan(layout);
+		readJob.setBindings("fruit", fruitBinding);
 		readJob.setInput(new ByteArrayInputStream(data.getBytes()));
+		readJob.setBeans(new ArrayList<Object>());
 		
 		readJob.run();
 		
-		Object[] beans = readJob.getBeans();
+		Object[] beans = readJob.getBeans().toArray();
 		assertEquals(2, beans.length);
 		
 		Fruit fruit1 = (Fruit) beans[0];
@@ -92,8 +95,8 @@ public class TextExampleTest extends TestCase {
 		assertEquals("Green", fruit2.getColour());
 				
 		DataWriteJob writeJob = new DataWriteJob();
-		writeJob.setPlan((DataPlan<?, ?, StreamOut, ?>) definition.toValue());
-		writeJob.setBindings(0, fruitBinding);		
+		writeJob.setPlan(layout);
+		writeJob.setBindings("fruit", fruitBinding);		
 		
 		writeJob.setBeans(Arrays.asList(beans));
 		

@@ -15,7 +15,7 @@ import org.oddjob.dido.UnsupportedeDataInException;
  * @author rob
  *
  */
-public class InputStreamIn implements StreamIn, LinesIn {
+public class InputStreamIn implements StreamIn {
 	
 	public final LineNumberReader reader;
 	
@@ -42,10 +42,13 @@ public class InputStreamIn implements StreamIn, LinesIn {
 	
 	@Override
 	public <T extends DataIn> T provide(Class<T> type) 
-	throws UnsupportedeDataInException{
+	throws DataException{
 		
 		if (type.isInstance(this)) {
 			return type.cast(this);
+		}
+		if (type.isAssignableFrom(LinesIn.class)) {
+			return type.cast(new StreamLinesIn(getStream()));
 		}
 		
 		throw new UnsupportedeDataInException(this.getClass(), type);
