@@ -3,9 +3,10 @@ package org.oddjob.dido.text;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.stream.LinesOut;
 
 
-public class StringTextOut implements TextOut {
+public class StringTextOut implements TextOut, LinesOut {
 
 	public static final char PAD_CHARACTER = ' ';
 	
@@ -17,6 +18,11 @@ public class StringTextOut implements TextOut {
 	
 	@Override
 	public void append(String text) {
+		buffer.append(text);
+	}
+	
+	@Override
+	public void writeLine(String text) throws DataException {
 		buffer.append(text);
 	}
 	
@@ -63,9 +69,8 @@ public class StringTextOut implements TextOut {
 		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
-		else {
-			throw new UnsupportedeDataOutException(getClass(), type);
-		}
+
+		throw new UnsupportedeDataOutException(getClass(), type);
 	}
 	
 	@Override

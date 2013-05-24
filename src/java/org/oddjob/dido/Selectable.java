@@ -18,4 +18,6 @@ public interface Selectable {
 	 * @param selected
 	 */
 	public void setSelected(boolean selected);
+	
+	public void acceptDiscriminator(Layout discriminator);
 }

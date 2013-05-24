@@ -15,40 +15,51 @@ public class StreamLinesOut implements LinesOut {
 	
 	private final OutputStream outputStream;
 	
-	private boolean disabled;
-	
 	private TextOut textOut;
-	
-	private String lastLine;
 	
 	public StreamLinesOut(OutputStream outputStream) {
 		this.outputStream = outputStream;
 	}
 
 	public void writeLine(String text) throws DataException {
-		if (!disabled) {
-			_writeLine(text);
-		}
-		textOut = null;
-	}
-	
-	private void _writeLine(String text) throws DataException {
-		lastLine = text;
 		try {
 			outputStream.write(text.getBytes());
 			outputStream.write(LINE_SEPARATOR.getBytes());
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			throw new DataException(e);
 		}
+		finally {
+			reset();
+		}
 	}
-
+	
+	protected void reset() {
+		textOut = null;
+	}
+	
+	
 	@Override
 	public <T extends DataOut> T provide(Class<T> type)
 			throws UnsupportedeDataOutException {
 		
 		if (type.isAssignableFrom(LinesOut.class)) {
-			this.disabled = true;
-			return type.cast(new StreamLinesOut(outputStream));
+			return type.cast(new StreamLinesOut(outputStream) {
+				@Override
+				public void writeLine(String text) throws DataException {
+					// Write text to the parent
+					if (textOut == null) {
+						textOut = new StringTextOut();
+					}
+					else {
+						textOut.append(LINE_SEPARATOR);
+					}
+					textOut.append(text);
+					
+					// Clear any text this LinesOut has.
+					this.reset();
+				}
+			});
 		}
 
 		if (type.isAssignableFrom(TextOut.class)) {
@@ -69,7 +80,7 @@ public class StreamLinesOut implements LinesOut {
 	
 	@Override
 	public boolean hasData() {
-		return lastLine != null;
+		return textOut != null && textOut.hasData();
 	}
 	
 	@Override
@@ -78,7 +89,7 @@ public class StreamLinesOut implements LinesOut {
 			return textOut.toValue(type);
 		}
 		else {
-			return type.cast(lastLine);
+			return null;
 		}
 	}
 	

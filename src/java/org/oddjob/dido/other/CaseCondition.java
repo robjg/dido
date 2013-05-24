@@ -26,7 +26,7 @@ public interface CaseCondition<TYPE> {
 	 * @return The value for the descriminator of null if this CaseCondition
 	 * wasn't selected.
 	 */
-	public TYPE evaluateOut();
+	public TYPE value();
 	
 	/**
 	 * The class type of the condition.

@@ -1,7 +1,11 @@
 package org.oddjob.dido.text;
 
+import java.util.Arrays;
+
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.UnsupportedeDataInException;
+import org.oddjob.dido.stream.LinesIn;
+import org.oddjob.dido.stream.ListLinesIn;
 
 
 public class StringTextIn implements TextIn {
@@ -23,11 +27,15 @@ public class StringTextIn implements TextIn {
 	@Override
 	public <T extends DataIn> T provide(Class<T> type)
 			throws UnsupportedeDataInException {
+		
 		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
-		else {
-			throw new UnsupportedeDataInException(this.getClass(), type);
+
+		if (type.isAssignableFrom(LinesIn.class)) {
+			return type.cast(new ListLinesIn(Arrays.asList(text)));
 		}
+		
+		throw new UnsupportedeDataInException(this.getClass(), type);
 	}
 }

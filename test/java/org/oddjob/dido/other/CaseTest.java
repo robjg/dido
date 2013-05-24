@@ -93,14 +93,9 @@ public class CaseTest extends TestCase {
 		test.setOf(1, when1);
 		test.setOf(2, when2);
 		
-		StringTextOut textOut = new StringTextOut() {
-			@Override
-			public boolean flush() throws DataException {
-				return false;
-			}
-		};
+		StringTextOut textOut = new StringTextOut();
 		
-		when1.bind(new ValueBinding());
+		text1.bind(new ValueBinding());
 		
 		DataWriter writer = test.writerFor(textOut);
 

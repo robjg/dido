@@ -20,6 +20,11 @@ implements
 	
 	private boolean selected;
 	
+	@Override
+	public void acceptDiscriminator(Layout discriminator) {
+		addOrRemoveChild(0, discriminator);
+	}
+
 	public void setOf(int index, Layout child) {
 		addOrRemoveChild(index, child);
 	}
@@ -53,20 +58,15 @@ implements
 	}
 
 	@Override
-	public String evaluateOut() {
-		if (selected) {
-			return value;
-		}
-		else {
-			return null;
-		}
-	}
-	
-	@Override
 	public Class<String> getType() {
 		return String.class;
 	}
 
+	@Override
+	public String value() {
+		return value;
+	}
+	
 	public String getValue() {
 		return value;
 	}

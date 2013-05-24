@@ -1,5 +1,6 @@
 package org.oddjob.dido.bio;
 
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -7,17 +8,14 @@ import junit.framework.TestCase;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.UnsupportedeDataInException;
-import org.oddjob.dido.stream.ListLinesOut;
 import org.oddjob.dido.stream.LinesIn;
 import org.oddjob.dido.stream.LinesLayout;
+import org.oddjob.dido.stream.ListLinesIn;
+import org.oddjob.dido.stream.ListLinesOut;
 import org.oddjob.dido.text.DelimitedLayout;
 import org.oddjob.dido.text.FieldLayout;
-import org.oddjob.dido.text.StringTextIn;
-import org.oddjob.dido.text.TextIn;
 import org.oddjob.dido.text.TextLayout;
 
 public class BeanBindingBeanTest extends TestCase {
@@ -36,42 +34,6 @@ public class BeanBindingBeanTest extends TestCase {
 	}
 	
 	
-	private class OurLinesIn 
-	implements LinesIn {
-
-		final String[] lines;
-		
-		int i = -1;
-		
-		public OurLinesIn(String[] lines) {
-			this.lines = lines;
-		}
-		
-		@Override
-		public <T extends DataIn> T provide(Class<T> type)
-				throws UnsupportedeDataInException {
-			
-			if (type.isAssignableFrom(LinesIn.class)) {
-				return type.cast(this);
-			}
-			
-			if (type.isAssignableFrom(TextIn.class)) {
-				return type.cast(new StringTextIn(lines[i]));
-			}
-			
-			throw new UnsupportedeDataInException(getClass(), type);
-		}
-		
-		@Override
-		public String readLine() throws DataException {
-			if (i == lines.length - 1) {
-				return null;
-			}
-			else {
-				return lines[++i];
-			}
-		}
-	}
 	
 	public void testBindOutNoChild() throws DataException {
 		
@@ -113,8 +75,8 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		root.bind(test);
 		
-		OurLinesIn dataIn = new OurLinesIn(
-				new String[] {"Apples", "Pears"});
+		LinesIn dataIn = new ListLinesIn(
+				Arrays.asList("Apples", "Pears"));
 		
 		DataReader reader = root.readerFor(dataIn);
 		
@@ -174,7 +136,8 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setType(new SimpleArooaClass(Fruit.class));
 		test.setNode("fruit");
 		
-		OurLinesIn dataIn = new OurLinesIn(new String[] { "apple" });
+		LinesIn dataIn = new ListLinesIn(
+				Arrays.asList("apple"));
 		
 		TextLayout typeNode = new TextLayout();
 		typeNode.setName("type");
@@ -272,7 +235,8 @@ public class BeanBindingBeanTest extends TestCase {
 				
 		root.bind(test);
 		
-		OurLinesIn dataIn = new OurLinesIn(new String[] { "12.47", "5.23" });
+		LinesIn dataIn = new ListLinesIn(
+				Arrays.asList("12.47", "5.23"));
 		
 		DataReader reader = root.readerFor(dataIn);
 		
@@ -350,8 +314,8 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		root.bind(test);
 		
-		OurLinesIn dataIn = new OurLinesIn(new String[] 
-				{ "apple,27" , "pear,42" });
+		LinesIn dataIn = new ListLinesIn(
+				Arrays.asList("apple,27" , "pear,42"));
 		
 		DataReader reader = root.readerFor(dataIn);
 

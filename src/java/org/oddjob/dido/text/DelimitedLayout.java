@@ -30,7 +30,7 @@ implements Headed, ClassMorphic {
 	
 	private boolean withHeadings;
 	
-	private DataReader reader;
+	private boolean initialised;
 	
 	@Override
 	public Class<String[]> getType() {
@@ -62,9 +62,7 @@ implements Headed, ClassMorphic {
 				headings = parseDelimited(line);
 			}
 
-			reader = new BodyReader(linesIn);
-			
-			return reader.read();
+			return new BodyReader(linesIn).read();
 		}
 	}
 	
@@ -119,18 +117,20 @@ implements Headed, ClassMorphic {
 	public DataReader readerFor(DataIn dataIn)
 	throws DataException {
 		
-		if (reader == null) {
-			
-			reader = new HeaderReader(
-					dataIn.provide(LinesIn.class));
+		LinesIn linesIn = dataIn.provide(LinesIn.class);
+		
+		if (initialised) {
+			return new BodyReader(linesIn);
 		}
-
-		return reader;
+		else {
+			initialised = true;
+			return new HeaderReader(linesIn);
+		}
 	}
 	
 	@Override
 	public void reset() {
-		reader = null;
+		initialised = false;
 	}
 	
 	

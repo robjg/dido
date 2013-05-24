@@ -431,6 +431,7 @@ public class WhenTest extends TestCase {
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
 		readJob.setInput(new ByteArrayInputStream(data.getBytes()));
+		readJob.setBeans(new ArrayList<Object>());
 		
 		readJob.run();
 		
