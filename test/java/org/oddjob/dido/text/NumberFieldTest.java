@@ -44,7 +44,6 @@ public class NumberFieldTest extends TestCase {
 	BeanBindingBean employeeBinding = new BeanBindingBean(); 
 	{
 		employeeBinding.setArooaSession(session);
-		employeeBinding.setNode("employee");
 		employeeBinding.setType(new SimpleArooaClass(Employee.class));
 	}
 	

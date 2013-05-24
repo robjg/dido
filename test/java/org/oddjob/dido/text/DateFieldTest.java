@@ -42,7 +42,6 @@ public class DateFieldTest extends TestCase {
 	BeanBindingBean employeeBinding = new BeanBindingBean(); 
 	{
 		employeeBinding.setArooaSession(session);
-		employeeBinding.setNode("employee");
 		employeeBinding.setType(new SimpleArooaClass(Employee.class));
 	}
 	

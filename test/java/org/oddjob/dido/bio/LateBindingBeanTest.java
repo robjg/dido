@@ -59,7 +59,6 @@ public class LateBindingBeanTest extends TestCase {
 		
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
-		test.setNode("fruit");
 		
 		FieldLayout typeNode = new FieldLayout();
 		typeNode.setName("type");
@@ -98,7 +97,6 @@ public class LateBindingBeanTest extends TestCase {
 		
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
-		test.setNode("basket");
 		
 		FieldLayout costNode = new FieldLayout();
 		costNode.setName("cost");

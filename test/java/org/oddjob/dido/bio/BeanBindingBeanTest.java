@@ -42,7 +42,6 @@ public class BeanBindingBeanTest extends TestCase {
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Fruit.class));
-		test.setNode("fruit");
 		
 		LinesLayout root = new LinesLayout();
 		root.setName("fruit");
@@ -68,7 +67,6 @@ public class BeanBindingBeanTest extends TestCase {
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Fruit.class));
-		test.setNode("fruit");
 		
 		LinesLayout root = new LinesLayout();
 		root.setName("fruit");
@@ -99,7 +97,6 @@ public class BeanBindingBeanTest extends TestCase {
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Fruit.class));
-		test.setNode("fruit");
 
 		TextLayout typeNode = new TextLayout();
 		typeNode.setName("type");
@@ -134,7 +131,6 @@ public class BeanBindingBeanTest extends TestCase {
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Fruit.class));
-		test.setNode("fruit");
 		
 		LinesIn dataIn = new ListLinesIn(
 				Arrays.asList("apple"));
@@ -183,7 +179,6 @@ public class BeanBindingBeanTest extends TestCase {
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Basket.class));
-		test.setNode("basket");
 		
 		TextLayout costNode = new TextLayout();
 		costNode.setName("cost");
@@ -224,7 +219,6 @@ public class BeanBindingBeanTest extends TestCase {
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Basket.class));
-		test.setNode("basket");
 		
 		TextLayout costNode = new TextLayout();
 		costNode.setName("cost");
@@ -267,7 +261,6 @@ public class BeanBindingBeanTest extends TestCase {
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Fruit.class));
-		test.setNode("fruit");
 		
 		FieldLayout typeNode = new FieldLayout();
 		typeNode.setName("type");
@@ -308,7 +301,6 @@ public class BeanBindingBeanTest extends TestCase {
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Fruit.class));
-		test.setNode("fruit");
 		
 		DelimitedLayout root = new DelimitedLayout();
 		

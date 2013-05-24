@@ -51,7 +51,6 @@ public class TextExampleTest extends TestCase {
 	BeanBindingBean fruitBinding = new BeanBindingBean(); 
 	{
 		fruitBinding.setArooaSession(session);
-		fruitBinding.setNode("fruit");
 		fruitBinding.setType(new SimpleArooaClass(Fruit.class));
 	}
 	

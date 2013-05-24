@@ -137,14 +137,12 @@ public class WhenTest extends TestCase {
 	BeanBindingBean personBinding = new BeanBindingBean();
 	{
 		personBinding.setArooaSession(session);
-		personBinding.setNode("people");
 		personBinding.setType(new SimpleArooaClass(Person.class));
 	}
 	
 	BeanBindingBean fruitBinding = new BeanBindingBean(); 
 	{
 		fruitBinding.setArooaSession(session);
-		fruitBinding.setNode("fruit");
 		fruitBinding.setType(new SimpleArooaClass(Fruit.class));
 	}
 	
