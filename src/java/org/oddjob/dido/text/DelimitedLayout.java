@@ -41,28 +41,36 @@ implements Headed, ClassMorphic {
 		addOrRemoveChild(index, child);
 	}
 	
-	class HeaderReader implements DataReader {
+	class HeaderFirstReader implements DataReader {
 		
 		private final LinesIn linesIn;
 		
-		public HeaderReader(LinesIn linesIn) {
+		private DataReader reader = new DataReader() {
+			
+			@Override
+			public Object read() throws DataException {
+				if (withHeadings) {
+					String line = linesIn.readLine();
+					
+					if (line == null) {
+						return null;
+					}
+					
+					headings = parseDelimited(line);
+				}
+
+				reader = new BodyReader(linesIn);
+				return reader.read();
+			}
+		};
+		
+		public HeaderFirstReader(LinesIn linesIn) {
 			this.linesIn = linesIn;
 		}
 		
 		@Override
 		public Object read() throws DataException {
-			
-			if (withHeadings) {
-				String line = linesIn.readLine();
-				
-				if (line == null) {
-					return null;
-				}
-				
-				headings = parseDelimited(line);
-			}
-
-			return new BodyReader(linesIn).read();
+			return reader.read();
 		}
 	}
 	
@@ -124,7 +132,7 @@ implements Headed, ClassMorphic {
 		}
 		else {
 			initialised = true;
-			return new HeaderReader(linesIn);
+			return new HeaderFirstReader(linesIn);
 		}
 	}
 	

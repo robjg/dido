@@ -6,6 +6,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.oddjob.arooa.life.SimpleArooaClass;
+import org.oddjob.arooa.reflect.BeanViewBean;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
@@ -24,12 +25,22 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		private String type;
 
+		private int quantity;
+		
 		public String getType() {
 			return type;
 		}
 
 		public void setType(String type) {
 			this.type = type;
+		}
+
+		public int getQuantity() {
+			return quantity;
+		}
+
+		public void setQuantity(int quantity) {
+			this.quantity = quantity;
 		}
 	}
 	
@@ -294,6 +305,50 @@ public class BeanBindingBeanTest extends TestCase {
 		test.reset();
 	}
 
+	public void testBindOutMorphicNoChild() throws DataException {
+		
+		StandardArooaSession session = new StandardArooaSession();
+		
+		BeanViewBean beanView = new BeanViewBean();
+		beanView.setProperties("type, quantity");
+		
+		BeanBindingBean test = new BeanBindingBean();
+		test.setArooaSession(session);
+		test.setBeanView(beanView.toValue());
+		test.setType(new SimpleArooaClass(Fruit.class));
+		
+		DelimitedLayout root = new DelimitedLayout();
+		root.setWithHeadings(true);
+		root.bind(test);
+		
+		ListLinesOut dataOut = new ListLinesOut();
+		
+		DataWriter writer = root.writerFor(dataOut);
+				
+		Fruit fruit = new Fruit();
+		fruit.setType("apple");
+		fruit.setQuantity(22);
+		
+		assertFalse(writer.write(fruit));
+		
+		List<String> results = dataOut.getLines();
+		
+		assertEquals("type,quantity", results.get(0));
+		assertEquals("apple,22", results.get(1));
+		
+		assertEquals(2, results.size());
+		
+		fruit.setType("pear");
+		fruit.setQuantity(5);
+		
+		assertFalse(writer.write(fruit));
+		
+		assertEquals("pear,5", results.get(2));
+		assertEquals(3, results.size());
+		
+		test.reset();
+	}
+	
 	public void testBindInMorphic() throws DataException {
 		
 		StandardArooaSession session = new StandardArooaSession();
@@ -303,11 +358,14 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setType(new SimpleArooaClass(Fruit.class));
 		
 		DelimitedLayout root = new DelimitedLayout();
-		
+		root.setWithHeadings(true);
 		root.bind(test);
 		
 		LinesIn dataIn = new ListLinesIn(
-				Arrays.asList("apple,27" , "pear,42"));
+				Arrays.asList(
+						"type,quantity", 
+						"apple,27", 
+						"pear,42"));
 		
 		DataReader reader = root.readerFor(dataIn);
 

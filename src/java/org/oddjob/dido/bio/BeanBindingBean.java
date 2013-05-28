@@ -274,7 +274,7 @@ implements Binding, ArooaSessionAware {
 		
 		@Override
 		public void process(Layout node) {
-			logger.info("Binding daata to " + node.getName());
+			logger.info("Binding data to " + node.getName());
 		}
 	}
 	

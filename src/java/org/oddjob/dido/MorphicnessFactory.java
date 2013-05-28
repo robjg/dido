@@ -1,5 +1,7 @@
 package org.oddjob.dido;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -30,6 +32,8 @@ public class MorphicnessFactory {
 		if (beanView == null) {
 			beanView = new FallbackBeanView(accessor, arooaClass);
 		}
+		
+		final List<String> properties = new ArrayList<String>();
 
 		final Map<String, Class<?>> types = new TreeMap<String, Class<?>>();
 		final Map<String, String> titles = new TreeMap<String, String>();
@@ -44,6 +48,7 @@ public class MorphicnessFactory {
 					!overview.isIndexed(property) &&
 					!overview.isMapped(property)) {
 
+				properties.add(property);
 				types.put(property, overview.getPropertyType(property));
 				titles.put(property, beanView.titleFor(property));
 			}
@@ -53,7 +58,7 @@ public class MorphicnessFactory {
 			
 			@Override
 			public String[] getNames() {
-				return types.keySet().toArray(new String[types.size()]);
+				return properties.toArray(new String[properties.size()]);
 			}
 			
 			@Override
@@ -83,6 +88,8 @@ public class MorphicnessFactory {
 			beanView = new FallbackBeanView(accessor, arooaClass);
 		}
 
+		final List<String> properties = new ArrayList<String>();
+
 		final Map<String, Class<?>> types = new TreeMap<String, Class<?>>();
 		final Map<String, String> titles = new TreeMap<String, String>();
 		
@@ -96,6 +103,7 @@ public class MorphicnessFactory {
 					!overview.isIndexed(property) &&
 					!overview.isMapped(property)) {
 
+				properties.add(property);
 				types.put(property, overview.getPropertyType(property));
 				titles.put(property, beanView.titleFor(property));
 			}
@@ -105,7 +113,7 @@ public class MorphicnessFactory {
 			
 			@Override
 			public String[] getNames() {
-				return types.keySet().toArray(new String[types.size()]);
+				return properties.toArray(new String[properties.size()]);
 			}
 			
 			@Override

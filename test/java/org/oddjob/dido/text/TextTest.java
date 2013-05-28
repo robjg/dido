@@ -1,63 +1,63 @@
 package org.oddjob.dido.text;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import junit.framework.TestCase;
 
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataNode;
-import org.oddjob.dido.WhereNextIn;
-import org.oddjob.dido.WhereNextOut;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.bio.ValueBinding;
 
 
 public class TextTest extends TestCase {
 
-	public void testFieldWhereNextInNoChildren() {
+	public void testFieldWhereNextInNoChildren() throws DataException {
 
-		Text test = new Text();
+		TextLayout test = new TextLayout();
 		
 		TextIn text = new StringTextIn("John");
 				
-		WhereNextIn<TextIn> next = test.in(text);
+		DataReader reader = test.readerFor(text);
+		
+		test.bind(new ValueBinding());
+
+		String next = (String) reader.read();
 		
 		assertNotNull(next);
 		
-		assertNull(next.getChildren());
-		assertNull(next.getChildData());
+		assertEquals("John", next);
+		assertEquals("John", test.getValue());
 		
+		next = (String) reader.read();
+		
+		assertNull(next);
 		assertEquals("John", test.getValue());
 	}	
 		
 	public void testTextInWithChildren() throws DataException {
 
-		Text test = new Text();
+		TextLayout test = new TextLayout();
 		test.setRaw(true);
 		
-		Text c1 = new Text();
+		TextLayout c1 = new TextLayout();
 		c1.setFrom(0);
 		c1.setLength(5);
 		
-		Text c2 = new Text();
+		TextLayout c2 = new TextLayout();
 		c2.setFrom(5);
 		c2.setLength(10);
 		c2.setRaw(true);
 
-		test.setIs(0, c1);
-		test.setIs(1, c2);
+		test.setOf(0, c1);
+		test.setOf(1, c2);
 		
 		TextIn text = new StringTextIn("Big  Cheese  ");
 				
-		WhereNextIn<TextIn> next = test.in(text);
+		DataReader reader = test.readerFor(text);
 		
-		assertNotNull(next);
+		String next = (String) reader.read();
 		
+		assertNull(next);
 		
-		DataNode<TextIn, ?, ?, ?>[] children = next.getChildren();
-		
-		TextIn childData = next.getChildData();
-		
-		children[0].in(childData);
-		children[1].in(childData);
 		
 		assertEquals("Big", c1.getValue());
 		assertEquals("Cheese  ", c2.getValue());
@@ -65,76 +65,44 @@ public class TextTest extends TestCase {
 	
 	public void testOutput() throws DataException {
 		
-		Text test = new Text();
+		TextLayout test = new TextLayout();
+
+		test.bind(new ValueBinding());
 		
-		test.setValue("apples");
+		StringTextOut dataOut = new StringTextOut();
 		
-		final AtomicReference<String> result = new AtomicReference<String>();
+		DataWriter writer = test.writerFor(dataOut);
 		
-		StringTextOut dataOut = new StringTextOut() {
-			
-			@Override
-			public boolean flush() throws DataException {
-				result.set(this.toString());
-				return true;
-			}
-		};
+		assertFalse(writer.write("apples"));
 		
-		WhereNextOut<TextOut> where = test.out(dataOut);
-		
-		assertNotNull(where);
-		assertNull(where.getChildren());
-		assertNull(where.getChildData());
-		
-		dataOut.flush();
-		
-		assertEquals("apples", result.get());
+		assertEquals("apples", dataOut.toValue(String.class));
 	}
 	
 	public void testTextOutWithChildren() throws DataException {
 
-		Text test = new Text();
+		TextLayout test = new TextLayout();
 		
-		Text c1 = new Text();
+		TextLayout c1 = new TextLayout();
 		c1.setFrom(0);
 		c1.setLength(5);
 		c1.setRaw(true);
 		
-		Text c2 = new Text();
+		TextLayout c2 = new TextLayout();
 		c2.setFrom(5);
 		c2.setLength(10);
 
-		test.setIs(0, c1);
-		test.setIs(1, c2);
+		test.setOf(0, c1);
+		test.setOf(1, c2);
 		
-		c1.setValue("Big");
-		c2.setValue("Cheese");
+		c1.bind(new ValueBinding());
+		c2.bind(new ValueBinding());
 		
-		final AtomicReference<String> result = new AtomicReference<String>();
+		StringTextOut dataOut = new StringTextOut();
+	
+		DataWriter writer = test.writerFor(dataOut);
 		
-		StringTextOut dataOut = new StringTextOut() {
-			
-			@Override
-			public boolean flush() throws DataException {
-				result.set(this.toString());
-				return true;
-			}
-		};
+		writer.write("Big");
 				
-		WhereNextOut<TextOut> where = test.out(dataOut);
-		
-		assertNotNull(where);
-		
-		DataNode<?, ?, TextOut, ?>[] children = where.getChildren();
-		
-		TextOut childData = where.getChildData();
-		
-		children[0].out(childData);
-		children[1].out(childData);
-		
-		childData.flush();
-		dataOut.flush();
-		
-		assertEquals("Big  Cheese    ", result.get());
+		assertEquals("Big  Big       ", dataOut.toValue(String.class));
 	}
 }

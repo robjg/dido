@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.oddjob.dido.bio.Binding;
-import org.oddjob.dido.io.ConfigurationType;
 import org.oddjob.dido.layout.BindingHelper;
 import org.oddjob.dido.stream.OutputStreamOut;
 import org.oddjob.dido.stream.StreamOut;
@@ -56,14 +55,12 @@ public class DataWriteJob implements Runnable {
      * @oddjob.required Yes.
      */	
 	private Map<String, Binding> bindings = new HashMap<String, Binding>();
-	
-    /**
+		
+	/**
      * @oddjob.property
-     * @oddjob.description How to configure nodes.
-     * @oddjob.required No.
-     */	
-	private ConfigurationType configurationType;
-	
+     * @oddjob.description The number of beans written.
+     * @oddjob.required Read Only.
+	 */
 	private int beanCount;
 	
 	@Override
@@ -73,11 +70,13 @@ public class DataWriteJob implements Runnable {
 		if (plan == null) {
 			throw new NullPointerException("No Definition.");
 		}
-		if (output == null) {
-			throw new NullPointerException("No Output.");
-		}
 
-		StreamOut out = new OutputStreamOut(output);
+		OutputStream output = this.output;
+		
+		StreamOut dataOut = null;
+		if (output != null) {
+			dataOut = new OutputStreamOut(output);
+		}
 		
 		Layout root = plan;
 		root.reset();
@@ -90,7 +89,7 @@ public class DataWriteJob implements Runnable {
 		}
 		
 		try {
-			DataWriter writer = root.writerFor(out);
+			DataWriter writer = root.writerFor(dataOut);
 			
 			for (Object bean : beans) {
 				
@@ -99,7 +98,9 @@ public class DataWriteJob implements Runnable {
 				++beanCount;
 			}
 			
-			output.close();
+			if (output != null) {
+				output.close();
+			}
 		}
 		catch (RuntimeException e) {
 			throw e;
@@ -162,14 +163,6 @@ public class DataWriteJob implements Runnable {
 		else {
 			return getClass().getSimpleName();
 		}
-	}
-
-	public ConfigurationType getConfigurationType() {
-		return configurationType;
-	}
-
-	public void setConfigurationType(ConfigurationType configurationStrategy) {
-		this.configurationType = configurationStrategy;
 	}
 
 	public int getBeanCount() {

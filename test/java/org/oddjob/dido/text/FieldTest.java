@@ -1,81 +1,50 @@
 package org.oddjob.dido.text;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import junit.framework.TestCase;
 
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.WhereNextIn;
-import org.oddjob.dido.WhereNextOut;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.bio.ValueBinding;
 
 public class FieldTest extends TestCase {
 
-	public void testInputNoChildren() {
+	public void testInputNoChildren() throws DataException {
 
-		Field test = new Field();
+		FieldLayout test = new FieldLayout();
 		
 		MappedFieldsIn fields = new MappedFieldsIn();
 		
 		fields.setHeadings(new String[] { "name" });
 		fields.setValues(new String[] { "John" });
+
+		test.bind(new ValueBinding());
 		
-		test.begin(fields);
+		DataReader reader = test.readerFor(fields);
 		
-		WhereNextIn<TextIn> next = test.in(fields);
-		
-		assertNotNull(next);
-		
-		assertNull(next.getChildren());
-		assertNull(next.getChildData());
-		
-		assertEquals("John", test.getValue());
+		String result = (String) reader.read();
+				
+		assertEquals("John", result);
 	}	
 	
 	public void testOutput() throws DataException {
 		
-		final AtomicReference<String[]>	result = 
-			new AtomicReference<String[]>();
-			
-		FieldsOut headingsOut = new HeadingsFieldsOut(
-				new MappedFieldsOut.FieldsWriter() {
-					@Override
-					public void write(String[] values) {
-						result.set(values);
-					}
-				}, false);
-			
-		Field test = new Field();
+		FieldLayout test = new FieldLayout();
+
+		test.bind(new ValueBinding());
 		
-		test.setValue("apples");
+		SimpleFieldsOut dataOut = new SimpleFieldsOut();
 		
-		test.begin(headingsOut);
+		DataWriter writer = test.writerFor(dataOut);
+		
+		writer.write("apples");
 		
 		assertEquals(1, test.getColumn());
 		
-		MappedFieldsOut dataOut = new MappedFieldsOut(
-				new MappedFieldsOut.FieldsWriter() {
-					@Override
-					public void write(String[] values) {
-						result.set(values);
-					}
-				});
+		assertEquals("apples", dataOut.values()[0]);		
 		
-		WhereNextOut<TextOut> where = test.out(dataOut);
-		
-		assertNotNull(where);
-		assertNull(where.getChildren());
-		assertNull(where.getChildData());
-		
-		dataOut.flush();
-		
-		assertEquals("apples", result.get()[0]);		
-		
-		test.setValue("oranges");
-		
-		test.out(dataOut);
-		
-		dataOut.flush();
-		
-		assertEquals("oranges", result.get()[0]);
+		writer.write("oranges");
+				
+		assertEquals("oranges", dataOut.values()[0]);
 	}
 }

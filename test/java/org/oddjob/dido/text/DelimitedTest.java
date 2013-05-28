@@ -6,17 +6,25 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import junit.framework.TestCase;
 
+import org.oddjob.arooa.ArooaSession;
+import org.oddjob.arooa.reflect.PropertyAccessor;
+import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.WhereNextIn;
 import org.oddjob.dido.WhereNextOut;
+import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.bio.Binding;
+import org.oddjob.dido.bio.ValueBinding;
 import org.oddjob.dido.stream.LinesLayout;
+import org.oddjob.dido.stream.LinesOut;
+import org.oddjob.dido.stream.ListLinesOut;
 import org.oddjob.dido.stream.OutputStreamOut;
 
 
@@ -74,83 +82,63 @@ public class DelimitedTest extends TestCase {
 		
 		String data = "a,b,c";
 
-		Delimited delimited = new Delimited();
+		DelimitedLayout delimited = new DelimitedLayout();
 		delimited.setHeadings(new String[] { "fieldA", "fieldB", "fieldC" });
-		delimited.setWithHeadings(true);
+		delimited.setWithHeadings(false);
 		
-		Field a = new Field();
+		FieldLayout a = new FieldLayout();
 		a.setName("fieldA");
-		Field b = new Field();
+		FieldLayout b = new FieldLayout();
 		b.setName("fieldB");
-		Field c = new Field();
+		FieldLayout c = new FieldLayout();
 		c.setName("fieldC");
 				
-		delimited.setIs(0, c);
-		delimited.setIs(1, b);
-		delimited.setIs(2, a);		
+		delimited.setOf(0, c);
+		delimited.setOf(1, b);
+		delimited.setOf(2, a);		
 		
-		WhereNextIn<FieldsIn> where = delimited.in(new StringTextIn(data));		
+		ArooaSession session = new StandardArooaSession();
+		BeanBindingBean binding = new BeanBindingBean();
+		binding.setArooaSession(session);
 		
-		assertNull(delimited.getValue());
-		
-		assertNotNull(where);
-	
-		FieldsIn fields = where.getChildData();
-		
-		assertEquals("a", fields.getColumn(1));
-		assertEquals("b", fields.getColumn(2));
-		assertEquals("c", fields.getColumn(3));
+		delimited.bind(binding);
 
-		DataNode<?, ?, ?, ?>[] children = where.getChildren();
-
-		assertEquals(a, children[2]);
-		assertEquals(b, children[1]);
-		assertEquals(c, children[0]);		
+		DataReader reader = delimited.readerFor(new StringTextIn(data));
 		
-		c.in(fields);
-		b.in(fields);
-		a.in(fields);
+		Object result =  reader.read();
 		
-		assertEquals("a", a.getValue());
-		assertEquals("b", b.getValue());
-		assertEquals("c", c.getValue());
+		assertNotNull(result);
+		
+		PropertyAccessor accessor = session.getTools().getPropertyAccessor();
+		
+		assertEquals("a", accessor.getProperty(result, "fieldA"));
+		assertEquals("b", accessor.getProperty(result, "fieldB"));
+		assertEquals("c", accessor.getProperty(result, "fieldC"));
 	}
 
 	String EOL = System.getProperty("line.separator");
 	
 	public void testWriteNoChildrenTheory() throws DataException {
+				
+		DelimitedLayout test = new DelimitedLayout();
+		test.bind(new ValueBinding());
 		
-		StringTextOut textOut = new StringTextOut() {
-			@Override
-			public boolean flush() throws DataException {
-				clear();
-				return true;
-			}
-		};
+		ListLinesOut dataOut = new ListLinesOut();
+				
+		DataWriter writer = test.writerFor(dataOut);
 		
-		Delimited test = new Delimited();
+		writer.write(new String[] { "a", "b", "c" });
+
+		assertEquals("a,b,c", dataOut.getLines().get(0));
 		
-		test.setValue(new String[] { "a", "b", "c" });
+		writer.write(new String[] { "d", "e", "f" });
 		
-		WhereNextOut<FieldsOut> where = test.out(textOut);
-		assertNotNull(where);
+		assertEquals("d,e,f", dataOut.getLines().get(1));
 		
-		assertEquals("a,b,c", textOut.toString());
-		textOut.flush();
+		writer.write(new String[] { "h", "i", "j" });
 		
-		test.setValue(new String[] { "d", "e", "f" });
-		
-		test.out(textOut);
-		
-		assertEquals("d,e,f", textOut.toString());
-		textOut.flush();
-		
-		test.setValue(new String[] { "h", "i", "j" });
-		
-		test.out(textOut);
-		
-		assertEquals("h,i,j", textOut.toString());
-		textOut.flush();
+		assertEquals("h,i,j", dataOut.getLines().get(2));
+
 	}
 	
 	private class OurBinding implements Binding {

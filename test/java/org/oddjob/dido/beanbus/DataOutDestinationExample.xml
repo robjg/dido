@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <bean-bus>
+            <parts>
+                <bus:iterable-driver xmlns:bus="oddjob:beanbus">
+                    <beans>
+                        <list>
+                            <values>
+                                <bean class="org.oddjob.dido.beanbus.DataOutDestinationTest$Fruit" quantity="5" type="Apple"/>
+                                <bean class="org.oddjob.dido.beanbus.DataOutDestinationTest$Fruit" quantity="2" type="Orange"/>
+                                <bean class="org.oddjob.dido.beanbus.DataOutDestinationTest$Fruit" quantity="7" type="Pear"/>
+                            </values>
+                        </list>
+                    </beans>
+                </bus:iterable-driver>
+                <bean class="org.oddjob.dido.beanbus.DataOutDestination">
+                    <layout>
+                        <dido:delimited name="top" withHeadings="true" xmlns:dido="oddjob:dido"/>
+                    </layout>
+                    <output>
+                        <stdout/>
+                    </output>
+                    <bindings>
+                        <dido:bean-binding key="top" xmlns:dido="oddjob:dido">
+                            <beanView>
+                                <bean class="org.oddjob.arooa.reflect.BeanViewBean" properties="type, quantity"/>
+                            </beanView>
+                        </dido:bean-binding>
+                    </bindings>
+                </bean>
+            </parts>
+        </bean-bus>
+    </job>
+</oddjob>
