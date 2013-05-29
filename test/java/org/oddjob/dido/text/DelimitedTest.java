@@ -10,13 +10,11 @@ import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataNode;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.ValueNode;
-import org.oddjob.dido.WhereNextIn;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.bio.ValueBinding;
@@ -28,17 +26,18 @@ import org.oddjob.dido.stream.OutputStreamOut;
 
 public class DelimitedTest extends TestCase {
 
-	public void testInWtihNoChildren() throws DataException {
+	public void testReadWtihNoChildren() throws DataException {
 		
-		String data = "a,b,c";
+		TextIn dataIn = new StringTextIn("a,b,c");
 
-		Delimited delimited = new Delimited();
-
-		WhereNextIn<FieldsIn> where = delimited.in(new StringTextIn(data));		
+		DelimitedLayout delimited = new DelimitedLayout();
+		delimited.bind(new ValueBinding());
 		
-		assertNotNull(where);
+		DataReader reader = delimited.readerFor(dataIn);
 		
-		String[] results = delimited.getValue();
+		Object o = reader.read();
+		
+		String[] results = (String[]) o;
 		
 		assertEquals("a", results[0]);
 		assertEquals("b", results[1]);
@@ -50,29 +49,30 @@ public class DelimitedTest extends TestCase {
 		
 		String data = "a,b,c";
 
-		Delimited delimited = new Delimited();
+		DelimitedLayout delimited = new DelimitedLayout();
 
-		Field a = new Field();
+		FieldLayout a = new FieldLayout();
+		FieldLayout b = new FieldLayout();
+		FieldLayout c = new FieldLayout();
 				
-		delimited.setIs(0, a);
+		delimited.setOf(0, a);
+		delimited.setOf(1, b);
+		delimited.setOf(2, c);
 		
-		WhereNextIn<FieldsIn> where = delimited.in(new StringTextIn(data));		
+		TextIn dataIn = new StringTextIn(data);
 		
-		assertNull(delimited.getValue());
+		DataReader reader = delimited.readerFor(dataIn);
+		
+		assertNull(reader.read());
 		
 		assertEquals(1, a.getColumn());
+		assertEquals(2, b.getColumn());
+		assertEquals(3, c.getColumn());
 		
-		assertNotNull(where);
-		
-		FieldsIn fields = where.getChildData();
-		
-		assertEquals("a", fields.getColumn(1));
-		assertEquals("b", fields.getColumn(2));
-		assertEquals("c", fields.getColumn(3));
+		assertEquals("a", a.getValue());
+		assertEquals("b", b.getValue());
+		assertEquals("c", c.getValue());
 
-		DataNode<?, ?, ?, ?>[] children = where.getChildren();
-
-		assertEquals(a, children[0]);
 	}
 
 	public void testSimpleInWithNamedChildren() throws DataException {

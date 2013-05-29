@@ -2,7 +2,6 @@ package org.oddjob.dido.io;
 
 import org.oddjob.dido.DataNode;
 import org.oddjob.dido.ValueNode;
-import org.oddjob.dido.stream.Lines;
 
 
 /**
@@ -25,7 +24,7 @@ public interface DataLinkIn {
 	
 	/**
 	 * Called after all the {@link DataNode}s of this link have been called.
-	 * For instance if this was a link to a {@link Lines} node, then the method
+	 * For instance if this was a link to a Lines node, then the method
 	 * will be called after the last line has been read and processed.
 	 * 
 	 * @param event
