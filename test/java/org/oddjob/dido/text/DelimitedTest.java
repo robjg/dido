@@ -2,7 +2,6 @@ package org.oddjob.dido.text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicReference;
 
 import junit.framework.TestCase;
 
@@ -18,12 +17,10 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.WhereNextIn;
-import org.oddjob.dido.WhereNextOut;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.bio.ValueBinding;
 import org.oddjob.dido.stream.LinesLayout;
-import org.oddjob.dido.stream.LinesOut;
 import org.oddjob.dido.stream.ListLinesOut;
 import org.oddjob.dido.stream.OutputStreamOut;
 
@@ -215,83 +212,52 @@ public class DelimitedTest extends TestCase {
 
 	public void testOutWtihNoChildren() throws DataException {
 		
-		Delimited delimited = new Delimited();
+		DelimitedLayout delimited = new DelimitedLayout();
 
-		final AtomicReference<String> ref = new AtomicReference<String>();
+		delimited.bind(new ValueBinding());
+
+		TextOut dataOut = new StringTextOut();
 		
-		delimited.setValue(new String[] {"a", "b", "c" });
+		DataWriter writer = delimited.writerFor(dataOut);
 		
-		TextOut out = new StringTextOut() {
-					@Override
-					public boolean flush() throws DataException {
-						ref.set(this.toString());
-						return true;
-					}
-				};
-		WhereNextOut<FieldsOut> where = delimited.out(out);		
-		
-		assertNotNull(where);
-		assertNull(where.getChildData());
-		assertNull(where.getChildren());
-		
-		out.flush();
+		writer.write(new String[] {"a", "b", "c" });
 		
 		String expected = "a,b,c";
 
-		assertEquals(expected, ref.get());
+		assertEquals(expected, dataOut.toValue(String.class));
 	}
 	
 	public void testSimpleOutWithUnNamedChildren() throws DataException {
 		
-		Delimited delimited = new Delimited();
+		DelimitedLayout delimited = new DelimitedLayout();
 
-		Field a = new Field();
+		FieldLayout a = new FieldLayout();
+		delimited.setOf(0, a);
+		
+		FieldLayout b = new FieldLayout();
+		delimited.setOf(1, b);
 				
-		delimited.setIs(0, a);
+		FieldLayout c = new FieldLayout();
+		delimited.setOf(2, c);
 		
-		final AtomicReference<String> ref = new AtomicReference<String>();		
+		a.bind(new OurBinding("a"));
+		b.bind(new OurBinding("b"));
+		c.bind(new OurBinding("c"));
 		
-		TextOut out = new StringTextOut() {
-					@Override
-					public boolean flush() throws DataException {
-						ref.set(this.toString());
-						clear();
-						return true;
-					}
-				};
-				
-		WhereNextOut<FieldsOut> where = delimited.out(out);		
-				
-		assertNotNull(where);
+		ListLinesOut dataOut = new ListLinesOut();
 		
-		FieldsOut fields = where.getChildData();
+		DataWriter writer = delimited.writerFor(dataOut);
 		
-		fields.setColumn(1, "a");
-		fields.setColumn(2, "b");
-		fields.setColumn(3, "c");
-
-		DataNode<?, ?, ?, ?>[] children = where.getChildren();
-
-		assertEquals(a, children[0]);
+		writer.write(new Object());
 		
-		fields.flush();
-		out.flush();
+		assertEquals("a,b,c", dataOut.getLines().get(0));
 		
-		assertEquals("a,b,c", ref.get());
+		a.bind(new OurBinding("d"));
+		b.bind(new OurBinding("e"));
+		c.bind(new OurBinding("f"));
 		
-		where = delimited.out(out);
+		writer.write(new Object());
 		
-		assertNotNull(where);
-		
-		fields = where.getChildData();
-		
-		fields.setColumn(1, "d");
-		fields.setColumn(2, "e");
-		fields.setColumn(3, "f");
-
-		fields.flush();
-		out.flush();
-		
-		assertEquals("d,e,f", ref.get());
+		assertEquals("d,e,f", dataOut.getLines().get(1));
 	}
 }

@@ -21,11 +21,29 @@ public class StreamLinesOutTest extends TestCase {
 		
 		test.writeLine("Apple");
 		
-		test.flush();
-	
 		test.writeLine("Orange");
 		
-		test.flush();
+		out.close();
+	
+		String expected = 
+			"Apple" + EOL +
+			"Orange" + EOL;
+		
+		assertEquals(expected, new String(out.toByteArray()));		
+	}
+	
+	
+	public void testSimpleNested() throws DataException, IOException {
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+		StreamLinesOut test = new StreamLinesOut(out);
+
+		LinesOut nested = test.provide(LinesOut.class);
+		
+		nested.writeLine("Apple");
+		
+		nested.writeLine("Orange");
 		
 		out.close();
 	
@@ -64,15 +82,7 @@ public class StreamLinesOutTest extends TestCase {
 		
 		assertFalse(nested.hasData());
 		
-		assertTrue(test.hasData());
-		
-		data = test.toValue(String.class);
-		
-		assertTrue(test.hasData());
-		
-		test.writeLine(data);
-		
-		assertFalse(test.hasData());
+		assertEquals(false, test.hasData());
 		
 		textOut = nested.provide(TextOut.class);
 
@@ -84,11 +94,7 @@ public class StreamLinesOutTest extends TestCase {
 		
 		nested.writeLine(nested.toValue(String.class));
 		
-		assertTrue(test.hasData());
-		
-		test.writeLine(test.toValue(String.class));
-		
-		assertFalse(test.hasData());
+		assertEquals(false, test.hasData());
 		
 		out.close();
 	

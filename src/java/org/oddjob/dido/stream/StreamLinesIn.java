@@ -21,6 +21,8 @@ public class StreamLinesIn implements LinesIn {
 	
 	private final LineTracker lines;
 	
+	private boolean used;
+	
 	private class LineTracker {
 		
 		private final LineNumberReader reader;
@@ -52,6 +54,7 @@ public class StreamLinesIn implements LinesIn {
 	}
 		
 	public String readLine() throws DataException {
+		used = true;
 		return lines.readLine();
 	}
 	
@@ -60,10 +63,8 @@ public class StreamLinesIn implements LinesIn {
 	public <T extends DataIn> T provide(Class<T> type) 
 	throws DataException{
 		
-		if (type.isAssignableFrom(LinesIn.class)) {
+		if (type.isAssignableFrom(LinesIn.class)) {			
 			return type.cast(new LinesIn() {
-				
-				boolean used;
 				
 				@Override
 				public <X extends DataIn> X provide(Class<X> type)
@@ -75,11 +76,11 @@ public class StreamLinesIn implements LinesIn {
 				public String readLine() throws DataException {
 					
 					if (used) {
-						return StreamLinesIn.this.readLine();
+						used = false;
+						return lines.lastLine;
 					}
 					else {
-						used = true;
-						return lines.lastLine;
+						return lines.readLine();
 					}
 				}
 			});

@@ -20,7 +20,7 @@ public class StreamLinesOut implements LinesOut {
 	public StreamLinesOut(OutputStream outputStream) {
 		this.outputStream = outputStream;
 	}
-
+	
 	public void writeLine(String text) throws DataException {
 		try {
 			outputStream.write(text.getBytes());
@@ -44,22 +44,21 @@ public class StreamLinesOut implements LinesOut {
 			throws UnsupportedeDataOutException {
 		
 		if (type.isAssignableFrom(LinesOut.class)) {
-			return type.cast(new StreamLinesOut(outputStream) {
-				@Override
-				public void writeLine(String text) throws DataException {
-					// Write text to the parent
-					if (textOut == null) {
-						textOut = new StringTextOut();
-					}
-					else {
+			if (textOut == null) {
+				return type.cast(this);
+			}
+			else {
+				type.cast(new StreamLinesOut(outputStream) {
+					@Override
+					public void writeLine(String text) throws DataException {
 						textOut.append(LINE_SEPARATOR);
+						textOut.append(text);
+						
+						// Clear any text this LinesOut has.
+						this.reset();
 					}
-					textOut.append(text);
-					
-					// Clear any text this LinesOut has.
-					this.reset();
-				}
-			});
+				});
+			}
 		}
 
 		if (type.isAssignableFrom(TextOut.class)) {

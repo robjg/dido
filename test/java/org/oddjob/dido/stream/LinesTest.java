@@ -7,12 +7,10 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataNode;
-import org.oddjob.dido.MockDataNode;
-import org.oddjob.dido.WhereNextIn;
-import org.oddjob.dido.WhereNextOut;
-import org.oddjob.dido.text.TextIn;
-import org.oddjob.dido.text.TextOut;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.bio.ValueBinding;
+import org.oddjob.dido.text.TextLayout;
 
 public class LinesTest extends TestCase {
 
@@ -27,33 +25,28 @@ public class LinesTest extends TestCase {
 		
 		InputStream input = new ByteArrayInputStream(lines.getBytes());
 
-		LinesIn data = new StreamLinesIn(input);
+		LinesIn dataIn = new StreamLinesIn(input);
 		
-		Lines test = new Lines();
+		LinesLayout test = new LinesLayout();
+		test.bind(new ValueBinding());
 		
-		WhereNextIn<TextIn> where1 = test.in(data);
+		DataReader reader = test.readerFor(dataIn);
 		
-		assertEquals("apples", test.getValue());
+		Object object = reader.read();
+		
+		assertEquals("apples", object);
 
-		assertNotNull(where1);		
-		assertNull(where1.getChildData());
-		assertNull(where1.getChildren());		
+		object = reader.read();
 		
-		WhereNextIn<TextIn> where2 = test.in(data);
-		
-		assertEquals("oranges", test.getValue());
+		assertEquals("oranges", object);
 
-		assertNotNull(where2);		
-		assertNull(where2.getChildData());
-		assertNull(where2.getChildren());		
+		object = reader.read();
 		
-		WhereNextIn<TextIn> where3 = test.in(data);
-		
-		assertEquals("bananas", test.getValue());
+		assertEquals("bananas", object);
 
-		assertNotNull(where3);		
-		assertNull(where3.getChildData());
-		assertNull(where3.getChildren());		
+		object = reader.read();
+		
+		assertNull(object);
 	}
 	
 	public void testReadLinesWithChildren() throws DataException {
@@ -65,86 +58,64 @@ public class LinesTest extends TestCase {
 		
 		InputStream input = new ByteArrayInputStream(lines.getBytes());
 
-		LinesIn data = new StreamLinesIn(input);
+		LinesIn dataIn = new StreamLinesIn(input);
 				
-		Lines test = new Lines();
+		LinesLayout test = new LinesLayout();
 		
-		DataNode<TextIn, ?, TextOut, ?> child = 
-			new MockDataNode<TextIn, StreamIn, TextOut, StreamOut>();
+		TextLayout child = new TextLayout();
+		child.bind(new ValueBinding());
 		
-		test.setIs(0, child);
+		test.setOf(0, child);
 		
-		WhereNextIn<TextIn> where1 = test.in(data);
+		DataReader reader = test.readerFor(dataIn);
 		
-		assertNull(test.getValue());
+		Object object = reader.read();
 
-		assertNotNull(where1);
-		assertSame(child, where1.getChildren()[0]);
-		assertEquals("apples", where1.getChildData().getText());
+		assertEquals("apples", object);
 		
-		WhereNextIn<TextIn> where2 = test.in(data);
+		object = reader.read();
 		
-		assertNull(test.getValue());
-
-		assertNotNull(where2);
-		assertSame(child, where2.getChildren()[0]);
-		assertEquals("oranges", where2.getChildData().getText());
+		assertEquals("oranges", object);
 		
-		WhereNextIn<TextIn> where3 = test.in(data);
+		object = reader.read();
 		
-		assertNull(test.getValue());
-
-		assertNotNull(where3);
-		assertSame(child, where3.getChildren()[0]);
-		assertEquals("bananas", where3.getChildData().getText());
+		assertEquals("bananas", object);
+		
+		object = reader.read();
+		
+		assertEquals(null, object);
 	}
 	
 	public void testEmptyInputSteam() throws DataException {
 		
 		InputStream input = new ByteArrayInputStream(new byte[0]);
 
-		LinesIn data = new StreamLinesIn(input);
+		LinesIn dataIn = new StreamLinesIn(input);
 				
-		Lines test = new Lines();
+		LinesLayout test = new LinesLayout();
 		
-		WhereNextIn<TextIn> where = test.in(data);
+		DataReader reader = test.readerFor(dataIn);
 		
-		assertNull(test.getValue());
+		assertNull(reader.read());
 
-		assertNull(where);
 	}
 	
 	public void testWriteThreeLines() throws DataException {
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-		StreamLinesOut data = new StreamLinesOut(output);
+		StreamLinesOut dataOut = new StreamLinesOut(output);
 		
-		Lines test = new Lines();
+		LinesLayout test = new LinesLayout();
+		test.bind(new ValueBinding());
 		
-		test.setValue("apples");
+		DataWriter writer = test.writerFor(dataOut);
+		
+		writer.write("apples");
+		
+		writer.write("oranges");
 
-		WhereNextOut<TextOut> where1 = test.out(data);
-		
-		assertNotNull(where1);		
-		assertNull(where1.getChildData());
-		assertNull(where1.getChildren());		
-		
-		test.setValue("oranges");
-
-		WhereNextOut<TextOut> where2 = test.out(data);
-		
-		assertNotNull(where2);		
-		assertNull(where2.getChildData());
-		assertNull(where2.getChildren());		
-		
-		test.setValue("bananas");
-
-		WhereNextOut<TextOut> where3 = test.out(data);
-		
-		assertNotNull(where3);		
-		assertNull(where3.getChildData());
-		assertNull(where3.getChildren());		
+		writer.write("bananas");
 		
 		String lines =
 			"apples" + EOL +
@@ -158,44 +129,22 @@ public class LinesTest extends TestCase {
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-		StreamLinesOut data = new StreamLinesOut(output);
+		StreamLinesOut dataOut = new StreamLinesOut(output);
 		
-		Lines test = new Lines();
+		LinesLayout test = new LinesLayout();
 		
-		DataNode<TextIn, ?, TextOut, ?> child = 
-			new MockDataNode<TextIn, StreamIn, TextOut, StreamOut>();
+		TextLayout child = new TextLayout();
+		child.bind(new ValueBinding());
 		
-		test.setIs(0, child);
+		test.setOf(0, child);
 				
-		WhereNextOut<TextOut> where1 = test.out(data);
-		
-		assertNull(test.getValue());
+		DataWriter writer = test.writerFor(dataOut);
 
-		assertNotNull(where1);
-		assertSame(child, where1.getChildren()[0]);
+		writer.write("apples");
 		
-		where1.getChildData().append("apples");
-		where1.getChildData().flush();
+		writer.write("oranges");
 		
-		WhereNextOut<TextOut> where2 = test.out(data);
-		
-		assertNull(test.getValue());
-
-		assertNotNull(where2);
-		assertSame(child, where2.getChildren()[0]);
-		
-		where2.getChildData().append("oranges");
-		where2.getChildData().flush();
-
-		WhereNextOut<TextOut> where3 = test.out(data);
-		
-		assertNull(test.getValue());
-
-		assertNotNull(where3);
-		assertSame(child, where3.getChildren()[0]);
-		
-		where3.getChildData().append("bananas");
-		where3.getChildData().flush();
+		writer.write("bananas");
 		
 		String lines =
 			"apples" + EOL +
