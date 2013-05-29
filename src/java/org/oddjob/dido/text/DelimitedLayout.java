@@ -10,7 +10,6 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Headed;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.Morphicness;
-import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.io.ClassMorphic;
 import org.oddjob.dido.layout.LayoutValueNode;
 import org.oddjob.dido.stream.LinesIn;
@@ -235,7 +234,7 @@ implements Headed, ClassMorphic {
 	
 	@Override
 	public DataWriter writerFor(DataOut dataOut)
-	throws UnsupportedeDataOutException {
+	throws DataException {
 
 		LinesOut linesOut = dataOut.provide(LinesOut.class);
 

@@ -6,7 +6,6 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.layout.LayoutValueNode;
 
 
@@ -144,7 +143,7 @@ extends LayoutValueNode<String> {
 
 	@Override
 	public DataWriter writerFor(DataOut dataOut)
-			throws UnsupportedeDataOutException {
+	throws DataException {
 		
 		FieldsOut out = dataOut.provide(FieldsOut.class);
 		
