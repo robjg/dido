@@ -29,6 +29,8 @@ import org.oddjob.dido.DataPlan;
 import org.oddjob.dido.DataPlanType;
 import org.oddjob.dido.DataReadJob;
 import org.oddjob.dido.DataWriteJob;
+import org.oddjob.dido.Morphicness;
+import org.oddjob.dido.MorphicnessFactory;
 import org.oddjob.dido.WhereNextIn;
 import org.oddjob.dido.WhereNextOut;
 import org.oddjob.dido.bio.BeanBindingBean;
@@ -95,10 +97,13 @@ public class QuickRowsTest extends TestCase {
 		beanView.setProperties("name, dateOfBirth, salary");
 
 		QuickRows test = new QuickRows();
-		test.setArooaSession(session);
-		test.setBeanView(beanView.toValue());
 		
-		test.beFor(new SimpleArooaClass(Person.class));
+		Morphicness morphicness = new MorphicnessFactory(
+				session.getTools().getPropertyAccessor()
+				).writeMorphicnessFor(new SimpleArooaClass(Person.class), 
+						beanView.toValue());
+				
+		test.beFor(morphicness);
 
 		Nodes nodes = new Nodes(test);
 		assertNotNull(nodes.getNode("name"));
@@ -147,7 +152,12 @@ public class QuickRowsTest extends TestCase {
 		assertEquals("25-Mar-1970", sheet.getRow(1).getCell(1).toString());
 		assertEquals("45000.0", sheet.getRow(1).getCell(2).toString());
 		
-		test.beFor(new SimpleArooaClass(Person.class));
+		morphicness = new MorphicnessFactory(
+				session.getTools().getPropertyAccessor()
+				).readMorphicnessFor(new SimpleArooaClass(Person.class), 
+						beanView.toValue());
+		
+		test.beFor(morphicness);
 		
 		SheetIn sheetIn = new PoiSheetIn(sheet);
 
@@ -197,8 +207,7 @@ public class QuickRowsTest extends TestCase {
 
 		BeanBindingBean bindingBean = new BeanBindingBean();
 		bindingBean.setArooaSession(session);
-		bindingBean.setNode("person");
-		bindingBean.setType(Person.class);
+		bindingBean.setType(new SimpleArooaClass(Person.class));
 
 		DataPlanType guide = new DataPlanType();
 		guide.setArooaSession(session);
@@ -213,25 +222,24 @@ public class QuickRowsTest extends TestCase {
 				.getClassLoader()));
 
 		DataWriteJob write = new DataWriteJob();
-		write.setConfigurationType(ConfigurationType.EVERY);
-		write.setPlan((DataPlan<?, ?, StreamOut, ?>) guide.toValue());
+		write.setPlan(null);
 		write.setBeans(beans);
-		write.setBindings(0, bindingBean);
+		write.setBindings("person", bindingBean);
 
 		write.setOutput(teeType.toValue());
 
 		write.run();
 
-		bindingBean.setType(Person.class);
+		bindingBean.setType(new SimpleArooaClass(Person.class));
 
 		DataReadJob read = new DataReadJob();
 		read.setInput(new ByteArrayInputStream(output.toByteArray()));
-		read.setPlan((DataPlan<StreamIn, ?, ?, ?>) guide.toValue());
-		read.setBindings(0, bindingBean);
-
+		read.setPlan(null);
+		read.setBindings("person", bindingBean);
+		read.setBeans(new ArrayList<Object>());
 		read.run();
 
-		Object[] results = read.getBeans();
+		Object[] results = read.getBeans().toArray();
 
 		Person person1 = (Person) results[0];
 		assertEquals("John", person1.getName());

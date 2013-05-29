@@ -11,6 +11,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.oddjob.dido.DataException;
+import org.oddjob.dido.DataOut;
+import org.oddjob.dido.UnsupportedeDataOutException;
 
 public class PoiBookOut implements BookOut {
 	private static final Logger logger = Logger.getLogger(PoiBookOut.class);
@@ -71,5 +73,26 @@ public class PoiBookOut implements BookOut {
 	@Override
 	public CellStyle styleFor(String styleName) {
 		return styleProvider.styleFor(styleName);
+	}
+	
+	@Override
+	public boolean hasData() {
+		throw new RuntimeException("To Do.");
+	}
+	
+	@Override
+	public <T> T toValue(Class<T> type) {
+		throw new RuntimeException("To Do.");
+	}
+	
+	
+	@Override
+	public <T extends DataOut> T provide(Class<T> type) throws DataException {
+
+		if (type.isInstance(this)) {
+			return type.cast(this);
+		}
+		
+		throw new UnsupportedeDataOutException(this.getClass(), type);
 	}
 }

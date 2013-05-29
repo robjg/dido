@@ -3,6 +3,9 @@ package org.oddjob.poi;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.oddjob.dido.DataException;
+import org.oddjob.dido.DataIn;
+import org.oddjob.dido.UnsupportedeDataInException;
 
 public class PoiSheetIn implements SheetIn {
 
@@ -70,5 +73,15 @@ public class PoiSheetIn implements SheetIn {
 	@Override
 	public int getLastColumn() {
 		return columnNum;
+	}
+	
+	@Override
+	public <T extends DataIn> T provide(Class<T> type) throws DataException {
+
+		if (type.isInstance(this)) {
+			return type.cast(this);
+		}
+		
+		throw new UnsupportedeDataInException(this.getClass(), type);
 	}
 }

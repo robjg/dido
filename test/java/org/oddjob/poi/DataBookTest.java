@@ -15,17 +15,14 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.utils.DateHelper;
 import org.oddjob.arooa.xml.XMLConfiguration;
-import org.oddjob.dido.DataPlan;
 import org.oddjob.dido.DataPlanType;
 import org.oddjob.dido.DataReadJob;
 import org.oddjob.dido.DataWriteJob;
 import org.oddjob.dido.bio.BeanBindingBean;
-import org.oddjob.dido.io.ConfigurationType;
-import org.oddjob.dido.stream.StreamIn;
-import org.oddjob.dido.stream.StreamOut;
 import org.oddjob.io.TeeType;
 
 public class DataBookTest extends TestCase {
@@ -119,8 +116,7 @@ public class DataBookTest extends TestCase {
 
 		BeanBindingBean bindingBean = new BeanBindingBean();
 		bindingBean.setArooaSession(session);
-		bindingBean.setNode("person");
-		bindingBean.setType(Person.class);
+		bindingBean.setType(new SimpleArooaClass(Person.class));
 		
 		DataPlanType guide = new DataPlanType();
 		guide.setArooaSession(session);
@@ -135,25 +131,25 @@ public class DataBookTest extends TestCase {
 				resource, getClass().getClassLoader()));
 		
 		DataWriteJob write = new DataWriteJob();
-		write.setConfigurationType(ConfigurationType.EVERY);
-		write.setPlan((DataPlan<?, ?, StreamOut, ?>) guide.toValue());
+		write.setPlan(null); // todo - with layout.
 		write.setBeans(beans);
-		write.setBindings(0, bindingBean);
+		write.setBindings("person", bindingBean);
 		
 		write.setOutput(teeType.toValue());
 		
 		write.run();
 		
-		bindingBean.setType(PersonAnd.class);
+		bindingBean.setType(new SimpleArooaClass(PersonAnd.class));
 		
 		DataReadJob read =  new DataReadJob();
 		read.setInput(new ByteArrayInputStream(output.toByteArray()));
-		read.setPlan((DataPlan<StreamIn, ?, ?, ?>) guide.toValue());
-		read.setBindings(0, bindingBean);
+		read.setPlan(null); // todo with layout.
+		read.setBindings("person", bindingBean);
+		read.setBeans(new ArrayList<Object>());
 		
 		read.run();
 		
-		Object[] results = read.getBeans();
+		Object[] results = read.getBeans().toArray();
 
 		assertEquals(3, results.length);
 		
@@ -190,8 +186,7 @@ public class DataBookTest extends TestCase {
 
 		BeanBindingBean bindingBean = new BeanBindingBean();
 		bindingBean.setArooaSession(session);
-		bindingBean.setNode("person");
-		bindingBean.setType(Person.class);
+		bindingBean.setType(new SimpleArooaClass(Person.class));
 		
 		DataPlanType guide = new DataPlanType();
 		guide.setArooaSession(session);
@@ -206,25 +201,24 @@ public class DataBookTest extends TestCase {
 				"org/oddjob/poi/SimpleWithHeadings.xml", getClass().getClassLoader()));
 		
 		DataWriteJob write = new DataWriteJob();		
-		write.setConfigurationType(ConfigurationType.EVERY);
-		write.setPlan((DataPlan<?, ?, StreamOut, ?>) guide.toValue());
+		write.setPlan(null); // todo with layout.
 		write.setBeans(beans);
-		write.setBindings(0, bindingBean);
+		write.setBindings("person", bindingBean);
 		
 		write.setOutput(teeType.toValue());
 		
 		write.run();
 		
-		bindingBean.setType(PersonAnd.class);
+		bindingBean.setType(new SimpleArooaClass(PersonAnd.class));
 		
 		DataReadJob read =  new DataReadJob();
 		read.setInput(new ByteArrayInputStream(output.toByteArray()));
-		read.setPlan((DataPlan<StreamIn, ?, ?, ?>) guide.toValue());
-		read.setBindings(0, bindingBean);
+		read.setPlan(null); // todo
+		read.setBindings("person", bindingBean);
 		
 		read.run();
 		
-		Object[] results = read.getBeans();
+		Object[] results = read.getBeans().toArray();
 				
 		assertEquals(0, results.length);
 	}

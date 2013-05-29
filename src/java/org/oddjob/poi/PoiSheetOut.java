@@ -5,6 +5,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.oddjob.dido.DataException;
+import org.oddjob.dido.DataOut;
+import org.oddjob.dido.UnsupportedeDataOutException;
 
 public class PoiSheetOut implements SheetOut {
 
@@ -101,5 +103,26 @@ public class PoiSheetOut implements SheetOut {
 	@Override
 	public Sheet getTheSheet() {
 		return sheet;
+	}
+	
+	@Override
+	public boolean hasData() {
+		throw new RuntimeException("To Do.");
+	}
+	
+	@Override
+	public <T> T toValue(Class<T> type) {
+		throw new RuntimeException("To Do.");
+	}
+	
+	
+	@Override
+	public <T extends DataOut> T provide(Class<T> type) throws DataException {
+
+		if (type.isInstance(this)) {
+			return type.cast(this);
+		}
+		
+		throw new UnsupportedeDataOutException(this.getClass(), type);
 	}
 }

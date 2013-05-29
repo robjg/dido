@@ -4,16 +4,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.oddjob.arooa.ArooaSession;
-import org.oddjob.arooa.life.ArooaSessionAware;
-import org.oddjob.arooa.reflect.ArooaClass;
-import org.oddjob.arooa.reflect.BeanOverview;
-import org.oddjob.arooa.reflect.BeanView;
-import org.oddjob.arooa.reflect.FallbackBeanView;
-import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.dido.DataDriver;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataNode;
+import org.oddjob.dido.Morphicness;
 import org.oddjob.dido.SupportsChildren;
 import org.oddjob.dido.WhereNextIn;
 import org.oddjob.dido.WhereNextOut;
@@ -21,7 +15,6 @@ import org.oddjob.dido.io.ClassMorphic;
 
 public class QuickRows 
 implements DataNode<SheetIn, SheetIn, SheetOut, SheetOut>,
-		ArooaSessionAware,
 		ClassMorphic,
 		SupportsChildren,
 		DataDriver {
@@ -41,45 +34,24 @@ implements DataNode<SheetIn, SheetIn, SheetOut, SheetOut>,
 	
 	private final DataRows dataRows = new DataRows();
 
-	private ArooaSession session;
-	
 	private boolean initialised;
 	
-	private BeanView beanView;
-	
 	@Override
-	public void setArooaSession(ArooaSession session) {
-		this.session = session;
-	}
-	
-	@Override
-	public void beFor(ArooaClass arooaClass) {
+	public Runnable beFor(Morphicness morphicness) {
 		
 		if (initialised) {
 			throw new IllegalStateException(
 					"QuickSheet Already initialised.");
 		}
 		
-		PropertyAccessor accessor = session.getTools().getPropertyAccessor();
-		
-		BeanOverview overview = 
-			arooaClass.getBeanOverview(accessor);
-		
 		dataRows.setWithHeadings(true);
 		
-		BeanView beanView = this.beanView;
-		if (beanView == null) {
-			beanView = new FallbackBeanView(accessor, arooaClass);
-		}
+		String[] properties = morphicness.getNames();
 		
 		int i = 0;
-		for (String property : beanView.getProperties()) {
+		for (String property : properties) {
 			
-			if ("class".equals(property)) {
-				continue;
-			}
-			
-			Class<?> propertyType = overview.getPropertyType(property);
+			Class<?> propertyType = morphicness.typeOf(property);
 			
 			DataCell<?> cell;
 			
@@ -99,12 +71,20 @@ implements DataNode<SheetIn, SheetIn, SheetOut, SheetOut>,
 			}
 			
 			cell.setName(property);
-			cell.setTitle(beanView.titleFor(property));
+			cell.setTitle(morphicness.titleFor(property));
 			
 			dataRows.setIs(i++, cell);
 		}
 		
 		initialised = true;
+		
+		return new Runnable() {
+			
+			@Override
+			public void run() {
+				throw new RuntimeException("To Do.");
+			}
+		};
 	}
 		
 	@Override
@@ -165,14 +145,6 @@ implements DataNode<SheetIn, SheetIn, SheetOut, SheetOut>,
 		String name = getName();
 		return getClass().getSimpleName() + 
 			(name == null ? "" : " " + name);
-	}
-
-	public BeanView getBeanView() {
-		return beanView;
-	}
-
-	public void setBeanView(BeanView beanView) {
-		this.beanView = beanView;
 	}
 
 	public boolean isAutoFilter() {
