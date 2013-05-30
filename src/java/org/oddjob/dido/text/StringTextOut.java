@@ -53,11 +53,6 @@ public class StringTextOut implements TextOut, LinesOut {
 	}
 	
 	@Override
-	public boolean flush() throws DataException {
-		return false;
-	}
-	
-	@Override
 	public int length() {
 		return buffer.length();
 	}

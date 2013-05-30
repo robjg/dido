@@ -3,7 +3,6 @@ package org.oddjob.dido.text;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 
@@ -63,11 +62,6 @@ public class SimpleFieldsOut implements FieldsOut {
 		}
 		
 		values.put(column, value);
-	}
-	
-	@Override
-	public boolean flush() throws DataException {
-		return true;
 	}
 	
 	private static String[] toArray(Map<Integer, String> things) {

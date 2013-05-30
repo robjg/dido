@@ -5,17 +5,10 @@ import junit.framework.TestCase;
 import org.oddjob.dido.DataException;
 
 public class OutgoingTextTest extends TestCase {
-
-	class OurOutgoingText extends StringTextOut {
-		@Override
-		public boolean flush() throws DataException {
-			return true;
-		}
-	}
 	
 	public void testDefault() throws DataException {
 
-		StringTextOut test = new OurOutgoingText();
+		StringTextOut test = new StringTextOut();
 		
 		test.write("Apple", 0, -1);
 		
@@ -24,7 +17,7 @@ public class OutgoingTextTest extends TestCase {
 
 	public void testTruncate() throws DataException {
 
-		StringTextOut test = new OurOutgoingText();
+		StringTextOut test = new StringTextOut();
 		
 		test.write("Apples and Oranges", 0, 6);
 		
@@ -33,7 +26,7 @@ public class OutgoingTextTest extends TestCase {
 
 	public void testFromStartFixed() throws DataException {
 
-		StringTextOut test = new OurOutgoingText();
+		StringTextOut test = new StringTextOut();
 		
 		test.write("Apple", 0, 12);
 		
@@ -42,7 +35,7 @@ public class OutgoingTextTest extends TestCase {
 
 	public void testReplacingSection() throws DataException {
 
-		StringTextOut test = new OurOutgoingText();
+		StringTextOut test = new StringTextOut();
 		
 		test.write("Apples and Oranges", 0, -1);
 		
@@ -53,7 +46,7 @@ public class OutgoingTextTest extends TestCase {
 
 	public void testReplacingExisting() throws DataException {
 
-		StringTextOut test = new OurOutgoingText();
+		StringTextOut test = new StringTextOut();
 		
 		test.write("Apples and Pears", 0, -1);
 		
@@ -64,7 +57,7 @@ public class OutgoingTextTest extends TestCase {
 
 	public void testInsertTruncated() throws DataException {
 
-		StringTextOut test = new OurOutgoingText();
+		StringTextOut test = new StringTextOut();
 		
 		test.write("Apples and Oranges", 0, -1);
 		
@@ -75,7 +68,7 @@ public class OutgoingTextTest extends TestCase {
 	
 	public void testManySections() throws DataException {
 
-		StringTextOut test = new OurOutgoingText();
+		StringTextOut test = new StringTextOut();
 		
 		test.write("Apples", 0, 10);
 		test.write("Oranges", 10, 10);
@@ -86,7 +79,7 @@ public class OutgoingTextTest extends TestCase {
 	
 	public void testStartingPastStart() throws DataException {
 
-		StringTextOut test = new OurOutgoingText();
+		StringTextOut test = new StringTextOut();
 		
 		test.write("Apples", 5, -1);
 		

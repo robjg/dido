@@ -1,7 +1,5 @@
 package org.oddjob.dido.text;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import junit.framework.TestCase;
 
 import org.oddjob.dido.DataException;
@@ -10,23 +8,13 @@ public class MappedFieldsOutTest extends TestCase {
 
 	public void testNextOut() throws DataException {
 		
-		final AtomicReference<String[]> ref = new AtomicReference<String[]>();
-		
-		MappedFieldsOut test = new MappedFieldsOut(
-				new MappedFieldsOut.FieldsWriter() {
-					@Override
-					public void write(String[] values) {
-						ref.set(values);
-					}
-				});
+		SimpleFieldsOut test = new SimpleFieldsOut();
 		
 		test.setColumn(1, "John");
 		test.setColumn(2, "34");
 		test.setColumn(3, "London");
 		
-		assertTrue(test.flush());
-		
-		String[] results = ref.get();
+		String[] results = test.toValue(String[].class);
 		
 		assertEquals("John", results[0]);
 		assertEquals("34", results[1]);
@@ -35,23 +23,13 @@ public class MappedFieldsOutTest extends TestCase {
 	
 	public void testRandomColumn() throws DataException {
 		
-		final AtomicReference<String[]> ref = new AtomicReference<String[]>();
-		
-		MappedFieldsOut test = new MappedFieldsOut(
-				new MappedFieldsOut.FieldsWriter() {
-					@Override
-					public void write(String[] values) {
-						ref.set(values);
-					}
-				});
+		SimpleFieldsOut test = new SimpleFieldsOut();
 		
 		test.setColumn(5, "John");
 		test.setColumn(3, "34");
 		test.setColumn(6, "London");
 		
-		test.flush();
-		
-		String[] results = ref.get();
+		String[] results = test.toValue(String[].class);
 		
 		assertEquals(null, results[0]);
 		assertEquals(null, results[1]);
@@ -62,24 +40,14 @@ public class MappedFieldsOutTest extends TestCase {
 	}
 	
 	public void testNamedFields() throws DataException {
-		
-		final AtomicReference<String[]> ref = new AtomicReference<String[]>();
-		
-		MappedFieldsOut test = new MappedFieldsOut(
-				new MappedFieldsOut.FieldsWriter() {
-					@Override
-					public void write(String[] values) {
-						ref.set(values);
-					}
-				});
+				
+		SimpleFieldsOut test = new SimpleFieldsOut();
 		
 		test.setColumn(4, "John");
 		test.setColumn(1, "34");
 		test.setColumn(2, "London");
 		
-		test.flush();
-		
-		String[] results = ref.get();
+		String[] results = test.toValue(String[].class);
 		
 		assertEquals("34", results[0]);
 		assertEquals("London", results[1]);

@@ -72,12 +72,6 @@ public class StreamLinesOut implements LinesOut {
 	}
 	
 	@Override
-	public boolean flush() throws DataException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
 	public boolean hasData() {
 		return textOut != null && textOut.hasData();
 	}

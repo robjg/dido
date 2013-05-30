@@ -51,11 +51,6 @@ public class ListLinesOut implements LinesOut {
 	}
 
 	@Override
-	public boolean flush() throws DataException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
 	public boolean hasData() {
 		// TODO Auto-generated method stub
 		return false;
