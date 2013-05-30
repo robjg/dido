@@ -81,11 +81,6 @@ public class PoiSheetOut implements SheetOut {
 	}
 	
 	@Override
-	public boolean flush() throws DataException {
-		return true;
-	}
-	
-	@Override
 	public CellStyle styleFor(String style) {
 		return styleProvider.styleFor(style);
 	}

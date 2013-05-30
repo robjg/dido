@@ -58,7 +58,6 @@ public class PoiBookOut implements BookOut {
 		}
 	}
 	
-	@Override
 	public boolean flush() throws DataException {
 		try {
 			workbook.write(output);
