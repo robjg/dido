@@ -7,15 +7,17 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.oddjob.dido.AbstractParent;
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.WhereNextIn;
-import org.oddjob.dido.WhereNextOut;
+import org.oddjob.dido.DataIn;
+import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.layout.LayoutNode;
 import org.oddjob.dido.stream.StreamIn;
 import org.oddjob.dido.stream.StreamOut;
 
 public class DataBook 
-extends AbstractParent<StreamIn, BookIn, StreamOut, BookOut> {
+extends LayoutNode {
 	
 	private static final Logger logger = Logger.getLogger(DataBook.class);
 	
@@ -25,8 +27,9 @@ extends AbstractParent<StreamIn, BookIn, StreamOut, BookOut> {
 		 = new LinkedHashMap<String, StyleBean>();
 	
 	@Override
-	public WhereNextIn<BookIn> in(
-			StreamIn data) throws DataException {
+	public DataReader readerFor(DataIn dataIn) throws DataException {
+		
+		StreamIn data = dataIn.provide(StreamIn.class);
 		
 		BookIn book = null;
 		try {
@@ -38,12 +41,14 @@ extends AbstractParent<StreamIn, BookIn, StreamOut, BookOut> {
 		}
 		
 		logger.debug("Created workbook from input stream.");
-		return new WhereNextIn<BookIn>(childrenToArray(), book);
+		
+		return nextReaderFor(book);
 	}
 	
 	@Override
-	public WhereNextOut<BookOut> out(
-			StreamOut data) throws DataException {
+	public DataWriter writerFor(DataOut dataOut) throws DataException {
+		
+		StreamOut data = dataOut.provide(StreamOut.class);
 		
 		StyleProviderFactory styleFactory;
 		if (styles == null) {
@@ -59,12 +64,12 @@ extends AbstractParent<StreamIn, BookIn, StreamOut, BookOut> {
 				styleFactory);
 		
 		logger.debug("Created empty workbook.");
-		return new WhereNextOut<BookOut>(childrenToArray(), book);
+		
+		return nextWriterFor(book);
 	}
 
 	@Override
-	public void flush(StreamOut data, BookOut childData) throws DataException {
-		childData.flush();
+	public void reset() {
 	}
 	
 	public SpreadsheetVersion getVersion() {

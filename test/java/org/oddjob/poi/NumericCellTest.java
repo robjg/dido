@@ -19,6 +19,10 @@ import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.dido.DataException;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.ValueNode;
+import org.oddjob.dido.bio.ValueBinding;
 
 public class NumericCellTest extends TestCase {
 	private static final Logger logger = Logger.getLogger(NumericCellTest.class);
@@ -31,14 +35,14 @@ public class NumericCellTest extends TestCase {
 		
 		NumericCell test1 = new NumericCell();
 		test1.setArooaSession(new StandardArooaSession());
-		test1.setValue(12.3);
+		test1.bind(new ValueBinding());
 		
 		SheetOut out = new PoiSheetOut(sheet);
 		out.nextRow();
 		
-		test1.begin(out);
-		test1.out(out);
-		test1.end(out);
+		DataWriter writer = test1.writerFor(out); 
+		
+		writer.write(12.3);
 		
 		assertEquals(0, test1.getColumn());
 		
@@ -47,12 +51,12 @@ public class NumericCellTest extends TestCase {
 
 		SheetIn in = new PoiSheetIn(sheet);
 		assertTrue(in.nextRow());
+
+		DataReader reader = test2.readerFor(in);
+
+		Object result = reader.read();
 		
-		test2.begin(in);
-		test2.in(in);
-		test2.end(in);
-		
-		assertEquals(new Double(12.3), test2.getValue());
+		assertEquals(new Double(12.3), result);
 	}
 	
 	/**
@@ -60,7 +64,7 @@ public class NumericCellTest extends TestCase {
 	 * recognise a that value was an attribute but test from eclipse worked
 	 * fine.
 	 * <p>
-	 * All to do with a jave bug. See Stencil.
+	 * All to do with a Jave bug. See {@link ValueNode}.
 	 * 
 	 * @throws IntrospectionException 
 	 */

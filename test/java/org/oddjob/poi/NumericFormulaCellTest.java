@@ -19,6 +19,8 @@ import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataPlanType;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
 
 public class NumericFormulaCellTest extends TestCase {
 
@@ -34,10 +36,10 @@ public class NumericFormulaCellTest extends TestCase {
 		
 		SheetOut out = new PoiSheetOut(sheet);
 		out.nextRow();
+
+		DataWriter writer = test1.writerFor(out);
 		
-		test1.begin(out);
-		test1.out(out);
-		test1.end(out);
+		writer.write(new Object());
 		
 		assertEquals(0, test1.getColumn());
 		
@@ -47,11 +49,11 @@ public class NumericFormulaCellTest extends TestCase {
 		SheetIn in = new PoiSheetIn(sheet);
 		assertTrue(in.nextRow());
 		
-		test2.begin(in);
-		test2.in(in);
-		test2.end(in);
+		DataReader reader = test2.readerFor(in);
 		
-		assertEquals(new Double(4), test2.getValue());
+		Object result = reader.read();
+		
+		assertEquals(new Double(4), result);
 	}
 	
 	/**

@@ -25,19 +25,15 @@ import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.utils.DateHelper;
 import org.oddjob.arooa.xml.XMLConfiguration;
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataPlan;
 import org.oddjob.dido.DataPlanType;
 import org.oddjob.dido.DataReadJob;
+import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriteJob;
+import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Morphicness;
 import org.oddjob.dido.MorphicnessFactory;
-import org.oddjob.dido.WhereNextIn;
-import org.oddjob.dido.WhereNextOut;
 import org.oddjob.dido.bio.BeanBindingBean;
-import org.oddjob.dido.io.ConfigurationType;
 import org.oddjob.dido.io.Nodes;
-import org.oddjob.dido.stream.StreamIn;
-import org.oddjob.dido.stream.StreamOut;
 import org.oddjob.io.TeeType;
 
 public class QuickRowsTest extends TestCase {
@@ -96,7 +92,7 @@ public class QuickRowsTest extends TestCase {
 		BeanViewBean beanView = new BeanViewBean();
 		beanView.setProperties("name, dateOfBirth, salary");
 
-		QuickRows test = new QuickRows();
+		DataRows test = new DataRows();
 		
 		Morphicness morphicness = new MorphicnessFactory(
 				session.getTools().getPropertyAccessor()
@@ -119,28 +115,14 @@ public class QuickRowsTest extends TestCase {
 		
 		SheetOut sheetOut = new PoiSheetOut(sheet, styleProvider);
 		
-		WhereNextOut<SheetOut> whereOut2 = test.out(sheetOut);
+		DataWriter writer = test.writerFor(sheetOut);
 
-		assertEquals(3, whereOut2.getChildren().length);
-		assertSame(sheetOut, whereOut2.getChildData());
+		Person person = new Person();
+		person.setName("John");
+		person.setDateOfBirth(DateHelper.parseDate("1970-03-25"));
+		person.setSalary(45000.0);
 
-		DataCell<String> cell1 = (DataCell<String>) whereOut2.getChildren()[0];
-		DataCell<Date> cell2 = (DataCell<Date>) whereOut2.getChildren()[1];
-		DataCell<Double> cell3 = (DataCell<Double>) whereOut2.getChildren()[2];
-
-		cell1.value("John");
-		cell2.value(DateHelper.parseDate("1970-03-25"));
-		cell3.value(45000.0);
-
-		cell1.out(sheetOut);
-		cell2.out(sheetOut);
-		cell3.out(sheetOut);
-
-		cell1.complete(sheetOut);
-		cell2.complete(sheetOut);
-		cell3.complete(sheetOut);
-
-		test.complete(sheetOut);
+		writer.write(person);
 
 		assertEquals(1, sheet.getLastRowNum());
 		assertEquals(3, sheet.getRow(1).getLastCellNum());
@@ -161,27 +143,13 @@ public class QuickRowsTest extends TestCase {
 		
 		SheetIn sheetIn = new PoiSheetIn(sheet);
 
-		WhereNextIn<SheetIn> whereIn2 = test.in(sheetIn);
+		DataReader reader = test.readerFor(sheetIn);
 
-		assertEquals(3, whereIn2.getChildren().length);
-
-		cell1 = (DataCell<String>) whereIn2.getChildren()[0];
-		cell2 = (DataCell<Date>) whereIn2.getChildren()[1];
-		cell3 = (DataCell<Double>) whereIn2.getChildren()[2];
-
-		cell1.in(sheetIn);
-		cell2.in(sheetIn);
-		cell3.in(sheetIn);
-
-		assertEquals("John", cell1.value());
-		assertEquals(DateHelper.parseDate("1970-03-25"), cell2.value());
-		assertEquals(45000.0, cell3.value());
-
-		cell1.complete(sheetIn);
-		cell2.complete(sheetIn);
-		cell3.complete(sheetIn);
-
-		test.complete(sheetIn);
+		Person result = (Person) reader.read();
+		
+		assertEquals("John", result.getName());
+		assertEquals(DateHelper.parseDate("1970-03-25"), result.getDateOfBirth());
+		assertEquals(45000.0, result.getSalary());
 
 	}
 

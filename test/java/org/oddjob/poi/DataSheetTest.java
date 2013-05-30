@@ -8,19 +8,11 @@ import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.MockDataNode;
-import org.oddjob.dido.WhereNextIn;
-import org.oddjob.dido.WhereNextOut;
-import org.oddjob.dido.text.TextIn;
-import org.oddjob.dido.text.TextOut;
+import org.oddjob.dido.DataReader;
+import org.oddjob.dido.DataWriter;
 
 public class DataSheetTest extends TestCase {
 
-	class OurSheetStuff 
-	extends MockDataNode<SheetIn, TextIn, SheetOut, TextOut> {
-		
-	}
-	
 	public void testWriteAndRead() throws DataException, InvalidFormatException, IOException {
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -29,28 +21,21 @@ public class DataSheetTest extends TestCase {
 		
 		DataSheet test = new DataSheet();
 		
-		OurSheetStuff child = new OurSheetStuff();
-		test.setIs(0, child);
 		
-		WhereNextOut<SheetOut> nextOut = test.out(bookOut);
-					
-		assertEquals(child, nextOut.getChildren()[0]);
+		DataRows child = new DataRows();
+		test.setOf(0, child);
 		
-		SheetOut sheetOut = nextOut.getChildData();
-		assertEquals(-1, sheetOut.getCurrentRow());
-
-		bookOut.flush();
-
+		DataWriter writer = test.writerFor(bookOut);
+		
+		writer.write(new Object());
+		
 		BookIn bookIn = new PoiBookIn(new ByteArrayInputStream(
-				output.toByteArray()));
 		
-		WhereNextIn<SheetIn> nextIn = test.in(bookIn);
+		output.toByteArray()));
 		
-		assertEquals(child, nextIn.getChildren()[0]);
+		DataReader reader = test.readerFor(bookIn);
 		
-		SheetIn sheetIn = nextIn.getChildData();
-		assertEquals(-1, sheetIn.getCurrentRow());		
-		assertTrue(sheetIn.nextRow());
-		
+		assertNull(reader.read());
+
 	}
 }
