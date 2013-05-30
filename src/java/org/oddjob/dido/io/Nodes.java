@@ -3,26 +3,25 @@ package org.oddjob.dido.io;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.oddjob.dido.DataNode;
-import org.oddjob.dido.SupportsChildren;
+import org.oddjob.dido.Layout;
 
 /**
- * Utility class for handling a tree of {@link DataNode}s.
+ * Utility class for handling a tree of {@link Layouts}s.
  * 
  * @author rob
  *
  */
 public class Nodes {
 
-	private final Map<String, DataNode<?, ?, ?, ?>> byName = 
-		new HashMap<String, DataNode<?, ?, ?, ?>>();
+	private final Map<String, Layout> byName = 
+		new HashMap<String, Layout>();
 	
 	/**
 	 * Constructor.
 	 * 
 	 * @param root The root node of the tree.
 	 */
-	public Nodes(DataNode<?, ?, ?, ?> root) {
+	public Nodes(Layout root) {
 		unpack(root);
 	}
 	
@@ -31,16 +30,14 @@ public class Nodes {
 	 * 
 	 * @param node
 	 */
-	private void unpack(DataNode<?, ?, ?, ?> node) {
+	private void unpack(Layout node) {
 		String name = node.getName();
 		if (name != null) {
 			byName.put(name, node);
 		}
-		if (node instanceof SupportsChildren) {
-			for (DataNode<?, ?, ?, ?> child : 
-					((SupportsChildren) node).childrenToArray()) {
-				unpack(child);
-			}
+		Iterable<Layout> children = node.childLayouts();
+		for (Layout child : children) {
+			unpack(child);
 		}
 	}
 	
@@ -51,7 +48,7 @@ public class Nodes {
 	 * 
 	 * @return The node, or null if no node by name exists in the tree.
 	 */
-	public DataNode<?, ?, ?, ?> getNode(String name) {
+	public Layout getNode(String name) {
 		return byName.get(name);
 	}
 }

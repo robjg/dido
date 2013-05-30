@@ -1,3 +1,28 @@
 <body>
 	<p>Provide a framework for Data Input and Data Output.</p>
+
+	<p>The starting point for reading and writing data is a {@link Layout}.	
+	</p>
+	
+	<h3>Reading Data</h3>
+	
+	<p>When reading data the typical pattern is:
+	
+	<ol>
+	<li>Use {@link Layout#bind} to bind a {@link Binding} for creating 
+	Objects from the data.</li> 
+	<li>Use {@link Layout#readerFor} to create a {@link DataReader} from
+	some {@link DataIn}.
+	<li>Call {@link DataReader#read} continually to read object from the
+	data until null indicates there are no more objects to be read.
+	</ol>
+
+	<p>The sequence of events is: {@link DataIn} is read into 
+	{@link ValueNode} if the {@code Layout is such}. If the {@code Layout} 
+	is bound, this is passed to the binding.
+	</p>
+	
+	<p>To be continued...</p>
+	
+	
 </body>

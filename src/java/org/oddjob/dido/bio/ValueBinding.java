@@ -5,6 +5,13 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.ValueNode;
 
+/**
+ * A very simple {@link Binding} that processes a Java Object out of 
+ * or into a single {@link Layout} that is assumed to be a {@link valueNode}.
+ * 
+ * @author rob
+ *
+ */
 public class ValueBinding implements Binding {
 
 	@Override

@@ -20,16 +20,13 @@ public interface ValueNode<T> {
 	 * 
 	 * @return A value. May be null.
 	 */
-//	public T getValue();
 	public T value();
 	
 	/**
-	 * Set the value to be written. Normally not relevant during
-	 * reading.
+	 * Set the value just read or to be written. 
 	 * 
-	 * @param value
+	 * @param value The value. Set with null to clear the last value.
 	 */
-//	public void setValue(T value);
 	public void value(T value);
 	
 	public Class<T> getType();
