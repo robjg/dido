@@ -4,6 +4,7 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.Layout;
+import org.oddjob.dido.io.ClassMorphic;
 
 /**
  * Provide the ability to bind data to and from a Java Object. A 
@@ -57,5 +58,10 @@ public interface Binding {
 			Layout boundLayout, DataOut dataOut)
 	throws DataException;
 	
-	public void reset();
+	/**
+	 * Reset the binding. A binding may have altered the {@link Layout} it 
+	 * is bound to, added children to a {@link ClassMorphic} for instance. This
+	 * provides the opportunity to undo those changes.
+	 */
+	public void free();
 }

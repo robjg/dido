@@ -70,7 +70,7 @@ public class StringTextOut implements TextOut, LinesOut {
 	
 	@Override
 	public String toString() {
-		return buffer.toString();
+		return getClass().getSimpleName() + " length [" + buffer.length() + "]";
 	}
 	
 	@Override

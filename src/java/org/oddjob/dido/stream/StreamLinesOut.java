@@ -86,4 +86,10 @@ public class StreamLinesOut implements LinesOut {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + 
+				(textOut == null ? "" : " with text length [" + 
+						textOut.length() + "]");
+	}
 }

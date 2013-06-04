@@ -14,4 +14,6 @@ public interface DataWriter {
 	 * @throws DataException
 	 */
 	public boolean write(Object object) throws DataException;
+	
+	public void close() throws DataException;
 }

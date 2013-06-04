@@ -10,4 +10,7 @@ public class NullWriter implements DataWriter {
 		return false;
 	}
 	
+	@Override
+	public void close() throws DataException {
+	}
 }

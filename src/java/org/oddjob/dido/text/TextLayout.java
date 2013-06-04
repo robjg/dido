@@ -1,5 +1,6 @@
 package org.oddjob.dido.text;
 
+import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
@@ -12,6 +13,8 @@ import org.oddjob.dido.layout.LayoutValueNode;
 public class TextLayout 
 extends LayoutValueNode<String> {
 
+	private static final Logger logger = Logger.getLogger(TextLayout.class);
+	
 	private int from;
 
 	private int length;
@@ -72,6 +75,13 @@ extends LayoutValueNode<String> {
 				
 				return nextReader.read();
 			}
+			
+			@Override
+			public void close() throws DataException {
+				if (nextReader != null) {
+					nextReader.close();
+				}
+			}
 		};
 	}
 	
@@ -81,7 +91,7 @@ extends LayoutValueNode<String> {
 		
 		final TextOut outgoing = dataOut.provide(TextOut.class);
 		
-		final StringTextOut nextOut = new StringTextOut();
+		logger.trace("Creating writer for [" + outgoing + "]");
 		
 		return new DataWriter() {
 			
@@ -93,25 +103,55 @@ extends LayoutValueNode<String> {
 				if (nextWriter == null) {
 					
 					value(null);
-					nextWriter = nextWriterFor(nextOut);
+
+					nextWriter = nextWriterFor(outgoing);
 				}
 				
-				if (nextWriter.write(object)) {
-					return true;
-				}
+				boolean keep = nextWriter.write(object);
 					
 				String value = value();
 				
 				if (value != null) {
-					outgoing.write(value, from, length == 0 ? value.length() : length);
+					
+					int theLength = length == 0 ? value.length() : length;
+					
+					outgoing.write(value, from, theLength);
+					
+					logger.trace("[" + TextLayout.this + "] wrote [" + 
+							value + "] to [" + outgoing + "]");
+				}
+				else {
+					logger.trace("[" + TextLayout.this + "] no value.");
+					
 				}
 				
-				nextWriter = null;
+				if (!keep) {
+					nextWriter.close();
+					nextWriter = null;
+				}
+				
+				return keep;
+			}
+			
+			@Override
+			public void close() throws DataException {
+				
+				if (nextWriter != null) {
 					
-				return false;
+					logger.trace("Closing [" + nextWriter + "]");
+					
+					nextWriter.close();
+					nextWriter = null;
+				}
+			}
+			
+			@Override
+			public String toString() {
+				
+				return DataWriter.class.getSimpleName() + " for [" + 
+						TextLayout.this;
 			}
 		};
-		
 	}
 
 	@Override

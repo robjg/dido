@@ -10,9 +10,9 @@ public class HeadingsFieldsOutTest extends TestCase {
 		
 		FieldsOut test = new SimpleFieldsOut();
 		
-		int nameCol = test.writeHeading(null, 0);
-		int ageCol = test.writeHeading(null, 0);
-		int cityCol = test.writeHeading(null, 0);
+		int nameCol = test.columnForHeading(null, 0);
+		int ageCol = test.columnForHeading(null, 0);
+		int cityCol = test.columnForHeading(null, 0);
 		
 		assertEquals(1, nameCol);
 		assertEquals(2, ageCol);
@@ -24,9 +24,9 @@ public class HeadingsFieldsOutTest extends TestCase {
 		
 		FieldsOut test = new SimpleFieldsOut();
 		
-		assertEquals(1, test.writeHeading("age", 0));
-		assertEquals(2, test.writeHeading("city", 0));
-		assertEquals(4, test.writeHeading("name", 4));
+		assertEquals(1, test.columnForHeading("age", 0));
+		assertEquals(2, test.columnForHeading("city", 0));
+		assertEquals(4, test.columnForHeading("name", 4));
 				
 		String[] results = test.toValue(String[].class);
 		
@@ -37,9 +37,9 @@ public class HeadingsFieldsOutTest extends TestCase {
 		
 		SimpleFieldsOut test = new SimpleFieldsOut();
 		
-		assertEquals(1, test.writeHeading("age", 0));
-		assertEquals(2, test.writeHeading("city", 0));
-		assertEquals(4, test.writeHeading("name", 4));
+		assertEquals(1, test.columnForHeading("age", 0));
+		assertEquals(2, test.columnForHeading("city", 0));
+		assertEquals(4, test.columnForHeading("name", 4));
 		
 		String[] results = test.headings();
 		

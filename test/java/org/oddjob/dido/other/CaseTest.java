@@ -102,7 +102,7 @@ public class CaseTest extends TestCase {
 		
 		writer.write("John");
 		
-		assertEquals("1John      ", textOut.toString());
+		assertEquals("1John      ", textOut.toValue(String.class));
 		
 	}
 }

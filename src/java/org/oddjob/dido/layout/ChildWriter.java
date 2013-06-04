@@ -2,6 +2,7 @@ package org.oddjob.dido.layout;
 
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataWriter;
@@ -15,13 +16,17 @@ import org.oddjob.dido.ValueNode;
  */
 public class ChildWriter implements DataWriter {
 
+	private static final Logger logger = Logger.getLogger(ChildWriter.class);
+	
 	private final Iterator<? extends DataWriterFactory> iterator;
 	
 	private final DataOut dataOut;
 	
 	private final ValueNode<?> valueNode;
 	
-	private DataWriter current;
+	private DataWriter currentWriter;
+	
+	private boolean closed;
 	
 	public ChildWriter(Iterable<? extends DataWriterFactory> children,
 			ValueNode<?> parent, DataOut dataOut) {
@@ -31,30 +36,68 @@ public class ChildWriter implements DataWriter {
 	}	
 	
 	@Override
-	public boolean write(Object value) throws DataException {
+	public boolean write(Object object) throws DataException {
 		
-		if (current == null && iterator.hasNext()) {
-			current = iterator.next().writerFor(dataOut);
+		if (closed) {
+			throw new IllegalStateException("Writer closed.");
 		}
 		
-		if (current == null) {
+		if (currentWriter == null && iterator.hasNext()) {
+			currentWriter = iterator.next().writerFor(dataOut);
+		}
+		
+		if (currentWriter == null) {
 			
-			if (valueNode != null) {
-				writeDataWithInferredType(valueNode);
-			}
+			writeDataWithInferredType(valueNode);
+			
 			return false;
 		}
 
-		if (current.write(value)) {
+		boolean keep = currentWriter.write(object);
+		
+		if (keep) {
+			writeDataWithInferredType(valueNode);
+			
 			return true;
 		}
 		else {
-			current = null;
-			return write(value);
+			currentWriter.close();
+			currentWriter = null;
+				
+			return write(object);
 		}
 	}
 	
 	private <T> void writeDataWithInferredType(ValueNode<T> valueNode) {
-		valueNode.value(dataOut.toValue(valueNode.getType()));
+		
+		if (valueNode == null) {
+			return;
+		}
+			
+		T value = dataOut.toValue(valueNode.getType());
+		
+		logger.trace("Writing [" + value + "] from [" + dataOut + 
+				"] back to [" + valueNode + "]");
+		
+		valueNode.value(value);
+	}
+	
+	@Override
+	public void close() throws DataException {
+		if (currentWriter != null) {
+			
+			logger.trace("Closing [" + currentWriter + "]");
+			
+			currentWriter.close();
+			currentWriter = null;
+		}
+		
+		closed = true;
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + (valueNode == null ? "" :
+			" for [" + valueNode + "]");
 	}
 }

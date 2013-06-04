@@ -1,5 +1,6 @@
 package org.oddjob.dido.text;
 
+import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
@@ -7,11 +8,13 @@ import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.layout.LayoutValueNode;
+import org.oddjob.dido.layout.NullWriter;
 
 
 public class FieldLayout 
 extends LayoutValueNode<String> {
 
+	private static final Logger logger = Logger.getLogger(FieldLayout.class);
 	private String title;
 	
 	private int column;
@@ -43,23 +46,34 @@ extends LayoutValueNode<String> {
 		public Object read() throws DataException {
 			
 			if (nextReader != null) {
+
 				Object value = nextReader.read();
 				
+				nextReader.close();
 				return value;
 			}
 			
 			String field = null;
+			
 			if (column > 0) {
 				field = in.getColumn(column);
 			}
 
 			value(field);
+
+			logger.trace("[" + FieldLayout.this + "] value is [" + 
+					field + "]");
+
 			
 			textIn = new StringTextIn(field);
 			
 			nextReader = nextReaderFor(textIn);
 			
 			return read();
+		}
+		
+		@Override
+		public void close() throws DataException {
 		}
 	}
 	
@@ -83,6 +97,9 @@ extends LayoutValueNode<String> {
 				column = in.columnFor(title, true, column);
 			}
 			
+			logger.trace("Reader for [" + FieldLayout.this + "] column is [" + 
+					column + "]");
+			
 			initialised = true;
 		}
 		
@@ -90,7 +107,9 @@ extends LayoutValueNode<String> {
 			reader = new MainReader(in);
 		}
 		
-		return new DataReader() {
+		return new DataReader() {			
+			
+			@Override
 			public Object read() throws DataException {
 				Object value = reader.read();
 				if (value == null) {
@@ -98,11 +117,13 @@ extends LayoutValueNode<String> {
 				}
 				return value;
 			}
+
+			@Override
+			public void close() throws DataException {
+			}
 		};
 	}	
 		
-	private DataWriter writer;
-	
 	class MainWriter implements DataWriter {
 
 		private final FieldsOut outgoing;
@@ -116,27 +137,50 @@ extends LayoutValueNode<String> {
 		}
 		
 		@Override
-		public boolean write(Object value) throws DataException {
+		public boolean write(Object object) throws DataException {
 
 			if (nextWriter == null) {
 				
 				value(null);
+				
 				textOut = new StringTextOut();
 				nextWriter = nextWriterFor(textOut);
 			}
 			
-			if (nextWriter.write(value)) {
-				return true;
+			boolean keep = nextWriter.write(object);
+			
+			String value = value();
+			
+			if (value != null ) {
+			
+				outgoing.setColumn(column, value);
+				
+				logger.trace("[" + FieldLayout.this + "] wrote value [" + 
+						value + "] to [" + outgoing + "]");
+			}
+			else {
+				logger.trace("[" + FieldLayout.this + "] no value.");
+				
 			}
 			
+			if (!keep) {
+				nextWriter.close();
+				nextWriter = null;
+			}
 			
-			if (value() != null ) {
-				outgoing.setColumn(column, value());
-			}	
+			return keep;
+		}
+		
+		@Override
+		public void close() throws DataException {
 			
-			writer = null;
-
-			return false;
+			if (nextWriter != null) {
+				
+				logger.trace("Closing [" + nextWriter + "]");
+				
+				nextWriter.close();
+				nextWriter = null;
+			}
 		}
 	}
 	
@@ -147,7 +191,7 @@ extends LayoutValueNode<String> {
 		
 		FieldsOut out = dataOut.provide(FieldsOut.class);
 		
-		if (writer == null) {
+		if (!initialised) {
 			
 			String heading = title;
 			
@@ -155,31 +199,34 @@ extends LayoutValueNode<String> {
 				heading = getName();
 			}
 			
-			column = out.writeHeading(heading, column);
+			column = out.columnForHeading(heading, column);
 			
-			if (column == 0) {
+			logger.trace("Initialised [" + FieldLayout.this + "] with column [" + 
+					column + "]");
+			
+			initialised = true;
+		}
+		
+		logger.trace("Creating Writer for column [" + column + 
+				"] of [" + out + "]");
+		
+		if (column == 0) {
+			
+				return new NullWriter();
+		}
+		else {
 				
-				writer = new DataWriter() {
-					@Override
-					public boolean write(Object value) throws DataException {
-						return false;
-					}
-				};
-			}
-			else {
-				
-				writer = new MainWriter(out);
-			}
+				return new MainWriter(out);
 		}		
 		
-		return writer;
 	}
 	
 	
 	@Override
 	public void reset() {
+		initialised = false;
+		
 		reader = null;
-		writer = null;
 	}
 	
 	

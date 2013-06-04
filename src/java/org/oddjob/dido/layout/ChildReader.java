@@ -18,7 +18,7 @@ public class ChildReader implements DataReader {
 	
 	private final DataIn dataIn;
 	
-	private DataReader current;
+	private DataReader currentReader;
 	
 	public ChildReader(Iterable<? extends DataReaderFactory> children,
 			DataIn dataIn) {
@@ -29,21 +29,29 @@ public class ChildReader implements DataReader {
 	@Override
 	public Object read() throws DataException {
 		
-		if (current == null && iterator.hasNext()) {
-			current = iterator.next().readerFor(dataIn);
+		if (currentReader == null && iterator.hasNext()) {
+			currentReader = iterator.next().readerFor(dataIn);
 		}
 		
-		if (current == null) {
+		if (currentReader == null) {
 			return null;
 		}
 
-		Object value = current.read();
+		Object value = currentReader.read();
 		if (value == null) {
-			current = null;
+			currentReader.close();
+			currentReader = null;
 			return read();
 		}
 		else {
 			return value;
+		}
+	}
+	
+	@Override
+	public void close() throws DataException {
+		if (currentReader != null) {
+			currentReader.close();
 		}
 	}
 }

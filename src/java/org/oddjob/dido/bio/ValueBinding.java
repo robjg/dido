@@ -47,6 +47,6 @@ public class ValueBinding implements Binding {
 	}
 	
 	@Override
-	public void reset() {
+	public void free() {
 	}
 }

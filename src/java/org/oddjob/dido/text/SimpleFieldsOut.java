@@ -24,13 +24,13 @@ public class SimpleFieldsOut implements FieldsOut {
 			
 			for (String heading : headings) {
 				
-				writeHeading(heading, 0);
+				columnForHeading(heading, 0);
 			}
 		}
 	}
 	
 	@Override
-	public int writeHeading(String heading, int column) {
+	public int columnForHeading(String heading, int column) {
 		
 		if (column < 1) {
 			column = maxColumn + 1;
@@ -102,12 +102,12 @@ public class SimpleFieldsOut implements FieldsOut {
 	@Override
 	public <T extends DataOut> T provide(Class<T> type)
 			throws UnsupportedeDataOutException {
+
 		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
-		else {
-			throw new UnsupportedeDataOutException(getClass(), type);
-		}
+
+		throw new UnsupportedeDataOutException(getClass(), type);
 	}
 
 	@Override
@@ -118,5 +118,11 @@ public class SimpleFieldsOut implements FieldsOut {
 	@Override
 	public <T> T toValue(Class<T> type) {
 		return type.cast(values());
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " [" + 
+				(values == null ? "no" : values.size()) + "] values";
 	}
 }

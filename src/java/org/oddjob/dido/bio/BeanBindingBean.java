@@ -16,6 +16,7 @@ import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Headed;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.MorphicnessFactory;
@@ -125,8 +126,7 @@ implements Binding, ArooaSessionAware {
 		}
 		
 		@Override
-		public void reset() {
-			node.bind(null);
+		public void free() {
 		}
 	}
 	
@@ -221,7 +221,7 @@ implements Binding, ArooaSessionAware {
 	}
 	
 	@Override
-	public void reset() {
+	public void free() {
 		processor = null;
 		for (Runnable reset : resets) {
 			reset.run();
@@ -232,10 +232,12 @@ implements Binding, ArooaSessionAware {
 	private class HeaderProcessorOut implements BindingLayoutProcessor {
 			
 		@Override
-		public void process(Layout node) {
+		public void process(final Layout parentLayout) {
 			
 			final BeanOverview overview = 
 					accessor.getClassName(bean).getBeanOverview(accessor);
+			
+			logger.debug("Binding for [" + parentLayout + "] binding to children.");
 			
 			new LayoutWalker() {
 				
@@ -249,6 +251,9 @@ implements Binding, ArooaSessionAware {
 						
 						layout.bind(new ChildNodeBinding(layout));
 					
+						logger.debug("Binding for [" + parentLayout + 
+								"] binding to child [" + layout + "]");
+						
 						resets.add(new Runnable() {
 							@Override
 							public void run() {
@@ -263,10 +268,10 @@ implements Binding, ArooaSessionAware {
 						return true;
 					}
 				}
-			}.walk(node);
+			}.walk(parentLayout);
 			
 			processor = new MainProcessorOut();
-			processor.process(node);
+			processor.process(parentLayout);
 		}
 	}
 	
@@ -274,23 +279,31 @@ implements Binding, ArooaSessionAware {
 		
 		@Override
 		public void process(Layout node) {
-			logger.info("Binding data to " + node.getName());
+			logger.trace("Binding on layout [" + node  + 
+					"] binding bean [" + bean + "]");
 		}
 	}
-	
+
 	@Override
-	public boolean process(Object value, Layout node, DataOut dataOut) throws DataException {
+	public boolean process(Object object, Layout node, DataOut dataOut) throws DataException {
 		
-		if (type != null && !type.forClass().isInstance(value)) {
+		if (type != null && !type.forClass().isInstance(object)) {
+			
+			logger.trace("Binding on [" + node + "] ignoring bean " + 
+					object);
+			
 			return false;
 		}
 		
-		this.bean = value;
+		this.bean = object;
 		
 		if (processor == null) {
 			if (type == null) {
 
-				type = accessor.getClassName(value);
+				type = accessor.getClassName(object);
+				
+				logger.debug("Binding on [" + node + "] using type of first bean which is " + 
+						type);
 				
 				resets.add(new Runnable() {
 					@Override
@@ -301,9 +314,11 @@ implements Binding, ArooaSessionAware {
 			}
 			
 			if (node instanceof ClassMorphic) {
+				
 				Runnable reset = ((ClassMorphic) node).beFor(
 						new MorphicnessFactory(accessor).writeMorphicnessFor(
 								type, beanView));
+				
 				resets.add(reset);
 			}
 			
@@ -312,11 +327,16 @@ implements Binding, ArooaSessionAware {
 		
 		processor.process(node);
 	
-		new ChildWriter(node.childLayouts(), 
-				node instanceof ValueNode ? (ValueNode<?>) node : null, 
-				dataOut).write(value);
+		DataWriter nextWriter = new ChildWriter(node.childLayouts(), 
+					node instanceof ValueNode ? (ValueNode<?>) node : null, 
+							dataOut);
+		
+		nextWriter.write(object); 
+		
+		nextWriter.close();
 		
 		return false;
+		
 	}
 		
 	private void derriveTypeFromLayout(Layout layout) throws DataException {
@@ -358,7 +378,7 @@ implements Binding, ArooaSessionAware {
 			}			
 		}
 		else {
-				throw new DataException("No type provided and it is not derivable.");
+			throw new DataException("No type provided and it is not derivable.");
 		}
 		
 		type = classCreator.create();

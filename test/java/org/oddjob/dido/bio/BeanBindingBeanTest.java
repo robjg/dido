@@ -63,12 +63,12 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		DataWriter writer = root.writerFor(dataOut);
 		
-		assertFalse(writer.write("Apples"));
+		assertTrue(writer.write("Apples"));
 		
 		List<String> results = dataOut.getLines();
 		assertEquals(0, results.size());
 		
-		test.reset();
+		test.free();
 	}
 	
 	public void testBindInNoChild() throws DataException {
@@ -97,7 +97,7 @@ public class BeanBindingBeanTest extends TestCase {
 		assertNotNull(reader.read());
 		assertNull(reader.read());
 		
-		test.reset();
+		test.free();
 	}
 	
 	
@@ -125,14 +125,14 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		DataWriter writer = lines.writerFor(dataOut);
 		
-		assertFalse(writer.write(fruit));
+		assertTrue(writer.write(fruit));
 				
 		List<String> results = dataOut.getLines();
 
 		assertEquals("apple", results.get(0));
 		assertEquals(1, results.size());
 		
-		test.reset();
+		test.free();
 	}
 
 	public void testBindInWithChildren() throws DataException {
@@ -167,7 +167,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		assertNull(reader.read());
 		
-		test.reset();
+		test.free();
 	}
 	
 	public static class Basket {
@@ -207,11 +207,11 @@ public class BeanBindingBeanTest extends TestCase {
 		Basket basket = new Basket();
 		basket.setCost(12.47);
 		
-		assertFalse(writer.write(basket));
+		assertTrue(writer.write(basket));
 		
 		basket.setCost(5.23);
 		
-		assertFalse(writer.write(basket));
+		assertTrue(writer.write(basket));
 		
 		List<String> results = dataOut.getLines();
 		
@@ -219,7 +219,7 @@ public class BeanBindingBeanTest extends TestCase {
 		assertEquals("5.23", results.get(1));
 		assertEquals(2, results.size());
 		
-		test.reset();
+		test.free();
 		
 	}
 	
@@ -288,7 +288,7 @@ public class BeanBindingBeanTest extends TestCase {
 		Fruit fruit = new Fruit();
 		fruit.setType("apple");
 		
-		assertFalse(writer.write(fruit));
+		assertTrue(writer.write(fruit));
 		
 		List<String> results = dataOut.getLines();
 		
@@ -297,12 +297,12 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		fruit.setType("pear");
 		
-		assertFalse(writer.write(fruit));
+		assertTrue(writer.write(fruit));
 		
 		assertEquals("pear", results.get(1));
 		assertEquals(2, results.size());
 		
-		test.reset();
+		test.free();
 	}
 
 	public void testBindOutMorphicNoChild() throws DataException {
@@ -329,7 +329,7 @@ public class BeanBindingBeanTest extends TestCase {
 		fruit.setType("apple");
 		fruit.setQuantity(22);
 		
-		assertFalse(writer.write(fruit));
+		assertTrue(writer.write(fruit));
 		
 		List<String> results = dataOut.getLines();
 		
@@ -341,12 +341,12 @@ public class BeanBindingBeanTest extends TestCase {
 		fruit.setType("pear");
 		fruit.setQuantity(5);
 		
-		assertFalse(writer.write(fruit));
+		assertTrue(writer.write(fruit));
 		
 		assertEquals("pear,5", results.get(2));
 		assertEquals(3, results.size());
 		
-		test.reset();
+		test.free();
 	}
 	
 	public void testBindInMorphic() throws DataException {
@@ -383,7 +383,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		assertNull(reader.read());
 		
-		test.reset();
+		test.free();
 	}
 	
 }

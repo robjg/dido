@@ -163,7 +163,7 @@ public class DelimitedTest extends TestCase {
 		}
 		
 		@Override
-		public void reset() {
+		public void free() {
 		}
 	}
 	

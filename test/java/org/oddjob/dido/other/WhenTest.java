@@ -10,6 +10,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.log4j.Logger;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
 import org.oddjob.arooa.life.SimpleArooaClass;
@@ -27,6 +28,15 @@ import org.oddjob.dido.text.SimpleFieldsOut;
 
 public class WhenTest extends TestCase {
 
+	private static final Logger logger = Logger.getLogger(WhenTest.class);
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		
+		logger.info("------------------   " + 
+				getName() + "   ----------------------");
+	}
+	
 	String EOL = System.getProperty("line.separator");
 	
 	public static class Person {

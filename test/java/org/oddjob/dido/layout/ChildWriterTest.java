@@ -66,7 +66,7 @@ public class ChildWriterTest extends TestCase {
 		
 		assertEquals(false, test.write("Apples"));
 		
-		assertEquals("", dataOut.toString());
+		assertEquals("", dataOut.toValue(String.class));
 	}
 	
 	public void testWriteChildrenWithOneBinding() throws DataException {
@@ -89,7 +89,7 @@ public class ChildWriterTest extends TestCase {
 
 		assertEquals(false, test.write("Apples"));
 
-		assertEquals("Apples", dataOut.toString());
+		assertEquals("Apples", dataOut.toValue(String.class));
 	}
 	
 	public void testWriteChildrenSeveralBindings() throws DataException {
@@ -113,11 +113,11 @@ public class ChildWriterTest extends TestCase {
 
 		assertEquals(false, test.write("Apples"));
 
-		assertEquals("Apples", dataOut.toString());
+		assertEquals("Apples", dataOut.toValue(String.class));
 		
 		assertEquals(false, test.write("Apples"));
 		
-		assertEquals("Apples", dataOut.toString());
+		assertEquals("Apples", dataOut.toValue(String.class));
 		
 	}
 }

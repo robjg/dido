@@ -76,19 +76,19 @@ public class LateBindingBeanTest extends TestCase {
 		
 		DataWriter writer = root.writerFor(dataOut);
 		
-		assertFalse(writer.write(fruit));
+		assertTrue(writer.write(fruit));
 
 		assertEquals("apple", dataOut.results.get(0));
 		assertEquals(1, dataOut.results.size());
 		
 		fruit.setType("pear");
 
-		assertFalse(writer.write(fruit));
+		assertTrue(writer.write(fruit));
 		
 		assertEquals("pear", dataOut.results.get(1));
 		assertEquals(2, dataOut.results.size());
 		
-		test.reset();
+		test.free();
 	}
 
 	public void testBindOutWithTypeConversion() throws DataException {
@@ -113,13 +113,13 @@ public class LateBindingBeanTest extends TestCase {
 		
 		DataWriter writer = root.writerFor(dataOut);
 		
-		assertFalse(writer.write(basket));
+		assertTrue(writer.write(basket));
 		
 		assertEquals("12.47", dataOut.results.get(0));
 		
 		assertEquals("12.47", costNode.value());
 		
-		test.reset();
+		test.free();
 	}
 		
 }

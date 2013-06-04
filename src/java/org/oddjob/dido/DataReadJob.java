@@ -31,6 +31,14 @@ import org.oddjob.dido.stream.StreamIn;
 public class DataReadJob implements Runnable {
 
 	private static final Logger logger = Logger.getLogger(DataReadJob.class);
+	
+	/** 
+	 * @oddjob.property
+	 * @oddjob.description The name of this job. 
+	 * @oddjob.required No.
+	 */
+	private String name;
+	
     /**
      * @oddjob.property
      * @oddjob.description The plan for reading the data. This is the
@@ -72,6 +80,8 @@ public class DataReadJob implements Runnable {
 			logger.info("No destination for beans!");
 		}
 		
+		logger.info("Starting to read data using [" + plan + "]");
+		
 		StreamIn in = new InputStreamIn(input);
 		
 		Layout root = plan;
@@ -80,7 +90,7 @@ public class DataReadJob implements Runnable {
 		BindingHelper bindingHelper = new BindingHelper(root);
 		for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
 			Binding binding = entry.getValue();
-			binding.reset();
+			binding.free();
 			bindingHelper.bind(entry.getKey(), binding);
 		}
 
@@ -96,6 +106,8 @@ public class DataReadJob implements Runnable {
 					beans.add(bean);
 				}
 			}
+			
+			reader.close();
 		}
 		catch (RuntimeException e) {
 			throw e;
@@ -146,4 +158,22 @@ public class DataReadJob implements Runnable {
 	public Binding getBindings(String name) {
 		return bindings.get(name);
 	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	@Override
+	public String toString() {
+		if (name == null) {
+			return getClass().getSimpleName();
+		}
+		return name;
+	}	
 }

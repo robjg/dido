@@ -71,6 +71,8 @@ public class DataWriteJob implements Runnable {
 			throw new NullPointerException("No Definition.");
 		}
 
+		logger.info("Starting to write data using [" + plan + "]");
+		
 		OutputStream output = this.output;
 		
 		StreamOut dataOut = null;
@@ -84,7 +86,7 @@ public class DataWriteJob implements Runnable {
 		BindingHelper bindingHelper = new BindingHelper(root);
 		for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
 			Binding binding = entry.getValue();
-			binding.reset();
+			binding.free();
 			bindingHelper.bind(entry.getKey(), binding);
 		}
 		
@@ -97,6 +99,8 @@ public class DataWriteJob implements Runnable {
 				
 				++beanCount;
 			}
+			
+			writer.close();
 			
 			if (output != null) {
 				output.close();

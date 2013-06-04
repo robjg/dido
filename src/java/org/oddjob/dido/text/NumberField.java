@@ -70,6 +70,9 @@ extends LayoutValueNode<Number>{
 					return true;
 				}
 				
+				nextWriter.close();
+				nextWriter = null;
+				
 				Number value = value();
 				
 				if (value == null) {
@@ -85,8 +88,11 @@ extends LayoutValueNode<Number>{
 				
 				return false;
 			}
+			
+			@Override
+			public void close() throws DataException {
+			}
 		};
-		
 	}
 
 	@Override

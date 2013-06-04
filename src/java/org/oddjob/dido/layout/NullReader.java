@@ -9,4 +9,8 @@ public class NullReader implements DataReader {
 	public Object read() throws DataException {
 		return null;
 	}
+	
+	@Override
+	public void close() throws DataException {
+	}
 }

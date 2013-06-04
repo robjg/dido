@@ -65,7 +65,7 @@ public class DataOutDestination extends AbstractDestination<Object>{
 			BindingHelper bindingHelper = new BindingHelper(layout);
 			for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
 				Binding binding = entry.getValue();
-				binding.reset();
+				binding.free();
 				bindingHelper.bind(entry.getKey(), binding);
 			}
 			

@@ -1,5 +1,6 @@
 package org.oddjob.dido.stream;
 
+import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
@@ -10,6 +11,8 @@ import org.oddjob.dido.layout.LayoutValueNode;
 
 public class LinesLayout extends LayoutValueNode<String> {
 
+	private static final Logger logger = Logger.getLogger(LinesLayout.class);
+	
 	@Override
 	public Class<String> getType() {
 		return String.class;
@@ -35,6 +38,9 @@ public class LinesLayout extends LayoutValueNode<String> {
 
 					String line = linesIn.readLine();
 					
+					logger.trace("[" + LinesLayout.this + "] read line [" + 
+							line + "]");
+					
 					if (line == null) {
 						return null;
 					}
@@ -47,13 +53,21 @@ public class LinesLayout extends LayoutValueNode<String> {
 				Object next = nextReader.read();
 				
 				if (next == null) {
-					
+
+					nextReader.close();
 					nextReader = null;
 					
 					return read();
 				}
 				else {
 					return next;
+				}
+			}
+			
+			@Override
+			public void close() throws DataException {
+				if (nextReader != null) {
+					nextReader.close();
 				}
 			}
 		};
@@ -68,7 +82,7 @@ public class LinesLayout extends LayoutValueNode<String> {
 		
 		return new DataWriter() {
 
-			DataWriter nextWriter;
+			private DataWriter nextWriter;
 			
 			@Override
 			public boolean write(Object value) throws DataException {
@@ -81,25 +95,37 @@ public class LinesLayout extends LayoutValueNode<String> {
 							
 				}
 				
-				if (nextWriter.write(value)) {
-					return true;
-				}
+				boolean keep = nextWriter.write(value);
 				
 				String text = value();
 				
 				if (text != null) {
 					linesOut.writeLine(text);
+					
+					logger.trace("[" + LinesLayout.this + "] wrote line [" + 
+							text + "]");
 				}
 
-				nextWriter = null;
+				if (!keep) {
+					nextWriter.close();
+					nextWriter = null;
+				}
 				
-				return false;
+				return true;
+			}
+			
+			@Override
+			public void close() throws DataException {
+				
+				if (nextWriter != null) {
+					
+					logger.trace("Closing [" + nextWriter + "]");
+					
+					nextWriter.close();
+					nextWriter = null;
+				}
 			}
 		};
 	}
 	
-	@Override
-	public void reset() {
-		value(null);
-	}
 }

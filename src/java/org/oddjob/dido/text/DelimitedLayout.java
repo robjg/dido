@@ -2,6 +2,7 @@ package org.oddjob.dido.text;
 
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
@@ -19,6 +20,8 @@ import org.oddjob.dido.stream.LinesOut;
 public class DelimitedLayout extends LayoutValueNode<String[]>
 implements Headed, ClassMorphic {
 
+	private static final Logger logger = Logger.getLogger(DelimitedLayout.class);
+	
 	public static final String DEFAULT = ",";
 	
 	private String delimiter;
@@ -61,6 +64,10 @@ implements Headed, ClassMorphic {
 				reader = new BodyReader(linesIn);
 				return reader.read();
 			}
+			
+			@Override
+			public void close() throws DataException {
+			}
 		};
 		
 		public HeaderFirstReader(LinesIn linesIn) {
@@ -70,6 +77,11 @@ implements Headed, ClassMorphic {
 		@Override
 		public Object read() throws DataException {
 			return reader.read();
+		}
+		
+		@Override
+		public void close() throws DataException {
+			reader.close();
 		}
 	}
 	
@@ -93,9 +105,15 @@ implements Headed, ClassMorphic {
 				if (value != null) {
 					return value;
 				}
+				else {
+					nextReader.close();
+				}
 			}
 			
 			String line = linesIn.readLine();
+			
+			logger.trace("[" + DelimitedLayout.this + "] read line [" + 
+					line + "]");
 			
 			if (line == null) {
 				return null;
@@ -116,6 +134,10 @@ implements Headed, ClassMorphic {
 			nextReader = nextReaderFor(fieldsIn);
 			
 			return read();
+		}
+		
+		@Override
+		public void close() throws DataException {
 		}
 	}
 	
@@ -163,7 +185,12 @@ implements Headed, ClassMorphic {
 			if (withHeadings) {
 				
 				String[] headings = fields.headings();
+
 				linesOut.writeLine(delimitedString(headings));
+				
+				logger.trace("[" + DelimitedLayout.this + "] wrote line [" + 
+						headings + "]");
+
 			}
 			
 			lineWriter = new BodyWriter();
@@ -176,8 +203,13 @@ implements Headed, ClassMorphic {
 		
 		@Override
 		public void write(LinesOut linesOut) throws DataException {
+
+			String line = delimitedString(value());
 			
-			linesOut.writeLine(delimitedString(value()));
+			linesOut.writeLine(line);
+			
+			logger.trace("[" + DelimitedLayout.this + "] wrote line [" + 
+					line + "]");
 		}
 	}		
 	
@@ -204,30 +236,48 @@ implements Headed, ClassMorphic {
 				nextWriter = nextWriterFor(fieldsOut);
 			}
 			
-			if (nextWriter.write(value)) {
-				return true;
+			boolean keep = nextWriter.write(value);
+					
+			if (value() == null) {
+				value(fieldsOut.values());
 			}
-			else {
-				
-				nextWriter = null;
-				
-				if (value() == null) {
-					value(fieldsOut.values());
+			
+			if (value() != null) {					
+					
+				if (lineWriter == null) {
+					lineWriter = new MaybeWriteHeadings(fieldsOut);
 				}
-				
-				if (value() != null) {					
-						
-					if (lineWriter == null) {
-						lineWriter = new MaybeWriteHeadings(fieldsOut);
-					}
-				
-					lineWriter.write(linesOut);
-				}
-				
-				fieldsOut.clear();
+			
+				lineWriter.write(linesOut);
+			}
+			
+			fieldsOut.clear();
 
-				return false;
+			if (!keep) {
+				nextWriter.close();
+				nextWriter = null;
 			}
+			
+			return true;
+				
+		}
+		
+		@Override
+		public void close() throws DataException {
+			
+			if (nextWriter != null) {
+				
+				logger.trace("Closing [" + nextWriter + "]");
+				
+				nextWriter.close();
+				nextWriter = null;
+			}
+		}
+		
+		@Override
+		public String toString() {
+			
+			return "Writer for [" + DelimitedLayout.this + "]";
 		}
 	}
 	
@@ -238,6 +288,8 @@ implements Headed, ClassMorphic {
 
 		LinesOut linesOut = dataOut.provide(LinesOut.class);
 
+		logger.trace("Creating writer for [" + linesOut + "]");
+		
 		return new DelimitedWriter(linesOut);
 	}
 	

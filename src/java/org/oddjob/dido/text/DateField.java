@@ -86,6 +86,7 @@ extends LayoutValueNode<Date>{
 					return true;
 				}
 				
+				nextWriter.close();
 				nextWriter = null;
 
 				Date value = value();
@@ -108,6 +109,10 @@ extends LayoutValueNode<Date>{
 				}
 				
 				return false;
+			}
+			
+			@Override
+			public void close() throws DataException {
 			}
 		};
 	}

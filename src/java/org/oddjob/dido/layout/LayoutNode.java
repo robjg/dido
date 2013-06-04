@@ -3,6 +3,7 @@ package org.oddjob.dido.layout;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
@@ -15,6 +16,8 @@ import org.oddjob.dido.bio.Binding;
 
 abstract public class LayoutNode implements Layout {
 
+	private static final Logger logger = Logger.getLogger(LayoutNode.class);
+	
 	private Binding binding;
 	
 	private String name;
@@ -54,12 +57,21 @@ abstract public class LayoutNode implements Layout {
 		return binding;
 	}
 	
+	@Override
+	public void reset() {
+		for (Layout child : children) {
+			child.reset();
+		}
+	}
+	
 	protected DataReader nextReaderFor(final DataIn dataIn) {
 		
 		if (binding() == null) {
 			return new ChildReader(childLayouts(), dataIn);
 		}
 		else {
+			logger.trace("[" + this + "] next reader is a Binding.");
+			
 			return new DataReader() {
 				
 				boolean revisit = false;
@@ -73,6 +85,18 @@ abstract public class LayoutNode implements Layout {
 						revisit = true;
 					}
 				}
+				
+				@Override
+				public void close() throws DataException {
+					
+					// Todo: Binding needs to be closeable.
+				}
+				
+				@Override
+				public String toString() {
+					
+					return "BindingReader for " + LayoutNode.this;
+				}
 			};
 		}
 	}
@@ -85,12 +109,31 @@ abstract public class LayoutNode implements Layout {
 					dataOut);
 		}
 		else {
+			logger.trace("[" + this + "] next writer is a Binding.");
+			
 			return new DataWriter() {
 				@Override
 				public boolean write(Object value) throws DataException {
 					return binding.process(value, LayoutNode.this, dataOut);
 				}
+				
+				@Override
+				public void close() throws DataException {
+					
+					// Todo: Binding need to be closeable.
+				}
+				
+				public String toString() {
+				
+					return "BindingWriter for " + LayoutNode.this;
+				}
 			};
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + ": " + 
+				(name == null ? "(unnamed)" : name);
 	}
 }

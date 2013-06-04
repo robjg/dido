@@ -19,4 +19,9 @@ implements ValueNode<T> {
 		this.value = value;
 	}
 	
+	@Override
+	public void reset() {
+		super.reset();
+		value(null);
+	}
 }
