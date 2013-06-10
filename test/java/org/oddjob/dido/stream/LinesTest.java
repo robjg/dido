@@ -9,7 +9,7 @@ import junit.framework.TestCase;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.bio.ValueBinding;
+import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.text.TextLayout;
 
 public class LinesTest extends TestCase {
@@ -28,7 +28,7 @@ public class LinesTest extends TestCase {
 		LinesIn dataIn = new StreamLinesIn(input);
 		
 		LinesLayout test = new LinesLayout();
-		test.bind(new ValueBinding());
+		test.bind(new DirectBinding());
 		
 		DataReader reader = test.readerFor(dataIn);
 		
@@ -63,7 +63,7 @@ public class LinesTest extends TestCase {
 		LinesLayout test = new LinesLayout();
 		
 		TextLayout child = new TextLayout();
-		child.bind(new ValueBinding());
+		child.bind(new DirectBinding());
 		
 		test.setOf(0, child);
 		
@@ -107,7 +107,7 @@ public class LinesTest extends TestCase {
 		StreamLinesOut dataOut = new StreamLinesOut(output);
 		
 		LinesLayout test = new LinesLayout();
-		test.bind(new ValueBinding());
+		test.bind(new DirectBinding());
 		
 		DataWriter writer = test.writerFor(dataOut);
 		
@@ -134,7 +134,7 @@ public class LinesTest extends TestCase {
 		LinesLayout test = new LinesLayout();
 		
 		TextLayout child = new TextLayout();
-		child.bind(new ValueBinding());
+		child.bind(new DirectBinding());
 		
 		test.setOf(0, child);
 				

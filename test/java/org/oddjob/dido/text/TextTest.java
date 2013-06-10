@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.bio.ValueBinding;
+import org.oddjob.dido.bio.DirectBinding;
 
 
 public class TextTest extends TestCase {
@@ -18,7 +18,7 @@ public class TextTest extends TestCase {
 				
 		DataReader reader = test.readerFor(text);
 		
-		test.bind(new ValueBinding());
+		test.bind(new DirectBinding());
 
 		String next = (String) reader.read();
 		
@@ -67,7 +67,7 @@ public class TextTest extends TestCase {
 		
 		TextLayout test = new TextLayout();
 
-		test.bind(new ValueBinding());
+		test.bind(new DirectBinding());
 		
 		StringTextOut dataOut = new StringTextOut();
 		
@@ -94,8 +94,8 @@ public class TextTest extends TestCase {
 		test.setOf(0, c1);
 		test.setOf(1, c2);
 		
-		c1.bind(new ValueBinding());
-		c2.bind(new ValueBinding());
+		c1.bind(new DirectBinding());
+		c2.bind(new DirectBinding());
 		
 		StringTextOut dataOut = new StringTextOut();
 	

@@ -70,6 +70,10 @@ public class ChildWriter implements DataWriter {
 	
 	private <T> void writeDataWithInferredType(ValueNode<T> valueNode) {
 		
+		if (dataOut == null) {
+			return;
+		}
+		
 		if (valueNode == null) {
 			return;
 		}

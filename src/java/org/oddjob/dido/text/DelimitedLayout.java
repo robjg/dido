@@ -295,7 +295,10 @@ implements Headed, ClassMorphic {
 	
 	@Override
 	public Runnable beFor(Morphicness morphicness) {
+		
 		if (childLayouts().size() > 0) {
+			logger.debug("[" + this + "] has children. Morphicness ignored.");
+			
 			return new Runnable() {
 				@Override
 				public void run() {
@@ -308,6 +311,9 @@ implements Headed, ClassMorphic {
 			FieldLayout layout = new FieldLayout();
 			layout.setName(name);
 			layout.setTitle(morphicness.titleFor(name));
+			
+			logger.debug("[" + this + "] adding morphicness [" + layout + "]");
+			
 			addOrRemoveChild(childLayouts().size(), layout);
 		}
 		

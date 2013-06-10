@@ -10,7 +10,7 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.MockDataOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
-import org.oddjob.dido.bio.ValueBinding;
+import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.stream.LinesOut;
 
 public class DelimitedLayoutTest extends TestCase {
@@ -41,7 +41,7 @@ public class DelimitedLayoutTest extends TestCase {
 		
 		OurLinesOut results = new OurLinesOut();
 		
-		ValueBinding binding = new ValueBinding();
+		DirectBinding binding = new DirectBinding();
 		
 		DelimitedLayout test = new DelimitedLayout();
 		
@@ -61,7 +61,7 @@ public class DelimitedLayoutTest extends TestCase {
 		
 		OurLinesOut results = new OurLinesOut();
 		
-		ValueBinding binding = new ValueBinding();
+		DirectBinding binding = new DirectBinding();
 		
 		DelimitedLayout test = new DelimitedLayout();
 

@@ -79,7 +79,7 @@ abstract public class LayoutNode implements Layout {
 				@Override
 				public Object read() throws DataException {
 					try {
-						return binding.process(LayoutNode.this, dataIn, revisit);
+						return binding.extract(LayoutNode.this, dataIn, revisit);
 					}
 					finally {
 						revisit = true;
@@ -114,7 +114,7 @@ abstract public class LayoutNode implements Layout {
 			return new DataWriter() {
 				@Override
 				public boolean write(Object value) throws DataException {
-					return binding.process(value, LayoutNode.this, dataOut);
+					return binding.inject(value, LayoutNode.this, dataOut);
 				}
 				
 				@Override

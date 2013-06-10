@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReaderFactory;
-import org.oddjob.dido.bio.ValueBinding;
+import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.text.StringTextIn;
 import org.oddjob.dido.text.TextIn;
 import org.oddjob.dido.text.TextLayout;
@@ -44,7 +44,7 @@ public class ChildReaderTest extends TestCase {
 	
 	public void testReadChildrenWithOneBinding() throws DataException {
 
-		ValueBinding valueBinding = new ValueBinding();
+		DirectBinding valueBinding = new DirectBinding();
 		
 		TextLayout child1 = new TextLayout();
 		TextLayout child2 = new TextLayout();
@@ -67,7 +67,7 @@ public class ChildReaderTest extends TestCase {
 	
 	public void testReadChildrenSeveralBindings() throws DataException {
 
-		ValueBinding valueBinding = new ValueBinding();
+		DirectBinding valueBinding = new DirectBinding();
 		
 		TextLayout child1 = new TextLayout();
 		TextLayout child2 = new TextLayout();

@@ -9,8 +9,8 @@ import org.oddjob.dido.io.ClassMorphic;
 /**
  * Provide the ability to bind data to and from a Java Object. A 
  * {@code Binding} is generally bound to a {@link Layout} that will 
- * call the {@link #process(Layout, DataIn, boolean)} method during 
- * reading and the {@link #process(Object, Layout, DataOut)} method during
+ * call the {@link #extract(Layout, DataIn, boolean)} method during 
+ * reading and the {@link #inject(Object, Layout, DataOut)} method during
  * writing.
  * 
  * @author rob
@@ -19,8 +19,8 @@ import org.oddjob.dido.io.ClassMorphic;
 public interface Binding {
 
 	/**
-	 * Process data into a Java Object. Note that this method will be
-	 * called repeatedly for the same data until it returns null. During
+	 * Extract data from the {@Layout} into a Java Object. Note that this 
+	 * method will be called repeatedly for the same data until it returns null. During
 	 * subsequent calls the {@code revist} flag will be true so that simple bindings
 	 * where there is a one Object for one Layout may simply return null
 	 * when the revisit flag is null.
@@ -36,12 +36,13 @@ public interface Binding {
 	 * 
 	 * @throws DataException
 	 */
-	public Object process(Layout boundLayout, DataIn dataIn, 
+	public Object extract(Layout boundLayout, DataIn dataIn, 
 			boolean revist)
 	throws DataException;
 	
 	/**
-	 * Process a Java Object into the out.
+	 * Inject a Java Object into the {@link Layout} (for a direct binding) or 
+	 * {@link DataOut} (normally by calling a child processor).
 	 * 
 	 * @param object The value to be written.
 	 * @param boundLayout The node that this binding is bound to.
@@ -54,7 +55,7 @@ public interface Binding {
 	 * 
 	 * @throws DataException
 	 */
-	public boolean process(Object object, 
+	public boolean inject(Object object, 
 			Layout boundLayout, DataOut dataOut)
 	throws DataException;
 	

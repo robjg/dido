@@ -80,7 +80,7 @@ implements Binding, ArooaSessionAware {
 		
 		
 		@Override
-		public Object process(Layout node, DataIn dataIn, 
+		public Object extract(Layout node, DataIn dataIn, 
 				boolean revisit) {
 			
 			if (revisit) {
@@ -94,7 +94,7 @@ implements Binding, ArooaSessionAware {
 		}
 		
 		@Override
-		public boolean process(Object value, 
+		public boolean inject(Object value, 
 				Layout node, DataOut dataOut) 
 		throws DataException {
 			
@@ -188,7 +188,7 @@ implements Binding, ArooaSessionAware {
 	private BindingLayoutProcessor processor;
 		
 	@Override
-	public Object process(Layout node, DataIn dataIn,
+	public Object extract(Layout node, DataIn dataIn,
 			boolean revisit) throws DataException {
 		
 		if (revisit) {
@@ -285,7 +285,7 @@ implements Binding, ArooaSessionAware {
 	}
 
 	@Override
-	public boolean process(Object object, Layout node, DataOut dataOut) throws DataException {
+	public boolean inject(Object object, Layout node, DataOut dataOut) throws DataException {
 		
 		if (type != null && !type.forClass().isInstance(object)) {
 			

@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.bio.ValueBinding;
+import org.oddjob.dido.bio.DirectBinding;
 
 public class TextLayoutTest extends TestCase {
 
@@ -15,7 +15,7 @@ public class TextLayoutTest extends TestCase {
 		
 		TextLayout test = new TextLayout();
 		
-		ValueBinding binding = new ValueBinding();
+		DirectBinding binding = new DirectBinding();
 		
 		test.bind(binding);
 
@@ -33,7 +33,7 @@ public class TextLayoutTest extends TestCase {
 		TextLayout test = new TextLayout();
 		test.setName("Fruit");
 		
-		ValueBinding binding = new ValueBinding();
+		DirectBinding binding = new DirectBinding();
 		
 		test.bind(binding);
 		test.setFrom(4);
@@ -52,7 +52,7 @@ public class TextLayoutTest extends TestCase {
 				
 		TextLayout test = new TextLayout();
 		
-		ValueBinding binding = new ValueBinding();
+		DirectBinding binding = new DirectBinding();
 		
 		test.bind(binding);
 		
@@ -72,7 +72,7 @@ public class TextLayoutTest extends TestCase {
 		TextLayout test = new TextLayout();
 		test.setName("Fruit");
 		
-		ValueBinding binding = new ValueBinding();
+		DirectBinding binding = new DirectBinding();
 		
 		test.bind(binding);
 		test.setFrom(3);

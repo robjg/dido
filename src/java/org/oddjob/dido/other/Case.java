@@ -14,7 +14,7 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.bio.Binding;
-import org.oddjob.dido.bio.ValueBinding;
+import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.layout.LayoutNode;
 
 /**
@@ -166,7 +166,7 @@ public class Case<TYPE> extends LayoutNode {
 						"No descriminator layout for Case.");
 			}
 			
-			descriminator.bind(new ValueBinding());
+			descriminator.bind(new DirectBinding());
 			
 			if (resets.size() == 0) {
 				resets.add(new Runnable() {

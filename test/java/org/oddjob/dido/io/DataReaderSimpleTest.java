@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.bio.Binding;
-import org.oddjob.dido.bio.ValueBinding;
+import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.stream.InputStreamIn;
 import org.oddjob.dido.stream.LinesLayout;
 import org.oddjob.dido.stream.StreamIn;
@@ -24,7 +24,7 @@ public class DataReaderSimpleTest extends TestCase {
 		
 		LinesLayout node = new LinesLayout();
 		
-		Binding binding = new ValueBinding();
+		Binding binding = new DirectBinding();
 		
 		node.bind(binding);
 		

@@ -9,14 +9,10 @@ import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.Layout;
-import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.bio.BeanBindingBean;
-import org.oddjob.dido.bio.Binding;
+import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.bio.ValueBinding;
 import org.oddjob.dido.stream.LinesLayout;
 import org.oddjob.dido.stream.ListLinesOut;
@@ -31,7 +27,7 @@ public class DelimitedTest extends TestCase {
 		TextIn dataIn = new StringTextIn("a,b,c");
 
 		DelimitedLayout delimited = new DelimitedLayout();
-		delimited.bind(new ValueBinding());
+		delimited.bind(new DirectBinding());
 		
 		DataReader reader = delimited.readerFor(dataIn);
 		
@@ -118,7 +114,7 @@ public class DelimitedTest extends TestCase {
 	public void testWriteNoChildrenTheory() throws DataException {
 				
 		DelimitedLayout test = new DelimitedLayout();
-		test.bind(new ValueBinding());
+		test.bind(new DirectBinding());
 		
 		ListLinesOut dataOut = new ListLinesOut();
 				
@@ -136,35 +132,6 @@ public class DelimitedTest extends TestCase {
 		
 		assertEquals("h,i,j", dataOut.getLines().get(2));
 
-	}
-	
-	private class OurBinding implements Binding {
-		
-		private final String value;
-		
-		public OurBinding(String value) {
-			this.value = value;
-		}
-		
-		@Override
-		public Object process(Layout node, DataIn dataIn, boolean revist)
-				throws DataException {
-			throw new RuntimeException("Unexpected.");
-		}
-		
-		@SuppressWarnings("unchecked")
-		@Override
-		public boolean process(Object object, Layout node, DataOut dataOut)
-				throws DataException {
-			
-			((ValueNode<String>) node).value(value);
-			
-			return false;
-		}
-		
-		@Override
-		public void free() {
-		}
 	}
 	
 	public void testWriteDataAndHeadings() throws DataException, IOException {
@@ -193,9 +160,23 @@ public class DelimitedTest extends TestCase {
 
 		DataWriter writer = lines.writerFor(new OutputStreamOut(output));
 		
-		a.bind(new OurBinding("a"));
-		b.bind(new OurBinding("b"));
-		c.bind(new OurBinding("c"));
+		ArooaSession session = new StandardArooaSession();
+		
+		ValueBinding bindingA = new ValueBinding();
+		bindingA.setArooaSession(session);
+		bindingA.setValue("a");
+		
+		ValueBinding bindingB = new ValueBinding();
+		bindingB.setArooaSession(session);
+		bindingB.setValue("b");
+		
+		ValueBinding bindingC = new ValueBinding();
+		bindingC.setArooaSession(session);
+		bindingC.setValue("c");
+		
+		a.bind(bindingA);
+		b.bind(bindingB);
+		c.bind(bindingC);
 		
 		writer.write(new Object());
 		writer.write(new Object());
@@ -214,7 +195,7 @@ public class DelimitedTest extends TestCase {
 		
 		DelimitedLayout delimited = new DelimitedLayout();
 
-		delimited.bind(new ValueBinding());
+		delimited.bind(new DirectBinding());
 
 		TextOut dataOut = new StringTextOut();
 		
@@ -240,9 +221,23 @@ public class DelimitedTest extends TestCase {
 		FieldLayout c = new FieldLayout();
 		delimited.setOf(2, c);
 		
-		a.bind(new OurBinding("a"));
-		b.bind(new OurBinding("b"));
-		c.bind(new OurBinding("c"));
+		ArooaSession session = new StandardArooaSession();
+		
+		ValueBinding bindingA = new ValueBinding();
+		bindingA.setArooaSession(session);
+		bindingA.setValue("a");
+		
+		ValueBinding bindingB = new ValueBinding();
+		bindingB.setArooaSession(session);
+		bindingB.setValue("b");
+		
+		ValueBinding bindingC = new ValueBinding();
+		bindingC.setArooaSession(session);
+		bindingC.setValue("c");
+		
+		a.bind(bindingA);
+		b.bind(bindingB);
+		c.bind(bindingC);
 		
 		ListLinesOut dataOut = new ListLinesOut();
 		
@@ -252,9 +247,9 @@ public class DelimitedTest extends TestCase {
 		
 		assertEquals("a,b,c", dataOut.getLines().get(0));
 		
-		a.bind(new OurBinding("d"));
-		b.bind(new OurBinding("e"));
-		c.bind(new OurBinding("f"));
+		bindingA.setValue("d");
+		bindingB.setValue("e");
+		bindingC.setValue("f");
 		
 		writer.write(new Object());
 		
