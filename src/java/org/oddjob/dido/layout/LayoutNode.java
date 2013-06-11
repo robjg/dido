@@ -64,7 +64,7 @@ abstract public class LayoutNode implements Layout {
 		}
 	}
 	
-	protected DataReader nextReaderFor(final DataIn dataIn) {
+	protected DataReader nextReaderFor(final DataIn dataIn) throws DataException {
 		
 		if (binding() == null) {
 			return new ChildReader(childLayouts(), dataIn);
@@ -101,7 +101,7 @@ abstract public class LayoutNode implements Layout {
 		}
 	}
 	
-	protected DataWriter nextWriterFor(final DataOut dataOut) {
+	protected DataWriter nextWriterFor(final DataOut dataOut) throws DataException {
 		
 		if (binding() == null) {
 			return new ChildWriter(childLayouts(), 

@@ -1,7 +1,9 @@
 package org.oddjob.dido.layout;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataReader;
@@ -14,33 +16,40 @@ import org.oddjob.dido.DataReaderFactory;
  */
 public class ChildReader implements DataReader {
 
-	private final Iterator<? extends DataReaderFactory> iterator;
+	private static final Logger logger = Logger.getLogger(ChildReader.class);
+
+	private final List<DataReader> readers;;
 	
-	private final DataIn dataIn;
-	
-	private DataReader currentReader;
+	private boolean closed;
 	
 	public ChildReader(Iterable<? extends DataReaderFactory> children,
-			DataIn dataIn) {
-		iterator = children.iterator();
-		this.dataIn = dataIn;
+			DataIn dataIn) throws DataException {
+		
+		readers = new ArrayList<DataReader>();
+		for (DataReaderFactory factory : children) {
+			readers.add(factory.readerFor(dataIn));
+		}
 	}	
 	
 	@Override
 	public Object read() throws DataException {
 		
-		if (currentReader == null && iterator.hasNext()) {
-			currentReader = iterator.next().readerFor(dataIn);
-		}
-		
-		if (currentReader == null) {
-			return null;
+		if (closed) {
+			throw new IllegalStateException("Writer closed.");
 		}
 
+		if (readers.size() == 0) {
+			return null;
+		}
+		
+		DataReader currentReader = readers.get(0);
+
 		Object value = currentReader.read();
+		
 		if (value == null) {
 			currentReader.close();
-			currentReader = null;
+			readers.remove(0);
+
 			return read();
 		}
 		else {
@@ -50,8 +59,13 @@ public class ChildReader implements DataReader {
 	
 	@Override
 	public void close() throws DataException {
-		if (currentReader != null) {
+		
+		for (DataReader currentReader : readers) {
 			currentReader.close();
+			logger.trace("Closing [" + currentReader + "]");
 		}
+		
+		readers.clear();
+		closed = true;
 	}
 }

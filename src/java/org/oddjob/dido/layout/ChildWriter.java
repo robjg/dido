@@ -1,6 +1,7 @@
 package org.oddjob.dido.layout;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
@@ -17,22 +18,29 @@ import org.oddjob.dido.ValueNode;
 public class ChildWriter implements DataWriter {
 
 	private static final Logger logger = Logger.getLogger(ChildWriter.class);
-	
-	private final Iterator<? extends DataWriterFactory> iterator;
+
+	private final List<DataWriter> writers;
 	
 	private final DataOut dataOut;
 	
 	private final ValueNode<?> valueNode;
 	
-	private DataWriter currentWriter;
-	
 	private boolean closed;
 	
 	public ChildWriter(Iterable<? extends DataWriterFactory> children,
-			ValueNode<?> parent, DataOut dataOut) {
-		iterator = children.iterator();
+			ValueNode<?> parent, DataOut dataOut) throws DataException {
+		
+		this.writers = new ArrayList<DataWriter>();
+		
+		for (DataWriterFactory factory : children) {
+			writers.add(factory.writerFor(dataOut));
+		}
+
 		this.valueNode = parent;
 		this.dataOut = dataOut;
+		
+		logger.trace("Created ChildWriter for [" + valueNode + 
+				"] parent with " + writers.size() + " children.");
 	}	
 	
 	@Override
@@ -41,17 +49,14 @@ public class ChildWriter implements DataWriter {
 		if (closed) {
 			throw new IllegalStateException("Writer closed.");
 		}
-		
-		if (currentWriter == null && iterator.hasNext()) {
-			currentWriter = iterator.next().writerFor(dataOut);
-		}
-		
-		if (currentWriter == null) {
-			
+
+		if (writers.size() == 0) {
 			writeDataWithInferredType(valueNode);
 			
 			return false;
 		}
+
+		DataWriter currentWriter = writers.get(0);
 
 		boolean keep = currentWriter.write(object);
 		
@@ -62,8 +67,8 @@ public class ChildWriter implements DataWriter {
 		}
 		else {
 			currentWriter.close();
-			currentWriter = null;
-				
+			writers.remove(0);
+			
 			return write(object);
 		}
 	}
@@ -88,14 +93,14 @@ public class ChildWriter implements DataWriter {
 	
 	@Override
 	public void close() throws DataException {
-		if (currentWriter != null) {
-			
+		
+		for (DataWriter currentWriter : writers) {
+				
 			logger.trace("Closing [" + currentWriter + "]");
-			
 			currentWriter.close();
-			currentWriter = null;
 		}
 		
+		writers.clear();
 		closed = true;
 	}
 	

@@ -71,10 +71,10 @@ public class DataReadJob implements Runnable {
 	@Override
 	public void run() {
 		if (plan == null) {
-			throw new NullPointerException("No Definition.");
+			throw new NullPointerException("No Layout provided.");
 		}
 		if (input == null) {
-			throw new NullPointerException("No Input.");
+			throw new NullPointerException("No Input provided.");
 		}
 		if (beans == null) {
 			logger.info("No destination for beans!");
@@ -90,7 +90,6 @@ public class DataReadJob implements Runnable {
 		BindingHelper bindingHelper = new BindingHelper(root);
 		for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
 			Binding binding = entry.getValue();
-			binding.free();
 			bindingHelper.bind(entry.getKey(), binding);
 		}
 
@@ -114,6 +113,13 @@ public class DataReadJob implements Runnable {
 		}
 		catch (DataException e) {
 			throw new RuntimeException(e);
+		}
+		finally {
+			for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
+				Binding binding = entry.getValue();
+				binding.free();
+				bindingHelper.bind(entry.getKey(), null);
+			}
 		}
 		
 	}

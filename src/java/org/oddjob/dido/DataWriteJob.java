@@ -68,7 +68,11 @@ public class DataWriteJob implements Runnable {
 		beanCount = 0;
 		
 		if (plan == null) {
-			throw new NullPointerException("No Definition.");
+			throw new NullPointerException("No Layout provided.");
+		}
+		
+		if (output == null) {
+			throw new NullPointerException("No output provided");
 		}
 
 		logger.info("Starting to write data using [" + plan + "]");
@@ -86,7 +90,6 @@ public class DataWriteJob implements Runnable {
 		BindingHelper bindingHelper = new BindingHelper(root);
 		for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
 			Binding binding = entry.getValue();
-			binding.free();
 			bindingHelper.bind(entry.getKey(), binding);
 		}
 		
@@ -112,6 +115,14 @@ public class DataWriteJob implements Runnable {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		finally {
+			for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
+				Binding binding = entry.getValue();
+				binding.free();
+				bindingHelper.bind(entry.getKey(), null);
+			}
+		}
+
 		logger.info("Wrote " + beanCount + " beans of data out.");
 	}	
 	
