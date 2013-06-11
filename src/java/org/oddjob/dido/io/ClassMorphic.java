@@ -1,10 +1,10 @@
 package org.oddjob.dido.io;
 
-import org.oddjob.dido.DataNode;
+import org.oddjob.dido.Layout;
 import org.oddjob.dido.Morphicness;
 
 /**
- * A thing, generally a {@link DataNode} that 
+ * A thing, generally a {@link Layout} that 
  * can dynamically create it's structure. 
  * 
  * 
