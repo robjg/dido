@@ -30,6 +30,45 @@ extends LayoutValueNode<String> {
 		addOrRemoveChild(index, child);
 	}
 	
+	class TextReader implements DataReader {
+		
+		final StringTextIn substr;
+				
+		DataReader nextReader;
+		
+		public TextReader(StringTextIn substr) {
+			this.substr = substr;
+		}
+		
+		@Override
+		public Object read() throws DataException {
+			
+			if (nextReader == null) {
+
+				value(substr.getText());
+				
+				nextReader = nextReaderFor(substr);
+			}
+			
+			return nextReader.read();
+		}
+		
+		@Override
+		public void close() throws DataException {
+			
+			if (nextReader != null) {
+				nextReader.close();
+			}
+		}
+		
+		@Override
+		public String toString() {
+			
+			return DataReader.class.getSimpleName() + " for [" + 
+					TextLayout.this + "]";
+		}
+	};
+	
 	@Override
 	public DataReader readerFor(DataIn dataIn)
 			throws DataException {
@@ -37,9 +76,9 @@ extends LayoutValueNode<String> {
 		TextIn textIn = dataIn.provide(TextIn.class);
 		
 		String inString = textIn.getText();
+		
 		String newText;
 
-		
 		if (from > inString.length()) {
 			newText = "";
 		}
@@ -57,33 +96,75 @@ extends LayoutValueNode<String> {
 			newText = newText.trim();
 		}
 				
-		final StringTextIn substr = new StringTextIn(newText);
-		
-		return new DataReader() {
-			
-			DataReader nextReader;
-			
-			@Override
-			public Object read() throws DataException {
-				
-				if (nextReader == null) {
-
-					value(substr.toString());
-					
-					nextReader = nextReaderFor(substr);
-				}
-				
-				return nextReader.read();
-			}
-			
-			@Override
-			public void close() throws DataException {
-				if (nextReader != null) {
-					nextReader.close();
-				}
-			}
-		};
+		return new TextReader(new StringTextIn(newText));		
 	}
+	
+	class TextWriter implements DataWriter {
+		
+		private final TextOut outgoing;
+		
+		private DataWriter nextWriter;
+		
+		
+		public TextWriter(TextOut outgoing) {
+			this.outgoing = outgoing;
+		}
+		
+		@Override
+		public boolean write(Object object) throws DataException {
+			
+			if (nextWriter == null) {
+				
+				value(null);
+
+				nextWriter = nextWriterFor(outgoing);
+			}
+			
+			boolean keep = nextWriter.write(object);
+				
+			String value = value();
+			
+			if (value != null) {
+				
+				int theLength = length == 0 ? value.length() : length;
+				
+				outgoing.write(value, from, theLength);
+				
+				logger.trace("[" + TextLayout.this + "] wrote [" + 
+						value + "] to [" + outgoing + "]");
+			}
+			else {
+				logger.trace("[" + TextLayout.this + "] no value.");
+				
+			}
+			
+			if (!keep) {
+				nextWriter.close();
+				nextWriter = null;
+			}
+			
+			return keep;
+		}
+		
+		@Override
+		public void close() throws DataException {
+			
+			if (nextWriter != null) {
+				
+				logger.trace("Closing [" + nextWriter + "]");
+				
+				nextWriter.close();
+				nextWriter = null;
+			}
+		}
+		
+		@Override
+		public String toString() {
+			
+			return DataWriter.class.getSimpleName() + " for [" + 
+					TextLayout.this + "]";
+		}
+	};
 	
 	@Override
 	public DataWriter writerFor(DataOut dataOut)
@@ -93,65 +174,7 @@ extends LayoutValueNode<String> {
 		
 		logger.trace("Creating writer for [" + outgoing + "]");
 		
-		return new DataWriter() {
-			
-			DataWriter nextWriter;
-			
-			@Override
-			public boolean write(Object object) throws DataException {
-				
-				if (nextWriter == null) {
-					
-					value(null);
-
-					nextWriter = nextWriterFor(outgoing);
-				}
-				
-				boolean keep = nextWriter.write(object);
-					
-				String value = value();
-				
-				if (value != null) {
-					
-					int theLength = length == 0 ? value.length() : length;
-					
-					outgoing.write(value, from, theLength);
-					
-					logger.trace("[" + TextLayout.this + "] wrote [" + 
-							value + "] to [" + outgoing + "]");
-				}
-				else {
-					logger.trace("[" + TextLayout.this + "] no value.");
-					
-				}
-				
-				if (!keep) {
-					nextWriter.close();
-					nextWriter = null;
-				}
-				
-				return keep;
-			}
-			
-			@Override
-			public void close() throws DataException {
-				
-				if (nextWriter != null) {
-					
-					logger.trace("Closing [" + nextWriter + "]");
-					
-					nextWriter.close();
-					nextWriter = null;
-				}
-			}
-			
-			@Override
-			public String toString() {
-				
-				return DataWriter.class.getSimpleName() + " for [" + 
-						TextLayout.this;
-			}
-		};
+		return new TextWriter(outgoing);
 	}
 
 	@Override
