@@ -3,7 +3,6 @@ package org.oddjob.poi;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
@@ -13,31 +12,41 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.BeanViewBean;
 import org.oddjob.arooa.standard.StandardArooaSession;
+import org.oddjob.arooa.types.ImportType;
 import org.oddjob.arooa.utils.DateHelper;
-import org.oddjob.arooa.xml.XMLConfiguration;
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataPlanType;
 import org.oddjob.dido.DataReadJob;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriteJob;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.Morphicness;
-import org.oddjob.dido.MorphicnessFactory;
+import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.io.Nodes;
 import org.oddjob.io.TeeType;
 
 public class QuickRowsTest extends TestCase {
 
+	private static final Logger logger = Logger.getLogger(QuickRowsTest.class);
+	
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		
+		logger.info("----------------------------    " + getName() + 
+				"   -------------------------");
+	}
+	
 	public static class Person {
 
 		private String name;
@@ -92,20 +101,15 @@ public class QuickRowsTest extends TestCase {
 		BeanViewBean beanView = new BeanViewBean();
 		beanView.setProperties("name, dateOfBirth, salary");
 
+		BeanBindingBean binding = new BeanBindingBean();
+		binding.setArooaSession(session);
+		binding.setType(new SimpleArooaClass(Person.class));
+		binding.setBeanView(beanView.toValue());
+		
 		DataRows test = new DataRows();
-		
-		Morphicness morphicness = new MorphicnessFactory(
-				session.getTools().getPropertyAccessor()
-				).writeMorphicnessFor(new SimpleArooaClass(Person.class), 
-						beanView.toValue());
-				
-		test.beFor(morphicness);
+		test.setWithHeadings(true);
+		test.bind(binding);
 
-		Nodes nodes = new Nodes(test);
-		assertNotNull(nodes.getNode("name"));
-		assertNotNull(nodes.getNode("dateOfBirth"));
-		assertNotNull(nodes.getNode("salary"));
-		
 		Workbook workbook = new HSSFWorkbook();
 		
 		Sheet sheet = workbook.createSheet();
@@ -115,15 +119,22 @@ public class QuickRowsTest extends TestCase {
 		
 		SheetOut sheetOut = new PoiSheetOut(sheet, styleProvider);
 		
-		DataWriter writer = test.writerFor(sheetOut);
-
 		Person person = new Person();
 		person.setName("John");
 		person.setDateOfBirth(DateHelper.parseDate("1970-03-25"));
 		person.setSalary(45000.0);
 
+		DataWriter writer = test.writerFor(sheetOut);
+
 		writer.write(person);
 
+		writer.close();
+		
+		Nodes nodes = new Nodes(test);
+		assertNotNull(nodes.getNode("name"));
+		assertNotNull(nodes.getNode("dateOfBirth"));
+		assertNotNull(nodes.getNode("salary"));
+		
 		assertEquals(1, sheet.getLastRowNum());
 		assertEquals(3, sheet.getRow(1).getLastCellNum());
 
@@ -133,13 +144,9 @@ public class QuickRowsTest extends TestCase {
 		assertEquals("John", sheet.getRow(1).getCell(0).toString());
 		assertEquals("25-Mar-1970", sheet.getRow(1).getCell(1).toString());
 		assertEquals("45000.0", sheet.getRow(1).getCell(2).toString());
-		
-		morphicness = new MorphicnessFactory(
-				session.getTools().getPropertyAccessor()
-				).readMorphicnessFor(new SimpleArooaClass(Person.class), 
-						beanView.toValue());
-		
-		test.beFor(morphicness);
+				
+		binding.free();
+		test.reset();
 		
 		SheetIn sheetIn = new PoiSheetIn(sheet);
 
@@ -154,14 +161,13 @@ public class QuickRowsTest extends TestCase {
 	}
 
 	public void testWriteReadWithHeadings() throws ParseException,
-			ArooaConversionException, FileNotFoundException {
+			ArooaConversionException, IOException {
 
 		doWriteRead("org/oddjob/poi/QuickRowsWithHeadings.xml");
 	}
 
-	@SuppressWarnings("unchecked")
 	public void doWriteRead(String resource) throws ParseException,
-			ArooaConversionException, FileNotFoundException {
+			ArooaConversionException, IOException {
 
 		ArooaSession session = new StandardArooaSession();
 		
@@ -177,20 +183,22 @@ public class QuickRowsTest extends TestCase {
 		bindingBean.setArooaSession(session);
 		bindingBean.setType(new SimpleArooaClass(Person.class));
 
-		DataPlanType guide = new DataPlanType();
-		guide.setArooaSession(session);
-		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
 		TeeType teeType = new TeeType();
 		teeType.setOutputs(0, output);
-		teeType.setOutputs(1, new FileOutputStream(new File("BookTest.xslx")));
+		teeType.setOutputs(1, new FileOutputStream(new File("BookTest.xlsx")));
 
-		guide.setConfiguration(new XMLConfiguration(resource, getClass()
-				.getClassLoader()));
-
+		ImportType importType = new ImportType();
+		importType.setArooaSession(new StandardArooaSession(
+				new ClassPathDescriptorFactory(
+						).createDescriptor(getClass().getClassLoader())));
+		importType.setResource(resource);
+		
+		Layout layout = (Layout) importType.toObject();
+		
 		DataWriteJob write = new DataWriteJob();
-		write.setPlan(null);
+		write.setPlan(layout);
 		write.setBeans(beans);
 		write.setBindings("person", bindingBean);
 
@@ -202,7 +210,7 @@ public class QuickRowsTest extends TestCase {
 
 		DataReadJob read = new DataReadJob();
 		read.setInput(new ByteArrayInputStream(output.toByteArray()));
-		read.setPlan(null);
+		read.setPlan(layout);
 		read.setBindings("person", bindingBean);
 		read.setBeans(new ArrayList<Object>());
 		read.run();

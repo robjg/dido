@@ -60,12 +60,15 @@ implements ClassMorphic {
 	@Override
 	public Runnable beFor(Morphicness morphicness) {
 		
-		if (initialised) {
-			throw new IllegalStateException(
-					"QuickSheet Already initialised.");
+		if (childLayouts().size() > 0) {
+			logger.debug("[" + this + "] has children. Morphicness ignored.");
+			
+			return new Runnable() {
+				@Override
+				public void run() {
+				}
+			};
 		}
-		
-		setWithHeadings(true);
 		
 		String[] properties = morphicness.getNames();
 		
@@ -94,6 +97,8 @@ implements ClassMorphic {
 			cell.setName(property);
 			cell.setTitle(morphicness.titleFor(property));
 			
+			logger.debug("[" + this + "] adding morphicness [" + cell + "]");
+			
 			setOf(i++, cell);
 		}
 		
@@ -107,9 +112,7 @@ implements ClassMorphic {
 			}
 		};
 	}
-		
-
-	
+			
 	class MainReader implements DataReader {
 	
 		private final SheetIn din; 
@@ -127,6 +130,10 @@ implements ClassMorphic {
 				Object value = nextReader.read();
 				
 				if (value != null) {
+					
+					lastRow = din.getCurrentRow();
+					lastColumn = din.getLastColumn();
+					
 					return value;
 				}
 			}
@@ -135,7 +142,7 @@ implements ClassMorphic {
 				return null;
 			}
 
-			logger.debug("[" + toString() + "] reading row " + 
+			logger.debug("[" + DataRows.this + "] reading row " + 
 						din.getCurrentRow());
 
 			nextReader = nextReaderFor(din);
@@ -143,9 +150,16 @@ implements ClassMorphic {
 			return read();
 		}
 		
-		public void close() {
-			lastRow = din.getCurrentRow();
-			lastColumn = din.getLastColumn();
+		@Override
+		public void close() throws DataException {
+			if (nextReader != null) {
+				nextReader.close();
+				nextReader = null;
+			}
+			
+			logger.debug("[" + DataRows.this +  
+					"] closed reader at row, column [" + lastRow + 
+					", " + lastColumn + "]");
 		}
 	}
 	
@@ -159,12 +173,16 @@ implements ClassMorphic {
 			din.startAt(firstRow, firstColumn);
 			
 			if (withHeadings) {
+				
 				if (din.headerRow()) {
-					// What happens here?
+					logger.debug("[" + this + "] Read headings.");
 				}
 				else {
 					return new NullReader();
 				}
+			}
+			else {
+				logger.debug("[" + this + "] No headings.");
 			}
 			
 			initialised = true;
@@ -175,12 +193,12 @@ implements ClassMorphic {
 
 	class MainWriter implements DataWriter {
 		
-		private final SheetOut dout;
+		private final SheetOut sheetOut;
 		
 		private DataWriter nextWriter;
 		
 		public MainWriter(SheetOut dout) {
-			this.dout = dout;
+			this.sheetOut = dout;
 		}
 		
 		@Override
@@ -188,62 +206,84 @@ implements ClassMorphic {
 			
 			if (nextWriter == null) {
 
-				nextWriter = nextWriterFor(dout);
+				sheetOut.nextRow();
+				
+				nextWriter = nextWriterFor(sheetOut);
 			}
 			
-			if (nextWriter.write(object)) {
-				return true;
-			}
-			else {
-				
-				nextWriter = null;
+			logger.trace("[" + DataRows.this + "] writing row " + 
+					sheetOut.getCurrentRow());
+			
+			boolean keep = nextWriter.write(object);
+			
+			lastRow = sheetOut.getCurrentRow();
+			lastColumn = sheetOut.getLastColumn();
 
-				dout.nextRow();
-			
-				logger.debug("[" + toString() + "] writing row " + 
-						dout.getCurrentRow());
+			if (!keep) {
 				
-				return false;
+				nextWriter.close();
+				nextWriter = null;
 			}
+
+			// Want to be kept by parent and given more data.
+			return true;
 		}
 		
-		public void close() {
-			lastRow = dout.getCurrentRow();
-			lastColumn = dout.getLastColumn();
-
+		@Override
+		public void close() throws DataException {
+			
+			if (nextWriter != null) {
+				nextWriter.close();
+				nextWriter = null;
+			}
+				
 			if (autoFilter) {
-				dout.getTheSheet().setAutoFilter(
+				sheetOut.getTheSheet().setAutoFilter(
 						new CellRangeAddress(
 								firstRow, lastRow,
 								firstColumn, lastColumn));
 			}
+			
 			if (autoWidth) {
-				for (int i = 0; i <= dout.getLastColumn(); ++i) {
-					dout.getTheSheet().autoSizeColumn(i);
+				for (int i = 0; i <= sheetOut.getLastColumn(); ++i) {
+					sheetOut.getTheSheet().autoSizeColumn(i);
 				}
 			}
+			
+			logger.debug("[" + DataRows.this +  
+					"] closed writer at row, column [" + lastRow + 
+					", " + lastColumn + "]");
 		}
 	}
 	
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 
-		SheetOut dout = dataOut.provide(SheetOut.class);
+		SheetOut sheetOut = dataOut.provide(SheetOut.class);
+		
+		logger.debug("Creating writer for [" + sheetOut + "]");
 		
 		if (!initialised) {
-			dout.startAt(firstRow, firstColumn);
+			
+			sheetOut.startAt(firstRow, firstColumn);
 			
 			if (withHeadings) {
-				dout.headerRow(headingsStyle);
+				sheetOut.headerRow(headingsStyle);
 			}
+			
+			logger.debug("[" + this + "] initialsed at [" + 
+					firstRow + ", " + firstColumn + "]");
+			
 			initialised = true;
 		}
 		
-		return new MainWriter(dout);
+		return new MainWriter(sheetOut);
 	}
 
 	@Override
 	public void reset() {
+		super.reset();
+		
 		initialised = false;
 	}
 	

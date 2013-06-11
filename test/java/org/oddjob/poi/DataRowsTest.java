@@ -9,7 +9,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.bio.ValueBinding;
+import org.oddjob.dido.bio.DirectBinding;
 
 public class DataRowsTest extends TestCase {
 
@@ -30,7 +30,7 @@ public class DataRowsTest extends TestCase {
 		test.setWithHeadings(true);
 		
 		TextCell cell = new TextCell();
-		cell.bind(new ValueBinding());
+		cell.bind(new DirectBinding());
 		cell.setTitle("Fruit");
 	
 		test.setOf(0, cell);
@@ -42,7 +42,7 @@ public class DataRowsTest extends TestCase {
 		writer.write("Apples");
 		
 		assertEquals(3, sheetOut.getCurrentRow());		
-		assertEquals(1, cell.getColumn());
+		assertEquals(1, cell.getIndex());
 		
 		Cell titleCell = sheet.getRow(2).getCell(1);
 		assertEquals("Fruit", titleCell.getStringCellValue());
@@ -54,21 +54,23 @@ public class DataRowsTest extends TestCase {
 		assertEquals(3, sheetOut.getCurrentRow());
 		
 		// second row
-		writer.write("Ornages");
+		writer.write("Oranges");
 		
 		assertEquals(4, sheetOut.getCurrentRow());
 
 		assertEquals(4, sheetOut.getCurrentRow());
-		assertEquals(1, cell.getColumn());
+		assertEquals(1, cell.getIndex());
 		
 		
 		assertEquals(4, test.getLastRow());
 		assertEquals(1, test.getLastColumn());
 		
+		writer.close();
+		
 		////////////////////////////////
 		// Read Side
 		
-		cell.setValue(null);
+		test.reset();
 		
 		SheetIn sheetIn = new PoiSheetIn(sheet);
 		
@@ -76,14 +78,9 @@ public class DataRowsTest extends TestCase {
 		
 		DataReader reader = test.readerFor(sheetIn);
 		
-		assertEquals(1, test.getLastColumn());
-
-		
-		assertEquals(3, sheetIn.getCurrentRow());
-
-		assertEquals(1, cell.getColumn());
-		
 		Object result = reader.read();
+		
+		assertEquals(1, cell.getIndex());
 		
 		assertEquals("Apples", cell.getValue());
 		assertEquals("Apples", result);
@@ -97,5 +94,7 @@ public class DataRowsTest extends TestCase {
 		assertEquals("Oranges", cell.getValue());
 		
 		assertEquals(4, sheetIn.getCurrentRow());
+		
+		reader.close();
 	}
 }

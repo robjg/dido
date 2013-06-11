@@ -18,6 +18,10 @@ public class PoiBookIn implements BookIn {
 	private int sheet = 0;
 	
 	public PoiBookIn(InputStream input) throws InvalidFormatException, IOException {
+		if (input == null) {
+			throw new NullPointerException();
+		}
+		
 		workbook = WorkbookFactory.create(input);
 	}
 	

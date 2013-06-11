@@ -58,15 +58,18 @@ public class PoiBookOut implements BookOut {
 		}
 	}
 	
-	public boolean flush() throws DataException {
+	@Override
+	public void close() throws DataException {
+		
 		try {
 			workbook.write(output);
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			throw new DataException(e);
 		}
+		
 		logger.debug("Wrote workbook of " + workbook.getNumberOfSheets() +
 				" sheet out.");
-		return true;
 	}
 	
 	@Override

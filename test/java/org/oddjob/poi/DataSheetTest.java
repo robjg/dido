@@ -21,7 +21,6 @@ public class DataSheetTest extends TestCase {
 		
 		DataSheet test = new DataSheet();
 		
-		
 		DataRows child = new DataRows();
 		test.setOf(0, child);
 		
@@ -29,9 +28,10 @@ public class DataSheetTest extends TestCase {
 		
 		writer.write(new Object());
 		
-		BookIn bookIn = new PoiBookIn(new ByteArrayInputStream(
+		bookOut.close();
 		
-		output.toByteArray()));
+		BookIn bookIn = new PoiBookIn(new ByteArrayInputStream(		
+					output.toByteArray()));
 		
 		DataReader reader = test.readerFor(bookIn);
 		

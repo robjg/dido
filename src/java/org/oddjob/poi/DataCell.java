@@ -16,8 +16,6 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.layout.LayoutValueNode;
 import org.oddjob.dido.layout.NullReader;
 import org.oddjob.dido.layout.NullWriter;
-import org.oddjob.dido.text.StringTextOut;
-import org.oddjob.dido.text.TextOut;
 
 abstract public class DataCell<T> 
 extends LayoutValueNode<T>
@@ -29,17 +27,13 @@ implements ArooaSessionAware {
 	
 	private String style;
 		
-	private int column = -1;
+	private int index = -1;
 	
 	private String title;
 	
-	private SheetData sheet;
+	private String reference;
 	
 	private boolean initialised;
-	
-	private DataReader reader;
-	
-	private DataWriter writer;
 	
 	abstract protected int getCellType();
 	
@@ -58,44 +52,62 @@ implements ArooaSessionAware {
 	
 	class MainReader implements DataReader {
 		
-		private final SheetIn sheetIn;
+		private final TupleIn tupleIn;
 		
 		private DataReader nextReader;
 		
-		public MainReader(SheetIn sheetIn) {
-			this.sheetIn = sheetIn;
+		public MainReader(TupleIn tupleIn) {
+			this.tupleIn = tupleIn;
 		}
 		
 		@Override
 		public Object read() throws DataException {
 			
 			if (nextReader != null) {
+				
 				Object value = nextReader.read();
+				
+				if (value == null) {
+					nextReader.close();
+				}
 				
 				return value;
 			}
 			
-			Cell cell = sheetIn.getCell(column);
+			Cell cell = tupleIn.getCell(index);
 			
 			if (cell == null) {
-				throw new NullPointerException("Cell in row " + 
-						sheetIn.getCurrentRow() + ", column " + column + 
-						" is null");
+				
+				throw new NullPointerException("Cell index " + 
+						index + " is null");
 			}
 			
 			try {
 				extractCellValue(cell);
 				
-				logger.debug("[" + this + "] read [" + value() + "]");
+				logger.debug("[" + DataCell.this + "] read [" + value() + "]");
 			}
 			catch (RuntimeException e) {
+				
 				throw new DataException("Failed extracting cell value in row " +
-						sheetIn.getCurrentRow() + ", column " + column, e);
+						cell.getRowIndex() + ", column " + 
+						cell.getColumnIndex(), e);
 			}
+			
+			setReferenceFrom(cell);
 			
 			nextReader = nextReaderFor(null);
 			
 			return read();
+		}
+		
+		@Override
+		public void close() throws DataException {
+			
+			if (nextReader != null) {
+				nextReader.close();
+				nextReader = null;
+			}
 		}
 	}
 	
@@ -103,33 +115,26 @@ implements ArooaSessionAware {
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 
-		SheetIn in = dataIn.provide(SheetIn.class);
+		TupleIn tupleIn = dataIn.provide(TupleIn.class);
+		
+		logger.debug("Creating reader for [" + tupleIn + "]");
 		
 		if (!initialised) {
 			
-			this.sheet = in;
-			column = in.columnFor(title);
-			logger.info("[" + toString() + "] is column " + column);
+			index = tupleIn.indexForHeading(title);
+			
+			logger.info("[" + this + "] is column " + index);
+			
 			initialised = true;
 		}
 
-		if (column < 0) {
+		if (index < 0) {
 			return new NullReader();
 		}
-		
-		if (reader == null) {
-			reader = new MainReader(in);
+		else {
+			return new MainReader(tupleIn);
 		}
 		
-		return new DataReader() {
-			public Object read() throws DataException {
-				Object value = reader.read();
-				if (value == null) {
-					reader = null;
-				}
-				return value;
-			}
-		};
 	}
 	
 	
@@ -143,66 +148,75 @@ implements ArooaSessionAware {
 
 	class MainWriter implements DataWriter {
 
-		private final SheetOut data;
+		private final TupleOut data;
 		
 		private DataWriter nextWriter;
 		
-		private TextOut textOut;
-		
-		public MainWriter(SheetOut outgoing) {
+		public MainWriter(TupleOut outgoing) {
 			this.data = outgoing; 
 		}
 		
 		@Override
-		public boolean write(Object value) throws DataException {
+		public boolean write(Object object) throws DataException {
 
 			if (nextWriter == null) {
 				
 				value(null);
-				textOut = new StringTextOut();
-				nextWriter = nextWriterFor(textOut);
+				
+				nextWriter = nextWriterFor(null);
 			}
 			
-			if (nextWriter.write(value)) {
-				return true;
+			boolean keep = nextWriter.write(object);
+							
+			Cell cell = data.createCell(index, getCellType());
+			
+			insertValueInto(cell);
+			
+			String style = DataCell.this.style;
+			if (style == null) {
+				style = getDefaultStyle();
+			}
+			if (style != null) {
+				CellStyle cellStyle = data.styleFor(style);
+				
+				if (cellStyle == null) {
+					throw new DataException("No style available of name [" + 
+							style + "] from cell [" + toString() + "]");
+				}
+				
+				cell.setCellStyle(cellStyle);
 			}
 			
+			logger.trace("[" + DataCell.this + "] wrote [" + value() + "]");
 			
-			if (value() != null ) {
-				Cell cell = data.createCell(column, getCellType());
-				
-				insertValueInto(cell);
-				
-				String style = DataCell.this.style;
-				if (style == null) {
-					style = getDefaultStyle();
-				}
-				if (style != null) {
-					CellStyle cellStyle = data.styleFor(style);
-					
-					if (cellStyle == null) {
-						throw new DataException("No style available of name [" + 
-								style + "] from cell [" + toString() + "]");
-					}
-					
-					cell.setCellStyle(cellStyle);
-				}
-				
-				logger.debug("[" + this + "] wrote [" + value() + "]");
-			}	
+			setReferenceFrom(cell);
 			
-			writer = null;
-
-			return false;
+			if (!keep) {
+				nextWriter.close();
+				nextWriter = null;
+			}
+			
+			return keep;
+		}
+		
+		@Override
+		public void close() throws DataException {
+			
+			if (nextWriter != null) {
+				nextWriter.close();
+				nextWriter = null;
+			}
 		}
 	}
 	
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 
-		SheetOut out = dataOut.provide(SheetOut.class);
+		TupleOut tupleOut = dataOut.provide(TupleOut.class);
 		
-		if (writer == null) {
+		logger.debug("Creating new column writer for [" + tupleOut + "]");
+		
+		if (!initialised) {
 			
 			String heading = title;
 			
@@ -210,34 +224,40 @@ implements ArooaSessionAware {
 				heading = getName();
 			}
 			
-			this.sheet = out;
+			this.index = tupleOut.indexForHeading(heading);
 			
-			column = out.writeHeading(title);
-			
-			if (column == 0) {
-				
-				writer = new NullWriter();
-			}
-			else {
-				
-				writer = new MainWriter(out);
-			}
+			this.initialised = true;
+
+			logger.debug("[" + this + "] initialsed for column [" + index + "]");
 		}		
 		
-		return writer;
+		if (index < 0) {
+			
+			return new NullWriter();
+		}
+		else {
+			
+			return new MainWriter(tupleOut);
+		}
 	}
 	
 	@Override
 	public void reset() {
-		this.sheet = null;
+		super.reset();
+		
+		index = -1;
+		initialised = false;
+	}
+	
+	private void setReferenceFrom(Cell cell) {
+		
+		reference = new CellReference(
+				cell.getRowIndex(), cell.getColumnIndex()
+					).formatAsString();
 	}
 	
 	public String getReference() {
-		SheetData sheet = this.sheet;
-		if (sheet == null) {
-			return null;
-		}
-		return new CellReference(sheet.getCurrentRow(), column).formatAsString();
+		return reference;
 	}
 	
 	public String getTitle() {
@@ -248,8 +268,8 @@ implements ArooaSessionAware {
 		this.title = title;
 	}
 
-	public int getColumn() {
-		return column;
+	public int getIndex() {
+		return index;
 	}
 
 	public String getStyle() {

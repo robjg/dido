@@ -12,10 +12,11 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.oddjob.arooa.utils.DateHelper;
+import org.oddjob.dido.DataException;
 
 public class PoiSheetsTest extends TestCase {
 
-	public void testgetNextWhenExisting() {
+	public void testgetNextWhenExisting() throws DataException {
 		
 		Workbook workbook = new HSSFWorkbook();
 		
@@ -24,7 +25,9 @@ public class PoiSheetsTest extends TestCase {
 		PoiSheetOut test1 = new PoiSheetOut(sheet);
 		test1.nextRow();
 		
-		Cell cell1 = test1.createCell(0, Cell.CELL_TYPE_STRING);
+		TupleOut tupleOut = test1.provide(TupleOut.class);
+		
+		Cell cell1 = tupleOut.createCell(0, Cell.CELL_TYPE_STRING);
 		assertEquals(Cell.CELL_TYPE_STRING, cell1.getCellType());
 		assertNull(cell1.getRichStringCellValue());
 		
@@ -33,17 +36,19 @@ public class PoiSheetsTest extends TestCase {
 		PoiSheetIn test2 = new PoiSheetIn(sheet);
 		assertTrue(test2.nextRow());
 		
-		Cell cell2 = test2.getCell(0);
+		TupleIn tupleIn = test2.provide(TupleIn.class);
+		
+		Cell cell2 = tupleIn.getCell(0);
 		
 		assertEquals(Cell.CELL_TYPE_STRING, cell2.getCellType());
 		assertNotNull(cell2.getRichStringCellValue());
 		assertEquals("apples", cell2.getRichStringCellValue().toString());
 		
-		assertNull(test2.getCell(1));
+		assertNull(tupleIn.getCell(1));
 		assertFalse(test2.nextRow());
 	}
 	
-	public void testDifferentCellTypes() {
+	public void testDifferentCellTypes() throws DataException {
 		
 		Workbook workbook = new HSSFWorkbook();
 		
@@ -52,7 +57,9 @@ public class PoiSheetsTest extends TestCase {
 		PoiSheetOut test1 = new PoiSheetOut(sheet);
 		test1.nextRow();
 		
-		Cell cell1 = test1.createCell(0, Cell.CELL_TYPE_BLANK);
+		TupleOut tupleOut = test1.provide(TupleOut.class);
+		
+		Cell cell1 = tupleOut.createCell(0, Cell.CELL_TYPE_BLANK);
 		assertEquals(Cell.CELL_TYPE_BLANK, cell1.getCellType());
 		cell1.setCellValue("apples");
 		
@@ -82,7 +89,7 @@ public class PoiSheetsTest extends TestCase {
 		
 	}
 	
-	public void testDateCellTypes() throws ParseException {
+	public void testDateCellTypes() throws ParseException, DataException {
 		
 		Workbook workbook = new HSSFWorkbook();
 		
@@ -93,7 +100,9 @@ public class PoiSheetsTest extends TestCase {
 		
 		Date theDate = DateHelper.parseDateTime("2010-12-25 12:45");
 		
-		Cell cell1 = test1.createCell(0, Cell.CELL_TYPE_BLANK);
+		TupleOut tupleOut = test1.provide(TupleOut.class);
+		
+		Cell cell1 = tupleOut.createCell(0, Cell.CELL_TYPE_BLANK);
 		cell1.setCellValue(theDate);
 		
 		assertEquals(Cell.CELL_TYPE_NUMERIC, cell1.getCellType());
@@ -118,7 +127,7 @@ public class PoiSheetsTest extends TestCase {
 		}
 	}
 
-	public void testMakingACellBlank() {
+	public void testMakingACellBlank() throws DataException {
 		
 		Workbook workbook = new HSSFWorkbook();
 		
@@ -127,7 +136,9 @@ public class PoiSheetsTest extends TestCase {
 		PoiSheetOut test1 = new PoiSheetOut(sheet);
 		test1.nextRow();
 		
-		Cell cell1 = test1.createCell(0, Cell.CELL_TYPE_STRING);
+		TupleOut tupleOut = test1.provide(TupleOut.class);
+		
+		Cell cell1 = tupleOut.createCell(0, Cell.CELL_TYPE_STRING);
 		cell1.setCellValue("apples");
 				
 		cell1.setCellType(Cell.CELL_TYPE_BLANK);
@@ -136,7 +147,7 @@ public class PoiSheetsTest extends TestCase {
 		assertEquals(0.0, cell1.getNumericCellValue());
 	}
 
-	public void testHeadings() {
+	public void testHeadings() throws DataException {
 		
 		Workbook workbook = new HSSFWorkbook();
 		
@@ -144,22 +155,30 @@ public class PoiSheetsTest extends TestCase {
 		
 		PoiSheetOut testOut = new PoiSheetOut(sheet, 
 				new DefaultStyleFactory().providerFor(workbook));
+		
 		testOut.headerRow(null);
-		assertEquals(0, testOut.writeHeading("Name"));
-		assertEquals(1, testOut.writeHeading("Age"));
+		
+		TupleOut tupleOut = testOut.provide(TupleOut.class);
+		
+		assertEquals(0, tupleOut.indexForHeading("Name"));
+		assertEquals(1, tupleOut.indexForHeading("Age"));
 
 		testOut.nextRow();
-		testOut.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("John");
-		testOut.createCell(1, Cell.CELL_TYPE_NUMERIC).setCellValue(25);
+		
+		tupleOut.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("John");
+		tupleOut.createCell(1, Cell.CELL_TYPE_NUMERIC).setCellValue(25);
 		
 		PoiSheetIn testIn = new PoiSheetIn(sheet);
 		testIn.headerRow();
-		assertEquals(0, testIn.columnFor("Name"));
-		assertEquals(1, testIn.columnFor("Age"));
+		
+		TupleIn tupleIn = testIn.provide(TupleIn.class);
+		
+		assertEquals(0, tupleIn.indexForHeading("Name"));
+		assertEquals(1, tupleIn.indexForHeading("Age"));
 
 		assertTrue(testIn.nextRow());
-		assertEquals(25.0, testIn.getCell(1).getNumericCellValue(), 0.01);
-		assertEquals("John", testIn.getCell(0).getStringCellValue());
+		assertEquals(25.0, tupleIn.getCell(1).getNumericCellValue(), 0.01);
+		assertEquals("John", tupleIn.getCell(0).getStringCellValue());
 	}
 	
 }                                                       

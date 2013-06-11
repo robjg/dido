@@ -3,21 +3,21 @@
 		<poi:style key="date" format="m/d/yy hh:mm" />
 		<poi:style key="percentage" format="#0.00%" />
 	</styles>
-	<is>
+	<of>
 		<poi:sheet>
-			<is>
+			<of>
 				<poi:rows name="person" autoWidth="true">
-					<is>
+					<of>
 						<poi:text name="name" title="Name" />
 						<poi:date name="dateOfBirth" title="Date Of Birth" style="date" />
-						<poi:numeric name="salary" title="Salary" id='salery' />
+						<poi:numeric name="salary" title="Salary"/>
 						<poi:numeric-formula name="bonus" title="Bonus"
-							formula="${salery.reference}*${percentage.reference}" />
-						<poi:numeric name="percentage" title="Percentage" id='percentage'
+							formula="10" />
+						<poi:numeric name="percentage" title="Percentage"
 								style="percentage" value='0.1'/>
-					</is>
+					</of>
 				</poi:rows>
-			</is>
+			</of>
 		</poi:sheet>
-	</is>
+	</of>
 </poi:book>

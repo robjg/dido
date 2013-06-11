@@ -21,6 +21,7 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataPlanType;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.bio.DirectBinding;
 
 public class NumericFormulaCellTest extends TestCase {
 
@@ -41,11 +42,12 @@ public class NumericFormulaCellTest extends TestCase {
 		
 		writer.write(new Object());
 		
-		assertEquals(0, test1.getColumn());
+		assertEquals(0, test1.getIndex());
 		
 		NumericFormulaCell test2 = new NumericFormulaCell();
 		test2.setArooaSession(new StandardArooaSession());
-
+		test2.bind(new DirectBinding());
+		
 		SheetIn in = new PoiSheetIn(sheet);
 		assertTrue(in.nextRow());
 		
@@ -66,7 +68,6 @@ public class NumericFormulaCellTest extends TestCase {
 		
 		ClassPathDescriptorFactory descriptorFactory = 
 			new ClassPathDescriptorFactory();
-		descriptorFactory.setResource(DataPlanType.DIDO_DESCRIPTOR_RESOURCE);
 		
 		ArooaDescriptor descriptor = 
 			descriptorFactory.createDescriptor(getClass().getClassLoader());

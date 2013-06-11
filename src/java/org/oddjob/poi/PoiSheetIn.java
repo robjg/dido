@@ -29,11 +29,6 @@ public class PoiSheetIn implements SheetIn {
 	}
 	
 	@Override
-	public Cell getCell(int column) {
-		return row.getCell(column);
-	}
-	
-	@Override
 	public boolean headerRow() {
 		if (rowNum + 1 < sheet.getLastRowNum()) {
 			this.headings = new SimpleHeadings(sheet.getRow(++rowNum), 
@@ -56,16 +51,6 @@ public class PoiSheetIn implements SheetIn {
 	}
 
 	@Override
-	public int columnFor(String title) {
-		if (headings != null && title != null) {
-			return headings.position(title);
-		}
-		else {
-			return ++columnNum;
-		}
-	}
-		
-	@Override
 	public int getCurrentRow() {
 		return rowNum;
 	}
@@ -82,6 +67,54 @@ public class PoiSheetIn implements SheetIn {
 			return type.cast(this);
 		}
 		
+		if (type.isAssignableFrom(TupleIn.class)) {
+			return type.cast(new PoiTupleIn());
+		}
+		
 		throw new UnsupportedeDataInException(this.getClass(), type);
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + ": " + sheet.getSheetName();
+	}
+
+	/**
+	 * 
+	 */
+	class PoiTupleIn implements TupleIn {
+		
+		@Override
+		public int indexForHeading(String title) {
+			
+			if (headings != null && title != null) {
+				return headings.position(title);
+			}
+			else {
+				return ++columnNum;
+			}
+		}	
+		
+		@Override
+		public Cell getCell(int column) {
+			return row.getCell(column);
+		}
+		
+		@Override
+		public <T extends DataIn> T provide(Class<T> type) throws DataException {
+			
+			if (type.isInstance(this)) {
+				return type.cast(this);
+			}
+			
+			throw new UnsupportedeDataInException(this.getClass(), type);
+		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + " row [" + 
+					row.getRowNum() + "]";
+		}
+		
 	}
 }

@@ -22,10 +22,18 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.ValueNode;
-import org.oddjob.dido.bio.ValueBinding;
+import org.oddjob.dido.bio.DirectBinding;
 
 public class NumericCellTest extends TestCase {
 	private static final Logger logger = Logger.getLogger(NumericCellTest.class);
+	
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		
+		logger.info("-------------------------   " + getName()  + 
+				"   ----------------------");
+	}
 	
 	public void testReadWrite() throws DataException {
 		
@@ -35,7 +43,7 @@ public class NumericCellTest extends TestCase {
 		
 		NumericCell test1 = new NumericCell();
 		test1.setArooaSession(new StandardArooaSession());
-		test1.bind(new ValueBinding());
+		test1.bind(new DirectBinding());
 		
 		SheetOut out = new PoiSheetOut(sheet);
 		out.nextRow();
@@ -44,10 +52,11 @@ public class NumericCellTest extends TestCase {
 		
 		writer.write(12.3);
 		
-		assertEquals(0, test1.getColumn());
+		assertEquals(0, test1.getIndex());
 		
 		NumericCell test2 = new NumericCell();
 		test2.setArooaSession(new StandardArooaSession());
+		test2.bind(new DirectBinding());
 
 		SheetIn in = new PoiSheetIn(sheet);
 		assertTrue(in.nextRow());

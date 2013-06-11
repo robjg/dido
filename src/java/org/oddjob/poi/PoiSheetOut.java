@@ -1,5 +1,6 @@
 package org.oddjob.poi;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -9,6 +10,8 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 
 public class PoiSheetOut implements SheetOut {
+
+	private static final Logger logger = Logger.getLogger(PoiSheetOut.class);
 
 	private final Sheet sheet;
 	
@@ -47,37 +50,15 @@ public class PoiSheetOut implements SheetOut {
 	public void headerRow(String headingStyle) {
 		this.headings = sheet.createRow(++rowNum);
 		this.headingStyle = headingStyle;
-	}
-	
-	@Override
-	public Cell createCell(int column, int type) {
-		return row.createCell(column, type);
+		
+		logger.debug("Created header row at row ["+ rowNum + "].");
 	}
 	
 	@Override
 	public void nextRow() {
 		this.row = sheet.createRow(++rowNum);
-	}
-	
-	@Override
-	public int writeHeading(String heading) {
 		
-		++columnNum;
-		
-		if (headings != null) {
-			Cell cell = headings.createCell(
-					columnNum, Cell.CELL_TYPE_STRING);
-			cell.setCellValue(heading);
-			String headingStyle = this.headingStyle;
-			if (headingStyle == null) {
-				headingStyle = DefaultStyleFactory.HEADING_STYLE;
-			}
-			CellStyle style = styleFor(headingStyle);
-			if (style != null) {
-				cell.setCellStyle(style);
-			}
-		}
-		return columnNum;
+		logger.debug("Created row " + rowNum);
 	}
 	
 	@Override
@@ -108,8 +89,7 @@ public class PoiSheetOut implements SheetOut {
 	@Override
 	public <T> T toValue(Class<T> type) {
 		throw new RuntimeException("To Do.");
-	}
-	
+	}	
 	
 	@Override
 	public <T extends DataOut> T provide(Class<T> type) throws DataException {
@@ -118,6 +98,81 @@ public class PoiSheetOut implements SheetOut {
 			return type.cast(this);
 		}
 		
+		if (type.isAssignableFrom(TupleOut.class)) {
+			return type.cast(new PoiTupleOut());
+		}
+		
 		throw new UnsupportedeDataOutException(this.getClass(), type);
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + ": " + sheet.getSheetName();
+	}
+	
+	/**
+	 * 
+	 */
+	class PoiTupleOut implements TupleOut {
+		
+		@Override
+		public Cell createCell(int column, int type) {
+			return row.createCell(column, type);
+		}
+		
+		@Override
+		public int indexForHeading(String heading) {
+			
+			++columnNum;
+			
+			if (headings != null) {
+				Cell cell = headings.createCell(
+						columnNum, Cell.CELL_TYPE_STRING);
+				cell.setCellValue(heading);
+				String headingStyle = PoiSheetOut.this.headingStyle;
+				if (headingStyle == null) {
+					headingStyle = DefaultStyleFactory.HEADING_STYLE;
+				}
+				CellStyle style = styleFor(headingStyle);
+				if (style != null) {
+					cell.setCellStyle(style);
+				}
+			}
+			return columnNum;
+		}
+		
+		@Override
+		public boolean hasData() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+		@Override
+		public <T> T toValue(Class<T> type) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override
+		public CellStyle styleFor(String style) {
+			return PoiSheetOut.this.styleFor(style);
+		}
+		
+		@Override
+		public <T extends DataOut> T provide(Class<T> type) throws DataException {
+
+			if (type.isInstance(this)) {
+				return type.cast(this);
+			}
+			
+			throw new UnsupportedeDataOutException(this.getClass(), type);
+		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + 
+					(row == null ? "(unused)" : 
+						" row [" + row.getRowNum() + "]");
+		}
 	}
 }

@@ -1,12 +1,9 @@
 package org.oddjob.poi;
 
-import org.apache.poi.ss.usermodel.Cell;
 import org.oddjob.dido.DataIn;
 
 public interface SheetIn extends DataIn, SheetData {
 
-	public Cell getCell(int column);
-	
 	/**
 	 * Read a header row.
 	 * 
@@ -23,5 +20,4 @@ public interface SheetIn extends DataIn, SheetData {
 	 */
 	public boolean nextRow();
 	
-	public int columnFor(String title);
 }

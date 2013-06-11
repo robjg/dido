@@ -12,6 +12,7 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.Layout;
 import org.oddjob.dido.layout.LayoutNode;
 import org.oddjob.dido.stream.StreamIn;
 import org.oddjob.dido.stream.StreamOut;
@@ -25,6 +26,10 @@ extends LayoutNode {
 	
 	private final Map<String, StyleBean> styles
 		 = new LinkedHashMap<String, StyleBean>();
+	
+	public void setOf(int index, Layout child) {
+		addOrRemoveChild(index, child);
+	}
 	
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
@@ -60,16 +65,31 @@ extends LayoutNode {
 		}
 		
 		
-		BookOut book = new PoiBookOut(data.getStream(), version, 
+		final BookOut bookOut = new PoiBookOut(data.getStream(), version, 
 				styleFactory);
 		
 		logger.debug("Created empty workbook.");
 		
-		return nextWriterFor(book);
+		final DataWriter nextWriter = nextWriterFor(bookOut);
+		
+		return new DataWriter() {
+			
+			@Override
+			public boolean write(Object object) throws DataException {
+				return nextWriter.write(object);
+			}
+			
+			@Override
+			public void close() throws DataException {
+				nextWriter.close();
+				bookOut.close();
+			}
+		};
 	}
 
 	@Override
 	public void reset() {
+		super.reset();
 	}
 	
 	public SpreadsheetVersion getVersion() {

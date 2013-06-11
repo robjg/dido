@@ -38,7 +38,8 @@ public class DataSheet extends LayoutNode {
 		
 		PoiSheetIn dataSheet = new PoiSheetIn(sheet);
 		
-		logger.debug("Reading sheet " + sheet.getSheetName());
+		logger.debug("Reading sheet " + sheet.getSheetName() + 
+				" of rows " + sheet.getLastRowNum());
 		
 		return nextReaderFor(dataSheet);
 	}
@@ -60,6 +61,8 @@ public class DataSheet extends LayoutNode {
 
 	@Override
 	public void reset() {
+		super.reset();
+		
 		sheetName = null;
 	}
 	
