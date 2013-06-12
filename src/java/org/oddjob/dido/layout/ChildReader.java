@@ -35,7 +35,7 @@ public class ChildReader implements DataReader {
 	public Object read() throws DataException {
 		
 		if (closed) {
-			throw new IllegalStateException("Writer closed.");
+			throw new IllegalStateException("Reader closed.");
 		}
 
 		if (readers.size() == 0) {

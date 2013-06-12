@@ -42,14 +42,14 @@ public class Case<TYPE> extends LayoutNode {
 	@Override
 	public DataReader readerFor(final DataIn dataIn) throws DataException {
 		
-		final Layout descriminator = childLayouts().get(0);
+		final Layout discriminator = childLayouts().get(0);
 		
-		if (descriminator == null) {
+		if (discriminator == null) {
 			throw new NullPointerException(
 					"No descriminator layout for Case.");
 		}
 		
-		if (! (descriminator instanceof ValueNode)) {
+		if (! (discriminator instanceof ValueNode)) {
 			throw new DataException(
 					"Descriminator is not a ValueNode.");
 			
@@ -65,11 +65,11 @@ public class Case<TYPE> extends LayoutNode {
 				
 				if (nextReader == null) {
 					
-					DataReader descriminatorReader = descriminator.readerFor(dataIn);
+					DataReader descriminatorReader = discriminator.readerFor(dataIn);
 					
 					descriminatorReader.read();
 					
-					Case.this.value = ((ValueNode<TYPE>) descriminator).value();
+					Case.this.value = ((ValueNode<TYPE>) discriminator).value();
 					
 					logger.trace("Read descriminator value of [" + 
 							Case.this.value + "]");
@@ -139,7 +139,7 @@ public class Case<TYPE> extends LayoutNode {
 		
 		private List<Layout> whens;
 		
-		private Layout descriminator;
+		private Layout discriminator;
 		
 		WriterInitialisation() {
 			
@@ -159,14 +159,14 @@ public class Case<TYPE> extends LayoutNode {
 				
 			}
 	
-			descriminator = childLayouts.get(0);
+			discriminator = childLayouts.get(0);
 			
-			if (descriminator == null) {
+			if (discriminator == null) {
 				throw new NullPointerException(
 						"No descriminator layout for Case.");
 			}
 			
-			descriminator.bind(new DirectBinding());
+			discriminator.bind(new DirectBinding());
 			
 			if (resets.size() == 0) {
 				resets.add(new Runnable() {
@@ -175,15 +175,15 @@ public class Case<TYPE> extends LayoutNode {
 					public void run() {
 						
 						logger.trace("Removing Case binding from descriminator [" + 
-								descriminator + "]");
+								discriminator + "]");
 						
-						descriminator.bind(null);
+						discriminator.bind(null);
 					}
 				});
 			}
 			
 			logger.trace("Initialised writing with " + whens.size() + 
-					" whens and descriminator [" + descriminator + "]");
+					" whens and descriminator [" + discriminator + "]");
 		}
 	}
 	
@@ -218,11 +218,11 @@ public class Case<TYPE> extends LayoutNode {
 			
 			if (value != null) {
 		
-				DataWriter descriminatorWriter = 
-						initialisation.descriminator.writerFor(
+				DataWriter discriminatorWriter = 
+						initialisation.discriminator.writerFor(
 								dataOut);
 				
-				descriminatorWriter.write(value);
+				discriminatorWriter.write(value);
 			}
 			
 			return true;
@@ -257,7 +257,7 @@ public class Case<TYPE> extends LayoutNode {
 	 * The methodology is: Iterate over children writing out data until
 	 * one of them writes data. If one writes data then set value
 	 * of this case to the value of the {@code CaseCondition} that
-	 * wrote the data. This will then be used to write the descriminator.
+	 * wrote the data. This will then be used to write the discriminator.
 	 * 
 	 * @param <T>
 	 */

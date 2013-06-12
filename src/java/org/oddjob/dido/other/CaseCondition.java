@@ -20,10 +20,10 @@ public interface CaseCondition<TYPE> {
 	
 	/**
 	 * Evaluate for output. Generally used in conjunction with {@link Selected}
-	 * to provide the value that is used to write to the descriminator node
+	 * to provide the value that is used to write to the discriminator node
 	 * of a {@link Case} node.
 	 *  
-	 * @return The value for the descriminator of null if this CaseCondition
+	 * @return The value for the discriminator of null if this CaseCondition
 	 * wasn't selected.
 	 */
 	public TYPE value();
