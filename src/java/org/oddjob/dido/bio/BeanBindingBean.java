@@ -35,7 +35,7 @@ import org.oddjob.dido.layout.LayoutWalker;
  * @author rob
  *
  */
-public class BeanBindingBean 
+public class BeanBindingBean extends SingleBeanBinding
 implements Binding, ArooaSessionAware {
 
 	private static final Logger logger = Logger.getLogger(BeanBindingBean.class);
@@ -70,7 +70,8 @@ implements Binding, ArooaSessionAware {
 	
 	
 	
-	private class ChildNodeBinding implements Binding {
+	private class ChildNodeBinding extends SingleBeanBinding
+	implements Binding {
 
 		private final Layout node;
 		
@@ -80,12 +81,7 @@ implements Binding, ArooaSessionAware {
 		
 		
 		@Override
-		public Object extract(Layout node, DataIn dataIn, 
-				boolean revisit) {
-			
-			if (revisit) {
-				return null;
-			}
+		protected Object extract(Layout node, DataIn dataIn) {
 			
 			accessor.setSimpleProperty(bean, node.getName(), 
 					((ValueNode<?>) node).value());
@@ -94,7 +90,7 @@ implements Binding, ArooaSessionAware {
 		}
 		
 		@Override
-		public boolean inject(Object value, 
+		protected boolean inject(Object value, 
 				Layout node, DataOut dataOut) 
 		throws DataException {
 			
@@ -188,12 +184,8 @@ implements Binding, ArooaSessionAware {
 	private BindingLayoutProcessor processor;
 		
 	@Override
-	public Object extract(Layout node, DataIn dataIn,
-			boolean revisit) throws DataException {
-		
-		if (revisit) {
-			return null;
-		}
+	protected Object extract(Layout node, DataIn dataIn) 
+	throws DataException {
 		
 		if (processor == null) {
 			

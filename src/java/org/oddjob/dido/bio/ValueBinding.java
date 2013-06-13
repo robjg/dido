@@ -17,7 +17,8 @@ import org.oddjob.dido.ValueNode;
  * @author rob
  *
  */
-public class ValueBinding implements Binding, ArooaSessionAware {
+public class ValueBinding extends SingleBeanBinding
+implements Binding, ArooaSessionAware {
 
 	private String value;
 	
@@ -29,13 +30,9 @@ public class ValueBinding implements Binding, ArooaSessionAware {
 	}
 	
 	@Override
-	public Object extract(Layout node, DataIn dataIn, 
-			boolean revist) throws DataException {
+	protected Object extract(Layout node, DataIn dataIn) 
+	throws DataException {
 
-		if (revist) {
-			return null;
-		}
-		
 		if (node instanceof ValueNode) {
 			
 			@SuppressWarnings("unchecked")
@@ -55,7 +52,7 @@ public class ValueBinding implements Binding, ArooaSessionAware {
 	}
 	
 	@Override
-	public boolean inject(Object object, Layout node, DataOut dataOut) throws DataException {
+	protected boolean inject(Object object, Layout node, DataOut dataOut) throws DataException {
 		
 		if (node instanceof ValueNode) {
 			

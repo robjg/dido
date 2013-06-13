@@ -12,16 +12,12 @@ import org.oddjob.dido.ValueNode;
  * @author rob
  *
  */
-public class DirectBinding implements Binding {
+public class DirectBinding extends SingleBeanBinding
+implements Binding {
 
 	@Override
-	public Object extract(Layout node, DataIn dataIn, 
-			boolean revist) {
+	protected Object extract(Layout node, DataIn dataIn) {
 
-		if (revist) {
-			return null;
-		}
-		
 		if (node instanceof ValueNode) {
 			return ((ValueNode<?>) node).value();
 		}
@@ -32,7 +28,7 @@ public class DirectBinding implements Binding {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean inject(Object object, Layout node, DataOut dataOut) {
+	protected boolean inject(Object object, Layout node, DataOut dataOut) {
 		
 		if (node instanceof ValueNode) {
 			

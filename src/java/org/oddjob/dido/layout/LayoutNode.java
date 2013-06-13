@@ -66,69 +66,34 @@ abstract public class LayoutNode implements Layout {
 	
 	protected DataReader nextReaderFor(final DataIn dataIn) throws DataException {
 		
+		DataReader nextReader;
 		if (binding() == null) {
-			return new ChildReader(childLayouts(), dataIn);
+			nextReader = new ChildReader(childLayouts(), dataIn);
 		}
 		else {
-			logger.trace("[" + this + "] next reader is a Binding.");
-			
-			return new DataReader() {
-				
-				boolean revisit = false;
-				
-				@Override
-				public Object read() throws DataException {
-					try {
-						return binding.extract(LayoutNode.this, dataIn, revisit);
-					}
-					finally {
-						revisit = true;
-					}
-				}
-				
-				@Override
-				public void close() throws DataException {
-					
-					// Todo: Binding needs to be closeable.
-				}
-				
-				@Override
-				public String toString() {
-					
-					return "BindingReader for " + LayoutNode.this;
-				}
-			};
+			nextReader = binding().readerFor(this, dataIn);
 		}
+		
+		logger.trace("[" + this + "] next reader is [" + nextReader + "]");		
+		
+		return nextReader;
 	}
 	
 	protected DataWriter nextWriterFor(final DataOut dataOut) throws DataException {
 		
+		DataWriter nextWriter;
 		if (binding() == null) {
-			return new ChildWriter(childLayouts(), 
+			nextWriter = new ChildWriter(childLayouts(), 
 					((this instanceof ValueNode) ? (ValueNode<?>) this : null), 
 					dataOut);
 		}
 		else {
-			logger.trace("[" + this + "] next writer is a Binding.");
-			
-			return new DataWriter() {
-				@Override
-				public boolean write(Object value) throws DataException {
-					return binding.inject(value, LayoutNode.this, dataOut);
-				}
-				
-				@Override
-				public void close() throws DataException {
-					
-					// Todo: Binding need to be closeable.
-				}
-				
-				public String toString() {
-				
-					return "BindingWriter for " + LayoutNode.this;
-				}
-			};
+			nextWriter = binding().writerFor(this, dataOut);
 		}
+
+		logger.trace("[" + this + "] next writer is a [" + nextWriter + "].");
+		
+		return nextWriter;
 	}
 	
 	@Override
