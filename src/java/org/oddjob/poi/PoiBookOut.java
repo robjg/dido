@@ -81,13 +81,7 @@ public class PoiBookOut implements BookOut {
 	public boolean hasData() {
 		throw new RuntimeException("To Do.");
 	}
-	
-	@Override
-	public <T> T toValue(Class<T> type) {
-		throw new RuntimeException("To Do.");
-	}
-	
-	
+		
 	@Override
 	public <T extends DataOut> T provide(Class<T> type) throws DataException {
 

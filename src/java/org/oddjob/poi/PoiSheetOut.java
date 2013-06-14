@@ -87,11 +87,6 @@ public class PoiSheetOut implements SheetOut {
 	}
 	
 	@Override
-	public <T> T toValue(Class<T> type) {
-		throw new RuntimeException("To Do.");
-	}	
-	
-	@Override
 	public <T extends DataOut> T provide(Class<T> type) throws DataException {
 
 		if (type.isInstance(this)) {
@@ -143,14 +138,7 @@ public class PoiSheetOut implements SheetOut {
 		
 		@Override
 		public boolean hasData() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-		
-		@Override
-		public <T> T toValue(Class<T> type) {
-			// TODO Auto-generated method stub
-			return null;
+			throw new RuntimeException("To Do");
 		}
 		
 		@Override
