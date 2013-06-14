@@ -12,11 +12,6 @@ public class VoidOut implements DataOut {
 	}
 	
 	@Override
-	public <T> T toValue(Class<T> type) {
-		return null;
-	}
-	
-	@Override
 	public <T extends DataOut> T provide(Class<T> type) throws DataException {
 		
 		throw new UnsupportedeDataOutException(getClass(), type);

@@ -2,11 +2,12 @@ package org.oddjob.dido.text;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.stream.LinesOut;
 
 
-public class StringTextOut implements TextOut, LinesOut {
+public class StringTextOut implements TextOut, LinesOut, DataValueOut {
 
 	public static final char PAD_CHARACTER = ' ';
 	

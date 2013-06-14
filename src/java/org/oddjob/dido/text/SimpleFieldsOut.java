@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 
-public class SimpleFieldsOut implements FieldsOut {
+public class SimpleFieldsOut implements FieldsOut, DataValueOut {
 
 	private Map<Integer, String> headings;
 	

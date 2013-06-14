@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.DataWriterFactory;
 import org.oddjob.dido.ValueNode;
@@ -82,8 +83,12 @@ public class ChildWriter implements DataWriter {
 		if (valueNode == null) {
 			return;
 		}
-			
-		T value = dataOut.toValue(valueNode.getType());
+		
+		if (! (dataOut instanceof DataValueOut)) {
+			return;
+		}
+		
+		T value = ((DataValueOut) dataOut).toValue(valueNode.getType());
 		
 		logger.trace("Writing [" + value + "] from [" + dataOut + 
 				"] back to [" + valueNode + "]");

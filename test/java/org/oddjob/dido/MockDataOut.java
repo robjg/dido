@@ -11,8 +11,4 @@ public class MockDataOut implements DataOut {
 			throws UnsupportedeDataOutException {
 		throw new RuntimeException("Unexpected from " + getClass().getName());
 	}
-	@Override
-	public <T> T toValue(Class<T> type) {
-		throw new RuntimeException("Unexpected from " + getClass().getName());
-	}
 }

@@ -5,10 +5,11 @@ import java.io.OutputStream;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 
 
-public class OutputStreamOut implements StreamOut {
+public class OutputStreamOut implements StreamOut, DataValueOut {
 
 	private final OutputStream outputStream;
 	

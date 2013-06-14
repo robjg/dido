@@ -13,7 +13,5 @@ public interface DataOut {
 	<T extends DataOut> T provide(Class<T> type) 
 	throws DataException;
 	
-	public boolean hasData();
-	
-	public <T> T toValue(Class<T> type);
+	public boolean hasData();	
 }

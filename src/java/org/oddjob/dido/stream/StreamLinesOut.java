@@ -5,11 +5,12 @@ import java.io.OutputStream;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.text.StringTextOut;
 import org.oddjob.dido.text.TextOut;
 
-public class StreamLinesOut implements LinesOut {
+public class StreamLinesOut implements LinesOut, DataValueOut {
 
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	

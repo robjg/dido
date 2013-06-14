@@ -1,18 +1,12 @@
 package org.oddjob.dido.bio;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import junit.framework.TestCase;
 
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.MockDataOut;
-import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.bio.BeanBindingBeanTest.Basket;
-import org.oddjob.dido.stream.LinesOut;
+import org.oddjob.dido.stream.ListLinesOut;
 import org.oddjob.dido.text.DelimitedLayout;
 import org.oddjob.dido.text.FieldLayout;
 
@@ -31,28 +25,6 @@ public class LateBindingBeanTest extends TestCase {
 		}
 	}
 	
-	private class OurLinesOut extends MockDataOut
-	implements LinesOut {
-		
-		private List<String> results = new ArrayList<String>();
-		
-		@Override
-		public <T extends DataOut> T provide(Class<T> type)
-				throws UnsupportedeDataOutException {
-			if (type.isAssignableFrom(LinesOut.class)) {
-				return type.cast(this);
-			}
-			else {
-				throw new UnsupportedeDataOutException(getClass(), type);
-			}
-		}
-		
-		@Override
-		public void writeLine(String text) throws DataException {
-			results.add(text);
-		}
-	}
-		
 	public void testBindOutWithChilden() throws DataException {
 		
 		StandardArooaSession session = new StandardArooaSession();
@@ -72,21 +44,21 @@ public class LateBindingBeanTest extends TestCase {
 		Fruit fruit = new Fruit();
 		fruit.setType("apple");
 		
-		OurLinesOut dataOut = new OurLinesOut();
+		ListLinesOut dataOut = new ListLinesOut();
 		
 		DataWriter writer = root.writerFor(dataOut);
 		
 		assertTrue(writer.write(fruit));
 
-		assertEquals("apple", dataOut.results.get(0));
-		assertEquals(1, dataOut.results.size());
+		assertEquals("apple", dataOut.getLines().get(0));
+		assertEquals(1, dataOut.getLines().size());
 		
 		fruit.setType("pear");
 
 		assertTrue(writer.write(fruit));
 		
-		assertEquals("pear", dataOut.results.get(1));
-		assertEquals(2, dataOut.results.size());
+		assertEquals("pear", dataOut.getLines().get(1));
+		assertEquals(2, dataOut.getLines().size());
 		
 		test.free();
 	}
@@ -109,13 +81,13 @@ public class LateBindingBeanTest extends TestCase {
 		Basket basket = new Basket();
 		basket.setCost(12.47);
 		
-		OurLinesOut dataOut = new OurLinesOut();
+		ListLinesOut dataOut = new ListLinesOut();
 		
 		DataWriter writer = root.writerFor(dataOut);
 		
 		assertTrue(writer.write(basket));
 		
-		assertEquals("12.47", dataOut.results.get(0));
+		assertEquals("12.47", dataOut.getLines().get(0));
 		
 		assertEquals("12.47", costNode.value());
 		

@@ -5,11 +5,12 @@ import java.util.List;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.text.StringTextOut;
 import org.oddjob.dido.text.TextOut;
 
-public class ListLinesOut implements LinesOut {
+public class ListLinesOut implements LinesOut, DataValueOut {
 
 	private List<String> lines = new ArrayList<String>();
 	
