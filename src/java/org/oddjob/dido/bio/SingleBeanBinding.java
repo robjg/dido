@@ -67,9 +67,21 @@ abstract public class SingleBeanBinding implements Binding {
 	throws DataException {
 		
 		return new DataWriter() {
+			
+			private boolean revisit;
+			
 			@Override
 			public boolean write(Object value) throws DataException {
-				return inject(value, boundLayout, dataOut);
+				
+				if (revisit) {
+					revisit = false;
+					return false;
+				}
+				else {
+					revisit = true;
+					inject(value, boundLayout, dataOut);
+					return false;
+				}
 			}
 			
 			@Override

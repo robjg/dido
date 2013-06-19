@@ -22,13 +22,13 @@ public class HeadingsFieldsOutTest extends TestCase {
 	
 	public void testHeadingsWithNoHeadings() throws DataException {
 		
-		FieldsOut test = new SimpleFieldsOut();
+		SimpleFieldsOut test = new SimpleFieldsOut();
 		
 		assertEquals(1, test.columnForHeading("age", 0));
 		assertEquals(2, test.columnForHeading("city", 0));
 		assertEquals(4, test.columnForHeading("name", 4));
 				
-		String[] results = test.toValue(String[].class);
+		String[] results = test.values();
 		
 		assertNull(results);
 	}

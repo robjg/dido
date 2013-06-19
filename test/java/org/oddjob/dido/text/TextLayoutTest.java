@@ -23,7 +23,7 @@ public class TextLayoutTest extends TestCase {
 		
 		assertEquals(false, writer.write("Apples"));
 
-		assertEquals("Apples", dataOut.toValue(String.class));
+		assertEquals("Apples", dataOut.toText());
 	}
 	
 	public void testWriteSubstring() throws DataException {
@@ -43,7 +43,7 @@ public class TextLayoutTest extends TestCase {
 		
 		assertEquals(false, writer.write("Apples"));
 
-		assertEquals("    App", dataOut.toValue(String.class));
+		assertEquals("    App", dataOut.toText());
 	}
 	
 	public void testReadSimple() throws DataException {

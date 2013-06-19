@@ -47,7 +47,7 @@ public class OutputStreamOut implements StreamOut, DataValueOut {
 	}
 	
 	@Override
-	public boolean hasData() {
+	public boolean isWrittenTo() {
 		throw new UnsupportedOperationException();
 	}
 	

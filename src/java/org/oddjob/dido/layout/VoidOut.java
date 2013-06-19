@@ -7,7 +7,7 @@ import org.oddjob.dido.UnsupportedeDataOutException;
 public class VoidOut implements DataOut {
 
 	@Override
-	public boolean hasData() {
+	public boolean isWrittenTo() {
 		return false;
 	}
 	

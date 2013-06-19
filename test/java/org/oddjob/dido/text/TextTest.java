@@ -75,7 +75,7 @@ public class TextTest extends TestCase {
 		
 		assertFalse(writer.write("apples"));
 		
-		assertEquals("apples", dataOut.toValue(String.class));
+		assertEquals("apples", dataOut.toText());
 	}
 	
 	public void testTextOutWithChildren() throws DataException {
@@ -103,6 +103,6 @@ public class TextTest extends TestCase {
 		
 		writer.write("Big");
 				
-		assertEquals("Big  Big       ", dataOut.toValue(String.class));
+		assertEquals("Big  Big       ", dataOut.toText());
 	}
 }

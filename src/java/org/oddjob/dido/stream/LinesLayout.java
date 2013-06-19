@@ -98,25 +98,39 @@ public class LinesLayout extends LayoutValueNode<String> {
 			if (nextWriter == null) {
 				
 				value(null);
+				linesOut.resetWrittenTo();
 				
 				nextWriter = nextWriterFor(linesOut);
 			}
 			
-			boolean keep = nextWriter.write(value);
+			if (nextWriter.write(value)) {
+				return true;
+			}
 			
-			String text = value();
+			if (linesOut.isWrittenTo()) {
+				value(linesOut.lastLine());
+			}
 			
-			if (text != null) {
+			if (isWrittenTo()) {
+				
+				String text = value();
+				
 				linesOut.writeLine(text);
 				
 				logger.trace("[" + LinesLayout.this + "] wrote line [" + 
 						text + "]");
+				
+				resetWrittenTo();
+				linesOut.resetWrittenTo();
+				
+				return write(value);
+			}
+			else {
+				logger.debug("[" + LinesLayout.this + "] Nothing to write.");
 			}
 
-			if (!keep) {
-				nextWriter.close();
-				nextWriter = null;
-			}
+			nextWriter.close();
+			nextWriter = null;
 			
 			return true;
 		}

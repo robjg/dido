@@ -159,6 +159,8 @@ implements Headed, ClassMorphic {
 	
 	@Override
 	public void reset() {
+		super.reset();
+		
 		initialised = false;
 	}
 	
@@ -227,39 +229,49 @@ implements Headed, ClassMorphic {
 		}
 		
 		@Override
-		public boolean write(Object value) throws DataException {
+		public boolean write(Object object) throws DataException {
 			
 			if (nextWriter == null) {
 
 				value(null);
-				
+				fieldsOut.clear();
+
 				nextWriter = nextWriterFor(fieldsOut);
 			}
 			
-			boolean keep = nextWriter.write(value);
+			if (nextWriter.write(object)) {
+				return true;
+			}
 					
-			if (value() == null) {
+			if (fieldsOut.isWrittenTo()) {
 				value(fieldsOut.values());
 			}
 			
-			if (value() != null) {					
+			if (isWrittenTo()) {
 					
-				if (lineWriter == null) {
-					lineWriter = new MaybeWriteHeadings(fieldsOut);
-				}
-			
-				lineWriter.write(linesOut);
+				resetWrittenTo();
+				fieldsOut.resetWrittenTo();
+				
+				return write(object);
 			}
-			
-			fieldsOut.clear();
-
-			if (!keep) {
+			else {
+				
+				String[] value = value();
+				
+				if (value != null) {
+					
+					if (lineWriter == null) {
+						lineWriter = new MaybeWriteHeadings(fieldsOut);
+					}
+				
+					lineWriter.write(linesOut);
+				}
+				
 				nextWriter.close();
 				nextWriter = null;
-			}
-			
-			return true;
 				
+				return linesOut.isMultiLine();
+			}
 		}
 		
 		@Override

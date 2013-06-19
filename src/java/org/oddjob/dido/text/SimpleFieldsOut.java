@@ -4,10 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 
-public class SimpleFieldsOut implements FieldsOut, DataValueOut {
+public class SimpleFieldsOut implements FieldsOut {
 
 	private Map<Integer, String> headings;
 	
@@ -15,6 +14,8 @@ public class SimpleFieldsOut implements FieldsOut, DataValueOut {
 	
 	private int maxColumn;
 			
+	private boolean writtenTo;
+	
 	public SimpleFieldsOut() {
 		this(null);
 	}
@@ -63,6 +64,7 @@ public class SimpleFieldsOut implements FieldsOut, DataValueOut {
 		}
 		
 		values.put(column, value);
+		writtenTo = true;
 	}
 	
 	private static String[] toArray(Map<Integer, String> things) {
@@ -70,15 +72,15 @@ public class SimpleFieldsOut implements FieldsOut, DataValueOut {
 			return null;
 		}
 		
-		int size = 0;
-		for (int i : things.keySet() ) {
-			if (i > size) {
-				size = i;
+		int maxColumn = 0;
+		for (Integer i : things.keySet() ) {
+			if (i.intValue() > maxColumn) {
+				maxColumn = i.intValue();
 			}
 		}
-		String[] a = new String[size];
+		String[] a = new String[maxColumn];
 		
-		for (int i = 0; i < size; ++i) {
+		for (int i = 0; i < maxColumn; ++i) {
 			String thing = things.get(i + 1);
 			if (thing != null) {
 				a[i] = thing;
@@ -98,6 +100,16 @@ public class SimpleFieldsOut implements FieldsOut, DataValueOut {
 	
 	public void clear() {
 		values = null;
+		resetWrittenTo();
+	}
+	
+	@Override
+	public boolean isWrittenTo() {
+		return writtenTo;
+	}
+	
+	public void resetWrittenTo() {
+		this.writtenTo = false;
 	}
 	
 	@Override
@@ -111,16 +123,6 @@ public class SimpleFieldsOut implements FieldsOut, DataValueOut {
 		throw new UnsupportedeDataOutException(getClass(), type);
 	}
 
-	@Override
-	public boolean hasData() {
-		return values != null;
-	}
-	
-	@Override
-	public <T> T toValue(Class<T> type) {
-		return type.cast(values());
-	}
-	
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + " [" + 

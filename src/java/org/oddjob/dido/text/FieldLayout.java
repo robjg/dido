@@ -128,31 +128,38 @@ extends LayoutValueNode<String> {
 
 		private final FieldsOut outgoing;
 		
-		private DataWriter nextWriter;
+		private final DataWriter nextWriter;
 		
-		private TextOut textOut;
+		private final StringTextOut textOut;
 		
-		public MainWriter(FieldsOut outgoing) {
+		public MainWriter(FieldsOut outgoing) throws DataException {
 			this.outgoing = outgoing; 
+			this.textOut = new StringTextOut();
+			this.nextWriter = nextWriterFor(textOut);
 		}
 		
 		@Override
 		public boolean write(Object object) throws DataException {
 
-			if (nextWriter == null) {
-				
-				value(null);
-				
-				textOut = new StringTextOut();
-				nextWriter = nextWriterFor(textOut);
+			if (nextWriter.write(object)) {
+				return true;
 			}
 			
-			boolean keep = nextWriter.write(object);
+			if (textOut.isWrittenTo()) {
+				value(textOut.toText());
+			}
+			
+			if (isWrittenTo()) {
+				
+				resetWrittenTo();
+				textOut.resetWrittenTo();
+				
+				return write(object);
+			}
 			
 			String value = value();
 			
-			if (value != null ) {
-			
+			if (value != null) {
 				outgoing.setColumn(column, value);
 				
 				logger.trace("[" + FieldLayout.this + "] wrote value [" + 
@@ -160,27 +167,17 @@ extends LayoutValueNode<String> {
 			}
 			else {
 				logger.trace("[" + FieldLayout.this + "] no value.");
-				
 			}
 			
-			if (!keep) {
-				nextWriter.close();
-				nextWriter = null;
-			}
-			
-			return keep;
+			return false;
 		}
 		
 		@Override
 		public void close() throws DataException {
 			
-			if (nextWriter != null) {
-				
-				logger.trace("Closing [" + nextWriter + "]");
-				
-				nextWriter.close();
-				nextWriter = null;
-			}
+			logger.trace("Closing [" + nextWriter + "]");
+			
+			nextWriter.close();
 		}
 	}
 	
@@ -224,6 +221,8 @@ extends LayoutValueNode<String> {
 	
 	@Override
 	public void reset() {
+		super.reset();
+		
 		initialised = false;
 		
 		reader = null;

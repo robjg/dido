@@ -5,16 +5,17 @@ import java.util.List;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.text.StringTextOut;
 import org.oddjob.dido.text.TextOut;
 
-public class ListLinesOut implements LinesOut, DataValueOut {
+public class ListLinesOut implements LinesOut {
 
 	private List<String> lines = new ArrayList<String>();
 	
-	private TextOut textOut;
+	private StringTextOut textOut;
+	
+	private String lastLine;
 	
 	@Override
 	public <T extends DataOut> T provide(Class<T> type)
@@ -36,25 +37,35 @@ public class ListLinesOut implements LinesOut, DataValueOut {
 	
 	@Override
 	public void writeLine(String text) throws DataException {
+		lastLine = text;
 		lines.add(text);
 		textOut = null;
-	}
-	
+	}	
 	
 	@Override
-	public <T> T toValue(Class<T> type) {
+	public String lastLine() {
 		if (textOut != null) {
-			return textOut.toValue(type);
+			return textOut.toText();
 		}
 		else {
-			return null;
+			return lastLine;
 		}
+	}
+	
+	@Override
+	public void resetWrittenTo() {
+		textOut = null;
+		lastLine = null;
 	}
 
 	@Override
-	public boolean hasData() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isWrittenTo() {
+		return lastLine != null || textOut != null && textOut.isWrittenTo();
+	}
+	
+	@Override
+	public boolean isMultiLine() {
+		return true;
 	}
 	
 	public List<String> getLines() {

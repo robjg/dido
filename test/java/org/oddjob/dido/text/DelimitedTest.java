@@ -197,7 +197,7 @@ public class DelimitedTest extends TestCase {
 
 		delimited.bind(new DirectBinding());
 
-		TextOut dataOut = new StringTextOut();
+		StringTextOut dataOut = new StringTextOut();
 		
 		DataWriter writer = delimited.writerFor(dataOut);
 		
@@ -205,7 +205,7 @@ public class DelimitedTest extends TestCase {
 		
 		String expected = "a,b,c";
 
-		assertEquals(expected, dataOut.toValue(String.class));
+		assertEquals(expected, dataOut.toText());
 	}
 	
 	public void testSimpleOutWithUnNamedChildren() throws DataException {

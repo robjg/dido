@@ -5,18 +5,19 @@ import java.io.OutputStream;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.text.StringTextOut;
 import org.oddjob.dido.text.TextOut;
 
-public class StreamLinesOut implements LinesOut, DataValueOut {
+public class StreamLinesOut implements LinesOut {
 
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	
 	private final OutputStream outputStream;
 	
-	private TextOut textOut;
+	private StringTextOut textOut;
+	
+	private String lastLine;
 	
 	public StreamLinesOut(OutputStream outputStream) {
 		this.outputStream = outputStream;
@@ -26,6 +27,8 @@ public class StreamLinesOut implements LinesOut, DataValueOut {
 		try {
 			outputStream.write(text.getBytes());
 			outputStream.write(LINE_SEPARATOR.getBytes());
+			
+			lastLine = text;
 		} 
 		catch (IOException e) {
 			throw new DataException(e);
@@ -39,6 +42,11 @@ public class StreamLinesOut implements LinesOut, DataValueOut {
 		textOut = null;
 	}
 	
+	@Override
+	public void resetWrittenTo() {
+		textOut = null;
+		lastLine = null;
+	}
 	
 	@Override
 	public <T extends DataOut> T provide(Class<T> type)
@@ -73,20 +81,25 @@ public class StreamLinesOut implements LinesOut, DataValueOut {
 	}
 	
 	@Override
-	public boolean hasData() {
-		return textOut != null && textOut.hasData();
+	public boolean isWrittenTo() {
+		return textOut != null && textOut.isWrittenTo();
 	}
 	
 	@Override
-	public <T> T toValue(Class<T> type) {
+	public String lastLine() {
 		if (textOut != null) {
-			return textOut.toValue(type);
+			return textOut.toText();
 		}
 		else {
-			return null;
+			return lastLine;
 		}
 	}
 	
+	@Override
+	public boolean isMultiLine() {
+		return true;
+	}
+		
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + 

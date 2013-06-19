@@ -207,11 +207,8 @@ public class Case<TYPE> extends LayoutNode {
 		@Override
 		public boolean write(Object object) throws DataException {
 						
-			if (!whenWriter.write(object, dataOut)) {
-				
-				whenWriter.close();
-				
-				return false;
+			if (whenWriter.write(object, dataOut)) {
+				return true;
 			}
 			
 			value = whenWriter.value;
@@ -225,7 +222,7 @@ public class Case<TYPE> extends LayoutNode {
 				discriminatorWriter.write(value);
 			}
 			
-			return true;
+			return false;
 		}
 	
 		@Override
@@ -299,14 +296,14 @@ public class Case<TYPE> extends LayoutNode {
 					openWriters.remove(currentLayout);
 				}
 			
-				if (dataOut.hasData() || keep) {
+				if (dataOut.isWrittenTo() || keep) {
 				
 					this.value = ((CaseCondition<T>) currentLayout).value();
 				
 					logger.trace("CaseCondition [" + currentLayout + 
 							"] provided data [" + value + "]");
 
-					return true;
+					return keep;
 				}
 			}
 			

@@ -3,7 +3,7 @@ package org.oddjob.dido;
 public class MockDataOut implements DataOut {
 
 	@Override
-	public boolean hasData() {
+	public boolean isWrittenTo() {
 		throw new RuntimeException("Unexpected from " + getClass().getName());
 	}
 	@Override

@@ -103,25 +103,40 @@ extends LayoutValueNode<String> {
 		
 		private final TextOut outgoing;
 		
-		private DataWriter nextWriter;
+		private final DataWriter nextWriter;
 		
+		private final StringTextOut textOut;
 		
-		public TextWriter(TextOut outgoing) {
+		public TextWriter(TextOut outgoing) throws DataException {
+			
 			this.outgoing = outgoing;
+			
+			this.textOut = new StringTextOut();
+			
+			this.nextWriter = nextWriterFor(textOut);
+			
+			value(null);
 		}
 		
 		@Override
 		public boolean write(Object object) throws DataException {
 			
-			if (nextWriter == null) {
+			if (nextWriter.write(object)) {
+				return true;
+			}
 				
-				value(null);
-
-				nextWriter = nextWriterFor(outgoing);
+			if (textOut.isWrittenTo()) {
+				value(textOut.toText());
 			}
 			
-			boolean keep = nextWriter.write(object);
+			if (isWrittenTo()) {
 				
+				resetWrittenTo();
+				textOut.resetWrittenTo();
+				
+				return write(object);
+			}
+			
 			String value = value();
 			
 			if (value != null) {
@@ -137,25 +152,16 @@ extends LayoutValueNode<String> {
 				logger.trace("[" + TextLayout.this + "] no value.");
 				
 			}
-			
-			if (!keep) {
-				nextWriter.close();
-				nextWriter = null;
-			}
-			
-			return keep;
+						
+			return false;
 		}
 		
 		@Override
 		public void close() throws DataException {
 			
-			if (nextWriter != null) {
-				
-				logger.trace("Closing [" + nextWriter + "]");
-				
-				nextWriter.close();
-				nextWriter = null;
-			}
+			logger.trace("Closing [" + nextWriter + "]");
+			
+			nextWriter.close();
 		}
 		
 		@Override

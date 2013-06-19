@@ -4,15 +4,19 @@ import junit.framework.TestCase;
 
 import org.oddjob.dido.DataException;
 
-public class OutgoingTextTest extends TestCase {
+public class StringTextTest extends TestCase {
 	
 	public void testDefault() throws DataException {
 
 		StringTextOut test = new StringTextOut();
 		
+		assertFalse(test.isWrittenTo());
+		
+		assertEquals(null, test.toText());
+		
 		test.write("Apple", 0, -1);
 		
-		assertEquals("Apple", test.toValue(String.class));
+		assertEquals("Apple", test.toText());
 	}
 
 	public void testTruncate() throws DataException {
@@ -21,7 +25,7 @@ public class OutgoingTextTest extends TestCase {
 		
 		test.write("Apples and Oranges", 0, 6);
 		
-		assertEquals("Apples", test.toValue(String.class));
+		assertEquals("Apples", test.toText());
 	}
 
 	public void testFromStartFixed() throws DataException {
@@ -30,7 +34,7 @@ public class OutgoingTextTest extends TestCase {
 		
 		test.write("Apple", 0, 12);
 		
-		assertEquals("Apple       ", test.toValue(String.class));
+		assertEquals("Apple       ", test.toText());
 	}
 
 	public void testReplacingSection() throws DataException {
@@ -41,7 +45,7 @@ public class OutgoingTextTest extends TestCase {
 		
 		test.write("or", 7, 3);
 
-		assertEquals("Apples or  Oranges", test.toValue(String.class));
+		assertEquals("Apples or  Oranges", test.toText());
 	}
 
 	public void testReplacingExisting() throws DataException {
@@ -52,7 +56,7 @@ public class OutgoingTextTest extends TestCase {
 		
 		test.write("Oranges", 11, -1);
 
-		assertEquals("Apples and Oranges", test.toValue(String.class));
+		assertEquals("Apples and Oranges", test.toText());
 	}
 
 	public void testInsertTruncated() throws DataException {
@@ -63,7 +67,7 @@ public class OutgoingTextTest extends TestCase {
 		
 		test.write("or maybe", 7, 3);
 
-		assertEquals("Apples or  Oranges", test.toValue(String.class));
+		assertEquals("Apples or  Oranges", test.toText());
 	}
 	
 	public void testManySections() throws DataException {
@@ -74,7 +78,7 @@ public class OutgoingTextTest extends TestCase {
 		test.write("Oranges", 10, 10);
 		test.write("Pears", 20, 10);
 		
-		assertEquals("Apples    Oranges   Pears     ", test.toValue(String.class));
+		assertEquals("Apples    Oranges   Pears     ", test.toText());
 	}
 	
 	public void testStartingPastStart() throws DataException {
@@ -83,6 +87,6 @@ public class OutgoingTextTest extends TestCase {
 		
 		test.write("Apples", 5, -1);
 		
-		assertEquals("     Apples", test.toValue(String.class));
+		assertEquals("     Apples", test.toText());
 	}
 }

@@ -13,5 +13,5 @@ public interface DataOut {
 	<T extends DataOut> T provide(Class<T> type) 
 	throws DataException;
 	
-	public boolean hasData();	
+	public boolean isWrittenTo();	
 }

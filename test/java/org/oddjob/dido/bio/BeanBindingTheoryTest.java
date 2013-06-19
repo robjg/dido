@@ -84,6 +84,8 @@ public class BeanBindingTheoryTest extends TestCase {
 		
 			return new DataWriter() {
 
+				int step = 1;
+				
 				@Override
 				public boolean write(Object object) throws DataException {
 					
@@ -92,9 +94,19 @@ public class BeanBindingTheoryTest extends TestCase {
 					
 					Fruit fruit = (Fruit) object;
 					
+					if (step == 1) {
 						vn.value(fruit.colour);
-					
-						return true;
+						step = 2;
+					}
+					else if (step == 2) {
+						vn.value(fruit.type);
+						step = 3;
+					}
+					else {
+						// do nothing. Writer will be closed.
+					}
+
+					return false;
 				}
 				
 				@Override
@@ -146,11 +158,11 @@ public class BeanBindingTheoryTest extends TestCase {
 		
 		writer.close();
 		
-		// Note that there is currently no way to write to lines per
-		// object.
 		String expected = 
 				"Green" + EOL +
-				"Yellow" + EOL;
+				"Apple" + EOL +
+				"Yellow" + EOL +
+				"Banana" + EOL;
 		
 		assertEquals(expected, output.toString());
 	}
@@ -181,11 +193,10 @@ public class BeanBindingTheoryTest extends TestCase {
 						((ValueNode<String>) boundLayout).value((
 								String) object);
 						
-						return true;
+						take = false;
 					}
-					else {
-						return false;
-					}
+					
+					return false;
 				}
 				
 				@Override
@@ -267,41 +278,36 @@ public class BeanBindingTheoryTest extends TestCase {
 				
 				int step = 1;
 				
-				DataWriter nextWriter;
+				
 				
 				@Override
 				public boolean write(Object object) throws DataException {
 					
-					if (nextWriter == null) {
-						
-						nextWriter = new ChildWriter(boundLayout.childLayouts(), 
+					DataWriter nextWriter = new ChildWriter(boundLayout.childLayouts(), 
 								(ValueNode<?>) boundLayout, dataOut);
-					}
 
 					if (step == 1) {
 						
 						binding1.take = true;
-						binding2.take = false;
 						
 						step = 2;
 						
-						assertTrue(nextWriter.write(object));
+						assertFalse(nextWriter.write(object));
 						
 						return true;
 					}
 					else if (step == 2) {
 						
-						binding1.take = false;
 						binding2.take = true;
 						
 						step = 3;
 						
-						assertTrue(nextWriter.write(object));
+						assertFalse(nextWriter.write(object));
 						
 						return false;
 					}
 					else {
-						throw new RuntimeException("Unexpected.");
+						return false;
 					}
 					
 				}
@@ -367,13 +373,8 @@ public class BeanBindingTheoryTest extends TestCase {
 		
 		writer.close();
 		
-		
-		// This also needs some work!
-		// 
 		String expected = 
-				"Green" + EOL +
 				"Green,Apple" + EOL + 
-				"Yellow" + EOL +
 				"Yellow,Banana" + EOL;
 		
 		assertEquals(expected, output.toString());

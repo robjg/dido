@@ -58,7 +58,7 @@ public class ChildWriterTest extends TestCase {
 		Iterable<? extends DataWriterFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		TextOut dataOut = new StringTextOut();
+		StringTextOut dataOut = new StringTextOut();
 		
 		OurValueNode valueNode = new OurValueNode();
 		
@@ -66,7 +66,7 @@ public class ChildWriterTest extends TestCase {
 		
 		assertEquals(false, test.write("Apples"));
 		
-		assertEquals("", dataOut.toValue(String.class));
+		assertEquals(null, dataOut.toText());
 	}
 	
 	public void testWriteChildrenWithOneBinding() throws DataException {
@@ -81,7 +81,7 @@ public class ChildWriterTest extends TestCase {
 		Iterable<? extends DataWriterFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		TextOut dataOut = new StringTextOut();
+		StringTextOut dataOut = new StringTextOut();
 		
 		OurValueNode valueNode = new OurValueNode();
 		
@@ -89,7 +89,7 @@ public class ChildWriterTest extends TestCase {
 
 		assertEquals(false, test.write("Apples"));
 
-		assertEquals("Apples", dataOut.toValue(String.class));
+		assertEquals("Apples", dataOut.toText());
 	}
 	
 	public void testWriteChildrenSeveralBindings() throws DataException {
@@ -105,7 +105,7 @@ public class ChildWriterTest extends TestCase {
 		Iterable<? extends DataWriterFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		TextOut dataOut = new StringTextOut();
+		StringTextOut dataOut = new StringTextOut();
 		
 		OurValueNode valueNode = new OurValueNode();
 		
@@ -113,11 +113,11 @@ public class ChildWriterTest extends TestCase {
 
 		assertEquals(false, test.write("Apples"));
 
-		assertEquals("Apples", dataOut.toValue(String.class));
+		assertEquals("Apples", dataOut.toText());
 		
 		assertEquals(false, test.write("Apples"));
 		
-		assertEquals("Apples", dataOut.toValue(String.class));
+		assertEquals("Apples", dataOut.toText());
 		
 	}
 }

@@ -15,7 +15,7 @@ public class ListLinesOutTest extends TestCase {
 		
 		text.append("apples");
 		
-		assertEquals("apples", test.toValue(String.class));
+		assertEquals("apples", test.lastLine());
 		
 	}
 }

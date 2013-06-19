@@ -2,60 +2,82 @@ package org.oddjob.dido.text;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 import org.oddjob.dido.stream.LinesOut;
 
 
-public class StringTextOut implements TextOut, LinesOut, DataValueOut {
+public class StringTextOut implements TextOut, LinesOut {
 
 	public static final char PAD_CHARACTER = ' ';
 	
 	private StringBuilder buffer;
 
-	public StringTextOut() {
-		buffer = new StringBuilder();
-	}
+	private boolean writtenTo;
 	
 	@Override
 	public void append(String text) {
+		if (buffer == null) {
+			buffer = new StringBuilder();
+		}
 		buffer.append(text);
+		writtenTo = true;
 	}
 	
 	@Override
 	public void writeLine(String text) throws DataException {
-		buffer.append(text);
+		append(text);
+	}
+
+	@Override
+	public String lastLine() {
+		return toText();
 	}
 	
 	@Override
 	public void write(String text, int from, int length) {
+		if (buffer == null) {
+			buffer = new StringBuilder();
+		}
+		
 		while (buffer.length() < from) {
 			buffer.append(PAD_CHARACTER);
 		}
+		
 		StringBuilder minibuf;
+		
 		if (length < 0 || length > text.length()) {
 			minibuf = new StringBuilder(text);
-		} else {
+		} 
+		else {
 			minibuf = new StringBuilder(text.substring(0, length));			
 		}
+		
 		while (minibuf.length() < length) {
 			minibuf.append(PAD_CHARACTER);
 		}
+		
 		if (from < buffer.length() ) {
 			buffer.replace(from, from + minibuf.length(), minibuf.toString());
 		}
 		else {
 			buffer.append(minibuf.toString());
 		}
+		
+		writtenTo = true;
 	}
 	
-	protected void clear() {
-		buffer = new StringBuilder();
+	public void clear() {
+		buffer = null;
+		writtenTo = false;
 	}
 	
-	@Override
 	public int length() {
-		return buffer.length();
+		if (buffer == null) {
+			return 0;
+		}
+		else {
+			return buffer.length();
+		}
 	}
 	
 	@Override
@@ -71,16 +93,31 @@ public class StringTextOut implements TextOut, LinesOut, DataValueOut {
 	
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " length [" + buffer.length() + "]";
+		return getClass().getSimpleName() + (buffer == null 
+				? " unwritten" :  " length " + buffer.length());
 	}
 	
 	@Override
-	public boolean hasData() {
-		return buffer.length() > 0;
+	public boolean isWrittenTo() {
+		return writtenTo;
+	}
+	
+	public void resetWrittenTo() {
+		writtenTo = false;
 	}
 	
 	@Override
-	public <T> T toValue(Class<T> type) {
-		return type.cast(buffer.toString());
+	public boolean isMultiLine() {
+		return false;
+	}
+	
+	public String toText() {
+	
+		if (buffer == null) {
+			return null;
+		}
+		else {
+			return buffer.toString();
+		}
 	}
 }

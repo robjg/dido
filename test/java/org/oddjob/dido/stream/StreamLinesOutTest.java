@@ -64,7 +64,7 @@ public class StreamLinesOutTest extends TestCase {
 
 		TextOut textOut = nested.provide(TextOut.class);
 
-		assertFalse(nested.hasData());
+		assertFalse(nested.isWrittenTo());
 		
 		textOut.append("Apples");
 		
@@ -72,29 +72,29 @@ public class StreamLinesOutTest extends TestCase {
 		
 		textOut.append(" can be Green.");
 		
-		assertTrue(nested.hasData());
+		assertTrue(nested.isWrittenTo());
 		
-		String data = nested.toValue(String.class);
+		String data = nested.lastLine();
 				
 		nested.writeLine(data);
 		
 		nested.writeLine("----------------");
 		
-		assertFalse(nested.hasData());
+		assertFalse(nested.isWrittenTo());
 		
-		assertEquals(false, test.hasData());
+		assertEquals(false, test.isWrittenTo());
 		
 		textOut = nested.provide(TextOut.class);
 
-		assertFalse(nested.hasData());
+		assertFalse(nested.isWrittenTo());
 		
 		textOut.append("Pears are normally Green.");
 		
-		assertTrue(nested.hasData());
+		assertTrue(nested.isWrittenTo());
 		
-		nested.writeLine(nested.toValue(String.class));
+		nested.writeLine(nested.lastLine());
 		
-		assertEquals(false, test.hasData());
+		assertEquals(false, test.isWrittenTo());
 		
 		out.close();
 	
