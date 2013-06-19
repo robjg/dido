@@ -82,7 +82,7 @@ public class PoiSheetOut implements SheetOut {
 	}
 	
 	@Override
-	public boolean hasData() {
+	public boolean isWrittenTo() {
 		throw new RuntimeException("To Do.");
 	}
 	
@@ -137,7 +137,7 @@ public class PoiSheetOut implements SheetOut {
 		}
 		
 		@Override
-		public boolean hasData() {
+		public boolean isWrittenTo() {
 			throw new RuntimeException("To Do");
 		}
 		

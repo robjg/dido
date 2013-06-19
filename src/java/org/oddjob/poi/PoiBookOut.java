@@ -78,7 +78,7 @@ public class PoiBookOut implements BookOut {
 	}
 	
 	@Override
-	public boolean hasData() {
+	public boolean isWrittenTo() {
 		throw new RuntimeException("To Do.");
 	}
 		
