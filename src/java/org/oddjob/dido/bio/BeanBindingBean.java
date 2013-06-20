@@ -17,11 +17,11 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.Headed;
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.MorphicnessFactory;
+import org.oddjob.dido.MorphMetaData;
+import org.oddjob.dido.MorphMetaDataFactory;
 import org.oddjob.dido.ValueNode;
-import org.oddjob.dido.io.ClassMorphic;
+import org.oddjob.dido.io.Morphable;
 import org.oddjob.dido.layout.ChildReader;
 import org.oddjob.dido.layout.ChildWriter;
 import org.oddjob.dido.layout.LayoutWalker;
@@ -195,9 +195,9 @@ implements Binding, ArooaSessionAware {
 				
 			}
 			
-			if (node instanceof ClassMorphic) {
-				Runnable reset = ((ClassMorphic) node).beFor(
-						new MorphicnessFactory(accessor).writeMorphicnessFor(
+			if (node instanceof Morphable) {
+				Runnable reset = ((Morphable) node).morphInto(
+						new MorphMetaDataFactory(accessor).writeableMorphMetaDataFor(
 								type, beanView));
 				resets.add(reset);
 			}
@@ -305,10 +305,10 @@ implements Binding, ArooaSessionAware {
 				});
 			}
 			
-			if (node instanceof ClassMorphic) {
+			if (node instanceof Morphable) {
 				
-				Runnable reset = ((ClassMorphic) node).beFor(
-						new MorphicnessFactory(accessor).writeMorphicnessFor(
+				Runnable reset = ((Morphable) node).morphInto(
+						new MorphMetaDataFactory(accessor).writeableMorphMetaDataFor(
 								type, beanView));
 				
 				resets.add(reset);
@@ -356,17 +356,18 @@ implements Binding, ArooaSessionAware {
 			}.walk(layout);
 			
 		}
-		else if (layout instanceof Headed) {
+		else if (layout instanceof Morphable) {
 			
-			String[] headings = ((Headed) layout).getHeadings();
+			MorphMetaData metaData = ((Morphable) layout).morphOf();
 			
-			if (headings == null) {
+			if (metaData == null) {
 				throw new DataException("No headings to create type");
 			}
 			
-			for (String heading: headings) {
+			for (String propertyName: metaData.getNames()) {
 
-				classCreator.addProperty(heading, String.class);
+				classCreator.addProperty(propertyName, 
+						metaData.typeOf(propertyName));
 			}			
 		}
 		else {

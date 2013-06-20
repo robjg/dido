@@ -8,17 +8,16 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.Headed;
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.Morphicness;
-import org.oddjob.dido.io.ClassMorphic;
+import org.oddjob.dido.MorphMetaData;
+import org.oddjob.dido.io.Morphable;
 import org.oddjob.dido.layout.LayoutValueNode;
 import org.oddjob.dido.stream.LinesIn;
 import org.oddjob.dido.stream.LinesOut;
 
 
 public class DelimitedLayout extends LayoutValueNode<String[]>
-implements Headed, ClassMorphic {
+implements Morphable {
 
 	private static final Logger logger = Logger.getLogger(DelimitedLayout.class);
 	
@@ -220,7 +219,7 @@ implements Headed, ClassMorphic {
 		private final LinesOut linesOut;
 		
 		private final SimpleFieldsOut fieldsOut = 
-				new SimpleFieldsOut(getHeadings());
+				new SimpleFieldsOut(headings);
 		
 		private DataWriter nextWriter;
 		
@@ -306,7 +305,7 @@ implements Headed, ClassMorphic {
 	}
 	
 	@Override
-	public Runnable beFor(Morphicness morphicness) {
+	public Runnable morphInto(MorphMetaData morphicness) {
 		
 		if (childLayouts().size() > 0) {
 			logger.debug("[" + this + "] has children. Morphicness ignored.");
@@ -375,14 +374,40 @@ implements Headed, ClassMorphic {
 	}
 	
 	@Override
-	public String[] getHeadings() {
-		return headings;
+	public MorphMetaData morphOf() {
+		
+		if (headings == null) {
+			return null;
+		}
+		
+		return new MorphMetaData() {
+			
+			@Override
+			public Class<?> typeOf(String name) {
+				return String.class;
+			}
+			
+			@Override
+			public String titleFor(String name) {
+				return name;
+			}
+			
+			@Override
+			public String[] getNames() {
+				
+				return headings;
+			}
+		};
 	}
-
+	
 	public void setHeadings(String[] headings) {
 		this.headings = headings;
 	}
 
+	public String[] getHeadings() {
+		return headings;
+	}
+	
 	public void setValue(String[] value) {
 		this.value(value);
 	}

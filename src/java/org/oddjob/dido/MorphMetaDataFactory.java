@@ -11,19 +11,26 @@ import org.oddjob.arooa.reflect.BeanView;
 import org.oddjob.arooa.reflect.FallbackBeanView;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 
-public class MorphicnessFactory {
+/**
+ * Helper class for creating {@link MorphMetaData} from {@link ArooaClass}s
+ * and {@link BeanView}s.
+ * 
+ * @author rob
+ *
+ */
+public class MorphMetaDataFactory {
 
 	private final PropertyAccessor accessor;
 	
-	public MorphicnessFactory(PropertyAccessor accessor) {
+	public MorphMetaDataFactory(PropertyAccessor accessor) {
 		this.accessor = accessor;
 	}
 		
-	public Morphicness readMorphicnessFor(ArooaClass arooaClass) {
-		return readMorphicnessFor(arooaClass, null);
+	public MorphMetaData readableMorphMetaDataFor(ArooaClass arooaClass) {
+		return readableMorphMetaDataFor(arooaClass, null);
 	}		
 		
-	public Morphicness readMorphicnessFor(
+	public MorphMetaData readableMorphMetaDataFor(
 			ArooaClass arooaClass, BeanView beanView ) {
 
 		BeanOverview overview = 
@@ -54,7 +61,7 @@ public class MorphicnessFactory {
 			}
 		}
 		
-		return new Morphicness() {
+		return new MorphMetaData() {
 			
 			@Override
 			public String[] getNames() {
@@ -74,11 +81,11 @@ public class MorphicnessFactory {
 			
 	}
 	
-	public Morphicness writeMorphicnessFor(ArooaClass arooaClass) {
-		return writeMorphicnessFor(arooaClass, null);
+	public MorphMetaData writeableMorphMetaDataFor(ArooaClass arooaClass) {
+		return writeableMorphMetaDataFor(arooaClass, null);
 	}		
 		
-	public Morphicness writeMorphicnessFor(
+	public MorphMetaData writeableMorphMetaDataFor(
 			ArooaClass arooaClass, BeanView beanView ) {
 
 		BeanOverview overview = 
@@ -109,7 +116,7 @@ public class MorphicnessFactory {
 			}
 		}
 		
-		return new Morphicness() {
+		return new MorphMetaData() {
 			
 			@Override
 			public String[] getNames() {

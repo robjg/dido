@@ -1,6 +1,6 @@
 package org.oddjob.dido;
 
-public interface Morphicness {
+public interface MorphMetaData {
 
 	public String[] getNames();
 	

@@ -6,7 +6,7 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.io.ClassMorphic;
+import org.oddjob.dido.io.Morphable;
 
 /**
  * Provide the ability to bind data to and from a Java Object. A 
@@ -55,7 +55,7 @@ public interface Binding {
 	
 	/**
 	 * Reset the binding. A binding may have altered the {@link Layout} it 
-	 * is bound to, added children to a {@link ClassMorphic} for instance. This
+	 * is bound to, added children to a {@link Morphable} for instance. This
 	 * provides the opportunity to undo those changes.
 	 */
 	public void free();
