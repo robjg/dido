@@ -12,13 +12,13 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.Morphicness;
-import org.oddjob.dido.io.ClassMorphic;
+import org.oddjob.dido.MorphMetaData;
+import org.oddjob.dido.io.Morphable;
 import org.oddjob.dido.layout.LayoutNode;
 import org.oddjob.dido.layout.NullReader;
 
 public class DataRows extends LayoutNode 
-implements ClassMorphic {
+implements Morphable {
 	
 	private static final Logger logger = Logger.getLogger(DataRows.class);
 	
@@ -58,7 +58,7 @@ implements ClassMorphic {
 	}
 	
 	@Override
-	public Runnable beFor(Morphicness morphicness) {
+	public Runnable morphInto(MorphMetaData morphicness) {
 		
 		if (childLayouts().size() > 0) {
 			logger.debug("[" + this + "] has children. Morphicness ignored.");
@@ -113,6 +113,12 @@ implements ClassMorphic {
 		};
 	}
 			
+	@Override
+	public MorphMetaData morphOf() {
+	
+		return null;
+	}
+	
 	class MainReader implements DataReader {
 	
 		private final SheetIn din; 

@@ -135,7 +135,7 @@ public class DataBookTest extends TestCase {
 		
 		TeeType teeType = new TeeType();
 		teeType.setOutputs(0, output);
-		teeType.setOutputs(1, new FileOutputStream(new File("BookTest.xslx")));
+		teeType.setOutputs(1, new FileOutputStream(new File("BookTest.xlsx")));
 		
 		
 		DataWriteJob write = new DataWriteJob();
