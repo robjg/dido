@@ -33,6 +33,8 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.io.Nodes;
+import org.oddjob.dido.stream.InputStreamIn;
+import org.oddjob.dido.stream.OutputStreamOut;
 import org.oddjob.io.TeeType;
 
 public class QuickRowsTest extends TestCase {
@@ -202,14 +204,15 @@ public class QuickRowsTest extends TestCase {
 		write.setBeans(beans);
 		write.setBindings("person", bindingBean);
 
-		write.setOutput(teeType.toValue());
+		write.setData(new OutputStreamOut(teeType.toValue()));
 
 		write.run();
 
 		bindingBean.setType(new SimpleArooaClass(Person.class));
 
 		DataReadJob read = new DataReadJob();
-		read.setInput(new ByteArrayInputStream(output.toByteArray()));
+		read.setData(new InputStreamIn(
+				new ByteArrayInputStream(output.toByteArray())));
 		read.setPlan(layout);
 		read.setBindings("person", bindingBean);
 		read.setBeans(new ArrayList<Object>());

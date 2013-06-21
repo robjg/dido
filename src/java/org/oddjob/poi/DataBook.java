@@ -38,7 +38,7 @@ extends LayoutNode {
 		
 		BookIn book = null;
 		try {
-			book = new PoiBookIn(data.getStream());
+			book = new PoiBookIn(data.inputStream());
 		} catch (InvalidFormatException e) {
 			throw new DataException(e);
 		} catch (IOException e) {
@@ -65,7 +65,7 @@ extends LayoutNode {
 		}
 		
 		
-		final BookOut bookOut = new PoiBookOut(data.getStream(), version, 
+		final BookOut bookOut = new PoiBookOut(data.outputStream(), version, 
 				styleFactory);
 		
 		logger.debug("Created empty workbook.");
