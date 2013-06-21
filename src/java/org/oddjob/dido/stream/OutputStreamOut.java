@@ -6,11 +6,10 @@ import java.io.OutputStream;
 import org.oddjob.dido.Closeable;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 
 
-public class OutputStreamOut implements StreamOut, DataValueOut, Closeable {
+public class OutputStreamOut implements StreamOut, Closeable {
 
 	private OutputStream outputStream;
 	
@@ -56,11 +55,6 @@ public class OutputStreamOut implements StreamOut, DataValueOut, Closeable {
 	
 	@Override
 	public boolean isWrittenTo() {
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public <T> T toValue(Class<T> type) {
 		throw new UnsupportedOperationException();
 	}
 	

@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.DataWriterFactory;
 import org.oddjob.dido.ValueNode;
@@ -22,8 +21,6 @@ public class ChildWriter implements DataWriter {
 
 	private final List<DataWriter> writers;
 	
-	private final DataOut dataOut;
-	
 	private final ValueNode<?> valueNode;
 	
 	private boolean closed;
@@ -38,7 +35,6 @@ public class ChildWriter implements DataWriter {
 		}
 
 		this.valueNode = parent;
-		this.dataOut = dataOut;
 		
 		logger.trace("Created ChildWriter for [" + valueNode + 
 				"] parent with " + writers.size() + " children.");
@@ -51,9 +47,7 @@ public class ChildWriter implements DataWriter {
 			throw new IllegalStateException("Writer closed.");
 		}
 
-		if (writers.size() == 0) {
-			writeDataWithInferredType(valueNode);
-			
+		if (writers.size() == 0) {			
 			return false;
 		}
 
@@ -62,8 +56,6 @@ public class ChildWriter implements DataWriter {
 		boolean keep = currentWriter.write(object);
 		
 		if (keep) {
-			writeDataWithInferredType(valueNode);
-			
 			return true;
 		}
 		else {
@@ -73,29 +65,7 @@ public class ChildWriter implements DataWriter {
 			return write(object);
 		}
 	}
-	
-	private <T> void writeDataWithInferredType(ValueNode<T> valueNode) {
 		
-		if (dataOut == null) {
-			return;
-		}
-		
-		if (valueNode == null) {
-			return;
-		}
-		
-		if (! (dataOut instanceof DataValueOut)) {
-			return;
-		}
-		
-		T value = ((DataValueOut) dataOut).toValue(valueNode.getType());
-		
-		logger.trace("Writing [" + value + "] from [" + dataOut + 
-				"] back to [" + valueNode + "]");
-		
-		valueNode.value(value);
-	}
-	
 	@Override
 	public void close() throws DataException {
 		
