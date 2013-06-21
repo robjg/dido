@@ -2,9 +2,9 @@ package org.oddjob.dido.stream;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 
+import org.oddjob.arooa.life.Destroy;
+import org.oddjob.dido.Closeable;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.UnsupportedeDataInException;
@@ -15,28 +15,23 @@ import org.oddjob.dido.UnsupportedeDataInException;
  * @author rob
  *
  */
-public class InputStreamIn implements StreamIn {
+public class InputStreamIn implements StreamIn, Closeable {
 	
-	public final LineNumberReader reader;
+	private InputStream inputStream;
 	
-	private final InputStream inputStream;
+	public InputStreamIn() {
+	}
 	
 	public InputStreamIn(InputStream inputStream) {
 		this.inputStream = inputStream;
-		this.reader = new LineNumberReader(new InputStreamReader(inputStream));
 	}
 		
-	
-	public String readLine() throws DataException {
-		try {
-			return reader.readLine();
-		} catch (IOException e) {
-			throw new DataException(e);
-		}
+	public void setInput(InputStream inputStream) {
+		this.inputStream = inputStream;
 	}
 	
 	@Override
-	public InputStream getStream() {
+	public InputStream inputStream() {
 		return inputStream;
 	}
 	
@@ -47,10 +42,23 @@ public class InputStreamIn implements StreamIn {
 		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
+		
 		if (type.isAssignableFrom(LinesIn.class)) {
-			return type.cast(new StreamLinesIn(getStream()));
+			return type.cast(new StreamLinesIn(inputStream()));
 		}
 		
 		throw new UnsupportedeDataInException(this.getClass(), type);
+	}
+	
+	@Override
+	@Destroy
+	public void close() throws DataException {
+		if (inputStream != null) {
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				throw new DataException(e);
+			}
+		}
 	}
 }

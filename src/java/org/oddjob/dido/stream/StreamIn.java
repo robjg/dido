@@ -13,6 +13,6 @@ import org.oddjob.dido.DataIn;
 public interface StreamIn extends DataIn {
 
 
-	public InputStream getStream();
+	public InputStream inputStream();
 	
 }

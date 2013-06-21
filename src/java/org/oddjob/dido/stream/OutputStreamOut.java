@@ -3,22 +3,30 @@ package org.oddjob.dido.stream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.oddjob.dido.Closeable;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataValueOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
 
 
-public class OutputStreamOut implements StreamOut, DataValueOut {
+public class OutputStreamOut implements StreamOut, DataValueOut, Closeable {
 
-	private final OutputStream outputStream;
+	private OutputStream outputStream;
+	
+	public OutputStreamOut() {
+	}
 	
 	public OutputStreamOut(OutputStream outputStream) {
 		this.outputStream = outputStream;
 	}
 		
+	public void setOutput(OutputStream outputStream) {
+		this.outputStream = outputStream;
+	}
+	
 	@Override
-	public OutputStream getStream() {
+	public OutputStream outputStream() {
 		return outputStream;
 	}
 	
@@ -56,8 +64,14 @@ public class OutputStreamOut implements StreamOut, DataValueOut {
 		throw new UnsupportedOperationException();
 	}
 	
-	public void close() throws IOException {
-		outputStream.close();
+	public void close() throws DataException {
+		if (outputStream != null) {
+			try {
+				outputStream.close();
+			} catch (IOException e) {
+				throw new DataException();
+			}
+		}
 	}
 	
 }

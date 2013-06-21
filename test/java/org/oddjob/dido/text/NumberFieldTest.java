@@ -17,6 +17,8 @@ import org.oddjob.dido.DataReadJob;
 import org.oddjob.dido.DataWriteJob;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
+import org.oddjob.dido.stream.InputStreamIn;
+import org.oddjob.dido.stream.OutputStreamOut;
 
 public class NumberFieldTest extends TestCase {
 
@@ -66,7 +68,8 @@ public class NumberFieldTest extends TestCase {
 		DataReadJob readJob = new DataReadJob();
 		readJob.setPlan(layout);
 		readJob.setBindings("employee", employeeBinding);
-		readJob.setInput(new ByteArrayInputStream(data.getBytes()));
+		readJob.setData(new InputStreamIn(
+				new ByteArrayInputStream(data.getBytes())));
 		readJob.setBeans(new ArrayList<Object>());
 		
 		readJob.run();
@@ -88,7 +91,7 @@ public class NumberFieldTest extends TestCase {
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		
-		writeJob.setOutput(output);
+		writeJob.setData(new OutputStreamOut(output));
 		
 		writeJob.run();
 		

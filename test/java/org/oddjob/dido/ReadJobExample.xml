@@ -11,9 +11,13 @@
      </type>
     </dido:bean-binding>
    </bindings>
-   <input>
-    <resource resource="org/oddjob/dido/ReadJobExampleData.txt"/>
-   </input>
+   <data>
+    <dido:input>
+     <input>
+      <resource resource="org/oddjob/dido/ReadJobExampleData.txt"/>
+     </input>
+    </dido:input>
+   </data>
    <beans>
     <list/>
    </beans>

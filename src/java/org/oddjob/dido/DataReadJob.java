@@ -1,6 +1,5 @@
 package org.oddjob.dido;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,8 +7,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.layout.BindingHelper;
-import org.oddjob.dido.stream.InputStreamIn;
-import org.oddjob.dido.stream.StreamIn;
 
 /**
  * @oddjob.description A Job that can read data from a file or 
@@ -56,10 +53,10 @@ public class DataReadJob implements Runnable {
 	
     /**
      * @oddjob.property
-     * @oddjob.description The input to read the data from.
+     * @oddjob.description The data to read.
      * @oddjob.required Yes.
      */	
-	private InputStream input;
+	private DataIn data;
 	
     /**
      * @oddjob.property
@@ -73,7 +70,7 @@ public class DataReadJob implements Runnable {
 		if (plan == null) {
 			throw new NullPointerException("No Layout provided.");
 		}
-		if (input == null) {
+		if (data == null) {
 			throw new NullPointerException("No Input provided.");
 		}
 		if (beans == null) {
@@ -81,8 +78,6 @@ public class DataReadJob implements Runnable {
 		}
 		
 		logger.info("Starting to read data using [" + plan + "]");
-		
-		StreamIn in = new InputStreamIn(input);
 		
 		Layout root = plan;
 		root.reset();
@@ -94,7 +89,7 @@ public class DataReadJob implements Runnable {
 		}
 
 		try {
-			DataReader reader = root.readerFor(in);
+			DataReader reader = root.readerFor(data);
 			
 			while (true) {				
 				Object bean = reader.read();
@@ -107,6 +102,9 @@ public class DataReadJob implements Runnable {
 			}
 			
 			reader.close();
+			if (data instanceof Closeable) {
+				((Closeable) data).close();
+			}
 		}
 		catch (RuntimeException e) {
 			throw e;
@@ -143,13 +141,13 @@ public class DataReadJob implements Runnable {
 	}
 
 
-	public InputStream getInput() {
-		return input;
+	public DataIn getData() {
+		return data;
 	}
 
 
-	public void setInput(InputStream input) {
-		this.input = input;
+	public void setData(DataIn input) {
+		this.data = input;
 	}
 	
 	public void setBindings(String name, Binding binding) {

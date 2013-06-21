@@ -19,6 +19,10 @@
 		    className='org.oddjob.dido.other.When'/>
 		<arooa:bean-def element='bean-binding'
 		    className='org.oddjob.dido.bio.BeanBindingBean'/>
+        <arooa:bean-def element='input'
+            className='org.oddjob.dido.stream.InputStreamIn'/>
+        <arooa:bean-def element='output'
+            className='org.oddjob.dido.stream.OutputStreamOut'/>
 	</values>
 	<components>
     	<arooa:bean-def element='read'

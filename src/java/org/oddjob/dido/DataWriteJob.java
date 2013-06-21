@@ -1,14 +1,11 @@
 package org.oddjob.dido;
 
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.layout.BindingHelper;
-import org.oddjob.dido.stream.OutputStreamOut;
-import org.oddjob.dido.stream.StreamOut;
 
 /**
  * @oddjob.description A Job that can write data out to a file or 
@@ -44,10 +41,10 @@ public class DataWriteJob implements Runnable {
 	
     /**
      * @oddjob.property
-     * @oddjob.description The output to write the data to.
+     * @oddjob.description The Data Out to write the data to.
      * @oddjob.required Yes.
      */	
-	private OutputStream output;
+	private DataOut data;
 	
     /**
      * @oddjob.property
@@ -71,19 +68,12 @@ public class DataWriteJob implements Runnable {
 			throw new NullPointerException("No Layout provided.");
 		}
 		
-		if (output == null) {
+		if (data == null) {
 			throw new NullPointerException("No output provided");
 		}
 
 		logger.info("Starting to write data using [" + plan + "]");
-		
-		OutputStream output = this.output;
-		
-		StreamOut dataOut = null;
-		if (output != null) {
-			dataOut = new OutputStreamOut(output);
-		}
-		
+				
 		Layout root = plan;
 		root.reset();
 		
@@ -94,7 +84,7 @@ public class DataWriteJob implements Runnable {
 		}
 		
 		try {
-			DataWriter writer = root.writerFor(dataOut);
+			DataWriter writer = root.writerFor(data);
 			
 			for (Object bean : beans) {
 				
@@ -105,8 +95,8 @@ public class DataWriteJob implements Runnable {
 			
 			writer.close();
 			
-			if (output != null) {
-				output.close();
+			if (data instanceof Closeable) {
+				((Closeable) data).close();
 			}
 		}
 		catch (RuntimeException e) {
@@ -141,13 +131,13 @@ public class DataWriteJob implements Runnable {
 	}
 
 
-	public OutputStream getOutput() {
-		return output;
+	public DataOut getData() {
+		return data;
 	}
 
 
-	public void setOutput(OutputStream output) {
-		this.output = output;
+	public void setData(DataOut output) {
+		this.data = output;
 	}
 	
 	public void setBindings(String name, Binding binding) {

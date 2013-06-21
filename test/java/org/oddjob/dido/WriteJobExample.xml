@@ -11,13 +11,17 @@
                     </type>
                 </dido:bean-binding>
             </bindings>
-            <output>
-                <identify id='results'>
+            <data>
+              <dido:output>
+                <output>
+                  <identify id='results'>
                     <value>
-                        <buffer/>
+                      <buffer/>
                     </value>
-                </identify>
-            </output>
+                  </identify>
+                </output>
+              </dido:output>
+            </data>
             <beans>
                 <value value='${beans}'/>
             </beans>

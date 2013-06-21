@@ -12,5 +12,5 @@ import org.oddjob.dido.DataOut;
  */
 public interface StreamOut extends DataOut {
 
-	public OutputStream getStream();
+	public OutputStream outputStream();
 }

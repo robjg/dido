@@ -23,6 +23,8 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.bio.DirectBinding;
+import org.oddjob.dido.stream.InputStreamIn;
+import org.oddjob.dido.stream.OutputStreamOut;
 import org.oddjob.dido.text.FieldLayout;
 import org.oddjob.dido.text.SimpleFieldsOut;
 
@@ -176,7 +178,8 @@ public class WhenTest extends TestCase {
 		readJob.setPlan(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
-		readJob.setInput(new ByteArrayInputStream(data.getBytes()));
+		readJob.setData(new InputStreamIn(
+				new ByteArrayInputStream(data.getBytes())));
 		
 		Collection<Object> results = new ArrayList<Object>();
 		
@@ -215,7 +218,7 @@ public class WhenTest extends TestCase {
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		
-		writeJob.setOutput(output);
+		writeJob.setData(new OutputStreamOut(output));
 		
 		writeJob.run();
 		
@@ -265,7 +268,7 @@ public class WhenTest extends TestCase {
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		
-		writeJob.setOutput(output);
+		writeJob.setData(new OutputStreamOut(output));
 		
 		writeJob.run();
 		
@@ -273,7 +276,8 @@ public class WhenTest extends TestCase {
 		readJob.setPlan(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
-		readJob.setInput(new ByteArrayInputStream(output.toByteArray()));
+		readJob.setData(new InputStreamIn(
+				new ByteArrayInputStream(output.toByteArray())));
 		readJob.setBeans(new ArrayList<Object>());
 		readJob.run();
 		
@@ -341,7 +345,8 @@ public class WhenTest extends TestCase {
 		readJob.setPlan(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
-		readJob.setInput(new ByteArrayInputStream(data.getBytes()));
+		readJob.setData(new InputStreamIn(
+				new ByteArrayInputStream(data.getBytes())));
 		readJob.setBeans(new ArrayList<Object>());
 		
 		readJob.run();
@@ -376,7 +381,7 @@ public class WhenTest extends TestCase {
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		
-		writeJob.setOutput(output);
+		writeJob.setData(new OutputStreamOut(output));
 		
 		writeJob.run();
 		
@@ -438,7 +443,8 @@ public class WhenTest extends TestCase {
 		readJob.setPlan(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
-		readJob.setInput(new ByteArrayInputStream(data.getBytes()));
+		readJob.setData(new InputStreamIn(
+				new ByteArrayInputStream(data.getBytes())));
 		readJob.setBeans(new ArrayList<Object>());
 		
 		readJob.run();
@@ -473,7 +479,7 @@ public class WhenTest extends TestCase {
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		
-		writeJob.setOutput(output);
+		writeJob.setData(new OutputStreamOut(output));
 		
 		writeJob.run();
 		
