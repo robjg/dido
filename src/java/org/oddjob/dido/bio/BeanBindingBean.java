@@ -308,7 +308,7 @@ implements Binding, ArooaSessionAware {
 			if (node instanceof Morphable) {
 				
 				Runnable reset = ((Morphable) node).morphInto(
-						new MorphMetaDataFactory(accessor).writeableMorphMetaDataFor(
+						new MorphMetaDataFactory(accessor).readableMorphMetaDataFor(
 								type, beanView));
 				
 				resets.add(reset);
