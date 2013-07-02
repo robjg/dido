@@ -12,13 +12,14 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.MorphMetaData;
-import org.oddjob.dido.io.Morphable;
 import org.oddjob.dido.layout.LayoutNode;
 import org.oddjob.dido.layout.NullReader;
+import org.oddjob.dido.morph.MorphDefinition;
+import org.oddjob.dido.morph.MorphProvider;
+import org.oddjob.dido.morph.Morphable;
 
 public class DataRows extends LayoutNode 
-implements Morphable {
+implements Morphable, MorphProvider {
 	
 	private static final Logger logger = Logger.getLogger(DataRows.class);
 	
@@ -58,7 +59,7 @@ implements Morphable {
 	}
 	
 	@Override
-	public Runnable morphInto(MorphMetaData morphicness) {
+	public Runnable morphInto(MorphDefinition morphicness) {
 		
 		if (childLayouts().size() > 0) {
 			logger.debug("[" + this + "] has children. Morphicness ignored.");
@@ -114,7 +115,7 @@ implements Morphable {
 	}
 			
 	@Override
-	public MorphMetaData morphOf() {
+	public MorphDefinition morphOf() {
 	
 		return null;
 	}
@@ -172,7 +173,7 @@ implements Morphable {
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 		
-		SheetIn din = dataIn.provide(SheetIn.class);
+		SheetIn din = dataIn.provideDataIn(SheetIn.class);
 		
 		if (!initialised) {
 			
@@ -265,7 +266,7 @@ implements Morphable {
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 
-		SheetOut sheetOut = dataOut.provide(SheetOut.class);
+		SheetOut sheetOut = dataOut.provideDataOut(SheetOut.class);
 		
 		logger.debug("Creating writer for [" + sheetOut + "]");
 		

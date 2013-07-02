@@ -25,7 +25,7 @@ public class PoiSheetsTest extends TestCase {
 		PoiSheetOut test1 = new PoiSheetOut(sheet);
 		test1.nextRow();
 		
-		TupleOut tupleOut = test1.provide(TupleOut.class);
+		TupleOut tupleOut = test1.provideDataOut(TupleOut.class);
 		
 		Cell cell1 = tupleOut.createCell(0, Cell.CELL_TYPE_STRING);
 		assertEquals(Cell.CELL_TYPE_STRING, cell1.getCellType());
@@ -36,7 +36,7 @@ public class PoiSheetsTest extends TestCase {
 		PoiSheetIn test2 = new PoiSheetIn(sheet);
 		assertTrue(test2.nextRow());
 		
-		TupleIn tupleIn = test2.provide(TupleIn.class);
+		TupleIn tupleIn = test2.provideDataIn(TupleIn.class);
 		
 		Cell cell2 = tupleIn.getCell(0);
 		
@@ -57,7 +57,7 @@ public class PoiSheetsTest extends TestCase {
 		PoiSheetOut test1 = new PoiSheetOut(sheet);
 		test1.nextRow();
 		
-		TupleOut tupleOut = test1.provide(TupleOut.class);
+		TupleOut tupleOut = test1.provideDataOut(TupleOut.class);
 		
 		Cell cell1 = tupleOut.createCell(0, Cell.CELL_TYPE_BLANK);
 		assertEquals(Cell.CELL_TYPE_BLANK, cell1.getCellType());
@@ -100,7 +100,7 @@ public class PoiSheetsTest extends TestCase {
 		
 		Date theDate = DateHelper.parseDateTime("2010-12-25 12:45");
 		
-		TupleOut tupleOut = test1.provide(TupleOut.class);
+		TupleOut tupleOut = test1.provideDataOut(TupleOut.class);
 		
 		Cell cell1 = tupleOut.createCell(0, Cell.CELL_TYPE_BLANK);
 		cell1.setCellValue(theDate);
@@ -136,7 +136,7 @@ public class PoiSheetsTest extends TestCase {
 		PoiSheetOut test1 = new PoiSheetOut(sheet);
 		test1.nextRow();
 		
-		TupleOut tupleOut = test1.provide(TupleOut.class);
+		TupleOut tupleOut = test1.provideDataOut(TupleOut.class);
 		
 		Cell cell1 = tupleOut.createCell(0, Cell.CELL_TYPE_STRING);
 		cell1.setCellValue("apples");
@@ -158,7 +158,7 @@ public class PoiSheetsTest extends TestCase {
 		
 		testOut.headerRow(null);
 		
-		TupleOut tupleOut = testOut.provide(TupleOut.class);
+		TupleOut tupleOut = testOut.provideDataOut(TupleOut.class);
 		
 		assertEquals(0, tupleOut.indexForHeading("Name"));
 		assertEquals(1, tupleOut.indexForHeading("Age"));
@@ -171,7 +171,7 @@ public class PoiSheetsTest extends TestCase {
 		PoiSheetIn testIn = new PoiSheetIn(sheet);
 		testIn.headerRow();
 		
-		TupleIn tupleIn = testIn.provide(TupleIn.class);
+		TupleIn tupleIn = testIn.provideDataIn(TupleIn.class);
 		
 		assertEquals(0, tupleIn.indexForHeading("Name"));
 		assertEquals(1, tupleIn.indexForHeading("Age"));

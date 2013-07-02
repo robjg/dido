@@ -34,7 +34,7 @@ extends LayoutNode {
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 		
-		StreamIn data = dataIn.provide(StreamIn.class);
+		StreamIn data = dataIn.provideDataIn(StreamIn.class);
 		
 		BookIn book = null;
 		try {
@@ -53,7 +53,7 @@ extends LayoutNode {
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 		
-		StreamOut data = dataOut.provide(StreamOut.class);
+		StreamOut data = dataOut.provideDataOut(StreamOut.class);
 		
 		StyleProviderFactory styleFactory;
 		if (styles == null) {

@@ -36,7 +36,7 @@ public class PoiBookIn implements BookIn {
 	}	
 	
 	@Override
-	public <T extends DataIn> T provide(Class<T> type) throws DataException {
+	public <T extends DataIn> T provideDataIn(Class<T> type) throws DataException {
 
 		if (type.isInstance(this)) {
 			return type.cast(this);

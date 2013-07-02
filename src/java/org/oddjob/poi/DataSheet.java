@@ -23,7 +23,7 @@ public class DataSheet extends LayoutNode {
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 
-		BookIn data = dataIn.provide(BookIn.class);
+		BookIn data = dataIn.provideDataIn(BookIn.class);
 		
 		Sheet sheet;
 		if (sheetName == null) {
@@ -47,7 +47,7 @@ public class DataSheet extends LayoutNode {
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 		
-		BookOut data = dataOut.provide(BookOut.class);
+		BookOut data = dataOut.provideDataOut(BookOut.class);
 
 		Sheet sheet = data.createSheet(sheetName);
 		

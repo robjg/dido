@@ -115,7 +115,7 @@ implements ArooaSessionAware {
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 
-		TupleIn tupleIn = dataIn.provide(TupleIn.class);
+		TupleIn tupleIn = dataIn.provideDataIn(TupleIn.class);
 		
 		logger.debug("Creating reader for [" + tupleIn + "]");
 		
@@ -212,7 +212,7 @@ implements ArooaSessionAware {
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 
-		TupleOut tupleOut = dataOut.provide(TupleOut.class);
+		TupleOut tupleOut = dataOut.provideDataOut(TupleOut.class);
 		
 		logger.debug("Creating new column writer for [" + tupleOut + "]");
 		

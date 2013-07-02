@@ -83,7 +83,7 @@ public class PoiBookOut implements BookOut {
 	}
 		
 	@Override
-	public <T extends DataOut> T provide(Class<T> type) throws DataException {
+	public <T extends DataOut> T provideDataOut(Class<T> type) throws DataException {
 
 		if (type.isInstance(this)) {
 			return type.cast(this);
