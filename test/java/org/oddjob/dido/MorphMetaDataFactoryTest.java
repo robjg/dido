@@ -8,6 +8,8 @@ import junit.framework.TestCase;
 import org.oddjob.arooa.beanutils.BeanUtilsPropertyAccessor;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.BeanViewBean;
+import org.oddjob.dido.morph.MorphDefinition;
+import org.oddjob.dido.morph.MorphDefinitionFactory;
 
 public class MorphMetaDataFactoryTest extends TestCase {
 
@@ -44,10 +46,10 @@ public class MorphMetaDataFactoryTest extends TestCase {
 	
 	public void testReadableMorphMetaData() {
 		
-		MorphMetaDataFactory test = new MorphMetaDataFactory(
+		MorphDefinitionFactory test = new MorphDefinitionFactory(
 				new BeanUtilsPropertyAccessor());
 		
-		MorphMetaData result = test.readableMorphMetaDataFor(
+		MorphDefinition result = test.readableMorphMetaDataFor(
 				new SimpleArooaClass(Fruit.class));
 		
 		Map<String, Class<?>> types = new HashMap<String, Class<?>>();
@@ -75,13 +77,13 @@ public class MorphMetaDataFactoryTest extends TestCase {
 	
 	public void testReadWithBeanView() {
 		
-		MorphMetaDataFactory test = new MorphMetaDataFactory(
+		MorphDefinitionFactory test = new MorphDefinitionFactory(
 				new BeanUtilsPropertyAccessor());
 		
 		BeanViewBean beanView = new BeanViewBean();
 		beanView.setProperties("type, quantity, nice, eaten");
 		
-		MorphMetaData morphicness = test.readableMorphMetaDataFor(
+		MorphDefinition morphicness = test.readableMorphMetaDataFor(
 				new SimpleArooaClass(Fruit.class), beanView.toValue());
 		
 		String[] names = morphicness.getNames();
@@ -96,10 +98,10 @@ public class MorphMetaDataFactoryTest extends TestCase {
 	
 	public void testWriteMorphMetaData() {
 		
-		MorphMetaDataFactory test = new MorphMetaDataFactory(
+		MorphDefinitionFactory test = new MorphDefinitionFactory(
 				new BeanUtilsPropertyAccessor());
 		
-		MorphMetaData result = test.writeableMorphMetaDataFor(
+		MorphDefinition result = test.writeableMorphMetaDataFor(
 				new SimpleArooaClass(Fruit.class));
 		
 		Map<String, Class<?>> types = new HashMap<String, Class<?>>();
@@ -126,13 +128,13 @@ public class MorphMetaDataFactoryTest extends TestCase {
 	
 	public void testWriteWithBeanView() {
 		
-		MorphMetaDataFactory test = new MorphMetaDataFactory(
+		MorphDefinitionFactory test = new MorphDefinitionFactory(
 				new BeanUtilsPropertyAccessor());
 		
 		BeanViewBean beanView = new BeanViewBean();
 		beanView.setProperties("type, quantity, nice, eaten");
 		
-		MorphMetaData morphicness = test.writeableMorphMetaDataFor(
+		MorphDefinition morphicness = test.writeableMorphMetaDataFor(
 				new SimpleArooaClass(Fruit.class), beanView.toValue());
 		
 		String[] names = morphicness.getNames();

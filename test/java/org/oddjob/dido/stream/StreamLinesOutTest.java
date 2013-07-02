@@ -39,7 +39,7 @@ public class StreamLinesOutTest extends TestCase {
 		
 		StreamLinesOut test = new StreamLinesOut(out);
 
-		LinesOut nested = test.provide(LinesOut.class);
+		LinesOut nested = test.provideDataOut(LinesOut.class);
 		
 		nested.writeLine("Apple");
 		
@@ -60,15 +60,15 @@ public class StreamLinesOutTest extends TestCase {
 		
 		StreamLinesOut test = new StreamLinesOut(out);
 
-		LinesOut nested = test.provide(LinesOut.class);
+		LinesOut nested = test.provideDataOut(LinesOut.class);
 
-		TextOut textOut = nested.provide(TextOut.class);
+		TextOut textOut = nested.provideDataOut(TextOut.class);
 
 		assertFalse(nested.isWrittenTo());
 		
 		textOut.append("Apples");
 		
-		textOut = nested.provide(TextOut.class);
+		textOut = nested.provideDataOut(TextOut.class);
 		
 		textOut.append(" can be Green.");
 		
@@ -84,7 +84,7 @@ public class StreamLinesOutTest extends TestCase {
 		
 		assertEquals(false, test.isWrittenTo());
 		
-		textOut = nested.provide(TextOut.class);
+		textOut = nested.provideDataOut(TextOut.class);
 
 		assertFalse(nested.isWrittenTo());
 		

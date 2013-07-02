@@ -73,7 +73,7 @@ extends LayoutValueNode<String> {
 	public DataReader readerFor(DataIn dataIn)
 			throws DataException {
 		
-		TextIn textIn = dataIn.provide(TextIn.class);
+		TextIn textIn = dataIn.provideDataIn(TextIn.class);
 		
 		String inString = textIn.getText();
 		
@@ -176,7 +176,7 @@ extends LayoutValueNode<String> {
 	public DataWriter writerFor(DataOut dataOut)
 	throws DataException {
 		
-		final TextOut outgoing = dataOut.provide(TextOut.class);
+		final TextOut outgoing = dataOut.provideDataOut(TextOut.class);
 		
 		logger.trace("Creating writer for [" + outgoing + "]");
 		

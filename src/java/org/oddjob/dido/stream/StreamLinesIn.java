@@ -60,16 +60,16 @@ public class StreamLinesIn implements LinesIn {
 	
 	
 	@Override
-	public <T extends DataIn> T provide(Class<T> type) 
+	public <T extends DataIn> T provideDataIn(Class<T> type) 
 	throws DataException{
 		
 		if (type.isAssignableFrom(LinesIn.class)) {			
 			return type.cast(new LinesIn() {
 				
 				@Override
-				public <X extends DataIn> X provide(Class<X> type)
+				public <X extends DataIn> X provideDataIn(Class<X> type)
 						throws DataException {
-					return StreamLinesIn.this.provide(type);
+					return StreamLinesIn.this.provideDataIn(type);
 				}
 				
 				@Override

@@ -1,0 +1,29 @@
+<oddjob>
+  <job>
+    <sequential>
+      <jobs>
+        <variables id="vars">
+          <connection>
+            <connection driver="org.hsqldb.jdbcDriver" url="jdbc:hsqldb:mem:test"
+              username="sa" password="">
+            </connection>
+          </connection>
+        </variables>
+        <sql>
+          <connection>
+            <value value="${vars.connection}"/>
+          </connection>
+          <input>
+            <buffer>
+              DROP TABLE fruit IF EXISTS
+
+              CREATE TABLE fruit(
+              TYPE VARCHAR(20),
+              QUANTITY INTEGER)
+            </buffer>
+          </input>
+        </sql>
+      </jobs>
+    </sequential>
+  </job>
+</oddjob>

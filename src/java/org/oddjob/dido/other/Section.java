@@ -1,4 +1,4 @@
-package org.oddjob.dido;
+package org.oddjob.dido.other;
 
 /**
  * Something that can be a Section of something. Examples of a section would

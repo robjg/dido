@@ -11,7 +11,7 @@ public class ListLinesOutTest extends TestCase {
 		
 		ListLinesOut test = new ListLinesOut();
 
-		TextOut text = test.provide(TextOut.class);
+		TextOut text = test.provideDataOut(TextOut.class);
 		
 		text.append("apples");
 		

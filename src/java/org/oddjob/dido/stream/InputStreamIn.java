@@ -36,7 +36,7 @@ public class InputStreamIn implements StreamIn, Closeable {
 	}
 	
 	@Override
-	public <T extends DataIn> T provide(Class<T> type) 
+	public <T extends DataIn> T provideDataIn(Class<T> type) 
 	throws DataException{
 		
 		if (type.isInstance(this)) {

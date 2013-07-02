@@ -1,4 +1,4 @@
-package org.oddjob.dido;
+package org.oddjob.dido.morph;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,25 +12,25 @@ import org.oddjob.arooa.reflect.FallbackBeanView;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 
 /**
- * Helper class for creating {@link MorphMetaData} from {@link ArooaClass}s
+ * Helper class for creating {@link MorphDefinition} from {@link ArooaClass}s
  * and {@link BeanView}s.
  * 
  * @author rob
  *
  */
-public class MorphMetaDataFactory {
+public class MorphDefinitionFactory {
 
 	private final PropertyAccessor accessor;
 	
-	public MorphMetaDataFactory(PropertyAccessor accessor) {
+	public MorphDefinitionFactory(PropertyAccessor accessor) {
 		this.accessor = accessor;
 	}
 		
-	public MorphMetaData readableMorphMetaDataFor(ArooaClass arooaClass) {
+	public MorphDefinition readableMorphMetaDataFor(ArooaClass arooaClass) {
 		return readableMorphMetaDataFor(arooaClass, null);
 	}		
 		
-	public MorphMetaData readableMorphMetaDataFor(
+	public MorphDefinition readableMorphMetaDataFor(
 			ArooaClass arooaClass, BeanView beanView ) {
 
 		BeanOverview overview = 
@@ -61,7 +61,7 @@ public class MorphMetaDataFactory {
 			}
 		}
 		
-		return new MorphMetaData() {
+		return new MorphDefinition() {
 			
 			@Override
 			public String[] getNames() {
@@ -81,11 +81,11 @@ public class MorphMetaDataFactory {
 			
 	}
 	
-	public MorphMetaData writeableMorphMetaDataFor(ArooaClass arooaClass) {
+	public MorphDefinition writeableMorphMetaDataFor(ArooaClass arooaClass) {
 		return writeableMorphMetaDataFor(arooaClass, null);
 	}		
 		
-	public MorphMetaData writeableMorphMetaDataFor(
+	public MorphDefinition writeableMorphMetaDataFor(
 			ArooaClass arooaClass, BeanView beanView ) {
 
 		BeanOverview overview = 
@@ -116,7 +116,7 @@ public class MorphMetaDataFactory {
 			}
 		}
 		
-		return new MorphMetaData() {
+		return new MorphDefinition() {
 			
 			@Override
 			public String[] getNames() {

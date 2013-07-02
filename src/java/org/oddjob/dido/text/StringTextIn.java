@@ -25,7 +25,7 @@ public class StringTextIn implements TextIn {
 	}
 	
 	@Override
-	public <T extends DataIn> T provide(Class<T> type)
+	public <T extends DataIn> T provideDataIn(Class<T> type)
 			throws UnsupportedeDataInException {
 		
 		if (type.isInstance(this)) {

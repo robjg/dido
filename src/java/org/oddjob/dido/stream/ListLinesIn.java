@@ -19,7 +19,7 @@ public class ListLinesIn implements LinesIn {
 	}
 
 	@Override
-	public <T extends DataIn> T provide(Class<T> type)
+	public <T extends DataIn> T provideDataIn(Class<T> type)
 			throws UnsupportedeDataInException {
 
 		if (type.isAssignableFrom(LinesIn.class)) {

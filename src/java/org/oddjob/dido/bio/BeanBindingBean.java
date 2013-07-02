@@ -18,13 +18,14 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.MorphMetaData;
-import org.oddjob.dido.MorphMetaDataFactory;
 import org.oddjob.dido.ValueNode;
-import org.oddjob.dido.io.Morphable;
 import org.oddjob.dido.layout.ChildReader;
 import org.oddjob.dido.layout.ChildWriter;
 import org.oddjob.dido.layout.LayoutWalker;
+import org.oddjob.dido.morph.MorphDefinition;
+import org.oddjob.dido.morph.MorphDefinitionFactory;
+import org.oddjob.dido.morph.MorphProvider;
+import org.oddjob.dido.morph.Morphable;
 
 /**
  * @oddjob.description Provide a binding to bean of the given type. 
@@ -77,6 +78,7 @@ implements Binding, ArooaSessionAware {
 		
 		public ChildNodeBinding(Layout node) {
 			this.node = node;
+			logger.debug("BeanBinding bound for property " + node.getName());
 		}
 		
 		
@@ -196,8 +198,11 @@ implements Binding, ArooaSessionAware {
 			}
 			
 			if (node instanceof Morphable) {
+				
+				logger.debug("Giving " + node + " the opportunity to morph.");
+				
 				Runnable reset = ((Morphable) node).morphInto(
-						new MorphMetaDataFactory(accessor).writeableMorphMetaDataFor(
+						new MorphDefinitionFactory(accessor).writeableMorphMetaDataFor(
 								type, beanView));
 				resets.add(reset);
 			}
@@ -272,7 +277,7 @@ implements Binding, ArooaSessionAware {
 		@Override
 		public void process(Layout node) {
 			logger.trace("Binding on layout [" + node  + 
-					"] binding bean [" + bean + "]");
+					"] is binding bean [" + bean + "]");
 		}
 	}
 
@@ -307,8 +312,10 @@ implements Binding, ArooaSessionAware {
 			
 			if (node instanceof Morphable) {
 				
+				logger.debug("Giving " + node + " the opportunity to morph.");
+				
 				Runnable reset = ((Morphable) node).morphInto(
-						new MorphMetaDataFactory(accessor).readableMorphMetaDataFor(
+						new MorphDefinitionFactory(accessor).readableMorphMetaDataFor(
 								type, beanView));
 				
 				resets.add(reset);
@@ -340,6 +347,8 @@ implements Binding, ArooaSessionAware {
 		
 		if (children.size() > 0) {
 			
+			logger.debug("Deriving Magic Bean Properties from child layouts.");
+			
 			new LayoutWalker() {				
 				@Override
 				protected boolean onLayout(Layout layout) {
@@ -347,8 +356,15 @@ implements Binding, ArooaSessionAware {
 							layout.getName() != null &&
 							layout instanceof ValueNode) {
 						
-						classCreator.addProperty(layout.getName(), 
-								((ValueNode<?>) layout).getType());
+						String propertyName = layout.getName();
+						Class<?> propertyType = 
+								((ValueNode<?>) layout).getType();
+						
+						logger.debug("Adding property " + propertyName + 
+								" of type " + propertyType.getName());
+						
+						classCreator.addProperty(propertyName, 
+								propertyType);
 					}
 					
 					return true;
@@ -356,9 +372,11 @@ implements Binding, ArooaSessionAware {
 			}.walk(layout);
 			
 		}
-		else if (layout instanceof Morphable) {
+		else if (layout instanceof MorphProvider) {
 			
-			MorphMetaData metaData = ((Morphable) layout).morphOf();
+			logger.debug("Deriving Magic Bean Properties from Morph Definition.");
+			
+			MorphDefinition metaData = ((MorphProvider) layout).morphOf();
 			
 			if (metaData == null) {
 				throw new DataException("No headings to create type");
@@ -366,8 +384,13 @@ implements Binding, ArooaSessionAware {
 			
 			for (String propertyName: metaData.getNames()) {
 
+				Class<?> propertyType = metaData.typeOf(propertyName);
+				
+				logger.debug("Adding property " + propertyName + 
+						" of type " + propertyType.getName());
+				
 				classCreator.addProperty(propertyName, 
-						metaData.typeOf(propertyName));
+						propertyType);
 			}			
 		}
 		else {

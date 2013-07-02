@@ -1,7 +1,6 @@
-package org.oddjob.dido.io;
+package org.oddjob.dido.morph;
 
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.MorphMetaData;
 
 /**
  * A thing, generally a {@link Layout} that 
@@ -13,7 +12,6 @@ import org.oddjob.dido.MorphMetaData;
  */
 public interface Morphable {
 
-	public Runnable morphInto(MorphMetaData morphicness);
+	public Runnable morphInto(MorphDefinition morphicness);
 	
-	public MorphMetaData morphOf();
 }

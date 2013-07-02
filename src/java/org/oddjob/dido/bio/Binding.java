@@ -6,7 +6,7 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.io.Morphable;
+import org.oddjob.dido.morph.Morphable;
 
 /**
  * Provide the ability to bind data to and from a Java Object. A 

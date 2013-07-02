@@ -1,6 +1,6 @@
-package org.oddjob.dido;
+package org.oddjob.dido.morph;
 
-public interface MorphMetaData {
+public interface MorphDefinition {
 
 	public String[] getNames();
 	

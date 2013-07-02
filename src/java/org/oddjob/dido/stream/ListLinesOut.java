@@ -18,7 +18,7 @@ public class ListLinesOut implements LinesOut {
 	private String lastLine;
 	
 	@Override
-	public <T extends DataOut> T provide(Class<T> type)
+	public <T extends DataOut> T provideDataOut(Class<T> type)
 			throws UnsupportedeDataOutException {
 		
 		if (type.isAssignableFrom(LinesOut.class)) {

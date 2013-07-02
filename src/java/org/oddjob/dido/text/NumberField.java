@@ -22,7 +22,7 @@ extends LayoutValueNode<Number>{
 
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
-		TextIn din = dataIn.provide(TextIn.class);
+		TextIn din = dataIn.provideDataIn(TextIn.class);
 
 		String number = din.getText().trim();
 		
@@ -50,7 +50,7 @@ extends LayoutValueNode<Number>{
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 		
-		final TextOut dout = dataOut.provide(TextOut.class);
+		final TextOut dout = dataOut.provideDataOut(TextOut.class);
 		
 		return new DataWriter() {
 			

@@ -12,7 +12,7 @@ public class VoidOut implements DataOut {
 	}
 	
 	@Override
-	public <T extends DataOut> T provide(Class<T> type) throws DataException {
+	public <T extends DataOut> T provideDataOut(Class<T> type) throws DataException {
 		
 		throw new UnsupportedeDataOutException(getClass(), type);
 	}

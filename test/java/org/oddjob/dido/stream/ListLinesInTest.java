@@ -20,12 +20,12 @@ public class ListLinesInTest extends TestCase {
 		assertEquals("type,quantity", dataIn.readLine());
 		assertEquals("apple,27", dataIn.readLine());
 		
-		TextIn text = dataIn.provide(TextIn.class);
+		TextIn text = dataIn.provideDataIn(TextIn.class);
 		assertEquals("apple,27", text.getText());
 		
 		assertEquals("pear,42", dataIn.readLine());
 		
-		text = dataIn.provide(TextIn.class);
+		text = dataIn.provideDataIn(TextIn.class);
 		assertEquals("pear,42", text.getText());
 		
 		assertEquals(null, dataIn.readLine());

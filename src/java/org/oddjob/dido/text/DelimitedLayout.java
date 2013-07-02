@@ -9,15 +9,16 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.MorphMetaData;
-import org.oddjob.dido.io.Morphable;
 import org.oddjob.dido.layout.LayoutValueNode;
+import org.oddjob.dido.morph.MorphDefinition;
+import org.oddjob.dido.morph.MorphProvider;
+import org.oddjob.dido.morph.Morphable;
 import org.oddjob.dido.stream.LinesIn;
 import org.oddjob.dido.stream.LinesOut;
 
 
 public class DelimitedLayout extends LayoutValueNode<String[]>
-implements Morphable {
+implements Morphable, MorphProvider {
 
 	private static final Logger logger = Logger.getLogger(DelimitedLayout.class);
 	
@@ -145,7 +146,7 @@ implements Morphable {
 	public DataReader readerFor(DataIn dataIn)
 	throws DataException {
 		
-		LinesIn linesIn = dataIn.provide(LinesIn.class);
+		LinesIn linesIn = dataIn.provideDataIn(LinesIn.class);
 		
 		if (initialised) {
 			return new BodyReader(linesIn);
@@ -297,7 +298,7 @@ implements Morphable {
 	public DataWriter writerFor(DataOut dataOut)
 	throws DataException {
 
-		LinesOut linesOut = dataOut.provide(LinesOut.class);
+		LinesOut linesOut = dataOut.provideDataOut(LinesOut.class);
 
 		logger.trace("Creating writer for [" + linesOut + "]");
 		
@@ -305,7 +306,7 @@ implements Morphable {
 	}
 	
 	@Override
-	public Runnable morphInto(MorphMetaData morphicness) {
+	public Runnable morphInto(MorphDefinition morphicness) {
 		
 		if (childLayouts().size() > 0) {
 			logger.debug("[" + this + "] has children. Morphicness ignored.");
@@ -337,7 +338,7 @@ implements Morphable {
 		};
 	}
 
-	private String[] parseDelimited(String line) {
+	public String[] parseDelimited(String line) {
 		
 		String use = regexp == null ? DEFAULT : regexp;
 		
@@ -346,7 +347,7 @@ implements Morphable {
 		return fields;
 	}
 	
-	private String delimitedString(String[] values) {
+	public String delimitedString(String[] values) {
 		String use = delimiter == null ? DEFAULT : delimiter;
 		
 		StringBuilder buffer = new StringBuilder();
@@ -374,13 +375,13 @@ implements Morphable {
 	}
 	
 	@Override
-	public MorphMetaData morphOf() {
+	public MorphDefinition morphOf() {
 		
 		if (headings == null) {
 			return null;
 		}
 		
-		return new MorphMetaData() {
+		return new MorphDefinition() {
 			
 			@Override
 			public Class<?> typeOf(String name) {

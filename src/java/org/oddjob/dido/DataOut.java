@@ -10,7 +10,7 @@ package org.oddjob.dido;
  */
 public interface DataOut {
 
-	<T extends DataOut> T provide(Class<T> type) 
+	<T extends DataOut> T provideDataOut(Class<T> type) 
 	throws DataException;
 	
 	public boolean isWrittenTo();	

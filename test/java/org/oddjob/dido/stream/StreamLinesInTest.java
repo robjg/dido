@@ -41,20 +41,20 @@ public class StreamLinesInTest extends TestCase {
 		
 		assertEquals("Apples", test.readLine());
 
-		TextIn textIn = test.provide(TextIn.class);
+		TextIn textIn = test.provideDataIn(TextIn.class);
 		
 		assertEquals("Apples", textIn.getText());
 		
 		assertEquals("Oranges", test.readLine());
 
-		textIn = test.provide(TextIn.class);
+		textIn = test.provideDataIn(TextIn.class);
 		
 		assertEquals("Oranges", textIn.getText());
 		
 		assertEquals(null, test.readLine());
 
 		try {
-			test.provide(TextIn.class);
+			test.provideDataIn(TextIn.class);
 		}
 		catch (DataException e) {
 			assertEquals("No more lines.", e.getMessage());
@@ -72,7 +72,7 @@ public class StreamLinesInTest extends TestCase {
 		StreamLinesIn test = new StreamLinesIn(
 				new ByteArrayInputStream(lines.getBytes()));
 		
-		LinesIn nested = test.provide(LinesIn.class);
+		LinesIn nested = test.provideDataIn(LinesIn.class);
 		
 		assertEquals("Apples", nested.readLine());
 		assertEquals("Oranges", nested.readLine());
@@ -94,7 +94,7 @@ public class StreamLinesInTest extends TestCase {
 		
 		assertEquals("Apples", test.readLine());
 		
-		LinesIn nested = test.provide(LinesIn.class);
+		LinesIn nested = test.provideDataIn(LinesIn.class);
 		
 		assertEquals("Apples", nested.readLine());
 		
@@ -102,7 +102,7 @@ public class StreamLinesInTest extends TestCase {
 		
 		assertEquals("Bananas", test.readLine());
 		
-		nested = test.provide(LinesIn.class);
+		nested = test.provideDataIn(LinesIn.class);
 		
 		assertEquals("Bananas", nested.readLine());
 		
