@@ -52,7 +52,7 @@ implements Binding, ArooaSessionAware {
 	}
 	
 	@Override
-	protected boolean inject(Object object, Layout node, DataOut dataOut) throws DataException {
+	protected void inject(Object object, Layout node, DataOut dataOut) throws DataException {
 		
 		if (node instanceof ValueNode) {
 			
@@ -62,11 +62,10 @@ implements Binding, ArooaSessionAware {
 			
 			try {
 				valueNode.value(converter.convert(value, type));
-			} catch (Exception e) {
+			} 
+			catch (Exception e) {
 				throw new DataException(e);
 			}
-			
-			return false;
 		}
 		else {
 			throw new IllegalStateException("Not a Value Node");

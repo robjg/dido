@@ -28,14 +28,12 @@ implements Binding {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected boolean inject(Object object, Layout node, DataOut dataOut) {
+	protected void inject(Object object, Layout node, DataOut dataOut) {
 		
 		if (node instanceof ValueNode) {
 			
 			ValueNode<Object> valueNode = (ValueNode<Object>) node;
 			valueNode.value(object);
-			
-			return false;
 		}
 		else {
 			throw new IllegalStateException("Not a Value Node");

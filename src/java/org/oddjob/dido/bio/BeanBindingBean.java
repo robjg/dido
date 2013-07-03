@@ -92,15 +92,13 @@ implements Binding, ArooaSessionAware {
 		}
 		
 		@Override
-		protected boolean inject(Object value, 
+		protected void inject(Object value, 
 				Layout node, DataOut dataOut) 
 		throws DataException {
 			
 			ValueNode<?> valueNode = (ValueNode<?>) node;
 			
 			processInferType(value, valueNode, dataOut);
-			
-			return false;
 		}
 		
 		public <T> void processInferType(Object value, 
@@ -282,14 +280,14 @@ implements Binding, ArooaSessionAware {
 	}
 
 	@Override
-	public boolean inject(Object object, Layout node, DataOut dataOut) throws DataException {
+	public void inject(Object object, Layout node, DataOut dataOut) throws DataException {
 		
 		if (type != null && !type.forClass().isInstance(object)) {
 			
 			logger.trace("Binding on [" + node + "] ignoring bean " + 
 					object);
 			
-			return false;
+			return;
 		}
 		
 		this.bean = object;
@@ -333,9 +331,6 @@ implements Binding, ArooaSessionAware {
 		nextWriter.write(object); 
 		
 		nextWriter.close();
-		
-		return false;
-		
 	}
 		
 	private void derriveTypeFromLayout(Layout layout) throws DataException {

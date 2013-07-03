@@ -97,7 +97,7 @@ abstract public class SingleBeanBinding implements Binding {
 		};
 	}
 	
-	protected abstract boolean inject(Object object, 
+	protected abstract void inject(Object object, 
 			Layout boundLayout, DataOut dataOut)
 	throws DataException;
 	
