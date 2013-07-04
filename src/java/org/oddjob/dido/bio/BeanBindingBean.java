@@ -1,6 +1,5 @@
 package org.oddjob.dido.bio;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -60,7 +59,7 @@ implements Binding, ArooaSessionAware {
 	 */
 	private Object bean;
 	
-	private final List<Runnable> resets = new ArrayList<Runnable>();
+	private final Resets resets = new Resets();
 	
 	@Override
 	public void setArooaSession(ArooaSession session) {
@@ -218,10 +217,7 @@ implements Binding, ArooaSessionAware {
 	@Override
 	public void free() {
 		processor = null;
-		for (Runnable reset : resets) {
-			reset.run();
-		}
-		resets.clear();
+		resets.reset();
 	}
 	
 	private class HeaderProcessorOut implements BindingLayoutProcessor {
@@ -325,8 +321,7 @@ implements Binding, ArooaSessionAware {
 		processor.process(node);
 	
 		DataWriter nextWriter = new ChildWriter(node.childLayouts(), 
-					node instanceof ValueNode ? (ValueNode<?>) node : null, 
-							dataOut);
+					dataOut);
 		
 		nextWriter.write(object); 
 		

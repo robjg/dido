@@ -7,33 +7,12 @@ import junit.framework.TestCase;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataWriterFactory;
-import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.text.StringTextOut;
 import org.oddjob.dido.text.TextLayout;
 import org.oddjob.dido.text.TextOut;
 
 public class ChildWriterTest extends TestCase {
-	
-	class OurValueNode implements ValueNode<String> {
-		
-		String value;
-		
-		@Override
-		public Class<String> getType() {
-			return String.class;
-		}
-		
-		@Override
-		public String value() {
-			return value;
-		}
-		
-		@Override
-		public void value(String value) {
-			this.value = value;
-		}
-	}
 	
 	public void testWriteNoChildren() throws DataException {
 
@@ -42,9 +21,7 @@ public class ChildWriterTest extends TestCase {
 		
 		TextOut dataIn = new StringTextOut();
 		
-		OurValueNode valueNode = new OurValueNode();
-		
-		ChildWriter test = new ChildWriter(children, valueNode, dataIn);
+		ChildWriter test = new ChildWriter(children, dataIn);
 		
 		assertFalse(null, test.write("Apples"));
 	}
@@ -60,9 +37,7 @@ public class ChildWriterTest extends TestCase {
 		
 		StringTextOut dataOut = new StringTextOut();
 		
-		OurValueNode valueNode = new OurValueNode();
-		
-		ChildWriter test = new ChildWriter(children, valueNode, dataOut);
+		ChildWriter test = new ChildWriter(children, dataOut);
 		
 		assertEquals(false, test.write("Apples"));
 		
@@ -82,10 +57,8 @@ public class ChildWriterTest extends TestCase {
 				Arrays.asList(child1, child2, child3);
 		
 		StringTextOut dataOut = new StringTextOut();
-		
-		OurValueNode valueNode = new OurValueNode();
-		
-		ChildWriter test = new ChildWriter(children, valueNode, dataOut);
+				
+		ChildWriter test = new ChildWriter(children, dataOut);
 
 		assertEquals(false, test.write("Apples"));
 
@@ -107,9 +80,7 @@ public class ChildWriterTest extends TestCase {
 		
 		StringTextOut dataOut = new StringTextOut();
 		
-		OurValueNode valueNode = new OurValueNode();
-		
-		ChildWriter test = new ChildWriter(children, valueNode, dataOut);
+		ChildWriter test = new ChildWriter(children, dataOut);
 
 		assertEquals(false, test.write("Apples"));
 

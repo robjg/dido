@@ -283,8 +283,8 @@ public class BeanBindingTheoryTest extends TestCase {
 				@Override
 				public boolean write(Object object) throws DataException {
 					
-					DataWriter nextWriter = new ChildWriter(boundLayout.childLayouts(), 
-								(ValueNode<?>) boundLayout, dataOut);
+					DataWriter nextWriter = new ChildWriter(
+							boundLayout.childLayouts(), dataOut);
 
 					if (step == 1) {
 						

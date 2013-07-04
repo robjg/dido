@@ -10,7 +10,6 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.bio.Binding;
 
 
@@ -83,9 +82,7 @@ abstract public class LayoutNode implements Layout {
 		
 		DataWriter nextWriter;
 		if (binding() == null) {
-			nextWriter = new ChildWriter(childLayouts(), 
-					((this instanceof ValueNode) ? (ValueNode<?>) this : null), 
-					dataOut);
+			nextWriter = new ChildWriter(childLayouts(), dataOut);
 		}
 		else {
 			nextWriter = binding().writerFor(this, dataOut);

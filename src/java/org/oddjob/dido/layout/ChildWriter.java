@@ -8,7 +8,6 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.DataWriterFactory;
-import org.oddjob.dido.ValueNode;
 
 /**
  * 
@@ -21,23 +20,16 @@ public class ChildWriter implements DataWriter {
 
 	private final List<DataWriter> writers;
 	
-	private final ValueNode<?> valueNode;
-	
 	private boolean closed;
 	
 	public ChildWriter(Iterable<? extends DataWriterFactory> children,
-			ValueNode<?> parent, DataOut dataOut) throws DataException {
+			DataOut dataOut) throws DataException {
 		
 		this.writers = new ArrayList<DataWriter>();
 		
 		for (DataWriterFactory factory : children) {
 			writers.add(factory.writerFor(dataOut));
 		}
-
-		this.valueNode = parent;
-		
-		logger.trace("Created ChildWriter for [" + valueNode + 
-				"] parent with " + writers.size() + " children.");
 	}	
 	
 	@Override
@@ -77,11 +69,5 @@ public class ChildWriter implements DataWriter {
 		
 		writers.clear();
 		closed = true;
-	}
-	
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + (valueNode == null ? "" :
-			" for [" + valueNode + "]");
-	}
+	}	
 }

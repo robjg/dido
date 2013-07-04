@@ -28,7 +28,7 @@ public class ChildReader implements DataReader {
 		readers = new ArrayList<DataReader>();
 		for (DataReaderFactory factory : children) {
 			readers.add(factory.readerFor(dataIn));
-		}
+ 		}
 	}	
 	
 	@Override
