@@ -42,6 +42,10 @@ public class PoiBookIn implements BookIn {
 			return type.cast(this);
 		}
 		
+		if (type.isAssignableFrom(SheetIn.class)) {
+			return type.cast(new PoiSheetIn(nextSheet()));
+		}
+		
 		throw new UnsupportedeDataInException(this.getClass(), type);
 	}
 }

@@ -22,6 +22,6 @@
 		<arooa:bean-def element='blank'
 		    className='org.oddjob.dido.poi.BlankCell'/>
 		<arooa:bean-def element='style'
-		    className='org.oddjob.dido.poi.StyleBean'/>
+		    className='org.oddjob.dido.poi.style.StyleBean'/>
 	</values>
 </arooa:descriptor>

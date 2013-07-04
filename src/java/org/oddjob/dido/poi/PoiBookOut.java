@@ -13,6 +13,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.poi.style.DefaultStyleFactory;
+import org.oddjob.dido.poi.style.StyleProvider;
+import org.oddjob.dido.poi.style.StyleProviderFactory;
 
 public class PoiBookOut implements BookOut {
 	private static final Logger logger = Logger.getLogger(PoiBookOut.class);
@@ -87,6 +90,10 @@ public class PoiBookOut implements BookOut {
 
 		if (type.isInstance(this)) {
 			return type.cast(this);
+		}
+		
+		if (type.isAssignableFrom(SheetOut.class)) {
+			return type.cast(new PoiSheetOut(createSheet(null), this));
 		}
 		
 		throw new UnsupportedeDataOutException(this.getClass(), type);

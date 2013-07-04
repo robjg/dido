@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.style;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,8 +1,10 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.style;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
 
 public class DefaultStyleFactory implements StyleProviderFactory {
@@ -10,6 +12,8 @@ public class DefaultStyleFactory implements StyleProviderFactory {
 	public static String HEADING_STYLE = "heading";
 	
 	public static String DATE_STYLE = "date";
+	
+	public static String BEANCMPR_DIFF_STYLE = "beancmpr-difference";
 	
 	private final StyleProviderFactory factory;
 	
@@ -23,8 +27,12 @@ public class DefaultStyleFactory implements StyleProviderFactory {
 		StyleBean date = new StyleBean();
 		date.setFormat("d/m/yyyy");
 		
+		StyleBean beanCmprDiff = new StyleBean();
+		beanCmprDiff.setColour(IndexedColors.RED);
+		
 		styles.put(HEADING_STYLE, heading);
 		styles.put(DATE_STYLE, date);
+		styles.put(BEANCMPR_DIFF_STYLE, beanCmprDiff);
 		
 		factory = new BeanStyleFactory(styles);
 	}

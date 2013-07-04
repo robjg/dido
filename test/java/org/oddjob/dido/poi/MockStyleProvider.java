@@ -1,7 +1,7 @@
 package org.oddjob.dido.poi;
 
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.oddjob.dido.poi.StyleProvider;
+import org.oddjob.dido.poi.style.StyleProvider;
 
 public class MockStyleProvider implements StyleProvider {
 

@@ -8,6 +8,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.poi.style.DefaultStyleFactory;
+import org.oddjob.dido.poi.style.StyleProvider;
 
 public class PoiSheetOut implements SheetOut {
 
@@ -36,6 +38,14 @@ public class PoiSheetOut implements SheetOut {
 	}	
 	
 	public PoiSheetOut(Sheet sheet, StyleProvider styleProvider) {
+		if (sheet == null) {
+			throw new NullPointerException("Sheet.");
+		}
+		
+		if (styleProvider == null) {
+			throw new NullPointerException("Style Provider.");
+		}
+		
 		this.sheet = sheet;
 		this.styleProvider = styleProvider;
 	}

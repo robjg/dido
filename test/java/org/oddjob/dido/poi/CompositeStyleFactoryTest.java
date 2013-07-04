@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.oddjob.dido.poi.BeanStyleFactory;
-import org.oddjob.dido.poi.CompositeStyleFactory;
-import org.oddjob.dido.poi.DefaultStyleFactory;
-import org.oddjob.dido.poi.StyleBean;
-import org.oddjob.dido.poi.StyleProvider;
-import org.oddjob.dido.poi.StyleProviderFactory;
+import org.oddjob.dido.poi.style.BeanStyleFactory;
+import org.oddjob.dido.poi.style.CompositeStyleFactory;
+import org.oddjob.dido.poi.style.DefaultStyleFactory;
+import org.oddjob.dido.poi.style.StyleBean;
+import org.oddjob.dido.poi.style.StyleProvider;
+import org.oddjob.dido.poi.style.StyleProviderFactory;
 
 import junit.framework.TestCase;
 

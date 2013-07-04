@@ -16,6 +16,7 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.layout.LayoutValueNode;
 import org.oddjob.dido.layout.NullReader;
 import org.oddjob.dido.layout.NullWriter;
+import org.oddjob.dido.layout.VoidOut;
 
 abstract public class DataCell<T> 
 extends LayoutValueNode<T>
@@ -150,24 +151,28 @@ implements ArooaSessionAware {
 
 		private final TupleOut data;
 		
-		private DataWriter nextWriter;
+		private final DataWriter nextWriter;
 		
-		public MainWriter(TupleOut outgoing) {
+		public MainWriter(TupleOut outgoing) throws DataException {
 			this.data = outgoing; 
+			
+			this.nextWriter = nextWriterFor(new VoidOut());
 		}
 		
 		@Override
 		public boolean write(Object object) throws DataException {
 
-			if (nextWriter == null) {
+			if (nextWriter.write(object)) {
+				return true;
+			}
+
+			if (isWrittenTo()) {
 				
-				value(null);
+				resetWrittenTo();
 				
-				nextWriter = nextWriterFor(null);
+				return write(object);
 			}
 			
-			boolean keep = nextWriter.write(object);
-							
 			Cell cell = data.createCell(index, getCellType());
 			
 			insertValueInto(cell);
@@ -191,21 +196,15 @@ implements ArooaSessionAware {
 			
 			setReferenceFrom(cell);
 			
-			if (!keep) {
-				nextWriter.close();
-				nextWriter = null;
-			}
-			
-			return keep;
+			return false;
 		}
 		
 		@Override
 		public void close() throws DataException {
 			
-			if (nextWriter != null) {
-				nextWriter.close();
-				nextWriter = null;
-			}
+			logger.trace("Closing [" + nextWriter + "]");
+			
+			nextWriter.close();
 		}
 	}
 	

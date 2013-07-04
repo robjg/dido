@@ -14,6 +14,11 @@ import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.layout.LayoutNode;
+import org.oddjob.dido.poi.style.BeanStyleFactory;
+import org.oddjob.dido.poi.style.CompositeStyleFactory;
+import org.oddjob.dido.poi.style.DefaultStyleFactory;
+import org.oddjob.dido.poi.style.StyleBean;
+import org.oddjob.dido.poi.style.StyleProviderFactory;
 import org.oddjob.dido.stream.StreamIn;
 import org.oddjob.dido.stream.StreamOut;
 
