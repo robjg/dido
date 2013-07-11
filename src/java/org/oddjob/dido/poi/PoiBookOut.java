@@ -12,7 +12,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.poi.style.DefaultStyleFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
 import org.oddjob.dido.poi.style.StyleProviderFactory;
@@ -96,6 +96,6 @@ public class PoiBookOut implements BookOut {
 			return type.cast(new PoiSheetOut(createSheet(null), this));
 		}
 		
-		throw new UnsupportedeDataOutException(this.getClass(), type);
+		throw new UnsupportedDataOutException(this.getClass(), type);
 	}
 }

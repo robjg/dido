@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.poi.style.DefaultStyleFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
 
@@ -107,7 +107,7 @@ public class PoiSheetOut implements SheetOut {
 			return type.cast(new PoiTupleOut());
 		}
 		
-		throw new UnsupportedeDataOutException(this.getClass(), type);
+		throw new UnsupportedDataOutException(this.getClass(), type);
 	}
 	
 	@Override
@@ -163,7 +163,7 @@ public class PoiSheetOut implements SheetOut {
 				return type.cast(this);
 			}
 			
-			throw new UnsupportedeDataOutException(this.getClass(), type);
+			throw new UnsupportedDataOutException(this.getClass(), type);
 		}
 		
 		@Override
