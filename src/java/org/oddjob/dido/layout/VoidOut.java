@@ -2,7 +2,7 @@ package org.oddjob.dido.layout;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.UnsupportedDataOutException;
 
 public class VoidOut implements DataOut {
 
@@ -14,6 +14,6 @@ public class VoidOut implements DataOut {
 	@Override
 	public <T extends DataOut> T provideDataOut(Class<T> type) throws DataException {
 		
-		throw new UnsupportedeDataOutException(getClass(), type);
+		throw new UnsupportedDataOutException(getClass(), type);
 	}
 }

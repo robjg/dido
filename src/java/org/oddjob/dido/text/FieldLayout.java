@@ -160,7 +160,7 @@ extends LayoutValueNode<String> {
 			String value = value();
 			
 			if (value != null) {
-				outgoing.setColumn(column, value);
+				outgoing.setColumnData(column, value);
 				
 				logger.trace("[" + FieldLayout.this + "] wrote value [" + 
 						value + "] to [" + outgoing + "]");
@@ -196,7 +196,7 @@ extends LayoutValueNode<String> {
 				heading = getName();
 			}
 			
-			column = out.columnForHeading(heading, column);
+			column = out.columnIndexFor(heading, column);
 			
 			logger.trace("Initialised [" + FieldLayout.this + "] with column [" + 
 					column + "]");

@@ -9,7 +9,7 @@ import org.oddjob.arooa.ArooaDescriptor;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.column.ColumnMetaData;
 
 public class SQLDataOutImpl implements SQLDataOut {
@@ -112,13 +112,13 @@ public class SQLDataOutImpl implements SQLDataOut {
 		
 	@Override
 	public <T extends DataOut> T provideDataOut(Class<T> type)
-			throws UnsupportedeDataOutException {
+			throws UnsupportedDataOutException {
 		
 		if (type.isAssignableFrom(this.getClass())) {
 			return type.cast(this);
 		}
 		
-		throw new UnsupportedeDataOutException(getClass(), type);
+		throw new UnsupportedDataOutException(getClass(), type);
 	}
 	
 	@Override

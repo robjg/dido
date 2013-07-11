@@ -8,7 +8,7 @@ public class MockDataOut implements DataOut {
 	}
 	@Override
 	public <T extends DataOut> T provideDataOut(Class<T> type)
-			throws UnsupportedeDataOutException {
+			throws UnsupportedDataOutException {
 		throw new RuntimeException("Unexpected from " + getClass().getName());
 	}
 }

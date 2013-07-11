@@ -2,7 +2,7 @@ package org.oddjob.dido.text;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.stream.LinesOut;
 
 
@@ -82,13 +82,13 @@ public class StringTextOut implements TextOut, LinesOut {
 	
 	@Override
 	public <T extends DataOut> T provideDataOut(Class<T> type)
-	throws UnsupportedeDataOutException {
+	throws UnsupportedDataOutException {
 		
 		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
 
-		throw new UnsupportedeDataOutException(getClass(), type);
+		throw new UnsupportedDataOutException(getClass(), type);
 	}
 	
 	@Override

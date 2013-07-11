@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import org.oddjob.dido.Closeable;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.UnsupportedDataOutException;
 
 
 public class OutputStreamOut implements StreamOut, Closeable {
@@ -40,7 +40,7 @@ public class OutputStreamOut implements StreamOut, Closeable {
 	
 	@Override
 	public <T extends DataOut> T provideDataOut(Class<T> type)
-			throws UnsupportedeDataOutException {
+			throws UnsupportedDataOutException {
 		
 		if (type.isInstance(this)) {
 			return type.cast(this);
@@ -50,7 +50,7 @@ public class OutputStreamOut implements StreamOut, Closeable {
 			return type.cast(new StreamLinesOut(outputStream));
 		}
 		
-		throw new UnsupportedeDataOutException(getClass(), type);
+		throw new UnsupportedDataOutException(getClass(), type);
 	}
 	
 	@Override

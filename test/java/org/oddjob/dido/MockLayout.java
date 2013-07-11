@@ -34,7 +34,7 @@ public class MockLayout implements Layout {
 	
 	@Override
 	public DataWriter writerFor(DataOut dataOut)
-			throws UnsupportedeDataOutException {
+			throws UnsupportedDataOutException {
 		throw new RuntimeException("Unexpected from " + getClass());
 	}
 }

@@ -2,12 +2,12 @@ package org.oddjob.dido.stream;
 
 import junit.framework.TestCase;
 
-import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.text.TextOut;
 
 public class ListLinesOutTest extends TestCase {
 
-	public void testWrite() throws UnsupportedeDataOutException {
+	public void testWrite() throws UnsupportedDataOutException {
 		
 		ListLinesOut test = new ListLinesOut();
 

@@ -1,6 +1,9 @@
 package org.oddjob.dido.sql;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
 
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaValue;
@@ -12,12 +15,14 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedeDataInException;
-import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.UnsupportedDataOutException;
 
 public class ConnectionDataImpl 
 implements ConnectionDataIn, ConnectionDataOut, ArooaSessionAware {
 
 	private ArooaValue connection;
+	
+	private DataSource dataSource;
 	
 	private ArooaConverter converter;
 
@@ -44,7 +49,7 @@ implements ConnectionDataIn, ConnectionDataOut, ArooaSessionAware {
 			return type.cast(this);
 		}
 
-		throw new UnsupportedeDataOutException(getClass(), type);
+		throw new UnsupportedDataOutException(getClass(), type);
 	}
 	
 	@Override
@@ -52,18 +57,17 @@ implements ConnectionDataIn, ConnectionDataOut, ArooaSessionAware {
 		return false;
 	}
 	
-	public ArooaValue getConnection() {
-		return connection;
-	}
-	
-	public void setConnection(ArooaValue connection) {
-		this.connection = connection;
-	}
-	
 	@Override
 	public Connection connection() throws DataException {
 		if (connection == null) {
-			throw new DataException("No Connection.");
+			if (dataSource == null) {
+				throw new DataException("No Connection or Data Source.");
+			}
+			try {
+				return dataSource.getConnection();
+			} catch (SQLException e) {
+				throw new DataException(e);
+			}
 		}
 		
 		try {
@@ -75,5 +79,21 @@ implements ConnectionDataIn, ConnectionDataOut, ArooaSessionAware {
 		catch (ConversionFailedException e) {
 			throw new DataException(e);
 		}
+	}
+
+	public ArooaValue getConnection() {
+		return connection;
+	}
+	
+	public void setConnection(ArooaValue connection) {
+		this.connection = connection;
+	}
+	
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 }

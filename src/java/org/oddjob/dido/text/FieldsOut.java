@@ -16,8 +16,8 @@ public interface FieldsOut extends DataOut {
 	 * 
 	 * @return The column assigned.
 	 */
-	public int columnForHeading(String heading, int column);
+	public int columnIndexFor(String heading, int column);
 	
-	public void setColumn(int column, String value);
+	public void setColumnData(int column, String value);
 	
 }

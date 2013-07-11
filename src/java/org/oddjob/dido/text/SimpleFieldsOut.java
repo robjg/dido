@@ -4,8 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.UnsupportedeDataOutException;
+import org.oddjob.dido.UnsupportedDataOutException;
+import org.oddjob.dido.column.ColumnMetaData;
+import org.oddjob.dido.column.ColumnarDataOut;
 
+/**
+ * Provide {@link ColumnarDataOut} for {@link DelimitedLayout}.
+ * 
+ * @author rob
+ *
+ */
 public class SimpleFieldsOut implements FieldsOut {
 
 	private Map<Integer, String> headings;
@@ -16,23 +24,33 @@ public class SimpleFieldsOut implements FieldsOut {
 			
 	private boolean writtenTo;
 	
+	/**
+	 * Create an instance with no headings.
+	 */
 	public SimpleFieldsOut() {
 		this(null);
 	}
 	
+	/**
+	 * Create an instance with the given headings.
+	 * 
+	 * @param headings
+	 */
 	public SimpleFieldsOut(String[] headings) {
 
 		if (headings != null) {
 			
 			for (String heading : headings) {
 				
-				columnForHeading(heading, 0);
+				columnIndexFor(heading, 0);
 			}
 		}
 	}
 	
+	
+	
 	@Override
-	public int columnForHeading(String heading, int column) {
+	public int columnIndexFor(String heading, int column) {
 		
 		if (column < 1) {
 			column = maxColumn + 1;
@@ -52,8 +70,19 @@ public class SimpleFieldsOut implements FieldsOut {
 		return column;
 	}
 	
+	public ColumnMetaData getColumnMetaData(int columnIndex) {
+		return new ColumnMetaData() {
+			
+			@SuppressWarnings("unchecked")
+			@Override
+			public <T> Class<T> getColumnType() {
+				return (Class<T>) String.class;
+			}
+		};
+	}
+	
 	@Override
-	public void setColumn(int column, String value) {
+	public void setColumnData(int column, String value) {
 		
 		if (column < 1) {
 			throw new IllegalArgumentException("Column is " + column);
@@ -63,7 +92,7 @@ public class SimpleFieldsOut implements FieldsOut {
 			values = new HashMap<Integer, String>();
 		}
 		
-		values.put(column, value);
+		values.put(column, (String) value);
 		writtenTo = true;
 	}
 	
@@ -114,13 +143,13 @@ public class SimpleFieldsOut implements FieldsOut {
 	
 	@Override
 	public <T extends DataOut> T provideDataOut(Class<T> type)
-			throws UnsupportedeDataOutException {
+			throws UnsupportedDataOutException {
 
 		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
 
-		throw new UnsupportedeDataOutException(getClass(), type);
+		throw new UnsupportedDataOutException(getClass(), type);
 	}
 
 	@Override

@@ -12,9 +12,9 @@ public class MappedFieldsOutTest extends TestCase {
 		
 		assertEquals(false, test.isWrittenTo());
 		
-		test.setColumn(1, "John");
-		test.setColumn(2, "34");
-		test.setColumn(3, "London");
+		test.setColumnData(1, "John");
+		test.setColumnData(2, "34");
+		test.setColumnData(3, "London");
 		
 		assertEquals(true, test.isWrittenTo());
 		
@@ -29,9 +29,9 @@ public class MappedFieldsOutTest extends TestCase {
 		
 		SimpleFieldsOut test = new SimpleFieldsOut();
 		
-		test.setColumn(5, "John");
-		test.setColumn(3, "34");
-		test.setColumn(6, "London");
+		test.setColumnData(5, "John");
+		test.setColumnData(3, "34");
+		test.setColumnData(6, "London");
 		
 		String[] results = test.values();
 		
@@ -47,9 +47,9 @@ public class MappedFieldsOutTest extends TestCase {
 				
 		SimpleFieldsOut test = new SimpleFieldsOut();
 		
-		test.setColumn(4, "John");
-		test.setColumn(1, "34");
-		test.setColumn(2, "London");
+		test.setColumnData(4, "John");
+		test.setColumnData(1, "34");
+		test.setColumnData(2, "London");
 		
 		String[] results = test.values();
 		
