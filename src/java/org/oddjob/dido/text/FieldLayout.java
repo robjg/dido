@@ -7,19 +7,24 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
+import org.oddjob.dido.column.Column;
+import org.oddjob.dido.column.ColumnIn;
+import org.oddjob.dido.column.ColumnOut;
 import org.oddjob.dido.layout.LayoutValueNode;
-import org.oddjob.dido.layout.NullWriter;
 
 
-public class FieldLayout 
-extends LayoutValueNode<String> {
+public class FieldLayout extends LayoutValueNode<String> 
+implements Column {
 
 	private static final Logger logger = Logger.getLogger(FieldLayout.class);
-	private String title;
 	
-	private int column;
+	private String columnLabel;
 	
-	private boolean initialised;
+	private int columnIndex;
+
+	private ColumnIn<String> columnIn;
+	
+	private ColumnOut<String> columnOut;
 	
 	@Override
 	public Class<String> getType() {
@@ -30,42 +35,26 @@ extends LayoutValueNode<String> {
 		addOrRemoveChild(index, child);
 	}
 	
-	private class MainReader implements DataReader {
-		
-		private final FieldsIn in;
+	class MainReader implements DataReader {
 		
 		private DataReader nextReader;
-		
-		private TextIn textIn;
-		
-		public MainReader(FieldsIn in) {
-			this.in = in;
-		}
 		
 		@Override
 		public Object read() throws DataException {
 			
 			if (nextReader != null) {
 
-				Object value = nextReader.read();
-				
-				nextReader.close();
-				return value;
+				return nextReader.read();
 			}
 			
-			String field = null;
+			String field = columnIn.getColumnData();
 			
-			if (column > 0) {
-				field = in.getColumn(column);
-			}
-
 			value(field);
 
 			logger.trace("[" + FieldLayout.this + "] value is [" + 
 					field + "]");
-
 			
-			textIn = new StringTextIn(field);
+			TextIn textIn = new StringTextIn(field);
 			
 			nextReader = nextReaderFor(textIn);
 			
@@ -74,66 +63,36 @@ extends LayoutValueNode<String> {
 		
 		@Override
 		public void close() throws DataException {
+			if (nextReader != null) {
+				nextReader.close();
+			}
 		}
 	}
-	
-
-	private DataReader reader;
-	
-	
 	
 	@Override
 	public DataReader readerFor(DataIn dataIn)
 	throws DataException {
-	
-		FieldsIn in = dataIn.provideDataIn(FieldsIn.class);
-		
-		if (!initialised) {
-			String title = getTitle();
-			if (title == null) {
-				column = in.columnFor(getName(), false, column);
-			}		
-			else {
-				column = in.columnFor(title, true, column);
-			}
-			
-			logger.trace("Reader for [" + FieldLayout.this + "] column is [" + 
-					column + "]");
-			
-			initialised = true;
-		}
-		
-		if (reader == null) {
-			reader = new MainReader(in);
-		}
-		
-		return new DataReader() {			
-			
-			@Override
-			public Object read() throws DataException {
-				Object value = reader.read();
-				if (value == null) {
-					reader = null;
-				}
-				return value;
-			}
 
-			@Override
-			public void close() throws DataException {
-			}
-		};
+		if (columnIn == null) {
+			
+			FieldsIn in = dataIn.provideDataIn(FieldsIn.class);
+			
+			columnIn = in.columnInFor(this);
+						
+			logger.trace("Create Reader for [" + FieldLayout.this + "], column is [" + 
+					columnIn.getColumnIndex() + "]");
+		}
+		
+		return new MainReader();
 	}	
 		
 	class MainWriter implements DataWriter {
 
-		private final FieldsOut outgoing;
-		
 		private final DataWriter nextWriter;
 		
 		private final StringTextOut textOut;
 		
-		public MainWriter(FieldsOut outgoing) throws DataException {
-			this.outgoing = outgoing; 
+		public MainWriter() throws DataException {
 			this.textOut = new StringTextOut();
 			this.nextWriter = nextWriterFor(textOut);
 		}
@@ -160,10 +119,10 @@ extends LayoutValueNode<String> {
 			String value = value();
 			
 			if (value != null) {
-				outgoing.setColumnData(column, value);
+				columnOut.setColumnData(value);
 				
 				logger.trace("[" + FieldLayout.this + "] wrote value [" + 
-						value + "] to [" + outgoing + "]");
+						value + "]");
 			}
 			else {
 				logger.trace("[" + FieldLayout.this + "] no value.");
@@ -186,36 +145,18 @@ extends LayoutValueNode<String> {
 	public DataWriter writerFor(DataOut dataOut)
 	throws DataException {
 		
-		FieldsOut out = dataOut.provideDataOut(FieldsOut.class);
-		
-		if (!initialised) {
+		if (columnOut == null) {
 			
-			String heading = title;
+			FieldsOut out = dataOut.provideDataOut(FieldsOut.class);
 			
-			if (heading == null) {
-				heading = getName();
-			}
+			columnOut = out.columnOutFor(this);
 			
-			column = out.columnIndexFor(heading, column);
+			logger.trace("Created writer for [" + FieldLayout.this + "], column is [" + 
+					columnOut.getColumnIndex() + "]");
 			
-			logger.trace("Initialised [" + FieldLayout.this + "] with column [" + 
-					column + "]");
-			
-			initialised = true;
 		}
 		
-		logger.trace("Creating Writer for column [" + column + 
-				"] of [" + out + "]");
-		
-		if (column == 0) {
-			
-				return new NullWriter();
-		}
-		else {
-				
-				return new MainWriter(out);
-		}		
-		
+		return new MainWriter();
 	}
 	
 	
@@ -223,26 +164,25 @@ extends LayoutValueNode<String> {
 	public void reset() {
 		super.reset();
 		
-		initialised = false;
-		
-		reader = null;
+		columnIn = null;
+		columnOut = null;
 	}
 	
 	
-	public String getTitle() {
-		return title;
+	public String getColumnLabel() {
+		return columnLabel;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setColumnLabel(String title) {
+		this.columnLabel = title;
 	}
 
-	public int getColumn() {
-		return column;
+	public int getColumnIndex() {
+		return columnIndex;
 	}
 
-	public void setColumn(int column) {
-		this.column = column;
+	public void setColumnIndex(int column) {
+		this.columnIndex = column;
 	}	
 	
 	public String getValue() {

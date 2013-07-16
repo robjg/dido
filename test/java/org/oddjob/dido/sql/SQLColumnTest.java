@@ -89,11 +89,11 @@ public class SQLColumnTest extends TestCase {
 		
 		ColumnLayout<Object> column1 = new ColumnLayout<Object>();
 		column1.setName("type");
-		column1.setColumnName("TYPE");
+		column1.setColumnLabel("TYPE");
 		
 		ColumnLayout<Object> column2 = new ColumnLayout<Object>();
 		column2.setName("quantity");
-		column2.setColumnName("QUANTITY");
+		column2.setColumnLabel("QUANTITY");
 		
 		test.setOf(0, column1);
 		test.setOf(1, column2);

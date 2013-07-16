@@ -28,10 +28,8 @@ public class FieldLayoutTest extends TestCase {
 		assertEquals("Apples", results[0]);
 		assertEquals(1, results.length);
 		
-		assertEquals(1, test.getColumn());
-		
 		String[] headings = fields.headings();
-		assertEquals(null, headings);
+		assertEquals(0, headings.length);
 	}
 	
 	public void testWriteByName() throws DataException {
@@ -39,7 +37,8 @@ public class FieldLayoutTest extends TestCase {
 		SimpleFieldsOut fields = new SimpleFieldsOut();
 		
 		FieldLayout test = new FieldLayout();
-		test.setName("Fruit");
+		test.setName("fruit");
+		test.setColumnLabel("Fruit");
 		
 		DirectBinding binding = new DirectBinding();
 		
@@ -54,8 +53,6 @@ public class FieldLayoutTest extends TestCase {
 		assertEquals("Apples", results[0]);
 		assertEquals(1, results.length);
 		
-		assertEquals(1, test.getColumn());
-		
 		String[] headings = fields.headings();
 		assertEquals("Fruit", headings[0]);
 		assertEquals(1, headings.length);
@@ -63,7 +60,7 @@ public class FieldLayoutTest extends TestCase {
 	
 	public void testReadSimple() throws DataException {
 		
-		MappedFieldsIn fields = new MappedFieldsIn();
+		SimpleFieldsIn fields = new SimpleFieldsIn();
 		fields.setValues(new String[] { "Apple" });
 		
 		FieldLayout test = new FieldLayout();
@@ -83,12 +80,12 @@ public class FieldLayoutTest extends TestCase {
 	
 	public void testReadByName() throws DataException {
 		
-		MappedFieldsIn fields = new MappedFieldsIn();
+		SimpleFieldsIn fields = new SimpleFieldsIn();
 		fields.setHeadings(new String[] { "Stuff", "Fruit" });
 		fields.setValues(new String[] { "Foo", "Apple" });
 		
 		FieldLayout test = new FieldLayout();
-		test.setName("Fruit");
+		test.setColumnLabel("Fruit");
 		
 		DirectBinding binding = new DirectBinding();
 		

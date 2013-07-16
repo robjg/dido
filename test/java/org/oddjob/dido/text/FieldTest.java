@@ -13,7 +13,7 @@ public class FieldTest extends TestCase {
 
 		FieldLayout test = new FieldLayout();
 		
-		MappedFieldsIn fields = new MappedFieldsIn();
+		SimpleFieldsIn fields = new SimpleFieldsIn();
 		
 		fields.setHeadings(new String[] { "name" });
 		fields.setValues(new String[] { "John" });
@@ -25,6 +25,22 @@ public class FieldTest extends TestCase {
 		String result = (String) reader.read();
 				
 		assertEquals("John", result);
+		
+		assertNull(reader.read());
+		
+		reader.close();
+		
+		fields.setValues(new String[] { "Jane" });
+		
+		reader = test.readerFor(fields);
+				
+		result = (String) reader.read();
+		
+		assertEquals("Jane", result);
+		
+		assertNull(reader.read());
+		
+		reader.close();
 	}	
 	
 	public void testOutput() throws DataException {
@@ -39,7 +55,7 @@ public class FieldTest extends TestCase {
 		
 		writer.write("apples");
 		
-		assertEquals(1, test.getColumn());
+		assertEquals(0, test.getColumnIndex());
 		
 		assertEquals("apples", dataOut.values()[0]);		
 		

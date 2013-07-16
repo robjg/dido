@@ -2,6 +2,7 @@ package org.oddjob.dido.text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -15,9 +16,9 @@ import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.bio.ValueBinding;
 import org.oddjob.dido.stream.LinesLayout;
+import org.oddjob.dido.stream.ListLinesIn;
 import org.oddjob.dido.stream.ListLinesOut;
 import org.oddjob.dido.stream.OutputStreamOut;
-
 
 
 public class DelimitedTest extends TestCase {
@@ -61,10 +62,6 @@ public class DelimitedTest extends TestCase {
 		
 		assertNull(reader.read());
 		
-		assertEquals(1, a.getColumn());
-		assertEquals(2, b.getColumn());
-		assertEquals(3, c.getColumn());
-		
 		assertEquals("a", a.getValue());
 		assertEquals("b", b.getValue());
 		assertEquals("c", c.getValue());
@@ -72,19 +69,25 @@ public class DelimitedTest extends TestCase {
 	}
 
 	public void testSimpleInWithNamedChildren() throws DataException {
-		
-		String data = "a,b,c";
 
+		ListLinesIn linesIn = new ListLinesIn(Arrays.asList(
+				"a,b,c", "s,t,u", "x,y,z"));
+		
 		DelimitedLayout delimited = new DelimitedLayout();
 		delimited.setHeadings(new String[] { "fieldA", "fieldB", "fieldC" });
 		delimited.setWithHeadings(false);
 		
 		FieldLayout a = new FieldLayout();
 		a.setName("fieldA");
+		a.setColumnLabel("fieldA");
+		
 		FieldLayout b = new FieldLayout();
 		b.setName("fieldB");
+		b.setColumnLabel("fieldB");
+		
 		FieldLayout c = new FieldLayout();
 		c.setName("fieldC");
+		c.setColumnLabel("fieldC");
 				
 		delimited.setOf(0, c);
 		delimited.setOf(1, b);
@@ -96,7 +99,7 @@ public class DelimitedTest extends TestCase {
 		
 		delimited.bind(binding);
 
-		DataReader reader = delimited.readerFor(new StringTextIn(data));
+		DataReader reader = delimited.readerFor(linesIn);
 		
 		Object result =  reader.read();
 		
@@ -107,6 +110,22 @@ public class DelimitedTest extends TestCase {
 		assertEquals("a", accessor.getProperty(result, "fieldA"));
 		assertEquals("b", accessor.getProperty(result, "fieldB"));
 		assertEquals("c", accessor.getProperty(result, "fieldC"));
+		
+		result =  reader.read();
+		
+		assertEquals("s", accessor.getProperty(result, "fieldA"));
+		assertEquals("t", accessor.getProperty(result, "fieldB"));
+		assertEquals("u", accessor.getProperty(result, "fieldC"));
+		
+		result =  reader.read();
+		
+		assertEquals("x", accessor.getProperty(result, "fieldA"));
+		assertEquals("y", accessor.getProperty(result, "fieldB"));
+		assertEquals("z", accessor.getProperty(result, "fieldC"));
+		
+		assertNull(reader.read());
+		
+		reader.close();
 	}
 
 	String EOL = System.getProperty("line.separator");
@@ -142,13 +161,13 @@ public class DelimitedTest extends TestCase {
 		delimited.setWithHeadings(true);
 
 		FieldLayout a = new FieldLayout();
-		a.setTitle("fieldA");
+		a.setColumnLabel("fieldA");
 		
 		FieldLayout b = new FieldLayout();
-		b.setTitle("fieldB");
+		b.setColumnLabel("fieldB");
 		
 		FieldLayout c = new FieldLayout();
-		c.setTitle("fieldC");
+		c.setColumnLabel("fieldC");
 		
 		delimited.setOf(0, a);
 		delimited.setOf(1, b);

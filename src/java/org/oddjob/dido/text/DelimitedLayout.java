@@ -32,7 +32,9 @@ implements Morphable, MorphProvider {
 	
 	private boolean withHeadings;
 	
-	private boolean initialised;
+	private SimpleFieldsIn fieldsIn;
+	
+	private SimpleFieldsOut fieldsOut;
 	
 	@Override
 	public Class<String[]> getType() {
@@ -43,35 +45,12 @@ implements Morphable, MorphProvider {
 		addOrRemoveChild(index, child);
 	}
 	
-	class HeaderFirstReader implements DataReader {
+	class SwapReader implements DataReader {
 		
-		private final LinesIn linesIn;
-		
-		private DataReader reader = new DataReader() {
-			
-			@Override
-			public Object read() throws DataException {
-				if (withHeadings) {
-					String line = linesIn.readLine();
-					
-					if (line == null) {
-						return null;
-					}
-					
-					headings = parseDelimited(line);
-				}
+		private DataReader reader;
 
-				reader = new BodyReader(linesIn);
-				return reader.read();
-			}
-			
-			@Override
-			public void close() throws DataException {
-			}
-		};
-		
-		public HeaderFirstReader(LinesIn linesIn) {
-			this.linesIn = linesIn;
+		public SwapReader(LinesIn linesIn) {
+			reader = new HeaderReader(linesIn, this);
 		}
 		
 		@Override
@@ -85,6 +64,36 @@ implements Morphable, MorphProvider {
 		}
 	}
 	
+	class HeaderReader implements DataReader {
+		
+		private final LinesIn linesIn;
+
+		private final SwapReader swapReader;
+		
+		public HeaderReader(LinesIn linesIn, SwapReader swapReader) {
+			this.linesIn = linesIn;
+			this.swapReader = swapReader;
+		}
+		
+		@Override
+		public Object read() throws DataException {
+
+			String line = linesIn.readLine();
+			
+			if (line == null) {
+				return null;
+			}
+			
+			headings = parseDelimited(line);
+
+			swapReader.reader = new BodyReader(linesIn);
+			return swapReader.reader.read();
+		}
+			
+		@Override
+		public void close() throws DataException {
+		}
+	}
 	
 	class BodyReader implements DataReader {
 		
@@ -93,7 +102,16 @@ implements Morphable, MorphProvider {
 		private DataReader nextReader;
 		
 		public BodyReader(LinesIn linesIn) {
+
 			this.linesIn = linesIn;
+			
+			if (fieldsIn == null) {
+				fieldsIn = new SimpleFieldsIn();
+				
+				if (headings != null) {
+					fieldsIn.setHeadings(headings);
+				}
+			}
 		}
 		
 		@Override
@@ -125,10 +143,6 @@ implements Morphable, MorphProvider {
 			
 			value(fields);
 
-			MappedFieldsIn fieldsIn = new MappedFieldsIn();
-			if (headings != null) {
-				fieldsIn.setHeadings(headings);
-			}
 			fieldsIn.setValues(fields);
 			
 			nextReader = nextReaderFor(fieldsIn);
@@ -148,12 +162,11 @@ implements Morphable, MorphProvider {
 		
 		LinesIn linesIn = dataIn.provideDataIn(LinesIn.class);
 		
-		if (initialised) {
-			return new BodyReader(linesIn);
+		if (withHeadings) {
+			return new SwapReader(linesIn);
 		}
 		else {
-			initialised = true;
-			return new HeaderFirstReader(linesIn);
+			return new BodyReader(linesIn);
 		}
 	}
 	
@@ -161,68 +174,17 @@ implements Morphable, MorphProvider {
 	public void reset() {
 		super.reset();
 		
-		initialised = false;
+		fieldsIn = null;
+		fieldsOut = null;
 	}
-	
-	
-	private interface LineWriter {
 		
-		void write(LinesOut linesOut)
-		throws DataException;
-	}
-	
-	private LineWriter lineWriter;
-			
-	private class MaybeWriteHeadings implements LineWriter {
-	
-		private final SimpleFieldsOut fields;
-		
-		public MaybeWriteHeadings(SimpleFieldsOut fields) {
-			this.fields = fields;
-		}
-		
-		@Override
-		public void write(LinesOut linesOut) throws DataException {
-			
-			if (withHeadings) {
-				
-				String[] headings = fields.headings();
-
-				linesOut.writeLine(delimitedString(headings));
-				
-				logger.trace("[" + DelimitedLayout.this + "] wrote line [" + 
-						headings + "]");
-
-			}
-			
-			lineWriter = new BodyWriter();
-			
-			lineWriter.write(linesOut);
-		}
-	}
-	
-	private class BodyWriter implements LineWriter {
-		
-		@Override
-		public void write(LinesOut linesOut) throws DataException {
-
-			String line = delimitedString(value());
-			
-			linesOut.writeLine(line);
-			
-			logger.trace("[" + DelimitedLayout.this + "] wrote line [" + 
-					line + "]");
-		}
-	}		
-	
 	class DelimitedWriter implements DataWriter {
 		
 		private final LinesOut linesOut;
 		
-		private final SimpleFieldsOut fieldsOut = 
-				new SimpleFieldsOut(headings);
-		
 		private DataWriter nextWriter;
+		
+		private boolean initialised;
 		
 		public DelimitedWriter(LinesOut linesOut) {
 			this.linesOut = linesOut;
@@ -259,12 +221,28 @@ implements Morphable, MorphProvider {
 				String[] value = value();
 				
 				if (value != null) {
-					
-					if (lineWriter == null) {
-						lineWriter = new MaybeWriteHeadings(fieldsOut);
+
+					if (!initialised) {
+						
+						if (withHeadings) {
+							
+							String[] headings = fieldsOut.headings();
+	
+							linesOut.writeLine(delimitedString(headings));
+								
+							logger.trace("[" + DelimitedLayout.this + 
+									"] wrote line [" + headings + "]");
+						}
+						
+						initialised = true;
 					}
-				
-					lineWriter.write(linesOut);
+					
+					String line = delimitedString(value);
+					
+					linesOut.writeLine(line);
+					
+					logger.trace("[" + DelimitedLayout.this + "] wrote line [" + 
+							line + "]");
 				}
 				
 				nextWriter.close();
@@ -301,6 +279,10 @@ implements Morphable, MorphProvider {
 		LinesOut linesOut = dataOut.provideDataOut(LinesOut.class);
 
 		logger.trace("Creating writer for [" + linesOut + "]");
+
+		if (fieldsOut == null) {
+			fieldsOut = new SimpleFieldsOut(headings);
+		}
 		
 		return new DelimitedWriter(linesOut);
 	}
@@ -322,7 +304,7 @@ implements Morphable, MorphProvider {
 			
 			FieldLayout layout = new FieldLayout();
 			layout.setName(name);
-			layout.setTitle(morphicness.titleFor(name));
+			layout.setColumnLabel(morphicness.titleFor(name));
 			
 			logger.debug("[" + this + "] adding morphicness [" + layout + "]");
 			

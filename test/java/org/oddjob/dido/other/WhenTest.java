@@ -123,18 +123,18 @@ public class WhenTest extends TestCase {
 		"   <of>" +
 		"    <case>" +
 		"     <of>" +
-		"      <field name='descriminator' column='1'/>" +
+		"      <field name='descriminator' columnIndex='1'/>" +
 		"      <when name='people' value='1'>" +
 		"       <of>" +
-		"        <field name='name' column='2'/>" +
-		"        <field name='city' column='3'/>" +
+		"        <field name='name' columnIndex='2'/>" +
+		"        <field name='city' columnIndex='3'/>" +
 		"       </of>" +
 		"      </when>" +
 		"      <when name='fruit' value='2'>" +
 		"       <of>" +
-		"        <field name='variety' column='2'/>" +
-	    "        <field name='type' column='3'/>" +
-	    "        <field name='colour' column='4'/>" +
+		"        <field name='variety' columnIndex='2'/>" +
+	    "        <field name='type' columnIndex='3'/>" +
+	    "        <field name='colour' columnIndex='4'/>" +
 	    "       </of>" +
 	    "      </when>" +
 		"     </of>" +
@@ -409,9 +409,9 @@ public class WhenTest extends TestCase {
 			"       <of>" +
 			"        <delimited>" +
 			"         <of>" +
-			"          <field name='variety' column='1'/>" +
-		    "          <field name='type' column='2'/>" +
-		    "          <field name='colour' column='3'/>" +
+			"          <field name='variety' columnIndex='1'/>" +
+		    "          <field name='type' columnIndex='2'/>" +
+		    "          <field name='colour' columnIndex='3'/>" +
 		    "         </of>" +
 			"        </delimited>" +
 			"       </of>" +

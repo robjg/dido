@@ -1,8 +1,10 @@
 package org.oddjob.dido.text;
 
-import org.oddjob.dido.DataOut;
+import org.oddjob.dido.column.Column;
+import org.oddjob.dido.column.ColumnOut;
+import org.oddjob.dido.column.ColumnarDataOut;
 
-public interface FieldsOut extends DataOut {
+public interface FieldsOut extends ColumnarDataOut {
 
 	/**
 	 * Write a heading. The heading will only be written
@@ -16,8 +18,6 @@ public interface FieldsOut extends DataOut {
 	 * 
 	 * @return The column assigned.
 	 */
-	public int columnIndexFor(String heading, int column);
-	
-	public void setColumnData(int column, String value);
-	
+	@Override
+	public ColumnOut<String> columnOutFor(Column column);
 }

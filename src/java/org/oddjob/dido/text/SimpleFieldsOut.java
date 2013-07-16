@@ -2,10 +2,13 @@ package org.oddjob.dido.text;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
+import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedDataOutException;
-import org.oddjob.dido.column.ColumnMetaData;
+import org.oddjob.dido.column.Column;
+import org.oddjob.dido.column.ColumnOut;
 import org.oddjob.dido.column.ColumnarDataOut;
 
 /**
@@ -16,11 +19,15 @@ import org.oddjob.dido.column.ColumnarDataOut;
  */
 public class SimpleFieldsOut implements FieldsOut {
 
-	private Map<Integer, String> headings;
+	private final Map<String, Integer> indexForHeading;
 	
-	private Map<Integer, String> values;
+	private final Map<Integer, String> headings = 
+			new HashMap<Integer, String>();
 	
-	private int maxColumn;
+	private final Map<Integer, String> values = 
+			new TreeMap<Integer, String>();
+	
+	private int lastColumn;
 			
 	private boolean writtenTo;
 	
@@ -34,66 +41,93 @@ public class SimpleFieldsOut implements FieldsOut {
 	/**
 	 * Create an instance with the given headings.
 	 * 
-	 * @param headings
+	 * @param headings May be null
 	 */
 	public SimpleFieldsOut(String[] headings) {
-
-		if (headings != null) {
+		if (headings == null) {
 			
-			for (String heading : headings) {
+			indexForHeading = null;
+		}
+		else {
+			
+			indexForHeading = new HashMap<String, Integer>();
+					
+			for (int i = 0; i < headings.length; ++i) {
 				
-				columnIndexFor(heading, 0);
+				Integer columnIndex = new Integer(i + 1);
+				String heading = headings[i];
+				this.indexForHeading.put(heading, columnIndex);
+				this.headings.put(columnIndex, heading);
 			}
 		}
 	}
-	
+
+	class TextColumnOut implements ColumnOut<String> {
+
+		private final int columnIndex;
+		
+		public TextColumnOut(int index) {
+			this.columnIndex = index;
+		}
+		
+		@Override
+		public int getColumnIndex() {
+			return columnIndex;
+		}
+		
+		@Override
+		public Class<String> getColumnType() {
+			return String.class;
+		}
+		
+		@Override
+		public void setColumnData(String data) throws DataException {
+			if (columnIndex > 0) {
+				if (data == null) {
+					values.remove(columnIndex);
+				}
+				else {
+					values.put(columnIndex, data);
+					writtenTo = true;
+				}
+			}
+		}
+	}
 	
 	
 	@Override
-	public int columnIndexFor(String heading, int column) {
+	public ColumnOut<String> columnOutFor(Column column) {
+				
+		String heading = column.getColumnLabel();
+		int columnIndex = column.getColumnIndex();
+		int useColumnIndex = 0;
 		
-		if (column < 1) {
-			column = maxColumn + 1;
-		}
-		if (column > maxColumn) {
-			maxColumn = column;
-		}
-		
-		if (heading != null) {			
-			if (headings == null) {				
-				headings = new HashMap<Integer, String>();
-			}
+		if (indexForHeading != null && heading != null) {
 			
-			headings.put(column, heading);
-		}
-		
-		return column;
-	}
-	
-	public ColumnMetaData getColumnMetaData(int columnIndex) {
-		return new ColumnMetaData() {
-			
-			@SuppressWarnings("unchecked")
-			@Override
-			public <T> Class<T> getColumnType() {
-				return (Class<T>) String.class;
+			Integer headingColumn = indexForHeading.get(heading);
+			if (headingColumn == null) {
+				useColumnIndex = columnIndex;
 			}
-		};
-	}
-	
-	@Override
-	public void setColumnData(int column, String value) {
+			else {
+				useColumnIndex = headingColumn.intValue();
+			}
+		}
+		else {
+			useColumnIndex = columnIndex;
 		
-		if (column < 1) {
-			throw new IllegalArgumentException("Column is " + column);
+			if (useColumnIndex == 0) {
+				useColumnIndex = ++lastColumn;
+			}
+			else {
+				lastColumn = useColumnIndex;
+			}
+		}
+
+		if (heading != null && useColumnIndex > 0) {
+			headings.put(useColumnIndex, heading);
 		}
 		
-		if (values == null) {
-			values = new HashMap<Integer, String>();
-		}
-		
-		values.put(column, (String) value);
-		writtenTo = true;
+		return new TextColumnOut(lastColumn);
 	}
 	
 	private static String[] toArray(Map<Integer, String> things) {
@@ -107,13 +141,12 @@ public class SimpleFieldsOut implements FieldsOut {
 				maxColumn = i.intValue();
 			}
 		}
-		String[] a = new String[maxColumn];
+		
+		String[] a = new String[maxColumn ];
 		
 		for (int i = 0; i < maxColumn; ++i) {
 			String thing = things.get(i + 1);
-			if (thing != null) {
-				a[i] = thing;
-			}
+			a[i] = thing;
 		}
 		
 		return a;
@@ -128,7 +161,7 @@ public class SimpleFieldsOut implements FieldsOut {
 	}
 	
 	public void clear() {
-		values = null;
+		values.clear();
 		resetWrittenTo();
 	}
 	

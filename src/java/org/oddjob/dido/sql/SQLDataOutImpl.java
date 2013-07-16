@@ -10,7 +10,8 @@ import org.oddjob.arooa.ArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedDataOutException;
-import org.oddjob.dido.column.ColumnMetaData;
+import org.oddjob.dido.column.Column;
+import org.oddjob.dido.column.ColumnOut;
 
 public class SQLDataOutImpl implements SQLDataOut {
 
@@ -51,44 +52,59 @@ public class SQLDataOutImpl implements SQLDataOut {
 		}
 	}
 
-	@Override
-	public ColumnMetaData getColumnMetaData(final int columnIndex) {
-		return new ColumnMetaData() {
-			
-			@SuppressWarnings("unchecked")
-			@Override
-			public <T> Class<T> getColumnType() {
+	
+	class SQLColumnOut<T> implements ColumnOut<T> {
+		
+		private final int columnIndex;
+		
+		public SQLColumnOut(int columnIndex) {
+			this.columnIndex = columnIndex;
+		}
+		
+		@Override
+		public int getColumnIndex() {
+			return columnIndex;
+		}
+		
+		@SuppressWarnings("unchecked")
+		@Override
+		public Class<T> getColumnType() {
+			if (columnIndex == 0) {
+				return (Class<T>) Void.TYPE;
+			}
+			else {
 				return (Class<T>) columnTypes[columnIndex - 1];
 			}
-		};
-	}
-
-	@Override
-	public int columnIndexFor(String columnName, int column) {
-		if (column > 0) {
-			lastColumnIndex = column;
-			return column;
 		}
-		else {
-			++lastColumnIndex;
-			return lastColumnIndex;
+		
+		@Override
+		public void setColumnData(T data) throws DataException {
+			if (columnIndex != 0) {
+				try {
+					if (data == null) {
+						stmt.setNull(columnIndex, sqlTypes[columnIndex -1]);
+					}
+					stmt.setObject(columnIndex, data);
+				} 
+				catch (SQLException e) {
+					throw new DataException(e);
+				}
+				writtenTo = true;
+			}
 		}
 	}
 	
 	@Override
-	public <T> void setColumnData(int columnIndex, T data) 
-	throws DataException {
-		try {
-			if (data == null) {
-				stmt.setNull(columnIndex, sqlTypes[columnIndex -1]);
-			}
-			stmt.setObject(columnIndex, data);
-		} 
-		catch (SQLException e) {
-			throw new DataException(e);
+	public ColumnOut<?> columnOutFor(Column column) {
+
+		if (column.getColumnIndex() > 0) {
+			lastColumnIndex = column.getColumnIndex();
 		}
-		writtenTo = true;
-	}
+		else {
+			++lastColumnIndex;
+		}
+		return new SQLColumnOut<Object>(lastColumnIndex);
+	}	
 	
 	@Override
 	public void addBatch() throws SQLException {

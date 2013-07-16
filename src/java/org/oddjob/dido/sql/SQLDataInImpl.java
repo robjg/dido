@@ -13,7 +13,8 @@ import org.oddjob.arooa.ArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.UnsupportedeDataInException;
-import org.oddjob.dido.column.ColumnMetaData;
+import org.oddjob.dido.column.Column;
+import org.oddjob.dido.column.ColumnIn;
 import org.oddjob.dido.morph.MorphDefinition;
 import org.oddjob.dido.morph.MorphDefinitionBuilder;
 
@@ -65,44 +66,53 @@ public class SQLDataInImpl implements SQLDataIn {
 		morphDefinition = morphBuilder.build();
 	}
 
+	class SQLColumnIn<T> implements ColumnIn<T> {
+
+		private final int columnIndex;
+
+		public SQLColumnIn(int index) {
+			this.columnIndex = index;
+		}
+		
+		@Override
+		public int getColumnIndex() {
+			return columnIndex;
+		}
+		
+		@SuppressWarnings("unchecked")
+		@Override
+		public Class<T> getColumnType() {
+			return (Class<T>) columnTypes[columnIndex - 1];
+		}
+		
+		@SuppressWarnings("unchecked")
+		@Override
+		public T getColumnData() throws DataException {
+			try {
+				return (T) resultSet.getObject(columnIndex);
+			} catch (SQLException e) {
+				throw new DataException(e);
+			}
+		}
+	}
+	
 	@Override
 	public MorphDefinition morphOf() {
 
 		return morphDefinition;
 	}
-		
+
 	@Override
-	public int columnIndexFor(String columnName, int columnIndex) {
-		if (columnIndex > 0) {
-			lastColumnIndex = columnIndex;
-			return columnIndex;
+	public ColumnIn<?> columnInFor(Column column) {
+		
+		if (column.getColumnIndex() > 0) {
+			lastColumnIndex = column.getColumnIndex();
 		}
 		else {
 			++lastColumnIndex;
-			return lastColumnIndex;
 		}
-	}
-
-	@Override
-	public ColumnMetaData getColumnMetaData(final int columnIndex) {
-		return new ColumnMetaData() {
-			
-			@SuppressWarnings("unchecked")
-			@Override
-			public <T> Class<T> getColumnType() {
-				return (Class<T>) columnTypes[columnIndex - 1];
-			}
-		};
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getColumnData(int column) throws DataException {
-		try {
-			return (T) resultSet.getObject(column);
-		} catch (SQLException e) {
-			throw new DataException(e);
-		}
+		
+		return new SQLColumnIn<Object>(lastColumnIndex);
 	}
 	
 	@Override

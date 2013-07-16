@@ -7,45 +7,42 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.layout.LayoutValueNode;
-import org.oddjob.dido.layout.NullReader;
-import org.oddjob.dido.layout.NullWriter;
+import org.oddjob.dido.layout.VoidIn;
+import org.oddjob.dido.layout.VoidOut;
 
-public class ColumnLayout<T> extends LayoutValueNode<T>{
+public class ColumnLayout<T> extends LayoutValueNode<T>
+implements Column {
 	
 	private static final Logger logger = Logger.getLogger(ColumnLayout.class);
 
 	private Class<T> type;
 	
-	private boolean initialised;
+	private String columnLabel;
 	
-	private String columnName;
+	private int columnIndex;
 	
-	private int column;
+	private ColumnIn<T> columnIn;
 	
-	private int originalColumn;
+	private ColumnOut<T> columnOut;
 	
 	@Override
 	public Class<T> getType() {
 		return type;
 	}
-
+	
 	class ColumnReader implements DataReader {
 		
-		private final ColumnarDataIn columnDataIn;
-
 		private final DataReader nextReader;
 		
-		public ColumnReader(ColumnarDataIn columnDataIn) throws DataException {
+		public ColumnReader() throws DataException {
 
-			this.columnDataIn = columnDataIn;
-			
-			this.nextReader = nextReaderFor(columnDataIn);
+			this.nextReader = nextReaderFor(new VoidIn());
 		}
 		
 		@Override
 		public Object read() throws DataException {
 		
-			T value = columnDataIn.getColumnData(column);
+			T value = columnIn.getColumnData();
 			
 			value(value);
 			
@@ -63,45 +60,30 @@ public class ColumnLayout<T> extends LayoutValueNode<T>{
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 		
-		ColumnarDataIn columnarDataIn = dataIn.provideDataIn(ColumnarDataIn.class);
+		if (columnIn == null) {
+			
+			ColumnarDataIn columnarDataIn = dataIn.provideDataIn(
+					ColumnarDataIn.class);
 
-		if (!initialised) {
+			this.columnIn = (ColumnIn<T>) 
+					columnarDataIn.columnInFor(this);
 			
-			originalColumn = column;
-					
-			column = columnarDataIn.columnIndexFor(columnName, column);
+			logger.debug("[" + this + "] initialised on column " + 
+					columnIn.getColumnIndex());
 			
-			logger.debug("[" + this + "] initialised on column " + column);
-			
-			if (column == 0) {
-				type = (Class<T>) Void.class;
-			}
-			else {
-				type = columnarDataIn.getColumnMetaData(column).getColumnType();
-			}
-			
-			initialised = true;
+			type = (Class<T>) columnIn.getColumnType();
 		}
 		
-		if (column == 0) {
-			return new NullReader();
-		}
-		else {
-			return new ColumnReader(columnarDataIn);
-		}
+		return new ColumnReader();
 	}
 	
 	class ColumnWriter implements DataWriter {
 
-		private final ColumnarDataOut columnDataOut;
-		
 		private final DataWriter nextWriter;
 		
-		public ColumnWriter(ColumnarDataOut columnDataOut) throws DataException {
+		public ColumnWriter() throws DataException {
 			
-			this.columnDataOut = columnDataOut;
-			
-			this.nextWriter = nextWriterFor(columnDataOut);
+			this.nextWriter = nextWriterFor(new VoidOut());
 		}
 		
 		@Override
@@ -118,7 +100,7 @@ public class ColumnLayout<T> extends LayoutValueNode<T>{
 				return write(object);
 			}
 
-			columnDataOut.setColumnData(column, value());
+			columnOut.setColumnData(value());
 			
 			return false;
 		}
@@ -134,55 +116,43 @@ public class ColumnLayout<T> extends LayoutValueNode<T>{
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 		
-		ColumnarDataOut columnarDataOut = dataOut.provideDataOut(ColumnarDataOut.class);
-		
-		if (!initialised) {
+		if (columnOut == null) {
 			
-			originalColumn = column;
+			ColumnarDataOut columnarDataOut = 
+					dataOut.provideDataOut(ColumnarDataOut.class);
 			
-			column = columnarDataOut.columnIndexFor(columnName, column);
+			columnOut = (ColumnOut<T>) columnarDataOut.columnOutFor(this);
 			
-			logger.debug("[" + this + "] initialised on column " + column);
+			logger.debug("[" + this + "] initialised on column " + 
+					columnOut.getColumnIndex());
 			
-			if (column == 0) {
-				type = (Class<T>) Void.class;
-			}	
-			else {
-				type = columnarDataOut.getColumnMetaData(column).getColumnType();
-			}
-			
-			initialised = true;
+			type = columnOut.getColumnType();
 		}
 		
-		if (column == 0) {
-			return new NullWriter();
-		}
-		else {
-			return new ColumnWriter(columnarDataOut);
-		}
+		return new ColumnWriter();
 	}
 	
 	@Override
 	public void reset() {
 		super.reset();
 		
-		initialised = false;
-		column = originalColumn;
+		columnIn = null;
+		columnOut = null;
 	}
 
-	public String getColumnName() {
-		return columnName;
+	public String getColumnLabel() {
+		return columnLabel;
 	}
 
-	public void setColumnName(String columnName) {
-		this.columnName = columnName;
+	public void setColumnLabel(String columnName) {
+		this.columnLabel = columnName;
 	}
 
-	public int getColumn() {
-		return column;
+	public int getColumnIndex() {
+		return columnIndex;
 	}
 
-	public void setColumn(int column) {
-		this.column = column;
+	public void setColumnIndex(int column) {
+		this.columnIndex = column;
 	}
 }
