@@ -23,7 +23,7 @@ import org.oddjob.dido.stream.OutputStreamOut;
 
 public class DataOutDestination extends AbstractDestination<Object>{
 	private static final Logger logger = Logger.getLogger(
-			DataOutDestinationTest.class);
+			DataOutDestination.class);
 	
 	private String name;
 	

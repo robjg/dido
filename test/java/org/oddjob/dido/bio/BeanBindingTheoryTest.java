@@ -6,6 +6,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.oddjob.arooa.utils.Iterables;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
@@ -113,8 +114,7 @@ public class BeanBindingTheoryTest extends TestCase {
 				public void close() throws DataException {
 				}
 			};
-		}
-		
+		}		
 		
 		@Override
 		public void free() {
@@ -232,18 +232,24 @@ public class BeanBindingTheoryTest extends TestCase {
 						
 						step = 2;
 						
+						List<Layout> children = Iterables.toList(
+								boundLayout.childLayouts());
+						
 						@SuppressWarnings("unchecked")
 						ValueNode<String> vn = 
-								(ValueNode<String> ) boundLayout.childLayouts().get(0);
+								(ValueNode<String>) children.get(0);
 						
 						return vn.value();
 					}
 					else if (step == 2) {
 						step = 3; 
 						
+						List<Layout> children = Iterables.toList(
+								boundLayout.childLayouts());
+						
 						@SuppressWarnings("unchecked")
 						ValueNode<String> vn = 
-								(ValueNode<String> ) boundLayout.childLayouts().get(1);
+								(ValueNode<String> ) children.get(1);
 						
 						return vn.value();
 					}
@@ -266,7 +272,8 @@ public class BeanBindingTheoryTest extends TestCase {
 			final ChildBinding binding1 = new ChildBinding();
 			final ChildBinding binding2 = new ChildBinding();
 			
-			List<Layout> childLayouts = boundLayout.childLayouts();
+			List<Layout> childLayouts = Iterables.toList(
+					boundLayout.childLayouts());
 			
 			Layout child1 = childLayouts.get(0);
 			child1.bind(binding1);

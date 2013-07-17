@@ -12,6 +12,7 @@ import org.oddjob.arooa.reflect.ArooaPropertyException;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.BeanView;
 import org.oddjob.arooa.reflect.PropertyAccessor;
+import org.oddjob.arooa.utils.Iterables;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
@@ -107,10 +108,10 @@ implements Binding, ArooaSessionAware {
 			Class<T> type = valueNode.getType();
 			
 			try {
-				Object fieldValue = accessor.getProperty(value, 
+				T fieldValue = accessor.getProperty(value, 
 						node.getName(), type);
 				
-				valueNode.value(type.cast(fieldValue));
+				valueNode.value(fieldValue);
 				
 			} catch (ArooaPropertyException e) {
 				throw new DataException(e);
@@ -333,7 +334,7 @@ implements Binding, ArooaSessionAware {
 		final MagicBeanClassCreator classCreator = 
 				new MagicBeanClassCreator("BeanBinding");
 
-		List<Layout> children = layout.childLayouts();
+		List<Layout> children = Iterables.toList(layout.childLayouts());
 		
 		if (children.size() > 0) {
 			
@@ -342,7 +343,11 @@ implements Binding, ArooaSessionAware {
 			new LayoutWalker() {				
 				@Override
 				protected boolean onLayout(Layout layout) {
-					if (layout.childLayouts().size() == 0 && 
+					
+					List<Layout> children = Iterables.toList(
+							layout.childLayouts());
+					
+					if (children.size() == 0 && 
 							layout.getName() != null &&
 							layout instanceof ValueNode) {
 						

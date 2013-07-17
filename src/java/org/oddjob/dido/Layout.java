@@ -1,7 +1,5 @@
 package org.oddjob.dido;
 
-import java.util.List;
-
 import org.oddjob.dido.bio.Binding;
 
 /**
@@ -46,7 +44,7 @@ public interface Layout extends DataReaderFactory, DataWriterFactory {
 	 * 
 	 * @return
 	 */
-	public List<Layout> childLayouts();
+	public Iterable<Layout> childLayouts();
 	
 	/**
 	 * Reset this layout. Any state created during the last read or
