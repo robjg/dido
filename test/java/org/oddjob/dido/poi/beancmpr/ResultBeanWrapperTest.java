@@ -34,6 +34,8 @@ public class ResultBeanWrapperTest extends TestCase {
 		ComparisonBeanWrapper comparison = test.getComparisons().get("quantity");
 		assertEquals(new Integer(15), comparison.getX());
 		assertEquals(new Integer(16), comparison.getY());
+		assertEquals(Object.class, comparison.getTypeOfX());
+		assertEquals(Object.class, comparison.getTypeOfY());
 		assertEquals(-1, comparison.getResult());
 	}
 }

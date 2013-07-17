@@ -254,10 +254,10 @@ implements ArooaSessionAware {
 
 				ComparisonBeanWrapper comparison = entry.getValue();
 				
-				morphBuilder.add(xProperty, 
-						typeFor(comparison.getX(), comparison.getY()));
+				morphBuilder.add(xProperty,
+							typeForClass(comparison.getTypeOfY()));
 				morphBuilder.add(yProperty, 
-						typeFor(comparison.getX(), comparison.getY()));
+						typeForClass(comparison.getTypeOfY()));
 				
 				injectors.add(new ComparisonXInjector(comparisonName));
 				injectors.add(new ComparisonYInjector(comparisonName));
@@ -268,18 +268,11 @@ implements ArooaSessionAware {
 	}	
 	
 	static Class<?> typeFor(Object key) {
-		return typeFor(key, key);
+		return typeForClass(key.getClass());
 	}
 	
-	static Class<?> typeFor(Object x, Object y) {
-		
-		Object use = x;
-		if (use == null) {
-			use = y;
-		}
-		
-		Class<?> type = use.getClass();
-		
+	static Class<?> typeForClass(Class<?> type) {
+				
 		if (type.isPrimitive()) {
 			return type;
 		}
@@ -311,5 +304,21 @@ implements ArooaSessionAware {
 	public void free() {
 		resets.reset();
 		initialised = false;
+	}
+
+	public String getxPrefix() {
+		return xPrefix;
+	}
+
+	public void setxPrefix(String xPrefix) {
+		this.xPrefix = xPrefix;
+	}
+
+	public String getyPrefix() {
+		return yPrefix;
+	}
+
+	public void setyPrefix(String yPrefix) {
+		this.yPrefix = yPrefix;
 	}
 }

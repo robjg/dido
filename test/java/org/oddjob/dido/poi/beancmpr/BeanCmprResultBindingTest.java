@@ -29,6 +29,9 @@ public class BeanCmprResultBindingTest extends TestCase {
 		builder.addComparison("price", new Double(22.4), 
 				new Float(22.4), 0);
 
+		builder.addComparison("colour", null, 
+				null, 0);
+		
 		ArooaSession session = new StandardArooaSession();
 		
 		DataBook book = new DataBook();
