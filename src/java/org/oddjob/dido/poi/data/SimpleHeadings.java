@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.data;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.data;
 
 import junit.framework.TestCase;
 
@@ -6,7 +6,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.oddjob.dido.poi.SimpleHeadings;
+import org.oddjob.dido.poi.data.SimpleHeadings;
 
 public class SimpleHeadingsTest extends TestCase {
 

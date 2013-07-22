@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.layouts;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -14,6 +14,10 @@ import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.layout.LayoutNode;
+import org.oddjob.dido.poi.BookIn;
+import org.oddjob.dido.poi.BookOut;
+import org.oddjob.dido.poi.data.PoiBookIn;
+import org.oddjob.dido.poi.data.PoiBookOut;
 import org.oddjob.dido.poi.style.BeanStyleFactory;
 import org.oddjob.dido.poi.style.CompositeStyleFactory;
 import org.oddjob.dido.poi.style.DefaultStyleFactory;

@@ -2,25 +2,25 @@
         prefix="poi" namespace="http://rgordon.co.uk/oddjob/poi">
 	<values>
 		<arooa:bean-def element='book'
-		    className='org.oddjob.dido.poi.DataBook'/>
+		    className='org.oddjob.dido.poi.layouts.DataBook'/>
 		<arooa:bean-def element='sheet'
-		    className='org.oddjob.dido.poi.DataSheet'/>
+		    className='org.oddjob.dido.poi.layouts.DataSheet'/>
 		<arooa:bean-def element='rows'
-		    className='org.oddjob.dido.poi.DataRows'/>
+		    className='org.oddjob.dido.poi.layouts.DataRows'/>
 		<arooa:bean-def element='boolean'
-		    className='org.oddjob.dido.poi.BooleanCell'/>
+		    className='org.oddjob.dido.poi.layouts.BooleanCell'/>
 		<arooa:bean-def element='date'
-		    className='org.oddjob.dido.poi.DateCell'/>
+		    className='org.oddjob.dido.poi.layouts.DateCell'/>
 		<arooa:bean-def element='numeric'
-		    className='org.oddjob.dido.poi.NumericCell'/>
+		    className='org.oddjob.dido.poi.layouts.NumericCell'/>
 		<arooa:bean-def element='text'
-		    className='org.oddjob.dido.poi.TextCell'/>
+		    className='org.oddjob.dido.poi.layouts.TextCell'/>
 		<arooa:bean-def element='numeric-formula'
-		    className='org.oddjob.dido.poi.NumericFormulaCell'/>
+		    className='org.oddjob.dido.poi.layouts.NumericFormulaCell'/>
 		<arooa:bean-def element='text-formula'
-		    className='org.oddjob.dido.poi.TextFormulaCell'/>
+		    className='org.oddjob.dido.poi.layouts.TextFormulaCell'/>
 		<arooa:bean-def element='blank'
-		    className='org.oddjob.dido.poi.BlankCell'/>
+		    className='org.oddjob.dido.poi.layouts.BlankCell'/>
 		<arooa:bean-def element='style'
 		    className='org.oddjob.dido.poi.style.StyleBean'/>
 	</values>

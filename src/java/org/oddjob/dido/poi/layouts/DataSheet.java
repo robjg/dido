@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.layouts;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -9,6 +9,10 @@ import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.layout.LayoutNode;
+import org.oddjob.dido.poi.BookIn;
+import org.oddjob.dido.poi.BookOut;
+import org.oddjob.dido.poi.data.PoiSheetIn;
+import org.oddjob.dido.poi.data.PoiSheetOut;
 
 public class DataSheet extends LayoutNode {
 	

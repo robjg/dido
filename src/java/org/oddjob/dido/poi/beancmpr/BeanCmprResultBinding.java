@@ -23,7 +23,7 @@ import org.oddjob.dido.layout.ChildWriter;
 import org.oddjob.dido.morph.MorphDefinition;
 import org.oddjob.dido.morph.MorphDefinitionBuilder;
 import org.oddjob.dido.morph.Morphable;
-import org.oddjob.dido.poi.DataCell;
+import org.oddjob.dido.poi.layouts.DataCell;
 import org.oddjob.dido.poi.style.DefaultStyleFactory;
 
 public class BeanCmprResultBinding extends SingleBeanBinding
@@ -114,7 +114,10 @@ implements ArooaSessionAware {
 	private <T> void doSetValue(ValueNode<T> valueNode, Object value)
 	throws DataException {
 		try {
-			valueNode.value(converter.convert(value, valueNode.getType()));
+			@SuppressWarnings("unchecked")
+			Class<T> type = (Class <T>) valueNode.getType();
+			
+			valueNode.value(converter.convert(value, type));
 		} 
 		catch (NoConversionAvailableException e) {
 			throw new DataException(e);
@@ -193,6 +196,9 @@ implements ArooaSessionAware {
 			if (comparison.getResult() != 0 && valueNode instanceof DataCell) {
 				((DataCell<?>) valueNode).setStyle(
 						DefaultStyleFactory.BEANCMPR_DIFF_STYLE);
+			}
+			else {
+				((DataCell<?>) valueNode).setStyle(null);
 			}
 		}
 		

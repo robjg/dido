@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.data;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,6 +13,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedDataOutException;
+import org.oddjob.dido.poi.BookOut;
+import org.oddjob.dido.poi.SheetOut;
 import org.oddjob.dido.poi.style.DefaultStyleFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
 import org.oddjob.dido.poi.style.StyleProviderFactory;

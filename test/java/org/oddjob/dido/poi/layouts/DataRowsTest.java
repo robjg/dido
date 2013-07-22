@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.layouts;
 
 import junit.framework.TestCase;
 
@@ -10,12 +10,11 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.bio.DirectBinding;
-import org.oddjob.dido.poi.DataRows;
-import org.oddjob.dido.poi.PoiSheetIn;
-import org.oddjob.dido.poi.PoiSheetOut;
 import org.oddjob.dido.poi.SheetIn;
 import org.oddjob.dido.poi.SheetOut;
-import org.oddjob.dido.poi.TextCell;
+import org.oddjob.dido.poi.data.PoiSheetIn;
+import org.oddjob.dido.poi.data.PoiSheetOut;
+import org.oddjob.dido.poi.layouts.DataRows;
 import org.oddjob.dido.poi.style.DefaultStyleFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
 

@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.layouts;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.util.CellReference;
@@ -17,6 +17,8 @@ import org.oddjob.dido.layout.LayoutValueNode;
 import org.oddjob.dido.layout.NullReader;
 import org.oddjob.dido.layout.NullWriter;
 import org.oddjob.dido.layout.VoidOut;
+import org.oddjob.dido.poi.TupleIn;
+import org.oddjob.dido.poi.TupleOut;
 
 abstract public class DataCell<T> 
 extends LayoutValueNode<T>

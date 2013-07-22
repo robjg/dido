@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.data;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -8,6 +8,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedDataOutException;
+import org.oddjob.dido.poi.SheetOut;
+import org.oddjob.dido.poi.TupleOut;
 import org.oddjob.dido.poi.style.DefaultStyleFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
 

@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.data;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -13,10 +13,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.oddjob.arooa.utils.DateHelper;
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.poi.PoiSheetIn;
-import org.oddjob.dido.poi.PoiSheetOut;
 import org.oddjob.dido.poi.TupleIn;
 import org.oddjob.dido.poi.TupleOut;
+import org.oddjob.dido.poi.data.PoiSheetIn;
+import org.oddjob.dido.poi.data.PoiSheetOut;
 import org.oddjob.dido.poi.style.DefaultStyleFactory;
 
 public class PoiSheetsTest extends TestCase {

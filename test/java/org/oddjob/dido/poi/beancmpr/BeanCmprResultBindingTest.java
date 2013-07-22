@@ -9,8 +9,8 @@ import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.poi.DataBook;
-import org.oddjob.dido.poi.DataRows;
+import org.oddjob.dido.poi.layouts.DataBook;
+import org.oddjob.dido.poi.layouts.DataRows;
 import org.oddjob.dido.stream.OutputStreamOut;
 
 public class BeanCmprResultBindingTest extends TestCase {

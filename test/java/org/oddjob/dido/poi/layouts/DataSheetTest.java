@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.layouts;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,10 +12,10 @@ import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.poi.BookIn;
 import org.oddjob.dido.poi.BookOut;
-import org.oddjob.dido.poi.DataRows;
-import org.oddjob.dido.poi.DataSheet;
-import org.oddjob.dido.poi.PoiBookIn;
-import org.oddjob.dido.poi.PoiBookOut;
+import org.oddjob.dido.poi.data.PoiBookIn;
+import org.oddjob.dido.poi.data.PoiBookOut;
+import org.oddjob.dido.poi.layouts.DataRows;
+import org.oddjob.dido.poi.layouts.DataSheet;
 
 public class DataSheetTest extends TestCase {
 

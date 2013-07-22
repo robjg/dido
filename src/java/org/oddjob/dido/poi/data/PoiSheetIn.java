@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.data;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -6,6 +6,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.UnsupportedeDataInException;
+import org.oddjob.dido.poi.SheetIn;
+import org.oddjob.dido.poi.TupleIn;
 
 public class PoiSheetIn implements SheetIn {
 

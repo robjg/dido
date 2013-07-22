@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.layouts;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -17,6 +17,8 @@ import org.oddjob.dido.layout.NullReader;
 import org.oddjob.dido.morph.MorphDefinition;
 import org.oddjob.dido.morph.MorphProvider;
 import org.oddjob.dido.morph.Morphable;
+import org.oddjob.dido.poi.SheetIn;
+import org.oddjob.dido.poi.SheetOut;
 
 public class DataRows extends LayoutNode 
 implements Morphable, MorphProvider {

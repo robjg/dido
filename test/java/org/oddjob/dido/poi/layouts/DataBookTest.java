@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.layouts;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

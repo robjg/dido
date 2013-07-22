@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.data;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +10,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.UnsupportedeDataInException;
+import org.oddjob.dido.poi.BookIn;
+import org.oddjob.dido.poi.SheetIn;
 
 public class PoiBookIn implements BookIn {
 

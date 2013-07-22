@@ -1,4 +1,4 @@
-package org.oddjob.dido.poi;
+package org.oddjob.dido.poi.layouts;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -23,11 +23,11 @@ import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.bio.DirectBinding;
-import org.oddjob.dido.poi.NumericCell;
-import org.oddjob.dido.poi.PoiSheetIn;
-import org.oddjob.dido.poi.PoiSheetOut;
 import org.oddjob.dido.poi.SheetIn;
 import org.oddjob.dido.poi.SheetOut;
+import org.oddjob.dido.poi.data.PoiSheetIn;
+import org.oddjob.dido.poi.data.PoiSheetOut;
+import org.oddjob.dido.poi.layouts.NumericCell;
 
 public class NumericCellTest extends TestCase {
 	private static final Logger logger = Logger.getLogger(NumericCellTest.class);
