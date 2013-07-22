@@ -29,5 +29,12 @@ public interface ValueNode<T> {
 	 */
 	public void value(T value);
 	
-	public Class<T> getType();
+	/**
+	 * Get the type. Note that this can't be Class&lt;T&gt; because of Java's
+	 * inability to resolve an expression such as 
+	 * <code>List&lt;Integer&gt;.class</code>.
+	 * 
+	 * @return The type that must be of Class&lt;T&gt;
+	 */
+	public Class<?> getType();
 }

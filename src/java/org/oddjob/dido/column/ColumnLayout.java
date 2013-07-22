@@ -15,7 +15,7 @@ implements Column {
 	
 	private static final Logger logger = Logger.getLogger(ColumnLayout.class);
 
-	private Class<T> type;
+	private Class<?> type;
 	
 	private String columnLabel;
 	
@@ -26,7 +26,7 @@ implements Column {
 	private ColumnOut<T> columnOut;
 	
 	@Override
-	public Class<T> getType() {
+	public Class<?> getType() {
 		return type;
 	}
 	

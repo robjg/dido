@@ -105,7 +105,8 @@ implements Binding, ArooaSessionAware {
 				ValueNode<T> valueNode, DataOut dataOut) 
 		throws DataException {
 
-			Class<T> type = valueNode.getType();
+			@SuppressWarnings("unchecked")
+			Class<T> type = (Class<T>) valueNode.getType();
 			
 			try {
 				T fieldValue = accessor.getProperty(value, 
@@ -118,7 +119,6 @@ implements Binding, ArooaSessionAware {
 			} catch (ArooaConversionException e) {
 				throw new DataException(e);
 			}
-			
 		}
 		
 		@Override
@@ -277,7 +277,7 @@ implements Binding, ArooaSessionAware {
 	}
 
 	@Override
-	public void inject(Object object, Layout node, DataOut dataOut) throws DataException {
+	protected void inject(Object object, Layout node, DataOut dataOut) throws DataException {
 		
 		if (type != null && !type.forClass().isInstance(object)) {
 			

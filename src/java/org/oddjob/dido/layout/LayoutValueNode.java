@@ -2,7 +2,13 @@ package org.oddjob.dido.layout;
 
 import org.oddjob.dido.ValueNode;
 
-
+/**
+ * Base class for {@link Layout}s that are also {@link ValueNode}s.
+ * 
+ * @author rob
+ *
+ * @param <T>
+ */
 abstract public class LayoutValueNode<T> extends LayoutNode
 implements ValueNode<T> {
 

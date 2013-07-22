@@ -79,10 +79,9 @@ public class SQLDataInImpl implements SQLDataIn {
 			return columnIndex;
 		}
 		
-		@SuppressWarnings("unchecked")
 		@Override
-		public Class<T> getColumnType() {
-			return (Class<T>) columnTypes[columnIndex - 1];
+		public Class<?> getColumnType() {
+			return columnTypes[columnIndex - 1];
 		}
 		
 		@SuppressWarnings("unchecked")

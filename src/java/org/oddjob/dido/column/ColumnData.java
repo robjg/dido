@@ -4,6 +4,6 @@ public interface ColumnData<T> {
 
 	public int getColumnIndex();
 	
-	public Class<T> getColumnType();
+	public Class<?> getColumnType();
 
 }

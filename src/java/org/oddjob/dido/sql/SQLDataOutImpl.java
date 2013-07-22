@@ -66,14 +66,13 @@ public class SQLDataOutImpl implements SQLDataOut {
 			return columnIndex;
 		}
 		
-		@SuppressWarnings("unchecked")
 		@Override
-		public Class<T> getColumnType() {
+		public Class<?> getColumnType() {
 			if (columnIndex == 0) {
-				return (Class<T>) Void.TYPE;
+				return Void.TYPE;
 			}
 			else {
-				return (Class<T>) columnTypes[columnIndex - 1];
+				return columnTypes[columnIndex - 1];
 			}
 		}
 		
