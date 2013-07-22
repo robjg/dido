@@ -1,25 +1,25 @@
-<poi:book xmlns:poi="http://rgordon.co.uk/oddjob/poi">
+<dido-poi:book xmlns:dido-poi="oddjob:dido:poi">
 	<styles>
-		<poi:style key="heading" bold="true" colour="RED"/>
-		<poi:style key="date" format="m/d/yy hh:mm" />
-		<poi:style key="percentage" format="#0.00%" />
+		<dido-poi:style key="heading" bold="true" colour="RED"/>
+		<dido-poi:style key="date" format="m/d/yy hh:mm" />
+		<dido-poi:style key="percentage" format="#0.00%" />
 	</styles>
 	<of>
-		<poi:sheet>
+		<dido-poi:sheet>
 			<of>
-				<poi:rows withHeadings="true" headingsStyle="heading" 
+				<dido-poi:rows withHeadings="true" headingsStyle="heading" 
 						autoWidth="true" autoFilter="true" name="person">
 					<of>
-						<poi:text name="name" title="Name" />
-						<poi:date name="dateOfBirth" title="Date Of Birth" style="date" />
-						<poi:numeric name="salary" title="Salary"/>
-						<poi:numeric-formula name="bonus" title="Bonus"
+						<dido-poi:text name="name" title="Name" />
+						<dido-poi:date name="dateOfBirth" title="Date Of Birth" style="date" />
+						<dido-poi:numeric name="salary" title="Salary"/>
+						<dido-poi:numeric-formula name="bonus" title="Bonus"
 							formula="10" />
-						<poi:numeric name="percentage" title="Percentage"
+						<dido-poi:numeric name="percentage" title="Percentage"
 								style="percentage" value='0.1'/>
 					</of>
-				</poi:rows>
+				</dido-poi:rows>
 			</of>
-		</poi:sheet>
+		</dido-poi:sheet>
 	</of>
-</poi:book>
+</dido-poi:book>

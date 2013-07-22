@@ -1,10 +1,10 @@
-<poi:book xmlns:poi="http://rgordon.co.uk/oddjob/poi">
+<dido-poi:book xmlns:dido-poi="oddjob:dido:poi">
 	<of>
-		<poi:sheet>
+		<dido-poi:sheet>
 			<of>
-				<poi:rows autoWidth="true" autoFilter="true"
+				<dido-poi:rows autoWidth="true" autoFilter="true"
 					name="person" withHeadings="true"/>
 			</of>
-		</poi:sheet>
+		</dido-poi:sheet>
 	</of>
-</poi:book>
+</dido-poi:book>

@@ -1,5 +1,5 @@
 <arooa:descriptor xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
-        prefix="poi" namespace="http://rgordon.co.uk/oddjob/poi">
+        prefix="dido-poi" namespace="oddjob:dido:poi">
 	<values>
 		<arooa:bean-def element='book'
 		    className='org.oddjob.dido.poi.layouts.DataBook'/>
