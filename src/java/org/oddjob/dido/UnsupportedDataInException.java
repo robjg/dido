@@ -6,11 +6,11 @@ package org.oddjob.dido;
  * @author rob
  *
  */
-public class UnsupportedeDataInException extends DataException {
+public class UnsupportedDataInException extends DataException {
 	private static final long serialVersionUID = 2010072700L;
 	
 	
-	public UnsupportedeDataInException(Class<? extends DataIn> provider, 
+	public UnsupportedDataInException(Class<? extends DataIn> provider, 
 			Class<? extends DataIn> required) {
 		super(provider.getName() + " cannot provide " + required.getName());
 	}

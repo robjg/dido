@@ -12,7 +12,7 @@ import org.oddjob.arooa.ArooaDescriptor;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.UnsupportedeDataInException;
+import org.oddjob.dido.UnsupportedDataInException;
 import org.oddjob.dido.column.Column;
 import org.oddjob.dido.column.ColumnIn;
 import org.oddjob.dido.morph.MorphDefinition;
@@ -126,7 +126,7 @@ public class SQLDataInImpl implements SQLDataIn {
 			return type.cast(this);
 		}
 
-		throw new UnsupportedeDataInException(getClass(), type);
+		throw new UnsupportedDataInException(getClass(), type);
 	}
 	
 	@Override

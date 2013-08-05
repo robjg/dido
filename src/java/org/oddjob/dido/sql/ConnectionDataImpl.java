@@ -14,7 +14,7 @@ import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.UnsupportedeDataInException;
+import org.oddjob.dido.UnsupportedDataInException;
 import org.oddjob.dido.UnsupportedDataOutException;
 
 public class ConnectionDataImpl 
@@ -38,7 +38,7 @@ implements ConnectionDataIn, ConnectionDataOut, ArooaSessionAware {
 			return type.cast(this);
 		}
 
-		throw new UnsupportedeDataInException(getClass(), type);
+		throw new UnsupportedDataInException(getClass(), type);
 	}
 
 	@Override

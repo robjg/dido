@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.UnsupportedeDataInException;
+import org.oddjob.dido.UnsupportedDataInException;
 import org.oddjob.dido.text.StringTextIn;
 import org.oddjob.dido.text.TextIn;
 
@@ -20,7 +20,7 @@ public class ListLinesIn implements LinesIn {
 
 	@Override
 	public <T extends DataIn> T provideDataIn(Class<T> type)
-			throws UnsupportedeDataInException {
+			throws UnsupportedDataInException {
 
 		if (type.isAssignableFrom(LinesIn.class)) {
 			return type.cast(this);
@@ -30,7 +30,7 @@ public class ListLinesIn implements LinesIn {
 			return type.cast(new StringTextIn(lastLine));
 		}
 
-		throw new UnsupportedeDataInException(getClass(), type);
+		throw new UnsupportedDataInException(getClass(), type);
 	}
 
 	@Override

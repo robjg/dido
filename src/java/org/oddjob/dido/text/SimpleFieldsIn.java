@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.UnsupportedeDataInException;
+import org.oddjob.dido.UnsupportedDataInException;
 import org.oddjob.dido.column.Column;
 import org.oddjob.dido.column.ColumnIn;
 
@@ -96,12 +96,12 @@ implements FieldsIn {
 		
 	@Override
 	public <T extends DataIn> T provideDataIn(Class<T> type)
-	throws UnsupportedeDataInException {
+	throws UnsupportedDataInException {
 
 		if (type.isInstance(this)) {
 			return type.cast(this);
 		}
 		
-		throw new UnsupportedeDataInException(this.getClass(), type);
+		throw new UnsupportedDataInException(this.getClass(), type);
 	}
 }

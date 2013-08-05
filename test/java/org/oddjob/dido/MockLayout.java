@@ -28,7 +28,7 @@ public class MockLayout implements Layout {
 	
 	@Override
 	public DataReader readerFor(DataIn dataIn)
-			throws UnsupportedeDataInException {
+			throws UnsupportedDataInException {
 		throw new RuntimeException("Unexpected from " + getClass());
 	}
 	

@@ -7,7 +7,7 @@ import org.oddjob.arooa.life.Destroy;
 import org.oddjob.dido.Closeable;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.UnsupportedeDataInException;
+import org.oddjob.dido.UnsupportedDataInException;
 
 /**
  * A {@link DataIn} from an {@link InputStream}.
@@ -47,7 +47,7 @@ public class InputStreamIn implements StreamIn, Closeable {
 			return type.cast(new StreamLinesIn(inputStream()));
 		}
 		
-		throw new UnsupportedeDataInException(this.getClass(), type);
+		throw new UnsupportedDataInException(this.getClass(), type);
 	}
 	
 	@Override

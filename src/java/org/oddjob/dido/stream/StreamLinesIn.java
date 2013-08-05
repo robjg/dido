@@ -7,7 +7,7 @@ import java.io.LineNumberReader;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.UnsupportedeDataInException;
+import org.oddjob.dido.UnsupportedDataInException;
 import org.oddjob.dido.text.StringTextIn;
 import org.oddjob.dido.text.TextIn;
 
@@ -95,6 +95,6 @@ public class StreamLinesIn implements LinesIn {
 			}
 		}
 			
-		throw new UnsupportedeDataInException(this.getClass(), type);
+		throw new UnsupportedDataInException(this.getClass(), type);
 	}
 }
