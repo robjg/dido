@@ -1,12 +1,9 @@
 package org.oddjob.dido.poi.layouts;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
@@ -16,26 +13,29 @@ import org.oddjob.dido.Layout;
 import org.oddjob.dido.layout.LayoutNode;
 import org.oddjob.dido.poi.BookIn;
 import org.oddjob.dido.poi.BookOut;
-import org.oddjob.dido.poi.data.PoiBookIn;
-import org.oddjob.dido.poi.data.PoiBookOut;
 import org.oddjob.dido.poi.style.BeanStyleFactory;
-import org.oddjob.dido.poi.style.CompositeStyleFactory;
-import org.oddjob.dido.poi.style.DefaultStyleFactory;
 import org.oddjob.dido.poi.style.StyleBean;
-import org.oddjob.dido.poi.style.StyleProviderFactory;
-import org.oddjob.dido.stream.StreamIn;
-import org.oddjob.dido.stream.StreamOut;
 
+/**
+ * The {@link Layout} representation of a Spreadsheet Book. 
+ * 
+ * @author rob
+ *
+ */
 public class DataBook 
 extends LayoutNode {
 	
 	private static final Logger logger = Logger.getLogger(DataBook.class);
 	
-	private SpreadsheetVersion version;
-	
 	private final Map<String, StyleBean> styles
 		 = new LinkedHashMap<String, StyleBean>();
 	
+	/**
+	 * Add or remove a child.
+	 * 
+	 * @param index
+	 * @param child
+	 */
 	public void setOf(int index, Layout child) {
 		addOrRemoveChild(index, child);
 	}
@@ -43,41 +43,23 @@ extends LayoutNode {
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 		
-		StreamIn data = dataIn.provideDataIn(StreamIn.class);
+		logger.debug("Creating reader from [" + dataIn + "]");
 		
-		BookIn book = null;
-		try {
-			book = new PoiBookIn(data.inputStream());
-		} catch (InvalidFormatException e) {
-			throw new DataException(e);
-		} catch (IOException e) {
-			throw new DataException(e);
-		}
-		
-		logger.debug("Created workbook from input stream.");
-		
+		BookIn book = dataIn.provideDataIn(BookIn.class);
+				
 		return nextReaderFor(book);
 	}
 	
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 		
-		StreamOut data = dataOut.provideDataOut(StreamOut.class);
+		logger.debug("Creating writer from [" + dataOut + "]");
 		
-		StyleProviderFactory styleFactory;
-		if (styles == null) {
-			styleFactory = new DefaultStyleFactory();
+		final BookOut bookOut = dataOut.provideDataOut(BookOut.class);
+		
+		if (styles.size() > 0) {
+			bookOut.addStyleFactory(new BeanStyleFactory(styles));
 		}
-		else {
-			styleFactory = new CompositeStyleFactory(
-					new BeanStyleFactory(styles), new DefaultStyleFactory());
-		}
-		
-		
-		final BookOut bookOut = new PoiBookOut(data.outputStream(), version, 
-				styleFactory);
-		
-		logger.debug("Created empty workbook.");
 		
 		final DataWriter nextWriter = nextWriterFor(bookOut);
 		
@@ -100,15 +82,7 @@ extends LayoutNode {
 	public void reset() {
 		super.reset();
 	}
-	
-	public SpreadsheetVersion getVersion() {
-		return version;
-	}
-
-	public void setVersion(SpreadsheetVersion version) {
-		this.version = version;
-	}
-	
+		
 	public StyleBean getStyles(String styleName) {
 		return styles.get(styleName);
 	}

@@ -1,20 +1,32 @@
 package org.oddjob.dido.poi.beancmpr;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import junit.framework.TestCase;
 
+import org.oddjob.OurDirs;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.standard.StandardArooaSession;
+import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.poi.data.PoiWorkbook;
 import org.oddjob.dido.poi.layouts.DataBook;
 import org.oddjob.dido.poi.layouts.DataRows;
-import org.oddjob.dido.stream.OutputStreamOut;
 
 public class BeanCmprResultBindingTest extends TestCase {
 
+	File workDir;
+	
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		
+		workDir = new OurDirs().relative("work");
+	}
+	
 	public void testsimple() throws DataException, FileNotFoundException {
 		
 		FakeResultsBean.Builder builder = 
@@ -44,15 +56,16 @@ public class BeanCmprResultBindingTest extends TestCase {
 		
 		rows.bind(test);
 
-		OutputStreamOut out = new OutputStreamOut(
-				new FileOutputStream("BookTest.xlsx"));
+		PoiWorkbook workbook = new PoiWorkbook();
+		workbook.setArooaSession(session);
+		workbook.setOutput(new ArooaObject(new FileOutputStream(
+				new File(workDir, "BeanCmprResultsTest.xlsx"))));
 		
-		DataWriter writer = book.writerFor(out);
+		DataWriter writer = book.writerFor(workbook);
 		
 		writer.write(builder.build()); 
 		
 		writer.close();
-		
 	}
 	
 }

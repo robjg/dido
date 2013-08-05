@@ -1,7 +1,5 @@
 package org.oddjob.dido.poi.layouts;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,12 +15,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.oddjob.OurDirs;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.BeanViewBean;
 import org.oddjob.arooa.standard.StandardArooaSession;
+import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.types.ImportType;
 import org.oddjob.arooa.utils.DateHelper;
 import org.oddjob.dido.DataException;
@@ -37,15 +37,14 @@ import org.oddjob.dido.poi.SheetIn;
 import org.oddjob.dido.poi.SheetOut;
 import org.oddjob.dido.poi.data.PoiSheetIn;
 import org.oddjob.dido.poi.data.PoiSheetOut;
-import org.oddjob.dido.poi.layouts.DataRows;
+import org.oddjob.dido.poi.data.PoiWorkbook;
 import org.oddjob.dido.poi.style.DefaultStyleFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
-import org.oddjob.dido.stream.InputStreamIn;
-import org.oddjob.dido.stream.OutputStreamOut;
-import org.oddjob.io.TeeType;
 
 public class QuickRowsTest extends TestCase {
 
+	File workDir;
+	
 	private static final Logger logger = Logger.getLogger(QuickRowsTest.class);
 	
 	@Override
@@ -54,6 +53,8 @@ public class QuickRowsTest extends TestCase {
 		
 		logger.info("----------------------------    " + getName() + 
 				"   -------------------------");
+
+		workDir = new OurDirs().relative("work");
 	}
 	
 	public static class Person {
@@ -166,7 +167,6 @@ public class QuickRowsTest extends TestCase {
 		assertEquals("John", result.getName());
 		assertEquals(DateHelper.parseDate("1970-03-25"), result.getDateOfBirth());
 		assertEquals(45000.0, result.getSalary());
-
 	}
 
 	public void testWriteReadWithHeadings() throws ParseException,
@@ -192,11 +192,12 @@ public class QuickRowsTest extends TestCase {
 		bindingBean.setArooaSession(session);
 		bindingBean.setType(new SimpleArooaClass(Person.class));
 
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-
-		TeeType teeType = new TeeType();
-		teeType.setOutputs(0, output);
-		teeType.setOutputs(1, new FileOutputStream(new File("BookTest.xlsx")));
+		PoiWorkbook workbook = new PoiWorkbook();
+		workbook.setArooaSession(session);
+		
+		workbook.setOutput(new ArooaObject(
+				new FileOutputStream(new File(workDir, 
+						"QuickRowsTest.xlsx"))));
 
 		ImportType importType = new ImportType();
 		importType.setArooaSession(new StandardArooaSession(
@@ -211,15 +212,17 @@ public class QuickRowsTest extends TestCase {
 		write.setBeans(beans);
 		write.setBindings("person", bindingBean);
 
-		write.setData(new OutputStreamOut(teeType.toValue()));
+		write.setData(workbook);
 
 		write.run();
 
+		// Read Side
+		////
+		
 		bindingBean.setType(new SimpleArooaClass(Person.class));
 
 		DataReadJob read = new DataReadJob();
-		read.setData(new InputStreamIn(
-				new ByteArrayInputStream(output.toByteArray())));
+		read.setData(workbook);
 		read.setPlan(layout);
 		read.setBindings("person", bindingBean);
 		read.setBeans(new ArrayList<Object>());
@@ -247,5 +250,4 @@ public class QuickRowsTest extends TestCase {
 
 		assertEquals(3, results.length);
 	}
-
 }

@@ -6,6 +6,12 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Workbook;
 
+/**
+ * Create a {@link StyleProvider} from {@link StyleBean}s.
+ * 
+ * @author rob
+ *
+ */
 public class BeanStyleFactory implements StyleProviderFactory {
 	
 	private final Map<String, StyleBean> styles;

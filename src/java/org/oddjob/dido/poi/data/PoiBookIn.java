@@ -9,7 +9,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
-import org.oddjob.dido.UnsupportedeDataInException;
+import org.oddjob.dido.UnsupportedDataInException;
 import org.oddjob.dido.poi.BookIn;
 import org.oddjob.dido.poi.SheetIn;
 
@@ -48,6 +48,6 @@ public class PoiBookIn implements BookIn {
 			return type.cast(new PoiSheetIn(nextSheet()));
 		}
 		
-		throw new UnsupportedeDataInException(this.getClass(), type);
+		throw new UnsupportedDataInException(this.getClass(), type);
 	}
 }

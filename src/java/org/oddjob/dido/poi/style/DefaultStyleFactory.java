@@ -3,7 +3,6 @@ package org.oddjob.dido.poi.style;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
 

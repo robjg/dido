@@ -6,9 +6,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.oddjob.arooa.ArooaBeanDescriptor;
 import org.oddjob.arooa.ArooaDescriptor;
 import org.oddjob.arooa.ConfiguredHow;
@@ -21,46 +18,47 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.bio.DirectBinding;
-import org.oddjob.dido.poi.SheetIn;
-import org.oddjob.dido.poi.SheetOut;
-import org.oddjob.dido.poi.data.PoiSheetIn;
-import org.oddjob.dido.poi.data.PoiSheetOut;
-import org.oddjob.dido.poi.layouts.FormulaCell;
-import org.oddjob.dido.poi.layouts.NumericFormulaCell;
+import org.oddjob.dido.poi.data.PoiWorkbook;
 
 public class NumericFormulaCellTest extends TestCase {
 
 	public void testReadWrite() throws DataException {
 		
-		Workbook workbook = new HSSFWorkbook();
+		PoiWorkbook workbook = new PoiWorkbook();
 		
-		Sheet sheet = workbook.createSheet();
+		NumericFormulaCell test = new NumericFormulaCell();
+		test.setArooaSession(new StandardArooaSession());
+		test.setFormula("2 + 2");
+				
+		DataRows rows = new DataRows();
+		rows.setOf(0, test);
 		
-		NumericFormulaCell test1 = new NumericFormulaCell();
-		test1.setArooaSession(new StandardArooaSession());
-		test1.setFormula("2 + 2");
+		DataBook book = new DataBook();		
+		book.setOf(0, rows);
 		
-		SheetOut out = new PoiSheetOut(sheet);
-		out.nextRow();
-
-		DataWriter writer = test1.writerFor(out);
+		test.bind(new DirectBinding());
+		
+		DataWriter writer = book.writerFor(workbook);
 		
 		writer.write(new Object());
 		
-		assertEquals(0, test1.getIndex());
+		assertEquals(1, test.getIndex());
 		
-		NumericFormulaCell test2 = new NumericFormulaCell();
-		test2.setArooaSession(new StandardArooaSession());
-		test2.bind(new DirectBinding());
+		writer.close();
 		
-		SheetIn in = new PoiSheetIn(sheet);
-		assertTrue(in.nextRow());
+		// read side.
 		
-		DataReader reader = test2.readerFor(in);
+		book.reset();
+		
+		DataReader reader = book.readerFor(workbook);
 		
 		Object result = reader.read();
 		
 		assertEquals(new Double(4), result);
+		
+		assertEquals(null, reader.read());
+		
+		reader.close();
 	}
 	
 	/**

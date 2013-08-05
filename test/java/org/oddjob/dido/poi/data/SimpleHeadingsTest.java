@@ -24,13 +24,13 @@ public class SimpleHeadingsTest extends TestCase {
 		
 		SimpleHeadings test = new SimpleHeadings(row, 0);
 		
-		assertEquals(2, test.position("City"));
-		assertEquals(1, test.position("Age"));
-		assertEquals(0, test.position("Name"));
-		assertEquals(-1, test.position("Fruit"));
+		assertEquals(3, test.position("City"));
+		assertEquals(2, test.position("Age"));
+		assertEquals(1, test.position("Name"));
+		assertEquals(0, test.position("Fruit"));
 	}
 	
-	public void testMissingColumns() {
+	public void testOffset() {
 		
 		Workbook workbook = new HSSFWorkbook();
 		
@@ -42,11 +42,11 @@ public class SimpleHeadingsTest extends TestCase {
 		row.createCell(4).setCellValue("Age");
 		row.createCell(5).setCellValue("City");
 		
-		SimpleHeadings test = new SimpleHeadings(row, 0);
+		SimpleHeadings test = new SimpleHeadings(row, 3);
 		
-		assertEquals(-1, test.position("City"));
-		assertEquals(-1, test.position("Age"));
-		assertEquals(-1, test.position("Name"));
-		assertEquals(-1, test.position("Fruit"));
+		assertEquals(3, test.position("City"));
+		assertEquals(2, test.position("Age"));
+		assertEquals(1, test.position("Name"));
+		assertEquals(0, test.position("Fruit"));
 	}
 }

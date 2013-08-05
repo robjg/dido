@@ -1,23 +1,21 @@
 package org.oddjob.dido.poi;
 
+import org.apache.poi.ss.usermodel.Sheet;
 import org.oddjob.dido.DataIn;
 
-public interface SheetIn extends DataIn, SheetData {
+/**
+ * Provide a way of reading a sheet.
+ * 
+ * @author rob
+ *
+ */
+public interface SheetIn extends DataIn {
 
 	/**
-	 * Read a header row.
+	 * Get the sheet this represents.
 	 * 
-	 * @return True if there is a header row , false if there
-	 * isn't.
+	 * @return A sheet. Never null.
 	 */
-	public boolean headerRow();
-	
-	/**
-	 * Advance the current row. 
-	 * 
-	 * @return True if there is another row , false if there
-	 * isn't.
-	 */
-	public boolean nextRow();
-	
+	public Sheet getTheSheet();
+
 }

@@ -32,6 +32,12 @@ public class PoiBookOut implements BookOut {
 		this(output, null, new DefaultStyleFactory());
 	}
 	
+	@Override
+	public void addStyleFactory(StyleProviderFactory styleProviderFactory) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public PoiBookOut(OutputStream output, SpreadsheetVersion version,
 			StyleProviderFactory styleProviderFactory) {
 		this.output = output;

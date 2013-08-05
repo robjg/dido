@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
@@ -17,8 +16,12 @@ import org.oddjob.dido.layout.NullReader;
 import org.oddjob.dido.morph.MorphDefinition;
 import org.oddjob.dido.morph.MorphProvider;
 import org.oddjob.dido.morph.Morphable;
+import org.oddjob.dido.poi.RowsIn;
+import org.oddjob.dido.poi.RowsOut;
 import org.oddjob.dido.poi.SheetIn;
 import org.oddjob.dido.poi.SheetOut;
+import org.oddjob.dido.poi.data.PoiRowsIn;
+import org.oddjob.dido.poi.data.PoiRowsOut;
 
 public class DataRows extends LayoutNode 
 implements Morphable, MorphProvider {
@@ -53,8 +56,6 @@ implements Morphable, MorphProvider {
 	private boolean autoWidth;
 	
 	private boolean autoFilter;
-	
-	private boolean initialised;	
 	
 	public void setOf(int index, Layout child) {
 		addOrRemoveChild(index, child);
@@ -105,8 +106,6 @@ implements Morphable, MorphProvider {
 			setOf(i++, cell);
 		}
 		
-		initialised = true;
-		
 		return new Runnable() {
 			
 			@Override
@@ -124,12 +123,12 @@ implements Morphable, MorphProvider {
 	
 	class MainReader implements DataReader {
 	
-		private final SheetIn din; 
+		private final RowsIn rowsIn; 
 		
 		private DataReader nextReader;
 		
-		public MainReader(SheetIn din) {
-			this.din = din;
+		public MainReader(RowsIn rowsIn) {
+			this.rowsIn = rowsIn;
 		}
 		
 		@Override
@@ -140,21 +139,21 @@ implements Morphable, MorphProvider {
 				
 				if (value != null) {
 					
-					lastRow = din.getCurrentRow();
-					lastColumn = din.getLastColumn();
+					lastRow = rowsIn.getLastRow();
+					lastColumn = rowsIn.getLastColumn();
 					
 					return value;
 				}
 			}
 			
-			if (!din.nextRow()) {
+			if (!rowsIn.nextRow()) {
 				return null;
 			}
 
 			logger.debug("[" + DataRows.this + "] reading row " + 
-						din.getCurrentRow());
+						rowsIn.getLastRow());
 
-			nextReader = nextReaderFor(din);
+			nextReader = nextReaderFor(rowsIn);
 			
 			return read();
 		}
@@ -175,39 +174,34 @@ implements Morphable, MorphProvider {
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 		
-		SheetIn din = dataIn.provideDataIn(SheetIn.class);
+		SheetIn sheetIn = dataIn.provideDataIn(SheetIn.class);
 		
-		if (!initialised) {
+		RowsIn rowsIn = new PoiRowsIn(sheetIn, firstRow, firstColumn);
+		
+		if (withHeadings) {
 			
-			din.startAt(firstRow, firstColumn);
-			
-			if (withHeadings) {
-				
-				if (din.headerRow()) {
-					logger.debug("[" + this + "] Read headings.");
-				}
-				else {
-					return new NullReader();
-				}
+			if (rowsIn.headerRow()) {
+				logger.debug("[" + this + "] Read headings.");
 			}
 			else {
-				logger.debug("[" + this + "] No headings.");
+				return new NullReader();
 			}
-			
-			initialised = true;
+		}
+		else {
+			logger.debug("[" + this + "] No headings.");
 		}
 		
-		return new MainReader(din);
+		return new MainReader(rowsIn);
 	}
 
 	class MainWriter implements DataWriter {
 		
-		private final SheetOut sheetOut;
+		private final RowsOut rowsOut;
 		
 		private DataWriter nextWriter;
 		
-		public MainWriter(SheetOut dout) {
-			this.sheetOut = dout;
+		public MainWriter(RowsOut dout) {
+			this.rowsOut = dout;
 		}
 		
 		@Override
@@ -215,18 +209,18 @@ implements Morphable, MorphProvider {
 			
 			if (nextWriter == null) {
 
-				sheetOut.nextRow();
+				rowsOut.nextRow();
 				
-				nextWriter = nextWriterFor(sheetOut);
+				nextWriter = nextWriterFor(rowsOut);
 			}
 			
 			logger.trace("[" + DataRows.this + "] writing row " + 
-					sheetOut.getCurrentRow());
+					rowsOut.getLastRow());
 			
 			boolean keep = nextWriter.write(object);
 			
-			lastRow = sheetOut.getCurrentRow();
-			lastColumn = sheetOut.getLastColumn();
+			lastRow = rowsOut.getLastRow();
+			lastColumn = rowsOut.getLastColumn();
 
 			if (!keep) {
 				
@@ -247,16 +241,11 @@ implements Morphable, MorphProvider {
 			}
 				
 			if (autoFilter) {
-				sheetOut.getTheSheet().setAutoFilter(
-						new CellRangeAddress(
-								firstRow, lastRow,
-								firstColumn, lastColumn));
+				rowsOut.autoFilter();
 			}
 			
 			if (autoWidth) {
-				for (int i = 0; i <= sheetOut.getLastColumn(); ++i) {
-					sheetOut.getTheSheet().autoSizeColumn(i);
-				}
+				rowsOut.autoWidth();
 			}
 			
 			logger.debug("[" + DataRows.this +  
@@ -271,29 +260,25 @@ implements Morphable, MorphProvider {
 		SheetOut sheetOut = dataOut.provideDataOut(SheetOut.class);
 		
 		logger.debug("Creating writer for [" + sheetOut + "]");
+
+		PoiRowsOut rowsOut = new PoiRowsOut(sheetOut, firstRow, firstColumn);
 		
-		if (!initialised) {
-			
-			sheetOut.startAt(firstRow, firstColumn);
-			
-			if (withHeadings) {
-				sheetOut.headerRow(headingsStyle);
-			}
+		if (withHeadings) {
+			rowsOut.headerRow(headingsStyle);
 			
 			logger.debug("[" + this + "] initialsed at [" + 
 					firstRow + ", " + firstColumn + "]");
-			
-			initialised = true;
 		}
 		
-		return new MainWriter(sheetOut);
+		return new MainWriter(rowsOut);
 	}
 
 	@Override
 	public void reset() {
 		super.reset();
 		
-		initialised = false;
+		lastRow = 0;
+		lastColumn = 0;
 	}
 	
 	public boolean isWithHeadings() {

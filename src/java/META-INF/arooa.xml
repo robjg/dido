@@ -23,5 +23,7 @@
 		    className='org.oddjob.dido.poi.layouts.BlankCell'/>
 		<arooa:bean-def element='style'
 		    className='org.oddjob.dido.poi.style.StyleBean'/>
+        <arooa:bean-def element='workbook'
+            className='org.oddjob.dido.poi.data.PoiWorkbook'/>
 	</values>
 </arooa:descriptor>

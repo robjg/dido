@@ -8,9 +8,6 @@ import java.beans.PropertyDescriptor;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.oddjob.arooa.ArooaBeanDescriptor;
 import org.oddjob.arooa.ConfiguredHow;
 import org.oddjob.arooa.life.SimpleArooaClass;
@@ -23,11 +20,7 @@ import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.bio.DirectBinding;
-import org.oddjob.dido.poi.SheetIn;
-import org.oddjob.dido.poi.SheetOut;
-import org.oddjob.dido.poi.data.PoiSheetIn;
-import org.oddjob.dido.poi.data.PoiSheetOut;
-import org.oddjob.dido.poi.layouts.NumericCell;
+import org.oddjob.dido.poi.data.PoiWorkbook;
 
 public class NumericCellTest extends TestCase {
 	private static final Logger logger = Logger.getLogger(NumericCellTest.class);
@@ -42,35 +35,39 @@ public class NumericCellTest extends TestCase {
 	
 	public void testReadWrite() throws DataException {
 		
-		Workbook workbook = new HSSFWorkbook();
+		PoiWorkbook workbook = new PoiWorkbook();
 		
-		Sheet sheet = workbook.createSheet();
+		NumericCell test = new NumericCell();
+		test.setArooaSession(new StandardArooaSession());
+		test.bind(new DirectBinding());
+
+		DataRows rows = new DataRows();
+		rows.setOf(0, test);
 		
-		NumericCell test1 = new NumericCell();
-		test1.setArooaSession(new StandardArooaSession());
-		test1.bind(new DirectBinding());
+		DataBook book = new DataBook();
+		book.setOf(0, rows);
 		
-		SheetOut out = new PoiSheetOut(sheet);
-		out.nextRow();
-		
-		DataWriter writer = test1.writerFor(out); 
+		DataWriter writer = book.writerFor(workbook); 
 		
 		writer.write(12.3);
 		
-		assertEquals(0, test1.getIndex());
+		assertEquals(1, test.getIndex());
+
+		writer.close();
 		
-		NumericCell test2 = new NumericCell();
-		test2.setArooaSession(new StandardArooaSession());
-		test2.bind(new DirectBinding());
-
-		SheetIn in = new PoiSheetIn(sheet);
-		assertTrue(in.nextRow());
-
-		DataReader reader = test2.readerFor(in);
+		// Read side.
+		
+		rows.reset();
+		
+		DataReader reader = book.readerFor(workbook);
 
 		Object result = reader.read();
 		
 		assertEquals(new Double(12.3), result);
+		
+		assertNull(reader.read());
+		
+		reader.close();
 	}
 	
 	/**

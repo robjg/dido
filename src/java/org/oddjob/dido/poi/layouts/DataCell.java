@@ -16,6 +16,7 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.layout.LayoutValueNode;
 import org.oddjob.dido.layout.NullReader;
 import org.oddjob.dido.layout.NullWriter;
+import org.oddjob.dido.layout.VoidIn;
 import org.oddjob.dido.layout.VoidOut;
 import org.oddjob.dido.poi.TupleIn;
 import org.oddjob.dido.poi.TupleOut;
@@ -30,7 +31,7 @@ implements ArooaSessionAware {
 	
 	private String style;
 		
-	private int index = -1;
+	private int index;
 	
 	private String title;
 	
@@ -99,7 +100,7 @@ implements ArooaSessionAware {
 			
 			setReferenceFrom(cell);
 			
-			nextReader = nextReaderFor(null);
+			nextReader = nextReaderFor(new VoidIn());
 			
 			return read();
 		}
@@ -131,7 +132,7 @@ implements ArooaSessionAware {
 			initialised = true;
 		}
 
-		if (index < 0) {
+		if (index < 1) {
 			return new NullReader();
 		}
 		else {
