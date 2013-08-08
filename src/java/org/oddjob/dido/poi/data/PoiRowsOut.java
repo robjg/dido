@@ -12,7 +12,7 @@ import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.poi.RowsOut;
 import org.oddjob.dido.poi.SheetOut;
 import org.oddjob.dido.poi.TupleOut;
-import org.oddjob.dido.poi.style.DefaultStyleFactory;
+import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
 
 /**
@@ -182,7 +182,7 @@ public class PoiRowsOut implements RowsOut {
 				cell.setCellValue(heading);
 				String headingStyle = PoiRowsOut.this.headingStyle;
 				if (headingStyle == null) {
-					headingStyle = DefaultStyleFactory.HEADING_STYLE;
+					headingStyle = DefaultStyleProivderFactory.HEADING_STYLE;
 				}
 				CellStyle style = styleFor(headingStyle);
 				if (style != null) {

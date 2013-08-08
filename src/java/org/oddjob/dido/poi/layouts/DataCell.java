@@ -189,7 +189,7 @@ implements ArooaSessionAware {
 				
 				if (cellStyle == null) {
 					throw new DataException("No style available of name [" + 
-							style + "] from cell [" + toString() + "]");
+							style + "] from cell [" + DataCell.this + "]");
 				}
 				
 				cell.setCellStyle(cellStyle);

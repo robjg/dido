@@ -10,7 +10,13 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 
-public class StyleBean {
+/**
+ * A container for style attributes.
+ * 
+ * @author rob
+ *
+ */
+public class StyleBean implements StyleFactory {
 
 	private HorizontalAlignment alignment;
 	
@@ -20,9 +26,9 @@ public class StyleBean {
 	
 	private IndexedColors colour;
 	
-	private IndexedColors fillColour;
+	private IndexedColors fillForegroundColour;
 	
-	private IndexedColors backgroundColour;
+	private IndexedColors fillBackgroundColour;
 	
 	private FillPatternType fillPattern;
 	
@@ -40,6 +46,14 @@ public class StyleBean {
 	
 	private String font;
 	
+	/**
+	 * Create a style.
+	 * 
+	 * @param workbook. The workbook. Must not be null.
+	 * 
+	 * @return The style. Will not be null.
+	 */
+	@Override
 	public CellStyle createStyle(Workbook workbook) {
 		
 		CellStyle style = workbook.createCellStyle();
@@ -60,8 +74,12 @@ public class StyleBean {
 			style.setFillForegroundColor(colour.getIndex());
 		}
 		
-		if (backgroundColour != null) {
-			style.setFillBackgroundColor(backgroundColour.getIndex());
+		if (fillBackgroundColour != null) {
+			style.setFillBackgroundColor(fillBackgroundColour.getIndex());
+		}
+
+		if (fillForegroundColour != null) {
+			style.setFillForegroundColor(fillForegroundColour.getIndex());
 		}
 		
 		if (fillPattern != null) {
@@ -77,6 +95,10 @@ public class StyleBean {
 		return style;
 	}
 	
+	/**
+	 * Helper class to create fonts.
+	 * 
+	 */
 	class FontProvider {
 		
 		Workbook workbook;
@@ -160,20 +182,20 @@ public class StyleBean {
 		this.colour = colour;
 	}
 
-	public IndexedColors getFillColour() {
-		return fillColour;
+	public IndexedColors getFillForegroundColour() {
+		return fillForegroundColour;
 	}
 
-	public void setFillColour(IndexedColors fillColour) {
-		this.fillColour = fillColour;
+	public void setFillForegroundColour(IndexedColors fillColour) {
+		this.fillForegroundColour = fillColour;
 	}
 
-	public IndexedColors getBackgroundColour() {
-		return backgroundColour;
+	public IndexedColors getFillBackgroundColour() {
+		return fillBackgroundColour;
 	}
 
-	public void setBackgroundColour(IndexedColors backgroundColour) {
-		this.backgroundColour = backgroundColour;
+	public void setFillBackgroundColour(IndexedColors backgroundColour) {
+		this.fillBackgroundColour = backgroundColour;
 	}
 
 	public FillPatternType getFillPattern() {

@@ -1,8 +1,5 @@
 package org.oddjob.dido.poi.layouts;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
@@ -13,8 +10,8 @@ import org.oddjob.dido.Layout;
 import org.oddjob.dido.layout.LayoutNode;
 import org.oddjob.dido.poi.BookIn;
 import org.oddjob.dido.poi.BookOut;
-import org.oddjob.dido.poi.style.BeanStyleFactory;
 import org.oddjob.dido.poi.style.StyleBean;
+import org.oddjob.dido.poi.style.StyleFactoryRegistry;
 
 /**
  * The {@link Layout} representation of a Spreadsheet Book. 
@@ -27,8 +24,7 @@ extends LayoutNode {
 	
 	private static final Logger logger = Logger.getLogger(DataBook.class);
 	
-	private final Map<String, StyleBean> styles
-		 = new LinkedHashMap<String, StyleBean>();
+	private final StyleFactoryRegistry styles = new StyleFactoryRegistry();
 	
 	/**
 	 * Add or remove a child.
@@ -57,8 +53,8 @@ extends LayoutNode {
 		
 		final BookOut bookOut = dataOut.provideDataOut(BookOut.class);
 		
-		if (styles.size() > 0) {
-			bookOut.addStyleFactory(new BeanStyleFactory(styles));
+		if (styles.hasStyles()) {
+			bookOut.addStyleFactory(styles);
 		}
 		
 		final DataWriter nextWriter = nextWriterFor(bookOut);
@@ -83,16 +79,12 @@ extends LayoutNode {
 		super.reset();
 	}
 		
-	public StyleBean getStyles(String styleName) {
-		return styles.get(styleName);
-	}
-	
 	public void setStyles(String styleName, StyleBean styleBean) {
 		if (styleBean == null) {
-			styles.remove(styleName);
+			styles.removeStyle(styleName);
 		}
 		else {
-			styles.put(styleName, styleBean);
+			styles.registerStyle(styleName, styleBean);
 		}
 	}
 	

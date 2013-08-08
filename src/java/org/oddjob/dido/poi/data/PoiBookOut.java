@@ -15,7 +15,7 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.poi.BookOut;
 import org.oddjob.dido.poi.SheetOut;
-import org.oddjob.dido.poi.style.DefaultStyleFactory;
+import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
 import org.oddjob.dido.poi.style.StyleProviderFactory;
 
@@ -29,7 +29,7 @@ public class PoiBookOut implements BookOut {
 	private final StyleProvider styleProvider;
 	
 	public PoiBookOut(OutputStream output) {
-		this(output, null, new DefaultStyleFactory());
+		this(output, null, new DefaultStyleProivderFactory());
 	}
 	
 	@Override

@@ -38,7 +38,7 @@ import org.oddjob.dido.poi.SheetOut;
 import org.oddjob.dido.poi.data.PoiSheetIn;
 import org.oddjob.dido.poi.data.PoiSheetOut;
 import org.oddjob.dido.poi.data.PoiWorkbook;
-import org.oddjob.dido.poi.style.DefaultStyleFactory;
+import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
 
 public class QuickRowsTest extends TestCase {
@@ -124,7 +124,7 @@ public class QuickRowsTest extends TestCase {
 		
 		Sheet sheet = workbook.createSheet();
 	
-		StyleProvider styleProvider = new DefaultStyleFactory().providerFor(
+		StyleProvider styleProvider = new DefaultStyleProivderFactory().providerFor(
 				workbook);
 		
 		SheetOut sheetOut = new PoiSheetOut(sheet, styleProvider);

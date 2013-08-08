@@ -23,7 +23,7 @@ import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.poi.BookIn;
 import org.oddjob.dido.poi.BookOut;
 import org.oddjob.dido.poi.style.CompositeStyleProvider;
-import org.oddjob.dido.poi.style.DefaultStyleFactory;
+import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 import org.oddjob.dido.poi.style.StyleProviderFactory;
 
 public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
@@ -159,7 +159,7 @@ public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 			}
 	 		
 	 		styleProviders = new CompositeStyleProvider(
-	 				new DefaultStyleFactory().providerFor(workbook));
+	 				new DefaultStyleProivderFactory().providerFor(workbook));
 		}
 		
 		@Override

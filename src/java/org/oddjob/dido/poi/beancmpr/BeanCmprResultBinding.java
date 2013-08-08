@@ -24,7 +24,7 @@ import org.oddjob.dido.morph.MorphDefinition;
 import org.oddjob.dido.morph.MorphDefinitionBuilder;
 import org.oddjob.dido.morph.Morphable;
 import org.oddjob.dido.poi.layouts.DataCell;
-import org.oddjob.dido.poi.style.DefaultStyleFactory;
+import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 
 public class BeanCmprResultBinding extends SingleBeanBinding
 implements ArooaSessionAware {
@@ -195,10 +195,11 @@ implements ArooaSessionAware {
 			
 			if (comparison.getResult() != 0 && valueNode instanceof DataCell) {
 				((DataCell<?>) valueNode).setStyle(
-						DefaultStyleFactory.BEANCMPR_DIFF_STYLE);
+						DefaultStyleProivderFactory.BEANCMPR_DIFF_STYLE);
 			}
 			else {
-				((DataCell<?>) valueNode).setStyle(null);
+				((DataCell<?>) valueNode).setStyle(
+						DefaultStyleProivderFactory.BEANCMPR_MATCH_STYLE);
 			}
 		}
 		
