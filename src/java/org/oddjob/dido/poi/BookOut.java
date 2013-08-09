@@ -7,7 +7,7 @@ import org.oddjob.dido.poi.style.StyleProvider;
 import org.oddjob.dido.poi.style.StyleProviderFactory;
 
 /**
- * Something that can write data to spreadsheet workbook.
+ * Something that can write data to a spreadsheet workbook.
  * 
  * @author rob
  *

@@ -17,6 +17,7 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.ValueNode;
+import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.bio.Resets;
 import org.oddjob.dido.bio.SingleBeanBinding;
 import org.oddjob.dido.layout.ChildWriter;
@@ -24,8 +25,20 @@ import org.oddjob.dido.morph.MorphDefinition;
 import org.oddjob.dido.morph.MorphDefinitionBuilder;
 import org.oddjob.dido.morph.Morphable;
 import org.oddjob.dido.poi.layouts.DataCell;
+import org.oddjob.dido.poi.layouts.DataRows;
 import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 
+/**
+ * A {@link Binding} that will take a bean generated with the 
+ * {@link org.oddjob.beancmpr.results.DidoBeanResultHandler} of the
+ * {@code beancmpr} project and bind to columns in a Dido Layout.
+ * <p>
+ * The main use case for this binding is with the {@link DataRows} Layout
+ * but it can be used with other table like layouts.
+ * 
+ * @author rob
+ *
+ */
 public class BeanCmprResultBinding extends SingleBeanBinding
 implements ArooaSessionAware {
 
@@ -39,7 +52,9 @@ implements ArooaSessionAware {
 	
 	private String yPrefix = "Y";
 	
-	boolean initialised;
+	private boolean initialised;
+	
+	private boolean includeResultType;
 	
 	@Override
 	public void setArooaSession(ArooaSession session) {
@@ -111,6 +126,14 @@ implements ArooaSessionAware {
 		}
 	}
 	
+	/**
+	 * Helper to set the value of the cell using the inferred type.
+	 * 
+	 * @param valueNode The node.
+	 * @param value The value.
+	 * 
+	 * @throws DataException
+	 */
 	private <T> void doSetValue(ValueNode<T> valueNode, Object value)
 	throws DataException {
 		try {
@@ -127,12 +150,21 @@ implements ArooaSessionAware {
 		}
 	}
 	
+	/**
+	 * Does the actual setting of a value. Different stratagy for keys and
+	 * values.
+	 */
 	interface Injector {
 		
 		void injectInto(ValueNode<?> valueNode, ResultBeanWrapper bean)
 		throws DataException;
 	}
 	
+	
+	/**
+	 * Injects a Result Type column if there is one.
+	 * 
+	 */
 	class ResultInjector implements Injector {
 		
 		@Override
@@ -161,6 +193,10 @@ implements ArooaSessionAware {
 		}
 	}
 	
+	/**
+	 * Injects the key values.
+	 * 
+	 */
 	class KeyInjector implements Injector {
 		
 		final String keyName;
@@ -174,9 +210,33 @@ implements ArooaSessionAware {
 		throws DataException {
 			
 			doSetValue(valueNode, bean.getKeys().get(keyName));
+			
+			int resultType = bean.getResultType();
+			String styleName;
+			if (valueNode instanceof DataCell) {
+				switch (resultType) {
+				case 0:
+					styleName = DefaultStyleProivderFactory.BEANCMPR_KEY_MATCH_STYLE;
+					break;
+				case 1:
+				case 2:
+					styleName = DefaultStyleProivderFactory.BEANCMPR_MISSING_STYLE;
+					break;
+				case 3:
+					styleName = DefaultStyleProivderFactory.BEANCMPR_KEY_DIFF_STYLE;
+					break;
+				default:
+					throw new IllegalStateException("Unknown Result Type.");
+				}
+				((DataCell<?>) valueNode).setStyle(styleName);
+			}
 		}
 	}
 	
+	/**
+	 * Injects the comparison values. Further sublcassed between X and Y.
+	 *
+	 */
 	abstract class ComparisonInjector implements Injector {
 		
 		final String comparisonName;
@@ -192,20 +252,25 @@ implements ArooaSessionAware {
 			ComparisonBeanWrapper comparison = bean.getComparisons().get(comparisonName);
 			
 			doSetValue(valueNode, get(comparison));
-			
-			if (comparison.getResult() != 0 && valueNode instanceof DataCell) {
-				((DataCell<?>) valueNode).setStyle(
-						DefaultStyleProivderFactory.BEANCMPR_DIFF_STYLE);
-			}
-			else {
-				((DataCell<?>) valueNode).setStyle(
-						DefaultStyleProivderFactory.BEANCMPR_MATCH_STYLE);
+
+			if (valueNode instanceof DataCell) {
+				if (comparison.getResult() != 0) {
+					((DataCell<?>) valueNode).setStyle(
+							DefaultStyleProivderFactory.BEANCMPR_DIFF_STYLE);
+				}
+				else {
+					((DataCell<?>) valueNode).setStyle(
+							DefaultStyleProivderFactory.BEANCMPR_MATCH_STYLE);
+				}
 			}
 		}
 		
 		abstract Object get(ComparisonBeanWrapper comparison);
 	}
 	
+	/**
+	 * X comparison injector.
+	 */
 	class ComparisonXInjector extends ComparisonInjector {
 		
 		public ComparisonXInjector(String comparisonName) {
@@ -218,6 +283,9 @@ implements ArooaSessionAware {
 		}
 	}
 	
+	/**
+	 * Y comparison injector.
+	 */
 	class ComparisonYInjector extends ComparisonInjector {
 		
 		public ComparisonYInjector(String comparisonName) {
@@ -230,6 +298,9 @@ implements ArooaSessionAware {
 		}
 	}
 	
+	/**
+	 * Initialise the binding.
+	 */
 	class Initialiser {
 		
 		MorphDefinition morphDefinition;
@@ -240,8 +311,10 @@ implements ArooaSessionAware {
 		
 			MorphDefinitionBuilder morphBuilder = new MorphDefinitionBuilder();
 			
-			morphBuilder.add("resultType", "Result Type", String.class);
-			injectors.add(new ResultInjector());
+			if (includeResultType) {
+				morphBuilder.add("resultType", "Result Type", String.class);
+				injectors.add(new ResultInjector());
+			}
 			
 			Map<String, Object> keys = result.getKeys();
 			
@@ -274,10 +347,22 @@ implements ArooaSessionAware {
 		}
 	}	
 	
+	/**
+	 * Helper method to get the Poi type.
+	 * 
+	 * @param key
+	 * @return
+	 */
 	static Class<?> typeFor(Object key) {
 		return typeForClass(key.getClass());
 	}
 	
+	/**
+	 * Helper method to get the Poi type.
+	 * 
+	 * @param type
+	 * @return
+	 */
 	static Class<?> typeForClass(Class<?> type) {
 				
 		if (type.isPrimitive()) {
@@ -327,5 +412,13 @@ implements ArooaSessionAware {
 
 	public void setyPrefix(String yPrefix) {
 		this.yPrefix = yPrefix;
+	}
+
+	public boolean isIncludeResultType() {
+		return includeResultType;
+	}
+
+	public void setIncludeResultType(boolean includeResultType) {
+		this.includeResultType = includeResultType;
 	}
 }

@@ -14,8 +14,10 @@ public class DefaultStyleProivderFactory implements StyleProviderFactory {
 	
 	public static String BEANCMPR_MATCH_STYLE = "beancmpr-match";
 	
-	public static String BEANCMPR_KEY_STYLE = "beancmpr-key";
+	public static String BEANCMPR_KEY_MATCH_STYLE = "beancmpr-key-of-match";
 	
+	public static String BEANCMPR_KEY_DIFF_STYLE = "beancmpr-key-of-difference";
+
 	public static String BEANCMPR_MISSING_STYLE = "beancmpr-missing";
 	
 	private final StyleFactoryRegistry factory = new StyleFactoryRegistry();
@@ -36,9 +38,13 @@ public class DefaultStyleProivderFactory implements StyleProviderFactory {
 		beanCmprMatch.setFillForegroundColour(IndexedColors.BRIGHT_GREEN);
 		beanCmprMatch.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-		StyleBean beanCmprKey = new StyleBean();
-		beanCmprKey.setFillForegroundColour(IndexedColors.YELLOW);
-		beanCmprKey.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		StyleBean beanCmprKeyMatch = new StyleBean();
+		beanCmprKeyMatch.setFillForegroundColour(IndexedColors.YELLOW);
+		beanCmprKeyMatch.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		
+		StyleBean beanCmprKeyDiff = new StyleBean();
+		beanCmprKeyDiff.setFillForegroundColour(IndexedColors.PINK);
+		beanCmprKeyDiff.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		
 		StyleBean beanCmprMissing= new StyleBean();
 		beanCmprMissing.setFillForegroundColour(IndexedColors.TURQUOISE);
@@ -48,7 +54,8 @@ public class DefaultStyleProivderFactory implements StyleProviderFactory {
 		factory.registerStyle(DATE_STYLE, date);
 		factory.registerStyle(BEANCMPR_DIFF_STYLE, beanCmprDiff);
 		factory.registerStyle(BEANCMPR_MATCH_STYLE, beanCmprMatch);
-		factory.registerStyle(BEANCMPR_KEY_STYLE, beanCmprKey);
+		factory.registerStyle(BEANCMPR_KEY_MATCH_STYLE, beanCmprKeyMatch);
+		factory.registerStyle(BEANCMPR_KEY_DIFF_STYLE, beanCmprKeyDiff);
 		factory.registerStyle(BEANCMPR_MISSING_STYLE, beanCmprMissing);
 	}
 	
