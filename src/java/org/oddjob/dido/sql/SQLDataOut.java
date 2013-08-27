@@ -3,9 +3,9 @@ package org.oddjob.dido.sql;
 import java.sql.SQLException;
 
 import org.oddjob.dido.DataOut;
-import org.oddjob.dido.column.ColumnarDataOut;
+import org.oddjob.dido.tabular.TabularDataOut;
 
-public interface SQLDataOut extends DataOut, ColumnarDataOut {
+public interface SQLDataOut extends DataOut, TabularDataOut {
 
 	public void resetWrittenTo();
 	

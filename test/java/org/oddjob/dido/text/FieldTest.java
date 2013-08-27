@@ -55,7 +55,7 @@ public class FieldTest extends TestCase {
 		
 		writer.write("apples");
 		
-		assertEquals(0, test.getColumnIndex());
+		assertEquals(1, test.getColumnIndex());
 		
 		assertEquals("apples", dataOut.values()[0]);		
 		

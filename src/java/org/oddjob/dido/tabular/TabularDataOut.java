@@ -1,8 +1,9 @@
-package org.oddjob.dido.column;
+package org.oddjob.dido.tabular;
 
-import org.oddjob.dido.DataIn;
+import org.oddjob.dido.field.Field;
+import org.oddjob.dido.field.FieldDataOut;
 
-public interface ColumnarDataIn extends DataIn {
+public interface TabularDataOut extends FieldDataOut {
 
 	/**
 	 * Get the column index to use. This will either be base on the 
@@ -16,6 +17,5 @@ public interface ColumnarDataIn extends DataIn {
 	 * 
 	 * @return The column assigned.
 	 */
-	public ColumnIn<?> columnInFor(Column column);
-
+	public ColumnOut<?> outFor(Field column);
 }

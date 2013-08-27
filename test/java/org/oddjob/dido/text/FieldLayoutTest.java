@@ -38,7 +38,7 @@ public class FieldLayoutTest extends TestCase {
 		
 		FieldLayout test = new FieldLayout();
 		test.setName("fruit");
-		test.setColumnLabel("Fruit");
+		test.setLabel("Fruit");
 		
 		DirectBinding binding = new DirectBinding();
 		
@@ -85,7 +85,7 @@ public class FieldLayoutTest extends TestCase {
 		fields.setValues(new String[] { "Foo", "Apple" });
 		
 		FieldLayout test = new FieldLayout();
-		test.setColumnLabel("Fruit");
+		test.setLabel("Fruit");
 		
 		DirectBinding binding = new DirectBinding();
 		

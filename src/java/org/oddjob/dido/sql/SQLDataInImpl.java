@@ -5,31 +5,33 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.oddjob.arooa.ArooaDescriptor;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.UnsupportedDataInException;
-import org.oddjob.dido.column.Column;
-import org.oddjob.dido.column.ColumnIn;
+import org.oddjob.dido.field.Field;
 import org.oddjob.dido.morph.MorphDefinition;
 import org.oddjob.dido.morph.MorphDefinitionBuilder;
+import org.oddjob.dido.tabular.ColumnHelper;
+import org.oddjob.dido.tabular.ColumnIn;
 
+/**
+ * A simple implementation of {@link SQLDataIn}.
+ * 
+ * @author rob
+ *
+ */
 public class SQLDataInImpl implements SQLDataIn {
 
 	private final MorphDefinition morphDefinition;
 	
-	private final Map<String, Integer> columnPositions = 
-			new HashMap<String, Integer>();
+	private final ColumnHelper columnHelper;
 	
 	private final ResultSet resultSet;
 	
 	private final Class<?>[] columnTypes; 
-	
-	private int lastColumnIndex;
 	
 	public SQLDataInImpl(Connection connection, String sql, 
 			ArooaSession session, int fetchSize) throws SQLException {
@@ -48,6 +50,7 @@ public class SQLDataInImpl implements SQLDataIn {
 		int columnCount = metaData.getColumnCount();
 		
 		columnTypes = new Class<?>[columnCount];
+		String[] columnNames = new String[columnCount];
 		
 		for (int column = 1; column <= columnCount; ++column) {
 			
@@ -58,12 +61,14 @@ public class SQLDataInImpl implements SQLDataIn {
 			
 			String columnName = metaData.getColumnName(column);
 			
-			columnPositions.put(columnName, new Integer(column));
+			columnNames[column -1 ] = columnName;
+			columnTypes[column - 1] = columnClass;
 			
 			morphBuilder.add(columnName, columnClass);
 		}
 		
 		morphDefinition = morphBuilder.build();
+		columnHelper = new ColumnHelper(columnNames);
 	}
 
 	class SQLColumnIn<T> implements ColumnIn<T> {
@@ -80,13 +85,13 @@ public class SQLDataInImpl implements SQLDataIn {
 		}
 		
 		@Override
-		public Class<?> getColumnType() {
+		public Class<?> getType() {
 			return columnTypes[columnIndex - 1];
 		}
 		
 		@SuppressWarnings("unchecked")
 		@Override
-		public T getColumnData() throws DataException {
+		public T getData() throws DataException {
 			try {
 				return (T) resultSet.getObject(columnIndex);
 			} catch (SQLException e) {
@@ -102,16 +107,9 @@ public class SQLDataInImpl implements SQLDataIn {
 	}
 
 	@Override
-	public ColumnIn<?> columnInFor(Column column) {
+	public ColumnIn<?> inFor(Field column) {
 		
-		if (column.getColumnIndex() > 0) {
-			lastColumnIndex = column.getColumnIndex();
-		}
-		else {
-			++lastColumnIndex;
-		}
-		
-		return new SQLColumnIn<Object>(lastColumnIndex);
+		return new SQLColumnIn<Object>(columnHelper.columnIndexFor(column));
 	}
 	
 	@Override

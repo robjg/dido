@@ -79,15 +79,15 @@ public class DelimitedTest extends TestCase {
 		
 		FieldLayout a = new FieldLayout();
 		a.setName("fieldA");
-		a.setColumnLabel("fieldA");
+		a.setLabel("fieldA");
 		
 		FieldLayout b = new FieldLayout();
 		b.setName("fieldB");
-		b.setColumnLabel("fieldB");
+		b.setLabel("fieldB");
 		
 		FieldLayout c = new FieldLayout();
 		c.setName("fieldC");
-		c.setColumnLabel("fieldC");
+		c.setLabel("fieldC");
 				
 		delimited.setOf(0, c);
 		delimited.setOf(1, b);
@@ -161,13 +161,13 @@ public class DelimitedTest extends TestCase {
 		delimited.setWithHeadings(true);
 
 		FieldLayout a = new FieldLayout();
-		a.setColumnLabel("fieldA");
+		a.setLabel("fieldA");
 		
 		FieldLayout b = new FieldLayout();
-		b.setColumnLabel("fieldB");
+		b.setLabel("fieldB");
 		
 		FieldLayout c = new FieldLayout();
-		c.setColumnLabel("fieldC");
+		c.setLabel("fieldC");
 		
 		delimited.setOf(0, a);
 		delimited.setOf(1, b);

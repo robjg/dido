@@ -74,7 +74,7 @@ public class MorphDefinitionFactory {
 			}
 			
 			@Override
-			public String titleFor(String name) {
+			public String labelFor(String name) {
 				return titles.get(name);
 			}
 		};
@@ -129,7 +129,7 @@ public class MorphDefinitionFactory {
 			}
 			
 			@Override
-			public String titleFor(String name) {
+			public String labelFor(String name) {
 				return titles.get(name);
 			}
 		};

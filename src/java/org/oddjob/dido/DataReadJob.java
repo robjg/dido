@@ -38,11 +38,11 @@ public class DataReadJob implements Runnable {
 	
     /**
      * @oddjob.property
-     * @oddjob.description The plan for reading the data. This is the
-     * root node of a structure of data nodes.
+     * @oddjob.description The layout of the data. This is the
+     * root node of a structure of layout nodes.
      * @oddjob.required Yes.
      */	
-	private Layout plan;
+	private Layout layout;
 	
     /**
      * @oddjob.property
@@ -61,13 +61,13 @@ public class DataReadJob implements Runnable {
     /**
      * @oddjob.property
      * @oddjob.description Bindings between beans and data in.
-     * @oddjob.required Yes.
+     * @oddjob.required No, but pointless if missing.
      */	
 	private Map<String, Binding> bindings = new HashMap<String, Binding>();
 	
 	@Override
 	public void run() {
-		if (plan == null) {
+		if (layout == null) {
 			throw new NullPointerException("No Layout provided.");
 		}
 		if (data == null) {
@@ -77,9 +77,9 @@ public class DataReadJob implements Runnable {
 			logger.info("No destination for beans!");
 		}
 		
-		logger.info("Starting to read data using [" + plan + "]");
+		logger.info("Starting to read data using [" + layout + "]");
 		
-		Layout root = plan;
+		Layout root = layout;
 		root.reset();
 		
 		BindingHelper bindingHelper = new BindingHelper(root);
@@ -131,13 +131,13 @@ public class DataReadJob implements Runnable {
 		this.beans = beans;
 	}
 
-	public Layout getPlan() {
-		return plan;
+	public Layout getLayout() {
+		return layout;
 	}
 
 
-	public void setPlan(Layout definition) {
-		this.plan = definition;
+	public void setLayout(Layout definition) {
+		this.layout = definition;
 	}
 
 

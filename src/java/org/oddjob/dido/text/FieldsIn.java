@@ -1,12 +1,12 @@
 package org.oddjob.dido.text;
 
-import org.oddjob.dido.column.Column;
-import org.oddjob.dido.column.ColumnIn;
-import org.oddjob.dido.column.ColumnarDataIn;
+import org.oddjob.dido.field.Field;
+import org.oddjob.dido.tabular.ColumnIn;
+import org.oddjob.dido.tabular.TabularDataIn;
 
-public interface FieldsIn extends ColumnarDataIn {
+public interface FieldsIn extends TabularDataIn {
 
 	@Override
-	public ColumnIn<String> columnInFor(Column column);
+	public ColumnIn<String> inFor(Field column);
 	
 }

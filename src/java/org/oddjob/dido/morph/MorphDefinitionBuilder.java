@@ -32,7 +32,7 @@ public class MorphDefinitionBuilder {
 			}
 			
 			@Override
-			public String titleFor(String name) {
+			public String labelFor(String name) {
 				return nameHeadings.get(name);
 			}
 			

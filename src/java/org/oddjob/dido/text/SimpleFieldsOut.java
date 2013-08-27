@@ -1,34 +1,29 @@
 package org.oddjob.dido.text;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedDataOutException;
-import org.oddjob.dido.column.Column;
-import org.oddjob.dido.column.ColumnOut;
-import org.oddjob.dido.column.ColumnarDataOut;
+import org.oddjob.dido.field.Field;
+import org.oddjob.dido.tabular.ColumnHelper;
+import org.oddjob.dido.tabular.ColumnOut;
+import org.oddjob.dido.tabular.TabularDataOut;
 
 /**
- * Provide {@link ColumnarDataOut} for {@link DelimitedLayout}.
+ * Provide {@link TabularDataOut} for {@link DelimitedLayout}.
  * 
  * @author rob
  *
  */
 public class SimpleFieldsOut implements FieldsOut {
 
-	private final Map<String, Integer> indexForHeading;
-	
-	private final Map<Integer, String> headings = 
-			new HashMap<Integer, String>();
+	private final ColumnHelper columnHelper;
 	
 	private final Map<Integer, String> values = 
 			new TreeMap<Integer, String>();
 	
-	private int lastColumn;
-			
 	private boolean writtenTo;
 	
 	/**
@@ -44,22 +39,7 @@ public class SimpleFieldsOut implements FieldsOut {
 	 * @param headings May be null
 	 */
 	public SimpleFieldsOut(String[] headings) {
-		if (headings == null) {
-			
-			indexForHeading = null;
-		}
-		else {
-			
-			indexForHeading = new HashMap<String, Integer>();
-					
-			for (int i = 0; i < headings.length; ++i) {
-				
-				Integer columnIndex = new Integer(i + 1);
-				String heading = headings[i];
-				this.indexForHeading.put(heading, columnIndex);
-				this.headings.put(columnIndex, heading);
-			}
-		}
+		this.columnHelper = new ColumnHelper(headings);
 	}
 
 	class TextColumnOut implements ColumnOut<String> {
@@ -76,12 +56,12 @@ public class SimpleFieldsOut implements FieldsOut {
 		}
 		
 		@Override
-		public Class<String> getColumnType() {
+		public Class<String> getType() {
 			return String.class;
 		}
 		
 		@Override
-		public void setColumnData(String data) throws DataException {
+		public void setData(String data) throws DataException {
 			if (columnIndex > 0) {
 				if (data == null) {
 					values.remove(columnIndex);
@@ -96,68 +76,27 @@ public class SimpleFieldsOut implements FieldsOut {
 	
 	
 	@Override
-	public ColumnOut<String> columnOutFor(Column column) {
+	public ColumnOut<String> outFor(Field column) {
 				
-		String heading = column.getColumnLabel();
-		int columnIndex = column.getColumnIndex();
-		int useColumnIndex = 0;
-		
-		if (indexForHeading != null && heading != null) {
-			
-			Integer headingColumn = indexForHeading.get(heading);
-			if (headingColumn == null) {
-				useColumnIndex = columnIndex;
-			}
-			else {
-				useColumnIndex = headingColumn.intValue();
-			}
-		}
-		else {
-			useColumnIndex = columnIndex;
-		
-			if (useColumnIndex == 0) {
-				useColumnIndex = ++lastColumn;
-			}
-			else {
-				lastColumn = useColumnIndex;
-			}
-		}
-
-		if (heading != null && useColumnIndex > 0) {
-			headings.put(useColumnIndex, heading);
-		}
-		
-		return new TextColumnOut(lastColumn);
+		return new TextColumnOut(columnHelper.columnIndexFor(column));
 	}
 	
-	private static String[] toArray(Map<Integer, String> things) {
-		if (things == null) {
-			return null;
-		}
-		
-		int maxColumn = 0;
-		for (Integer i : things.keySet() ) {
-			if (i.intValue() > maxColumn) {
-				maxColumn = i.intValue();
-			}
-		}
-		
-		String[] a = new String[maxColumn ];
-		
-		for (int i = 0; i < maxColumn; ++i) {
-			String thing = things.get(i + 1);
-			a[i] = thing;
-		}
-		
-		return a;
-	}
-	
+	/**
+	 * Get the headings. 
+	 * 
+	 * @return An array, Null if there are no headings.
+	 */
 	public String[] headings() {
-		return toArray(headings);
+		return columnHelper.getHeadings();
 	}
 	
+	/**
+	 * Get the values. 
+	 * 
+	 * @return An array, Never null.
+	 */
 	public String[] values() {
-		return toArray(values);
+		return ColumnHelper.toArray(values);
 	}
 	
 	public void clear() {
@@ -170,6 +109,9 @@ public class SimpleFieldsOut implements FieldsOut {
 		return writtenTo;
 	}
 	
+	/**
+	 * Reset the written to flag.
+	 */
 	public void resetWrittenTo() {
 		this.writtenTo = false;
 	}

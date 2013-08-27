@@ -1,4 +1,4 @@
-package org.oddjob.dido.column;
+package org.oddjob.dido.tabular;
 
 import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
@@ -10,6 +10,13 @@ import org.oddjob.dido.layout.LayoutValueNode;
 import org.oddjob.dido.layout.VoidIn;
 import org.oddjob.dido.layout.VoidOut;
 
+/**
+ * @oddjob.description A general purpose column.
+ * 
+ * @author rob
+ *
+ * @param <T>
+ */
 public class ColumnLayout<T> extends LayoutValueNode<T>
 implements Column {
 	
@@ -17,7 +24,7 @@ implements Column {
 
 	private Class<?> type;
 	
-	private String columnLabel;
+	private String label;
 	
 	private int columnIndex;
 	
@@ -42,7 +49,7 @@ implements Column {
 		@Override
 		public Object read() throws DataException {
 		
-			T value = columnIn.getColumnData();
+			T value = columnIn.getData();
 			
 			value(value);
 			
@@ -62,16 +69,16 @@ implements Column {
 		
 		if (columnIn == null) {
 			
-			ColumnarDataIn columnarDataIn = dataIn.provideDataIn(
-					ColumnarDataIn.class);
+			TabularDataIn columnarDataIn = dataIn.provideDataIn(
+					TabularDataIn.class);
 
 			this.columnIn = (ColumnIn<T>) 
-					columnarDataIn.columnInFor(this);
+					columnarDataIn.inFor(this);
 			
 			logger.debug("[" + this + "] initialised on column " + 
 					columnIn.getColumnIndex());
 			
-			type = (Class<T>) columnIn.getColumnType();
+			type = (Class<T>) columnIn.getType();
 		}
 		
 		return new ColumnReader();
@@ -100,7 +107,7 @@ implements Column {
 				return write(object);
 			}
 
-			columnOut.setColumnData(value());
+			columnOut.setData(value());
 			
 			return false;
 		}
@@ -118,15 +125,15 @@ implements Column {
 		
 		if (columnOut == null) {
 			
-			ColumnarDataOut columnarDataOut = 
-					dataOut.provideDataOut(ColumnarDataOut.class);
+			TabularDataOut columnarDataOut = 
+					dataOut.provideDataOut(TabularDataOut.class);
 			
-			columnOut = (ColumnOut<T>) columnarDataOut.columnOutFor(this);
+			columnOut = (ColumnOut<T>) columnarDataOut.outFor(this);
 			
 			logger.debug("[" + this + "] initialised on column " + 
 					columnOut.getColumnIndex());
 			
-			type = columnOut.getColumnType();
+			type = columnOut.getType();
 		}
 		
 		return new ColumnWriter();
@@ -140,12 +147,12 @@ implements Column {
 		columnOut = null;
 	}
 
-	public String getColumnLabel() {
-		return columnLabel;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setColumnLabel(String columnName) {
-		this.columnLabel = columnName;
+	public void setLabel(String columnName) {
+		this.label = columnName;
 	}
 
 	public int getColumnIndex() {

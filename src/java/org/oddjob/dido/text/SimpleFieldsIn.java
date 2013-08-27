@@ -1,34 +1,27 @@
 package org.oddjob.dido.text;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.UnsupportedDataInException;
-import org.oddjob.dido.column.Column;
-import org.oddjob.dido.column.ColumnIn;
+import org.oddjob.dido.field.Field;
+import org.oddjob.dido.tabular.ColumnHelper;
+import org.oddjob.dido.tabular.ColumnIn;
 
+/**
+ * A simple implementation of {@link FieldsIn}.
+ * 
+ * @author rob
+ *
+ */
 public class SimpleFieldsIn
 implements FieldsIn {
 
-	private Map<String, Integer> headerToColumn;
+	private final ColumnHelper columnHelper = new ColumnHelper();
 	
 	private String[] values;
 	
-	private int lastColumn = 0;
-	
 	public void setHeadings(String[] headings) {
-
-		if (headings == null) {
-			throw new NullPointerException("Null Headings.");
-		}
-		
-		headerToColumn = new HashMap<String, Integer>();
-
-		for (int i = 0; i < headings.length; ++i) {
-			headerToColumn.put(headings[i], i + 1);
-		}		
+		columnHelper.setHeadings(headings);
 	}
 	
 	class TextColumnIn implements ColumnIn<String> {
@@ -45,12 +38,12 @@ implements FieldsIn {
 		}
 		
 		@Override
-		public Class<String> getColumnType() {
+		public Class<String> getType() {
 			return String.class;
 		}
 		
 		@Override
-		public String getColumnData() throws DataException {
+		public String getData() throws DataException {
 			if (columnIndex == 0 || columnIndex > values.length) {
 				return null;
 			}
@@ -63,35 +56,9 @@ implements FieldsIn {
 	}
 
 	@Override
-	public ColumnIn<String> columnInFor(Column column) {
+	public ColumnIn<String> inFor(Field column) {
 
-		String heading = column.getColumnLabel();		
-		int columnIndex = column.getColumnIndex();
-		int useColumnIndex = 0;
-		
-		if (headerToColumn != null && heading != null) {
-			
-			Integer headerColumn = headerToColumn.get(heading);
-			
-			if (headerColumn == null) {
-				useColumnIndex = columnIndex;
-			}
-			else {
-				useColumnIndex = headerColumn.intValue();
-			}
-		}
-		else {
-			useColumnIndex = columnIndex;
-			
-			if (useColumnIndex == 0) {
-				useColumnIndex = ++lastColumn;
-			}
-			else {
-				lastColumn = useColumnIndex;
-			}
-		}
-		
-		return new TextColumnIn(useColumnIndex);
+		return new TextColumnIn(columnHelper.columnIndexFor(column));
 	}
 		
 	@Override

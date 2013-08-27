@@ -26,11 +26,11 @@ public class DataWriteJob implements Runnable {
 	
     /**
      * @oddjob.property
-     * @oddjob.description Guide for writing the data. This is the
-     * root node of a structure of data nodes.
+     * @oddjob.description The layout of the data. This is the
+     * root node of a hierarchy of layout nodes.
      * @oddjob.required Yes.
      */	
-	private Layout plan;
+	private Layout layout;
 	
     /**
      * @oddjob.property
@@ -64,7 +64,7 @@ public class DataWriteJob implements Runnable {
 	public void run() {
 		beanCount = 0;
 		
-		if (plan == null) {
+		if (layout == null) {
 			throw new NullPointerException("No Layout provided.");
 		}
 		
@@ -72,9 +72,9 @@ public class DataWriteJob implements Runnable {
 			throw new NullPointerException("No output provided");
 		}
 
-		logger.info("Starting to write data using [" + plan + "]");
+		logger.info("Starting to write data using [" + layout + "]");
 				
-		Layout root = plan;
+		Layout root = layout;
 		root.reset();
 		
 		BindingHelper bindingHelper = new BindingHelper(root);
@@ -121,13 +121,13 @@ public class DataWriteJob implements Runnable {
 	}
 
 
-	public Layout getPlan() {
-		return plan;
+	public Layout getLayout() {
+		return layout;
 	}
 
 
-	public void setPlan(Layout definition) {
-		this.plan = definition;
+	public void setLayout(Layout definition) {
+		this.layout = definition;
 	}
 
 

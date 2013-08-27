@@ -19,7 +19,7 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.bio.BeanBindingBean;
-import org.oddjob.dido.column.ColumnLayout;
+import org.oddjob.dido.tabular.ColumnLayout;
 import org.oddjob.state.ParentState;
 
 public class SQLColumnTest extends TestCase {
@@ -89,11 +89,11 @@ public class SQLColumnTest extends TestCase {
 		
 		ColumnLayout<Object> column1 = new ColumnLayout<Object>();
 		column1.setName("type");
-		column1.setColumnLabel("TYPE");
+		column1.setLabel("TYPE");
 		
 		ColumnLayout<Object> column2 = new ColumnLayout<Object>();
 		column2.setName("quantity");
-		column2.setColumnLabel("QUANTITY");
+		column2.setLabel("QUANTITY");
 		
 		test.setOf(0, column1);
 		test.setOf(1, column2);

@@ -3,8 +3,8 @@ package org.oddjob.dido.text;
 import junit.framework.TestCase;
 
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.column.Column;
-import org.oddjob.dido.column.ColumnOut;
+import org.oddjob.dido.tabular.Column;
+import org.oddjob.dido.tabular.ColumnOut;
 
 public class SimpleFieldsOutTest extends TestCase {
 
@@ -19,7 +19,7 @@ public class SimpleFieldsOutTest extends TestCase {
 		}
 		
 		@Override
-		public String getColumnLabel() {
+		public String getLabel() {
 			return columnLabel;
 		}
 		
@@ -33,9 +33,9 @@ public class SimpleFieldsOutTest extends TestCase {
 		
 		FieldsOut test = new SimpleFieldsOut();
 		
-		ColumnOut<?> nameCol = test.columnOutFor(new OurColumn(null, 0));
-		ColumnOut<?> ageCol = test.columnOutFor(new OurColumn(null, 0));
-		ColumnOut<?> cityCol = test.columnOutFor(new OurColumn(null, 0));
+		ColumnOut<?> nameCol = test.outFor(new OurColumn(null, 0));
+		ColumnOut<?> ageCol = test.outFor(new OurColumn(null, 0));
+		ColumnOut<?> cityCol = test.outFor(new OurColumn(null, 0));
 		
 		assertEquals(1, nameCol.getColumnIndex());
 		assertEquals(2, ageCol.getColumnIndex());
@@ -47,9 +47,9 @@ public class SimpleFieldsOutTest extends TestCase {
 		
 		SimpleFieldsOut test = new SimpleFieldsOut();
 		
-		ColumnOut<?> ageCol = test.columnOutFor(new OurColumn("age", 0));
-		ColumnOut<?> cityCol = test.columnOutFor(new OurColumn("city", 0));
-		ColumnOut<?> nameCol = test.columnOutFor(new OurColumn("name", 4));
+		ColumnOut<?> ageCol = test.outFor(new OurColumn("age", 0));
+		ColumnOut<?> cityCol = test.outFor(new OurColumn("city", 0));
+		ColumnOut<?> nameCol = test.outFor(new OurColumn("name", 4));
 		
 		assertEquals(1, ageCol.getColumnIndex());
 		assertEquals(2, cityCol.getColumnIndex());
@@ -68,9 +68,9 @@ public class SimpleFieldsOutTest extends TestCase {
 		
 		SimpleFieldsOut test = new SimpleFieldsOut();
 		
-		ColumnOut<?> ageCol = test.columnOutFor(new OurColumn("age", 0));
-		ColumnOut<?> cityCol = test.columnOutFor(new OurColumn("city", 0));
-		ColumnOut<?> nameCol = test.columnOutFor(new OurColumn("name", 4));
+		ColumnOut<?> ageCol = test.outFor(new OurColumn("age", 0));
+		ColumnOut<?> cityCol = test.outFor(new OurColumn("city", 0));
+		ColumnOut<?> nameCol = test.outFor(new OurColumn("name", 4));
 		
 		assertEquals(1, ageCol.getColumnIndex());
 		assertEquals(2, cityCol.getColumnIndex());
@@ -90,13 +90,13 @@ public class SimpleFieldsOutTest extends TestCase {
 		
 		assertEquals(false, test.isWrittenTo());
 		
-		ColumnOut<String> nameCol = test.columnOutFor(new OurColumn(null, 1));
-		ColumnOut<String> ageCol = test.columnOutFor(new OurColumn(null, 2));
-		ColumnOut<String> cityCol = test.columnOutFor(new OurColumn(null, 3));
+		ColumnOut<String> nameCol = test.outFor(new OurColumn(null, 1));
+		ColumnOut<String> ageCol = test.outFor(new OurColumn(null, 2));
+		ColumnOut<String> cityCol = test.outFor(new OurColumn(null, 3));
 		
-		nameCol.setColumnData("John");
-		ageCol.setColumnData("34");
-		cityCol.setColumnData("London");
+		nameCol.setData("John");
+		ageCol.setData("34");
+		cityCol.setData("London");
 		
 		assertEquals(true, test.isWrittenTo());
 		
@@ -111,13 +111,13 @@ public class SimpleFieldsOutTest extends TestCase {
 		
 		SimpleFieldsOut test = new SimpleFieldsOut();
 		
-		ColumnOut<String> nameCol = test.columnOutFor(new OurColumn(null, 5));
-		ColumnOut<String> ageCol = test.columnOutFor(new OurColumn(null, 3));
-		ColumnOut<String> cityCol = test.columnOutFor(new OurColumn(null, 6));
+		ColumnOut<String> nameCol = test.outFor(new OurColumn(null, 5));
+		ColumnOut<String> ageCol = test.outFor(new OurColumn(null, 3));
+		ColumnOut<String> cityCol = test.outFor(new OurColumn(null, 6));
 				
-		nameCol.setColumnData("John");
-		ageCol.setColumnData("34");
-		cityCol.setColumnData("London");
+		nameCol.setData("John");
+		ageCol.setData("34");
+		cityCol.setData("London");
 		
 		String[] results = test.values();
 		
@@ -133,13 +133,13 @@ public class SimpleFieldsOutTest extends TestCase {
 				
 		SimpleFieldsOut test = new SimpleFieldsOut();
 		
-		ColumnOut<String> nameCol = test.columnOutFor(new OurColumn(null, 4));
-		ColumnOut<String> ageCol = test.columnOutFor(new OurColumn(null, 1));
-		ColumnOut<String> cityCol = test.columnOutFor(new OurColumn(null, 2));
+		ColumnOut<String> nameCol = test.outFor(new OurColumn(null, 4));
+		ColumnOut<String> ageCol = test.outFor(new OurColumn(null, 1));
+		ColumnOut<String> cityCol = test.outFor(new OurColumn(null, 2));
 				
-		nameCol.setColumnData("John");
-		ageCol.setColumnData("34");
-		cityCol.setColumnData("London");
+		nameCol.setData("John");
+		ageCol.setData("34");
+		cityCol.setData("London");
 		
 		String[] results = test.values();
 		

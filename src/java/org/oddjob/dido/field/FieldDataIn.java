@@ -1,11 +1,11 @@
-package org.oddjob.dido.column;
+package org.oddjob.dido.field;
 
-import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataIn;
 
-public interface ColumnarDataOut extends DataOut {
+public interface FieldDataIn extends DataIn {
 
 	/**
-	 * Get the column index to use. This will either be base on the 
+	 * Get the column index to use. This will either be based on the 
 	 * heading provided or on the column index provided. 
 	 * <p>
 	 * Text based implementations may then use the heading for writing a 
@@ -16,5 +16,6 @@ public interface ColumnarDataOut extends DataOut {
 	 * 
 	 * @return The column assigned.
 	 */
-	public ColumnOut<?> columnOutFor(Column column);
+	public FieldIn<?> inFor(Field column);
+
 }

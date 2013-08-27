@@ -1,10 +1,10 @@
 package org.oddjob.dido.text;
 
-import org.oddjob.dido.column.Column;
-import org.oddjob.dido.column.ColumnOut;
-import org.oddjob.dido.column.ColumnarDataOut;
+import org.oddjob.dido.field.Field;
+import org.oddjob.dido.tabular.ColumnOut;
+import org.oddjob.dido.tabular.TabularDataOut;
 
-public interface FieldsOut extends ColumnarDataOut {
+public interface FieldsOut extends TabularDataOut {
 
 	/**
 	 * Write a heading. The heading will only be written
@@ -19,5 +19,5 @@ public interface FieldsOut extends ColumnarDataOut {
 	 * @return The column assigned.
 	 */
 	@Override
-	public ColumnOut<String> columnOutFor(Column column);
+	public ColumnOut<String> outFor(Field column);
 }

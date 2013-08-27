@@ -75,7 +75,7 @@ public class TextExampleTest extends TestCase {
 		Layout layout = (Layout) importType.toObject();
 				
 		DataReadJob readJob = new DataReadJob();
-		readJob.setPlan(layout);
+		readJob.setLayout(layout);
 		readJob.setBindings("fruit", fruitBinding);
 		readJob.setData(new InputStreamIn(
 				new ByteArrayInputStream(data.getBytes())));
@@ -97,7 +97,7 @@ public class TextExampleTest extends TestCase {
 		assertEquals("Green", fruit2.getColour());
 				
 		DataWriteJob writeJob = new DataWriteJob();
-		writeJob.setPlan(layout);
+		writeJob.setLayout(layout);
 		writeJob.setBindings("fruit", fruitBinding);		
 		
 		writeJob.setBeans(Arrays.asList(beans));

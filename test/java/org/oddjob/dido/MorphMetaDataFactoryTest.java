@@ -58,7 +58,7 @@ public class MorphMetaDataFactoryTest extends TestCase {
 
 		for (String name : names) {
 			
-			assertEquals(name, result.titleFor(name));
+			assertEquals(name, result.labelFor(name));
 			types.put(name, result.typeOf(name));
 		}
 		
@@ -110,7 +110,7 @@ public class MorphMetaDataFactoryTest extends TestCase {
 
 		for (String name : names) {
 			
-			assertEquals(name, result.titleFor(name));
+			assertEquals(name, result.labelFor(name));
 			types.put(name, result.typeOf(name));
 		}
 		

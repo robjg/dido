@@ -10,11 +10,20 @@ import org.oddjob.arooa.ArooaSession;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedDataOutException;
-import org.oddjob.dido.column.Column;
-import org.oddjob.dido.column.ColumnOut;
+import org.oddjob.dido.field.Field;
+import org.oddjob.dido.tabular.ColumnHelper;
+import org.oddjob.dido.tabular.ColumnOut;
 
+/**
+ * A simple implementation of {@link SQLDataOut}.
+ * 
+ * @author rob
+ *
+ */
 public class SQLDataOutImpl implements SQLDataOut {
 
+	private final ColumnHelper columnHelper  = new ColumnHelper();
+	
 	private final PreparedStatement stmt;
 
 	private final Class<?>[] columnTypes; 
@@ -23,8 +32,15 @@ public class SQLDataOutImpl implements SQLDataOut {
 	
 	private boolean writtenTo;
 
-	private int lastColumnIndex;
-	
+	/**
+	 * Create a new instance.
+	 * 
+	 * @param connection The DB connection. This class will close it.
+	 * @param sql The SQL DML statement.
+	 * @param session The session. Used for class resolution.
+	 * 
+	 * @throws SQLException
+	 */
 	public SQLDataOutImpl(Connection connection, String sql, 
 			ArooaSession session) 
 	throws SQLException {
@@ -67,7 +83,7 @@ public class SQLDataOutImpl implements SQLDataOut {
 		}
 		
 		@Override
-		public Class<?> getColumnType() {
+		public Class<?> getType() {
 			if (columnIndex == 0) {
 				return Void.TYPE;
 			}
@@ -77,7 +93,7 @@ public class SQLDataOutImpl implements SQLDataOut {
 		}
 		
 		@Override
-		public void setColumnData(T data) throws DataException {
+		public void setData(T data) throws DataException {
 			if (columnIndex != 0) {
 				try {
 					if (data == null) {
@@ -94,15 +110,10 @@ public class SQLDataOutImpl implements SQLDataOut {
 	}
 	
 	@Override
-	public ColumnOut<?> columnOutFor(Column column) {
+	public ColumnOut<?> outFor(Field column) {
 
-		if (column.getColumnIndex() > 0) {
-			lastColumnIndex = column.getColumnIndex();
-		}
-		else {
-			++lastColumnIndex;
-		}
-		return new SQLColumnOut<Object>(lastColumnIndex);
+		return new SQLColumnOut<Object>(
+				columnHelper.columnIndexFor(column));
 	}	
 	
 	@Override

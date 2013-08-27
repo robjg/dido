@@ -10,6 +10,10 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.DataWriterFactory;
 
 /**
+ * A writer for a list writers obtained from a list of 
+ * {@link DataWriterFactory}s. Typically these will be children of some
+ * parent Layout.
+ * <p>
  * 
  * @author rob
  *
@@ -18,10 +22,21 @@ public class ChildWriter implements DataWriter {
 
 	private static final Logger logger = Logger.getLogger(ChildWriter.class);
 
+	/** The writers. */
 	private final List<DataWriter> writers;
 	
+	/** Closed flag. */
 	private boolean closed;
 	
+	/**
+	 * Create a new instance. This creates all the writer from the 
+	 * factories ensuring they are all initialised before any writing
+	 * happens.
+	 * 
+	 * @param children
+	 * @param dataOut
+	 * @throws DataException
+	 */
 	public ChildWriter(Iterable<? extends DataWriterFactory> children,
 			DataOut dataOut) throws DataException {
 		
@@ -70,4 +85,14 @@ public class ChildWriter implements DataWriter {
 		writers.clear();
 		closed = true;
 	}	
+	
+	@Override
+	public String toString() {
+		if (closed) {
+			return getClass().getSimpleName() + " closed";
+		}
+		else {
+			return getClass().getSimpleName() + " size=" + writers.size();
+		}
+	}
 }

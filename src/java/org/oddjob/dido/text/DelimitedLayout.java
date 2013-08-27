@@ -304,7 +304,7 @@ implements Morphable, MorphProvider {
 			
 			FieldLayout layout = new FieldLayout();
 			layout.setName(name);
-			layout.setColumnLabel(morphicness.titleFor(name));
+			layout.setLabel(morphicness.labelFor(name));
 			
 			logger.debug("[" + this + "] adding morphicness [" + layout + "]");
 			
@@ -371,7 +371,7 @@ implements Morphable, MorphProvider {
 			}
 			
 			@Override
-			public String titleFor(String name) {
+			public String labelFor(String name) {
 				return name;
 			}
 			

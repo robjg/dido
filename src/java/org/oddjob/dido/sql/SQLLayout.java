@@ -13,11 +13,11 @@ import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.beanbus.FlushableDataWriter;
-import org.oddjob.dido.column.ColumnLayout;
 import org.oddjob.dido.layout.LayoutNode;
 import org.oddjob.dido.morph.MorphDefinition;
 import org.oddjob.dido.morph.MorphProvider;
 import org.oddjob.dido.morph.Morphable;
+import org.oddjob.dido.tabular.ColumnLayout;
 
 public class SQLLayout extends LayoutNode 
 implements Morphable, MorphProvider, ArooaSessionAware {

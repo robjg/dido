@@ -3,8 +3,8 @@ package org.oddjob.dido.text;
 import junit.framework.TestCase;
 
 import org.oddjob.dido.DataException;
-import org.oddjob.dido.column.Column;
-import org.oddjob.dido.column.ColumnIn;
+import org.oddjob.dido.tabular.Column;
+import org.oddjob.dido.tabular.ColumnIn;
 
 public class SimpleFieldsInTest extends TestCase {
 
@@ -19,7 +19,7 @@ public class SimpleFieldsInTest extends TestCase {
 		}
 		
 		@Override
-		public String getColumnLabel() {
+		public String getLabel() {
 			return columnLabel;
 		}
 		
@@ -39,20 +39,20 @@ public class SimpleFieldsInTest extends TestCase {
 		test.setHeadings(headings);
 		test.setValues(values);
 		
-		ColumnIn<?> nameCol = test.columnInFor(new OurColumn("name", 0));
-		ColumnIn<?> ageCol = test.columnInFor(new OurColumn("age", 0));
-		ColumnIn<?> cityCol = test.columnInFor(new OurColumn("city", 0));
-		ColumnIn<?> occuCol = test.columnInFor(new OurColumn("occupation", 0));
+		ColumnIn<?> nameCol = test.inFor(new OurColumn("name", 0));
+		ColumnIn<?> ageCol = test.inFor(new OurColumn("age", 0));
+		ColumnIn<?> cityCol = test.inFor(new OurColumn("city", 0));
+		ColumnIn<?> occuCol = test.inFor(new OurColumn("occupation", 0));
 		
 		assertEquals(1, nameCol.getColumnIndex());
 		assertEquals(2, ageCol.getColumnIndex());
 		assertEquals(3, cityCol.getColumnIndex());
 		assertEquals(0, occuCol.getColumnIndex());
 		
-		assertEquals("John", nameCol.getColumnData());
-		assertEquals("32", ageCol.getColumnData());
-		assertEquals("London", cityCol.getColumnData());
-		assertNull(occuCol.getColumnData());
+		assertEquals("John", nameCol.getData());
+		assertEquals("32", ageCol.getData());
+		assertEquals("London", cityCol.getData());
+		assertNull(occuCol.getData());
 	}
 	
 	public void testHeadingsAndColumnHeadingsInDifferentOrder() throws DataException {
@@ -65,20 +65,20 @@ public class SimpleFieldsInTest extends TestCase {
 		test.setHeadings(headings);
 		test.setValues(values);
 		
-		ColumnIn<?> cityCol = test.columnInFor(new OurColumn("city", 0));
-		ColumnIn<?> nameCol = test.columnInFor(new OurColumn("name", 0));
-		ColumnIn<?> ageCol = test.columnInFor(new OurColumn("age", 0));
-		ColumnIn<?> occuCol = test.columnInFor(new OurColumn("occupation", 0));
+		ColumnIn<?> cityCol = test.inFor(new OurColumn("city", 0));
+		ColumnIn<?> nameCol = test.inFor(new OurColumn("name", 0));
+		ColumnIn<?> ageCol = test.inFor(new OurColumn("age", 0));
+		ColumnIn<?> occuCol = test.inFor(new OurColumn("occupation", 0));
 		
 		assertEquals(1, nameCol.getColumnIndex());
 		assertEquals(2, ageCol.getColumnIndex());
 		assertEquals(3, cityCol.getColumnIndex());
 		assertEquals(0, occuCol.getColumnIndex());
 		
-		assertEquals("John", nameCol.getColumnData());
-		assertEquals("32", ageCol.getColumnData());
-		assertEquals("London", cityCol.getColumnData());
-		assertNull(occuCol.getColumnData());
+		assertEquals("John", nameCol.getData());
+		assertEquals("32", ageCol.getData());
+		assertEquals("London", cityCol.getData());
+		assertNull(occuCol.getData());
 	}
 	
 		
@@ -86,10 +86,10 @@ public class SimpleFieldsInTest extends TestCase {
 		
 		SimpleFieldsIn test = new SimpleFieldsIn();
 		
-		ColumnIn<?> col1 = test.columnInFor(new OurColumn(null, 0));
-		ColumnIn<?> col2 = test.columnInFor(new OurColumn(null, 0));
-		ColumnIn<?> col3 = test.columnInFor(new OurColumn(null, 0));
-		ColumnIn<?> col4 = test.columnInFor(new OurColumn(null, 0));
+		ColumnIn<?> col1 = test.inFor(new OurColumn(null, 0));
+		ColumnIn<?> col2 = test.inFor(new OurColumn(null, 0));
+		ColumnIn<?> col3 = test.inFor(new OurColumn(null, 0));
+		ColumnIn<?> col4 = test.inFor(new OurColumn(null, 0));
 		
 		assertEquals(1, col1.getColumnIndex());
 		assertEquals(2, col2.getColumnIndex());
@@ -99,20 +99,20 @@ public class SimpleFieldsInTest extends TestCase {
 		String[] values = { "John", "32", "London" };
 		test.setValues(values);
 		
-		assertEquals("John", col1.getColumnData());
-		assertEquals("32", col2.getColumnData());
-		assertEquals("London", col3.getColumnData());
-		assertNull(col4.getColumnData());
+		assertEquals("John", col1.getData());
+		assertEquals("32", col2.getData());
+		assertEquals("London", col3.getData());
+		assertNull(col4.getData());
 	}
 	
 	public void testColumnHeadingsOnly() {
 		
 		SimpleFieldsIn test = new SimpleFieldsIn();
 
-		ColumnIn<?> nameCol = test.columnInFor(new OurColumn("name", 0));
-		ColumnIn<?> ageCol = test.columnInFor(new OurColumn("age", 0));
-		ColumnIn<?> cityCol = test.columnInFor(new OurColumn("city", 0));
-		ColumnIn<?> occuCol = test.columnInFor(new OurColumn("occupation", 0));
+		ColumnIn<?> nameCol = test.inFor(new OurColumn("name", 0));
+		ColumnIn<?> ageCol = test.inFor(new OurColumn("age", 0));
+		ColumnIn<?> cityCol = test.inFor(new OurColumn("city", 0));
+		ColumnIn<?> occuCol = test.inFor(new OurColumn("occupation", 0));
 		
 		assertEquals(1, nameCol.getColumnIndex());
 		assertEquals(2, ageCol.getColumnIndex());
@@ -127,10 +127,10 @@ public class SimpleFieldsInTest extends TestCase {
 		
 		SimpleFieldsIn test = new SimpleFieldsIn();
 		
-		ColumnIn<?> nameCol = test.columnInFor(new OurColumn("name", 0));
-		ColumnIn<?> ageCol = test.columnInFor(new OurColumn("age", 0));
-		ColumnIn<?> cityCol = test.columnInFor(new OurColumn("city", 0));
-		ColumnIn<?> occuCol = test.columnInFor(new OurColumn("occupation", 0));
+		ColumnIn<?> nameCol = test.inFor(new OurColumn("name", 0));
+		ColumnIn<?> ageCol = test.inFor(new OurColumn("age", 0));
+		ColumnIn<?> cityCol = test.inFor(new OurColumn("city", 0));
+		ColumnIn<?> occuCol = test.inFor(new OurColumn("occupation", 0));
 		
 		assertEquals(1, nameCol.getColumnIndex());
 		assertEquals(2, ageCol.getColumnIndex());
@@ -139,10 +139,10 @@ public class SimpleFieldsInTest extends TestCase {
 		
 		test.setValues(values);
 		
-		assertEquals("John", nameCol.getColumnData());
-		assertEquals("32", ageCol.getColumnData());
-		assertEquals("London", cityCol.getColumnData());
+		assertEquals("John", nameCol.getData());
+		assertEquals("32", ageCol.getData());
+		assertEquals("London", cityCol.getData());
 		
-		assertNull(occuCol.getColumnData());
+		assertNull(occuCol.getData());
 	}
 }

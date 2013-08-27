@@ -7,18 +7,23 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
-import org.oddjob.dido.column.Column;
-import org.oddjob.dido.column.ColumnIn;
-import org.oddjob.dido.column.ColumnOut;
 import org.oddjob.dido.layout.LayoutValueNode;
+import org.oddjob.dido.tabular.Column;
+import org.oddjob.dido.tabular.ColumnIn;
+import org.oddjob.dido.tabular.ColumnOut;
 
-
+/**
+ * @oddjob.description A field. 
+ * 
+ * @author rob
+ *
+ */
 public class FieldLayout extends LayoutValueNode<String> 
 implements Column {
 
 	private static final Logger logger = Logger.getLogger(FieldLayout.class);
 	
-	private String columnLabel;
+	private String label;
 	
 	private int columnIndex;
 
@@ -47,7 +52,7 @@ implements Column {
 				return nextReader.read();
 			}
 			
-			String field = columnIn.getColumnData();
+			String field = columnIn.getData();
 			
 			value(field);
 
@@ -77,7 +82,7 @@ implements Column {
 			
 			FieldsIn in = dataIn.provideDataIn(FieldsIn.class);
 			
-			columnIn = in.columnInFor(this);
+			columnIn = in.inFor(this);
 						
 			logger.trace("Create Reader for [" + FieldLayout.this + "], column is [" + 
 					columnIn.getColumnIndex() + "]");
@@ -119,7 +124,7 @@ implements Column {
 			String value = value();
 			
 			if (value != null) {
-				columnOut.setColumnData(value);
+				columnOut.setData(value);
 				
 				logger.trace("[" + FieldLayout.this + "] wrote value [" + 
 						value + "]");
@@ -149,7 +154,7 @@ implements Column {
 			
 			FieldsOut out = dataOut.provideDataOut(FieldsOut.class);
 			
-			columnOut = out.columnOutFor(this);
+			columnOut = out.outFor(this);
 			
 			logger.trace("Created writer for [" + FieldLayout.this + "], column is [" + 
 					columnOut.getColumnIndex() + "]");
@@ -169,15 +174,21 @@ implements Column {
 	}
 	
 	
-	public String getColumnLabel() {
-		return columnLabel;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setColumnLabel(String title) {
-		this.columnLabel = title;
+	public void setLabel(String title) {
+		this.label = title;
 	}
 
 	public int getColumnIndex() {
+		if (columnIn != null) {
+			return columnIn.getColumnIndex();
+		}
+		if (columnOut != null) {
+			return columnOut.getColumnIndex();
+		}
 		return columnIndex;
 	}
 

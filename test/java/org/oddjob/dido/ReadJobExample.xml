@@ -1,9 +1,9 @@
 <oddjob id="this" xmlns:dido='oddjob:dido'>
  <job>
   <dido:read id='read'>
-   <plan>
+   <layout>
     <import resource="org/oddjob/dido/DelimitedExamplePlan.xml"/>
-   </plan>
+   </layout>
    <bindings>
     <dido:bean-binding key='person'>
      <type>

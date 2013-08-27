@@ -64,7 +64,7 @@ public class DateFieldTest extends TestCase {
 		Layout layout = (Layout) importType.toObject();
 				
 		DataReadJob readJob = new DataReadJob();
-		readJob.setPlan(layout);
+		readJob.setLayout(layout);
 		readJob.setBindings("employee", employeeBinding);
 		readJob.setData(new InputStreamIn(
 				new ByteArrayInputStream(data.getBytes())));
@@ -86,7 +86,7 @@ public class DateFieldTest extends TestCase {
 						employee2.getClockOut()));
 				
 		DataWriteJob writeJob = new DataWriteJob();
-		writeJob.setPlan(layout);
+		writeJob.setLayout(layout);
 		writeJob.setBindings("employee", employeeBinding);
 		
 		writeJob.setBeans(Arrays.asList(beans));

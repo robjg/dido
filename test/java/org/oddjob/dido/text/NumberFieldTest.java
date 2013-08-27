@@ -66,7 +66,7 @@ public class NumberFieldTest extends TestCase {
 		Layout layout = (Layout) importType.toObject();
 		
 		DataReadJob readJob = new DataReadJob();
-		readJob.setPlan(layout);
+		readJob.setLayout(layout);
 		readJob.setBindings("employee", employeeBinding);
 		readJob.setData(new InputStreamIn(
 				new ByteArrayInputStream(data.getBytes())));
@@ -84,7 +84,7 @@ public class NumberFieldTest extends TestCase {
 		assertEquals(23500.0, employee2.getSalary());
 				
 		DataWriteJob writeJob = new DataWriteJob();
-		writeJob.setPlan(layout);
+		writeJob.setLayout(layout);
 		writeJob.setBindings("employee", employeeBinding);		
 		
 		writeJob.setBeans(Arrays.asList(beans));
