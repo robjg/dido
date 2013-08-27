@@ -14,18 +14,17 @@ public class DateCell extends DataCell<Date> {
 	}
 	
 	@Override
-	protected int getCellType() {
+	public int getCellType() {
 		return Cell.CELL_TYPE_NUMERIC;
 	}
 	
 	@Override
-	protected void extractCellValue(Cell cell) {
-		setValue(cell.getDateCellValue());
+	public Date extractCellValue(Cell cell) {
+		return cell.getDateCellValue();
 	}
 		
 	@Override
-	protected void insertValueInto(Cell cell) {
-		Date value = getValue();
+	public void insertValueInto(Cell cell, Date value) {
 		if (value == null) {
 			cell.setCellType(Cell.CELL_TYPE_BLANK);
 		}
@@ -37,10 +36,6 @@ public class DateCell extends DataCell<Date> {
 	@Override
 	public String getDefaultStyle() {
 		return DEFAULT_DATE_STYLE;
-	}
-	
-	public void setValue(Date value) {
-		this.value(value);
 	}
 	
 	public Date getValue() {

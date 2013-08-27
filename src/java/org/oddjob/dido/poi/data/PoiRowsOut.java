@@ -9,11 +9,15 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedDataOutException;
+import org.oddjob.dido.field.Field;
+import org.oddjob.dido.poi.CellOut;
 import org.oddjob.dido.poi.RowsOut;
 import org.oddjob.dido.poi.SheetOut;
 import org.oddjob.dido.poi.TupleOut;
 import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
+import org.oddjob.dido.tabular.ColumnHelper;
+import org.oddjob.dido.tabular.ColumnOut;
 
 /**
  * Implementation of {@link RowsOut}.
@@ -25,6 +29,8 @@ public class PoiRowsOut implements RowsOut {
 
 	private static final Logger logger = Logger.getLogger(PoiRowsOut.class);
 
+	private final ColumnHelper columnHelper = new ColumnHelper();
+	
 	/** The sheet these rows are being written on. */
 	private final Sheet sheet;
 	
@@ -157,6 +163,27 @@ public class PoiRowsOut implements RowsOut {
 		return getClass().getSimpleName() + ": " + sheet.getSheetName();
 	}
 	
+	private void writeHeaderForColumn(int columnIndex, String heading) {
+		
+		if (headings == null) {
+			return;
+		}
+		
+		Cell cell = headings.createCell(
+				columnIndex - 1 + columnOffset, Cell.CELL_TYPE_STRING);
+		cell.setCellValue(heading);
+		
+		String headingStyle = PoiRowsOut.this.headingStyle;
+		if (headingStyle == null) {
+			headingStyle = DefaultStyleProivderFactory.HEADING_STYLE;
+		}
+		
+		CellStyle style = styleProvider.styleFor(headingStyle);
+		if (style != null) {
+			cell.setCellStyle(style);
+		}
+	}
+	
 	/**
 	 * Implementation of {@link TupleOut}.
 	 */
@@ -176,23 +203,13 @@ public class PoiRowsOut implements RowsOut {
 		@Override
 		public int indexForHeading(String heading) {
 			
-			if (headings != null) {
-				Cell cell = headings.createCell(
-						lastColumnNum, Cell.CELL_TYPE_STRING);
-				cell.setCellValue(heading);
-				String headingStyle = PoiRowsOut.this.headingStyle;
-				if (headingStyle == null) {
-					headingStyle = DefaultStyleProivderFactory.HEADING_STYLE;
-				}
-				CellStyle style = styleFor(headingStyle);
-				if (style != null) {
-					cell.setCellStyle(style);
-				}
-			}
-			
 			++lastColumnNum;
 			
-			return lastColumnNum - columnOffset;
+			int columnIndex = lastColumnNum - columnOffset;
+
+			writeHeaderForColumn(columnIndex, heading);
+			
+			return columnIndex;
 		}
 		
 		@Override
@@ -216,10 +233,124 @@ public class PoiRowsOut implements RowsOut {
 		}
 		
 		@Override
+		public ColumnOut<?> outFor(Field column) {
+
+			final int columnIndex = columnHelper.columnIndexFor(column);
+			
+			if (column instanceof CellLayout) {
+				return createCellOutWithInferredType(columnIndex, 
+						(CellLayout<?>) column);
+			}
+			
+			return new TextCell(columnIndex);
+		}
+		
+		@Override
 		public String toString() {
 			return getClass().getSimpleName() + 
 					(row == null ? "(unused)" : 
 						" row [" + row.getRowNum() + "]");
+		}
+	}
+	
+	abstract class PoiCellOut<T> implements CellOut<T> {
+		
+		private final int columnIndex;
+		
+		public PoiCellOut(int columnIndex) {
+			this.columnIndex = columnIndex;
+		}
+		
+		@Override
+		public int getColumnIndex() {
+			return columnIndex;
+		}
+		
+		@Override
+		public void setData(T data) throws DataException {
+			
+			int poiCellIndex = columnOffset + columnIndex - 1;
+			
+			Cell cell = row.createCell(poiCellIndex, getPoiColumnType());
+			
+			setCellValue(cell, data);
+		}
+		
+		abstract protected int getPoiColumnType();
+		
+		abstract protected void setCellValue(Cell cell, T value)
+		throws DataException;
+		
+	}
+	
+	class TextCell extends PoiCellOut<Object>{
+		
+		public TextCell(int columnIndex) {
+			super(columnIndex);
+		}
+		
+		@Override
+		public Class<?> getType() {
+			return Object.class;
+		}
+		
+		@Override
+		protected int getPoiColumnType() {
+			return Cell.CELL_TYPE_STRING;
+		}
+		
+		@Override
+		protected void setCellValue(Cell cell, Object value) {
+			if (value != null) {
+				cell.setCellValue(value.toString());
+			}
+		}
+	}
+	
+	<T> DataCellOut<T> createCellOutWithInferredType(int columnIndex, 
+			CellLayout<T> dataCell) {
+		return new DataCellOut<T>(columnIndex, dataCell);
+	}
+	
+	class DataCellOut<T> extends PoiCellOut<T> {
+		
+		private final CellLayout<T> dataCell;
+		
+		public DataCellOut(int columnIndex, CellLayout<T> dataCell) {
+			super(columnIndex);
+			this.dataCell = dataCell;
+		}
+		
+		@Override
+		public Class<?> getType() {
+			return dataCell.getType();
+		}
+		
+		@Override
+		protected int getPoiColumnType() {
+			return dataCell.getCellType();
+		}
+		
+		@Override
+		protected void setCellValue(Cell cell, T value) throws DataException {
+		
+			String style = dataCell.getStyle();
+			
+			if (style == null) {
+				style = dataCell.getDefaultStyle();
+			}
+			if (style != null) {
+				CellStyle cellStyle = styleProvider.styleFor(style);
+				
+				if (cellStyle == null) {
+					throw new DataException("No style available of name [" + 
+							style + "] from cell [" + dataCell+ "]");
+				}
+				
+				cell.setCellStyle(cellStyle);
+			}
+			
+			dataCell.insertValueInto(cell, value);
 		}
 	}
 }

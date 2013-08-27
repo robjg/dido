@@ -12,9 +12,9 @@
                     </output>
                 </dido-poi:workbook>
             </data>
-            <plan>
+            <layout>
                 <import resource="${layout.resource}"/>
-            </plan>
+            </layout>
             <bindings>
                 <dido:bean-binding key="person"/>
             </bindings>

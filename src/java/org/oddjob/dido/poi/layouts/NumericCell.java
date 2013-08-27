@@ -10,28 +10,22 @@ public class NumericCell extends DataCell<Double> {
 	}
 	
 	@Override
-	protected int getCellType() {
+	public int getCellType() {
 		return Cell.CELL_TYPE_NUMERIC;
 	}
 
 	@Override
-	protected void extractCellValue(Cell cell) {
-		setValue(cell.getNumericCellValue());
-		
+	public Double extractCellValue(Cell cell) {
+		return cell.getNumericCellValue();
 	}
 	
 	@Override
-	protected void insertValueInto(Cell cell) {
-		Double value = getValue();
+	public void insertValueInto(Cell cell, Double value) {
 		if (value != null) {
 			cell.setCellValue(value.doubleValue());
 		}
 	}
-	
-	public void setValue(Double value) {
-		this.value(value);
-	}
-	
+		
 	public Double getValue() {
 		return this.value();
 	}

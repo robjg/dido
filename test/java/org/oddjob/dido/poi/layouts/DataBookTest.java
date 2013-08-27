@@ -89,7 +89,7 @@ public class DataBookTest extends TestCase {
 		workbook.setOutput(file);
 				
 		DataWriteJob write = new DataWriteJob();
-		write.setPlan(layout);
+		write.setLayout(layout);
 		write.setBeans(beans);
 		write.setBindings("person", bindingBean);
 		write.setBindings("percentage", valueBinding);
@@ -105,7 +105,7 @@ public class DataBookTest extends TestCase {
 		
 		DataReadJob read =  new DataReadJob();
 		read.setData(workbook);
-		read.setPlan(layout);
+		read.setLayout(layout);
 		read.setBindings("person", bindingBean);
 		read.setBeans(new ArrayList<Object>());
 		
@@ -167,7 +167,7 @@ public class DataBookTest extends TestCase {
 		workbook.setOutput(file);
 		
 		DataWriteJob write = new DataWriteJob();		
-		write.setPlan(layout);
+		write.setLayout(layout);
 		write.setBeans(beans);
 		write.setBindings("person", bindingBean);
 		
@@ -182,7 +182,7 @@ public class DataBookTest extends TestCase {
 		
 		DataReadJob read =  new DataReadJob();
 		read.setData(workbook);
-		read.setPlan(layout);
+		read.setLayout(layout);
 		read.setBindings("person", bindingBean);
 		read.setBeans(new ArrayList<Object>());
 		

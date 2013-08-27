@@ -6,9 +6,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.UnsupportedDataInException;
+import org.oddjob.dido.field.Field;
+import org.oddjob.dido.poi.CellIn;
 import org.oddjob.dido.poi.RowsIn;
 import org.oddjob.dido.poi.SheetIn;
 import org.oddjob.dido.poi.TupleIn;
+import org.oddjob.dido.tabular.ColumnHelper;
 
 /**
  * Implementation of {@link RowsIn}.
@@ -19,6 +22,8 @@ import org.oddjob.dido.poi.TupleIn;
 public class PoiRowsIn implements RowsIn {
 
 	private final Sheet sheet;
+	
+	private final ColumnHelper columnHelper = new ColumnHelper();
 	
 	private SimpleHeadings headings;
 	
@@ -165,10 +170,94 @@ public class PoiRowsIn implements RowsIn {
 		}
 		
 		@Override
-		public String toString() {
-			return getClass().getSimpleName() + " row [" + 
-					row.getRowNum() + "]";
+		public CellIn<?> inFor(Field column) {
+
+			final int columnIndex = columnHelper.columnIndexFor(column);
+			
+			if (column instanceof CellLayout) {
+				return createCellInWithInferredType(columnIndex, 
+						(CellLayout<?>) column);
+			}
+			
+			return new TextCell(columnIndex);
 		}
 		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + 
+					(row == null ? "(unused)" : 
+						" row [" + row.getRowNum() + "]");
+		}
 	}
+
+	abstract class PoiCellIn<T> implements CellIn<T> {
+		
+		private final int columnIndex;
+		
+		public PoiCellIn(int columnIndex) {
+			this.columnIndex = columnIndex;
+		}
+		
+		@Override
+		public int getColumnIndex() {
+			return columnIndex;
+		}
+		
+		@Override
+		public T getData() throws DataException {
+
+			int poiCellIndex = columnOffset + columnIndex - 1;
+			
+			Cell cell = row.getCell(poiCellIndex);
+			
+			return getCellValue(cell);
+		}
+		
+		abstract protected T getCellValue(Cell cell)
+		throws DataException;
+		
+	}
+	
+	class TextCell extends PoiCellIn<Object>{
+		
+		public TextCell(int columnIndex) {
+			super(columnIndex);
+		}
+		
+		@Override
+		public Class<?> getType() {
+			return Object.class;
+		}
+		
+		@Override
+		protected Object getCellValue(Cell cell) throws DataException {
+			return cell.getStringCellValue();
+		}
+	}
+	
+	<T> DataCellIn<T> createCellInWithInferredType(int columnIndex, 
+			CellLayout<T> dataCell) {
+		return new DataCellIn<T>(columnIndex, dataCell);
+	}
+	
+	class DataCellIn<T> extends PoiCellIn<T> {
+		
+		private final CellLayout<T> dataCell;
+		
+		public DataCellIn(int columnIndex, CellLayout<T> dataCell) {
+			super(columnIndex);
+			this.dataCell = dataCell;
+		}
+		
+		@Override
+		public Class<?> getType() {
+			return dataCell.getType();
+		}
+
+		@Override
+		protected T getCellValue(Cell cell) throws DataException {
+
+			return dataCell.extractCellValue(cell);
+		}
+	}		
 }

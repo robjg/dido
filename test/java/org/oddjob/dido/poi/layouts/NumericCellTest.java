@@ -51,7 +51,7 @@ public class NumericCellTest extends TestCase {
 		
 		writer.write(12.3);
 		
-		assertEquals(1, test.getIndex());
+		assertEquals(1, test.getColumnIndex());
 
 		writer.close();
 		
@@ -70,8 +70,30 @@ public class NumericCellTest extends TestCase {
 		reader.close();
 	}
 	
+	public static class ParameterisedBean<T> {
+		
+		public T getFoo() {
+			return null;
+		}
+		
+		public void setFoo(T foo) {
+			
+		}
+	}
+	
+	public static class StringBean extends ParameterisedBean<String> {
+		
+		public String getFoo() {
+			return null;
+		}
+		
+		public void setFoo(String foo) {
+			
+		}
+	}
+	
 	/**
-	 * Tracking down a really weird problem where tests from and failed to
+	 * Tracking down a really weird problem where tests from Ant failed to
 	 * recognise a that value was an attribute but test from eclipse worked
 	 * fine.
 	 * <p>
@@ -86,7 +108,7 @@ public class NumericCellTest extends TestCase {
 		logger.info("java.vm.version=" + System.getProperty("java.vm.version"));
 		logger.info("java.home=" + System.getProperty("java.home"));
 		
-		BeanInfo beanInfo = Introspector.getBeanInfo(NumericCell.class);
+		BeanInfo beanInfo = Introspector.getBeanInfo(StringBean.class);
 		PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
 
 		for (PropertyDescriptor descriptor : descriptors) {
@@ -98,17 +120,19 @@ public class NumericCellTest extends TestCase {
 		PropertyAccessor accessor = 
 			session.getTools().getPropertyAccessor();
 		
-		ArooaClass arooaClass = new SimpleArooaClass(NumericCell.class);
+		ArooaClass arooaClass = new SimpleArooaClass(StringBean.class);
 		
 		BeanOverview overview = arooaClass.getBeanOverview(accessor);
 		
-		assertEquals(Double.class, overview.getPropertyType("value"));
+		// Would expect String!
+		assertEquals(Object.class, overview.getPropertyType("foo"));
 		
 		ArooaBeanDescriptor descriptor = 			
 			session.getArooaDescriptor().getBeanDescriptor(
 				arooaClass, accessor);
 		
-		assertEquals(ConfiguredHow.ATTRIBUTE, 
-				descriptor.getConfiguredHow("value"));
+		// Would expect Attribute!
+		assertEquals(ConfiguredHow.ELEMENT, 
+				descriptor.getConfiguredHow("foo"));
 	}
 }

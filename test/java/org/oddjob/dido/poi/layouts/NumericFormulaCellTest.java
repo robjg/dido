@@ -42,7 +42,7 @@ public class NumericFormulaCellTest extends TestCase {
 		
 		writer.write(new Object());
 		
-		assertEquals(1, test.getIndex());
+		assertEquals(1, test.getColumnIndex());
 		
 		writer.close();
 		
@@ -100,9 +100,7 @@ public class NumericFormulaCellTest extends TestCase {
 		assertEquals(ConfiguredHow.ATTRIBUTE, 
 				beanDescriptor.getConfiguredHow("name"));
 		assertEquals(ConfiguredHow.ATTRIBUTE, 
-				beanDescriptor.getConfiguredHow("title"));
-		assertEquals(ConfiguredHow.ATTRIBUTE, 
-				beanDescriptor.getConfiguredHow("value"));
+				beanDescriptor.getConfiguredHow("label"));
 		assertEquals(ConfiguredHow.ATTRIBUTE, 
 				beanDescriptor.getConfiguredHow("style"));
 		assertEquals(ConfiguredHow.ATTRIBUTE, 

@@ -10,11 +10,16 @@ import org.oddjob.dido.Layout;
 import org.oddjob.dido.layout.LayoutNode;
 import org.oddjob.dido.poi.BookIn;
 import org.oddjob.dido.poi.BookOut;
+import org.oddjob.dido.poi.data.PoiWorkbook;
 import org.oddjob.dido.poi.style.StyleBean;
 import org.oddjob.dido.poi.style.StyleFactoryRegistry;
 
 /**
- * The {@link Layout} representation of a Spreadsheet Book. 
+ * @oddjob.description The definition of a Spreadsheet Book.
+ * <p>
+ * This layout type will probably be a top level node in layout definition
+ * and will be used in conjunction with an {@link PoiWorkbook} for providing
+ * data in and data out.
  * 
  * @author rob
  *
@@ -24,13 +29,22 @@ extends LayoutNode {
 	
 	private static final Logger logger = Logger.getLogger(DataBook.class);
 	
+	/**
+	 * @oddjob.property
+	 * @oddjob.description Allow a number of named styles to be set for
+	 * the book. See {@link StyleBean}.
+	 * @oddjob.required No.
+	 */
 	private final StyleFactoryRegistry styles = new StyleFactoryRegistry();
 	
 	/**
-	 * Add or remove a child.
 	 * 
-	 * @param index
-	 * @param child
+	 * @oddjob.property of
+	 * @oddjob.description The child layouts of this sheet.
+	 * @oddjob.required No, but pointless if missing.
+	 * 
+	 * @param index 0 based index.
+	 * @param child The child, null will remove the child for the given index.
 	 */
 	public void setOf(int index, Layout child) {
 		addOrRemoveChild(index, child);
@@ -59,6 +73,8 @@ extends LayoutNode {
 		
 		final DataWriter nextWriter = nextWriterFor(bookOut);
 		
+		// Note that we need this to close the book at the end, so the
+		// book can be written out.
 		return new DataWriter() {
 			
 			@Override
@@ -79,6 +95,13 @@ extends LayoutNode {
 		super.reset();
 	}
 		
+	/**
+	 * Setter for mapped styles.
+	 * 
+	 * @param styleName The name of the styles.
+	 * @param styleBean The style bean. If null then the style of the
+	 * given name will be removed.
+	 */
 	public void setStyles(String styleName, StyleBean styleBean) {
 		if (styleBean == null) {
 			styles.removeStyle(styleName);

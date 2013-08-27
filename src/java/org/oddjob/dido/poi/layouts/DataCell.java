@@ -20,26 +20,63 @@ import org.oddjob.dido.layout.VoidIn;
 import org.oddjob.dido.layout.VoidOut;
 import org.oddjob.dido.poi.TupleIn;
 import org.oddjob.dido.poi.TupleOut;
+import org.oddjob.dido.poi.data.CellLayout;
+import org.oddjob.dido.tabular.Column;
 
-abstract public class DataCell<T> 
-extends LayoutValueNode<T>
-implements ArooaSessionAware {
+/**
+ * Shared implementation base class for cells.
+ * 
+ * @author rob
+ *
+ * @param <T> The type of the cell.
+ */
+abstract public class DataCell<T> extends LayoutValueNode<T>
+implements ArooaSessionAware, Column, CellLayout<T> {
 	
 	private static final Logger logger = Logger.getLogger(DataCell.class);
 	
+	/** Converter for converting value to cell type. */
 	private ArooaConverter converter;
 	
+	/**
+	 * @oddjob.property
+	 * @oddjob.description The name of the style to use. The style will have
+	 * been defined with the {@link DataBook} definition.
+	 * @oddjob.required No.
+	 */
 	private String style;
 		
-	private int index;
+	/**
+	 * @oddjob.property
+	 * @oddjob.description The 1 based column index of this layout.
+	 * @oddjob.required Read only.
+	 */
+	private int columnIndex;
 	
-	private String title;
+	/**
+	 * @oddjob.property
+	 * @oddjob.description The title of this column.
+	 * @oddjob.required No.
+	 */
+	private String label;
 	
+	/**
+	 * @oddjob.property
+	 * @oddjob.description The Excel reference of the last row of this
+	 * column that has been written.
+	 * @oddjob.required Read only.
+	 */
 	private String reference;
 	
 	private boolean initialised;
 	
-	abstract protected int getCellType();
+	/**
+	 * @oddjob.property cellType
+	 * @oddjob.description The Excel type of this column.
+	 * @oddjob.required Read only.
+	 */
+	@Override
+	abstract public int getCellType();
 	
 	@Override
 	@ArooaHidden
@@ -47,13 +84,29 @@ implements ArooaSessionAware {
 		this.converter = session.getTools().getArooaConverter();
 	}
 
+	/**
+	 * Provide sub classes access to the converter.
+	 * 
+	 * @return
+	 */
 	protected ArooaConverter getConverter() {
 		return converter;
 	}
 
-	abstract protected void extractCellValue(Cell cell)
+	/**
+	 * Sub classes must override this to extract the value from the
+	 * cell.
+	 * 
+	 * @param cell
+	 * @throws DataException
+	 */
+	@Override
+	abstract public T extractCellValue(Cell cell)
 	throws DataException;
 	
+	/**
+	 * Data Reader for the cell.
+	 */
 	class MainReader implements DataReader {
 		
 		private final TupleIn tupleIn;
@@ -78,16 +131,16 @@ implements ArooaSessionAware {
 				return value;
 			}
 			
-			Cell cell = tupleIn.getCell(index);
+			Cell cell = tupleIn.getCell(columnIndex);
 			
 			if (cell == null) {
 				
 				throw new NullPointerException("Cell index " + 
-						index + " is null");
+						columnIndex + " is null");
 			}
 			
 			try {
-				extractCellValue(cell);
+				value(extractCellValue(cell));
 				
 				logger.debug("[" + DataCell.this + "] read [" + value() + "]");
 			}
@@ -125,14 +178,14 @@ implements ArooaSessionAware {
 		
 		if (!initialised) {
 			
-			index = tupleIn.indexForHeading(title);
+			columnIndex = tupleIn.indexForHeading(label);
 			
-			logger.info("[" + this + "] is column " + index);
+			logger.info("[" + this + "] is column " + columnIndex);
 			
 			initialised = true;
 		}
 
-		if (index < 1) {
+		if (columnIndex < 1) {
 			return new NullReader();
 		}
 		else {
@@ -141,15 +194,33 @@ implements ArooaSessionAware {
 		
 	}
 	
-	
-	abstract protected void insertValueInto(Cell cell)
+	/**
+	 * Sub classes must override this to write a value into the cell.
+	 * 
+	 * @param cell
+	 * @throws DataException
+	 */
+	@Override
+	abstract public void insertValueInto(Cell cell, T value)
 	throws DataException;
 		
+	/**
+	 * @oddjob.property defaultStyle
+	 * @oddjob.description The default style for the cell. This is a 
+	 * visible property of the layout so that users can see which style
+	 * name to use if they wish to override the style at the {@link DataBook}
+	 * level.
+	 * @oddjob.required Read only.
+	 * 
+	 * @return
+	 */
 	public String getDefaultStyle() {
 		return null;
 	}
 	
-
+	/**
+	 * The Data Writer that writes to the cell.
+	 */
 	class MainWriter implements DataWriter {
 
 		private final TupleOut data;
@@ -176,9 +247,9 @@ implements ArooaSessionAware {
 				return write(object);
 			}
 			
-			Cell cell = data.createCell(index, getCellType());
+			Cell cell = data.createCell(columnIndex, getCellType());
 			
-			insertValueInto(cell);
+			insertValueInto(cell, value());
 			
 			String style = DataCell.this.style;
 			if (style == null) {
@@ -220,20 +291,20 @@ implements ArooaSessionAware {
 		
 		if (!initialised) {
 			
-			String heading = title;
+			String heading = label;
 			
 			if (heading == null) {
 				heading = getName();
 			}
 			
-			this.index = tupleOut.indexForHeading(heading);
+			this.columnIndex = tupleOut.indexForHeading(heading);
 			
 			this.initialised = true;
 
-			logger.debug("[" + this + "] initialsed for column [" + index + "]");
+			logger.debug("[" + this + "] initialsed for column [" + columnIndex + "]");
 		}		
 		
-		if (index < 0) {
+		if (columnIndex < 0) {
 			
 			return new NullWriter();
 		}
@@ -247,7 +318,7 @@ implements ArooaSessionAware {
 	public void reset() {
 		super.reset();
 		
-		index = -1;
+		columnIndex = -1;
 		initialised = false;
 	}
 	
@@ -257,21 +328,21 @@ implements ArooaSessionAware {
 				cell.getRowIndex(), cell.getColumnIndex()
 					).formatAsString();
 	}
-	
+		
 	public String getReference() {
 		return reference;
 	}
 	
-	public String getTitle() {
-		return title;
+	public String getLabel() {
+		return label;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setLabel(String title) {
+		this.label = title;
 	}
 
-	public int getIndex() {
-		return index;
+	public int getColumnIndex() {
+		return columnIndex;
 	}
 
 	public String getStyle() {
@@ -283,13 +354,11 @@ implements ArooaSessionAware {
 	}	
 	
 	public String toString() {
-		if (title != null) {
-			return title;
+		if (label == null) {
+			return super.toString();
 		}
-		String name = getName();
-		if (name != null) {
-			return name;
+		else {
+			return super.toString() + ", title=" + label;
 		}
-		return getClass().getSimpleName();
 	}
 }

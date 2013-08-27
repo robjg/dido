@@ -18,26 +18,60 @@ import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
+import org.oddjob.dido.DataReadJob;
+import org.oddjob.dido.DataWriteJob;
 import org.oddjob.dido.UnsupportedDataInException;
 import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.poi.BookIn;
 import org.oddjob.dido.poi.BookOut;
+import org.oddjob.dido.poi.layouts.DataBook;
 import org.oddjob.dido.poi.style.CompositeStyleProvider;
 import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 import org.oddjob.dido.poi.style.StyleProviderFactory;
 
+/**
+ * @oddjob.description A source or sink of data that is a Microsoft 
+ * Excel Spreadsheet.
+ * <p>
+ * This will generally be used to set the data property of a 
+ * {@link DataReadJob} or {@link DataWriteJob} when the layout definition
+ * is a {@link DataBook}.
+ * 
+ * @author rob
+ *
+ */
 public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 
 	private static final Logger logger = Logger.getLogger(PoiBookOut.class);
 	
+	/** The workbook created or read. */
 	private Workbook workbook;
 	
+	/** Used to convert input and output to streams. */
 	private ArooaConverter arooaConverter;
 	
+	/**
+	 * @oddjob.property
+	 * @oddjob.description An input type (i.e. file) that is an Excel 
+	 * Workbook.
+	 * @oddjob.required For reading yes but optional for writing.
+	 */
 	private ArooaValue input;
 	
+	/**
+	 * @oddjob.property
+	 * @oddjob.description An output type (i.e. file) that is an Excel 
+	 * Workbook.
+	 * @oddjob.required For writing yes, ignored for reading.
+	 */
 	private ArooaValue output;
 	
+	/**
+	 * @oddjob.property
+	 * @oddjob.description The version of Excel to create. EXCEL97 or
+	 * EXCEL2007. 
+	 * @oddjob.required No. Default to EXCEL2007.
+	 */
 	private SpreadsheetVersion version;
 	
 	@Override

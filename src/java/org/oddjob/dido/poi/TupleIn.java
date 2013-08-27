@@ -1,7 +1,9 @@
 package org.oddjob.dido.poi;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.oddjob.dido.DataIn;
+import org.oddjob.dido.field.Field;
+import org.oddjob.dido.tabular.ColumnIn;
+import org.oddjob.dido.tabular.TabularDataIn;
 
 /**
  * For reading a group of named values, generally a row.
@@ -9,7 +11,7 @@ import org.oddjob.dido.DataIn;
  * @author rob
  *
  */
-public interface TupleIn extends DataIn {
+public interface TupleIn extends TabularDataIn {
 	
 	/**
 	 * Provide the column index for the heading. The column index is
@@ -32,4 +34,8 @@ public interface TupleIn extends DataIn {
 	 */
 	public Cell getCell(int column);
 		
+	
+	@Override
+	public CellIn<?> inFor(Field column);
+	
 }

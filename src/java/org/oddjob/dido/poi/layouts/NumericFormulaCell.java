@@ -6,24 +6,19 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
 public class NumericFormulaCell extends FormulaCell<Double> {
 
-
 	@Override
 	public Class<Double> getType() {
 		return Double.class;
 	}
 
 	@Override
-	protected void extractCellValue(Cell cell) {
+	public Double extractCellValue(Cell cell) {
 		FormulaEvaluator evaluator = cell.getRow().getSheet(
 		).getWorkbook().getCreationHelper().createFormulaEvaluator();
 
 		CellValue cellValue = evaluator.evaluate(cell);
 		
-		setValue(cellValue.getNumberValue());
-	}
-	
-	public void setValue(Double value) {
-		this.value(value);
+		return cellValue.getNumberValue();
 	}
 	
 	public Double getValue() {

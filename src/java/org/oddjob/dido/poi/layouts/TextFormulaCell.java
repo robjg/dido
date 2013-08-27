@@ -12,17 +12,14 @@ public class TextFormulaCell extends FormulaCell<String> {
 	}
 
 	@Override
-	protected void extractCellValue(Cell cell) {
+	public String extractCellValue(Cell cell) {
+		
 		FormulaEvaluator evaluator = cell.getRow().getSheet(
 		).getWorkbook().getCreationHelper().createFormulaEvaluator();
 
 		CellValue cellValue = evaluator.evaluate(cell);
 		
-		setValue(cellValue.getStringValue());
-	}
-	
-	public void setValue(String value) {
-		this.value(value);
+		return cellValue.getStringValue();
 	}
 	
 	public String getValue() {

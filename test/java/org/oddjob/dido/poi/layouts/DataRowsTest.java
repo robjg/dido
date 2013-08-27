@@ -38,7 +38,7 @@ public class DataRowsTest extends TestCase {
 		
 		TextCell cell = new TextCell();
 		cell.bind(new DirectBinding());
-		cell.setTitle("Fruit");
+		cell.setLabel("Fruit");
 	
 		test.setOf(0, cell);
 
@@ -82,7 +82,7 @@ public class DataRowsTest extends TestCase {
 		
 		Object result = reader.read();
 		
-		assertEquals(1, cell.getIndex());
+		assertEquals(1, cell.getColumnIndex());
 		
 		assertEquals(3, test.getLastRow());
 		assertEquals(3, test.getLastColumn());

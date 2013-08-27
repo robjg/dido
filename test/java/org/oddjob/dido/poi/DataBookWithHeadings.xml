@@ -10,13 +10,13 @@
 				<dido-poi:rows withHeadings="true" headingsStyle="heading" 
 						autoWidth="true" autoFilter="true" name="person">
 					<of>
-						<dido-poi:text name="name" title="Name" />
-						<dido-poi:date name="dateOfBirth" title="Date Of Birth" style="date" />
-						<dido-poi:numeric name="salary" title="Salary"/>
-						<dido-poi:numeric-formula name="bonus" title="Bonus"
+						<dido-poi:text name="name" label="Name" />
+						<dido-poi:date name="dateOfBirth" label="Date Of Birth" style="date" />
+						<dido-poi:numeric name="salary" label="Salary"/>
+						<dido-poi:numeric-formula name="bonus" label="Bonus"
 							formula="10" />
-						<dido-poi:numeric name="percentage" title="Percentage"
-								style="percentage" value='0.1'/>
+						<dido-poi:numeric name="percentage" label="Percentage"
+								style="percentage"/>
 					</of>
 				</dido-poi:rows>
 			</of>

@@ -10,22 +10,18 @@ public class TextCell extends DataCell<String> {
 	}
 	
 	@Override
-	protected int getCellType() {
+	public int getCellType() {
 		return Cell.CELL_TYPE_STRING;
 	}
 	
 	@Override
-	protected void extractCellValue(Cell cell) {
-		setValue(cell.getStringCellValue());
+	public String extractCellValue(Cell cell) {
+		return cell.getStringCellValue();
 	}
 
 	@Override
-	protected void insertValueInto(Cell cell) {
-		cell.setCellValue(getValue());
-	}
-	
-	public void setValue(String value) {
-		this.value(value);
+	public void insertValueInto(Cell cell, String value) {
+		cell.setCellValue(value);
 	}
 	
 	public String getValue() {

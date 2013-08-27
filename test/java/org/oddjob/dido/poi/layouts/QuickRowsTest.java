@@ -208,7 +208,7 @@ public class QuickRowsTest extends TestCase {
 		Layout layout = (Layout) importType.toObject();
 		
 		DataWriteJob write = new DataWriteJob();
-		write.setPlan(layout);
+		write.setLayout(layout);
 		write.setBeans(beans);
 		write.setBindings("person", bindingBean);
 
@@ -223,7 +223,7 @@ public class QuickRowsTest extends TestCase {
 
 		DataReadJob read = new DataReadJob();
 		read.setData(workbook);
-		read.setPlan(layout);
+		read.setLayout(layout);
 		read.setBindings("person", bindingBean);
 		read.setBeans(new ArrayList<Object>());
 		read.run();
