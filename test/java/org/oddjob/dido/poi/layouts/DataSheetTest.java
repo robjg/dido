@@ -7,15 +7,14 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.oddjob.arooa.standard.StandardArooaSession;
+import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.poi.BookIn;
 import org.oddjob.dido.poi.BookOut;
-import org.oddjob.dido.poi.data.PoiBookIn;
-import org.oddjob.dido.poi.data.PoiBookOut;
-import org.oddjob.dido.poi.layouts.DataRows;
-import org.oddjob.dido.poi.layouts.DataSheet;
+import org.oddjob.dido.poi.data.PoiWorkbook;
 
 public class DataSheetTest extends TestCase {
 
@@ -23,7 +22,11 @@ public class DataSheetTest extends TestCase {
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		
-		BookOut bookOut = new PoiBookOut(output);
+		PoiWorkbook workbook = new PoiWorkbook();
+		workbook.setArooaSession(new StandardArooaSession());
+		workbook.setOutput(new ArooaObject(output));
+		
+		BookOut bookOut = workbook.provideDataOut(BookOut.class);
 		
 		DataSheet test = new DataSheet();
 		
@@ -36,8 +39,10 @@ public class DataSheetTest extends TestCase {
 		
 		bookOut.close();
 		
-		BookIn bookIn = new PoiBookIn(new ByteArrayInputStream(		
-					output.toByteArray()));
+		workbook.setInput(new ArooaObject(new ByteArrayInputStream(		
+					output.toByteArray())));
+		
+		BookIn bookIn = workbook.provideDataIn(BookIn.class);
 		
 		DataReader reader = test.readerFor(bookIn);
 		
