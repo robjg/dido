@@ -1,6 +1,7 @@
 package org.oddjob.dido.poi;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.oddjob.dido.field.Field;
 import org.oddjob.dido.poi.style.StyleProvider;
 import org.oddjob.dido.tabular.TabularDataOut;
 
@@ -34,4 +35,6 @@ public interface TupleOut extends TabularDataOut, StyleProvider {
 	 */
 	public Cell createCell(int index, int type);
 	
+	@Override
+	public CellOut<?> outFor(Field column);
 }

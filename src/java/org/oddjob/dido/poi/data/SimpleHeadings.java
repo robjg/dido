@@ -1,11 +1,14 @@
 package org.oddjob.dido.poi.data;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.oddjob.dido.poi.RowsIn;
+import org.oddjob.dido.tabular.ColumnHelper;
 
 /**
  * Manage Heading for {@link RowsIn}.
@@ -18,6 +21,9 @@ class SimpleHeadings {
 	
 	private final Map<String, Integer> headings;
 	
+	private final Map<Integer, String> headingsByColumn = 
+			new HashMap<Integer, String>();
+
 	private int columnCursor = 0;
 	
 	/**
@@ -53,6 +59,7 @@ class SimpleHeadings {
 			}
 			
 			headings.put(title, new Integer(columnPosition));
+			headingsByColumn.put(columnPosition, title);
 		}
 		
 		if (logger.isDebugEnabled()) {
@@ -87,5 +94,9 @@ class SimpleHeadings {
 		else {
 			return column.intValue();
 		}
+	}
+	
+	public String[] getHeadings() {
+		return ColumnHelper.toArray(headingsByColumn);
 	}
 }

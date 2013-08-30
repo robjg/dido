@@ -15,5 +15,5 @@ import org.oddjob.dido.tabular.ColumnIn;
  */
 public interface CellIn<T> extends ColumnIn<T> {
 
-	
+	public String getCellReference();
 }

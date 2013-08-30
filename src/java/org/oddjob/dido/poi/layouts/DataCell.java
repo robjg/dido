@@ -14,10 +14,10 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.layout.LayoutValueNode;
-import org.oddjob.dido.layout.NullReader;
-import org.oddjob.dido.layout.NullWriter;
 import org.oddjob.dido.layout.VoidIn;
 import org.oddjob.dido.layout.VoidOut;
+import org.oddjob.dido.poi.CellIn;
+import org.oddjob.dido.poi.CellOut;
 import org.oddjob.dido.poi.TupleIn;
 import org.oddjob.dido.poi.TupleOut;
 import org.oddjob.dido.poi.data.CellLayout;
@@ -67,6 +67,10 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 	 * @oddjob.required Read only.
 	 */
 	private String reference;
+	
+	private CellIn<T> columnIn;
+	
+	private CellOut<T> columnOut;
 	
 	private boolean initialised;
 	
@@ -168,30 +172,75 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 		}
 	}
 	
+	class MainReader2 implements DataReader {
+		
+		private DataReader nextReader;
+		
+		@Override
+		public Object read() throws DataException {
+			
+			if (nextReader != null) {
+
+				return nextReader.read();
+			}
+			
+			T field = columnIn.getData();
+			
+			reference = columnIn.getCellReference();
+			
+			value(field);
+
+			logger.trace("[" + DataCell.this + "] value is [" + 
+					field + "]");
+			
+			nextReader = nextReaderFor(new VoidIn());
+			
+			return read();
+		}
+		
+		@Override
+		public void close() throws DataException {
+			if (nextReader != null) {
+				nextReader.close();
+				nextReader = null;
+			}
+		}
+	}
 	
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 
-		TupleIn tupleIn = dataIn.provideDataIn(TupleIn.class);
+//		TupleIn tupleIn = dataIn.provideDataIn(TupleIn.class);
+//		
+//		logger.debug("Creating reader for [" + tupleIn + "]");
+//		
+//		if (!initialised) {
+//			
+//			columnIndex = tupleIn.indexForHeading(label);
+//			
+//			logger.info("[" + this + "] is column " + columnIndex);
+//			
+//			initialised = true;
+//		}
+//
+//		if (columnIndex < 1) {
+//			return new NullReader();
+//		}
+//		else {
+//			return new MainReader(tupleIn);
+//		}
 		
-		logger.debug("Creating reader for [" + tupleIn + "]");
-		
-		if (!initialised) {
+		if (columnIn == null) {
 			
-			columnIndex = tupleIn.indexForHeading(label);
+			TupleIn in = dataIn.provideDataIn(TupleIn.class);
 			
-			logger.info("[" + this + "] is column " + columnIndex);
-			
-			initialised = true;
-		}
-
-		if (columnIndex < 1) {
-			return new NullReader();
-		}
-		else {
-			return new MainReader(tupleIn);
+			columnIn = (CellIn<T>) in.inFor(this);
+						
+			logger.trace("Create Reader for [" + DataCell.this + "], column is [" + 
+					columnIn.getColumnIndex() + "]");
 		}
 		
+		return new MainReader2();
 	}
 	
 	/**
@@ -282,44 +331,102 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 		}
 	}
 	
+	class MainWriter2 implements DataWriter {
+
+		private final DataWriter nextWriter;
+		
+		public MainWriter2() throws DataException {
+			this.nextWriter = nextWriterFor(new VoidOut());
+		}
+		
+		@Override
+		public boolean write(Object object) throws DataException {
+
+			if (nextWriter.write(object)) {
+				return true;
+			}
+			
+			if (isWrittenTo()) {
+				
+				resetWrittenTo();
+				
+				return write(object);
+			}
+			
+			T value = value();
+			
+			columnOut.setData(value);
+			
+			reference = columnOut.getCellReference();
+			
+			logger.trace("[" + DataCell.this + "] wrote value [" + 
+					value + "]");
+		
+			return false;
+		}
+		
+		@Override
+		public void close() throws DataException {
+			
+			logger.trace("Closing [" + nextWriter + "]");
+			
+			nextWriter.close();
+		}
+	}
+	
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 
-		TupleOut tupleOut = dataOut.provideDataOut(TupleOut.class);
+//		TupleOut tupleOut = dataOut.provideDataOut(TupleOut.class);
+//		
+//		logger.debug("Creating new column writer for [" + tupleOut + "]");
+//		
+//		if (!initialised) {
+//			
+//			String heading = label;
+//			
+//			if (heading == null) {
+//				heading = getName();
+//			}
+//			
+//			this.columnIndex = tupleOut.indexForHeading(heading);
+//			
+//			this.initialised = true;
+//
+//			logger.debug("[" + this + "] initialsed for column [" + columnIndex + "]");
+//		}		
+//		
+//		if (columnIndex < 0) {
+//			
+//			return new NullWriter();
+//		}
+//		else {
+//			
+//			return new MainWriter(tupleOut);
+//		}
 		
-		logger.debug("Creating new column writer for [" + tupleOut + "]");
-		
-		if (!initialised) {
+		if (columnOut == null) {
 			
-			String heading = label;
+			TupleOut tupleOut = dataOut.provideDataOut(TupleOut.class);
 			
-			if (heading == null) {
-				heading = getName();
-			}
+			columnOut = (CellOut<T>) tupleOut.outFor(this);
 			
-			this.columnIndex = tupleOut.indexForHeading(heading);
+			logger.trace("Created writer for [" + DataCell.this + "], column is [" + 
+					columnOut.getColumnIndex() + "]");
 			
-			this.initialised = true;
-
-			logger.debug("[" + this + "] initialsed for column [" + columnIndex + "]");
-		}		
-		
-		if (columnIndex < 0) {
-			
-			return new NullWriter();
 		}
-		else {
-			
-			return new MainWriter(tupleOut);
-		}
+		
+		return new MainWriter2();
 	}
 	
 	@Override
 	public void reset() {
 		super.reset();
 		
-		columnIndex = -1;
+		reference = null;
 		initialised = false;
+		columnIn = null;
+		columnOut = null;
 	}
 	
 	private void setReferenceFrom(Cell cell) {
@@ -342,6 +449,12 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 	}
 
 	public int getColumnIndex() {
+		if (columnIn != null) {
+			return columnIn.getColumnIndex();
+		}
+		if (columnOut != null) {
+			return columnOut.getColumnIndex();
+		}
 		return columnIndex;
 	}
 

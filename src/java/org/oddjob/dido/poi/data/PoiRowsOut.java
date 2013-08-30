@@ -1,6 +1,7 @@
 package org.oddjob.dido.poi.data;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -9,6 +10,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedDataOutException;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.field.Field;
 import org.oddjob.dido.poi.CellOut;
 import org.oddjob.dido.poi.RowsOut;
@@ -16,8 +18,8 @@ import org.oddjob.dido.poi.SheetOut;
 import org.oddjob.dido.poi.TupleOut;
 import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
+import org.oddjob.dido.poi.utils.CellHelper;
 import org.oddjob.dido.tabular.ColumnHelper;
-import org.oddjob.dido.tabular.ColumnOut;
 
 /**
  * Implementation of {@link RowsOut}.
@@ -121,7 +123,7 @@ public class PoiRowsOut implements RowsOut {
 	
 	@Override
 	public int getLastColumn() {
-		return lastColumnNum;
+		return columnHelper.getMaxColumn() + columnOffset;
 	}
 	
 	@Override
@@ -233,16 +235,24 @@ public class PoiRowsOut implements RowsOut {
 		}
 		
 		@Override
-		public ColumnOut<?> outFor(Field column) {
+		public CellOut<?> outFor(Field column) {
 
 			final int columnIndex = columnHelper.columnIndexFor(column);
+			
+			if (columnIndex > 0) {
+				writeHeaderForColumn(columnIndex, column.getLabel());
+			}
 			
 			if (column instanceof CellLayout) {
 				return createCellOutWithInferredType(columnIndex, 
 						(CellLayout<?>) column);
 			}
-			
-			return new TextCell(columnIndex);
+			else if (column instanceof ValueNode) {
+				return new GenericCell(columnIndex, ((ValueNode) column).getType());
+			}
+			else {
+				return new GenericCell(columnIndex, Object.class);
+			}
 		}
 		
 		@Override
@@ -257,6 +267,8 @@ public class PoiRowsOut implements RowsOut {
 		
 		private final int columnIndex;
 		
+		private String cellReference;
+		
 		public PoiCellOut(int columnIndex) {
 			this.columnIndex = columnIndex;
 		}
@@ -269,11 +281,22 @@ public class PoiRowsOut implements RowsOut {
 		@Override
 		public void setData(T data) throws DataException {
 			
-			int poiCellIndex = columnOffset + columnIndex - 1;
-			
-			Cell cell = row.createCell(poiCellIndex, getPoiColumnType());
-			
-			setCellValue(cell, data);
+			if (columnIndex != 0) {
+				int poiCellIndex = columnOffset + columnIndex - 1;
+				
+				Cell cell = row.createCell(poiCellIndex, getPoiColumnType());
+				
+				cellReference = new CellReference(
+						cell.getRowIndex(), cell.getColumnIndex()
+							).formatAsString();
+				
+				setCellValue(cell, data);
+			}
+		}
+		
+		@Override
+		public String getCellReference() {
+			return cellReference;
 		}
 		
 		abstract protected int getPoiColumnType();
@@ -283,26 +306,30 @@ public class PoiRowsOut implements RowsOut {
 		
 	}
 	
-	class TextCell extends PoiCellOut<Object>{
+	class GenericCell<T> extends PoiCellOut<T>{
 		
-		public TextCell(int columnIndex) {
+		private final Class<T> type;
+		
+		public GenericCell(int columnIndex, Class<T> type) {
 			super(columnIndex);
+			
+			this.type = type;
 		}
 		
 		@Override
 		public Class<?> getType() {
-			return Object.class;
+			return type;
 		}
 		
 		@Override
 		protected int getPoiColumnType() {
-			return Cell.CELL_TYPE_STRING;
+			return Cell.CELL_TYPE_BLANK;
 		}
 		
 		@Override
 		protected void setCellValue(Cell cell, Object value) {
 			if (value != null) {
-				cell.setCellValue(value.toString());
+				new CellHelper().setCellValue(cell, value);
 			}
 		}
 	}

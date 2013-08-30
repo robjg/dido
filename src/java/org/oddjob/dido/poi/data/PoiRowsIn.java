@@ -1,16 +1,19 @@
 package org.oddjob.dido.poi.data;
 
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.UnsupportedDataInException;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.field.Field;
 import org.oddjob.dido.poi.CellIn;
 import org.oddjob.dido.poi.RowsIn;
 import org.oddjob.dido.poi.SheetIn;
 import org.oddjob.dido.poi.TupleIn;
+import org.oddjob.dido.poi.utils.CellHelper;
 import org.oddjob.dido.tabular.ColumnHelper;
 
 /**
@@ -74,6 +77,8 @@ public class PoiRowsIn implements RowsIn {
 		}
 		else {
 			this.headings = new SimpleHeadings(row, columnOffset);
+			columnHelper.setHeadings(headings.getHeadings());
+			
 			++lastRowNum;
 			return true;
 		}
@@ -99,7 +104,8 @@ public class PoiRowsIn implements RowsIn {
 	
 	@Override
 	public int getLastColumn() {
-		return lastColumnNum;
+//		return lastColumnNum;
+		return columnHelper.getMaxColumn() + columnOffset;
 	}
 	
 	@Override
@@ -178,8 +184,12 @@ public class PoiRowsIn implements RowsIn {
 				return createCellInWithInferredType(columnIndex, 
 						(CellLayout<?>) column);
 			}
-			
-			return new TextCell(columnIndex);
+			else if (column instanceof ValueNode) {
+				return new GenericCell(columnIndex, ((ValueNode) column).getType());
+			}
+			else {
+				return new GenericCell(columnIndex, Object.class);
+			}
 		}
 		
 		@Override
@@ -194,6 +204,8 @@ public class PoiRowsIn implements RowsIn {
 		
 		private final int columnIndex;
 		
+		private String cellReference;
+		
 		public PoiCellIn(int columnIndex) {
 			this.columnIndex = columnIndex;
 		}
@@ -206,11 +218,25 @@ public class PoiRowsIn implements RowsIn {
 		@Override
 		public T getData() throws DataException {
 
-			int poiCellIndex = columnOffset + columnIndex - 1;
-			
-			Cell cell = row.getCell(poiCellIndex);
-			
-			return getCellValue(cell);
+			if (columnIndex == 0) {
+				return null;
+			}
+			else {
+				int poiCellIndex = columnOffset + columnIndex - 1;
+				
+				Cell cell = row.getCell(poiCellIndex);
+				
+				cellReference = new CellReference(
+						cell.getRowIndex(), cell.getColumnIndex()
+							).formatAsString();
+				
+				return getCellValue(cell);
+			}
+		}
+		
+		@Override
+		public String getCellReference() {
+			return cellReference;
 		}
 		
 		abstract protected T getCellValue(Cell cell)
@@ -218,10 +244,13 @@ public class PoiRowsIn implements RowsIn {
 		
 	}
 	
-	class TextCell extends PoiCellIn<Object>{
+	class GenericCell<T> extends PoiCellIn<T>{
 		
-		public TextCell(int columnIndex) {
+		private final Class<T> type;
+				
+		public GenericCell(int columnIndex, Class<T> type) {
 			super(columnIndex);
+			this.type = type;
 		}
 		
 		@Override
@@ -230,8 +259,8 @@ public class PoiRowsIn implements RowsIn {
 		}
 		
 		@Override
-		protected Object getCellValue(Cell cell) throws DataException {
-			return cell.getStringCellValue();
+		protected T getCellValue(Cell cell) throws DataException {
+			return new CellHelper().getCellValue(cell, type);
 		}
 	}
 	

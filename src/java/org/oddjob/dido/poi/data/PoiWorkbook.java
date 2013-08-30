@@ -177,21 +177,21 @@ public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 			}
 			else {
 				logger.debug("Created empty workbook.");
+				
+				if (version == null) {
+					version = SpreadsheetVersion.EXCEL2007;
+				}
+				
+		 		switch (version) {
+				case EXCEL97:
+					workbook = new HSSFWorkbook();
+					break;
+				default:
+					workbook = new XSSFWorkbook();
+					break;
+				}
 			}
 			
-			if (version == null) {
-				version = SpreadsheetVersion.EXCEL2007;
-			}
-			
-	 		switch (version) {
-			case EXCEL97:
-				workbook = new HSSFWorkbook();
-				break;
-			default:
-				workbook = new XSSFWorkbook();
-				break;
-			}
-	 		
 	 		styleProviders = new CompositeStyleProvider(
 	 				new DefaultStyleProivderFactory().providerFor(workbook));
 		}
@@ -278,5 +278,10 @@ public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 
 	public void setVersion(SpreadsheetVersion version) {
 		this.version = version;
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
 	}
 }

@@ -4,6 +4,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Create a type based on the class. Used to create Cells of the write
+ * type.
+ * 
+ * @author rob
+ *
+ * @param <T> The type of thing created by the factory.
+ */
 abstract public class CellTypeFactory<T> {
 
 	private final static Set<Class<?>> NUMERIC_PRIMATIVES = 

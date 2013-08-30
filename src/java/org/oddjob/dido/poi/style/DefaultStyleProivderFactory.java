@@ -3,25 +3,47 @@ package org.oddjob.dido.poi.style;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.oddjob.dido.poi.beancmpr.BeanCmprResultBinding;
 
+/**
+ * Provide the default styles.
+ * 
+ * @author rob
+ *
+ */
 public class DefaultStyleProivderFactory implements StyleProviderFactory {
 
+	/** The name of the style used for headings. */
 	public static String HEADING_STYLE = "heading";
 	
+	/** The name of the style used for dates. */
 	public static String DATE_STYLE = "date";
 	
+	/** The name of the style used for a beancmpr difference. 
+	 * See {@link BeanCmprResultBinding}. */
 	public static String BEANCMPR_DIFF_STYLE = "beancmpr-difference";
 	
+	/** The name of the style used for a beancmpr key column for a matching 
+	 * row. See {@link BeanCmprResultBinding}. */
 	public static String BEANCMPR_MATCH_STYLE = "beancmpr-match";
 	
-	public static String BEANCMPR_KEY_MATCH_STYLE = "beancmpr-key-of-match";
+	/** The name of the style used for a beancmpr key column for a row
+	 * that matches. See {@link BeanCmprResultBinding}. */
+	public static String BEANCMPR_KEY_MATCH_STYLE = "beancmpr-key-match";
 	
-	public static String BEANCMPR_KEY_DIFF_STYLE = "beancmpr-key-of-difference";
+	/** The name of the style used for a beancmpr key column for a row
+	 * with a difference. See {@link BeanCmprResultBinding}. */
+	public static String BEANCMPR_KEY_DIFF_STYLE = "beancmpr-key-difference";
 
+	/** The name of the style used for a beancmpr key column for a row
+	 * with one side missing. See {@link BeanCmprResultBinding}. */
 	public static String BEANCMPR_MISSING_STYLE = "beancmpr-missing";
 	
 	private final StyleFactoryRegistry factory = new StyleFactoryRegistry();
 	
+	/**
+	 * Create a new instance.
+	 */
 	public DefaultStyleProivderFactory() {
 		
 		StyleBean heading = new StyleBean();

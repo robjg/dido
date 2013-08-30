@@ -15,5 +15,5 @@ import org.oddjob.dido.tabular.ColumnOut;
  */
 public interface CellOut<T> extends ColumnOut<T> {
 
-	
+	public String getCellReference();
 }
