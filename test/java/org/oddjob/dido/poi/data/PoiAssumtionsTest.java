@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.oddjob.OurDirs;
 import org.oddjob.dido.DataException;
@@ -99,6 +100,13 @@ public class PoiAssumtionsTest extends TestCase {
 		
 		assertEquals("", cell1.getRichStringCellValue().toString());
 		assertEquals(0.0, cell1.getNumericCellValue());
+	}
+	
+	public void testCellRangeAddress() {
+		
+		CellRangeAddress test = new CellRangeAddress(2, 5, 3, 7);
+		
+		assertEquals("D3:H6", test.formatAsString());
 	}
 
 }

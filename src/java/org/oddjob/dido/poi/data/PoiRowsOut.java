@@ -128,15 +128,21 @@ public class PoiRowsOut implements RowsOut {
 	
 	@Override
 	public void autoFilter() {
-		sheet.setAutoFilter(
+		int lastRowNumber = getLastRow() ;
+		int lastColumnNumber = getLastColumn();
+		
+		if (lastRowNumber > 0 && lastColumnNumber > 0) {
+			sheet.setAutoFilter(
 				new CellRangeAddress(
-						rowOffset, lastRowNum -1,
-						columnOffset, lastColumnNum - 1));
+						rowOffset, lastRowNumber - 1,
+						columnOffset, lastColumnNumber - 1));
+		}
 	}
 	
 	@Override
 	public void autoWidth() {
-		for (int i = 1; i <= lastColumnNum; ++i) {
+		int lastColumnNumber = getLastColumn();
+		for (int i = columnOffset; i < lastColumnNumber; ++i) {
 			sheet.autoSizeColumn(i);
 		}
 	}

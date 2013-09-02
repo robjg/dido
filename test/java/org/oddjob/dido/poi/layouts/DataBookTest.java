@@ -162,7 +162,7 @@ public class DataBookTest extends TestCase {
 		workbook.setArooaSession(session);
 		
 		FileType file = new FileType();
-		file.setFile(new File(workDir, "BookTest.xlsx"));
+		file.setFile(new File(workDir, "NoDataBookTest.xlsx"));
 		
 		workbook.setOutput(file);
 		

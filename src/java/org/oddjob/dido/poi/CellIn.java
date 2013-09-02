@@ -1,7 +1,7 @@
 package org.oddjob.dido.poi;
 
-import org.apache.poi.hssf.record.formula.functions.Column;
 import org.oddjob.dido.poi.data.CellLayout;
+import org.oddjob.dido.tabular.Column;
 import org.oddjob.dido.tabular.ColumnIn;
 
 /**
