@@ -3,7 +3,6 @@ package org.oddjob.dido.poi.layouts;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConverter;
 import org.oddjob.arooa.deploy.annotations.ArooaHidden;
@@ -110,69 +109,8 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 	
 	/**
 	 * Data Reader for the cell.
-	 */
+	 */	
 	class MainReader implements DataReader {
-		
-		private final TupleIn tupleIn;
-		
-		private DataReader nextReader;
-		
-		public MainReader(TupleIn tupleIn) {
-			this.tupleIn = tupleIn;
-		}
-		
-		@Override
-		public Object read() throws DataException {
-			
-			if (nextReader != null) {
-				
-				Object value = nextReader.read();
-				
-				if (value == null) {
-					nextReader.close();
-				}
-				
-				return value;
-			}
-			
-			Cell cell = tupleIn.getCell(columnIndex);
-			
-			if (cell == null) {
-				
-				throw new NullPointerException("Cell index " + 
-						columnIndex + " is null");
-			}
-			
-			try {
-				value(extractCellValue(cell));
-				
-				logger.debug("[" + DataCell.this + "] read [" + value() + "]");
-			}
-			catch (RuntimeException e) {
-				
-				throw new DataException("Failed extracting cell value in row " +
-						cell.getRowIndex() + ", column " + 
-						cell.getColumnIndex(), e);
-			}
-			
-			setReferenceFrom(cell);
-			
-			nextReader = nextReaderFor(new VoidIn());
-			
-			return read();
-		}
-		
-		@Override
-		public void close() throws DataException {
-			
-			if (nextReader != null) {
-				nextReader.close();
-				nextReader = null;
-			}
-		}
-	}
-	
-	class MainReader2 implements DataReader {
 		
 		private DataReader nextReader;
 		
@@ -209,26 +147,6 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 	
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
-
-//		TupleIn tupleIn = dataIn.provideDataIn(TupleIn.class);
-//		
-//		logger.debug("Creating reader for [" + tupleIn + "]");
-//		
-//		if (!initialised) {
-//			
-//			columnIndex = tupleIn.indexForHeading(label);
-//			
-//			logger.info("[" + this + "] is column " + columnIndex);
-//			
-//			initialised = true;
-//		}
-//
-//		if (columnIndex < 1) {
-//			return new NullReader();
-//		}
-//		else {
-//			return new MainReader(tupleIn);
-//		}
 		
 		if (columnIn == null) {
 			
@@ -240,7 +158,7 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 					columnIn.getColumnIndex() + "]");
 		}
 		
-		return new MainReader2();
+		return new MainReader();
 	}
 	
 	/**
@@ -272,70 +190,9 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 	 */
 	class MainWriter implements DataWriter {
 
-		private final TupleOut data;
-		
 		private final DataWriter nextWriter;
 		
-		public MainWriter(TupleOut outgoing) throws DataException {
-			this.data = outgoing; 
-			
-			this.nextWriter = nextWriterFor(new VoidOut());
-		}
-		
-		@Override
-		public boolean write(Object object) throws DataException {
-
-			if (nextWriter.write(object)) {
-				return true;
-			}
-
-			if (isWrittenTo()) {
-				
-				resetWrittenTo();
-				
-				return write(object);
-			}
-			
-			Cell cell = data.createCell(columnIndex, getCellType());
-			
-			insertValueInto(cell, value());
-			
-			String style = DataCell.this.style;
-			if (style == null) {
-				style = getDefaultStyle();
-			}
-			if (style != null) {
-				CellStyle cellStyle = data.styleFor(style);
-				
-				if (cellStyle == null) {
-					throw new DataException("No style available of name [" + 
-							style + "] from cell [" + DataCell.this + "]");
-				}
-				
-				cell.setCellStyle(cellStyle);
-			}
-			
-			logger.trace("[" + DataCell.this + "] wrote [" + value() + "]");
-			
-			setReferenceFrom(cell);
-			
-			return false;
-		}
-		
-		@Override
-		public void close() throws DataException {
-			
-			logger.trace("Closing [" + nextWriter + "]");
-			
-			nextWriter.close();
-		}
-	}
-	
-	class MainWriter2 implements DataWriter {
-
-		private final DataWriter nextWriter;
-		
-		public MainWriter2() throws DataException {
+		public MainWriter() throws DataException {
 			this.nextWriter = nextWriterFor(new VoidOut());
 		}
 		
@@ -376,34 +233,6 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 	
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
-
-//		TupleOut tupleOut = dataOut.provideDataOut(TupleOut.class);
-//		
-//		logger.debug("Creating new column writer for [" + tupleOut + "]");
-//		
-//		if (!initialised) {
-//			
-//			String heading = label;
-//			
-//			if (heading == null) {
-//				heading = getName();
-//			}
-//			
-//			this.columnIndex = tupleOut.indexForHeading(heading);
-//			
-//			this.initialised = true;
-//
-//			logger.debug("[" + this + "] initialsed for column [" + columnIndex + "]");
-//		}		
-//		
-//		if (columnIndex < 0) {
-//			
-//			return new NullWriter();
-//		}
-//		else {
-//			
-//			return new MainWriter(tupleOut);
-//		}
 		
 		if (columnOut == null) {
 			
@@ -416,7 +245,7 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 			
 		}
 		
-		return new MainWriter2();
+		return new MainWriter();
 	}
 	
 	@Override
@@ -458,6 +287,10 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 		return columnIndex;
 	}
 
+	public void setColumnIndex(int column) {
+		this.columnIndex = column;
+	}	
+	
 	public String getStyle() {
 		return style;
 	}

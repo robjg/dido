@@ -2,7 +2,6 @@ package org.oddjob.dido.poi.layouts;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
@@ -71,16 +70,6 @@ public class DataCellTest extends TestCase {
 		public CellStyle styleFor(String styleName) {
 			throw new RuntimeException("Unexpected!");
 		}
-
-		@Override
-		public int indexForHeading(String heading) {
-			throw new RuntimeException("Unexpected!");
-		}
-
-		@Override
-		public Cell createCell(int index, int type) {
-			throw new RuntimeException("Unexpected!");
-		}
 	}
 	
 	public void testWrite() throws DataException {
@@ -143,16 +132,6 @@ public class DataCellTest extends TestCase {
 				throws DataException {
 			assertEquals(TupleIn.class, type);
 			return type.cast(this);
-		}
-
-		@Override
-		public int indexForHeading(String title) {
-			throw new RuntimeException("Unexpected!");
-		}
-
-		@Override
-		public Cell getCell(int column) {
-			throw new RuntimeException("Unexpected!");
 		}
 
 		@Override

@@ -37,11 +37,7 @@ public class PoiRowsIn implements RowsIn {
 	/** The 1 based index of the last row written. */
 	private int lastRowNum;
 	
-	/** The 1 based index of the last column. */
-	private int lastColumnNum;
-		
-	
-	
+	/** The current row. */
 	private Row row;
 	
 	/**
@@ -62,9 +58,8 @@ public class PoiRowsIn implements RowsIn {
 		}
 		
 		this.lastRowNum = firstRow - 1;
-		this.lastColumnNum = firstColumn -1;
 		
-		this.columnOffset = lastColumnNum;
+		this.columnOffset = firstColumn - 1;
 	}
 	
 	@Override
@@ -132,38 +127,6 @@ public class PoiRowsIn implements RowsIn {
 	 * Implementation of {@link TupleIn}.
 	 */
 	class PoiTupleIn implements TupleIn {
-		
-		@Override
-		public int indexForHeading(String title) {
-			
-			if (headings != null && title != null) {
-				Integer column = headings.position(title);
-				if (column == null) {
-					return 0; 
-				}
-				else {
-					int columnInt = column.intValue();
-					if (columnInt > lastColumnNum - columnOffset) {
-						lastColumnNum = columnInt + columnOffset;
-					}
-					return columnInt;
-				}
-			}
-			else {
-				return ++lastColumnNum - columnOffset;
-			}
-		}	
-		
-		@Override
-		public Cell getCell(int column) {
-			
-			if (column < 1) {
-				throw new IndexOutOfBoundsException(
-						"Column " + column + " is invalid.");
-			}
-			
-			return row.getCell(columnOffset + column - 1);
-		}
 		
 		@Override
 		public <T extends DataIn> T provideDataIn(Class<T> type) throws DataException {

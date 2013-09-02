@@ -6,27 +6,33 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.oddjob.arooa.utils.DateHelper;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.poi.BookIn;
 import org.oddjob.dido.poi.BookOut;
+import org.oddjob.dido.poi.CellIn;
+import org.oddjob.dido.poi.CellOut;
 import org.oddjob.dido.poi.RowsIn;
 import org.oddjob.dido.poi.RowsOut;
 import org.oddjob.dido.poi.SheetIn;
 import org.oddjob.dido.poi.SheetOut;
 import org.oddjob.dido.poi.TupleIn;
 import org.oddjob.dido.poi.TupleOut;
+import org.oddjob.dido.poi.layouts.BlankCell;
+import org.oddjob.dido.poi.layouts.DateCell;
+import org.oddjob.dido.poi.layouts.NumericCell;
+import org.oddjob.dido.poi.layouts.NumericFormulaCell;
+import org.oddjob.dido.poi.layouts.TextCell;
 import org.oddjob.dido.poi.style.StyleBean;
-import org.oddjob.dido.poi.style.StyleProvider;
-import org.oddjob.dido.poi.style.StyleProviderFactory;
+import org.oddjob.dido.poi.style.StyleFactoryRegistry;
 
 public class PoiRowsTest extends TestCase {
 
 	public void testWriteNextAndGetNext() throws DataException {
 		
+		TextCell text = new TextCell();
+		text.setColumnIndex(1);
+
 		PoiWorkbook workbook = new PoiWorkbook();
 
 		BookOut bookOut = workbook.provideDataOut(BookOut.class);
@@ -37,20 +43,18 @@ public class PoiRowsTest extends TestCase {
 		test1.nextRow();
 		
 		TupleOut tupleOut = test1.provideDataOut(TupleOut.class);
-		
-		Cell cell1 = tupleOut.createCell(1, Cell.CELL_TYPE_STRING);
-		assertEquals(Cell.CELL_TYPE_STRING, cell1.getCellType());
-		
-		// Not that this is null with version Excel 97.
-		assertEquals("", cell1.getRichStringCellValue().toString());
-		
-		cell1.setCellValue("apples");
 
+		CellOut<Object> cellOut1 = (CellOut<Object>) tupleOut.outFor(text);
+				
+		cellOut1.setData("apples");
+
+		Cell cell1 = sheetOut.getTheSheet().getRow(0).getCell(0);
+		assertEquals(Cell.CELL_TYPE_STRING, cell1.getCellType());
+				
 		test1.nextRow();
 		
-		cell1 = tupleOut.createCell(1, Cell.CELL_TYPE_STRING);
-		cell1.setCellValue("oranges");
-		
+		cellOut1.setData("oranges");
+				
 		assertEquals(2, test1.getLastRow());
 		
 		bookOut.close();
@@ -67,16 +71,17 @@ public class PoiRowsTest extends TestCase {
 		
 		TupleIn tupleIn = test2.provideDataIn(TupleIn.class);
 		
-		Cell cell2 = tupleIn.getCell(1);
+		CellIn<String> cellIn1 = (CellIn<String>) tupleIn.inFor(text);
 		
-		assertEquals(Cell.CELL_TYPE_STRING, cell2.getCellType());
-		assertNotNull(cell2.getRichStringCellValue());
-		assertEquals("apples", cell2.getRichStringCellValue().toString());
+		String data = cellIn1.getData();
+		
+		assertEquals("apples", data);
 		
 		assertTrue(test2.nextRow());
 		
-		cell2 = tupleIn.getCell(1);
-		assertEquals("oranges", cell2.getStringCellValue().toString());
+		data = cellIn1.getData();
+		
+		assertEquals("oranges", data);
 		
 		assertFalse(test2.nextRow());
 	}
@@ -93,8 +98,21 @@ public class PoiRowsTest extends TestCase {
 		
 		TupleOut tupleOut = test1.provideDataOut(TupleOut.class);
 		
-		Cell cell1 = tupleOut.createCell(1, Cell.CELL_TYPE_BLANK);
+		BlankCell blank = new BlankCell();
+		blank.setColumnIndex(1);
+
+		CellOut<Object> cellOut1 = (CellOut<Object>) tupleOut.outFor(blank);
+		cellOut1.setData(null);
+		
+		Cell cell1 = sheetOut.getTheSheet().getRow(0).getCell(0);
 		assertEquals(Cell.CELL_TYPE_BLANK, cell1.getCellType());
+		
+		TextCell text = new TextCell();
+		text.setColumnIndex(1);
+
+		cellOut1 = (CellOut<Object>) tupleOut.outFor(text);
+		cellOut1.setData("apples");
+		
 		cell1.setCellValue("apples");
 		
 		assertEquals(Cell.CELL_TYPE_STRING, cell1.getCellType());
@@ -115,10 +133,21 @@ public class PoiRowsTest extends TestCase {
 			// expected
 		}
 		
-		cell1.setCellValue(12.2);
+		NumericCell numeric = new NumericCell();
+		numeric.setColumnIndex(1);
+
+		cellOut1 = (CellOut<Object>) tupleOut.outFor(numeric);
+		cellOut1.setData(12.2);
+		
 		assertEquals(Cell.CELL_TYPE_NUMERIC, cell1.getCellType());
 		
-		cell1.setCellFormula("6/2");
+		NumericFormulaCell formula = new NumericFormulaCell();
+		formula.setColumnIndex(1);
+		formula.setFormula("6/2");
+		
+		cellOut1 = (CellOut<Object>) tupleOut.outFor(formula);
+		cellOut1.setData(null);
+		
 		assertEquals(Cell.CELL_TYPE_FORMULA, cell1.getCellType());
 		
 		bookOut.close();
@@ -131,19 +160,24 @@ public class PoiRowsTest extends TestCase {
 		BookOut bookOut = workbook.provideDataOut(BookOut.class);
 		SheetOut sheetOut = bookOut.provideDataOut(SheetOut.class);
 		
+		TextCell cell1 = new TextCell();
+		cell1.setLabel("Name");
+		NumericCell cell2 = new NumericCell();
+		cell1.setLabel("Age");
+		
 		RowsOut testOut = new PoiRowsOut(sheetOut, 8, 4);
 		
 		testOut.headerRow(null);
 		
 		TupleOut tupleOut = testOut.provideDataOut(TupleOut.class);
 		
-		assertEquals(1, tupleOut.indexForHeading("Name"));
-		assertEquals(2, tupleOut.indexForHeading("Age"));
-
+		CellOut<String> cellOut1 = (CellOut<String>) tupleOut.outFor(cell1);
+		CellOut<Double> cellOut2 = (CellOut<Double>) tupleOut.outFor(cell2);
+		
 		testOut.nextRow();
 		
-		tupleOut.createCell(1, Cell.CELL_TYPE_STRING).setCellValue("John");
-		tupleOut.createCell(2, Cell.CELL_TYPE_NUMERIC).setCellValue(25);
+		cellOut1.setData("John");
+		cellOut2.setData(25.0);
 		
 		bookOut.close();
 		
@@ -159,17 +193,27 @@ public class PoiRowsTest extends TestCase {
 		
 		TupleIn tupleIn = testIn.provideDataIn(TupleIn.class);
 		
-		assertEquals(1, tupleIn.indexForHeading("Name"));
-		assertEquals(2, tupleIn.indexForHeading("Age"));
+		CellIn<String> cellIn1 = (CellIn<String>) tupleIn.inFor(cell1);
+		CellIn<Double> cellIn2 = (CellIn<Double>) tupleIn.inFor(cell2);
+		
+		assertEquals(1, cellIn1.getColumnIndex());
+		assertEquals(2, cellIn2.getColumnIndex());
 
 		assertTrue(testIn.nextRow());
 		
-		assertEquals("John", tupleIn.getCell(1).getStringCellValue());
-		assertEquals(25.0, tupleIn.getCell(2).getNumericCellValue(), 0.01);
+		assertEquals("John", cellIn1.getData());
+		assertEquals(25.0, cellIn2.getData(), 0.01);
 		
 		assertFalse(testIn.nextRow());
 	}
 	
+	/**
+	 * An old test refactored for changes so much that I'm not quite sure 
+	 * what it proves any more.
+	 * 
+	 * @throws ParseException
+	 * @throws DataException
+	 */
 	public void testDateCellTypes() throws ParseException, DataException {
 		
 		PoiWorkbook workbook = new PoiWorkbook();
@@ -177,29 +221,11 @@ public class PoiRowsTest extends TestCase {
 		StyleBean styleBean = new StyleBean();
 		styleBean.setFormat("m/d/yy h:mm");
 		
+		StyleFactoryRegistry styles = new StyleFactoryRegistry();
+		styles.registerStyle("my-date-format", styleBean);
+		
 		BookOut bookOut = workbook.provideDataOut(BookOut.class);
-		bookOut.addStyleFactory(new StyleProviderFactory() {
-			
-			@Override
-			public StyleProvider providerFor(final Workbook workbook) {
-				return new StyleProvider() {
-					@Override
-					public CellStyle styleFor(String styleName) {
-						if (!"my-date-format".equals(styleName)) {
-							return null;
-						}
-						CreationHelper createHelper = workbook.getCreationHelper();
-						  
-						CellStyle cellStyle = workbook.createCellStyle();
-						    
-						cellStyle.setDataFormat(
-						        createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
-						
-						return cellStyle;
-					}
-				};
-			}
-		});
+		bookOut.addStyleFactory(styles);
 		
 		SheetOut sheetOut = bookOut.provideDataOut(SheetOut.class);
 		
@@ -210,8 +236,21 @@ public class PoiRowsTest extends TestCase {
 		
 		TupleOut tupleOut = test1.provideDataOut(TupleOut.class);
 		
-		Cell cell1 = tupleOut.createCell(1, Cell.CELL_TYPE_BLANK);
-		cell1.setCellValue(theDate);
+		BlankCell blank = new BlankCell();
+		blank.setColumnIndex(1);
+
+		CellOut<Object> cellOut1 = (CellOut<Object>) tupleOut.outFor(blank);
+		cellOut1.setData(null);
+		
+		Cell cell1 = sheetOut.getTheSheet().getRow(0).getCell(0);
+		
+		assertEquals(Cell.CELL_TYPE_BLANK, cell1.getCellType());
+		
+		DateCell dateColumn = new DateCell();
+		dateColumn.setColumnIndex(1);
+		
+		cellOut1 = (CellOut<Object>) tupleOut.outFor(dateColumn);
+		cellOut1.setData(theDate);
 		
 		assertEquals(Cell.CELL_TYPE_NUMERIC, cell1.getCellType());
 
@@ -226,6 +265,5 @@ public class PoiRowsTest extends TestCase {
 		catch (IllegalStateException e) {
 			// expected
 		}
-	}
-	
+	}	
 }

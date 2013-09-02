@@ -50,10 +50,6 @@ public class PoiRowsOut implements RowsOut {
 	 * been created yet. */
 	private int lastRowNum;
 	
-	/** The 1 based index of the last column requested. 0 if no column
-	 * has been requested yet. */
-	private int lastColumnNum;
-	
 	/** The current row being written to. */
 	private Row row;
 	
@@ -88,10 +84,9 @@ public class PoiRowsOut implements RowsOut {
 		}
 		
 		this.lastRowNum = firstRow - 1;
-		this.lastColumnNum = firstColumn - 1; 
 
 		this.rowOffset = lastRowNum;
-		this.columnOffset = lastColumnNum; 
+		this.columnOffset = firstColumn - 1; 
 	}
 	
 	@Override
@@ -196,29 +191,6 @@ public class PoiRowsOut implements RowsOut {
 	 * Implementation of {@link TupleOut}.
 	 */
 	class PoiTupleOut implements TupleOut {
-		
-		@Override
-		public Cell createCell(int column, int type) {
-
-			if (column < 1) {
-				throw new IndexOutOfBoundsException(
-						"Column " + column + " is invalid.");
-			}
-			
-			return row.createCell(columnOffset + column - 1, type);
-		}
-		
-		@Override
-		public int indexForHeading(String heading) {
-			
-			++lastColumnNum;
-			
-			int columnIndex = lastColumnNum - columnOffset;
-
-			writeHeaderForColumn(columnIndex, heading);
-			
-			return columnIndex;
-		}
 		
 		@Override
 		public boolean isWrittenTo() {

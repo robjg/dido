@@ -1,8 +1,8 @@
 package org.oddjob.dido.poi;
 
-import org.apache.poi.ss.usermodel.Cell;
 import org.oddjob.dido.field.Field;
 import org.oddjob.dido.poi.style.StyleProvider;
+import org.oddjob.dido.tabular.Column;
 import org.oddjob.dido.tabular.TabularDataOut;
 
 /**
@@ -14,27 +14,12 @@ import org.oddjob.dido.tabular.TabularDataOut;
 public interface TupleOut extends TabularDataOut, StyleProvider {
 
 	/**
-	 * Provide the column index for the heading. The column index is
-	 * one based.
+	 * Provide an outgoing cells representation for writing data to.
 	 * 
-	 * @param heading The heading. May be null in which case the 
-	 * next column will be returned.
+	 * @param column The field definition that is probably a {@link Column}.
 	 * 
-	 * @return The column index.
+	 * @return A {@link CellOut}. Never null.
 	 */
-	public int indexForHeading(String heading);	
-	
-	/**
-	 * Create a cell or get an existing one.
-	 * 
-	 * @param index The index for this cell in the tuple. The index is
-	 * one based.
-	 * @param type The Poi Type of the cell.
-	 * 
-	 * @return A Cell. Never null.
-	 */
-	public Cell createCell(int index, int type);
-	
 	@Override
 	public CellOut<?> outFor(Field column);
 }
