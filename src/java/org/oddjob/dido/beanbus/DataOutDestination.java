@@ -21,6 +21,11 @@ import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.layout.BindingHelper;
 import org.oddjob.dido.stream.OutputStreamOut;
 
+/**
+ * A Beanbus destination that wraps a {@link DataWriter.
+ * @author rob
+ *
+ */
 public class DataOutDestination extends AbstractDestination<Object>{
 	private static final Logger logger = Logger.getLogger(
 			DataOutDestination.class);

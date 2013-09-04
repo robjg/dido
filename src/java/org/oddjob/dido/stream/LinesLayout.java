@@ -70,6 +70,7 @@ public class LinesLayout extends LayoutValueNode<String> {
 			if (nextReader != null) {
 				nextReader.close();
 			}
+			linesIn.close();
 		}
 	}
  
@@ -145,10 +146,10 @@ public class LinesLayout extends LayoutValueNode<String> {
 				nextWriter.close();
 				nextWriter = null;
 			}
+			
+			linesOut.close();
 		}
 	};
-
-	
 	
 	@Override
 	public DataWriter writerFor(DataOut dataOut)

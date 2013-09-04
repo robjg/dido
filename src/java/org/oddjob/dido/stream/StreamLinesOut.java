@@ -9,6 +9,12 @@ import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.text.StringTextOut;
 import org.oddjob.dido.text.TextOut;
 
+/**
+ * Provide a way of writing lines to an {@code OutputStream}.
+ * 
+ * @author rob
+ *
+ */
 public class StreamLinesOut implements LinesOut {
 
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
@@ -66,6 +72,10 @@ public class StreamLinesOut implements LinesOut {
 						// Clear any text this LinesOut has.
 						this.reset();
 					}
+					@Override
+					public void close() throws DataException {
+						// only outer class closes the stream.
+					}
 				});
 			}
 		}
@@ -98,6 +108,15 @@ public class StreamLinesOut implements LinesOut {
 	@Override
 	public boolean isMultiLine() {
 		return true;
+	}
+	
+	@Override
+	public void close() throws DataException {
+		try {
+			outputStream.close();
+		} catch (IOException e) {
+			throw new DataException(e);
+		}
 	}
 		
 	@Override

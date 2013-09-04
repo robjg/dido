@@ -111,6 +111,11 @@ public class StringTextOut implements TextOut, LinesOut {
 		return false;
 	}
 	
+	@Override
+	public void close() throws DataException {
+		// Nothing to close.
+	}
+	
 	public String toText() {
 	
 		if (buffer == null) {

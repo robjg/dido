@@ -156,6 +156,21 @@ public class ColumnHelperTest extends TestCase {
 		assertEquals("[Fruit, Colour, Quantity]", Arrays.toString(test.getHeadings()));
 	}
 	
+	
+	public void testWithLabelsButNoIndexsAndNoHeadings() {
+		
+		ColumnHelper test = new ColumnHelper();
+		
+		assertEquals(1, test.columnIndexFor(new OurColumn("Colour")));
+		assertEquals(2, test.columnIndexFor(new OurColumn("Quantity")));
+		assertEquals(3, test.columnIndexFor(new OurColumn("Fruit")));
+		
+		assertEquals(3, test.getLastColumn());
+		assertEquals(3, test.getMaxColumn());
+		
+		assertEquals("[Colour, Quantity, Fruit]", Arrays.toString(test.getHeadings()));
+	}
+	
 	public void testWithLabelsAndHeadings() {
 		
 		ColumnHelper test = new ColumnHelper();

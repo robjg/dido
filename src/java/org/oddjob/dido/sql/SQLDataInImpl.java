@@ -107,7 +107,7 @@ public class SQLDataInImpl implements SQLDataIn {
 	}
 
 	@Override
-	public ColumnIn<?> inFor(Field column) {
+	public ColumnIn<Object> inFor(Field column) {
 		
 		return new SQLColumnIn<Object>(columnHelper.columnIndexFor(column));
 	}

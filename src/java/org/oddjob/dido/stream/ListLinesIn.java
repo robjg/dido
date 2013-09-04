@@ -42,4 +42,9 @@ public class ListLinesIn implements LinesIn {
 		}
 		return lastLine;
 	}
+	
+	@Override
+	public void close() throws DataException {
+		// Nothing to close.
+	}
 }

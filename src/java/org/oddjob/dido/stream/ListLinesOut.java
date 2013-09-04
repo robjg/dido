@@ -71,4 +71,9 @@ public class ListLinesOut implements LinesOut {
 	public List<String> getLines() {
 		return lines;
 	}
+	
+	@Override
+	public void close() throws DataException {
+		// Nothing to close.
+	}
 }

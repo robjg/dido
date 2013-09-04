@@ -92,6 +92,7 @@ implements Morphable, MorphProvider {
 			
 		@Override
 		public void close() throws DataException {
+			linesIn.close();
 		}
 	}
 	
@@ -152,6 +153,7 @@ implements Morphable, MorphProvider {
 		
 		@Override
 		public void close() throws DataException {
+			linesIn.close();
 		}
 	}
 	
@@ -262,6 +264,8 @@ implements Morphable, MorphProvider {
 				nextWriter.close();
 				nextWriter = null;
 			}
+			
+			linesOut.close();
 		}
 		
 		@Override
@@ -270,7 +274,6 @@ implements Morphable, MorphProvider {
 			return "Writer for [" + DelimitedLayout.this + "]";
 		}
 	}
-	
 	
 	@Override
 	public DataWriter writerFor(DataOut dataOut)

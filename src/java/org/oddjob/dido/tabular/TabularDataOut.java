@@ -3,19 +3,21 @@ package org.oddjob.dido.tabular;
 import org.oddjob.dido.field.Field;
 import org.oddjob.dido.field.FieldDataOut;
 
+/**
+ * An abstraction for data that is to be written to a layout that
+ * is in tabular form.  
+ * 
+ * @author rob
+ *
+ */
 public interface TabularDataOut extends FieldDataOut {
 
 	/**
-	 * Get the column index to use. This will either be base on the 
-	 * heading provided or on the column index provided. 
+	 * Provide access to the data for the given field definition.
 	 * <p>
-	 * Text based implementations may then use the heading for writing a 
-	 * heading line.
+	 * @param column The field definition. This is often a {@link Column}.
 	 * 
-	 * @param heading The heading, can be null.
-	 * @param column The column. If 0 a column is to be assigned.
-	 * 
-	 * @return The column assigned.
+	 * @return Access to the column data.
 	 */
 	public ColumnOut<?> outFor(Field column);
 }

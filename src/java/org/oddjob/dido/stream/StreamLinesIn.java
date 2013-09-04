@@ -46,6 +46,14 @@ public class StreamLinesIn implements LinesIn {
 		boolean hasNext() {
 			return lastLine != null;
 		}
+		
+		void close() throws DataException {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				throw new DataException(e);
+			}
+		}
 	}
 	
 	public StreamLinesIn(InputStream inputStream) throws DataException {
@@ -83,6 +91,11 @@ public class StreamLinesIn implements LinesIn {
 						return lines.readLine();
 					}
 				}
+				
+				@Override
+				public void close() throws DataException {
+					// Nothing to do as outer class closes stream.
+				}
 			});
 		}
 		
@@ -96,5 +109,10 @@ public class StreamLinesIn implements LinesIn {
 		}
 			
 		throw new UnsupportedDataInException(this.getClass(), type);
+	}
+	
+	@Override
+	public void close() throws DataException {
+		lines.close();
 	}
 }

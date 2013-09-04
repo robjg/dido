@@ -107,9 +107,12 @@ public class ColumnHelper {
 			
 			Column column = (Column) field;
 			
-			int columnIndex = column.getColumnIndex();
-			useColumnIndex = columnIndex;
+			useColumnIndex = column.getColumnIndex();
 		
+			if (useColumnIndex < 0) {
+				throw new IllegalArgumentException("Column Index of " + 
+						useColumnIndex + " is invalid.");
+			}
 			if (useColumnIndex == 0) {
 				useColumnIndex = ++lastColumn;
 			}
@@ -129,6 +132,15 @@ public class ColumnHelper {
 		return useColumnIndex;
 	}
 	
+	/**
+	 * Helper method to convert a map keyed by an integer that is the index
+	 * of the thing. Not that things with a key of less than 1 will be 
+	 * ignored.
+	 * 
+	 * @param things Map of things.
+	 * @return An array of all the things who's key is greater than 0. This
+	 * will not be null but may contain null elements.
+	 */
 	public static String[] toArray(Map<Integer, String> things) {
 		if (things == null) {
 			return null;
@@ -136,12 +148,13 @@ public class ColumnHelper {
 		
 		int maxColumn = 0;
 		for (Integer i : things.keySet() ) {
-			if (i.intValue() > maxColumn) {
-				maxColumn = i.intValue();
+			int index = i.intValue();
+			if (index > maxColumn) {
+				maxColumn = index;
 			}
 		}
 		
-		String[] a = new String[maxColumn ];
+		String[] a = new String[maxColumn];
 		
 		for (int i = 0; i < maxColumn; ++i) {
 			String thing = things.get(i + 1);
