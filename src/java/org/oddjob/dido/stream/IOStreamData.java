@@ -8,6 +8,7 @@ import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConverter;
 import org.oddjob.arooa.convert.ConversionFailedException;
 import org.oddjob.arooa.convert.NoConversionAvailableException;
+import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
@@ -32,6 +33,7 @@ public class IOStreamData implements DataIn, DataOut, ArooaSessionAware{
 	
 	private ArooaConverter converter;
 	
+	@ArooaHidden
 	@Override
 	public void setArooaSession(ArooaSession session) {
 		this.converter = session.getTools().getArooaConverter();
@@ -95,7 +97,7 @@ public class IOStreamData implements DataIn, DataOut, ArooaSessionAware{
 		
 		if (type.isAssignableFrom(LinesOut.class)) {
 			if (output == null) {
-				throw new NullPointerException("No input!");
+				throw new NullPointerException("No output!");
 			}
 			
 			if (converter == null) {
@@ -104,7 +106,7 @@ public class IOStreamData implements DataIn, DataOut, ArooaSessionAware{
 			
 			OutputStream outputStream;
 			try {
-				outputStream = converter.convert(input, OutputStream.class);
+				outputStream = converter.convert(output, OutputStream.class);
 			} catch (NoConversionAvailableException e) {
 				throw new DataException(e);
 			} catch (ConversionFailedException e) {

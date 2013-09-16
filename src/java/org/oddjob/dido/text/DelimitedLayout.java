@@ -13,10 +13,42 @@ import org.oddjob.dido.layout.LayoutValueNode;
 import org.oddjob.dido.morph.MorphDefinition;
 import org.oddjob.dido.morph.MorphProvider;
 import org.oddjob.dido.morph.Morphable;
+import org.oddjob.dido.other.When;
 import org.oddjob.dido.stream.LinesIn;
 import org.oddjob.dido.stream.LinesOut;
 
-
+/**
+ * @oddjob.description Define a delimited layout.
+ * <p>
+ * <ul>
+ * <li>This is generally a top level layout.</li> 
+ * <li>It can be nested in a {@link When} layout.</li>
+ * <li>It can be a child layout of a {link {@link TextLayout} layout to
+ * further delimit a region of text.</li>
+ * </ul>
+ * <p>
+ * This layout is Morphable which means that a binding can ask it to 
+ * generate it's children If no child nodes (cells) are already defined.
+ * 
+ * @oddjob.example
+ * 
+ * Read data and then write it back out again. Note that as no type is 
+ * specified in the binding, the headings are required to create the beans.
+ * 
+ * {@oddjob.xml.resource org/oddjob/dido/text/DelimitedSimplestReadWrite.xml}
+ * 
+ * @oddjob.example
+ * 
+ * Read and write data using actual java beans as defined by the type in 
+ * the binding. The heading property is still required to create the beans
+ * because the property order in a java bean isn't guaranteed.
+ * 
+ * {@oddjob.xml.resource org/oddjob/dido/text/DelimitedReadWriteByType.xml}
+ * 
+ * 
+ * @author rob
+ *
+ */
 public class DelimitedLayout extends LayoutValueNode<String[]>
 implements Morphable, MorphProvider {
 
