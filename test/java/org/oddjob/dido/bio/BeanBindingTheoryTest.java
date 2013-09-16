@@ -6,6 +6,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.oddjob.arooa.standard.StandardArooaSession;
+import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.utils.Iterables;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
@@ -16,9 +18,8 @@ import org.oddjob.dido.Layout;
 import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.layout.ChildReader;
 import org.oddjob.dido.layout.ChildWriter;
-import org.oddjob.dido.stream.InputStreamIn;
+import org.oddjob.dido.stream.IOStreamData;
 import org.oddjob.dido.stream.LinesLayout;
-import org.oddjob.dido.stream.OutputStreamOut;
 import org.oddjob.dido.text.DelimitedLayout;
 import org.oddjob.dido.text.FieldLayout;
 
@@ -134,8 +135,12 @@ public class BeanBindingTheoryTest extends TestCase {
 		LinesLayout lines = new LinesLayout();
 		lines.bind(new TwoLinesPerObjectBinding());
 		
-		DataReader reader = lines.readerFor(
-				new InputStreamIn(new ByteArrayInputStream(text.getBytes())));
+		IOStreamData data = new IOStreamData();
+		data.setArooaSession(new StandardArooaSession());
+		data.setInput(new ArooaObject(
+				new ByteArrayInputStream(text.getBytes())));
+
+		DataReader reader = lines.readerFor(data);
 		
 		Fruit fruit1 = (Fruit) reader.read();
 		
@@ -150,8 +155,9 @@ public class BeanBindingTheoryTest extends TestCase {
 		reader.close();
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		data.setOutput(new ArooaObject(output));
 		
-		DataWriter writer = lines.writerFor(new OutputStreamOut(output));
+		DataWriter writer = lines.writerFor(data);
 		
 		writer.write(fruit1);
 		writer.write(fruit2);
@@ -336,6 +342,11 @@ public class BeanBindingTheoryTest extends TestCase {
 				"Green,Apple" + EOL + 
 				"Yellow,Banana" + EOL;
 		
+		IOStreamData data = new IOStreamData();
+		data.setArooaSession(new StandardArooaSession());
+		data.setInput(new ArooaObject(
+				new ByteArrayInputStream(text.getBytes())));
+		
 		DelimitedLayout layout = new DelimitedLayout();
 		
 		FieldLayout field1 = new FieldLayout();
@@ -346,8 +357,7 @@ public class BeanBindingTheoryTest extends TestCase {
 		
 		layout.bind(new TwoObjectsPerLineBinding());
 		
-		DataReader reader = layout.readerFor(
-				new InputStreamIn(new ByteArrayInputStream(text.getBytes())));
+		DataReader reader = layout.readerFor(data);
 		
 		String colour1 = (String) reader.read();
 		
@@ -370,8 +380,9 @@ public class BeanBindingTheoryTest extends TestCase {
 		layout.reset();
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		data.setOutput(new ArooaObject(output));
 		
-		DataWriter writer = layout.writerFor(new OutputStreamOut(output));
+		DataWriter writer = layout.writerFor(data);
 		
 		writer.write("Green");
 		writer.write("Apple");

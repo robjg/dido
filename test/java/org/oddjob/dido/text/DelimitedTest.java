@@ -9,16 +9,17 @@ import junit.framework.TestCase;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.arooa.standard.StandardArooaSession;
+import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.bio.ValueBinding;
+import org.oddjob.dido.stream.IOStreamData;
 import org.oddjob.dido.stream.LinesLayout;
 import org.oddjob.dido.stream.ListLinesIn;
 import org.oddjob.dido.stream.ListLinesOut;
-import org.oddjob.dido.stream.OutputStreamOut;
 
 
 public class DelimitedTest extends TestCase {
@@ -177,7 +178,11 @@ public class DelimitedTest extends TestCase {
 				
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-		DataWriter writer = lines.writerFor(new OutputStreamOut(output));
+		IOStreamData ioData = new IOStreamData();
+		ioData.setArooaSession(new StandardArooaSession());
+		ioData.setOutput(new ArooaObject(output));
+		
+		DataWriter writer = lines.writerFor(ioData);
 		
 		ArooaSession session = new StandardArooaSession();
 		

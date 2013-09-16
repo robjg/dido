@@ -11,6 +11,16 @@ import org.oddjob.dido.layout.BindingHelper;
  * @oddjob.description A Job that can write data out to a file or 
  * other output.  
  * 
+ * @oddjob.exapmle
+ * 
+ * Writing a delimited file.
+ * 
+ * {@oddjob.xml.resource org/oddjob/dido/WriteJobExample.xml}
+ * 
+ * The plan is 
+ * 
+ * {@oddjob.xml.resource org/oddjob/dido/DelimitedExamplePlan.xml}
+ * 
  * @author rob
  *
  */

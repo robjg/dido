@@ -9,7 +9,7 @@ import org.oddjob.io.BufferType;
 
 import junit.framework.TestCase;
 
-public class IODataStreamTest extends TestCase {
+public class IOStreamDataTest extends TestCase {
 
 	public static final String EOL = System.getProperty("line.separator");
 	

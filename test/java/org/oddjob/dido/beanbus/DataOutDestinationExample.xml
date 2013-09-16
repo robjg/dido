@@ -14,13 +14,17 @@
                         </list>
                     </beans>
                 </bus:iterable-driver>
-                <bean class="org.oddjob.dido.beanbus.DataOutDestination">
+                <bean class="org.oddjob.dido.beanbus.DataOutDestination" xmlns:dido="oddjob:dido">
                     <layout>
-                        <dido:delimited name="top" withHeadings="true" xmlns:dido="oddjob:dido"/>
+                        <dido:delimited name="top" withHeadings="true"/>
                     </layout>
-                    <output>
-                        <stdout/>
-                    </output>
+                    <data>
+                        <dido:io>
+                          <output>
+                            <stdout/>
+                          </output>
+                        </dido:io>
+                    </data>
                     <bindings>
                         <dido:bean-binding key="top" xmlns:dido="oddjob:dido">
                             <beanView>

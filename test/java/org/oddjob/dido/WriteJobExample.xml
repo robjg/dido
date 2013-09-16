@@ -12,7 +12,7 @@
         </dido:bean-binding>
       </bindings>
       <data>
-        <dido:output>
+        <dido:io>
           <output>
             <identify id='results'>
               <value>
@@ -20,7 +20,7 @@
               </value>
             </identify>
           </output>
-        </dido:output>
+        </dido:io>
       </data>
       <beans>
         <value value='${beans}' />

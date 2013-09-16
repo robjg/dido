@@ -8,17 +8,18 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
+import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
+import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.types.ImportType;
 import org.oddjob.dido.DataReadJob;
 import org.oddjob.dido.DataWriteJob;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
-import org.oddjob.dido.stream.InputStreamIn;
-import org.oddjob.dido.stream.OutputStreamOut;
+import org.oddjob.dido.stream.IOStreamData;
 
 public class NumberFieldTest extends TestCase {
 
@@ -57,19 +58,24 @@ public class NumberFieldTest extends TestCase {
 			"$17,000.00" + EOL +
 			"$23,500.00" + EOL;
 	
-		ImportType importType = new ImportType();
-		importType.setArooaSession(new StandardArooaSession(
+		ArooaSession session = new StandardArooaSession(
 				new ClassPathDescriptorFactory(
-						).createDescriptor(getClass().getClassLoader())));
+						).createDescriptor(getClass().getClassLoader()));
+		ImportType importType = new ImportType();
+		importType.setArooaSession(session);
 		importType.setResource("org/oddjob/dido/text/NumberFormatExample.xml");
+		
+		IOStreamData ioData = new IOStreamData();
+		ioData.setArooaSession(session);
+		ioData.setInput(new ArooaObject(
+				new ByteArrayInputStream(data.getBytes())));
 		
 		Layout layout = (Layout) importType.toObject();
 		
 		DataReadJob readJob = new DataReadJob();
 		readJob.setLayout(layout);
 		readJob.setBindings("employee", employeeBinding);
-		readJob.setData(new InputStreamIn(
-				new ByteArrayInputStream(data.getBytes())));
+		readJob.setData(ioData);
 		readJob.setBeans(new ArrayList<Object>());
 		
 		readJob.run();
@@ -89,9 +95,10 @@ public class NumberFieldTest extends TestCase {
 		
 		writeJob.setBeans(Arrays.asList(beans));
 		
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		ByteArrayOutputStream output = new ByteArrayOutputStream();		
+		ioData.setOutput(new ArooaObject(output));
 		
-		writeJob.setData(new OutputStreamOut(output));
+		writeJob.setData(ioData);
 		
 		writeJob.run();
 		

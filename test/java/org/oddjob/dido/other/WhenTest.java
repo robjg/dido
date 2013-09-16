@@ -11,10 +11,12 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
+import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
+import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.types.ImportType;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReadJob;
@@ -23,7 +25,7 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.bio.DirectBinding;
-import org.oddjob.dido.stream.InputStreamIn;
+import org.oddjob.dido.stream.IOStreamData;
 import org.oddjob.dido.stream.OutputStreamOut;
 import org.oddjob.dido.text.FieldLayout;
 import org.oddjob.dido.text.SimpleFieldsOut;
@@ -166,11 +168,18 @@ public class WhenTest extends TestCase {
 			"2,Cox,Apple,Red" + EOL +
 			"2,Granny Smith,Apple,Green" + EOL;
 	
-		ImportType importType = new ImportType();
-		importType.setArooaSession(new StandardArooaSession(
+		ArooaSession session = new StandardArooaSession(
 				new ClassPathDescriptorFactory(
-						).createDescriptor(getClass().getClassLoader())));
+						).createDescriptor(getClass().getClassLoader()));
+		
+		ImportType importType = new ImportType();
+		importType.setArooaSession(session);
 		importType.setXml(delimitedConfig);
+		
+		IOStreamData ioData = new IOStreamData();
+		ioData.setArooaSession(session);
+		ioData.setInput(new ArooaObject(
+				new ByteArrayInputStream(data.getBytes())));
 		
 		Layout layout = (Layout) importType.toObject();
 		
@@ -178,8 +187,7 @@ public class WhenTest extends TestCase {
 		readJob.setLayout(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
-		readJob.setData(new InputStreamIn(
-				new ByteArrayInputStream(data.getBytes())));
+		readJob.setData(ioData);
 		
 		Collection<Object> results = new ArrayList<Object>();
 		
@@ -217,8 +225,8 @@ public class WhenTest extends TestCase {
 		writeJob.setBeans(Arrays.asList(beans));
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		
-		writeJob.setData(new OutputStreamOut(output));
+		ioData.setOutput(new ArooaObject(output));
+		writeJob.setData(ioData);
 		
 		writeJob.run();
 		
@@ -227,12 +235,21 @@ public class WhenTest extends TestCase {
 	
 	public void testDelimitedWriteRead() throws ArooaConversionException, IOException {
 		
-		ImportType importType = new ImportType();
-		importType.setArooaSession(new StandardArooaSession(
+		ArooaSession session = new StandardArooaSession(
 				new ClassPathDescriptorFactory(
-						).createDescriptor(getClass().getClassLoader())));
+						).createDescriptor(getClass().getClassLoader()));
+		
+		ImportType importType = new ImportType();
+		importType.setArooaSession(session);
 		importType.setXml(delimitedConfig);
 		
+		IOStreamData ioData = new IOStreamData();
+		ioData.setArooaSession(session);
+		
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+		ioData.setOutput(new ArooaObject(output));
+				
 		Layout layout = (Layout) importType.toObject();
 		
 		Person person1 = new Person();
@@ -266,9 +283,7 @@ public class WhenTest extends TestCase {
 		
 		writeJob.setBeans(beans);
 		
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		
-		writeJob.setData(new OutputStreamOut(output));
+		writeJob.setData(ioData);
 		
 		writeJob.run();
 		
@@ -276,9 +291,12 @@ public class WhenTest extends TestCase {
 		readJob.setLayout(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
-		readJob.setData(new InputStreamIn(
-				new ByteArrayInputStream(output.toByteArray())));
 		readJob.setBeans(new ArrayList<Object>());
+		
+		ioData.setInput(new ArooaObject(
+				new ByteArrayInputStream(output.toByteArray())));
+		readJob.setData(ioData);
+		
 		readJob.run();
 		
 		Object[] results = readJob.getBeans().toArray();
@@ -333,20 +351,26 @@ public class WhenTest extends TestCase {
 			"2Cox         Apple       Red      " + EOL +
 			"2Granny SmithApple       Green    " + EOL;
 	
-		ImportType importType = new ImportType();
-		importType.setArooaSession(new StandardArooaSession(
+		ArooaSession session = new StandardArooaSession(
 				new ClassPathDescriptorFactory(
-						).createDescriptor(getClass().getClassLoader())));
+						).createDescriptor(getClass().getClassLoader()));
+		
+		ImportType importType = new ImportType();
+		importType.setArooaSession(session);
 		importType.setXml(fixedConfig);
 		
+		IOStreamData ioData = new IOStreamData();
+		ioData.setArooaSession(session);
+		ioData.setInput(new ArooaObject(
+				new ByteArrayInputStream(data.getBytes())));
+
 		Layout layout = (Layout) importType.toObject();
 		
 		DataReadJob readJob = new DataReadJob();
 		readJob.setLayout(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
-		readJob.setData(new InputStreamIn(
-				new ByteArrayInputStream(data.getBytes())));
+		readJob.setData(ioData);
 		readJob.setBeans(new ArrayList<Object>());
 		
 		readJob.run();
@@ -380,8 +404,9 @@ public class WhenTest extends TestCase {
 		writeJob.setBeans(Arrays.asList(beans));
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		ioData.setOutput(new ArooaObject(output));
 		
-		writeJob.setData(new OutputStreamOut(output));
+		writeJob.setData(ioData);
 		
 		writeJob.run();
 		
@@ -421,8 +446,7 @@ public class WhenTest extends TestCase {
 			"   </of>" +
 			"  </case>" +
 			" </of>" +
-			"</lines>";
-			
+			"</lines>";			
 			
 		String data = 
 			"1John   London      " + EOL +
@@ -430,12 +454,18 @@ public class WhenTest extends TestCase {
 			"2Cox,Apple,Red" + EOL +
 			"2Granny Smith,Apple,Green" + EOL;
 	
+		ArooaSession session = new StandardArooaSession(
+				new ClassPathDescriptorFactory(
+						).createDescriptor(getClass().getClassLoader()));
 		
 		ImportType importType = new ImportType();
-		importType.setArooaSession(new StandardArooaSession(
-				new ClassPathDescriptorFactory(
-						).createDescriptor(getClass().getClassLoader())));
+		importType.setArooaSession(session);
 		importType.setXml(xml);
+		
+		IOStreamData ioData = new IOStreamData();
+		ioData.setArooaSession(session);
+		ioData.setInput(new ArooaObject(
+				new ByteArrayInputStream(data.getBytes())));
 		
 		Layout layout = (Layout) importType.toObject();
 		
@@ -443,8 +473,7 @@ public class WhenTest extends TestCase {
 		readJob.setLayout(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
-		readJob.setData(new InputStreamIn(
-				new ByteArrayInputStream(data.getBytes())));
+		readJob.setData(ioData);
 		readJob.setBeans(new ArrayList<Object>());
 		
 		readJob.run();
@@ -478,8 +507,9 @@ public class WhenTest extends TestCase {
 		writeJob.setBeans(Arrays.asList(beans));
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		ioData.setOutput(new ArooaObject(output));
 		
-		writeJob.setData(new OutputStreamOut(output));
+		writeJob.setData(ioData);
 		
 		writeJob.run();
 		

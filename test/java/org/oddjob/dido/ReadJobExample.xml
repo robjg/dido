@@ -12,11 +12,11 @@
     </dido:bean-binding>
    </bindings>
    <data>
-    <dido:input>
+    <dido:io>
      <input>
       <resource resource="org/oddjob/dido/ReadJobExampleData.txt"/>
      </input>
-    </dido:input>
+    </dido:io>
    </data>
    <beans>
     <list/>

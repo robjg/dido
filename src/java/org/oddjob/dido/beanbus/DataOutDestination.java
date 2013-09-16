@@ -1,7 +1,5 @@
 package org.oddjob.dido.beanbus;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +17,6 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.layout.BindingHelper;
-import org.oddjob.dido.stream.OutputStreamOut;
 
 /**
  * A Beanbus destination that wraps a {@link DataWriter.
@@ -34,7 +31,12 @@ public class DataOutDestination extends AbstractDestination<Object>{
 	
 	private Layout layout;
 	
-	private OutputStream output;
+    /**
+     * @oddjob.property
+     * @oddjob.description The Data Out to write the data to.
+     * @oddjob.required Yes.
+     */	
+	private DataOut data;
 	
     /**
      * @oddjob.property
@@ -62,11 +64,10 @@ public class DataOutDestination extends AbstractDestination<Object>{
 				throw new BusCrashException("No Layout.");
 			}
 			
-			DataOut dataOut = null;
-			if (output != null) {
-				dataOut = new OutputStreamOut(output);
+			if (data == null) {
+				throw new NullPointerException("No output provided");
 			}
-			
+						
 			BindingHelper bindingHelper = new BindingHelper(layout);
 			for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
 				Binding binding = entry.getValue();
@@ -75,8 +76,9 @@ public class DataOutDestination extends AbstractDestination<Object>{
 			}
 			
 			try {
-				writer = layout.writerFor(dataOut);
-			} catch (DataException e) {
+				writer = layout.writerFor(data);
+			} 
+			catch (DataException e) {
 				throw new BusCrashException("Failed creating writer.", e);
 			}
 			
@@ -86,11 +88,11 @@ public class DataOutDestination extends AbstractDestination<Object>{
 		@Override
 		public void busTerminated(org.oddjob.beanbus.BusEvent event) {
 			
-			if (output != null) {
+			if (writer != null) {
 				try {
-					output.close();
-				} catch (IOException e) {
-					logger.error("Failed closing output.", e);
+					writer.close();
+				} catch (DataException e) {
+					logger.error("Failed closing output data.", e);
 				}
 			}
 		}
@@ -146,14 +148,14 @@ public class DataOutDestination extends AbstractDestination<Object>{
 		this.layout = layout;
 	}
 
-	public OutputStream getOutput() {
-		return output;
+	public DataOut getData() {
+		return data;
 	}
-
-	public void setOutput(OutputStream output) {
-		this.output = output;
+	
+	public void setData(DataOut data) {
+		this.data = data;
 	}
-
+	
 	public int getCount() {
 		return count;
 	}
