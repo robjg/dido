@@ -100,11 +100,7 @@ public class DataReadJob implements Runnable {
 					beans.add(bean);
 				}
 			}
-			
 			reader.close();
-			if (data instanceof Closeable) {
-				((Closeable) data).close();
-			}
 		}
 		catch (RuntimeException e) {
 			throw e;

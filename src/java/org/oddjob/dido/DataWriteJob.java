@@ -102,12 +102,7 @@ public class DataWriteJob implements Runnable {
 				
 				++beanCount;
 			}
-			
-			writer.close();
-			
-			if (data instanceof Closeable) {
-				((Closeable) data).close();
-			}
+			writer.close();			
 		}
 		catch (RuntimeException e) {
 			throw e;

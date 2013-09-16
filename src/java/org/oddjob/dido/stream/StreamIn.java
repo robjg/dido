@@ -2,6 +2,7 @@ package org.oddjob.dido.stream;
 
 import java.io.InputStream;
 
+import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 
 /**
@@ -12,7 +13,7 @@ import org.oddjob.dido.DataIn;
  */
 public interface StreamIn extends DataIn {
 
-
 	public InputStream inputStream();
 	
+	public void close() throws DataException;
 }

@@ -3,8 +3,6 @@ package org.oddjob.dido.stream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.oddjob.arooa.life.Destroy;
-import org.oddjob.dido.Closeable;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.UnsupportedDataInException;
@@ -15,7 +13,7 @@ import org.oddjob.dido.UnsupportedDataInException;
  * @author rob
  *
  */
-public class InputStreamIn implements StreamIn, Closeable {
+public class InputStreamIn implements StreamIn {
 	
 	private InputStream inputStream;
 	
@@ -49,9 +47,8 @@ public class InputStreamIn implements StreamIn, Closeable {
 		
 		throw new UnsupportedDataInException(this.getClass(), type);
 	}
-	
+
 	@Override
-	@Destroy
 	public void close() throws DataException {
 		if (inputStream != null) {
 			try {

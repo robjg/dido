@@ -2,6 +2,7 @@ package org.oddjob.dido.stream;
 
 import java.io.OutputStream;
 
+import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 
 /**
@@ -13,4 +14,6 @@ import org.oddjob.dido.DataOut;
 public interface StreamOut extends DataOut {
 
 	public OutputStream outputStream();
+	
+	public void close() throws DataException;
 }
