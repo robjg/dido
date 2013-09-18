@@ -9,6 +9,7 @@ import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.layout.LayoutNode;
+import org.oddjob.dido.layout.NullReader;
 import org.oddjob.dido.poi.BookIn;
 import org.oddjob.dido.poi.BookOut;
 import org.oddjob.dido.poi.data.PoiSheetIn;
@@ -30,7 +31,9 @@ public class DataSheet extends LayoutNode {
 	private static final Logger logger = Logger.getLogger(DataSheet.class);
 	
 	/** @oddjob.property
-	 *  @oddjob.description The name of the sheet. 
+	 *  @oddjob.description The name of the sheet to read or write. When
+	 *  reading if a name is given and the sheet doesn't exist in the
+	 *  workbook then no data will be read.
 	 *  @oddjob.required No. If not supplied the next sheet is used.
 	 */
 	private String sheetName;
@@ -55,12 +58,17 @@ public class DataSheet extends LayoutNode {
 		Sheet sheet;
 		if (sheetName == null) {
 			sheet = data.nextSheet();
+			if (sheet == null) {
+				logger.info("[" + this + "] no more sheets.");
+				return new NullReader();
+			}
 		}
 		else {
 			sheet = data.getSheet(sheetName);
-		}
-		if (sheet == null) {
-			return null;		
+			if (sheet == null) {
+				logger.info("[" + this + "] no sheet of name [" + sheetName + "].");
+				return new NullReader();
+			}
 		}
 		
 		PoiSheetIn dataSheet = new PoiSheetIn(sheet);
@@ -74,23 +82,35 @@ public class DataSheet extends LayoutNode {
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 		
-		BookOut data = dataOut.provideDataOut(BookOut.class);
+		final BookOut data = dataOut.provideDataOut(BookOut.class);
 
 		Sheet sheet = data.createSheet(sheetName);
 		
-		PoiSheetOut sheetData = new PoiSheetOut(sheet, 
+		final PoiSheetOut sheetData = new PoiSheetOut(sheet, 
 				data);
 		
 		logger.debug("Created sheet " + sheet.getSheetName());
 		
-		return nextWriterFor(sheetData);
+		final DataWriter nextWriter = nextWriterFor(sheetData);
+		
+		return new DataWriter() {
+			
+			@Override
+			public boolean write(Object object) throws DataException {
+				return nextWriter.write(object);
+			}
+			
+			@Override
+			public void close() throws DataException {
+				nextWriter.close();
+				data.close();
+			}
+		};
 	}
 
 	@Override
 	public void reset() {
 		super.reset();
-		
-		sheetName = null;
 	}
 	
 	/**

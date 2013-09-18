@@ -1,6 +1,7 @@
 package org.oddjob.dido.poi;
 
 import org.apache.poi.ss.usermodel.Sheet;
+import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.poi.style.StyleProvider;
 
@@ -18,4 +19,7 @@ public interface SheetOut extends DataOut, StyleProvider {
 	 * @return A sheet. Never null.
 	 */
 	public Sheet getTheSheet();	
+	
+	
+	public void close() throws DataException;
 }

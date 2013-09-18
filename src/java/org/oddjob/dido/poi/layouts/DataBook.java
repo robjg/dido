@@ -21,6 +21,13 @@ import org.oddjob.dido.poi.style.StyleFactoryRegistry;
  * and will be used in conjunction with an {@link PoiWorkbook} for providing
  * data in and data out.
  * 
+ * @oddjob.example
+ * 
+ * Read data and then write it back out again. Note that as no type is 
+ * specified in the binding, the headings are required to create the beans.
+ * 
+ * {@oddjob.xml.resource org/oddjob/dido/text/DelimitedSimplestReadWrite.xml}
+ * 
  * @author rob
  *
  */

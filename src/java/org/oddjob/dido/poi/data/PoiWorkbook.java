@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConverter;
+import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
@@ -24,6 +25,8 @@ import org.oddjob.dido.UnsupportedDataInException;
 import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.poi.BookIn;
 import org.oddjob.dido.poi.BookOut;
+import org.oddjob.dido.poi.SheetIn;
+import org.oddjob.dido.poi.SheetOut;
 import org.oddjob.dido.poi.layouts.DataBook;
 import org.oddjob.dido.poi.style.CompositeStyleProvider;
 import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
@@ -79,6 +82,7 @@ public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 		throw new UnsupportedOperationException();
 	}
 
+	@ArooaHidden
 	@Override
 	public void setArooaSession(ArooaSession session) {
 		this.arooaConverter = session.getTools().getArooaConverter();
@@ -92,6 +96,10 @@ public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 			return type.cast(new PoiBookIn());
 		}
 		
+		if (type.isAssignableFrom(SheetIn.class)) {
+			return new PoiBookIn().provideDataIn(type);
+		}
+		
 		throw new UnsupportedDataInException(this.getClass(), type);
 	}
 	
@@ -100,7 +108,18 @@ public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 	throws DataException {
 		
 		if (type.isAssignableFrom(BookOut.class)) {
-			return type.cast(new PoiBookOut());
+			return type.cast(new RootPoiBookOut());
+		}
+		
+		if (type.isAssignableFrom(SheetOut.class)) {
+			final PoiBookOut bookOut = new RootPoiBookOut();
+			return type.cast(new PoiSheetOut(
+					bookOut.createSheet(null), bookOut) {
+				@Override
+				public void close() throws DataException {
+					bookOut.close();
+				}
+			});
 		}
 		
 		throw new UnsupportedDataOutException(this.getClass(), type);
@@ -150,15 +169,84 @@ public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 				return type.cast(this);
 			}
 			
-			return new PoiSheetIn(nextSheet()).provideDataIn(type);
+			if (type.isAssignableFrom(SheetIn.class)) {
+				return type.cast(new PoiSheetIn(nextSheet()));
+			}
+			
+			throw new UnsupportedDataInException(this.getClass(), type);
 		}
 	}	
 	
 	class PoiBookOut implements BookOut {
 		
-		private final CompositeStyleProvider styleProviders; 
+		CompositeStyleProvider styleProviders; 
 				
-		public PoiBookOut() {
+		protected PoiBookOut() {
+			
+		}
+		
+		public PoiBookOut(PoiBookOut original) {
+			styleProviders = original.styleProviders;
+		}
+
+		@Override
+		public Sheet createSheet(String name) {
+			if (name == null) {
+				return workbook.createSheet();
+			}
+			else {
+				Sheet sheet = workbook.getSheet(name);
+				if (sheet == null) {
+					sheet = workbook.createSheet(name);
+					workbook.setSheetName(
+							workbook.getSheetIndex(sheet), name);
+				}
+				return sheet;
+			}
+		}
+		
+		@Override
+		public void addStyleFactory(StyleProviderFactory styleProviderFactory) {
+			styleProviders.addStyleProvider(
+					styleProviderFactory.providerFor(workbook));
+		}
+		
+		@Override
+		public void close() throws DataException {
+			
+			// Do nothing.
+		}
+		
+		@Override
+		public CellStyle styleFor(String styleName) {
+
+			return styleProviders.styleFor(styleName);
+		}
+		
+		@Override
+		public boolean isWrittenTo() {
+			throw new RuntimeException("To Do.");
+		}
+			
+		@Override
+		public <T extends DataOut> T provideDataOut(Class<T> type) throws DataException {
+	
+			if (type.isInstance(this)) {
+				return type.cast(new PoiBookOut(this));
+			}
+			
+			if (type.isAssignableFrom(SheetOut.class)) {
+				return type.cast(new PoiSheetOut(createSheet(null), 
+						new PoiBookOut(this)));
+			}
+			
+			throw new UnsupportedDataOutException(this.getClass(), type);
+		}
+	}
+	
+	class RootPoiBookOut extends PoiBookOut {
+		
+		public RootPoiBookOut() {
 			
 			if (input != null) {
 	
@@ -195,23 +283,7 @@ public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 	 		styleProviders = new CompositeStyleProvider(
 	 				new DefaultStyleProivderFactory().providerFor(workbook));
 		}
-		
-		@Override
-		public Sheet createSheet(String name) {
-			if (name == null) {
-				return workbook.createSheet();
-			}
-			else {
-				return workbook.createSheet(name);
-			}
-		}
-		
-		@Override
-		public void addStyleFactory(StyleProviderFactory styleProviderFactory) {
-			styleProviders.addStyleProvider(
-					styleProviderFactory.providerFor(workbook));
-		}
-		
+
 		@Override
 		public void close() throws DataException {
 			
@@ -233,29 +305,9 @@ public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 						" sheet out.");
 			}
 		}
-		
-		@Override
-		public CellStyle styleFor(String styleName) {
-
-			return styleProviders.styleFor(styleName);
-		}
-		
-		@Override
-		public boolean isWrittenTo() {
-			throw new RuntimeException("To Do.");
-		}
-			
-		@Override
-		public <T extends DataOut> T provideDataOut(Class<T> type) throws DataException {
-	
-			if (type.isInstance(this)) {
-				return type.cast(this);
-			}
-			
-			return new PoiSheetOut(createSheet(null), this).provideDataOut(type);
-		}
 	}
-
+	
+	
 	public ArooaValue getInput() {
 		return input;
 	}

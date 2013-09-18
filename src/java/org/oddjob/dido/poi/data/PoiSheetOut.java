@@ -67,4 +67,8 @@ public class PoiSheetOut implements SheetOut {
 		return getClass().getSimpleName() + ": " + sheet.getSheetName();
 	}
 	
+	@Override
+	public void close() throws DataException {
+		// Override by subclasses that need to close the book.
+	}
 }

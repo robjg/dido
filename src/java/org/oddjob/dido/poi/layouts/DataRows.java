@@ -315,7 +315,7 @@ implements Morphable, MorphProvider {
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 
-		SheetOut sheetOut = dataOut.provideDataOut(SheetOut.class);
+		final SheetOut sheetOut = dataOut.provideDataOut(SheetOut.class);
 		
 		logger.debug("Creating writer for [" + sheetOut + "]");
 
@@ -328,7 +328,14 @@ implements Morphable, MorphProvider {
 					firstRow + ", " + firstColumn + "]");
 		}
 		
-		return new MainWriter(rowsOut);
+		return new MainWriter(rowsOut) {
+			
+			@Override
+			public void close() throws DataException {
+				super.close();
+				sheetOut.close();
+			}
+		};
 	}
 
 	@Override

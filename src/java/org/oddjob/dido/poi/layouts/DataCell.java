@@ -1,7 +1,6 @@
 package org.oddjob.dido.poi.layouts;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConverter;
@@ -70,8 +69,6 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 	private CellIn<T> columnIn;
 	
 	private CellOut<T> columnOut;
-	
-	private boolean initialised;
 	
 	/**
 	 * @oddjob.property cellType
@@ -145,6 +142,7 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 		
@@ -231,6 +229,7 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 		
@@ -253,18 +252,10 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 		super.reset();
 		
 		reference = null;
-		initialised = false;
 		columnIn = null;
 		columnOut = null;
 	}
 	
-	private void setReferenceFrom(Cell cell) {
-		
-		reference = new CellReference(
-				cell.getRowIndex(), cell.getColumnIndex()
-					).formatAsString();
-	}
-		
 	public String getReference() {
 		return reference;
 	}

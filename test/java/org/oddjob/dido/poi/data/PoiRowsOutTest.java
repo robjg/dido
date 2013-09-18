@@ -18,7 +18,7 @@ public class PoiRowsOutTest extends TestCase {
 
 	Sheet sheet;
 	
-	private class OurSheetIn implements SheetOut {
+	private class OurSheetOut implements SheetOut {
 		
 		@Override
 		public <T extends DataOut> T provideDataOut(Class<T> type)
@@ -41,6 +41,11 @@ public class PoiRowsOutTest extends TestCase {
 			// TODO Auto-generated method stub
 			return null;
 		}
+		
+		@Override
+		public void close() {
+			throw new RuntimeException("Unexpected.");
+		}
 	}
 
 	private class OurColumn implements Column {
@@ -62,7 +67,7 @@ public class PoiRowsOutTest extends TestCase {
 		sheet = workbook.createSheet();
 
 		
-		PoiRowsOut test = new PoiRowsOut(new OurSheetIn(), 3, 7);
+		PoiRowsOut test = new PoiRowsOut(new OurSheetOut(), 3, 7);
 		
 		assertEquals(2, test.getLastRow());
 		assertEquals(6, test.getLastColumn());
@@ -70,6 +75,7 @@ public class PoiRowsOutTest extends TestCase {
 		TupleOut tupleOut = test.provideDataOut(TupleOut.class);
 		test.headerRow(null);
 		
+		@SuppressWarnings("unchecked")
 		CellOut<Object> cellOut = (CellOut<Object>) tupleOut.outFor(new OurColumn());
 
 		assertEquals(2, cellOut.getColumnIndex());
