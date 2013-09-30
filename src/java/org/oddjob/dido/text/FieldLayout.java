@@ -13,7 +13,6 @@ import org.oddjob.dido.tabular.ColumnIn;
 import org.oddjob.dido.tabular.ColumnOut;
 
 /**
- * @oddjob.description A field. 
  * 
  * @author rob
  *
@@ -27,6 +26,10 @@ implements Column {
 	
 	private int columnIndex;
 
+	private int from;
+
+	private int length;
+	
 	private ColumnIn<String> columnIn;
 	
 	private ColumnOut<String> columnOut;

@@ -10,16 +10,22 @@ import org.oddjob.dido.Layout;
 import org.oddjob.dido.layout.LayoutValueNode;
 
 
+/**
+ * @oddjob.description A field. 
+ * 
+ * @author rob
+ *
+ */
 public class TextLayout 
 extends LayoutValueNode<String> {
 
 	private static final Logger logger = Logger.getLogger(TextLayout.class);
 	
+	private boolean raw;
+	
 	private int from;
 
 	private int length;
-	
-	private boolean raw;
 	
 	@Override
 	public Class<String> getType() {
