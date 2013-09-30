@@ -42,7 +42,7 @@ public class NumericFormulaCellTest extends TestCase {
 		
 		writer.write(new Object());
 		
-		assertEquals(1, test.getColumnIndex());
+		assertEquals(1, test.getIndex());
 		
 		writer.close();
 		

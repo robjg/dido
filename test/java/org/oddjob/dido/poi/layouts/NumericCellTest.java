@@ -51,7 +51,7 @@ public class NumericCellTest extends TestCase {
 		
 		writer.write(12.3);
 		
-		assertEquals(1, test.getColumnIndex());
+		assertEquals(1, test.getIndex());
 
 		writer.close();
 		

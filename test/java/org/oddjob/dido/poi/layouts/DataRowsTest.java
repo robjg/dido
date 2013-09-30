@@ -82,7 +82,7 @@ public class DataRowsTest extends TestCase {
 		
 		Object result = reader.read();
 		
-		assertEquals(1, cell.getColumnIndex());
+		assertEquals(1, cell.getIndex());
 		
 		assertEquals(3, test.getLastRow());
 		assertEquals(3, test.getLastColumn());

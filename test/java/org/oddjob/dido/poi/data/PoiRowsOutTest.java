@@ -51,7 +51,7 @@ public class PoiRowsOutTest extends TestCase {
 	private class OurColumn implements Column {
 		
 		@Override
-		public int getColumnIndex() {
+		public int getIndex() {
 			return 2;
 		}
 		

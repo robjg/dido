@@ -48,7 +48,7 @@ public class DataCellTest extends TestCase {
 		
 		@Override
 		public CellOut<?> outFor(Field column) {
-			assertEquals(0, ((Column) column).getColumnIndex());
+			assertEquals(0, ((Column) column).getIndex());
 			assertEquals("Fruit", column.getLabel());
 			
 			return new OurCellOut();
@@ -97,7 +97,7 @@ public class DataCellTest extends TestCase {
 		assertEquals("Pear", data);
 		
 		assertEquals("A3", test.getReference());
-		assertEquals(3, test.getColumnIndex());
+		assertEquals(3, test.getIndex());
 		
 	}
 	
@@ -137,7 +137,7 @@ public class DataCellTest extends TestCase {
 		@Override
 		public CellIn<?> inFor(Field column) {
 			
-			assertEquals(0, ((Column) column).getColumnIndex());
+			assertEquals(0, ((Column) column).getIndex());
 			assertEquals("Fruit", column.getLabel());
 			
 			return new OurCellIn();
@@ -183,7 +183,7 @@ public class DataCellTest extends TestCase {
 		reader.close();
 		
 		assertEquals("B4", test.getReference());
-		assertEquals(4, test.getColumnIndex());
+		assertEquals(4, test.getIndex());
 	}
 	
 	
