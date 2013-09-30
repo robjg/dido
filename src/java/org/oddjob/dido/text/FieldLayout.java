@@ -185,7 +185,7 @@ implements Column {
 		this.label = title;
 	}
 
-	public int getColumnIndex() {
+	public int getIndex() {
 		if (columnIn != null) {
 			return columnIn.getColumnIndex();
 		}

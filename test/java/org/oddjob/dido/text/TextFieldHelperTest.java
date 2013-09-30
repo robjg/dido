@@ -26,7 +26,7 @@ public class TextFieldHelperTest extends TestCase {
 		}
 		
 		@Override
-		public int getColumnIndex() {
+		public int getIndex() {
 			return index;
 		}
 		
@@ -51,13 +51,13 @@ public class TextFieldHelperTest extends TestCase {
 		FixedWidthColumn result2 = test.columnIndexFor(new OurField());
 		FixedWidthColumn result3 = test.columnIndexFor(new OurField());
 	
-		assertEquals(1, result1.getColumnIndex());
+		assertEquals(1, result1.getIndex());
 		assertEquals(1, result1.getLength());
 		
-		assertEquals(2, result2.getColumnIndex());
+		assertEquals(2, result2.getIndex());
 		assertEquals(1, result2.getLength());
 		
-		assertEquals(3, result3.getColumnIndex());
+		assertEquals(3, result3.getIndex());
 		assertEquals(-1, result3.getLength());
 	}
 	
@@ -72,13 +72,13 @@ public class TextFieldHelperTest extends TestCase {
 		FixedWidthColumn result3 = test.columnIndexFor(
 				new OurFixedWidthColumn(15));
 	
-		assertEquals(1, result1.getColumnIndex());
+		assertEquals(1, result1.getIndex());
 		assertEquals(9, result1.getLength());
 		
-		assertEquals(10, result2.getColumnIndex());
+		assertEquals(10, result2.getIndex());
 		assertEquals(5, result2.getLength());
 		
-		assertEquals(15, result3.getColumnIndex());
+		assertEquals(15, result3.getIndex());
 		assertEquals(-1, result3.getLength());
 	}
 	
@@ -93,13 +93,13 @@ public class TextFieldHelperTest extends TestCase {
 		FixedWidthColumn result3 = test.columnIndexFor(
 				new OurFixedWidthColumn(30, 5));
 	
-		assertEquals(10, result1.getColumnIndex());
+		assertEquals(10, result1.getIndex());
 		assertEquals(4, result1.getLength());
 		
-		assertEquals(20, result2.getColumnIndex());
+		assertEquals(20, result2.getIndex());
 		assertEquals(2, result2.getLength());
 		
-		assertEquals(30, result3.getColumnIndex());
+		assertEquals(30, result3.getIndex());
 		assertEquals(5, result3.getLength());
 	}
 	
@@ -114,13 +114,13 @@ public class TextFieldHelperTest extends TestCase {
 		FixedWidthColumn result3 = test.columnIndexFor(
 				new OurFixedWidthColumn());
 	
-		assertEquals(1, result1.getColumnIndex());
+		assertEquals(1, result1.getIndex());
 		assertEquals(1, result1.getLength());
 		
-		assertEquals(2, result2.getColumnIndex());
+		assertEquals(2, result2.getIndex());
 		assertEquals(1, result2.getLength());
 		
-		assertEquals(3, result3.getColumnIndex());
+		assertEquals(3, result3.getIndex());
 		assertEquals(-1, result3.getLength());
 	}
 	
@@ -135,13 +135,13 @@ public class TextFieldHelperTest extends TestCase {
 		FixedWidthColumn result3 = test.columnIndexFor(
 				new OurFixedWidthColumn(5, 1));
 	
-		assertEquals(1, result1.getColumnIndex());
+		assertEquals(1, result1.getIndex());
 		assertEquals(4, result1.getLength());
 		
-		assertEquals(10, result2.getColumnIndex());
+		assertEquals(10, result2.getIndex());
 		assertEquals(3, result2.getLength());
 		
-		assertEquals(5, result3.getColumnIndex());
+		assertEquals(5, result3.getIndex());
 		assertEquals(1, result3.getLength());
 	}
 	
@@ -157,13 +157,13 @@ public class TextFieldHelperTest extends TestCase {
 		FixedWidthColumn result3 = test.columnIndexFor(
 				new OurFixedWidthColumn(10));
 	
-		assertEquals(30, result1.getColumnIndex());
+		assertEquals(30, result1.getIndex());
 		assertEquals(-1, result1.getLength());
 		
-		assertEquals(20, result2.getColumnIndex());
+		assertEquals(20, result2.getIndex());
 		assertEquals(10, result2.getLength());
 		
-		assertEquals(10, result3.getColumnIndex());
+		assertEquals(10, result3.getIndex());
 		assertEquals(10, result3.getLength());
 	}
 }

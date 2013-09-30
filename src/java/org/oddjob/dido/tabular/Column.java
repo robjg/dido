@@ -17,6 +17,6 @@ public interface Column extends Field {
 	 * 
 	 * @return The index.
 	 */
-	public int getColumnIndex();
+	public int getIndex();
 	
 }

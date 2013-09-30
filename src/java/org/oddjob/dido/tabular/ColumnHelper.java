@@ -107,7 +107,7 @@ public class ColumnHelper {
 			
 			Column column = (Column) field;
 			
-			useColumnIndex = column.getColumnIndex();
+			useColumnIndex = column.getIndex();
 		
 			if (useColumnIndex < 0) {
 				throw new IllegalArgumentException("Column Index of " + 

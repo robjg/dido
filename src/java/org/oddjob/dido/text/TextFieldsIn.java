@@ -45,7 +45,7 @@ public class TextFieldsIn implements FieldsIn {
 		@Override
 		public String getData() throws DataException {
 			
-			int from = fixedWidthColumn.getColumnIndex();
+			int from = fixedWidthColumn.getIndex();
 			int length = fixedWidthColumn.getLength();
 			
 			String newText;
@@ -74,7 +74,7 @@ public class TextFieldsIn implements FieldsIn {
 		
 		@Override
 		public int getColumnIndex() {
-			return fixedWidthColumn.getColumnIndex();
+			return fixedWidthColumn.getIndex();
 		}		
 	}
 	

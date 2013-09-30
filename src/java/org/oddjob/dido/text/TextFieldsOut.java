@@ -62,7 +62,7 @@ public class TextFieldsOut implements FieldsOut {
 		@Override
 		public void setData(String text) throws DataException {
 			
-			int from = fixedWidthColumn.getColumnIndex();
+			int from = fixedWidthColumn.getIndex();
 			int length = fixedWidthColumn.getLength();			
 						
 			while (buffer.length() < from) {
@@ -99,7 +99,7 @@ public class TextFieldsOut implements FieldsOut {
 		
 		@Override
 		public int getColumnIndex() {
-			return fixedWidthColumn.getColumnIndex();
+			return fixedWidthColumn.getIndex();
 		}		
 	}
 	

@@ -155,7 +155,7 @@ implements Column {
 		this.label = columnName;
 	}
 
-	public int getColumnIndex() {
+	public int getIndex() {
 		return columnIndex;
 	}
 

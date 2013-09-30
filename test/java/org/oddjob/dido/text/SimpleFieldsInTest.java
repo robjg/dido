@@ -24,7 +24,7 @@ public class SimpleFieldsInTest extends TestCase {
 		}
 		
 		@Override
-		public int getColumnIndex() {
+		public int getIndex() {
 			return columnIndex;
 		}
 	}

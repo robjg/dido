@@ -26,7 +26,7 @@ public class TextFieldHelper {
 				
 		if (field instanceof FixedWidthColumn) {
 			
-			start = ((FixedWidthColumn) field).getColumnIndex();
+			start = ((FixedWidthColumn) field).getIndex();
 			int length = ((FixedWidthColumn) field).getLength();
 			
 			if (length > 0) {
@@ -35,7 +35,7 @@ public class TextFieldHelper {
 		}
 		else if (field instanceof Column){
 			
-			start = ((Column) field).getColumnIndex();
+			start = ((Column) field).getIndex();
 		}
 		
 		if (start == 0) {
@@ -83,7 +83,7 @@ public class TextFieldHelper {
 			}
 			
 			@Override
-			public int getColumnIndex() {
+			public int getIndex() {
 				return finalStart;
 			}
 		};
