@@ -23,7 +23,7 @@ import org.oddjob.dido.stream.LinesOut;
  * <ul>
  * <li>This is generally a top level layout.</li> 
  * <li>It can be nested in a {@link When} layout.</li>
- * <li>It can be a child layout of a {link {@link TextLayout} layout to
+ * <li>It can be a child layout of a {link {@link TextLayout2} layout to
  * further delimit a region of text.</li>
  * </ul>
  * <p>

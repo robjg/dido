@@ -21,8 +21,6 @@ public class StreamLinesIn implements LinesIn {
 	
 	private final LineTracker lines;
 	
-	private boolean used;
-	
 	private class LineTracker {
 		
 		private final LineNumberReader reader;
@@ -62,7 +60,6 @@ public class StreamLinesIn implements LinesIn {
 	}
 		
 	public String readLine() throws DataException {
-		used = true;
 		return lines.readLine();
 	}
 	
@@ -74,6 +71,8 @@ public class StreamLinesIn implements LinesIn {
 		if (type.isAssignableFrom(LinesIn.class)) {			
 			return type.cast(new LinesIn() {
 				
+				private boolean readALineAlready;
+				
 				@Override
 				public <X extends DataIn> X provideDataIn(Class<X> type)
 						throws DataException {
@@ -83,12 +82,16 @@ public class StreamLinesIn implements LinesIn {
 				@Override
 				public String readLine() throws DataException {
 					
-					if (used) {
-						used = false;
-						return lines.lastLine;
+					try {
+						if (readALineAlready || lines.lastLine == null) {
+							return lines.readLine();
+						}
+						else {
+							return lines.lastLine; 
+						}
 					}
-					else {
-						return lines.readLine();
+					finally {
+						readALineAlready = true;
 					}
 				}
 				

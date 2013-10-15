@@ -136,7 +136,7 @@ public class TextFieldHelperTest extends TestCase {
 				new OurFixedWidthColumn(5, 1));
 	
 		assertEquals(1, result1.getIndex());
-		assertEquals(4, result1.getLength());
+		assertEquals(20, result1.getLength());
 		
 		assertEquals(10, result2.getIndex());
 		assertEquals(3, result2.getLength());
@@ -146,25 +146,73 @@ public class TextFieldHelperTest extends TestCase {
 	}
 	
 	
-	public void testInsertingHighestFirst() {
+	public void testNoIndexJustLength() {
 		
 		TextFieldHelper test = new TextFieldHelper();
 		
 		FixedWidthColumn result1 = test.columnIndexFor(
-				new OurFixedWidthColumn(30));
-		FixedWidthColumn result2 = test.columnIndexFor(
-				new OurFixedWidthColumn(20));
-		FixedWidthColumn result3 = test.columnIndexFor(
-				new OurFixedWidthColumn(10));
+				new OurFixedWidthColumn(0, 1));
 	
-		assertEquals(30, result1.getIndex());
-		assertEquals(-1, result1.getLength());
+		assertEquals(1, result1.getIndex());
+		assertEquals(1, result1.getLength());		
+	}
+	
+	
+	public void testResusingValuesWithLength() {
 		
-		assertEquals(20, result2.getIndex());
-		assertEquals(10, result2.getLength());
+		TextFieldHelper test = new TextFieldHelper();
 		
-		assertEquals(10, result3.getIndex());
-		assertEquals(10, result3.getLength());
+		FixedWidthColumn result1 = test.columnIndexFor(
+				new OurFixedWidthColumn(1, 9));
+		FixedWidthColumn result2 = test.columnIndexFor(
+				new OurFixedWidthColumn(10, 5));
+		FixedWidthColumn result3 = test.columnIndexFor(
+				new OurFixedWidthColumn(1, 2));
+		FixedWidthColumn result4 = test.columnIndexFor(
+				new OurFixedWidthColumn(3, 20));
+	
+		assertEquals(1, result1.getIndex());
+		assertEquals(9, result1.getLength());
+		
+		assertEquals(10, result2.getIndex());
+		assertEquals(5, result2.getLength());
+		
+		assertEquals(1, result3.getIndex());
+		assertEquals(2, result3.getLength());
+		
+		assertEquals(3, result4.getIndex());
+		assertEquals(20, result4.getLength());
+	}
+	
+	public void testResusingValuesNoLength() {
+		
+		TextFieldHelper test = new TextFieldHelper();
+		
+		FixedWidthColumn result1 = test.columnIndexFor(
+				new OurFixedWidthColumn(1));
+		FixedWidthColumn result2 = test.columnIndexFor(
+				new OurFixedWidthColumn(10));
+		FixedWidthColumn result3 = test.columnIndexFor(
+				new OurFixedWidthColumn(1));
+		FixedWidthColumn result4 = test.columnIndexFor(
+				new OurFixedWidthColumn(3));
+		FixedWidthColumn result5 = test.columnIndexFor(
+				new OurFixedWidthColumn(24));
+	
+		assertEquals(1, result1.getIndex());
+		assertEquals(9, result1.getLength());
+		
+		assertEquals(10, result2.getIndex());
+		assertEquals(-1, result2.getLength());
+		
+		assertEquals(1, result3.getIndex());
+		assertEquals(2, result3.getLength());
+		
+		assertEquals(3, result4.getIndex());
+		assertEquals(21, result4.getLength());
+		
+		assertEquals(24, result5.getIndex());
+		assertEquals(-1, result5.getLength());
 	}
 }
 

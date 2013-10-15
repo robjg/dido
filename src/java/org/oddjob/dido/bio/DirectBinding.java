@@ -43,4 +43,9 @@ implements Binding {
 	@Override
 	public void free() {
 	}
+	
+	@Override
+	public String toString() {
+		return getClass().getName();
+	}
 }

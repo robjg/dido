@@ -9,6 +9,13 @@ import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.text.StringTextOut;
 import org.oddjob.dido.text.TextOut;
 
+/**
+ * An implementation of {@link LinesOut} that stores the lines written
+ * in a list.
+ * 
+ * @author rob
+ *
+ */
 public class ListLinesOut implements LinesOut {
 
 	private List<String> lines = new ArrayList<String>();
@@ -75,5 +82,10 @@ public class ListLinesOut implements LinesOut {
 	@Override
 	public void close() throws DataException {
 		// Nothing to close.
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + ", size=" + lines.size();
 	}
 }

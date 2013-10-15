@@ -1,7 +1,7 @@
-<lines name='fruit' xmlns='oddjob:dido'>
+<fixed name='fruit' xmlns='oddjob:dido'>
  <of>
-  <text name='variety' from='0' length='12'/>
-  <text name='type' from='14' length='10'/>
-  <text name='colour' from='24' length='12'/>
+  <text name='variety' index='1' length='12'/>
+  <text name='type' index='15' length='10'/>
+  <text name='colour' index='25' length='12'/>
  </of>
-</lines>
+</fixed>

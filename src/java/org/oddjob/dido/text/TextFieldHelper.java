@@ -9,8 +9,8 @@ import org.oddjob.dido.tabular.Column;
 
 public class TextFieldHelper {
 
-	private final NavigableMap<Integer, Integer> startEndPositions = 
-			new TreeMap<Integer, Integer>();
+	private final NavigableMap<Integer, MutableFixedWidthColumn> startEndPositions = 
+			new TreeMap<Integer, MutableFixedWidthColumn>();
 	
 	/**
 	 * Provide the fixed width column information for the field.
@@ -23,15 +23,12 @@ public class TextFieldHelper {
 		
 		int start = 0;
 		int end = -1;
-				
+		int length = 0;
+		
 		if (field instanceof FixedWidthColumn) {
 			
 			start = ((FixedWidthColumn) field).getIndex();
-			int length = ((FixedWidthColumn) field).getLength();
-			
-			if (length > 0) {
-				end = length + start;
-			}			
+			length = ((FixedWidthColumn) field).getLength();			
 		}
 		else if (field instanceof Column){
 			
@@ -39,54 +36,75 @@ public class TextFieldHelper {
 		}
 		
 		if (start == 0) {
-			Map.Entry<Integer, Integer> last = startEndPositions.lastEntry();
+			Map.Entry<Integer, MutableFixedWidthColumn> last = 
+					startEndPositions.lastEntry();
 			if (last == null) {
 				start = 1;
 			}
-			else if (last.getValue() < 1) {
+			else if (last.getValue().end < 1) {
 				start = last.getKey() + 1;
 			}
 			else {
-				start = last.getValue();
+				start = last.getValue().end;
 			}
 		}
 		
-		Map.Entry<Integer, Integer> below = startEndPositions.lowerEntry(start);
-		if (below != null) {
-			if (below.getValue() > start || below.getValue() < 1) {
-				startEndPositions.put(below.getKey(), start);
+		while (true) {
+			Integer higher = startEndPositions.higherKey(start);
+			if (higher == null) {
+				break;
+			}
+			else {
+				startEndPositions.remove(higher);
 			}
 		}
+	
+		if (length > 0) {
+			end = length + start;
+		}			
 		
-		Integer above = startEndPositions.higherKey(start);
-		if (above != null) {
-			if (end < start || end >= above.intValue()) {
-				end = above.intValue();
-			}
+		Map.Entry<Integer, MutableFixedWidthColumn> below = 
+				startEndPositions.lowerEntry(start);
+		if (below != null && below.getValue().end < 1) {
+			below.getValue().end = start;
 		}
 		
-		startEndPositions.put(start, end);
+		MutableFixedWidthColumn column = new
+				MutableFixedWidthColumn(start, end);
 		
-		final int finalStart = start;
+		startEndPositions.put(start, column);
 		
-		return new FixedWidthColumn() {
-			
-			@Override
-			public int getLength() {
-				int endPos = startEndPositions.get(finalStart);
-				if (endPos < 1) {
-					return -1;
-				}
-				else {
-					return endPos - finalStart;
-				}
-			}
-			
-			@Override
-			public int getIndex() {
-				return finalStart;
-			}
-		};
+		return column;
 	}
 	
+	static class MutableFixedWidthColumn implements FixedWidthColumn {
+		
+		private final int start;
+		private int end;
+		
+		public MutableFixedWidthColumn(int start, int end) {
+			this.start = start;
+			this.end = end;
+		}
+		
+		@Override
+		public int getIndex() {
+			return start;
+		}
+		
+		@Override
+		public int getLength() {
+			if (end < 1) {
+				return -1;
+			}
+			else {
+				return end - start;
+			}
+		}
+		
+		@Override
+		public String getLabel() {
+			return null;
+		}	
+	}
 }

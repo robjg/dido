@@ -62,7 +62,7 @@ public class StreamLinesInTest extends TestCase {
 		
 	}
 	
-	public void testSimpleReadLinesNested() throws DataException {
+	public void testReadLinesNestedParentDoesntRead() throws DataException {
 		
 		String lines = "Apples" + EOL +
 				"Oranges" + EOL +
@@ -82,7 +82,7 @@ public class StreamLinesInTest extends TestCase {
 		
 	}
 	
-	public void testReadLinesNested() throws DataException {
+	public void testReadLinesNestedParentReadsFirst() throws DataException {
 	
 		String lines = "Apples" + EOL +
 				"Oranges" + EOL +
@@ -107,6 +107,39 @@ public class StreamLinesInTest extends TestCase {
 		assertEquals("Bananas", nested.readLine());
 		
 		assertEquals("Pears", nested.readLine());
+		
+		assertEquals(null, nested.readLine());
+		
+		assertEquals(null, test.readLine());
+	}
+	
+	public void testReadLinesTwiceNestedFirstNestedReadsFirst() throws DataException {
+		
+		String lines = "Apples" + EOL +
+				"Oranges" + EOL +
+				"Bananas" + EOL + 
+				"Pears";
+		
+		StreamLinesIn test = new StreamLinesIn(
+				new ByteArrayInputStream(lines.getBytes()));
+		
+		LinesIn nested = test.provideDataIn(LinesIn.class);
+		
+		assertEquals("Apples", nested.readLine());
+		
+		LinesIn nested2 = nested.provideDataIn(LinesIn.class);
+		
+		assertEquals("Apples", nested2.readLine());
+		
+		assertEquals("Oranges", nested2.readLine());
+		
+		assertEquals("Bananas", nested.readLine());
+		
+		nested2 = nested.provideDataIn(LinesIn.class);
+		
+		assertEquals("Bananas", nested2.readLine());
+		
+		assertEquals("Pears", nested2.readLine());
 		
 		assertEquals(null, nested.readLine());
 		

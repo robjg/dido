@@ -26,7 +26,6 @@ import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.stream.IOStreamData;
-import org.oddjob.dido.stream.OutputStreamOut;
 import org.oddjob.dido.text.FieldLayout;
 import org.oddjob.dido.text.SimpleFieldsOut;
 
@@ -318,28 +317,28 @@ public class WhenTest extends TestCase {
 	}
 	
 	String fixedConfig = 
-		"<lines xmlns='oddjob:dido'>" +
+		"<fixed xmlns='oddjob:dido'>" +
 		" <of>" +
 		"  <case>" +
 		"   <of>" +
-		"    <text from='0' length='1'/>" +
+		"    <text index='1' length='1'/>" +
 		"    <when name='people' value='1'>" +
 		"     <of>" +
-		"      <text name='name' from='1' length='7'/>" +
-	    "      <text name='city' from='8' length='12'/>" +
+		"      <text name='name' index='2' length='7'/>" +
+	    "      <text name='city' index='9' length='12'/>" +
 	    "     </of>" +
 	    "    </when>" +
 		"    <when name='fruit' value='2'>" +
 		"     <of>" +
-		"      <text name='variety' from='1' length='12'/>" +
-	    "      <text name='type' from='13' length='12'/>" +
-	    "      <text name='colour' from='25' length='9'/>" +
+		"      <text name='variety' index='2' length='12'/>" +
+	    "      <text name='type' index='14' length='12'/>" +
+	    "      <text name='colour' index='26' length='9'/>" +
 	    "     </of>" +
 		"    </when>" +
 		"   </of>" +
 		"  </case>" +
 		" </of>" +
-		"</lines>";
+		"</fixed>";
 		
 	public void testFixedReadWrite() throws ArooaConversionException, IOException {
 		
@@ -347,7 +346,7 @@ public class WhenTest extends TestCase {
 			"1John   London      " + EOL +
 			"1Harry  Manchester  " + EOL +
 //                     1         2         3			
-//           0123456789012345678901234567890123456789
+//           123456789012345678901234567890123456789
 			"2Cox         Apple       Red      " + EOL +
 			"2Granny SmithApple       Green    " + EOL;
 	
@@ -417,20 +416,20 @@ public class WhenTest extends TestCase {
 	public void testMixedExample() throws ArooaConversionException, IOException {
 		
 		String xml = 
-			"<lines xmlns='oddjob:dido'>" +
+			"<fixed xmlns='oddjob:dido'>" +
 			" <of>" +
 			"  <case>" +
 			"   <of>" +
-			"    <text name='descriminator' from='0' length='1'/>" +
+			"    <text name='descriminator' index='1' length='1'/>" +
 			"    <when name='people' value='1'>" +
 			"     <of>" +
-			"      <text name='name' from='1' length='7'/>" +
-		    "      <text name='city' from='8' length='12'/>" +
+			"      <text name='name' index='2' length='7'/>" +
+		    "      <text name='city' index='9' length='12'/>" +
 		    "     </of>" +
 		    "    </when>" +
 			"    <when name='fruit' value='2'>" +
 			"     <of>" +
-			"      <text name='all' from='1'>" +
+			"      <text name='all' index='2'>" +
 			"       <of>" +
 			"        <delimited>" +
 			"         <of>" +
@@ -446,7 +445,7 @@ public class WhenTest extends TestCase {
 			"   </of>" +
 			"  </case>" +
 			" </of>" +
-			"</lines>";			
+			"</fixed>";			
 			
 		String data = 
 			"1John   London      " + EOL +

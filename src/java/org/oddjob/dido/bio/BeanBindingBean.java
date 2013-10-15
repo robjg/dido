@@ -30,8 +30,8 @@ import org.oddjob.dido.morph.Morphable;
 /**
  * @oddjob.description Provide a binding to bean of the given type. 
  * <p>
- * At the moment property names must match node names, but this will change 
- * soon.
+ * For a property of the bean to be bound to a node, the property name 
+ * must match node name.
  * 
  * @author rob
  *
@@ -41,9 +41,7 @@ implements Binding, ArooaSessionAware {
 
 	private static final Logger logger = Logger.getLogger(BeanBindingBean.class);
 	
-	/**
-	 * PropertyAccessor with conversions.
-	 */
+	/** PropertyAccessor with conversions. */
 	private PropertyAccessor accessor;
 	
     /**
@@ -53,14 +51,22 @@ implements Binding, ArooaSessionAware {
      */
 	private ArooaClass type;
 	
+	/**
+     * @oddjob.property
+     * @oddjob.description Provide a view of the bean to {@link Morphable}
+     * layouts.
+     * @oddjob.required No.
+	 */
 	private BeanView beanView;
 	
-	/**
-	 * The current bean.
-	 */
+	/** The current bean. */
 	private Object bean;
 	
+	/** Keep track of additional bindings this binding has made. */
 	private final Resets resets = new Resets();
+	
+	/** The current node processor for either reading or writing. */
+	private BindingLayoutProcessor processor;
 	
 	@Override
 	public void setArooaSession(ArooaSession session) {
@@ -69,8 +75,10 @@ implements Binding, ArooaSessionAware {
 						session.getTools().getArooaConverter());
 	}
 	
-	
-	
+	/**
+	 * The binding added to child node to get and set the properties
+	 * of a bean with values to and from the node.
+	 */	
 	private class ChildNodeBinding extends SingleBeanBinding
 	implements Binding {
 
@@ -98,11 +106,20 @@ implements Binding, ArooaSessionAware {
 			
 			ValueNode<?> valueNode = (ValueNode<?>) node;
 			
-			processInferType(value, valueNode, dataOut);
+			processInferType(value, valueNode);
 		}
 		
-		public <T> void processInferType(Object value, 
-				ValueNode<T> valueNode, DataOut dataOut) 
+		/**
+		 * Set the value of the node with the property using generics
+		 * to infer the type.
+		 * 
+		 * @param value
+		 * @param valueNode
+		 * 
+		 * @throws DataException
+		 */
+		private <T> void processInferType(Object value, 
+				ValueNode<T> valueNode) 
 		throws DataException {
 
 			@SuppressWarnings("unchecked")
@@ -126,63 +143,18 @@ implements Binding, ArooaSessionAware {
 		}
 	}
 	
+	/**
+	 * Implementations process the Layout and it's children binding the 
+	 * child nodes to properties of the bean.
+	 */
 	private interface BindingLayoutProcessor {
 		public void process(Layout node);
 	}
 
-	private class HeaderProcessorIn implements BindingLayoutProcessor {
-		
-		@Override
-		public void process(Layout node) {
-			
-			final BeanOverview overview = 
-					type.getBeanOverview(accessor);
-			
-			new LayoutWalker() {
-				
-				@Override
-				protected boolean onLayout(final Layout layout) {
-					
-					final String nodeName = layout.getName();
-					
-					if (nodeName != null && 
-							overview.hasReadableProperty(nodeName)) {
-						
-						layout.bind(new ChildNodeBinding(layout));
-					
-						resets.add(new Runnable() {
-							@Override
-							public void run() {
-								layout.bind(null);
-							}
-						});
-						
-						return false;
-					}
-					else {
-
-						return true;
-					}
-				}
-			}.walk(node);
-			
-			processor = new MainProcessorIn();
-			processor.process(node);
-		}
-	}
-	
-	private class MainProcessorIn implements BindingLayoutProcessor {
-		
-		@Override
-		public void process(Layout node) {
-			
-			bean = type.newInstance();
-		}
-	}
-	
-	
-	private BindingLayoutProcessor processor;
-		
+	/*
+	 * (non-Javadoc)
+	 * @see org.oddjob.dido.bio.SingleBeanBinding#extract(org.oddjob.dido.Layout, org.oddjob.dido.DataIn)
+	 */
 	@Override
 	protected Object extract(Layout node, DataIn dataIn) 
 	throws DataException {
@@ -192,7 +164,6 @@ implements Binding, ArooaSessionAware {
 			if (type == null) {
 				
 				derriveTypeFromLayout(node);
-				
 			}
 			
 			if (node instanceof Morphable) {
@@ -215,120 +186,12 @@ implements Binding, ArooaSessionAware {
 		return bean;
 	}
 	
-	@Override
-	public void free() {
-		processor = null;
-		resets.reset();
-	}
-	
-	private class HeaderProcessorOut implements BindingLayoutProcessor {
-			
-		@Override
-		public void process(final Layout parentLayout) {
-			
-			final BeanOverview overview = 
-					accessor.getClassName(bean).getBeanOverview(accessor);
-			
-			logger.debug("Binding for [" + parentLayout + "] binding to children.");
-			
-			new LayoutWalker() {
-				
-				@Override
-				protected boolean onLayout(final Layout layout) {
-					
-					final String nodeName = layout.getName();
-					
-					if (nodeName != null && 
-							overview.hasWriteableProperty(nodeName)) {
-						
-						layout.bind(new ChildNodeBinding(layout));
-					
-						logger.debug("Binding for [" + parentLayout + 
-								"] binding to child [" + layout + "]");
-						
-						resets.add(new Runnable() {
-							@Override
-							public void run() {
-								layout.bind(null);
-							}
-						});
-						
-						return false;
-					}
-					else {
-
-						return true;
-					}
-				}
-			}.walk(parentLayout);
-			
-			processor = new MainProcessorOut();
-			processor.process(parentLayout);
-		}
-	}
-	
-	private class MainProcessorOut implements BindingLayoutProcessor {
-		
-		@Override
-		public void process(Layout node) {
-			logger.trace("Binding on layout [" + node  + 
-					"] is binding bean [" + bean + "]");
-		}
-	}
-
-	@Override
-	protected void inject(Object object, Layout node, DataOut dataOut) throws DataException {
-		
-		if (type != null && !type.forClass().isInstance(object)) {
-			
-			logger.trace("Binding on [" + node + "] ignoring bean " + 
-					object);
-			
-			return;
-		}
-		
-		this.bean = object;
-		
-		if (processor == null) {
-			if (type == null) {
-
-				type = accessor.getClassName(object);
-				
-				logger.debug("Binding on [" + node + "] using type of first bean which is " + 
-						type);
-				
-				resets.add(new Runnable() {
-					@Override
-					public void run() {
-						type = null;
-					}
-				});
-			}
-			
-			if (node instanceof Morphable) {
-				
-				logger.debug("Giving " + node + " the opportunity to morph.");
-				
-				Runnable reset = ((Morphable) node).morphInto(
-						new MorphDefinitionFactory(accessor).readableMorphMetaDataFor(
-								type, beanView));
-				
-				resets.add(reset);
-			}
-			
-			processor = new HeaderProcessorOut();
-		}
-		
-		processor.process(node);
-	
-		DataWriter nextWriter = new ChildWriter(node.childLayouts(), 
-					dataOut);
-		
-		nextWriter.write(object); 
-		
-		nextWriter.close();
-	}
-		
+	/**
+	 * Utility method to derive the type.
+	 *  
+	 * @param layout
+	 * @throws DataException
+	 */
 	private void derriveTypeFromLayout(Layout layout) throws DataException {
 		
 		final MagicBeanClassCreator classCreator = 
@@ -389,7 +252,8 @@ implements Binding, ArooaSessionAware {
 			}			
 		}
 		else {
-			throw new DataException("No type provided and it is not derivable.");
+			throw new DataException(
+					"No type provided for binding and it is not derivable.");
 		}
 		
 		type = classCreator.create();
@@ -400,6 +264,217 @@ implements Binding, ArooaSessionAware {
 				type = null;
 			}
 		});
+	}
+	
+	/**
+	 * The initial processor that binds to children for reading values
+	 * from layout nodes and setting them as properties of the bean.
+	 */
+	private class HeaderProcessorIn implements BindingLayoutProcessor {
+		
+		@Override
+		public void process(Layout node) {
+			
+			final BeanOverview overview = 
+					type.getBeanOverview(accessor);
+			
+			new LayoutWalker() {
+				
+				@Override
+				protected boolean onLayout(final Layout layout) {
+					
+					final String nodeName = layout.getName();
+					
+					if (nodeName == null) {
+						
+						logger.debug("Binding ignoring node [" + layout + 
+								"] as it has no name.");
+
+						return true;
+					}
+					
+					if (overview.hasWriteableProperty(nodeName) &&
+							!overview.isIndexed(nodeName) &&
+							!overview.isMapped(nodeName)) {
+						
+						layout.bind(new ChildNodeBinding(layout));
+					
+						logger.debug("Binding to child [" + layout + 
+								"] on writeable property [" + nodeName + "]");
+						
+						resets.add(new Runnable() {
+							@Override
+							public void run() {
+								layout.bind(null);
+							}
+						});
+						
+						return false;
+					}
+					else {
+
+						logger.debug("Binding ignoring [" + nodeName + 
+								"] as it has no simple writeable property [" +
+								nodeName + "]");
+						
+						return true;
+					}
+				}
+			}.walk(node);
+			
+			processor = new MainProcessorIn();
+			processor.process(node);
+		}
+	}
+	
+	/**
+	 * The processor for every instance of reading.
+	 */
+	private class MainProcessorIn implements BindingLayoutProcessor {
+		
+		@Override
+		public void process(Layout node) {
+			
+			bean = type.newInstance();
+		}
+	}	
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.oddjob.dido.bio.SingleBeanBinding#inject(java.lang.Object, org.oddjob.dido.Layout, org.oddjob.dido.DataOut)
+	 */
+	@Override
+	protected void inject(Object object, Layout node, DataOut dataOut) throws DataException {
+		
+		if (type != null && !type.forClass().isInstance(object)) {
+			
+			logger.trace("Binding on [" + node + "] ignoring bean " + 
+					object);
+			
+			return;
+		}
+		
+		this.bean = object;
+		
+		if (processor == null) {
+			if (type == null) {
+
+				type = accessor.getClassName(object);
+				
+				logger.debug("Binding on [" + node + "] using type of first bean which is " + 
+						type);
+				
+				resets.add(new Runnable() {
+					@Override
+					public void run() {
+						type = null;
+					}
+				});
+			}
+			
+			if (node instanceof Morphable) {
+				
+				logger.debug("Giving " + node + " the opportunity to morph.");
+				
+				Runnable reset = ((Morphable) node).morphInto(
+						new MorphDefinitionFactory(accessor).readableMorphMetaDataFor(
+								type, beanView));
+				
+				resets.add(reset);
+			}
+			
+			processor = new HeaderProcessorOut();
+		}
+		
+		processor.process(node);
+	
+		DataWriter nextWriter = new ChildWriter(node.childLayouts(), 
+					dataOut);
+		
+		nextWriter.write(object); 
+		
+		nextWriter.close();
+	}
+	
+	/**
+	 * The initial processor that binds to children for writing values
+	 * from layout nodes from the readable properties of the bean.
+	 */
+	private class HeaderProcessorOut implements BindingLayoutProcessor {
+			
+		@Override
+		public void process(final Layout parentLayout) {
+			
+			final BeanOverview overview = 
+					accessor.getClassName(bean).getBeanOverview(accessor);
+			
+			logger.debug("Binding for [" + parentLayout + "] binding to children.");
+			
+			new LayoutWalker() {
+				
+				@Override
+				protected boolean onLayout(final Layout layout) {
+					
+					final String nodeName = layout.getName();
+					
+					if (nodeName == null) {
+						
+						logger.debug("Binding ignoring node [" + layout + 
+								"] as it has no name.");
+
+						return true;
+					}
+					
+					if (overview.hasReadableProperty(nodeName) &&
+							!overview.isIndexed(nodeName) &&
+							!overview.isMapped(nodeName)) {
+						
+						layout.bind(new ChildNodeBinding(layout));
+					
+						logger.debug("Binding to child [" + layout + 
+								"] on readable property [" + nodeName + "]");
+						
+						resets.add(new Runnable() {
+							@Override
+							public void run() {
+								layout.bind(null);
+							}
+						});
+						
+						return false;
+					}
+					else {
+						
+						logger.debug("Binding ignoring [" + nodeName + 
+								"] as it has no simple readable property [" +
+								nodeName + "]");
+						
+						return true;
+					}
+				}
+			}.walk(parentLayout);
+			
+			processor = new MainProcessorOut();
+			processor.process(parentLayout);
+		}
+	}
+	
+	/**
+	 * The processor for every instance of writing.
+	 */
+	private class MainProcessorOut implements BindingLayoutProcessor {
+		
+		@Override
+		public void process(Layout node) {
+			logger.trace("Binding on layout [" + node  + 
+					"] is binding bean [" + bean + "]");
+		}
+	}
+
+	@Override
+	public void free() {
+		processor = null;
+		resets.reset();
 	}
 	
 	public ArooaClass getType() {
@@ -417,4 +492,10 @@ implements Binding, ArooaSessionAware {
 	public void setBeanView(BeanView beanView) {
 		this.beanView = beanView;
 	}	
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + 
+				(type == null ? " for an unknown type" : type.toString());
+	}
 }

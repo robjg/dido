@@ -53,7 +53,7 @@ abstract public class SingleBeanBinding implements Binding {
 			@Override
 			public String toString() {
 				
-				return "BindingReader for " + boundLayout;
+				return "BindingReader for " + SingleBeanBinding.this.toString();
 			}
 		};
 	}
@@ -92,7 +92,7 @@ abstract public class SingleBeanBinding implements Binding {
 			
 			public String toString() {
 			
-				return "BindingWriter for " + boundLayout;
+				return "Writer for " + SingleBeanBinding.this.toString();
 			}
 		};
 	}

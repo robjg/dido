@@ -146,7 +146,7 @@ abstract public class LayoutNode implements Layout {
 	
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + ": " + 
-				(name == null ? "(unnamed)" : name);
+		return getClass().getSimpleName() + 
+				(name == null ? "" : ": " + name);
 	}
 }

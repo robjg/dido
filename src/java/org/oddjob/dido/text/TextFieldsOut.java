@@ -13,8 +13,8 @@ public class TextFieldsOut implements FieldsOut {
 	
 	public static final char PAD_CHARACTER = ' ';
 	
-	private StringBuilder buffer = new StringBuilder();
-
+	private final StringTextOut buffer = new StringTextOut();
+	
 	private boolean writtenTo;
 		
 	@Override
@@ -26,12 +26,15 @@ public class TextFieldsOut implements FieldsOut {
 		writtenTo = false;
 	}
 	
+	/**
+	 * Clears old fields written for a previous line.
+	 */
 	public void clear() {
-		buffer = new StringBuilder();
+		buffer.clear();
 	}
 	
 	public String getText() {
-		return buffer.toString();
+		return buffer.toText();
 	}
 	
 	@Override
@@ -62,32 +65,10 @@ public class TextFieldsOut implements FieldsOut {
 		@Override
 		public void setData(String text) throws DataException {
 			
-			int from = fixedWidthColumn.getIndex();
+			int from = fixedWidthColumn.getIndex() - 1;
 			int length = fixedWidthColumn.getLength();			
 						
-			while (buffer.length() < from) {
-				buffer.append(PAD_CHARACTER);
-			}
-			
-			StringBuilder minibuf;
-			
-			if (length < 0 || length > text.length()) {
-				minibuf = new StringBuilder(text);
-			} 
-			else {
-				minibuf = new StringBuilder(text.substring(0, length));			
-			}
-			
-			while (minibuf.length() < length) {
-				minibuf.append(PAD_CHARACTER);
-			}
-			
-			if (from < buffer.length() ) {
-				buffer.replace(from, from + minibuf.length(), minibuf.toString());
-			}
-			else {
-				buffer.append(minibuf.toString());
-			}
+			buffer.write(text, from, length);
 			
 			writtenTo = true;
 		}

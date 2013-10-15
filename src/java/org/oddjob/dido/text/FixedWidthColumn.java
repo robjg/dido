@@ -1,8 +1,8 @@
 package org.oddjob.dido.text;
 
-public interface FixedWidthColumn {
+import org.oddjob.dido.tabular.Column;
 
-	public int getIndex();
-	
+public interface FixedWidthColumn extends Column {
+
 	public int getLength();
 }

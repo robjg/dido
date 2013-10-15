@@ -10,7 +10,8 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.bio.DirectBinding;
-import org.oddjob.dido.text.TextLayout;
+import org.oddjob.dido.text.FixedWidthLayout;
+import org.oddjob.dido.text.TextLayout2;
 
 public class LinesTest extends TestCase {
 
@@ -62,10 +63,12 @@ public class LinesTest extends TestCase {
 				
 		LinesLayout test = new LinesLayout();
 		
-		TextLayout child = new TextLayout();
-		child.bind(new DirectBinding());
+		FixedWidthLayout fixed = new FixedWidthLayout();
+		test.setOf(0, fixed);
 		
-		test.setOf(0, child);
+		TextLayout2 text = new TextLayout2();
+		text.bind(new DirectBinding());
+		fixed.setOf(0, text);
 		
 		DataReader reader = test.readerFor(dataIn);
 		
@@ -133,10 +136,13 @@ public class LinesTest extends TestCase {
 		
 		LinesLayout test = new LinesLayout();
 		
-		TextLayout child = new TextLayout();
-		child.bind(new DirectBinding());
+		FixedWidthLayout fixed = new FixedWidthLayout();
+		test.setOf(0, fixed);
 		
-		test.setOf(0, child);
+		TextLayout2 text = new TextLayout2();
+		text.bind(new DirectBinding());
+		
+		fixed.setOf(0, text);
 				
 		DataWriter writer = test.writerFor(dataOut);
 
