@@ -9,8 +9,9 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReaderFactory;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.text.StringTextIn;
+import org.oddjob.dido.text.TextFieldsIn;
 import org.oddjob.dido.text.TextIn;
-import org.oddjob.dido.text.TextLayout;
+import org.oddjob.dido.text.TextLayout2;
 
 public class ChildReaderTest extends TestCase {
 
@@ -28,14 +29,15 @@ public class ChildReaderTest extends TestCase {
 	
 	public void testReadChildrenNoBinding() throws DataException {
 
-		TextLayout child1 = new TextLayout();
-		TextLayout child2 = new TextLayout();
-		TextLayout child3 = new TextLayout();
+		TextLayout2 child1 = new TextLayout2();
+		TextLayout2 child2 = new TextLayout2();
+		TextLayout2 child3 = new TextLayout2();
 
 		Iterable<? extends DataReaderFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		TextIn dataIn = new StringTextIn("Apples");
+		TextFieldsIn dataIn = new TextFieldsIn();
+		dataIn.setText("Apples");
 		
 		ChildReader test = new ChildReader(children, dataIn);
 		
@@ -46,21 +48,22 @@ public class ChildReaderTest extends TestCase {
 
 		DirectBinding valueBinding = new DirectBinding();
 		
-		TextLayout child1 = new TextLayout();
-		TextLayout child2 = new TextLayout();
+		TextLayout2 child1 = new TextLayout2();
+		TextLayout2 child2 = new TextLayout2();
 		child2.bind(valueBinding);
-		TextLayout child3 = new TextLayout();
+		TextLayout2 child3 = new TextLayout2();
 
 		Iterable<? extends DataReaderFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		TextIn dataIn = new StringTextIn("Apples");
+		TextFieldsIn dataIn = new TextFieldsIn();
+		dataIn.setText("Oranges");
 		
 		ChildReader test = new ChildReader(children, dataIn);
 
 		Object result = test.read();
 
-		assertEquals("Apples", result);
+		assertEquals("r", result);
 		
 		assertEquals(null, test.read());
 	}
@@ -69,26 +72,27 @@ public class ChildReaderTest extends TestCase {
 
 		DirectBinding valueBinding = new DirectBinding();
 		
-		TextLayout child1 = new TextLayout();
-		TextLayout child2 = new TextLayout();
+		TextLayout2 child1 = new TextLayout2();
+		TextLayout2 child2 = new TextLayout2();
 		child2.bind(valueBinding);
-		TextLayout child3 = new TextLayout();
+		TextLayout2 child3 = new TextLayout2();
 		child3.bind(valueBinding);
 
 		Iterable<? extends DataReaderFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		TextIn dataIn = new StringTextIn("Apples");
+		TextFieldsIn dataIn = new TextFieldsIn();
+		dataIn.setText("Oranges");
 		
 		ChildReader test = new ChildReader(children, dataIn);
 
 		Object result = test.read();
 
-		assertEquals("Apples", result);
+		assertEquals("r", result);
 		
 		result = test.read();
 
-		assertEquals("Apples", result);
+		assertEquals("anges", result);
 		
 		assertEquals(null, test.read());
 	}

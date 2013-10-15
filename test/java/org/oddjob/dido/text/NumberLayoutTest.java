@@ -3,10 +3,8 @@ package org.oddjob.dido.text;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 
 import junit.framework.TestCase;
 
@@ -23,20 +21,24 @@ import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.stream.IOStreamData;
 
-public class DateFieldTest extends TestCase {
+public class NumberLayoutTest extends TestCase {
 
 	public static class Employee {
 		
-		private Date clockOut;
+		private double salary;
 
 		public Employee() {}
 		
-		public Date getClockOut() {
-			return clockOut;
+		Employee(double salary) {
+			this.salary = salary;
+		}
+		
+		public double getSalary() {
+			return salary;
 		}
 
-		public void setClockOut(Date clockOut) {
-			this.clockOut= clockOut;
+		public void setSalary(double salary) {
+			this.salary = salary;
 		}
 	}
 	
@@ -53,16 +55,15 @@ public class DateFieldTest extends TestCase {
 		String EOL = System.getProperty("line.separator");
 		
 		String data = 
-			"23/11/10 17:34" + EOL +
-			"22/11/10 15:01" + EOL;
+			"$17,000.00" + EOL +
+			"$23,500.00" + EOL;
 	
 		ArooaSession session = new StandardArooaSession(
 				new ClassPathDescriptorFactory(
 						).createDescriptor(getClass().getClassLoader()));
-		
 		ImportType importType = new ImportType();
 		importType.setArooaSession(session);
-		importType.setResource("org/oddjob/dido/text/DateFormatExample.xml");
+		importType.setResource("org/oddjob/dido/text/NumberFormatExample.xml");
 		
 		IOStreamData ioData = new IOStreamData();
 		ioData.setArooaSession(session);
@@ -70,7 +71,7 @@ public class DateFieldTest extends TestCase {
 				new ByteArrayInputStream(data.getBytes())));
 		
 		Layout layout = (Layout) importType.toObject();
-				
+		
 		DataReadJob readJob = new DataReadJob();
 		readJob.setLayout(layout);
 		readJob.setBindings("employee", employeeBinding);
@@ -83,23 +84,20 @@ public class DateFieldTest extends TestCase {
 		assertEquals(2, beans.length);
 		
 		Employee employee1 = (Employee) beans[0];
-		assertEquals("23/11/10 17:34", 
-				new SimpleDateFormat("dd/MM/yy HH:mm").format(
-						employee1.getClockOut()));
+		assertEquals(17000.0, employee1.getSalary());
 		
 		Employee employee2 = (Employee) beans[1];
-		assertEquals("22/11/10 15:01", 
-				new SimpleDateFormat("dd/MM/yy HH:mm").format(
-						employee2.getClockOut()));
+		assertEquals(23500.0, employee2.getSalary());
 				
 		DataWriteJob writeJob = new DataWriteJob();
 		writeJob.setLayout(layout);
-		writeJob.setBindings("employee", employeeBinding);
+		writeJob.setBindings("employee", employeeBinding);		
 		
 		writeJob.setBeans(Arrays.asList(beans));
 		
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		ByteArrayOutputStream output = new ByteArrayOutputStream();		
 		ioData.setOutput(new ArooaObject(output));
+		
 		writeJob.setData(ioData);
 		
 		writeJob.run();

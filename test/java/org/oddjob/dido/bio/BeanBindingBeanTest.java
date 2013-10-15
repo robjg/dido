@@ -17,7 +17,8 @@ import org.oddjob.dido.stream.ListLinesIn;
 import org.oddjob.dido.stream.ListLinesOut;
 import org.oddjob.dido.text.DelimitedLayout;
 import org.oddjob.dido.text.FieldLayout;
-import org.oddjob.dido.text.TextLayout;
+import org.oddjob.dido.text.FixedWidthLayout;
+import org.oddjob.dido.text.TextLayout2;
 
 public class BeanBindingBeanTest extends TestCase {
 
@@ -109,10 +110,10 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Fruit.class));
 
-		TextLayout typeNode = new TextLayout();
+		TextLayout2 typeNode = new TextLayout2();
 		typeNode.setName("type");
 		
-		LinesLayout lines = new LinesLayout();
+		FixedWidthLayout lines = new FixedWidthLayout();
 		lines.setName("fruit");
 		lines.setOf(0, typeNode);
 		
@@ -144,12 +145,12 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setType(new SimpleArooaClass(Fruit.class));
 		
 		LinesIn dataIn = new ListLinesIn(
-				Arrays.asList("apple"));
+				Arrays.asList("apple"));		
 		
-		TextLayout typeNode = new TextLayout();
+		TextLayout2 typeNode = new TextLayout2();
 		typeNode.setName("type");
 		
-		LinesLayout root = new LinesLayout();
+		FixedWidthLayout root = new FixedWidthLayout();
 		root.setName("fruit");
 		root.setOf(0, typeNode);
 		
@@ -191,10 +192,10 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Basket.class));
 		
-		TextLayout costNode = new TextLayout();
+		TextLayout2 costNode = new TextLayout2();
 		costNode.setName("cost");
 		
-		LinesLayout root = new LinesLayout();
+		FixedWidthLayout root = new FixedWidthLayout();
 		root.setName("basket");
 		root.setOf(0, costNode);
 		
@@ -231,10 +232,10 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Basket.class));
 		
-		TextLayout costNode = new TextLayout();
+		TextLayout2 costNode = new TextLayout2();
 		costNode.setName("cost");
 		
-		LinesLayout root = new LinesLayout();
+		FixedWidthLayout root = new FixedWidthLayout();
 		root.setName("basket");
 		root.setOf(0, costNode);
 				

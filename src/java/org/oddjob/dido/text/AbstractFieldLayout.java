@@ -31,12 +31,28 @@ implements FixedWidthColumn {
 	private ColumnIn<String> columnIn;
 	
 	private ColumnOut<String> columnOut;
-		
+			
+	/**
+	 * Used by super classes to convert the text to their required type.
+	 * 
+	 * @param value The text value. Might be 0 length but will not be null.
+	 * @return The result of the conversion. May be null.
+	 * 
+	 * @throws DataException
+	 */
+	abstract protected T convertIn(String value)
+	throws DataException;
 	
-	
-	abstract protected T convertIn(String value);
-	
-	abstract protected String convertOut(T value);
+	/**
+	 * Used by super classes to convert their data value back to text.
+	 * 
+	 * @param value The data value. May be null.
+	 * @return The text equivalent. May be null.
+	 * 
+	 * @throws DataException
+	 */
+	abstract protected String convertOut(T value)
+	throws DataException;
 	
 	class MainReader implements DataReader {
 		

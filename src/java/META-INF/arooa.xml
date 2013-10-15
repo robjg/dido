@@ -12,9 +12,9 @@
 		<arooa:bean-def element='text'
 		    className='org.oddjob.dido.text.TextLayout2'/>
 		<arooa:bean-def element='date'
-		    className='org.oddjob.dido.text.DateField'/>
+		    className='org.oddjob.dido.text.DateLayout'/>
 		<arooa:bean-def element='number'
-		    className='org.oddjob.dido.text.NumberField'/>
+		    className='org.oddjob.dido.text.NumberLayout'/>
 		<arooa:bean-def element='case'
 		    className='org.oddjob.dido.other.Case'/>
 		<arooa:bean-def element='when'
