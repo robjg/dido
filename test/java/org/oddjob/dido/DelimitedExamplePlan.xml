@@ -2,9 +2,9 @@
  <of>
   <delimited name='person'>
    <of>
-    <field name='name'/>
-    <field name='age'/>
-    <field name='city'/>
+    <text name='name'/>
+    <text name='age'/>
+    <text name='city'/>
    </of>
   </delimited>
  </of>

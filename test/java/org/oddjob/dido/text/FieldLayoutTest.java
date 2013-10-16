@@ -17,11 +17,32 @@ import org.oddjob.dido.stream.ListLinesOut;
 
 public class FieldLayoutTest extends TestCase {
 
+	public void testOutput() throws DataException {
+		
+		TextLayout2 test = new TextLayout2();
+
+		test.bind(new DirectBinding());
+		
+		SimpleFieldsOut dataOut = new SimpleFieldsOut();
+		
+		DataWriter writer = test.writerFor(dataOut);
+		
+		writer.write("apples");
+		
+		assertEquals(1, test.getIndex());
+		
+		assertEquals("apples", dataOut.values()[0]);		
+		
+		writer.write("oranges");
+				
+		assertEquals("oranges", dataOut.values()[0]);
+	}
+	
 	public void testWriteSimpleFields() throws DataException {
 		
 		SimpleFieldsOut fields = new SimpleFieldsOut();
 		
-		FieldLayout test = new FieldLayout();
+		TextLayout2 test = new TextLayout2();
 		
 		DirectBinding binding = new DirectBinding();
 		
@@ -44,7 +65,7 @@ public class FieldLayoutTest extends TestCase {
 		
 		SimpleFieldsOut fields = new SimpleFieldsOut();
 		
-		FieldLayout test = new FieldLayout();
+		TextLayout2 test = new TextLayout2();
 		test.setName("fruit");
 		test.setLabel("Fruit");
 		
@@ -66,12 +87,12 @@ public class FieldLayoutTest extends TestCase {
 		assertEquals(1, headings.length);
 	}
 	
-	public void testReadSimpleFields() throws DataException {
+	public void testReadSimpleFieldsNoLabels() throws DataException {
 		
 		SimpleFieldsIn fields = new SimpleFieldsIn();
 		fields.setValues(new String[] { "Apple" });
 		
-		FieldLayout test = new FieldLayout();
+		TextLayout2 test = new TextLayout2();
 		
 		DirectBinding binding = new DirectBinding();
 		
@@ -89,10 +110,11 @@ public class FieldLayoutTest extends TestCase {
 	public void testReadSimpleFieldsByLabel() throws DataException {
 		
 		SimpleFieldsIn fields = new SimpleFieldsIn();
-		fields.setHeadings(new String[] { "Stuff", "Fruit" });
-		fields.setValues(new String[] { "Foo", "Apple" });
+		fields.setHeadings(new String[] { "Person", "Fruit" });
 		
-		FieldLayout test = new FieldLayout();
+		fields.setValues(new String[] { "John", "Apple" });
+		
+		TextLayout2 test = new TextLayout2();
 		test.setLabel("Fruit");
 		
 		DirectBinding binding = new DirectBinding();
@@ -106,7 +128,44 @@ public class FieldLayoutTest extends TestCase {
 		assertEquals("Apple", result);
 		
 		assertNull(reader.read());
+		
+		fields.setValues(new String[] { "Foo", "Apple" });
+		
 	}
+	
+	public void testInputNoChildren() throws DataException {
+
+		TextLayout2 test = new TextLayout2();
+		
+		SimpleFieldsIn fields = new SimpleFieldsIn();
+		
+		fields.setHeadings(new String[] { "name" });
+		fields.setValues(new String[] { "John" });
+
+		test.bind(new DirectBinding());
+		
+		DataReader reader = test.readerFor(fields);
+		
+		String result = (String) reader.read();
+				
+		assertEquals("John", result);
+		
+		assertNull(reader.read());
+		
+		reader.close();
+		
+		fields.setValues(new String[] { "Jane" });
+		
+		reader = test.readerFor(fields);
+				
+		result = (String) reader.read();
+		
+		assertEquals("Jane", result);
+		
+		assertNull(reader.read());
+		
+		reader.close();
+	}	
 	
 	public static class Fruit {
 		
@@ -133,16 +192,16 @@ public class FieldLayoutTest extends TestCase {
 		String xml = 
 				"<dido:delimited xmlns:dido='oddjob:dido'>" +
 				" <of>" +
-				"  <dido:field>" +
+				"  <dido:text>" +
 				"   <of>" +
 				"    <dido:delimited delimiter='|'>" +
 				"     <of>" +
-				"      <dido:field name='fruit'/>" +
-				"      <dido:field name='colour'/>" +
+				"      <dido:text name='fruit'/>" +
+				"      <dido:text name='colour'/>" +
 				"     </of>" +
 				"    </dido:delimited>" +
 				"   </of>" +
-				"  </dido:field>" +
+				"  </dido:text>" +
 				" </of>" +
 				"</dido:delimited>";
 		

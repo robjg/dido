@@ -12,6 +12,8 @@ import org.oddjob.dido.Layout;
 public class TextLayout2 
 extends AbstractFieldLayout<String> {
 
+	private boolean raw;
+	
 	@Override
 	public Class<String> getType() {
 		return String.class;
@@ -23,7 +25,12 @@ extends AbstractFieldLayout<String> {
 	
 	@Override
 	protected String convertIn(String value) {
-		return value;
+		if (raw) {
+			return value;
+		}
+		else {
+			return value.trim();
+		}
 	}
 	
 	@Override
@@ -31,4 +38,11 @@ extends AbstractFieldLayout<String> {
 		return value;
 	}
 	
+	public boolean isRaw() {
+		return raw;
+	}
+
+	public void setRaw(boolean trim) {
+		this.raw = trim;
+	}
 }

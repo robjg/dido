@@ -337,7 +337,7 @@ implements Morphable, MorphProvider {
 		
 		for (String name : morphicness.getNames()) {
 			
-			FieldLayout layout = new FieldLayout();
+			TextLayout2 layout = new TextLayout2();
 			layout.setName(name);
 			layout.setLabel(morphicness.labelFor(name));
 			

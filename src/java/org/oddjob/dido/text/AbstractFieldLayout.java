@@ -26,8 +26,6 @@ implements FixedWidthColumn {
 
 	private int length;
 	
-	private boolean raw;
-	
 	private ColumnIn<String> columnIn;
 	
 	private ColumnOut<String> columnOut;
@@ -54,6 +52,9 @@ implements FixedWidthColumn {
 	abstract protected String convertOut(T value)
 	throws DataException;
 	
+	/**
+	 * Read and item of data.
+	 */
 	class MainReader implements DataReader {
 		
 		private DataReader nextReader;
@@ -67,9 +68,6 @@ implements FixedWidthColumn {
 			}
 			
 			String field = columnIn.getData();
-			if (!raw) {
-				field = field.trim();
-			}
 
 			value(convertIn(field));
 
@@ -114,6 +112,14 @@ implements FixedWidthColumn {
 		return new MainReader();
 	}	
 		
+	/**
+	 * Provide a writer. 
+	 * 
+	 * The writer will provide a child node or binding with the opportunity to
+	 * write multiple times from one object (which is probably complete
+	 * overkill)
+	 *
+	 */
 	class MainWriter implements DataWriter {
 
 		private final DataWriter nextWriter;
@@ -132,19 +138,19 @@ implements FixedWidthColumn {
 				return true;
 			}
 			
-			if (textOut.isWrittenTo()) {
-				value(convertIn(textOut.toText()));
-			}
-			
-			if (isWrittenTo()) {
-				
-				resetWrittenTo();
+			if (textOut.isWrittenTo() || isWrittenTo()) {
 				textOut.resetWrittenTo();
-				
+				resetWrittenTo();
 				return write(object);
 			}
 			
-			String value = convertOut(value());
+			String value = textOut.toText();
+			if (value == null) {
+				value = convertOut(value());
+			}
+			else {
+				value(convertIn(value));
+			}
 			
 			if (value != null) {
 				columnOut.setData(value);
@@ -235,13 +241,5 @@ implements FixedWidthColumn {
 
 	public void setLength(int length) {
 		this.length = length;
-	}
-	
-	public boolean isRaw() {
-		return raw;
-	}
-
-	public void setRaw(boolean trim) {
-		this.raw = trim;
-	}
+	}	
 }

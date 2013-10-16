@@ -7,8 +7,6 @@
 		    className='org.oddjob.dido.text.DelimitedLayout'/>
         <arooa:bean-def element='fixed'
             className='org.oddjob.dido.text.FixedWidthLayout'/>
-		<arooa:bean-def element='field'
-		    className='org.oddjob.dido.text.FieldLayout'/>
 		<arooa:bean-def element='text'
 		    className='org.oddjob.dido.text.TextLayout2'/>
 		<arooa:bean-def element='date'
