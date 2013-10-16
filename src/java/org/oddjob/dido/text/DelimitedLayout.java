@@ -1,8 +1,12 @@
 package org.oddjob.dido.text;
 
-import java.util.regex.Pattern;
+import java.text.ParseException;
 
 import org.apache.log4j.Logger;
+import org.oddjob.arooa.utils.ArooaDelimiter;
+import org.oddjob.arooa.utils.ArooaTokenizer;
+import org.oddjob.arooa.utils.FlexibleDelimiterFactory;
+import org.oddjob.arooa.utils.FlexibleTokenizerFactory;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
@@ -58,7 +62,13 @@ implements Morphable, MorphProvider {
 	
 	private String delimiter;
 	
-	private String regexp;
+	private boolean regexp;
+	
+	private Character quote;
+	
+	private boolean alwaysQuote;
+	
+	private Character escape;
 	
 	private String[] headings;
 	
@@ -66,7 +76,11 @@ implements Morphable, MorphProvider {
 	
 	private SimpleFieldsIn fieldsIn;
 	
+	private ArooaTokenizer arooaTokenizer;
+	
 	private SimpleFieldsOut fieldsOut;
+	
+	private ArooaDelimiter arooaDelimiter;
 	
 	@Override
 	public Class<String[]> getType() {
@@ -170,9 +184,7 @@ implements Morphable, MorphProvider {
 				return null;
 			}
 						
-			String use = regexp == null ? DEFAULT : regexp;
-			
-			String fields[] = line.split(use, -1);
+			String fields[] = parseDelimited(line);
 			
 			value(fields);
 
@@ -195,6 +207,14 @@ implements Morphable, MorphProvider {
 	throws DataException {
 		
 		LinesIn linesIn = dataIn.provideDataIn(LinesIn.class);
+		
+		FlexibleTokenizerFactory tokenizerFactory = new FlexibleTokenizerFactory();
+		tokenizerFactory.setDelimiter(delimiter == null ? DEFAULT : delimiter);
+		tokenizerFactory.setRegexp(regexp);
+		tokenizerFactory.setEscape(escape);
+		tokenizerFactory.setQuote(quote);
+		
+		arooaTokenizer = tokenizerFactory.newTokenizer();
 		
 		if (withHeadings) {
 			return new SwapReader(linesIn);
@@ -250,40 +270,38 @@ implements Morphable, MorphProvider {
 				
 				return write(object);
 			}
-			else {
 				
-				String[] value = value();
+			String[] value = value();
 				
-				if (value != null) {
+			if (value != null) {
 
-					if (!initialised) {
-						
-						if (withHeadings) {
-							
-							String[] headings = fieldsOut.headings();
-	
-							linesOut.writeLine(delimitedString(headings));
-								
-							logger.trace("[" + DelimitedLayout.this + 
-									"] wrote line [" + headings + "]");
-						}
-						
-						initialised = true;
+				if (!initialised) {
+
+					if (withHeadings) {
+
+						String[] headings = fieldsOut.headings();
+
+						linesOut.writeLine(delimitedString(headings));
+
+						logger.trace("[" + DelimitedLayout.this + 
+								"] wrote line [" + headings + "]");
 					}
-					
-					String line = delimitedString(value);
-					
-					linesOut.writeLine(line);
-					
-					logger.trace("[" + DelimitedLayout.this + "] wrote line [" + 
-							line + "]");
+
+					initialised = true;
 				}
-				
-				nextWriter.close();
-				nextWriter = null;
-				
-				return linesOut.isMultiLine();
+
+				String line = delimitedString(value);
+
+				linesOut.writeLine(line);
+
+				logger.trace("[" + DelimitedLayout.this + "] wrote line [" + 
+						line + "]");
 			}
+
+			nextWriter.close();
+			nextWriter = null;
+
+			return linesOut.isMultiLine();
 		}
 		
 		@Override
@@ -313,6 +331,14 @@ implements Morphable, MorphProvider {
 
 		LinesOut linesOut = dataOut.provideDataOut(LinesOut.class);
 
+		FlexibleDelimiterFactory delimiterFactory = new FlexibleDelimiterFactory();
+		delimiterFactory.setDelimiter(delimiter == null ? DEFAULT : delimiter);
+		delimiterFactory.setQuote(quote);
+		delimiterFactory.setEscape(escape);
+		delimiterFactory.setAlwaysQuote(alwaysQuote);
+
+		arooaDelimiter = delimiterFactory.newDelimiter();
+		
 		logger.trace("Creating writer for [" + linesOut + "]");
 
 		if (fieldsOut == null) {
@@ -355,36 +381,22 @@ implements Morphable, MorphProvider {
 		};
 	}
 
-	public String[] parseDelimited(String line) {
+	public String[] parseDelimited(String line) throws DataException {
 		
-		String use = regexp == null ? DEFAULT : regexp;
-		
-		String fields[] = line.split(use, -1);
-		
-		return fields;
+		try {
+			return arooaTokenizer.parse(line);
+		} catch (ParseException e) {
+			throw new DataException(e);
+		}
 	}
 	
 	public String delimitedString(String[] values) {
-		String use = delimiter == null ? DEFAULT : delimiter;
 		
-		StringBuilder buffer = new StringBuilder();
-		for (int i = 0; i < values.length; ++i) {
-			if (i > 0) {
-				buffer.append(use);
-			}
-			if (values[i] != null) {
-				buffer.append(values[i]);
-			}
-		}
-		
-		return buffer.toString();
+		return arooaDelimiter.delimit(values);
 	}
 	
 	public void setDelimiter(String delimiter) {
 		this.delimiter = delimiter;
-		if (regexp == null) {
-			regexp = Pattern.quote(delimiter);
-		}
 	}
 	
 	public String getDelimiter() {
@@ -442,11 +454,37 @@ implements Morphable, MorphProvider {
 		this.withHeadings = withHeadings;
 	}
 
-	public String getRegexp() {
+	public boolean getRegexp() {
 		return regexp;
 	}
 
-	public void setRegexp(String regexp) {
+	public void setRegexp(boolean regexp) {
 		this.regexp = regexp;
 	}
+
+	public Character getQuote() {
+		return quote;
+	}
+
+	public void setQuote(Character quote) {
+		this.quote = quote;
+	}
+
+	public boolean isAlwaysQuote() {
+		return alwaysQuote;
+	}
+
+	public void setAlwaysQuote(boolean alwaysQuote) {
+		this.alwaysQuote = alwaysQuote;
+	}
+
+	public Character getEscape() {
+		return escape;
+	}
+
+	public void setEscape(Character escape) {
+		this.escape = escape;
+	}
+	
+	
 }
