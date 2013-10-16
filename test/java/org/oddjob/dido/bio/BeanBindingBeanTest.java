@@ -16,9 +16,8 @@ import org.oddjob.dido.stream.LinesLayout;
 import org.oddjob.dido.stream.ListLinesIn;
 import org.oddjob.dido.stream.ListLinesOut;
 import org.oddjob.dido.text.DelimitedLayout;
-import org.oddjob.dido.text.FieldLayout;
 import org.oddjob.dido.text.FixedWidthLayout;
-import org.oddjob.dido.text.TextLayout2;
+import org.oddjob.dido.text.TextLayout;
 
 public class BeanBindingBeanTest extends TestCase {
 
@@ -110,7 +109,7 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Fruit.class));
 
-		TextLayout2 typeNode = new TextLayout2();
+		TextLayout typeNode = new TextLayout();
 		typeNode.setName("type");
 		
 		FixedWidthLayout lines = new FixedWidthLayout();
@@ -147,7 +146,7 @@ public class BeanBindingBeanTest extends TestCase {
 		LinesIn dataIn = new ListLinesIn(
 				Arrays.asList("apple"));		
 		
-		TextLayout2 typeNode = new TextLayout2();
+		TextLayout typeNode = new TextLayout();
 		typeNode.setName("type");
 		
 		FixedWidthLayout root = new FixedWidthLayout();
@@ -192,7 +191,7 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Basket.class));
 		
-		TextLayout2 costNode = new TextLayout2();
+		TextLayout costNode = new TextLayout();
 		costNode.setName("cost");
 		
 		FixedWidthLayout root = new FixedWidthLayout();
@@ -232,7 +231,7 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Basket.class));
 		
-		TextLayout2 costNode = new TextLayout2();
+		TextLayout costNode = new TextLayout();
 		costNode.setName("cost");
 		
 		FixedWidthLayout root = new FixedWidthLayout();
@@ -274,7 +273,7 @@ public class BeanBindingBeanTest extends TestCase {
 		test.setArooaSession(session);
 		test.setType(new SimpleArooaClass(Fruit.class));
 		
-		FieldLayout typeNode = new FieldLayout();
+		TextLayout typeNode = new TextLayout();
 		typeNode.setName("type");
 		
 		DelimitedLayout root = new DelimitedLayout();

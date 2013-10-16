@@ -64,13 +64,13 @@ public class DelimitedLayoutTest extends TestCase {
 		DelimitedLayout delimited = new DelimitedLayout();
 		delimited.setWithHeadings(true);
 
-		TextLayout2 a = new TextLayout2();
+		TextLayout a = new TextLayout();
 		a.setLabel("fieldA");
 		
-		TextLayout2 b = new TextLayout2();
+		TextLayout b = new TextLayout();
 		b.setLabel("fieldB");
 		
-		TextLayout2 c = new TextLayout2();
+		TextLayout c = new TextLayout();
 		c.setLabel("fieldC");
 		
 		delimited.setOf(0, a);
@@ -174,13 +174,13 @@ public class DelimitedLayoutTest extends TestCase {
 		
 		DelimitedLayout delimited = new DelimitedLayout();
 
-		TextLayout2 a = new TextLayout2();
+		TextLayout a = new TextLayout();
 		delimited.setOf(0, a);
 		
-		TextLayout2 b = new TextLayout2();
+		TextLayout b = new TextLayout();
 		delimited.setOf(1, b);
 				
-		TextLayout2 c = new TextLayout2();
+		TextLayout c = new TextLayout();
 		delimited.setOf(2, c);
 		
 		ArooaSession session = new StandardArooaSession();
@@ -283,9 +283,9 @@ public class DelimitedLayoutTest extends TestCase {
 		
 		DelimitedLayout test = new DelimitedLayout();
 
-		TextLayout2 a = new TextLayout2();
-		TextLayout2 b = new TextLayout2();
-		TextLayout2 c = new TextLayout2();
+		TextLayout a = new TextLayout();
+		TextLayout b = new TextLayout();
+		TextLayout c = new TextLayout();
 				
 		test.setOf(0, a);
 		test.setOf(1, b);
@@ -311,15 +311,15 @@ public class DelimitedLayoutTest extends TestCase {
 		test.setHeadings(new String[] { "fieldA", "fieldB", "fieldC" });
 		test.setWithHeadings(false);
 		
-		TextLayout2 a = new TextLayout2();
+		TextLayout a = new TextLayout();
 		a.setName("fieldA");
 		a.setLabel("fieldA");
 		
-		TextLayout2 b = new TextLayout2();
+		TextLayout b = new TextLayout();
 		b.setName("fieldB");
 		b.setLabel("fieldB");
 		
-		TextLayout2 c = new TextLayout2();
+		TextLayout c = new TextLayout();
 		c.setName("fieldC");
 		c.setLabel("fieldC");
 				

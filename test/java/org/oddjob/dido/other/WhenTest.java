@@ -26,8 +26,8 @@ import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.stream.IOStreamData;
-import org.oddjob.dido.text.FieldLayout;
 import org.oddjob.dido.text.SimpleFieldsOut;
+import org.oddjob.dido.text.TextLayout;
 
 public class WhenTest extends TestCase {
 
@@ -90,10 +90,10 @@ public class WhenTest extends TestCase {
 	
 	public void testWritingSequenceTheory() throws DataException {
 		
-		FieldLayout on = new FieldLayout();
+		TextLayout on = new TextLayout();
 		on.bind(new DirectBinding());
 		
-		FieldLayout child = new FieldLayout();
+		TextLayout child = new TextLayout();
 		child.bind(new DirectBinding());
 		
 		When test = 

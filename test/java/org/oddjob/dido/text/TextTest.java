@@ -12,7 +12,7 @@ public class TextTest extends TestCase {
 
 	public void testFieldWhereNextInNoChildren() throws DataException {
 
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		
 		TextFieldsIn text = new TextFieldsIn();
 		text.setText("John");
@@ -36,17 +36,17 @@ public class TextTest extends TestCase {
 		
 	public void testTextInWithChildren() throws DataException {
 
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		test.setRaw(true);
 		
 		FixedWidthLayout fixedWidthLayout = new FixedWidthLayout();
 		test.setOf(0, fixedWidthLayout);
 		
-		TextLayout2 c1 = new TextLayout2();
+		TextLayout c1 = new TextLayout();
 		c1.setIndex(1);
 		c1.setLength(5);
 		
- 		TextLayout2 c2 = new TextLayout2();
+ 		TextLayout c2 = new TextLayout();
 		c2.setIndex(6);
 		c2.setLength(10);
 		c2.setRaw(true);
@@ -69,7 +69,7 @@ public class TextTest extends TestCase {
 	
 	public void testOutput() throws DataException {
 		
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 
 		test.bind(new DirectBinding());
 		
@@ -84,17 +84,17 @@ public class TextTest extends TestCase {
 	
 	public void testTextOutWithChildren() throws DataException {
 
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		
 		FixedWidthLayout fixedWidthLayout = new FixedWidthLayout();
 		test.setOf(0, fixedWidthLayout);
 		
-		TextLayout2 c1 = new TextLayout2();
+		TextLayout c1 = new TextLayout();
 		c1.setIndex(1);
 		c1.setLength(5);
 		c1.setRaw(true);
 		
-		TextLayout2 c2 = new TextLayout2();
+		TextLayout c2 = new TextLayout();
 		c2.setIndex(6);
 		c2.setLength(10);
 

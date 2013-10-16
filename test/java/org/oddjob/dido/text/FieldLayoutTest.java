@@ -19,7 +19,7 @@ public class FieldLayoutTest extends TestCase {
 
 	public void testOutput() throws DataException {
 		
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 
 		test.bind(new DirectBinding());
 		
@@ -42,7 +42,7 @@ public class FieldLayoutTest extends TestCase {
 		
 		SimpleFieldsOut fields = new SimpleFieldsOut();
 		
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		
 		DirectBinding binding = new DirectBinding();
 		
@@ -65,7 +65,7 @@ public class FieldLayoutTest extends TestCase {
 		
 		SimpleFieldsOut fields = new SimpleFieldsOut();
 		
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		test.setName("fruit");
 		test.setLabel("Fruit");
 		
@@ -92,7 +92,7 @@ public class FieldLayoutTest extends TestCase {
 		SimpleFieldsIn fields = new SimpleFieldsIn();
 		fields.setValues(new String[] { "Apple" });
 		
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		
 		DirectBinding binding = new DirectBinding();
 		
@@ -114,7 +114,7 @@ public class FieldLayoutTest extends TestCase {
 		
 		fields.setValues(new String[] { "John", "Apple" });
 		
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		test.setLabel("Fruit");
 		
 		DirectBinding binding = new DirectBinding();
@@ -135,7 +135,7 @@ public class FieldLayoutTest extends TestCase {
 	
 	public void testInputNoChildren() throws DataException {
 
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		
 		SimpleFieldsIn fields = new SimpleFieldsIn();
 		

@@ -8,7 +8,7 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.text.TextFieldsIn;
 import org.oddjob.dido.text.TextFieldsOut;
-import org.oddjob.dido.text.TextLayout2;
+import org.oddjob.dido.text.TextLayout;
 
 public class CaseTest extends TestCase {
 
@@ -17,7 +17,7 @@ public class CaseTest extends TestCase {
 		Case<String> test = 
 			new Case<String>();
 
-		TextLayout2 text = new TextLayout2();
+		TextLayout text = new TextLayout();
 		text.setName("delimiter");
 		text.setIndex(1);
 		text.setLength(1);
@@ -25,7 +25,7 @@ public class CaseTest extends TestCase {
 		When when1 = new When(); 
 		when1.setValue("1");
 		
-		TextLayout2 text1 = new TextLayout2();
+		TextLayout text1 = new TextLayout();
 		text1.setName("person");
 		text1.setIndex(2);
 		text1.setLength(10);
@@ -35,7 +35,7 @@ public class CaseTest extends TestCase {
 		When when2 = new When(); 
 		when2.setValue("2");
 		
-		TextLayout2 text2 = new TextLayout2();
+		TextLayout text2 = new TextLayout();
 		text1.setName("fruit");
 		text2.setIndex(2);
 		text2.setLength(10);
@@ -72,14 +72,14 @@ public class CaseTest extends TestCase {
 		Case<String> test = 
 			new Case<String>();
 
-		TextLayout2 text = new TextLayout2();
+		TextLayout text = new TextLayout();
 		text.setIndex(1);
 		text.setLength(1);
 		
 		When when1 = new When(); 
 		when1.setValue("1");
 		
-		final TextLayout2 text1 = new TextLayout2();
+		final TextLayout text1 = new TextLayout();
 		text1.setIndex(2);
 		text1.setLength(10);
 		
@@ -88,7 +88,7 @@ public class CaseTest extends TestCase {
 		When when2 = new When(); 
 		when2.setValue("2");
 		
-		TextLayout2 text2 = new TextLayout2();
+		TextLayout text2 = new TextLayout();
 		text2.setIndex(2);
 		text2.setLength(10);
 				

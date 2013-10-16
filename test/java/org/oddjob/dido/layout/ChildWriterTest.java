@@ -9,6 +9,7 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataWriterFactory;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.text.StringTextOut;
+import org.oddjob.dido.text.TextFieldsOut;
 import org.oddjob.dido.text.TextLayout;
 import org.oddjob.dido.text.TextOut;
 
@@ -34,14 +35,14 @@ public class ChildWriterTest extends TestCase {
 
 		Iterable<? extends DataWriterFactory> children = 
 				Arrays.asList(child1, child2, child3);
-		
-		StringTextOut dataOut = new StringTextOut();
+				
+		TextFieldsOut dataOut = new TextFieldsOut();
 		
 		ChildWriter test = new ChildWriter(children, dataOut);
 		
 		assertEquals(false, test.write("Apples"));
 		
-		assertEquals(null, dataOut.toText());
+		assertEquals(null, dataOut.getText());
 	}
 	
 	public void testWriteChildrenWithOneBinding() throws DataException {
@@ -50,19 +51,21 @@ public class ChildWriterTest extends TestCase {
 		
 		TextLayout child1 = new TextLayout();
 		TextLayout child2 = new TextLayout();
+		child2.setIndex(1);
+		child2.setLength(10);
 		child2.bind(valueBinding);
 		TextLayout child3 = new TextLayout();
 
 		Iterable<? extends DataWriterFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		StringTextOut dataOut = new StringTextOut();
+		TextFieldsOut dataOut = new TextFieldsOut();
 				
 		ChildWriter test = new ChildWriter(children, dataOut);
 
 		assertEquals(false, test.write("Apples"));
 
-		assertEquals("Apples", dataOut.toText());
+		assertEquals("Apples    ", dataOut.getText());
 	}
 	
 	public void testWriteChildrenSeveralBindings() throws DataException {
@@ -71,24 +74,37 @@ public class ChildWriterTest extends TestCase {
 		
 		TextLayout child1 = new TextLayout();
 		TextLayout child2 = new TextLayout();
+		child2.setIndex(1);
+		child2.setLength(10);
 		child2.bind(valueBinding);
 		TextLayout child3 = new TextLayout();
+		child3.setIndex(11);
+		child3.setLength(10);
 		child3.bind(valueBinding);
 
 		Iterable<? extends DataWriterFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		StringTextOut dataOut = new StringTextOut();
+		TextFieldsOut dataOut = new TextFieldsOut();
 		
 		ChildWriter test = new ChildWriter(children, dataOut);
 
 		assertEquals(false, test.write("Apples"));
 
-		assertEquals("Apples", dataOut.toText());
+		assertEquals("Apples    Apples    ", dataOut.getText());
+
+		// Writing again has no affect. The ChildWriter has no more
+		// children to write to.
+		assertEquals(false, test.write("Oranges"));
 		
-		assertEquals(false, test.write("Apples"));
+		assertEquals("Apples    Apples    ", dataOut.getText());
 		
-		assertEquals("Apples", dataOut.toText());
+		test.close();
 		
+		test = new ChildWriter(children, dataOut);
+
+		assertEquals(false, test.write("Oranges"));
+		
+		assertEquals("Oranges   Oranges   ", dataOut.getText());		
 	}
 }

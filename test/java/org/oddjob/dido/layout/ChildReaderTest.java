@@ -11,7 +11,7 @@ import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.text.StringTextIn;
 import org.oddjob.dido.text.TextFieldsIn;
 import org.oddjob.dido.text.TextIn;
-import org.oddjob.dido.text.TextLayout2;
+import org.oddjob.dido.text.TextLayout;
 
 public class ChildReaderTest extends TestCase {
 
@@ -29,9 +29,9 @@ public class ChildReaderTest extends TestCase {
 	
 	public void testReadChildrenNoBinding() throws DataException {
 
-		TextLayout2 child1 = new TextLayout2();
-		TextLayout2 child2 = new TextLayout2();
-		TextLayout2 child3 = new TextLayout2();
+		TextLayout child1 = new TextLayout();
+		TextLayout child2 = new TextLayout();
+		TextLayout child3 = new TextLayout();
 
 		Iterable<? extends DataReaderFactory> children = 
 				Arrays.asList(child1, child2, child3);
@@ -48,10 +48,10 @@ public class ChildReaderTest extends TestCase {
 
 		DirectBinding valueBinding = new DirectBinding();
 		
-		TextLayout2 child1 = new TextLayout2();
-		TextLayout2 child2 = new TextLayout2();
+		TextLayout child1 = new TextLayout();
+		TextLayout child2 = new TextLayout();
 		child2.bind(valueBinding);
-		TextLayout2 child3 = new TextLayout2();
+		TextLayout child3 = new TextLayout();
 
 		Iterable<? extends DataReaderFactory> children = 
 				Arrays.asList(child1, child2, child3);
@@ -72,10 +72,10 @@ public class ChildReaderTest extends TestCase {
 
 		DirectBinding valueBinding = new DirectBinding();
 		
-		TextLayout2 child1 = new TextLayout2();
-		TextLayout2 child2 = new TextLayout2();
+		TextLayout child1 = new TextLayout();
+		TextLayout child2 = new TextLayout();
 		child2.bind(valueBinding);
-		TextLayout2 child3 = new TextLayout2();
+		TextLayout child3 = new TextLayout();
 		child3.bind(valueBinding);
 
 		Iterable<? extends DataReaderFactory> children = 

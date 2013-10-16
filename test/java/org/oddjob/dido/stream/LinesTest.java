@@ -11,7 +11,7 @@ import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.text.FixedWidthLayout;
-import org.oddjob.dido.text.TextLayout2;
+import org.oddjob.dido.text.TextLayout;
 
 public class LinesTest extends TestCase {
 
@@ -66,7 +66,7 @@ public class LinesTest extends TestCase {
 		FixedWidthLayout fixed = new FixedWidthLayout();
 		test.setOf(0, fixed);
 		
-		TextLayout2 text = new TextLayout2();
+		TextLayout text = new TextLayout();
 		text.bind(new DirectBinding());
 		fixed.setOf(0, text);
 		
@@ -139,7 +139,7 @@ public class LinesTest extends TestCase {
 		FixedWidthLayout fixed = new FixedWidthLayout();
 		test.setOf(0, fixed);
 		
-		TextLayout2 text = new TextLayout2();
+		TextLayout text = new TextLayout();
 		text.bind(new DirectBinding());
 		
 		fixed.setOf(0, text);

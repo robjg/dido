@@ -21,7 +21,7 @@ import org.oddjob.dido.layout.ChildWriter;
 import org.oddjob.dido.stream.IOStreamData;
 import org.oddjob.dido.stream.LinesLayout;
 import org.oddjob.dido.text.DelimitedLayout;
-import org.oddjob.dido.text.FieldLayout;
+import org.oddjob.dido.text.TextLayout;
 
 /**
  * Test the binding theory for situations where there is more than one
@@ -349,10 +349,10 @@ public class BeanBindingTheoryTest extends TestCase {
 		
 		DelimitedLayout layout = new DelimitedLayout();
 		
-		FieldLayout field1 = new FieldLayout();
+		TextLayout field1 = new TextLayout();
 		layout.setOf(0,  field1);
 		
-		FieldLayout field2 = new FieldLayout();
+		TextLayout field2 = new TextLayout();
 		layout.setOf(1,  field2);
 		
 		layout.bind(new TwoObjectsPerLineBinding());

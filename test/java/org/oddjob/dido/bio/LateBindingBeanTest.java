@@ -8,7 +8,7 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.bio.BeanBindingBeanTest.Basket;
 import org.oddjob.dido.stream.ListLinesOut;
 import org.oddjob.dido.text.DelimitedLayout;
-import org.oddjob.dido.text.FieldLayout;
+import org.oddjob.dido.text.TextLayout;
 
 public class LateBindingBeanTest extends TestCase {
 
@@ -32,7 +32,7 @@ public class LateBindingBeanTest extends TestCase {
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
 		
-		FieldLayout typeNode = new FieldLayout();
+		TextLayout typeNode = new TextLayout();
 		typeNode.setName("type");
 		
 		DelimitedLayout root = new DelimitedLayout();
@@ -70,7 +70,7 @@ public class LateBindingBeanTest extends TestCase {
 		BeanBindingBean test = new BeanBindingBean();
 		test.setArooaSession(session);
 		
-		FieldLayout costNode = new FieldLayout();
+		TextLayout costNode = new TextLayout();
 		costNode.setName("cost");
 		
 		DelimitedLayout root = new DelimitedLayout();

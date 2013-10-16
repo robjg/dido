@@ -23,7 +23,7 @@ public class TextLayoutTest extends TestCase {
 		
 		FixedWidthLayout fixed = new FixedWidthLayout();
 		
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		fixed.setOf(0, test);
 		
 		DirectBinding binding = new DirectBinding();
@@ -53,7 +53,7 @@ public class TextLayoutTest extends TestCase {
 		
 		TextFieldsOut dataOut = new TextFieldsOut();
 		
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		test.setName("Fruit");
 		
 		DirectBinding binding = new DirectBinding();
@@ -74,7 +74,7 @@ public class TextLayoutTest extends TestCase {
 		TextFieldsIn dataIn = new TextFieldsIn();
 		dataIn.setText("Apples");
 				
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		
 		DirectBinding binding = new DirectBinding();
 		
@@ -94,7 +94,7 @@ public class TextLayoutTest extends TestCase {
 		TextFieldsIn dataIn = new TextFieldsIn();
 		dataIn.setText("Apples");
 		
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		test.setName("Fruit");
 		
 		DirectBinding binding = new DirectBinding();
@@ -117,7 +117,7 @@ public class TextLayoutTest extends TestCase {
 		TextFieldsOut textFieldsOut = new TextFieldsOut();
 		assertEquals(false, textFieldsOut.isWrittenTo());
 		
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		test.setIndex(3);
 		test.setLength(6);
 		
@@ -140,7 +140,7 @@ public class TextLayoutTest extends TestCase {
 		TextFieldsIn textFieldsIn = new TextFieldsIn();
 		textFieldsIn.setText("  Apples and Pears");
 		
-		TextLayout2 test = new TextLayout2();
+		TextLayout test = new TextLayout();
 		test.setIndex(3);
 		test.setLength(6);
 		
