@@ -259,7 +259,7 @@
 			<fileset dir=".">
 				<include name="build.xml"/>
 				<include name="LICENSE.txt"/>
-				<include name="RELEASE-NOTES.txt"/>
+				<include name="README.txt"/>
 			</fileset>
 		</copy>
 
@@ -281,8 +281,8 @@
 
 		<copy todir="${dist.bin.dir}">
 			<fileset dir=".">
-				<include name="DIDO-LICENSE.txt"/>
-				<include name="DIDO-RELEASE-NOTES.txt"/>
+				<include name="LICENSE.txt"/>
+				<include name="README.txt"/>
 			</fileset>
 		</copy>
 

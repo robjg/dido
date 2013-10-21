@@ -61,7 +61,7 @@ public class SQLDataInImpl implements SQLDataIn {
 			
 			String columnName = metaData.getColumnName(column);
 			
-			columnNames[column -1 ] = columnName;
+			columnNames[column - 1] = columnName;
 			columnTypes[column - 1] = columnClass;
 			
 			morphBuilder.add(columnName, columnClass);

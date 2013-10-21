@@ -183,6 +183,7 @@ public class WhenTest extends TestCase {
 		Layout layout = (Layout) importType.toObject();
 		
 		DataReadJob readJob = new DataReadJob();
+		readJob.setArooaSession(session);
 		readJob.setLayout(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
@@ -217,6 +218,7 @@ public class WhenTest extends TestCase {
 		assertEquals("Green", fruit2.getColour());
 				
 		DataWriteJob writeJob = new DataWriteJob();
+		writeJob.setArooaSession(session);
 		writeJob.setLayout(layout);
 		writeJob.setBindings("people", personBinding);
 		writeJob.setBindings("fruit", fruitBinding);		
@@ -270,6 +272,7 @@ public class WhenTest extends TestCase {
 		fruit2.setColour("Green");
 		
 		DataWriteJob writeJob = new DataWriteJob();
+		writeJob.setArooaSession(session);
 		writeJob.setLayout(layout);
 		writeJob.setBindings("people", personBinding);
 		writeJob.setBindings("fruit", fruitBinding);		
@@ -287,6 +290,7 @@ public class WhenTest extends TestCase {
 		writeJob.run();
 		
 		DataReadJob readJob = new DataReadJob();
+		readJob.setArooaSession(session);
 		readJob.setLayout(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
@@ -366,6 +370,7 @@ public class WhenTest extends TestCase {
 		Layout layout = (Layout) importType.toObject();
 		
 		DataReadJob readJob = new DataReadJob();
+		readJob.setArooaSession(session);
 		readJob.setLayout(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
@@ -396,6 +401,7 @@ public class WhenTest extends TestCase {
 		assertEquals("Green", fruit2.getColour());
 				
 		DataWriteJob writeJob = new DataWriteJob();
+		writeJob.setArooaSession(session);
 		writeJob.setLayout(layout);
 		writeJob.setBindings("people", personBinding);
 		writeJob.setBindings("fruit", fruitBinding);		
@@ -469,6 +475,7 @@ public class WhenTest extends TestCase {
 		Layout layout = (Layout) importType.toObject();
 		
 		DataReadJob readJob = new DataReadJob();
+		readJob.setArooaSession(session);
 		readJob.setLayout(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
@@ -499,6 +506,7 @@ public class WhenTest extends TestCase {
 		assertEquals("Green", fruit2.getColour());
 				
 		DataWriteJob writeJob = new DataWriteJob();
+		writeJob.setArooaSession(session);
 		writeJob.setLayout(layout);
 		writeJob.setBindings("people", personBinding);
 		writeJob.setBindings("fruit", fruitBinding);

@@ -8,39 +8,24 @@ import org.oddjob.dido.bio.Binding;
 
 public class BindingHelper {
 
-	private final Map<String, Layout> nameToLayout =
-			new HashMap<String, Layout>();
+	private final Map<Layout, Binding> layoutsAndBindings =
+			new HashMap<Layout, Binding>();
+	
+	public void bind(Layout layout, Binding binding) {
 
-	public BindingHelper(Layout layout) {
+		layout.bind(binding);
 		
-		// LayoutWalker doesn't visit the root node!
-		String name = layout.getName();
-		if (name != null) {
-			nameToLayout.put(name, layout);
-		}
-		
-		new LayoutWalker() {
-			@Override
-			protected boolean onLayout(Layout layout) {
-				String name = layout.getName();
-				if (name != null) {
-					nameToLayout.put(name, layout);
-				}
-				
-				return true;
-			}
-		}.walk(layout);
-		
+		layoutsAndBindings.put(layout, binding);
 	}
 	
-	public void bind(String name, Binding binding) {
-		Layout layout = nameToLayout.get(name);
-
-		if (layout == null) {
-			throw new NullPointerException("No Layout to bind to named " + 
-					name);
+	public void freeAll() {
+		
+		for (Map.Entry<Layout, Binding> entry : layoutsAndBindings.entrySet()) {
+			
+			entry.getValue().free();
+			entry.getKey().bind(null);
 		}
 		
-		layout.bind(binding);
+		layoutsAndBindings.clear();
 	}
 }

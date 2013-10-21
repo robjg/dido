@@ -1,4 +1,4 @@
-package org.oddjob.dido.io;
+package org.oddjob.dido.stream;
 
 import java.io.ByteArrayInputStream;
 

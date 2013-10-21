@@ -5,8 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.oddjob.arooa.ArooaSession;
+import org.oddjob.arooa.ArooaTools;
+import org.oddjob.arooa.life.ArooaSessionAware;
+import org.oddjob.arooa.registry.BeanDirectory;
+import org.oddjob.arooa.registry.BeanDirectoryOwner;
 import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.layout.BindingHelper;
+import org.oddjob.dido.layout.LayoutDirectoryFactory;
+import org.oddjob.dido.layout.LayoutsByName;
 
 /**
  * @oddjob.description A Job that can read data from a file or 
@@ -25,7 +32,8 @@ import org.oddjob.dido.layout.BindingHelper;
  * @author rob
  *
  */
-public class DataReadJob implements Runnable {
+public class DataReadJob 
+implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
 
 	private static final Logger logger = Logger.getLogger(DataReadJob.class);
 	
@@ -64,32 +72,63 @@ public class DataReadJob implements Runnable {
      * @oddjob.required No, but pointless if missing.
      */	
 	private Map<String, Binding> bindings = new HashMap<String, Binding>();
+
+	/** Creates the bean directory from the layouts. */
+	private LayoutDirectoryFactory layoutDirectoryFactory;
+	
+	/** Set when running from the layout names. */
+	private BeanDirectory beanDirectory;
+	
+	@Override
+	public void setArooaSession(ArooaSession session) {
+		ArooaTools tools = session.getTools();
+		this.layoutDirectoryFactory = new LayoutDirectoryFactory
+				(tools.getPropertyAccessor(), tools.getArooaConverter());		
+	}
 	
 	@Override
 	public void run() {
 		if (layout == null) {
 			throw new NullPointerException("No Layout provided.");
 		}
+		
 		if (data == null) {
 			throw new NullPointerException("No Input provided.");
 		}
+		
 		if (beans == null) {
 			logger.info("No destination for beans!");
 		}
 		
 		logger.info("Starting to read data using [" + layout + "]");
 		
-		Layout root = layout;
-		root.reset();
-		
-		BindingHelper bindingHelper = new BindingHelper(root);
-		for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
-			Binding binding = entry.getValue();
-			bindingHelper.bind(entry.getKey(), binding);
-		}
+		layout.reset();
 
+		LayoutsByName layoutsByName = new LayoutsByName(layout);
+		
+		BindingHelper bindingHelper = new BindingHelper();
+		
+		for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
+			
+			Layout layout = layoutsByName.getLayout(entry.getKey());
+			if (layout == null) {
+				logger.warn("No Layout to bind to named " + name);
+			}
+			else {
+				bindingHelper.bind(layout, entry.getValue());
+			}
+		}
+		
+		if (layoutDirectoryFactory == null) {
+			throw new NullPointerException("Call setArooaSession before run!");
+		}
+		else {
+			beanDirectory = layoutDirectoryFactory.createFrom(
+					layoutsByName.getAll());
+		}
+		
 		try {
-			DataReader reader = root.readerFor(data);
+			DataReader reader = layout.readerFor(data);
 			
 			while (true) {				
 				Object bean = reader.read();
@@ -109,15 +148,16 @@ public class DataReadJob implements Runnable {
 			throw new RuntimeException(e);
 		}
 		finally {
-			for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
-				Binding binding = entry.getValue();
-				binding.free();
-				bindingHelper.bind(entry.getKey(), null);
-			}
+			bindingHelper.freeAll();
 		}
 		
 	}
 	
+	@Override
+	public BeanDirectory provideBeanDirectory() {
+		return beanDirectory;
+	}
+
 	
 	public Collection<Object> getBeans() {
 		return beans;

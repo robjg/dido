@@ -73,6 +73,7 @@ public class NumberLayoutTest extends TestCase {
 		Layout layout = (Layout) importType.toObject();
 		
 		DataReadJob readJob = new DataReadJob();
+		readJob.setArooaSession(session);
 		readJob.setLayout(layout);
 		readJob.setBindings("employee", employeeBinding);
 		readJob.setData(ioData);
@@ -90,6 +91,7 @@ public class NumberLayoutTest extends TestCase {
 		assertEquals(23500.0, employee2.getSalary());
 				
 		DataWriteJob writeJob = new DataWriteJob();
+		writeJob.setArooaSession(session);
 		writeJob.setLayout(layout);
 		writeJob.setBindings("employee", employeeBinding);		
 		

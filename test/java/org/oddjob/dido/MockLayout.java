@@ -1,7 +1,5 @@
 package org.oddjob.dido;
 
-import java.util.List;
-
 import org.oddjob.dido.bio.Binding;
 
 public class MockLayout implements Layout {
@@ -12,7 +10,7 @@ public class MockLayout implements Layout {
 	}
 	
 	@Override
-	public List<Layout> childLayouts() {
+	public Iterable<Layout> childLayouts() {
 		throw new RuntimeException("Unexpected from " + getClass());
 	}
 	

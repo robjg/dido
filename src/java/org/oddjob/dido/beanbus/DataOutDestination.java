@@ -17,6 +17,7 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.layout.BindingHelper;
+import org.oddjob.dido.layout.LayoutsByName;
 
 /**
  * A Beanbus destination that wraps a {@link DataWriter.
@@ -56,6 +57,8 @@ public class DataOutDestination extends AbstractDestination<Object>{
 	
 	private final TrackingBusListener busListener = new TrackingBusListener() {
 		
+		BindingHelper bindingHelper = new BindingHelper();
+		
 		@Override
 		public void busStarting(org.oddjob.beanbus.BusEvent event) 
 		throws BusCrashException {
@@ -68,11 +71,21 @@ public class DataOutDestination extends AbstractDestination<Object>{
 				throw new NullPointerException("No output provided");
 			}
 						
-			BindingHelper bindingHelper = new BindingHelper(layout);
+			layout.reset();
+			
+			LayoutsByName layoutsByName = new LayoutsByName(layout);
+			
+			BindingHelper bindingHelper = new BindingHelper();
+			
 			for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
-				Binding binding = entry.getValue();
-				binding.free();
-				bindingHelper.bind(entry.getKey(), binding);
+				
+				Layout layout = layoutsByName.getLayout(entry.getKey());
+				if (layout == null) {
+					logger.warn("No Layout to bind to named " + name);
+				}
+				else {
+					bindingHelper.bind(layout, entry.getValue());
+				}
 			}
 			
 			try {
@@ -94,6 +107,8 @@ public class DataOutDestination extends AbstractDestination<Object>{
 				} catch (DataException e) {
 					logger.error("Failed closing output data.", e);
 				}
+				
+				bindingHelper.freeAll();
 			}
 		}
 	};

@@ -83,6 +83,7 @@ public class TextExampleTest extends TestCase {
 		Layout layout = (Layout) importType.toObject();
 				
 		DataReadJob readJob = new DataReadJob();
+		readJob.setArooaSession(session);
 		readJob.setLayout(layout);
 		readJob.setBindings("fruit", fruitBinding);
 		readJob.setData(ioData);
@@ -104,6 +105,7 @@ public class TextExampleTest extends TestCase {
 		assertEquals("Green", fruit2.getColour());
 				
 		DataWriteJob writeJob = new DataWriteJob();
+		writeJob.setArooaSession(session);
 		writeJob.setLayout(layout);
 		writeJob.setBindings("fruit", fruitBinding);		
 		

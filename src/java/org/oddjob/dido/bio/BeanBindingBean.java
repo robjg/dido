@@ -227,7 +227,7 @@ implements Binding, ArooaSessionAware {
 					
 					return true;
 				}
-			}.walk(layout);
+			}.walkChildren(layout);
 			
 		}
 		else if (layout instanceof MorphProvider) {
@@ -320,7 +320,7 @@ implements Binding, ArooaSessionAware {
 						return true;
 					}
 				}
-			}.walk(node);
+			}.walkChildren(node);
 			
 			processor = new MainProcessorIn();
 			processor.process(node);
@@ -452,7 +452,7 @@ implements Binding, ArooaSessionAware {
 						return true;
 					}
 				}
-			}.walk(parentLayout);
+			}.walkChildren(parentLayout);
 			
 			processor = new MainProcessorOut();
 			processor.process(parentLayout);

@@ -72,6 +72,7 @@ public class DateLayoutTest extends TestCase {
 		Layout layout = (Layout) importType.toObject();
 				
 		DataReadJob readJob = new DataReadJob();
+		readJob.setArooaSession(session);
 		readJob.setLayout(layout);
 		readJob.setBindings("employee", employeeBinding);
 		readJob.setData(ioData);
@@ -93,6 +94,7 @@ public class DateLayoutTest extends TestCase {
 						employee2.getClockOut()));
 				
 		DataWriteJob writeJob = new DataWriteJob();
+		writeJob.setArooaSession(session);
 		writeJob.setLayout(layout);
 		writeJob.setBindings("employee", employeeBinding);
 		

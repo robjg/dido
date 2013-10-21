@@ -4,8 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.oddjob.arooa.ArooaSession;
+import org.oddjob.arooa.ArooaTools;
+import org.oddjob.arooa.life.ArooaSessionAware;
+import org.oddjob.arooa.registry.BeanDirectory;
+import org.oddjob.arooa.registry.BeanDirectoryOwner;
 import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.layout.BindingHelper;
+import org.oddjob.dido.layout.LayoutDirectoryFactory;
+import org.oddjob.dido.layout.LayoutsByName;
 
 /**
  * @oddjob.description A Job that can write data out to a file or 
@@ -24,7 +31,9 @@ import org.oddjob.dido.layout.BindingHelper;
  * @author rob
  *
  */
-public class DataWriteJob implements Runnable {
+public class DataWriteJob 
+implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
+	
 	private static final Logger logger = Logger.getLogger(DataWriteJob.class);
 	
     /**
@@ -70,6 +79,19 @@ public class DataWriteJob implements Runnable {
 	 */
 	private int beanCount;
 	
+	/** Creates the bean directory from the layouts. */
+	private LayoutDirectoryFactory layoutDirectoryFactory;
+	
+	/** Set when running from the layout names. */
+	private BeanDirectory beanDirectory;
+	
+	@Override
+	public void setArooaSession(ArooaSession session) {
+		ArooaTools tools = session.getTools();
+		this.layoutDirectoryFactory = new LayoutDirectoryFactory(
+				tools.getPropertyAccessor(), tools.getArooaConverter());
+	}
+	
 	@Override
 	public void run() {
 		beanCount = 0;
@@ -81,20 +103,40 @@ public class DataWriteJob implements Runnable {
 		if (data == null) {
 			throw new NullPointerException("No output provided");
 		}
+		
+		if (beans == null) {
+			throw new NullPointerException("No beans provided");
+		}
 
 		logger.info("Starting to write data using [" + layout + "]");
 				
-		Layout root = layout;
-		root.reset();
+		layout.reset();
 		
-		BindingHelper bindingHelper = new BindingHelper(root);
+		LayoutsByName layoutsByName = new LayoutsByName(layout);
+		
+		BindingHelper bindingHelper = new BindingHelper();
+		
 		for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
-			Binding binding = entry.getValue();
-			bindingHelper.bind(entry.getKey(), binding);
+			
+			Layout layout = layoutsByName.getLayout(entry.getKey());
+			if (layout == null) {
+				logger.warn("No Layout to bind to named " + name);
+			}
+			else {
+				bindingHelper.bind(layout, entry.getValue());
+			}
+		}
+		
+		if (layoutDirectoryFactory == null) {
+			throw new NullPointerException("Call setArooaSession before run!");
+		}
+		else {
+			beanDirectory = layoutDirectoryFactory.createFrom(
+					layoutsByName.getAll());
 		}
 		
 		try {
-			DataWriter writer = root.writerFor(data);
+			DataWriter writer = layout.writerFor(data);
 			
 			for (Object bean : beans) {
 				
@@ -111,15 +153,16 @@ public class DataWriteJob implements Runnable {
 			throw new RuntimeException(e);
 		}
 		finally {
-			for (Map.Entry<String, Binding> entry: bindings.entrySet()) {
-				Binding binding = entry.getValue();
-				binding.free();
-				bindingHelper.bind(entry.getKey(), null);
-			}
+			bindingHelper.freeAll();
 		}
 
 		logger.info("Wrote " + beanCount + " beans of data out.");
 	}	
+	
+	@Override
+	public BeanDirectory provideBeanDirectory() {
+		return beanDirectory;
+	}
 	
 	public void setBeans(Iterable<Object> beans) {
 		this.beans = beans;
