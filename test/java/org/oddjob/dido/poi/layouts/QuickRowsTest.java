@@ -32,7 +32,7 @@ import org.oddjob.dido.DataWriteJob;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
-import org.oddjob.dido.io.Nodes;
+import org.oddjob.dido.layout.LayoutsByName;
 import org.oddjob.dido.poi.SheetIn;
 import org.oddjob.dido.poi.SheetOut;
 import org.oddjob.dido.poi.data.PoiSheetIn;
@@ -140,10 +140,10 @@ public class QuickRowsTest extends TestCase {
 
 		writer.close();
 		
-		Nodes nodes = new Nodes(test);
-		assertNotNull(nodes.getNode("name"));
-		assertNotNull(nodes.getNode("dateOfBirth"));
-		assertNotNull(nodes.getNode("salary"));
+		LayoutsByName nodes = new LayoutsByName(test);
+		assertNotNull(nodes.getLayout("name"));
+		assertNotNull(nodes.getLayout("dateOfBirth"));
+		assertNotNull(nodes.getLayout("salary"));
 		
 		assertEquals(1, sheet.getLastRowNum());
 		assertEquals(3, sheet.getRow(1).getLastCellNum());
@@ -208,6 +208,7 @@ public class QuickRowsTest extends TestCase {
 		Layout layout = (Layout) importType.toObject();
 		
 		DataWriteJob write = new DataWriteJob();
+		write.setArooaSession(session);
 		write.setLayout(layout);
 		write.setBeans(beans);
 		write.setBindings("person", bindingBean);
@@ -222,6 +223,7 @@ public class QuickRowsTest extends TestCase {
 		bindingBean.setType(new SimpleArooaClass(Person.class));
 
 		DataReadJob read = new DataReadJob();
+		read.setArooaSession(session);
 		read.setData(workbook);
 		read.setLayout(layout);
 		read.setBindings("person", bindingBean);

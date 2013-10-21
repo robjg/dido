@@ -140,6 +140,7 @@ public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 				try {
 					InputStream inputStream = arooaConverter.convert(input, InputStream.class);
 					workbook = WorkbookFactory.create(inputStream);
+					logger.info("Read workbook from [" + input + "]");
 				} 
 				catch (Exception e) {
 					throw new RuntimeException(e);
@@ -261,10 +262,10 @@ public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 				catch (Exception e) {
 					throw new RuntimeException(e);
 				}
-				logger.debug("Created workbook from [" + input + "]");
+				logger.info("Read workbook from [" + input + "]");
 			}
 			else {
-				logger.debug("Created empty workbook.");
+				logger.info("Created empty workbook.");
 				
 				if (version == null) {
 					version = SpreadsheetVersion.EXCEL2007;
@@ -301,8 +302,8 @@ public class PoiWorkbook implements ArooaSessionAware, DataIn, DataOut {
 					throw new RuntimeException(e);
 				}
 				
-				logger.debug("Wrote workbook of " + workbook.getNumberOfSheets() +
-						" sheet out.");
+				logger.info("Wrote workbook of " + workbook.getNumberOfSheets() +
+						" sheet(s) to " + output);
 			}
 		}
 	}

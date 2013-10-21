@@ -89,6 +89,7 @@ public class DataBookTest extends TestCase {
 		workbook.setOutput(file);
 				
 		DataWriteJob write = new DataWriteJob();
+		write.setArooaSession(session);
 		write.setLayout(layout);
 		write.setBeans(beans);
 		write.setBindings("person", bindingBean);
@@ -104,6 +105,7 @@ public class DataBookTest extends TestCase {
 		bindingBean.setType(new SimpleArooaClass(PersonBonus.class));
 		
 		DataReadJob read =  new DataReadJob();
+		read.setArooaSession(session);
 		read.setData(workbook);
 		read.setLayout(layout);
 		read.setBindings("person", bindingBean);
@@ -166,7 +168,8 @@ public class DataBookTest extends TestCase {
 		
 		workbook.setOutput(file);
 		
-		DataWriteJob write = new DataWriteJob();		
+		DataWriteJob write = new DataWriteJob();
+		write.setArooaSession(session);
 		write.setLayout(layout);
 		write.setBeans(beans);
 		write.setBindings("person", bindingBean);
@@ -181,6 +184,7 @@ public class DataBookTest extends TestCase {
 		bindingBean.setType(new SimpleArooaClass(PersonBonus.class));
 		
 		DataReadJob read =  new DataReadJob();
+		read.setArooaSession(session);
 		read.setData(workbook);
 		read.setLayout(layout);
 		read.setBindings("person", bindingBean);
