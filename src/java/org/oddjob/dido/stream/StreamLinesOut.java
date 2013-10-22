@@ -25,16 +25,26 @@ public class StreamLinesOut implements LinesOut {
 	
 	private String lastLine;
 	
+	private int linesWritten;
+	
 	public StreamLinesOut(OutputStream outputStream) {
+		if (outputStream == null) {
+			throw new NullPointerException("Null OutputStream!");
+		}
+		
 		this.outputStream = outputStream;
 	}
 	
+	@Override
 	public void writeLine(String text) throws DataException {
+
 		try {
 			outputStream.write(text.getBytes());
 			outputStream.write(LINE_SEPARATOR.getBytes());
 			
 			lastLine = text;
+			
+			++linesWritten;
 		} 
 		catch (IOException e) {
 			throw new DataException(e);
@@ -42,6 +52,11 @@ public class StreamLinesOut implements LinesOut {
 		finally {
 			reset();
 		}
+	}
+	
+	@Override
+	public int getLinesWritten() {
+		return linesWritten;
 	}
 	
 	protected void reset() {

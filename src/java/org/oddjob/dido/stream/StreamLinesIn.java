@@ -21,6 +21,8 @@ public class StreamLinesIn implements LinesIn {
 	
 	private final LineTracker lines;
 	
+	private int linesRead;
+	
 	private class LineTracker {
 		
 		private final LineNumberReader reader;
@@ -34,6 +36,9 @@ public class StreamLinesIn implements LinesIn {
 		String readLine() throws DataException {
 			try {
 				lastLine = reader.readLine();
+				if (lastLine != null) {
+					++linesRead;
+				}
 				return lastLine;
 			}
 			catch (IOException e) {
@@ -96,6 +101,11 @@ public class StreamLinesIn implements LinesIn {
 				}
 				
 				@Override
+				public int getLinesRead() {
+					return linesRead;
+				}
+				
+				@Override
 				public void close() throws DataException {
 					// Nothing to do as outer class closes stream.
 				}
@@ -112,6 +122,11 @@ public class StreamLinesIn implements LinesIn {
 		}
 			
 		throw new UnsupportedDataInException(this.getClass(), type);
+	}
+	
+	@Override
+	public int getLinesRead() {
+		return linesRead;
 	}
 	
 	@Override

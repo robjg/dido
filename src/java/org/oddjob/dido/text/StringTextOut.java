@@ -66,6 +66,11 @@ public class StringTextOut implements TextOut, LinesOut {
 		writtenTo = true;
 	}
 	
+	@Override
+	public int getLinesWritten() {
+		return writtenTo ? 1 : 0;
+	}
+	
 	public void clear() {
 		buffer = null;
 		writtenTo = false;

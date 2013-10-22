@@ -27,6 +27,8 @@ public interface LinesOut extends DataOut {
 	 */
 	public String lastLine();
 	
+	public int getLinesWritten();
+	
 	/**
 	 * Reset the internal written to flag.
 	 */

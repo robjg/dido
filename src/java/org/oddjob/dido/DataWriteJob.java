@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaTools;
+import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.arooa.registry.BeanDirectory;
 import org.oddjob.arooa.registry.BeanDirectoryOwner;
@@ -13,6 +14,8 @@ import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.layout.BindingHelper;
 import org.oddjob.dido.layout.LayoutDirectoryFactory;
 import org.oddjob.dido.layout.LayoutsByName;
+import org.oddjob.framework.HardReset;
+import org.oddjob.framework.SoftReset;
 
 /**
  * @oddjob.description A Job that can write data out to a file or 
@@ -77,7 +80,7 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
      * @oddjob.description The number of beans written.
      * @oddjob.required Read Only.
 	 */
-	private int beanCount;
+	private int count;
 	
 	/** Creates the bean directory from the layouts. */
 	private LayoutDirectoryFactory layoutDirectoryFactory;
@@ -85,6 +88,7 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
 	/** Set when running from the layout names. */
 	private BeanDirectory beanDirectory;
 	
+	@ArooaHidden
 	@Override
 	public void setArooaSession(ArooaSession session) {
 		ArooaTools tools = session.getTools();
@@ -92,9 +96,19 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
 				tools.getPropertyAccessor(), tools.getArooaConverter());
 	}
 	
+	@HardReset
+	@SoftReset
+	public void reset() {
+		count = 0;
+		
+		if (layout != null) {
+			layout.reset();
+		}
+	}
+	
 	@Override
 	public void run() {
-		beanCount = 0;
+		count = 0;
 		
 		if (layout == null) {
 			throw new NullPointerException("No Layout provided.");
@@ -110,8 +124,6 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
 
 		logger.info("Starting to write data using [" + layout + "]");
 				
-		layout.reset();
-		
 		LayoutsByName layoutsByName = new LayoutsByName(layout);
 		
 		BindingHelper bindingHelper = new BindingHelper();
@@ -142,8 +154,9 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
 				
 				writer.write(bean);
 				
-				++beanCount;
+				++count;
 			}
+			
 			writer.close();			
 		}
 		catch (RuntimeException e) {
@@ -153,10 +166,10 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
 			throw new RuntimeException(e);
 		}
 		finally {
+			logger.info("Wrote " + count + " beans.");
+			
 			bindingHelper.freeAll();
 		}
-
-		logger.info("Wrote " + beanCount + " beans of data out.");
 	}	
 	
 	@Override
@@ -218,7 +231,7 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
 		}
 	}
 
-	public int getBeanCount() {
-		return beanCount;
+	public int getCount() {
+		return count;
 	}
 }

@@ -20,6 +20,8 @@ public interface LinesIn extends DataIn  {
 	 */
 	public String readLine() throws DataException;
 	
+	public int getLinesRead();
+	
 	/**
 	 * Free resource, i.e. close streams.
 	 * 

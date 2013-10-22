@@ -23,6 +23,8 @@ public class ListLinesOut implements LinesOut {
 	private StringTextOut textOut;
 	
 	private String lastLine;
+
+	private int linesWritten;
 	
 	@Override
 	public <T extends DataOut> T provideDataOut(Class<T> type)
@@ -46,6 +48,7 @@ public class ListLinesOut implements LinesOut {
 	public void writeLine(String text) throws DataException {
 		lastLine = text;
 		lines.add(text);
+		++linesWritten;
 		textOut = null;
 	}	
 	
@@ -57,6 +60,11 @@ public class ListLinesOut implements LinesOut {
 		else {
 			return lastLine;
 		}
+	}
+	
+	@Override
+	public int getLinesWritten() {
+		return linesWritten;
 	}
 	
 	@Override

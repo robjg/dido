@@ -14,6 +14,8 @@ public class ListLinesIn implements LinesIn {
 
 	private String lastLine;
 
+	private int linesRead;
+	
 	public ListLinesIn(Iterable<String> list) {
 		this.lines = list.iterator();
 	}
@@ -35,12 +37,21 @@ public class ListLinesIn implements LinesIn {
 
 	@Override
 	public String readLine() throws DataException {
+		
 		if (lines.hasNext()) {
 			lastLine = lines.next();
-		} else {
+			++linesRead;
+		} 
+		else {
 			lastLine = null;
 		}
+		
 		return lastLine;
+	}
+	
+	@Override
+	public int getLinesRead() {
+		return linesRead;
 	}
 	
 	@Override

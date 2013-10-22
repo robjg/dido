@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaTools;
+import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.arooa.registry.BeanDirectory;
 import org.oddjob.arooa.registry.BeanDirectoryOwner;
@@ -14,6 +15,8 @@ import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.layout.BindingHelper;
 import org.oddjob.dido.layout.LayoutDirectoryFactory;
 import org.oddjob.dido.layout.LayoutsByName;
+import org.oddjob.framework.HardReset;
+import org.oddjob.framework.SoftReset;
 
 /**
  * @oddjob.description A Job that can read data from a file or 
@@ -59,6 +62,14 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
      */	
 	private Collection<Object> beans;
 	
+	
+    /**
+     * @oddjob.property
+     * @oddjob.description A count of the number of beans read.
+     * @oddjob.required R/O.
+     */	
+	private int count;
+	
     /**
      * @oddjob.property
      * @oddjob.description The data to read.
@@ -79,11 +90,22 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
 	/** Set when running from the layout names. */
 	private BeanDirectory beanDirectory;
 	
+	@ArooaHidden
 	@Override
 	public void setArooaSession(ArooaSession session) {
 		ArooaTools tools = session.getTools();
 		this.layoutDirectoryFactory = new LayoutDirectoryFactory
 				(tools.getPropertyAccessor(), tools.getArooaConverter());		
+	}
+	
+	@HardReset
+	@SoftReset
+	public void reset() {
+		count = 0;
+		
+		if (layout != null) {
+			layout.reset();
+		}
 	}
 	
 	@Override
@@ -102,8 +124,6 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
 		
 		logger.info("Starting to read data using [" + layout + "]");
 		
-		layout.reset();
-
 		LayoutsByName layoutsByName = new LayoutsByName(layout);
 		
 		BindingHelper bindingHelper = new BindingHelper();
@@ -138,7 +158,9 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
 				if (beans != null) {
 					beans.add(bean);
 				}
+				++count;
 			}
+
 			reader.close();
 		}
 		catch (RuntimeException e) {
@@ -148,9 +170,10 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
 			throw new RuntimeException(e);
 		}
 		finally {
+			logger.info("Read " + count + " beans.");
+			
 			bindingHelper.freeAll();
 		}
-		
 	}
 	
 	@Override
@@ -207,6 +230,10 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public int getCount() {
+		return count;
 	}
 	
 	@Override

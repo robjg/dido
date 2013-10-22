@@ -17,6 +17,10 @@
 		    className='org.oddjob.dido.other.Case'/>
 		<arooa:bean-def element='when'
 		    className='org.oddjob.dido.other.When'/>
+        <arooa:bean-def element='reconfigure'
+            className='org.oddjob.dido.layout.ReconfigureLayout'/>
+        <arooa:bean-def element='hidden'
+            className='org.oddjob.dido.layout.HiddenLayout'/>
 		<arooa:bean-def element='bean-binding'
 		    className='org.oddjob.dido.bio.BeanBindingBean'/>
         <arooa:bean-def element='io'

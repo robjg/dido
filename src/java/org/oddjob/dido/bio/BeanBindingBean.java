@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.beanutils.MagicBeanClassCreator;
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.arooa.reflect.ArooaClass;
 import org.oddjob.arooa.reflect.ArooaPropertyException;
@@ -68,6 +69,7 @@ implements Binding, ArooaSessionAware {
 	/** The current node processor for either reading or writing. */
 	private BindingLayoutProcessor processor;
 	
+	@ArooaHidden
 	@Override
 	public void setArooaSession(ArooaSession session) {
 		this.accessor = session.getTools().getPropertyAccessor(
@@ -313,8 +315,8 @@ implements Binding, ArooaSessionAware {
 					}
 					else {
 
-						logger.debug("Binding ignoring [" + nodeName + 
-								"] as it has no simple writeable property [" +
+						logger.debug("Binding ignoring [" + layout + 
+								"] as there is no simple writeable property [" +
 								nodeName + "]");
 						
 						return true;
@@ -445,8 +447,8 @@ implements Binding, ArooaSessionAware {
 					}
 					else {
 						
-						logger.debug("Binding ignoring [" + nodeName + 
-								"] as it has no simple readable property [" +
+						logger.debug("Binding ignoring [" + layout + 
+								"] as there is no simple readable property [" +
 								nodeName + "]");
 						
 						return true;

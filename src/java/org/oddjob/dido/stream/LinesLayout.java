@@ -12,6 +12,10 @@ import org.oddjob.dido.layout.LayoutValueNode;
 public class LinesLayout extends LayoutValueNode<String> {
 
 	private static final Logger logger = Logger.getLogger(LinesLayout.class);
+
+	private LinesOut linesOut;
+	
+	private LinesIn linesIn;
 	
 	@Override
 	public Class<String> getType() {
@@ -24,13 +28,7 @@ public class LinesLayout extends LayoutValueNode<String> {
 	
 	private class LineReader implements DataReader {
 		
-		private final LinesIn linesIn;
-		
 		private DataReader nextReader;
-		
-		public LineReader(LinesIn linesIn) {
-			this.linesIn = linesIn;
-		}
 		
 		@Override
 		public Object read() throws DataException {
@@ -78,20 +76,14 @@ public class LinesLayout extends LayoutValueNode<String> {
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 		
-		final LinesIn linesIn = dataIn.provideDataIn(LinesIn.class);
+		this.linesIn = dataIn.provideDataIn(LinesIn.class);
 
-		return new LineReader(linesIn);			
+		return new LineReader();			
 	}
 	
 	private class LineWriter implements DataWriter {
 
-		private final LinesOut linesOut;
-		
 		private DataWriter nextWriter;
-		
-		public LineWriter(LinesOut linesOut) {
-			this.linesOut = linesOut;
-		}
 		
 		@Override
 		public boolean write(Object value) throws DataException {
@@ -155,9 +147,28 @@ public class LinesLayout extends LayoutValueNode<String> {
 	public DataWriter writerFor(DataOut dataOut)
 	throws DataException {
 		
-		final LinesOut linesOut = dataOut.provideDataOut(LinesOut.class);
+		this.linesOut = dataOut.provideDataOut(LinesOut.class);
 		
-		return new LineWriter(linesOut);
+		return new LineWriter();
 	}
 	
+	@Override
+	public void reset() {
+		super.reset();
+		
+		linesIn = null;
+		linesOut = null;
+	}
+	
+	public int getLineCount() {
+		if (linesIn != null) {
+			return linesIn.getLinesRead();
+		}
+		else if (linesOut != null) {
+			return linesOut.getLinesWritten();
+		}
+		else {
+			return 0;
+		}
+	}
 }
