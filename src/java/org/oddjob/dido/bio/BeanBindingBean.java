@@ -295,9 +295,7 @@ implements Binding, ArooaSessionAware {
 						return true;
 					}
 					
-					if (overview.hasWriteableProperty(nodeName) &&
-							!overview.isIndexed(nodeName) &&
-							!overview.isMapped(nodeName)) {
+					if (overview.hasWriteableProperty(nodeName)) {
 						
 						layout.bind(new ChildNodeBinding(layout));
 					
@@ -427,9 +425,7 @@ implements Binding, ArooaSessionAware {
 						return true;
 					}
 					
-					if (overview.hasReadableProperty(nodeName) &&
-							!overview.isIndexed(nodeName) &&
-							!overview.isMapped(nodeName)) {
+					if (overview.hasReadableProperty(nodeName)) {
 						
 						layout.bind(new ChildNodeBinding(layout));
 					

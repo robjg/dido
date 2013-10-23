@@ -5,24 +5,20 @@
             <jobs>
                 <variables id="vars">
                     <ourLayout>
-                        <dido:lines name="lines" xmlns:dido="oddjob:dido">
+                        <dido:delimited name="data" xmlns:dido="oddjob:dido">
                             <of>
-                                <dido:fixed name="data">
-                                    <of>
-                                        <dido:text name="fruit"/>
-                                        <dido:dynamic>
-                                            <of>
-                                                <dido:hidden name="line" value="${read/lines.lineCount}"/>
-                                            </of>
-                                        </dido:dynamic>
-                                    </of>
-                                </dido:fixed>
+                                <dido:named-values name="fields"/>
                             </of>
-                        </dido:lines>
+                        </dido:delimited>
                     </ourLayout>
-                    <result>
+                    <testData>
+                        <buffer><![CDATA[fruit=apples, colour=red
+fruit=banana, colour=yellow
+fruit=pear, colour=green]]></buffer>
+                    </testData>
+                    <resultData>
                         <buffer/>
-                    </result>
+                    </resultData>
                 </variables>
                 <dido:read id="read" xmlns:dido="oddjob:dido">
                     <beans>
@@ -31,10 +27,7 @@
                     <data>
                         <dido:io>
                             <input>
-                                <buffer><![CDATA[apples
-pears
-bananas
-oranges]]></buffer>
+                                <value value="${vars.testData}"/>
                             </input>
                         </dido:io>
                     </data>
@@ -42,11 +35,7 @@ oranges]]></buffer>
                         <value value="${vars.ourLayout}"/>
                     </layout>
                     <bindings>
-                        <dido:bean-binding key="data">
-                            <type>
-                                <class name="org.oddjob.dido.layout.ReconfigureLayoutTest$Snack"/>
-                            </type>
-                        </dido:bean-binding>
+                        <dido:bean-binding key="data"/>
                     </bindings>
                 </dido:read>
                 <dido:write id="write" xmlns:dido="oddjob:dido">
@@ -56,7 +45,7 @@ oranges]]></buffer>
                     <data>
                         <dido:io>
                             <output>
-                                <value value="${vars.result}"/>
+                                <value value="${vars.resultData}"/>
                             </output>
                         </dido:io>
                     </data>
@@ -64,11 +53,7 @@ oranges]]></buffer>
                         <value value="${vars.ourLayout}"/>
                     </layout>
                     <bindings>
-                        <dido:bean-binding key="data">
-                            <type>
-                                <class name="org.oddjob.dido.layout.ReconfigureLayoutTest$Snack"/>
-                            </type>
-                        </dido:bean-binding>
+                        <dido:bean-binding key="data"/>
                     </bindings>
                 </dido:write>
             </jobs>

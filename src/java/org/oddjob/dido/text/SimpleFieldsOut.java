@@ -17,7 +17,7 @@ import org.oddjob.dido.tabular.TabularDataOut;
  * @author rob
  *
  */
-public class SimpleFieldsOut implements FieldsOut {
+public class SimpleFieldsOut implements FieldsOut, StringsOut {
 
 	private final ColumnHelper columnHelper;
 	
@@ -88,6 +88,20 @@ public class SimpleFieldsOut implements FieldsOut {
 	 */
 	public String[] headings() {
 		return columnHelper.getHeadings();
+	}
+	
+	@Override
+	public void setValues(String[] values) {
+		for (int columnIndex = 1; columnIndex <= values.length; ++columnIndex) {
+			String data = values[columnIndex - 1];
+			if (data == null) {
+				this.values.remove(columnIndex);
+			}
+			else {
+				this.values.put(columnIndex, data);
+				writtenTo = true;
+			}
+		}
 	}
 	
 	/**

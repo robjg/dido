@@ -58,11 +58,11 @@ implements Morphable, MorphProvider {
 
 	private static final Logger logger = Logger.getLogger(DelimitedLayout.class);
 	
-	public static final String DEFAULT = ",";
+	public static final String DEFAULT_DELIMITER = ",";
 	
 	private String delimiter;
 	
-	private boolean regexp;
+	private String regexp;
 	
 	private Character quote;
 	
@@ -209,8 +209,14 @@ implements Morphable, MorphProvider {
 		LinesIn linesIn = dataIn.provideDataIn(LinesIn.class);
 		
 		FlexibleTokenizerFactory tokenizerFactory = new FlexibleTokenizerFactory();
-		tokenizerFactory.setDelimiter(delimiter == null ? DEFAULT : delimiter);
-		tokenizerFactory.setRegexp(regexp);
+		if (regexp == null) {
+			tokenizerFactory.setDelimiter(delimiter == null ? DEFAULT_DELIMITER : delimiter);
+			tokenizerFactory.setRegexp(false);
+		}
+		else {
+			tokenizerFactory.setDelimiter(regexp);
+			tokenizerFactory.setRegexp(true);
+		}
 		tokenizerFactory.setEscape(escape);
 		tokenizerFactory.setQuote(quote);
 		
@@ -332,7 +338,7 @@ implements Morphable, MorphProvider {
 		LinesOut linesOut = dataOut.provideDataOut(LinesOut.class);
 
 		FlexibleDelimiterFactory delimiterFactory = new FlexibleDelimiterFactory();
-		delimiterFactory.setDelimiter(delimiter == null ? DEFAULT : delimiter);
+		delimiterFactory.setDelimiter(delimiter == null ? DEFAULT_DELIMITER : delimiter);
 		delimiterFactory.setQuote(quote);
 		delimiterFactory.setEscape(escape);
 		delimiterFactory.setAlwaysQuote(alwaysQuote);
@@ -454,11 +460,11 @@ implements Morphable, MorphProvider {
 		this.withHeadings = withHeadings;
 	}
 
-	public boolean getRegexp() {
+	public String getRegexp() {
 		return regexp;
 	}
 
-	public void setRegexp(boolean regexp) {
+	public void setRegexp(String regexp) {
 		this.regexp = regexp;
 	}
 

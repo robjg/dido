@@ -14,7 +14,7 @@ import org.oddjob.dido.tabular.ColumnIn;
  *
  */
 public class SimpleFieldsIn
-implements FieldsIn {
+implements FieldsIn, StringsIn {
 
 	private final ColumnHelper columnHelper = new ColumnHelper();
 	
@@ -55,6 +55,11 @@ implements FieldsIn {
 		this.values = values;
 	}
 
+	@Override
+	public String[] getValues() {
+		return this.values;
+	}
+	
 	@Override
 	public ColumnIn<String> inFor(Field column) {
 
