@@ -128,7 +128,7 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 			logger.trace("[" + DataCell.this + "] value is [" + 
 					field + "]");
 			
-			nextReader = nextReaderFor(new VoidIn());
+			nextReader = nextReaderFor(childDataIn());
 			
 			return read();
 		}
@@ -140,6 +140,10 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 				nextReader = null;
 			}
 		}
+	}
+	
+	protected DataIn childDataIn() {
+		return new VoidIn();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -184,14 +188,34 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 	}
 	
 	/**
+	 * 
+	 * @author rob
+	 *
+	 * @param <T>
+	 */
+	protected interface DataOutControl<T> {
+		
+		public DataOut dataOut();
+		
+		public boolean isWrittenTo();
+		
+		public void resetWrittenTo();
+		
+		public T value();
+	}
+	
+	/**
 	 * The Data Writer that writes to the cell.
 	 */
 	class MainWriter implements DataWriter {
 
 		private final DataWriter nextWriter;
 		
+		private final DataOutControl<T> dataOutControl;
+		
 		public MainWriter() throws DataException {
-			this.nextWriter = nextWriterFor(new VoidOut());
+			this.dataOutControl = childDataOut();
+			this.nextWriter = nextWriterFor(dataOutControl.dataOut());
 		}
 		
 		@Override
@@ -201,14 +225,21 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 				return true;
 			}
 			
-			if (isWrittenTo()) {
+			if (isWrittenTo() || dataOutControl.isWrittenTo()) {
 				
+				dataOutControl.resetWrittenTo();
 				resetWrittenTo();
 				
 				return write(object);
 			}
 			
-			T value = value();
+			T value = dataOutControl.value();
+			if (value == null) {
+				value = value();
+			}
+			else {
+				value(value);
+			}
 			
 			columnOut.setData(value);
 			
@@ -227,6 +258,31 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 			
 			nextWriter.close();
 		}
+	}
+	
+	protected DataOutControl<T> childDataOut() {
+		
+		return new DataOutControl<T>() {
+			
+			@Override
+			public T value() {
+				return null;
+			}
+			
+			@Override
+			public boolean isWrittenTo() {
+				return false;
+			}
+			
+			@Override
+			public void resetWrittenTo() {
+			}
+			
+			@Override
+			public DataOut dataOut() {
+				return new VoidOut();
+			}
+		};
 	}
 	
 	@SuppressWarnings("unchecked")

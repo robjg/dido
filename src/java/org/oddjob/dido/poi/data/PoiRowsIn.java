@@ -138,6 +138,7 @@ public class PoiRowsIn implements RowsIn {
 			throw new UnsupportedDataInException(this.getClass(), type);
 		}
 		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 		public CellIn<?> inFor(Field column) {
 
