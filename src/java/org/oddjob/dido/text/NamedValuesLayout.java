@@ -2,7 +2,7 @@ package org.oddjob.dido.text;
 
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -67,7 +67,7 @@ public class NamedValuesLayout extends LayoutValueNode<Map<String, String>> {
 			
 			String[] fields = stringsIn.getValues();
 
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new LinkedHashMap<String, String>();
 			
 			for (String field: fields) {
 				String[] nameAndValue;
@@ -238,4 +238,46 @@ public class NamedValuesLayout extends LayoutValueNode<Map<String, String>> {
 		arooaTokenizer = null;
 		arooaDelimiter = null;
 	}
+
+	public String getDelimiter() {
+		return delimiter;
+	}
+
+	public void setDelimiter(String delimiter) {
+		this.delimiter = delimiter;
+	}
+
+	public String getRegexp() {
+		return regexp;
+	}
+
+	public void setRegexp(String regexp) {
+		this.regexp = regexp;
+	}
+
+	public Character getQuote() {
+		return quote;
+	}
+
+	public void setQuote(Character quote) {
+		this.quote = quote;
+	}
+
+	public boolean isAlwaysQuote() {
+		return alwaysQuote;
+	}
+
+	public void setAlwaysQuote(boolean alwaysQuote) {
+		this.alwaysQuote = alwaysQuote;
+	}
+
+	public Character getEscape() {
+		return escape;
+	}
+
+	public void setEscape(Character escape) {
+		this.escape = escape;
+	}
+	
+	
 }

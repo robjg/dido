@@ -140,7 +140,7 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
 		}
 		
 		if (layoutDirectoryFactory == null) {
-			throw new NullPointerException("Call setArooaSession before run!");
+			logger.debug("No session set so no bean directory available.");
 		}
 		else {
 			beanDirectory = layoutDirectoryFactory.createFrom(
