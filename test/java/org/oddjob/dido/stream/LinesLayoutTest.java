@@ -13,7 +13,7 @@ import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.text.FixedWidthLayout;
 import org.oddjob.dido.text.TextLayout;
 
-public class LinesTest extends TestCase {
+public class LinesLayoutTest extends TestCase {
 
 	String EOL = System.getProperty("line.separator");
 	

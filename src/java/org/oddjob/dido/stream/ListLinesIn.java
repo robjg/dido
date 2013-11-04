@@ -2,14 +2,18 @@ package org.oddjob.dido.stream;
 
 import java.util.Iterator;
 
+import org.oddjob.arooa.utils.Iterables;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.UnsupportedDataInException;
 import org.oddjob.dido.text.StringTextIn;
+import org.oddjob.dido.text.StringsIn;
 import org.oddjob.dido.text.TextIn;
 
-public class ListLinesIn implements LinesIn {
+public class ListLinesIn implements LinesIn, StringsIn {
 
+	private final Iterable<String> list;
+	
 	private final Iterator<String> lines;
 
 	private String lastLine;
@@ -17,6 +21,7 @@ public class ListLinesIn implements LinesIn {
 	private int linesRead;
 	
 	public ListLinesIn(Iterable<String> list) {
+		this.list = list;
 		this.lines = list.iterator();
 	}
 
@@ -47,6 +52,11 @@ public class ListLinesIn implements LinesIn {
 		}
 		
 		return lastLine;
+	}
+	
+	@Override
+	public String[] getValues() {
+		return Iterables.toArray(list, String.class);
 	}
 	
 	@Override

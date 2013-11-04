@@ -1,7 +1,6 @@
 package org.oddjob.dido.layout;
 
 import org.apache.log4j.Logger;
-import org.oddjob.arooa.deploy.annotations.ArooaAttribute;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
@@ -39,7 +38,6 @@ public class HiddenLayout extends LayoutValueNode<Object> {
 		return nextWriterFor(dataOut);
 	}
 	
-	@ArooaAttribute
 	public void setValue(Object value) {
 		value(value);
 		if (logger.isTraceEnabled()) {

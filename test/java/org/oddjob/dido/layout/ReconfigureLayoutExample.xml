@@ -12,7 +12,11 @@
                                         <dido:text name="fruit"/>
                                         <dido:dynamic>
                                             <of>
-                                                <dido:hidden name="line" value="${read/lines.lineCount}"/>
+                                                <dido:hidden name="line">
+                                                  <value>
+                                                    <value value="${read/lines.lineCount}"/>
+                                                  </value>
+                                                </dido:hidden>
                                             </of>
                                         </dido:dynamic>
                                     </of>

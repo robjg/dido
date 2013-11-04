@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.oddjob.arooa.ArooaSession;
-import org.oddjob.arooa.beanutils.MagicBeanClassCreator;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
@@ -196,8 +195,8 @@ implements Binding, ArooaSessionAware {
 	 */
 	private void derriveTypeFromLayout(Layout layout) throws DataException {
 		
-		final MagicBeanClassCreator classCreator = 
-				new MagicBeanClassCreator("BeanBinding");
+		final BeanDefinitionBuilder beanDefinitionBuilder = 
+				new BeanDefinitionBuilder();
 
 		List<Layout> children = Iterables.toList(layout.childLayouts());
 		
@@ -223,7 +222,7 @@ implements Binding, ArooaSessionAware {
 						logger.debug("Adding property " + propertyName + 
 								" of type " + propertyType.getName());
 						
-						classCreator.addProperty(propertyName, 
+						beanDefinitionBuilder.addProperty(propertyName, 
 								propertyType);
 					}
 					
@@ -249,7 +248,7 @@ implements Binding, ArooaSessionAware {
 				logger.debug("Adding property " + propertyName + 
 						" of type " + propertyType.getName());
 				
-				classCreator.addProperty(propertyName, 
+				beanDefinitionBuilder.addProperty(propertyName, 
 						propertyType);
 			}			
 		}
@@ -258,12 +257,14 @@ implements Binding, ArooaSessionAware {
 					"No type provided for binding and it is not derivable.");
 		}
 		
-		type = classCreator.create();
+		type = beanDefinitionBuilder.createType();
+		beanView = beanDefinitionBuilder.createBeanView();
 		
 		resets.add(new Runnable() {
 			@Override
 			public void run() {
 				type = null;
+				beanView = null;
 			}
 		});
 	}

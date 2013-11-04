@@ -9,6 +9,12 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
 import org.oddjob.dido.layout.LayoutValueNode;
 
+/**
+ * @oddjob.description Represent lines in the layout of a file. 
+ * 
+ * @author rob
+ *
+ */
 public class LinesLayout extends LayoutValueNode<String> {
 
 	private static final Logger logger = Logger.getLogger(LinesLayout.class);

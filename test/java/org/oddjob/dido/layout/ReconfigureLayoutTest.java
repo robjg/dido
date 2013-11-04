@@ -9,6 +9,7 @@ import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.reflect.ArooaPropertyException;
+import org.oddjob.state.ParentState;
 
 public class ReconfigureLayoutTest extends TestCase {
 
@@ -45,6 +46,9 @@ public class ReconfigureLayoutTest extends TestCase {
 		oddjob.setFile(file);
 		
 		oddjob.run();
+		
+		assertEquals(ParentState.COMPLETE, 
+				oddjob.lastStateEvent().getState());
 		
 		OddjobLookup lookup = new OddjobLookup(oddjob);
 		
