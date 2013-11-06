@@ -67,9 +67,5 @@ extends AbstractFieldLayout<Number> {
 	
 	public Number getValue() {
 		return this.value();
-	}
-	
-	public void setValue(Number value) {
-		this.value(value);
-	}
+	}	
 }

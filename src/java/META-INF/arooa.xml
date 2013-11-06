@@ -23,6 +23,8 @@
             className='org.oddjob.dido.layout.ReconfigureLayout'/>
         <arooa:bean-def element='hidden'
             className='org.oddjob.dido.layout.HiddenLayout'/>
+        <arooa:bean-def element='substitution'
+            className='org.oddjob.dido.text.SubstitutionLayout'/>
 		<arooa:bean-def element='bean-binding'
 		    className='org.oddjob.dido.bio.BeanBindingBean'/>
         <arooa:bean-def element='io'

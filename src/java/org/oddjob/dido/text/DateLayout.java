@@ -94,9 +94,5 @@ extends AbstractFieldLayout<Date> {
 	
 	public Date getValue() {
 		return this.value();
-	}
-	
-	public void setValue(Date value) {
-		this.value(value);
-	}
+	}	
 }
