@@ -72,6 +72,11 @@ public class SimpleFieldsOut implements FieldsOut, StringsOut {
 				}
 			}
 		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + ": index=" + columnIndex;
+		}
 	}
 	
 	

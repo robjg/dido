@@ -9,7 +9,8 @@ package org.oddjob.dido.field;
 public interface FieldData {
 
 	/**
-	 * The type of data being provided access to.
+	 * The type of data being provided access to. If in the current data
+	 * the field does not exist then a type of Void may be returned.
 	 * 
 	 * @return The type. Never null.
 	 */

@@ -107,6 +107,11 @@ public class SQLDataOutImpl implements SQLDataOut {
 				writtenTo = true;
 			}
 		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + ": index=" + columnIndex;
+		}
 	}
 	
 	@Override

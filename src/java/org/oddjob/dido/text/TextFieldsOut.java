@@ -82,6 +82,13 @@ public class TextFieldsOut implements FieldsOut {
 		public int getColumnIndex() {
 			return fixedWidthColumn.getIndex();
 		}		
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + ": index=" + 
+					fixedWidthColumn.getIndex() + ", length=" + 
+					fixedWidthColumn.getLength();
+		}
 	}
 	
 }

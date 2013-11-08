@@ -6,6 +6,8 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.field.FieldIn;
+import org.oddjob.dido.field.FieldOut;
 import org.oddjob.dido.layout.LayoutValueNode;
 import org.oddjob.dido.layout.VoidIn;
 import org.oddjob.dido.layout.VoidOut;
@@ -28,13 +30,17 @@ implements Column {
 	
 	private int columnIndex;
 	
-	private ColumnIn<T> columnIn;
+	private FieldIn<T> columnIn;
 	
-	private ColumnOut<T> columnOut;
+	private FieldOut<T> columnOut;
 	
 	@Override
 	public Class<?> getType() {
 		return type;
+	}
+	
+	public void setType(Class<?> type) {
+		this.type = type;
 	}
 	
 	class ColumnReader implements DataReader {
@@ -74,11 +80,18 @@ implements Column {
 
 			this.columnIn = (ColumnIn<T>) 
 					columnarDataIn.inFor(this);
-			
-			logger.debug("[" + this + "] initialised on column " + 
-					columnIn.getColumnIndex());
+						
+			if (type != null && !type.isAssignableFrom(columnIn.getType())) {
+				throw new DataException("Type " + type.getName() + 
+						" is not assignable from field type " + 
+						columnIn.getType().getName());
+			}
 			
 			type = (Class<T>) columnIn.getType();
+			
+			logger.debug("[" + this + "] initialised on [" + 
+					columnIn + "] of type [" + type.getName() + "]");
+			
 		}
 		
 		return new ColumnReader();
@@ -130,10 +143,16 @@ implements Column {
 			
 			columnOut = (ColumnOut<T>) columnarDataOut.outFor(this);
 			
-			logger.debug("[" + this + "] initialised on column " + 
-					columnOut.getColumnIndex());
+			if (type != null && !type.isAssignableFrom(columnIn.getType())) {
+				throw new DataException("Type " + type.getName() + 
+						" is not assignable from field type " + 
+						columnIn.getType().getName());
+			}
 			
 			type = columnOut.getType();
+			
+			logger.debug("[" + this + "] initialised on [" + 
+					columnOut + "] of type [" + type.getName() + "]");
 		}
 		
 		return new ColumnWriter();

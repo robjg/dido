@@ -86,17 +86,32 @@ public class SQLDataInImpl implements SQLDataIn {
 		
 		@Override
 		public Class<?> getType() {
-			return columnTypes[columnIndex - 1];
+			if (columnIndex == 0) {
+				return Void.class;
+			}
+			else {
+				return columnTypes[columnIndex - 1];
+			}
 		}
 		
 		@SuppressWarnings("unchecked")
 		@Override
 		public T getData() throws DataException {
-			try {
-				return (T) resultSet.getObject(columnIndex);
-			} catch (SQLException e) {
-				throw new DataException(e);
+			if (columnIndex == 0) {
+				return null;
 			}
+			else {
+				try {
+					return (T) resultSet.getObject(columnIndex);
+				} catch (SQLException e) {
+					throw new DataException(e);
+				}
+			}
+		}
+		
+		@Override
+		public String toString() {
+			return getClass().getName() + ": index" + columnIndex;
 		}
 	}
 	

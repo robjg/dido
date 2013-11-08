@@ -75,7 +75,14 @@ public class TextFieldsIn implements FieldsIn {
 		@Override
 		public int getColumnIndex() {
 			return fixedWidthColumn.getIndex();
-		}		
+		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + ": index=" + 
+					fixedWidthColumn.getIndex() + ", length=" + 
+					fixedWidthColumn.getLength();
+		}
 	}
 	
 }

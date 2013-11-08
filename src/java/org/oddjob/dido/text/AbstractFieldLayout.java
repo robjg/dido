@@ -115,7 +115,7 @@ implements FixedWidthColumn {
 			
 			columnIn = (FieldIn<Object>) in.inFor(this);
 						
-			logger.trace("Created Reader for [" + AbstractFieldLayout.this + "], for [" + 
+			logger.trace("[" + this + "] initialised on [" + 
 					columnIn+ "]");
 		}
 		
@@ -202,7 +202,7 @@ implements FixedWidthColumn {
 			
 			columnOut = (FieldOut<Object>) out.outFor(this);
 			
-			logger.trace("Created writer for [" + AbstractFieldLayout.this + "], column is [" + 
+			logger.trace("[" + this + "] initialised on [" + 
 					columnOut + "]");			
 		}
 		
