@@ -24,11 +24,11 @@ implements FieldsIn, StringsIn {
 		columnHelper.setHeadings(headings);
 	}
 	
-	class TextColumnIn implements ColumnIn<String> {
+	class TextColumn implements ColumnIn<String> {
 		
 		private final int columnIndex;
 		
-		public TextColumnIn(int columnIndex) {
+		public TextColumn(int columnIndex) {
 			this.columnIndex = columnIndex;
 		}
 		
@@ -49,6 +49,11 @@ implements FieldsIn, StringsIn {
 			}
 			return values[columnIndex - 1];
 		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + ": " + columnIndex;
+		}
 	}
 	
 	public void setValues(String[] values) {
@@ -63,7 +68,7 @@ implements FieldsIn, StringsIn {
 	@Override
 	public ColumnIn<String> inFor(Field column) {
 
-		return new TextColumnIn(columnHelper.columnIndexFor(column));
+		return new TextColumn(columnHelper.columnIndexFor(column));
 	}
 		
 	@Override

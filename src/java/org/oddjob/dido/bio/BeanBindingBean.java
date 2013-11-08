@@ -87,7 +87,6 @@ implements Binding, ArooaSessionAware {
 		
 		public ChildNodeBinding(Layout node) {
 			this.node = node;
-			logger.debug("BeanBinding bound for property " + node.getName());
 		}
 		
 		
@@ -142,6 +141,12 @@ implements Binding, ArooaSessionAware {
 		@Override
 		public void free() {
 		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + " for " + 
+					BeanBindingBean.this;
+		}
 	}
 	
 	/**
@@ -169,7 +174,7 @@ implements Binding, ArooaSessionAware {
 			
 			if (node instanceof Morphable) {
 				
-				logger.debug("Giving " + node + " the opportunity to morph.");
+				logger.debug("Giving [" + node + "] the opportunity to morph.");
 				
 				Runnable reset = ((Morphable) node).morphInto(
 						new MorphDefinitionFactory(accessor).writeableMorphMetaDataFor(
@@ -219,8 +224,8 @@ implements Binding, ArooaSessionAware {
 						Class<?> propertyType = 
 								((ValueNode<?>) layout).getType();
 						
-						logger.debug("Adding property " + propertyName + 
-								" of type " + propertyType.getName());
+						logger.debug("Adding property [" + propertyName + 
+								"] of type " + propertyType.getName());
 						
 						beanDefinitionBuilder.addProperty(propertyName, 
 								propertyType);
@@ -495,6 +500,6 @@ implements Binding, ArooaSessionAware {
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + 
-				(type == null ? " for an unknown type" : type.toString());
+				(type == null ? " for an unknown type" : " for type " + type.toString());
 	}
 }

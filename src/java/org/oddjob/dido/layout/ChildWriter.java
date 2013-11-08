@@ -63,9 +63,18 @@ public class ChildWriter implements DataWriter {
 		boolean keep = currentWriter.write(object);
 		
 		if (keep) {
+			if (logger.isTraceEnabled()) {
+				logger.trace("Current writer [" + currentWriter + 
+						"] requires more data.");
+			}
+			
 			return true;
 		}
 		else {
+			if (logger.isTraceEnabled()) {
+				logger.trace("Current writer [" + currentWriter + "] complete.");
+			}
+			
 			currentWriter.close();
 			writers.remove(0);
 			
@@ -92,7 +101,7 @@ public class ChildWriter implements DataWriter {
 			return getClass().getSimpleName() + " closed";
 		}
 		else {
-			return getClass().getSimpleName() + " size=" + writers.size();
+			return getClass().getSimpleName() + " for " + writers;
 		}
 	}
 }

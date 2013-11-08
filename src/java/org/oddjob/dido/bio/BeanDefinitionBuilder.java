@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.oddjob.arooa.beanutils.MagicBeanClassCreator;
 import org.oddjob.arooa.reflect.ArooaClass;
@@ -15,11 +16,14 @@ public class BeanDefinitionBuilder {
 	private final static Set<Character> special = 
 			new HashSet<Character>(Arrays.asList('[', ']', '(', ')', '.'));
 
+	private final AtomicInteger instance = new AtomicInteger();
+	
 	private final Map<String, String> properties = 
 			new LinkedHashMap<String, String>();
 	
 	private final MagicBeanClassCreator classCreator = 
-			new MagicBeanClassCreator("BeanBinding");
+			new MagicBeanClassCreator("BeanBinding" + 
+					instance.incrementAndGet());
 	
 	public void addProperty(String name, Class<?> type) {
 		
@@ -38,6 +42,7 @@ public class BeanDefinitionBuilder {
 		properties.put(property, label);
 	}
 	
+	// Should be centralised - maybe on ClassCreator?
 	protected String replaceSpecialCharacters(String name) {
 		
 		char[] chars = name.toCharArray();

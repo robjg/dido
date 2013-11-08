@@ -69,7 +69,7 @@ public class LayoutsByName {
 			Container other = byName.get(name);
 			if (other == null) {
 				byName.put(name, namedContainer.container);
-				logger.debug("Inserted layout named [" + name + "]");
+				logger.debug("Registering layout named [" + name + "]");
 				return namedContainer.container.parents;
 			}
 			else {

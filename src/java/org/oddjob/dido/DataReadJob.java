@@ -122,8 +122,6 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
 			logger.info("No destination for beans!");
 		}
 		
-		logger.info("Starting to read data using [" + layout + "]");
-		
 		LayoutsByName layoutsByName = new LayoutsByName(layout);
 		
 		BindingHelper bindingHelper = new BindingHelper();
@@ -146,6 +144,8 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
 			beanDirectory = layoutDirectoryFactory.createFrom(
 					layoutsByName.getAll());
 		}
+		
+		logger.info("Starting to read data using [" + layout + "]");
 		
 		try {
 			DataReader reader = layout.readerFor(data);

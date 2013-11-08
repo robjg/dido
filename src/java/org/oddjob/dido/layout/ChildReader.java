@@ -62,12 +62,21 @@ public class ChildReader implements DataReader {
 		Object value = currentReader.read();
 		
 		if (value == null) {
+			if (logger.isTraceEnabled()) {
+				logger.trace("Current reader [" + currentReader + "] complete.");
+			}
+			
 			currentReader.close();
 			readers.remove(0);
 
 			return read();
 		}
 		else {
+			if (logger.isTraceEnabled()) {
+				logger.trace("Current reader [" + currentReader + 
+						"] provided value [" + value + "]");
+			}
+			
 			return value;
 		}
 	}
@@ -87,10 +96,10 @@ public class ChildReader implements DataReader {
 	@Override
 	public String toString() {
 		if (closed) {
-			return getClass().getSimpleName() + " closed";
+			return getClass().getSimpleName() + ", closed";
 		}
 		else {
-			return getClass().getSimpleName() + " size=" + readers.size();
+			return getClass().getSimpleName() +  " for " + readers;
 		}
 	}
 }

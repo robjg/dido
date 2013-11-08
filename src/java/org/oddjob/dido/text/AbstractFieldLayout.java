@@ -6,9 +6,12 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.field.FieldDataIn;
+import org.oddjob.dido.field.FieldDataOut;
+import org.oddjob.dido.field.FieldIn;
+import org.oddjob.dido.field.FieldOut;
 import org.oddjob.dido.layout.LayoutValueNode;
-import org.oddjob.dido.tabular.ColumnIn;
-import org.oddjob.dido.tabular.ColumnOut;
+import org.oddjob.dido.tabular.ColumnData;
 
 /**
  * 
@@ -26,9 +29,9 @@ implements FixedWidthColumn {
 
 	private int length;
 	
-	private ColumnIn<String> columnIn;
+	private FieldIn<Object> columnIn;
 	
-	private ColumnOut<String> columnOut;
+	private FieldOut<Object> columnOut;
 			
 	/**
 	 * Used by super classes to convert the text to their required type.
@@ -55,7 +58,7 @@ implements FixedWidthColumn {
 	/**
 	 * Read and item of data.
 	 */
-	class MainReader implements DataReader {
+	private class InternalReader implements DataReader {
 		
 		private DataReader nextReader;
 		
@@ -67,8 +70,14 @@ implements FixedWidthColumn {
 				return nextReader.read();
 			}
 			
-			String field = columnIn.getData();
+			Object data = columnIn.getData();
+			String field = data == null ? null : data.toString();
 
+			if (field == null) {
+				value(null);
+				return null;
+			}
+			
 			value(convertIn(field));
 
 			logger.trace("[" + AbstractFieldLayout.this + "] value is [" + 
@@ -95,21 +104,22 @@ implements FixedWidthColumn {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public DataReader readerFor(DataIn dataIn)
 	throws DataException {
 
 		if (columnIn == null) {
 			
-			FieldsIn in = dataIn.provideDataIn(FieldsIn.class);
+			FieldDataIn in = dataIn.provideDataIn(FieldDataIn.class);
 			
-			columnIn = in.inFor(this);
+			columnIn = (FieldIn<Object>) in.inFor(this);
 						
-			logger.trace("Created Reader for [" + AbstractFieldLayout.this + "], column is [" + 
-					columnIn.getColumnIndex() + "]");
+			logger.trace("Created Reader for [" + AbstractFieldLayout.this + "], for [" + 
+					columnIn+ "]");
 		}
 		
-		return new MainReader();
+		return new InternalReader();
 	}	
 		
 	/**
@@ -120,13 +130,13 @@ implements FixedWidthColumn {
 	 * overkill)
 	 *
 	 */
-	class MainWriter implements DataWriter {
+	private class InternalWriter implements DataWriter {
 
 		private final DataWriter nextWriter;
 		
 		private final StringTextOut textOut;
 		
-		public MainWriter() throws DataException {
+		public InternalWriter() throws DataException {
 			this.textOut = new StringTextOut();
 			this.nextWriter = nextWriterFor(textOut);
 		}
@@ -181,22 +191,22 @@ implements FixedWidthColumn {
 	}
 	
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public DataWriter writerFor(DataOut dataOut)
 	throws DataException {
 		
 		if (columnOut == null) {
 			
-			FieldsOut out = dataOut.provideDataOut(FieldsOut.class);
+			FieldDataOut out = dataOut.provideDataOut(FieldDataOut.class);
 			
-			columnOut = out.outFor(this);
+			columnOut = (FieldOut<Object>) out.outFor(this);
 			
 			logger.trace("Created writer for [" + AbstractFieldLayout.this + "], column is [" + 
-					columnOut.getColumnIndex() + "]");
-			
+					columnOut + "]");			
 		}
 		
-		return new MainWriter();
+		return new InternalWriter();
 	}
 	
 	
@@ -218,11 +228,11 @@ implements FixedWidthColumn {
 	}
 
 	public int getIndex() {
-		if (columnIn != null) {
-			return columnIn.getColumnIndex();
+		if (columnIn instanceof ColumnData) {
+			return ((ColumnData) columnIn).getColumnIndex();
 		}
-		if (columnOut != null) {
-			return columnOut.getColumnIndex();
+		if (columnOut instanceof ColumnData) {
+			return ((ColumnData) columnOut).getColumnIndex();
 		}
 		return index;
 	}

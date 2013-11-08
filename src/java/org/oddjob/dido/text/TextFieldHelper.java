@@ -7,6 +7,14 @@ import java.util.TreeMap;
 import org.oddjob.dido.field.Field;
 import org.oddjob.dido.tabular.Column;
 
+/**
+ * A Helper Class for tracking the columns in a fixed width layout.
+ * 
+ * @see TextFieldsIn
+ * 
+ * @author rob
+ *
+ */
 public class TextFieldHelper {
 
 	private final NavigableMap<Integer, MutableFixedWidthColumn> startEndPositions = 

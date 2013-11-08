@@ -90,4 +90,30 @@ public class NamedValuesLayoutTest extends TestCase {
 		
 		assertEquals(expected.length, result.length);
 	}
+	
+	public void testExampleWithChildLayouts() throws ArooaPropertyException, ArooaConversionException {
+		
+		File file = new File(getClass().getResource(
+				"NamedValuesWithChildren.xml").getFile());
+		
+		Oddjob oddjob = new Oddjob();
+		oddjob.setFile(file);
+		
+		oddjob.run();
+		
+		assertEquals(ParentState.COMPLETE, 
+				oddjob.lastStateEvent().getState());
+		
+		OddjobLookup lookup = new OddjobLookup(oddjob);
+		
+		String[] expected = lookup.lookup("vars.testData", String[].class);
+		
+		String[] result = lookup.lookup("vars.resultData", String[].class);
+		
+		assertEquals(expected[0], result[0]);
+		assertEquals(expected[1], result[1]);
+		assertEquals(expected[2], result[2]);
+		
+		assertEquals(expected.length, result.length);
+	}
 }

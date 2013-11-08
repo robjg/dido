@@ -15,10 +15,17 @@ import org.oddjob.dido.DataIn;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
+import org.oddjob.dido.Layout;
+import org.oddjob.dido.field.SimpleFieldDataIn;
+import org.oddjob.dido.field.SimpleFieldDataOut;
 import org.oddjob.dido.layout.LayoutValueNode;
-import org.oddjob.dido.layout.VoidIn;
-import org.oddjob.dido.layout.VoidOut;
 
+/**
+ * @oddjob.description Support name value pairs.
+ * 
+ * @author rob
+ *
+ */
 public class NamedValuesLayout extends LayoutValueNode<Map<String, String>> {
 
 	private static final Logger logger = Logger.getLogger(NamedValuesLayout.class);
@@ -41,19 +48,26 @@ public class NamedValuesLayout extends LayoutValueNode<Map<String, String>> {
 	
 	private ArooaDelimiter arooaDelimiter;
 	
+	private SimpleFieldDataIn fieldDataIn;
+
+	private SimpleFieldDataOut fieldDataOut;
 	
 	@Override
 	public Class<?> getType() {
 		return Map.class;
 	}
 
-	private class NameValuePairReader implements DataReader {
+	public void setOf(int index, Layout child) {
+		addOrRemoveChild(index, child);
+	}
+	
+	private class InternalReader implements DataReader {
 		
 		private final StringsIn stringsIn;
 		
 		private DataReader nextReader;
 		
-		public NameValuePairReader(StringsIn stringsIn) {
+		public InternalReader(StringsIn stringsIn) {
 			this.stringsIn = stringsIn;
 		}
 		
@@ -84,15 +98,15 @@ public class NamedValuesLayout extends LayoutValueNode<Map<String, String>> {
 			}
 			
 			value(map);
-
+			fieldDataIn.setValues(map);
+			
 			if (logger.isTraceEnabled()) {
 				
 				logger.trace("[" + NamedValuesLayout.this + "] value is [" + 
 						map + "]");
 			}
 						
-			// Todo: Support FieldsIn and children.
-			nextReader = nextReaderFor(new VoidIn());
+			nextReader = nextReaderFor(fieldDataIn);
 			
 			return read();
 		}
@@ -106,7 +120,7 @@ public class NamedValuesLayout extends LayoutValueNode<Map<String, String>> {
 		
 		@Override
 		public String toString() {
-			return "Reader for [" + NamedValuesLayout.this + "]";
+			return getClass().getSimpleName() + " for " + NamedValuesLayout.this;
 		}
 	}
 	
@@ -135,16 +149,20 @@ public class NamedValuesLayout extends LayoutValueNode<Map<String, String>> {
 			arooaTokenizer = tokenizerFactory.newTokenizer();
 		}
 
-		return new NameValuePairReader(dataIn.provideDataIn(StringsIn.class));
+		if (fieldDataIn == null) {
+			fieldDataIn = new SimpleFieldDataIn();
+		}
+		
+		return new InternalReader(dataIn.provideDataIn(StringsIn.class));
 	}
 
-	class NamdValuePairWriter implements DataWriter {
+	private class InternalWriter implements DataWriter {
 		
 		private final StringsOut stringsOut;
 		
 		private DataWriter nextWriter;
 		
-		public NamdValuePairWriter(StringsOut stringsOut) {
+		public InternalWriter(StringsOut stringsOut) {
 			this.stringsOut = stringsOut;
 		}
 		
@@ -155,16 +173,21 @@ public class NamedValuesLayout extends LayoutValueNode<Map<String, String>> {
 
 				value(null);
 
-				nextWriter = nextWriterFor(new VoidOut());
+				nextWriter = nextWriterFor(fieldDataOut);
 			}
 			
 			if (nextWriter.write(object)) {
 				return true;
 			}
 					
+			if (fieldDataOut.isWrittenTo()) {
+				value(fieldDataOut.getValues());
+			}
+			
 			if (isWrittenTo()) {
 					
 				resetWrittenTo();
+				fieldDataOut.clear();
 				
 				return write(object);
 			}
@@ -208,7 +231,8 @@ public class NamedValuesLayout extends LayoutValueNode<Map<String, String>> {
 		
 		@Override
 		public String toString() {
-			return "Writer for [" + NamedValuesLayout.this + "]";
+			return getClass().getSimpleName() + " for " + 
+						NamedValuesLayout.this;
 		}
 	}
 	
@@ -227,7 +251,11 @@ public class NamedValuesLayout extends LayoutValueNode<Map<String, String>> {
 			arooaDelimiter = delimiterFactory.newDelimiter();
 		}
 		
-		return new NamdValuePairWriter(dataOut.provideDataOut(
+		if (fieldDataOut == null) {
+			fieldDataOut = new SimpleFieldDataOut();
+		}
+		
+		return new InternalWriter(dataOut.provideDataOut(
 				StringsOut.class));
 	}
 	
@@ -237,6 +265,9 @@ public class NamedValuesLayout extends LayoutValueNode<Map<String, String>> {
 		
 		arooaTokenizer = null;
 		arooaDelimiter = null;
+		
+		fieldDataIn = null;
+		fieldDataOut = null;
 	}
 
 	public String getDelimiter() {
