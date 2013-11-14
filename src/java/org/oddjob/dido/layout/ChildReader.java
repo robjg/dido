@@ -53,32 +53,31 @@ public class ChildReader implements DataReader {
 			throw new IllegalStateException("Reader closed.");
 		}
 
-		if (readers.size() == 0) {
-			return null;
+		while (readers.size() > 0) {
+		
+			DataReader currentReader = readers.get(0);
+
+			Object value = currentReader.read();
+
+			if (value == null) {
+				if (logger.isTraceEnabled()) {
+					logger.trace("Current reader [" + currentReader + "] complete.");
+				}
+
+				currentReader.close();
+				readers.remove(0);
+			}
+			else {
+				if (logger.isTraceEnabled()) {
+					logger.trace("Current reader [" + currentReader + 
+							"] provided value [" + value + "]");
+				}
+
+				return value;
+			}
 		}
 		
-		DataReader currentReader = readers.get(0);
-
-		Object value = currentReader.read();
-		
-		if (value == null) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("Current reader [" + currentReader + "] complete.");
-			}
-			
-			currentReader.close();
-			readers.remove(0);
-
-			return read();
-		}
-		else {
-			if (logger.isTraceEnabled()) {
-				logger.trace("Current reader [" + currentReader + 
-						"] provided value [" + value + "]");
-			}
-			
-			return value;
-		}
+		return null;
 	}
 	
 	@Override

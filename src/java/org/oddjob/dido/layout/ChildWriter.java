@@ -54,32 +54,31 @@ public class ChildWriter implements DataWriter {
 			throw new IllegalStateException("Writer closed.");
 		}
 
-		if (writers.size() == 0) {			
-			return false;
+		while (writers.size() > 0) {			
+
+			DataWriter currentWriter = writers.get(0);
+
+			boolean keep = currentWriter.write(object);
+
+			if (keep) {
+				if (logger.isTraceEnabled()) {
+					logger.trace("Current writer [" + currentWriter + 
+							"] requires more data.");
+				}
+
+				return true;
+			}
+			else {
+				if (logger.isTraceEnabled()) {
+					logger.trace("Current writer [" + currentWriter + "] complete.");
+				}
+
+				currentWriter.close();
+				writers.remove(0);
+			}
 		}
-
-		DataWriter currentWriter = writers.get(0);
-
-		boolean keep = currentWriter.write(object);
 		
-		if (keep) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("Current writer [" + currentWriter + 
-						"] requires more data.");
-			}
-			
-			return true;
-		}
-		else {
-			if (logger.isTraceEnabled()) {
-				logger.trace("Current writer [" + currentWriter + "] complete.");
-			}
-			
-			currentWriter.close();
-			writers.remove(0);
-			
-			return write(object);
-		}
+		return false;
 	}
 		
 	@Override
