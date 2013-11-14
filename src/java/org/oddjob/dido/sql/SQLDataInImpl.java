@@ -87,7 +87,7 @@ public class SQLDataInImpl implements SQLDataIn {
 		@Override
 		public Class<?> getType() {
 			if (columnIndex == 0) {
-				return Void.class;
+				return null;
 			}
 			else {
 				return columnTypes[columnIndex - 1];

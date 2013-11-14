@@ -85,7 +85,7 @@ public class SQLDataOutImpl implements SQLDataOut {
 		@Override
 		public Class<?> getType() {
 			if (columnIndex == 0) {
-				return Void.TYPE;
+				return null;
 			}
 			else {
 				return columnTypes[columnIndex - 1];

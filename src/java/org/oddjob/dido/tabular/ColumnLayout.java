@@ -9,6 +9,8 @@ import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.field.FieldIn;
 import org.oddjob.dido.field.FieldOut;
 import org.oddjob.dido.layout.LayoutValueNode;
+import org.oddjob.dido.layout.NullReader;
+import org.oddjob.dido.layout.NullWriter;
 import org.oddjob.dido.layout.VoidIn;
 import org.oddjob.dido.layout.VoidOut;
 
@@ -80,21 +82,36 @@ implements Column {
 
 			this.columnIn = (ColumnIn<T>) 
 					columnarDataIn.inFor(this);
-						
-			if (type != null && !type.isAssignableFrom(columnIn.getType())) {
+				
+			Class<?> columnType = columnIn.getType();
+					
+			if (type == null) {
+				type = columnType;
+			}
+			else if (columnType != null 
+					&& !type.isAssignableFrom(columnType)) {
+				
 				throw new DataException("Type " + type.getName() + 
 						" is not assignable from field type " + 
-						columnIn.getType().getName());
+						columnType.getName());
 			}
 			
-			type = (Class<T>) columnIn.getType();
-			
-			logger.debug("[" + this + "] initialised on [" + 
-					columnIn + "] of type [" + type.getName() + "]");
-			
+			if (type == null) {
+				logger.debug("[" + this + "] initialised on null field.");
+				
+			}
+			else {
+				logger.debug("[" + this + "] initialised on [" + 
+						columnIn + "] of type [" + type.getName() + "]");
+			}			
 		}
 		
-		return new ColumnReader();
+		if (type == null) {
+			return new NullReader();
+		}
+		else {
+			return new ColumnReader();
+		}
 	}
 	
 	class ColumnWriter implements DataWriter {
@@ -143,19 +160,36 @@ implements Column {
 			
 			columnOut = (ColumnOut<T>) columnarDataOut.outFor(this);
 			
-			if (type != null && !type.isAssignableFrom(columnIn.getType())) {
+			Class<?> columnType = columnOut.getType();
+			
+			if (type == null) {
+				
+				type = columnType;
+			}
+			else if (columnType != null 
+					&& !type.isAssignableFrom(columnType)) {
+
 				throw new DataException("Type " + type.getName() + 
 						" is not assignable from field type " + 
-						columnIn.getType().getName());
+						columnType.getName());
 			}
 			
-			type = columnOut.getType();
-			
-			logger.debug("[" + this + "] initialised on [" + 
-					columnOut + "] of type [" + type.getName() + "]");
+			if (type == null) {
+				logger.debug("[" + this + "] initialised on null field.");
+			}
+			else {
+				logger.debug("[" + this + "] initialised on [" + 
+						columnOut + "] of type [" + type.getName() + "]");
+			}
 		}
 		
-		return new ColumnWriter();
+		if (type == null) {
+			return new NullWriter();
+		}
+		else {
+			return new ColumnWriter();
+
+		}
 	}
 	
 	@Override
