@@ -140,6 +140,12 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 				nextReader = null;
 			}
 		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + " for " + 
+					DataCell.this.toString();
+		}
 	}
 	
 	protected DataIn childDataIn() {
@@ -257,6 +263,12 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 			logger.trace("Closing [" + nextWriter + "]");
 			
 			nextWriter.close();
+		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + " for " + 
+					DataCell.this.toString();
 		}
 	}
 	

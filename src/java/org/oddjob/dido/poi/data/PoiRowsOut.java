@@ -282,6 +282,10 @@ public class PoiRowsOut implements RowsOut {
 		abstract protected void setCellValue(Cell cell, T value)
 		throws DataException;
 		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + ": index=" + columnIndex;
+		}
 	}
 	
 	class GenericCell<T> extends PoiCellOut<T>{

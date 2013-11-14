@@ -206,6 +206,10 @@ public class PoiRowsIn implements RowsIn {
 		abstract protected T getCellValue(Cell cell)
 		throws DataException;
 		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + ": index=" + columnIndex;
+		}
 	}
 	
 	class GenericCell<T> extends PoiCellIn<T>{

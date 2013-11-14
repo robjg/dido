@@ -25,6 +25,13 @@ public class TextCell extends DataCell<String> {
 	
 	@Override
 	public String extractCellValue(Cell cell) {
+		
+		// We need this because even if the cell is a formatted cell
+		// but contains a number we get a can't read from numeric cell
+		// exception.
+		if (cell.getCellType() != Cell.CELL_TYPE_STRING) {
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+		}
 		return cell.getStringCellValue();
 	}
 
