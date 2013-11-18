@@ -14,7 +14,7 @@ public class TextTest extends TestCase {
 
 		TextLayout test = new TextLayout();
 		
-		TextFieldsIn text = new TextFieldsIn();
+		FixedWidthTextFieldsIn text = new FixedWidthTextFieldsIn();
 		text.setText("John");
 				
 		DataReader reader = test.readerFor(text);
@@ -54,7 +54,7 @@ public class TextTest extends TestCase {
 		fixedWidthLayout.setOf(0, c1);
 		fixedWidthLayout.setOf(1, c2);
 
-		TextFieldsIn text = new TextFieldsIn();
+		FixedWidthTextFieldsIn text = new FixedWidthTextFieldsIn();
 		text.setText("Big  Cheese  ");
 
 		DataReader reader = test.readerFor(text);
@@ -73,7 +73,7 @@ public class TextTest extends TestCase {
 
 		test.bind(new DirectBinding());
 		
-		TextFieldsOut dataOut = new TextFieldsOut();
+		FixedWidthTextFieldsOut dataOut = new FixedWidthTextFieldsOut();
 		
 		DataWriter writer = test.writerFor(dataOut);
 		
@@ -104,7 +104,7 @@ public class TextTest extends TestCase {
 		c1.bind(new DirectBinding());
 		c2.bind(new DirectBinding());
 		
-		TextFieldsOut dataOut = new TextFieldsOut();
+		FixedWidthTextFieldsOut dataOut = new FixedWidthTextFieldsOut();
 	
 		DataWriter writer = test.writerFor(dataOut);
 		

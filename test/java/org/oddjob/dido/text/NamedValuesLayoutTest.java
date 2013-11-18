@@ -20,7 +20,7 @@ public class NamedValuesLayoutTest extends TestCase {
 
 	public void testReadFromFields() throws DataException {
 		
-		SimpleFieldsIn dataIn = new SimpleFieldsIn();
+		SimpleTextFieldsIn dataIn = new SimpleTextFieldsIn();
 		
 		NamedValuesLayout test = new NamedValuesLayout();
 		
@@ -43,7 +43,7 @@ public class NamedValuesLayoutTest extends TestCase {
 	
 	public void testWriteToFields() throws DataException {
 		
-		SimpleFieldsOut dataOut = new SimpleFieldsOut();
+		SimpleTextFieldsOut dataOut = new SimpleTextFieldsOut();
 
 		NamedValuesLayout test = new NamedValuesLayout();
 		

@@ -5,8 +5,8 @@ import org.oddjob.dido.tabular.Column;
 /**
  * Representation of a column of text in a fixed width layout.
  * 
- * @see TextFieldsIn
- * @see TextFieldsOut
+ * @see FixedWidthTextFieldsIn
+ * @see FixedWidthTextFieldsOut
  * 
  * @author rob
  *

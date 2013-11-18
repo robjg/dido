@@ -26,7 +26,7 @@ import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.stream.IOStreamData;
-import org.oddjob.dido.text.SimpleFieldsOut;
+import org.oddjob.dido.text.SimpleTextFieldsOut;
 import org.oddjob.dido.text.TextLayout;
 
 public class WhenTest extends TestCase {
@@ -101,7 +101,7 @@ public class WhenTest extends TestCase {
 		test.setValue("1");
 		test.setOf(0, child);
 				
-		SimpleFieldsOut fieldsOut = new SimpleFieldsOut();
+		SimpleTextFieldsOut fieldsOut = new SimpleTextFieldsOut();
 
 		DataWriter writer = on.writerFor(fieldsOut);
 

@@ -9,7 +9,7 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataWriterFactory;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.text.StringTextOut;
-import org.oddjob.dido.text.TextFieldsOut;
+import org.oddjob.dido.text.FixedWidthTextFieldsOut;
 import org.oddjob.dido.text.TextLayout;
 import org.oddjob.dido.text.TextOut;
 
@@ -36,7 +36,7 @@ public class ChildWriterTest extends TestCase {
 		Iterable<? extends DataWriterFactory> children = 
 				Arrays.asList(child1, child2, child3);
 				
-		TextFieldsOut dataOut = new TextFieldsOut();
+		FixedWidthTextFieldsOut dataOut = new FixedWidthTextFieldsOut();
 		
 		ChildWriter test = new ChildWriter(children, dataOut);
 		
@@ -59,7 +59,7 @@ public class ChildWriterTest extends TestCase {
 		Iterable<? extends DataWriterFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		TextFieldsOut dataOut = new TextFieldsOut();
+		FixedWidthTextFieldsOut dataOut = new FixedWidthTextFieldsOut();
 				
 		ChildWriter test = new ChildWriter(children, dataOut);
 
@@ -85,7 +85,7 @@ public class ChildWriterTest extends TestCase {
 		Iterable<? extends DataWriterFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		TextFieldsOut dataOut = new TextFieldsOut();
+		FixedWidthTextFieldsOut dataOut = new FixedWidthTextFieldsOut();
 		
 		ChildWriter test = new ChildWriter(children, dataOut);
 

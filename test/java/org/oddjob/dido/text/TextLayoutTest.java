@@ -51,7 +51,7 @@ public class TextLayoutTest extends TestCase {
 	
 	public void testWriteSubstring() throws DataException {
 		
-		TextFieldsOut dataOut = new TextFieldsOut();
+		FixedWidthTextFieldsOut dataOut = new FixedWidthTextFieldsOut();
 		
 		TextLayout test = new TextLayout();
 		test.setName("Fruit");
@@ -71,7 +71,7 @@ public class TextLayoutTest extends TestCase {
 	
 	public void testReadSimple() throws DataException {
 		
-		TextFieldsIn dataIn = new TextFieldsIn();
+		FixedWidthTextFieldsIn dataIn = new FixedWidthTextFieldsIn();
 		dataIn.setText("Apples");
 				
 		TextLayout test = new TextLayout();
@@ -91,7 +91,7 @@ public class TextLayoutTest extends TestCase {
 	
 	public void testReadSubstring() throws DataException {
 		
-		TextFieldsIn dataIn = new TextFieldsIn();
+		FixedWidthTextFieldsIn dataIn = new FixedWidthTextFieldsIn();
 		dataIn.setText("Apples");
 		
 		TextLayout test = new TextLayout();
@@ -114,7 +114,7 @@ public class TextLayoutTest extends TestCase {
 	
 	public void testWriteSimpleField() throws DataException {
 		
-		TextFieldsOut textFieldsOut = new TextFieldsOut();
+		FixedWidthTextFieldsOut textFieldsOut = new FixedWidthTextFieldsOut();
 		assertEquals(false, textFieldsOut.isWrittenTo());
 		
 		TextLayout test = new TextLayout();
@@ -137,7 +137,7 @@ public class TextLayoutTest extends TestCase {
 	
 	public void testReadSimpleField() throws DataException {
 		
-		TextFieldsIn textFieldsIn = new TextFieldsIn();
+		FixedWidthTextFieldsIn textFieldsIn = new FixedWidthTextFieldsIn();
 		textFieldsIn.setText("  Apples and Pears");
 		
 		TextLayout test = new TextLayout();

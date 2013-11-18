@@ -74,11 +74,11 @@ implements Morphable, MorphProvider {
 	
 	private boolean withHeadings;
 	
-	private SimpleFieldsIn fieldsIn;
+	private SimpleTextFieldsIn fieldsIn;
 	
 	private ArooaTokenizer arooaTokenizer;
 	
-	private SimpleFieldsOut fieldsOut;
+	private SimpleTextFieldsOut fieldsOut;
 	
 	private ArooaDelimiter arooaDelimiter;
 	
@@ -153,7 +153,7 @@ implements Morphable, MorphProvider {
 			this.linesIn = linesIn;
 			
 			if (fieldsIn == null) {
-				fieldsIn = new SimpleFieldsIn();
+				fieldsIn = new SimpleTextFieldsIn();
 				
 				if (headings != null) {
 					fieldsIn.setHeadings(headings);
@@ -348,7 +348,7 @@ implements Morphable, MorphProvider {
 		logger.trace("Creating writer for [" + linesOut + "]");
 
 		if (fieldsOut == null) {
-			fieldsOut = new SimpleFieldsOut(headings);
+			fieldsOut = new SimpleTextFieldsOut(headings);
 		}
 		
 		return new DelimitedWriter(linesOut);

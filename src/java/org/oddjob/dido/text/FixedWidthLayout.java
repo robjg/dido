@@ -32,9 +32,9 @@ public class FixedWidthLayout extends LayoutValueNode<String> {
 	
 	public static final String DEFAULT = ",";
 	
-	private TextFieldsIn fieldsIn;
+	private FixedWidthTextFieldsIn fieldsIn;
 	
-	private TextFieldsOut fieldsOut;
+	private FixedWidthTextFieldsOut fieldsOut;
 	
 	@Override
 	public Class<String> getType() {
@@ -103,7 +103,7 @@ public class FixedWidthLayout extends LayoutValueNode<String> {
 		LinesIn linesIn = dataIn.provideDataIn(LinesIn.class);
 
 		if (fieldsIn == null) {
-			fieldsIn = new TextFieldsIn();
+			fieldsIn = new FixedWidthTextFieldsIn();
 		}
 		
 		return new MainReader(linesIn);
@@ -200,7 +200,7 @@ public class FixedWidthLayout extends LayoutValueNode<String> {
 		logger.trace("Creating writer for [" + linesOut + "]");
 
 		if (fieldsOut == null) {
-			fieldsOut = new TextFieldsOut();
+			fieldsOut = new FixedWidthTextFieldsOut();
 		}
 		
 		return new MainWriter(linesOut);

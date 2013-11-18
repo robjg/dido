@@ -10,7 +10,7 @@ import org.oddjob.dido.tabular.Column;
 /**
  * A Helper Class for tracking the columns in a fixed width layout.
  * 
- * @see TextFieldsIn
+ * @see FixedWidthTextFieldsIn
  * 
  * @author rob
  *

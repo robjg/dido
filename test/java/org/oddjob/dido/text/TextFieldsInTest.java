@@ -40,7 +40,7 @@ public class TextFieldsInTest extends TestCase {
 	 */
 	public void testTwoTextFieldsInSamePosition() throws DataException {
 		
-		TextFieldsIn test = new TextFieldsIn();
+		FixedWidthTextFieldsIn test = new FixedWidthTextFieldsIn();
 		test.setText("Apples");
 		
 		ColumnIn<String> col1 = test.inFor(new OurFixedWidthColumn(1, 10));

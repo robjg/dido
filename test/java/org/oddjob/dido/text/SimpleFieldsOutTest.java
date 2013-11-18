@@ -31,7 +31,7 @@ public class SimpleFieldsOutTest extends TestCase {
 	
 	public void testNoHeadingsNoHeadings() throws DataException {
 		
-		FieldsOut test = new SimpleFieldsOut();
+		TextFieldsOut test = new SimpleTextFieldsOut();
 		
 		ColumnOut<?> nameCol = test.outFor(new OurColumn(null, 0));
 		ColumnOut<?> ageCol = test.outFor(new OurColumn(null, 0));
@@ -45,7 +45,7 @@ public class SimpleFieldsOutTest extends TestCase {
 	
 	public void testHeadingsWithNoHeadings() throws DataException {
 		
-		SimpleFieldsOut test = new SimpleFieldsOut();
+		SimpleTextFieldsOut test = new SimpleTextFieldsOut();
 		
 		ColumnOut<?> ageCol = test.outFor(new OurColumn("age", 0));
 		ColumnOut<?> cityCol = test.outFor(new OurColumn("city", 0));
@@ -66,7 +66,7 @@ public class SimpleFieldsOutTest extends TestCase {
 	
 	public void testHeadingsWithHeadings() throws DataException {
 		
-		SimpleFieldsOut test = new SimpleFieldsOut();
+		SimpleTextFieldsOut test = new SimpleTextFieldsOut();
 		
 		ColumnOut<?> ageCol = test.outFor(new OurColumn("age", 0));
 		ColumnOut<?> cityCol = test.outFor(new OurColumn("city", 0));
@@ -86,7 +86,7 @@ public class SimpleFieldsOutTest extends TestCase {
 	
 	public void testNextOut() throws DataException {
 		
-		SimpleFieldsOut test = new SimpleFieldsOut();
+		SimpleTextFieldsOut test = new SimpleTextFieldsOut();
 		
 		assertEquals(false, test.isWrittenTo());
 		
@@ -109,7 +109,7 @@ public class SimpleFieldsOutTest extends TestCase {
 	
 	public void testRandomColumn() throws DataException {
 		
-		SimpleFieldsOut test = new SimpleFieldsOut();
+		SimpleTextFieldsOut test = new SimpleTextFieldsOut();
 		
 		ColumnOut<String> nameCol = test.outFor(new OurColumn(null, 5));
 		ColumnOut<String> ageCol = test.outFor(new OurColumn(null, 3));
@@ -131,7 +131,7 @@ public class SimpleFieldsOutTest extends TestCase {
 	
 	public void testNamedFields() throws DataException {
 				
-		SimpleFieldsOut test = new SimpleFieldsOut();
+		SimpleTextFieldsOut test = new SimpleTextFieldsOut();
 		
 		ColumnOut<String> nameCol = test.outFor(new OurColumn(null, 4));
 		ColumnOut<String> ageCol = test.outFor(new OurColumn(null, 1));

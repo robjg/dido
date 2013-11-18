@@ -9,15 +9,14 @@ import org.oddjob.dido.UnsupportedDataOutException;
 import org.oddjob.dido.field.Field;
 import org.oddjob.dido.tabular.ColumnHelper;
 import org.oddjob.dido.tabular.ColumnOut;
-import org.oddjob.dido.tabular.TabularDataOut;
 
 /**
- * Provide {@link TabularDataOut} for {@link DelimitedLayout}.
+ * Provide a {@link TextFieldsOut} for a {@link DelimitedLayout}.
  * 
  * @author rob
  *
  */
-public class SimpleFieldsOut implements FieldsOut, StringsOut {
+public class SimpleTextFieldsOut implements TextFieldsOut, StringsOut {
 
 	private final ColumnHelper columnHelper;
 	
@@ -29,7 +28,7 @@ public class SimpleFieldsOut implements FieldsOut, StringsOut {
 	/**
 	 * Create an instance with no headings.
 	 */
-	public SimpleFieldsOut() {
+	public SimpleTextFieldsOut() {
 		this(null);
 	}
 	
@@ -38,7 +37,7 @@ public class SimpleFieldsOut implements FieldsOut, StringsOut {
 	 * 
 	 * @param headings May be null
 	 */
-	public SimpleFieldsOut(String[] headings) {
+	public SimpleTextFieldsOut(String[] headings) {
 		this.columnHelper = new ColumnHelper(headings);
 	}
 

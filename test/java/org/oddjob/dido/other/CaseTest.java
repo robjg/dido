@@ -6,8 +6,8 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.bio.DirectBinding;
-import org.oddjob.dido.text.TextFieldsIn;
-import org.oddjob.dido.text.TextFieldsOut;
+import org.oddjob.dido.text.FixedWidthTextFieldsIn;
+import org.oddjob.dido.text.FixedWidthTextFieldsOut;
 import org.oddjob.dido.text.TextLayout;
 
 public class CaseTest extends TestCase {
@@ -47,7 +47,7 @@ public class CaseTest extends TestCase {
 		test.setOf(1, when1);
 		test.setOf(2, when2);
 		
-		TextFieldsIn textIn = new TextFieldsIn();
+		FixedWidthTextFieldsIn textIn = new FixedWidthTextFieldsIn();
 		textIn.setText("1John");
 		
 		DataReader reader = test.readerFor(textIn);
@@ -98,7 +98,7 @@ public class CaseTest extends TestCase {
 		test.setOf(1, when1);
 		test.setOf(2, when2);
 		
-		TextFieldsOut textOut = new TextFieldsOut();
+		FixedWidthTextFieldsOut textOut = new FixedWidthTextFieldsOut();
 		
 		text1.bind(new DirectBinding());
 		

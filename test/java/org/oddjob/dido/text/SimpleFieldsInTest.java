@@ -34,7 +34,7 @@ public class SimpleFieldsInTest extends TestCase {
 		String[] headings = { "name", "age", "city" };
 		String[] values = { "John", "32", "London" };
 		
-		SimpleFieldsIn test = new SimpleFieldsIn();
+		SimpleTextFieldsIn test = new SimpleTextFieldsIn();
 		
 		test.setHeadings(headings);
 		test.setValues(values);
@@ -60,7 +60,7 @@ public class SimpleFieldsInTest extends TestCase {
 		String[] headings = { "name", "age", "city" };
 		String[] values = { "John", "32", "London" };
 		
-		SimpleFieldsIn test = new SimpleFieldsIn();
+		SimpleTextFieldsIn test = new SimpleTextFieldsIn();
 		
 		test.setHeadings(headings);
 		test.setValues(values);
@@ -84,7 +84,7 @@ public class SimpleFieldsInTest extends TestCase {
 		
 	public void testNoHeadings() throws DataException {
 		
-		SimpleFieldsIn test = new SimpleFieldsIn();
+		SimpleTextFieldsIn test = new SimpleTextFieldsIn();
 		
 		ColumnIn<?> col1 = test.inFor(new OurColumn(null, 0));
 		ColumnIn<?> col2 = test.inFor(new OurColumn(null, 0));
@@ -107,7 +107,7 @@ public class SimpleFieldsInTest extends TestCase {
 	
 	public void testColumnHeadingsOnly() {
 		
-		SimpleFieldsIn test = new SimpleFieldsIn();
+		SimpleTextFieldsIn test = new SimpleTextFieldsIn();
 
 		ColumnIn<?> nameCol = test.inFor(new OurColumn("name", 0));
 		ColumnIn<?> ageCol = test.inFor(new OurColumn("age", 0));
@@ -125,7 +125,7 @@ public class SimpleFieldsInTest extends TestCase {
 		
 		String[] values = { "John", "32", "London" };
 		
-		SimpleFieldsIn test = new SimpleFieldsIn();
+		SimpleTextFieldsIn test = new SimpleTextFieldsIn();
 		
 		ColumnIn<?> nameCol = test.inFor(new OurColumn("name", 0));
 		ColumnIn<?> ageCol = test.inFor(new OurColumn("age", 0));

@@ -57,7 +57,7 @@ public class SubstitutionLayoutTest extends TestCase {
 	
 	public void testRead() throws DataException {
 		
-		SimpleFieldsIn dataIn = new SimpleFieldsIn();
+		SimpleTextFieldsIn dataIn = new SimpleTextFieldsIn();
 		
 		dataIn.setValues(new String[] { "${favourite-fruit}" });
 		
@@ -85,7 +85,7 @@ public class SubstitutionLayoutTest extends TestCase {
 	
 	public void testWrite() throws DataException {
 		
-		SimpleFieldsOut dataOut = new SimpleFieldsOut();
+		SimpleTextFieldsOut dataOut = new SimpleTextFieldsOut();
 				
 		SubstitutionLayout test = new SubstitutionLayout();
 		test.setSubstitution("${favourite-fruit}");

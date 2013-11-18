@@ -9,7 +9,7 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReaderFactory;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.text.StringTextIn;
-import org.oddjob.dido.text.TextFieldsIn;
+import org.oddjob.dido.text.FixedWidthTextFieldsIn;
 import org.oddjob.dido.text.TextIn;
 import org.oddjob.dido.text.TextLayout;
 
@@ -36,7 +36,7 @@ public class ChildReaderTest extends TestCase {
 		Iterable<? extends DataReaderFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		TextFieldsIn dataIn = new TextFieldsIn();
+		FixedWidthTextFieldsIn dataIn = new FixedWidthTextFieldsIn();
 		dataIn.setText("Apples");
 		
 		ChildReader test = new ChildReader(children, dataIn);
@@ -56,7 +56,7 @@ public class ChildReaderTest extends TestCase {
 		Iterable<? extends DataReaderFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		TextFieldsIn dataIn = new TextFieldsIn();
+		FixedWidthTextFieldsIn dataIn = new FixedWidthTextFieldsIn();
 		dataIn.setText("Oranges");
 		
 		ChildReader test = new ChildReader(children, dataIn);
@@ -81,7 +81,7 @@ public class ChildReaderTest extends TestCase {
 		Iterable<? extends DataReaderFactory> children = 
 				Arrays.asList(child1, child2, child3);
 		
-		TextFieldsIn dataIn = new TextFieldsIn();
+		FixedWidthTextFieldsIn dataIn = new FixedWidthTextFieldsIn();
 		dataIn.setText("Oranges");
 		
 		ChildReader test = new ChildReader(children, dataIn);

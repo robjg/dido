@@ -8,13 +8,13 @@ import org.oddjob.dido.tabular.ColumnHelper;
 import org.oddjob.dido.tabular.ColumnIn;
 
 /**
- * A simple implementation of {@link FieldsIn}.
+ * A simple implementation of {@link TextFieldsIn}.
  * 
  * @author rob
  *
  */
-public class SimpleFieldsIn
-implements FieldsIn, StringsIn {
+public class SimpleTextFieldsIn
+implements TextFieldsIn, StringsIn {
 
 	private final ColumnHelper columnHelper = new ColumnHelper();
 	

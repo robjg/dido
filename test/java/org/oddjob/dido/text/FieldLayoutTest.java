@@ -23,7 +23,7 @@ public class FieldLayoutTest extends TestCase {
 
 		test.bind(new DirectBinding());
 		
-		SimpleFieldsOut dataOut = new SimpleFieldsOut();
+		SimpleTextFieldsOut dataOut = new SimpleTextFieldsOut();
 		
 		DataWriter writer = test.writerFor(dataOut);
 		
@@ -40,7 +40,7 @@ public class FieldLayoutTest extends TestCase {
 	
 	public void testWriteSimpleFields() throws DataException {
 		
-		SimpleFieldsOut fields = new SimpleFieldsOut();
+		SimpleTextFieldsOut fields = new SimpleTextFieldsOut();
 		
 		TextLayout test = new TextLayout();
 		
@@ -63,7 +63,7 @@ public class FieldLayoutTest extends TestCase {
 	
 	public void testWriteSimpleFieldByLabel() throws DataException {
 		
-		SimpleFieldsOut fields = new SimpleFieldsOut();
+		SimpleTextFieldsOut fields = new SimpleTextFieldsOut();
 		
 		TextLayout test = new TextLayout();
 		test.setName("fruit");
@@ -89,7 +89,7 @@ public class FieldLayoutTest extends TestCase {
 	
 	public void testReadSimpleFieldsNoLabels() throws DataException {
 		
-		SimpleFieldsIn fields = new SimpleFieldsIn();
+		SimpleTextFieldsIn fields = new SimpleTextFieldsIn();
 		fields.setValues(new String[] { "Apple" });
 		
 		TextLayout test = new TextLayout();
@@ -109,7 +109,7 @@ public class FieldLayoutTest extends TestCase {
 	
 	public void testReadSimpleFieldsByLabel() throws DataException {
 		
-		SimpleFieldsIn fields = new SimpleFieldsIn();
+		SimpleTextFieldsIn fields = new SimpleTextFieldsIn();
 		fields.setHeadings(new String[] { "Person", "Fruit" });
 		
 		fields.setValues(new String[] { "John", "Apple" });
@@ -137,7 +137,7 @@ public class FieldLayoutTest extends TestCase {
 
 		TextLayout test = new TextLayout();
 		
-		SimpleFieldsIn fields = new SimpleFieldsIn();
+		SimpleTextFieldsIn fields = new SimpleTextFieldsIn();
 		
 		fields.setHeadings(new String[] { "name" });
 		fields.setValues(new String[] { "John" });
