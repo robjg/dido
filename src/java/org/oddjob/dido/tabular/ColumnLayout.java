@@ -69,6 +69,12 @@ implements Column {
 			
 			nextReader.close();
 		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + " for " + 
+					ColumnLayout.this.toString();
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -146,6 +152,12 @@ implements Column {
 		public void close() throws DataException {
 			
 			nextWriter.close();
+		}
+		
+		@Override
+		public String toString() {
+			return getClass().getSimpleName() + " for " + 
+					ColumnLayout.this.toString();
 		}
 	}
 	
