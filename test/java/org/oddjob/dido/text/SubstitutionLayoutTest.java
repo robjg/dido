@@ -55,7 +55,7 @@ public class SubstitutionLayoutTest extends TestCase {
 		}
 	}
 	
-	public void testRead() throws DataException {
+	public void testReadNoChildren() throws DataException {
 		
 		SimpleTextFieldsIn dataIn = new SimpleTextFieldsIn();
 		
@@ -83,7 +83,7 @@ public class SubstitutionLayoutTest extends TestCase {
 	}
 	
 	
-	public void testWrite() throws DataException {
+	public void testWriteNoChildren() throws DataException {
 		
 		SimpleTextFieldsOut dataOut = new SimpleTextFieldsOut();
 				
@@ -93,6 +93,59 @@ public class SubstitutionLayoutTest extends TestCase {
 		DirectBinding binding = new DirectBinding();
 		
 		test.bind(binding);
+		
+		DataWriter writer = test.writerFor(dataOut);
+
+		assertEquals(false, writer.write("Apple"));
+		
+		assertEquals("${favourite-fruit}", dataOut.values()[0]);
+		
+		writer.close();
+	}
+	
+	public void testReadWithChild() throws DataException {
+		
+		SimpleTextFieldsIn dataIn = new SimpleTextFieldsIn();
+		
+		dataIn.setValues(new String[] { "${favourite-fruit}" });
+		
+		ArooaSession session = new StandardArooaSession();
+		
+		session.getBeanRegistry().register("favourite-fruit", "Apple");
+		
+		TextLayout textLayout = new TextLayout();
+		
+		SubstitutionLayout test = new SubstitutionLayout();
+		test.setArooaSession(session);
+		test.setOf(0, textLayout);
+		
+		DirectBinding binding = new DirectBinding();
+		
+		textLayout.bind(binding);
+		
+		DataReader reader = test.readerFor(dataIn);
+
+		assertEquals("Apple", reader.read());
+		
+		assertEquals(null, reader.read());
+
+		reader.close();
+	}
+	
+	
+	public void testWriteWithChild() throws DataException {
+		
+		SimpleTextFieldsOut dataOut = new SimpleTextFieldsOut();
+				
+		TextLayout textLayout = new TextLayout();
+		
+		SubstitutionLayout test = new SubstitutionLayout();
+		test.setOf(0, textLayout);
+		test.setSubstitution("${favourite-fruit}");
+		
+		DirectBinding binding = new DirectBinding();
+		
+		textLayout.bind(binding);
 		
 		DataWriter writer = test.writerFor(dataOut);
 
@@ -149,4 +202,49 @@ public class SubstitutionLayoutTest extends TestCase {
 		oddjob.destroy();
 	}
 	
+	public void testExample2WithNestedLayout() throws ArooaPropertyException, ArooaConversionException, ParseException {
+		
+		File config = new File(getClass().getResource(
+				"SubstitutionLayoutExample2.xml").getFile());
+		
+		Oddjob oddjob = new Oddjob();
+		oddjob.setFile(config);
+		
+		oddjob.run();
+		
+		assertEquals(ParentState.COMPLETE, 
+				oddjob.lastStateEvent().getState());
+		
+		OddjobLookup lookup = new OddjobLookup(oddjob);
+		
+		@SuppressWarnings("unchecked")
+		List<Order> orders = (List<Order>) lookup.lookup("read.beans", List.class);
+		
+		assertEquals(3, orders.size());
+		
+		Order order1 = orders.get(0);
+		
+		assertEquals(DateHelper.parseDate("2013-11-20"), order1.getDate());
+		assertEquals("apples", order1.getFruit());
+		assertEquals(5, order1.getQuantity());
+		
+		Order order2 = orders.get(1);
+		
+		assertEquals(DateHelper.parseDate("2013-11-20"), order2.getDate());
+		assertEquals("bananas", order2.getFruit());
+		assertEquals(2, order2.getQuantity());
+		
+		Order order3 = orders.get(2);
+		
+		assertEquals(DateHelper.parseDate("2013-11-20"), order3.getDate());
+		assertEquals("pears", order3.getFruit());
+		assertEquals(7, order3.getQuantity());
+		
+		String[] lines = lookup.lookup("write.data.output", String[].class);
+		assertEquals("${order.date},apples,5", lines[0]);
+		assertEquals("${order.date},bananas,2", lines[1]);
+		assertEquals("${order.date},pears,7", lines[2]);
+
+		oddjob.destroy();
+	}
 }

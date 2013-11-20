@@ -32,7 +32,7 @@ import org.oddjob.dido.stream.LinesOut;
  * </ul>
  * <p>
  * This layout is Morphable which means that a binding can ask it to 
- * generate it's children If no child nodes (cells) are already defined.
+ * generate it's children If no child nodes (fields) are already defined.
  * 
  * @oddjob.example
  * 

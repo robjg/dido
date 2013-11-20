@@ -5,7 +5,7 @@
       <jobs>
         <properties>
           <values>
-            <value key="order.date" value="2013-11-06" />
+            <value key="order.date" value="20-Nov-2013" />
           </values>
         </properties>
         <dido:read id="read" xmlns:dido="oddjob:dido">
@@ -25,8 +25,11 @@ ${order.date},pears,7
           <layout>
             <dido:delimited name="data">
               <of>
-                <dido:substitution name="date"
-                  substitution="$${order.date}" />
+                <dido:substitution substitution="$${order.date}">
+                  <of>
+                    <dido:date name="date" format="dd-MMM-yyyy" />
+                  </of>
+                </dido:substitution>
                 <dido:text name="fruit" />
                 <dido:number name="quantity" />
               </of>
