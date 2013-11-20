@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.oddjob.dido.field.Field;
 
-public class TextFieldHelperTest extends TestCase {
+public class FixedWidthTextFieldHelperTest extends TestCase {
 
 	private class OurFixedWidthColumn extends OurField 
 	implements FixedWidthColumn {
@@ -45,7 +45,7 @@ public class TextFieldHelperTest extends TestCase {
 	
 	public void testNoValuesSet() {
 		
-		TextFieldHelper test = new TextFieldHelper();
+		FixedWidthTextFieldHelper test = new FixedWidthTextFieldHelper();
 		
 		FixedWidthColumn result1 = test.columnIndexFor(new OurField());
 		FixedWidthColumn result2 = test.columnIndexFor(new OurField());
@@ -63,7 +63,7 @@ public class TextFieldHelperTest extends TestCase {
 	
 	public void testJustIndexes() {
 		
-		TextFieldHelper test = new TextFieldHelper();
+		FixedWidthTextFieldHelper test = new FixedWidthTextFieldHelper();
 		
 		FixedWidthColumn result1 = test.columnIndexFor(
 				new OurFixedWidthColumn(1));
@@ -84,7 +84,7 @@ public class TextFieldHelperTest extends TestCase {
 	
 	public void testIndexesAndLengths() {
 		
-		TextFieldHelper test = new TextFieldHelper();
+		FixedWidthTextFieldHelper test = new FixedWidthTextFieldHelper();
 		
 		FixedWidthColumn result1 = test.columnIndexFor(
 				new OurFixedWidthColumn(10, 4));
@@ -105,7 +105,7 @@ public class TextFieldHelperTest extends TestCase {
 	
 	public void testFixedWidthTypesNoValues() {
 		
-		TextFieldHelper test = new TextFieldHelper();
+		FixedWidthTextFieldHelper test = new FixedWidthTextFieldHelper();
 		
 		FixedWidthColumn result1 = test.columnIndexFor(
 				new OurFixedWidthColumn());
@@ -126,7 +126,7 @@ public class TextFieldHelperTest extends TestCase {
 	
 	public void testOverlappingValues() {
 		
-		TextFieldHelper test = new TextFieldHelper();
+		FixedWidthTextFieldHelper test = new FixedWidthTextFieldHelper();
 		
 		FixedWidthColumn result1 = test.columnIndexFor(
 				new OurFixedWidthColumn(1, 20));
@@ -148,7 +148,7 @@ public class TextFieldHelperTest extends TestCase {
 	
 	public void testNoIndexJustLength() {
 		
-		TextFieldHelper test = new TextFieldHelper();
+		FixedWidthTextFieldHelper test = new FixedWidthTextFieldHelper();
 		
 		FixedWidthColumn result1 = test.columnIndexFor(
 				new OurFixedWidthColumn(0, 1));
@@ -160,7 +160,7 @@ public class TextFieldHelperTest extends TestCase {
 	
 	public void testResusingValuesWithLength() {
 		
-		TextFieldHelper test = new TextFieldHelper();
+		FixedWidthTextFieldHelper test = new FixedWidthTextFieldHelper();
 		
 		FixedWidthColumn result1 = test.columnIndexFor(
 				new OurFixedWidthColumn(1, 9));
@@ -186,7 +186,7 @@ public class TextFieldHelperTest extends TestCase {
 	
 	public void testResusingValuesNoLength() {
 		
-		TextFieldHelper test = new TextFieldHelper();
+		FixedWidthTextFieldHelper test = new FixedWidthTextFieldHelper();
 		
 		FixedWidthColumn result1 = test.columnIndexFor(
 				new OurFixedWidthColumn(1));

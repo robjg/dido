@@ -3,9 +3,16 @@ package org.oddjob.dido.text;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataOut;
 import org.oddjob.dido.UnsupportedDataOutException;
+import org.oddjob.dido.field.Field;
 import org.oddjob.dido.stream.LinesOut;
+import org.oddjob.dido.tabular.ColumnOut;
 
-
+/**
+ * Implementation for writing out text.
+ * 
+ * @author rob
+ *
+ */
 public class StringTextOut implements TextOut, LinesOut {
 
 	public static final char PAD_CHARACTER = ' ';
@@ -31,39 +38,6 @@ public class StringTextOut implements TextOut, LinesOut {
 	@Override
 	public String lastLine() {
 		return toText();
-	}
-	
-	@Override
-	public void write(String text, int from, int length) {
-		if (buffer == null) {
-			buffer = new StringBuilder();
-		}
-		
-		while (buffer.length() < from) {
-			buffer.append(PAD_CHARACTER);
-		}
-		
-		StringBuilder minibuf;
-		
-		if (length < 0 || length > text.length()) {
-			minibuf = new StringBuilder(text);
-		} 
-		else {
-			minibuf = new StringBuilder(text.substring(0, length));			
-		}
-		
-		while (minibuf.length() < length) {
-			minibuf.append(PAD_CHARACTER);
-		}
-		
-		if (from < buffer.length() ) {
-			buffer.replace(from, from + minibuf.length(), minibuf.toString());
-		}
-		else {
-			buffer.append(minibuf.toString());
-		}
-		
-		writtenTo = true;
 	}
 	
 	@Override
@@ -93,6 +67,52 @@ public class StringTextOut implements TextOut, LinesOut {
 			return type.cast(this);
 		}
 
+		if (type.isAssignableFrom(TextFieldsOut.class)) {
+			TextFieldsOut textFields = new TextFieldsOut() {
+
+				@Override
+				public <X extends DataOut> X provideDataOut(Class<X> type)
+						throws DataException {
+					
+					if (type.isInstance(this)) {
+						return type.cast(this);
+					}
+
+					throw new UnsupportedDataOutException(getClass(), type);
+				}
+
+				@Override
+				public boolean isWrittenTo()
+						throws UnsupportedOperationException {
+					return StringTextOut.this.isWrittenTo();
+				}
+
+				@Override
+				public ColumnOut<String> outFor(Field field) {
+					return new ColumnOut<String>() {
+
+						@Override
+						public void setData(String data) throws DataException {
+							append(data);
+						}
+
+						@Override
+						public Class<?> getType() {
+							return String.class;
+						}
+
+						@Override
+						public int getColumnIndex() {
+							return 1;
+						}
+						
+					};
+				}
+			};
+			
+			return type.cast(textFields);					
+		}
+		
 		throw new UnsupportedDataOutException(getClass(), type);
 	}
 	

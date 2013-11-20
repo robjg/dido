@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
+import org.oddjob.Helper;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
@@ -32,6 +33,8 @@ public class FixedWidthLayoutTest extends TestCase {
 		
 		writer.write("Apples  red");
 		writer.write("Bananas yellow");
+		
+		writer.close();
 		
 		assertEquals("Apples  red", results.getLines().get(0));
 		assertEquals("Bananas yellow", results.getLines().get(1));
@@ -62,16 +65,16 @@ public class FixedWidthLayoutTest extends TestCase {
 		result = (String) reader.read();
 		
 		assertEquals(null, result);
+		
+		reader.close();
 	}
-	
-	String LS = System.getProperty("line.separator");
 	
 	public void testReadingAsChildOfLines() throws DataException {
 		
 		String lines =
-				"apples" + LS +
-				"oranges" + LS +
-				"bananas" + LS;
+				"apples" + Helper.LS +
+				"oranges" + Helper.LS +
+				"bananas" + Helper.LS;
 			
 		InputStream input = new ByteArrayInputStream(lines.getBytes());
 

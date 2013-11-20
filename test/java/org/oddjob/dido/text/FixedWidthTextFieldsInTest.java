@@ -5,7 +5,7 @@ import org.oddjob.dido.tabular.ColumnIn;
 
 import junit.framework.TestCase;
 
-public class TextFieldsInTest extends TestCase {
+public class FixedWidthTextFieldsInTest extends TestCase {
 
 	private class OurFixedWidthColumn
 	implements FixedWidthColumn {

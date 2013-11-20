@@ -15,7 +15,7 @@ import org.oddjob.dido.tabular.Column;
  * @author rob
  *
  */
-public class TextFieldHelper {
+public class FixedWidthTextFieldHelper {
 
 	private final NavigableMap<Integer, MutableFixedWidthColumn> startEndPositions = 
 			new TreeMap<Integer, MutableFixedWidthColumn>();

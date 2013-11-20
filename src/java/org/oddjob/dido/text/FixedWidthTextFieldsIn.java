@@ -15,8 +15,8 @@ import org.oddjob.dido.tabular.ColumnIn;
  */
 public class FixedWidthTextFieldsIn implements TextFieldsIn {
 
-	private final TextFieldHelper textFieldHelper = 
-			new TextFieldHelper();
+	private final FixedWidthTextFieldHelper textFieldHelper = 
+			new FixedWidthTextFieldHelper();
 	
 	private String text;	
 	

@@ -17,39 +17,36 @@ import org.oddjob.dido.stream.ListLinesOut;
 
 public class TextLayoutTest extends TestCase {
 
-	public void testWriteSimple() throws DataException {
+	public void testWriteSingleTextFieldNoWidth() throws DataException {
 		
-		StringTextOut dataOut = new StringTextOut();
-		
-		FixedWidthLayout fixed = new FixedWidthLayout();
+		FixedWidthTextFieldsOut dataOut = new FixedWidthTextFieldsOut();
 		
 		TextLayout test = new TextLayout();
-		fixed.setOf(0, test);
 		
 		DirectBinding binding = new DirectBinding();
 		
 		test.bind(binding);
 
-		DataWriter writer = fixed.writerFor(dataOut);
+		DataWriter writer = test.writerFor(dataOut);
 		
 		assertEquals(false, writer.write("Apples"));
 		
 		writer.close();
 
-		assertEquals("Apples", dataOut.toText());
+		assertEquals("Apples", dataOut.getText());
 		
-		dataOut = new StringTextOut();
+		dataOut.clear();
 		
-		writer = fixed.writerFor(dataOut);
+		writer = test.writerFor(dataOut);
 		
 		assertEquals(false, writer.write("Oranges"));
 		
 		writer.close();
 
-		assertEquals("Oranges", dataOut.toText());		
+		assertEquals("Oranges", dataOut.getText());		
 	}
 	
-	public void testWriteSubstring() throws DataException {
+	public void testWriteSingleTextFieldAsSubstring() throws DataException {
 		
 		FixedWidthTextFieldsOut dataOut = new FixedWidthTextFieldsOut();
 		
@@ -69,7 +66,7 @@ public class TextLayoutTest extends TestCase {
 		assertEquals("    App", dataOut.getText());
 	}
 	
-	public void testReadSimple() throws DataException {
+	public void testReadSingleTextFieldNoWidth() throws DataException {
 		
 		FixedWidthTextFieldsIn dataIn = new FixedWidthTextFieldsIn();
 		dataIn.setText("Apples");
@@ -85,11 +82,28 @@ public class TextLayoutTest extends TestCase {
 		Object result = reader.read();
 		
 		assertEquals("Apples", result);
+		assertEquals("Apples", test.getValue());
 		
 		assertNull(reader.read());
+		assertEquals("Apples", test.getValue());
+		
+		reader.close();
+		
+		dataIn.setText("Oranges");
+		
+		reader = test.readerFor(dataIn);
+		
+		result = reader.read();
+		
+		assertEquals("Oranges", result);
+		assertEquals("Oranges", test.getValue());
+		
+		assertNull(reader.read());
+		
+		reader.close();
 	}
 	
-	public void testReadSubstring() throws DataException {
+	public void testReadSingleTextFieldAsSubstring() throws DataException {
 		
 		FixedWidthTextFieldsIn dataIn = new FixedWidthTextFieldsIn();
 		dataIn.setText("Apples");
@@ -155,6 +169,70 @@ public class TextLayoutTest extends TestCase {
 		
 		reader.close();
 		
+	}
+	
+	public void testReadWithFixedWidthChild() throws DataException {
+
+		TextLayout test = new TextLayout();
+		test.setRaw(true);
+		
+		FixedWidthLayout fixedWidthLayout = new FixedWidthLayout();
+		test.setOf(0, fixedWidthLayout);
+		
+		TextLayout textChild1 = new TextLayout();
+		textChild1.setIndex(1);
+		textChild1.setLength(5);
+		
+ 		TextLayout textChild2 = new TextLayout();
+		textChild2.setIndex(6);
+		textChild2.setLength(10);
+		textChild2.setRaw(true);
+		
+		fixedWidthLayout.setOf(0, textChild1);
+		fixedWidthLayout.setOf(1, textChild2);
+
+		FixedWidthTextFieldsIn text = new FixedWidthTextFieldsIn();
+		text.setText("Big  Cheese  ");
+
+		DataReader reader = test.readerFor(text);
+
+		String next = (String) reader.read();
+
+		assertNull(next);
+
+		assertEquals("Big", textChild1.getValue());
+		assertEquals("Cheese  ", textChild2.getValue());
+	}	
+	
+	public void testWriteWithFixedWidthChild() throws DataException {
+
+		TextLayout test = new TextLayout();
+		
+		FixedWidthLayout fixedWidthLayout = new FixedWidthLayout();
+		test.setOf(0, fixedWidthLayout);
+		
+		TextLayout textChild1 = new TextLayout();
+		textChild1.setIndex(1);
+		textChild1.setLength(5);
+		textChild1.setRaw(true);
+		
+		TextLayout textChild2 = new TextLayout();
+		textChild2.setIndex(6);
+		textChild2.setLength(10);
+
+		fixedWidthLayout.setOf(0, textChild1);
+		fixedWidthLayout.setOf(1, textChild2);
+		
+		textChild1.bind(new DirectBinding());
+		textChild2.bind(new DirectBinding());
+		
+		FixedWidthTextFieldsOut dataOut = new FixedWidthTextFieldsOut();
+	
+		DataWriter writer = test.writerFor(dataOut);
+		
+		writer.write("Big");
+				
+		assertEquals("Big  Big       ", dataOut.getText());
 	}
 	
 	public static class Fruit {

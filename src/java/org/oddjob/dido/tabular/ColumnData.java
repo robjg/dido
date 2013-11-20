@@ -5,6 +5,9 @@ import org.oddjob.dido.field.FieldData;
 /**
  * An abstraction for data that is tabular.
  * 
+ * @see ColumnOut
+ * @see ColumnIn
+ * 
  * @author rob
  *
  */
