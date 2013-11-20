@@ -2,6 +2,7 @@ package org.oddjob.dido;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 import org.oddjob.arooa.ArooaSession;
@@ -14,8 +15,6 @@ import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.layout.BindingHelper;
 import org.oddjob.dido.layout.LayoutDirectoryFactory;
 import org.oddjob.dido.layout.LayoutsByName;
-import org.oddjob.framework.HardReset;
-import org.oddjob.framework.SoftReset;
 
 /**
  * @oddjob.description A Job that can write data out to a file or 
@@ -35,7 +34,7 @@ import org.oddjob.framework.SoftReset;
  *
  */
 public class DataWriteJob 
-implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
+implements Callable<Integer>, ArooaSessionAware, BeanDirectoryOwner {
 	
 	private static final Logger logger = Logger.getLogger(DataWriteJob.class);
 	
@@ -96,18 +95,9 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
 				tools.getPropertyAccessor(), tools.getArooaConverter());
 	}
 	
-	@HardReset
-	@SoftReset
-	public void reset() {
-		count = 0;
-		
-		if (layout != null) {
-			layout.reset();
-		}
-	}
-	
 	@Override
-	public void run() {
+	public Integer call() throws DataException {
+		
 		count = 0;
 		
 		if (layout == null) {
@@ -124,6 +114,8 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
 
 		logger.info("Starting to write data using [" + layout + "]");
 				
+		layout.reset();
+		
 		LayoutsByName layoutsByName = new LayoutsByName(layout);
 		
 		BindingHelper bindingHelper = new BindingHelper();
@@ -147,29 +139,33 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner {
 					layoutsByName.getAll());
 		}
 		
+		DataWriter writer = layout.writerFor(data);
+		
 		try {
-			DataWriter writer = layout.writerFor(data);
-			
 			for (Object bean : beans) {
+				
+				if (Thread.interrupted()) {
+					logger.info("Interrupted.");
+					return 1;
+				}
 				
 				writer.write(bean);
 				
 				++count;
 			}
-			
-			writer.close();			
-		}
-		catch (RuntimeException e) {
-			throw e;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
 		}
 		finally {
 			logger.info("Wrote " + count + " beans.");
 			
-			bindingHelper.freeAll();
+			try {
+				writer.close();			
+			}
+			finally {
+				bindingHelper.freeAll();
+			}
 		}
+		
+		return 0;
 	}	
 	
 	@Override

@@ -159,7 +159,7 @@ public class WhenTest extends TestCase {
 		fruitBinding.setType(new SimpleArooaClass(Fruit.class));
 	}
 	
-	public void testDelimitedReadWrite() throws ArooaConversionException, IOException {
+	public void testDelimitedReadWrite() throws ArooaConversionException, IOException, DataException {
 		
 		String data = 
 			"1,John,London" + EOL +
@@ -193,7 +193,7 @@ public class WhenTest extends TestCase {
 		
 		readJob.setBeans(results);
 		
-		readJob.run();
+		readJob.call();
 		
 		Object[] beans = results.toArray();
 		
@@ -229,12 +229,12 @@ public class WhenTest extends TestCase {
 		ioData.setOutput(new ArooaObject(output));
 		writeJob.setData(ioData);
 		
-		writeJob.run();
+		writeJob.call();
 		
 		assertEquals(data, new String(output.toByteArray()));
 	}
 	
-	public void testDelimitedWriteRead() throws ArooaConversionException, IOException {
+	public void testDelimitedWriteRead() throws ArooaConversionException, IOException, DataException {
 		
 		ArooaSession session = new StandardArooaSession(
 				new ClassPathDescriptorFactory(
@@ -287,7 +287,7 @@ public class WhenTest extends TestCase {
 		
 		writeJob.setData(ioData);
 		
-		writeJob.run();
+		writeJob.call();
 		
 		DataReadJob readJob = new DataReadJob();
 		readJob.setArooaSession(session);
@@ -300,7 +300,7 @@ public class WhenTest extends TestCase {
 				new ByteArrayInputStream(output.toByteArray())));
 		readJob.setData(ioData);
 		
-		readJob.run();
+		readJob.call();
 		
 		Object[] results = readJob.getBeans().toArray();
 		assertEquals(4, results.length);
@@ -344,7 +344,7 @@ public class WhenTest extends TestCase {
 		" </of>" +
 		"</fixed>";
 		
-	public void testFixedReadWrite() throws ArooaConversionException, IOException {
+	public void testFixedReadWrite() throws ArooaConversionException, IOException, DataException {
 		
 		String data = 
 			"1John   London      " + EOL +
@@ -377,7 +377,7 @@ public class WhenTest extends TestCase {
 		readJob.setData(ioData);
 		readJob.setBeans(new ArrayList<Object>());
 		
-		readJob.run();
+		readJob.call();
 		
 		Object[] beans = readJob.getBeans().toArray();
 		assertEquals(4, beans.length);
@@ -413,13 +413,13 @@ public class WhenTest extends TestCase {
 		
 		writeJob.setData(ioData);
 		
-		writeJob.run();
+		writeJob.call();
 		
 		assertEquals(data, new String(output.toByteArray()));
 		
 	}
 
-	public void testMixedExample() throws ArooaConversionException, IOException {
+	public void testMixedExample() throws ArooaConversionException, IOException, DataException {
 		
 		String xml = 
 			"<fixed xmlns='oddjob:dido'>" +
@@ -482,7 +482,7 @@ public class WhenTest extends TestCase {
 		readJob.setData(ioData);
 		readJob.setBeans(new ArrayList<Object>());
 		
-		readJob.run();
+		readJob.call();
 		
 		Object[] beans = readJob.getBeans().toArray();
 		assertEquals(4, beans.length);
@@ -518,7 +518,7 @@ public class WhenTest extends TestCase {
 		
 		writeJob.setData(ioData);
 		
-		writeJob.run();
+		writeJob.call();
 		
 		assertEquals(data, new String(output.toByteArray()));
 		

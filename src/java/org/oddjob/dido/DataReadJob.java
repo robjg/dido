@@ -3,6 +3,7 @@ package org.oddjob.dido;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 import org.oddjob.arooa.ArooaSession;
@@ -15,8 +16,6 @@ import org.oddjob.dido.bio.Binding;
 import org.oddjob.dido.layout.BindingHelper;
 import org.oddjob.dido.layout.LayoutDirectoryFactory;
 import org.oddjob.dido.layout.LayoutsByName;
-import org.oddjob.framework.HardReset;
-import org.oddjob.framework.SoftReset;
 
 /**
  * @oddjob.description A Job that can read data from a file or 
@@ -36,7 +35,7 @@ import org.oddjob.framework.SoftReset;
  *
  */
 public class DataReadJob 
-implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
+implements Callable<Integer>, ArooaSessionAware, BeanDirectoryOwner  {
 
 	private static final Logger logger = Logger.getLogger(DataReadJob.class);
 	
@@ -98,18 +97,11 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
 				(tools.getPropertyAccessor(), tools.getArooaConverter());		
 	}
 	
-	@HardReset
-	@SoftReset
-	public void reset() {
+	@Override
+	public Integer call() throws DataException {
+		
 		count = 0;
 		
-		if (layout != null) {
-			layout.reset();
-		}
-	}
-	
-	@Override
-	public void run() {
 		if (layout == null) {
 			throw new NullPointerException("No Layout provided.");
 		}
@@ -121,6 +113,8 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
 		if (beans == null) {
 			logger.info("No destination for beans!");
 		}
+		
+		layout.reset();
 		
 		LayoutsByName layoutsByName = new LayoutsByName(layout);
 		
@@ -147,10 +141,17 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
 		
 		logger.info("Starting to read data using [" + layout + "]");
 		
+		DataReader reader = layout.readerFor(data);
+
 		try {
-			DataReader reader = layout.readerFor(data);
 			
-			while (true) {				
+			while (true) {
+				
+				if (Thread.interrupted()) {
+					logger.info("Interrupted.");
+					return 1;
+				}
+				
 				Object bean = reader.read();
 				if (bean== null) {
 					break;
@@ -161,19 +162,19 @@ implements Runnable, ArooaSessionAware, BeanDirectoryOwner  {
 				++count;
 			}
 
-			reader.close();
-		}
-		catch (RuntimeException e) {
-			throw e;
-		}
-		catch (DataException e) {
-			throw new RuntimeException(e);
 		}
 		finally {
 			logger.info("Read " + count + " beans.");
 			
-			bindingHelper.freeAll();
+			try {
+				reader.close();
+			}
+			finally {
+				bindingHelper.freeAll();
+			}
 		}
+		
+		return 0;
 	}
 	
 	@Override

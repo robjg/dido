@@ -17,6 +17,7 @@ import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.types.ImportType;
+import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReadJob;
 import org.oddjob.dido.DataWriteJob;
 import org.oddjob.dido.Layout;
@@ -48,7 +49,7 @@ public class DateLayoutTest extends TestCase {
 		employeeBinding.setType(new SimpleArooaClass(Employee.class));
 	}
 	
-	public void testReadWrite() throws ArooaConversionException, IOException {
+	public void testReadWrite() throws ArooaConversionException, IOException, DataException {
 		
 		String EOL = System.getProperty("line.separator");
 		
@@ -78,7 +79,7 @@ public class DateLayoutTest extends TestCase {
 		readJob.setData(ioData);
 		readJob.setBeans(new ArrayList<Object>());
 		
-		readJob.run();
+		readJob.call();
 		
 		Object[] beans = readJob.getBeans().toArray();
 		assertEquals(2, beans.length);
@@ -104,7 +105,7 @@ public class DateLayoutTest extends TestCase {
 		ioData.setOutput(new ArooaObject(output));
 		writeJob.setData(ioData);
 		
-		writeJob.run();
+		writeJob.call();
 		
 		assertEquals(data, new String(output.toByteArray()));
 		

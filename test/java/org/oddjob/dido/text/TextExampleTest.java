@@ -15,6 +15,7 @@ import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.types.ImportType;
+import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReadJob;
 import org.oddjob.dido.DataWriteJob;
 import org.oddjob.dido.Layout;
@@ -57,7 +58,7 @@ public class TextExampleTest extends TestCase {
 		fruitBinding.setType(new SimpleArooaClass(Fruit.class));
 	}
 	
-	public void testFixedReadWrite() throws ArooaConversionException, IOException {
+	public void testFixedReadWrite() throws ArooaConversionException, IOException, DataException {
 		
 		String EOL = System.getProperty("line.separator");
 				
@@ -89,7 +90,7 @@ public class TextExampleTest extends TestCase {
 		readJob.setData(ioData);
 		readJob.setBeans(new ArrayList<Object>());
 		
-		readJob.run();
+		readJob.call();
 		
 		Object[] beans = readJob.getBeans().toArray();
 		assertEquals(2, beans.length);
@@ -116,7 +117,7 @@ public class TextExampleTest extends TestCase {
 		
 		writeJob.setData(ioData);
 		
-		writeJob.run();
+		writeJob.call();
 		
 		assertEquals(data, new String(output.toByteArray()));
 		
