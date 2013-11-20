@@ -170,13 +170,13 @@ public class QuickRowsTest extends TestCase {
 	}
 
 	public void testWriteReadWithHeadings() throws ParseException,
-			ArooaConversionException, IOException {
+			ArooaConversionException, IOException, DataException {
 
 		doWriteRead("org/oddjob/dido/poi/QuickRowsWithHeadings.xml");
 	}
 
 	public void doWriteRead(String resource) throws ParseException,
-			ArooaConversionException, IOException {
+			ArooaConversionException, IOException, DataException {
 
 		ArooaSession session = new StandardArooaSession();
 		
@@ -215,7 +215,7 @@ public class QuickRowsTest extends TestCase {
 
 		write.setData(workbook);
 
-		write.run();
+		write.call();
 
 		// Read Side
 		////
@@ -228,7 +228,7 @@ public class QuickRowsTest extends TestCase {
 		read.setLayout(layout);
 		read.setBindings("person", bindingBean);
 		read.setBeans(new ArrayList<Object>());
-		read.run();
+		read.call();
 
 		Object[] results = read.getBeans().toArray();
 

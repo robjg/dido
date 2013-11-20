@@ -20,6 +20,7 @@ import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.types.ImportType;
 import org.oddjob.arooa.utils.DateHelper;
+import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReadJob;
 import org.oddjob.dido.DataWriteJob;
 import org.oddjob.dido.Layout;
@@ -45,17 +46,17 @@ public class DataBookTest extends TestCase {
 		workDir = new OurDirs().relative("work");
 	}
 	
-	public void testWriteReadWithHeadings() throws ParseException, ArooaConversionException, IOException {
+	public void testWriteReadWithHeadings() throws ParseException, ArooaConversionException, IOException, DataException {
 		
 		doWriteRead("org/oddjob/dido/poi/DataBookWithHeadings.xml");
 	}
 
-	public void testWriteReadWithoutHeadings() throws ParseException, ArooaConversionException, IOException {
+	public void testWriteReadWithoutHeadings() throws ParseException, ArooaConversionException, IOException, DataException {
 		
 		doWriteRead("org/oddjob/dido/poi/DataBookWithoutHeadings.xml");
 	}
 	
-	public void doWriteRead(String resource) throws ParseException, ArooaConversionException, IOException {
+	public void doWriteRead(String resource) throws ParseException, ArooaConversionException, IOException, DataException {
 		
 		ArooaSession session = new OddjobSessionFactory().createSession();
 		
@@ -97,7 +98,7 @@ public class DataBookTest extends TestCase {
 		
 		write.setData(workbook);
 		
-		write.run();
+		write.call();
 		
 		// Read Side
 		/////
@@ -111,7 +112,7 @@ public class DataBookTest extends TestCase {
 		read.setBindings("person", bindingBean);
 		read.setBeans(new ArrayList<Object>());
 		
-		read.run();
+		read.call();
 		
 		Object[] results = read.getBeans().toArray();
 
@@ -141,7 +142,7 @@ public class DataBookTest extends TestCase {
 		assertEquals(3, results.length);
 	}
 	
-	public void testNoData() throws ParseException, ArooaConversionException, IOException {
+	public void testNoData() throws ParseException, ArooaConversionException, IOException, DataException {
 		
 		ArooaSession session = new OddjobSessionFactory().createSession();
 		
@@ -176,7 +177,7 @@ public class DataBookTest extends TestCase {
 		
 		write.setData(workbook);
 		
-		write.run();
+		write.call();
 		
 		// Read Side
 		/////
@@ -190,7 +191,7 @@ public class DataBookTest extends TestCase {
 		read.setBindings("person", bindingBean);
 		read.setBeans(new ArrayList<Object>());
 		
-		read.run();
+		read.call();
 		
 		Object[] results = read.getBeans().toArray();
 				
