@@ -13,9 +13,14 @@ import org.oddjob.dido.layout.NullReader;
 import org.oddjob.dido.layout.NullWriter;
 import org.oddjob.dido.layout.VoidIn;
 import org.oddjob.dido.layout.VoidOut;
+import org.oddjob.dido.morph.Morphable;
 
 /**
  * @oddjob.description A general purpose column.
+ * <p>
+ * This column is frequently used by {@link Morphable} layouts to provide
+ * their child layouts as the type does not need to be set until the 
+ * column is about to be used. 
  * 
  * @author rob
  *
@@ -32,9 +37,9 @@ implements Column {
 	
 	private int columnIndex;
 	
-	private FieldIn<T> columnIn;
+	private FieldIn<T> fieldIn;
 	
-	private FieldOut<T> columnOut;
+	private FieldOut<T> fieldOut;
 	
 	@Override
 	public Class<?> getType() {
@@ -57,7 +62,7 @@ implements Column {
 		@Override
 		public Object read() throws DataException {
 		
-			T value = columnIn.getData();
+			T value = fieldIn.getData();
 			
 			value(value);
 			
@@ -81,15 +86,15 @@ implements Column {
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 		
-		if (columnIn == null) {
+		if (fieldIn == null) {
 			
 			TabularDataIn columnarDataIn = dataIn.provideDataIn(
 					TabularDataIn.class);
 
-			this.columnIn = (ColumnIn<T>) 
+			this.fieldIn = (FieldIn<T>) 
 					columnarDataIn.inFor(this);
 				
-			Class<?> columnType = columnIn.getType();
+			Class<?> columnType = fieldIn.getType();
 					
 			if (type == null) {
 				type = columnType;
@@ -108,7 +113,7 @@ implements Column {
 			}
 			else {
 				logger.debug("[" + this + "] initialised on [" + 
-						columnIn + "] of type [" + type.getName() + "]");
+						fieldIn + "] of type [" + type.getName() + "]");
 			}			
 		}
 		
@@ -143,7 +148,7 @@ implements Column {
 				return write(object);
 			}
 
-			columnOut.setData(value());
+			fieldOut.setData(value());
 			
 			return false;
 		}
@@ -165,14 +170,14 @@ implements Column {
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 		
-		if (columnOut == null) {
+		if (fieldOut == null) {
 			
 			TabularDataOut columnarDataOut = 
 					dataOut.provideDataOut(TabularDataOut.class);
 			
-			columnOut = (ColumnOut<T>) columnarDataOut.outFor(this);
+			fieldOut = (FieldOut<T>) columnarDataOut.outFor(this);
 			
-			Class<?> columnType = columnOut.getType();
+			Class<?> columnType = fieldOut.getType();
 			
 			if (type == null) {
 				
@@ -191,7 +196,7 @@ implements Column {
 			}
 			else {
 				logger.debug("[" + this + "] initialised on [" + 
-						columnOut + "] of type [" + type.getName() + "]");
+						fieldOut + "] of type [" + type.getName() + "]");
 			}
 		}
 		
@@ -208,8 +213,8 @@ implements Column {
 	public void reset() {
 		super.reset();
 		
-		columnIn = null;
-		columnOut = null;
+		fieldIn = null;
+		fieldOut = null;
 	}
 
 	public String getLabel() {
@@ -221,6 +226,12 @@ implements Column {
 	}
 
 	public int getIndex() {
+		if (fieldIn instanceof ColumnData) {
+			return ((ColumnData) fieldIn).getColumnIndex();
+		}
+		if (fieldOut instanceof ColumnData) {
+			return ((ColumnData) fieldOut).getColumnIndex();
+		}
 		return columnIndex;
 	}
 

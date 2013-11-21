@@ -29,9 +29,9 @@ implements FixedWidthColumn {
 
 	private int length;
 	
-	private FieldIn<Object> columnIn;
+	private FieldIn<Object> fieldIn;
 	
-	private FieldOut<Object> columnOut;
+	private FieldOut<Object> fieldOut;
 			
 	/**
 	 * Used by super classes to convert the text to their required type.
@@ -70,7 +70,7 @@ implements FixedWidthColumn {
 				return nextReader.read();
 			}
 			
-			Object data = columnIn.getData();
+			Object data = fieldIn.getData();
 			String field = data == null ? null : data.toString();
 
 			if (field == null) {
@@ -109,14 +109,14 @@ implements FixedWidthColumn {
 	public DataReader readerFor(DataIn dataIn)
 	throws DataException {
 
-		if (columnIn == null) {
+		if (fieldIn == null) {
 			
 			FieldDataIn in = dataIn.provideDataIn(FieldDataIn.class);
 			
-			columnIn = (FieldIn<Object>) in.inFor(this);
+			fieldIn = (FieldIn<Object>) in.inFor(this);
 						
 			logger.trace("[" + this + "] initialised on [" + 
-					columnIn+ "]");
+					fieldIn+ "]");
 		}
 		
 		return new InternalReader();
@@ -163,7 +163,7 @@ implements FixedWidthColumn {
 			}
 			
 			if (value != null) {
-				columnOut.setData(value);
+				fieldOut.setData(value);
 				
 				logger.trace("[" + AbstractFieldLayout.this + "] wrote value [" + 
 						value + "]");
@@ -196,14 +196,14 @@ implements FixedWidthColumn {
 	public DataWriter writerFor(DataOut dataOut)
 	throws DataException {
 		
-		if (columnOut == null) {
+		if (fieldOut == null) {
 			
 			FieldDataOut out = dataOut.provideDataOut(FieldDataOut.class);
 			
-			columnOut = (FieldOut<Object>) out.outFor(this);
+			fieldOut = (FieldOut<Object>) out.outFor(this);
 			
 			logger.trace("[" + this + "] initialised on [" + 
-					columnOut + "]");			
+					fieldOut + "]");			
 		}
 		
 		return new InternalWriter();
@@ -214,8 +214,8 @@ implements FixedWidthColumn {
 	public void reset() {
 		super.reset();
 		
-		columnIn = null;
-		columnOut = null;
+		fieldIn = null;
+		fieldOut = null;
 	}
 	
 	
@@ -228,11 +228,11 @@ implements FixedWidthColumn {
 	}
 
 	public int getIndex() {
-		if (columnIn instanceof ColumnData) {
-			return ((ColumnData) columnIn).getColumnIndex();
+		if (fieldIn instanceof ColumnData) {
+			return ((ColumnData) fieldIn).getColumnIndex();
 		}
-		if (columnOut instanceof ColumnData) {
-			return ((ColumnData) columnOut).getColumnIndex();
+		if (fieldOut instanceof ColumnData) {
+			return ((ColumnData) fieldOut).getColumnIndex();
 		}
 		return index;
 	}

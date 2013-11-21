@@ -6,7 +6,7 @@ import org.oddjob.dido.DataException;
 import org.oddjob.dido.tabular.Column;
 import org.oddjob.dido.tabular.ColumnOut;
 
-public class SimpleFieldsOutTest extends TestCase {
+public class SimpleTextFieldsOutTest extends TestCase {
 
 	private class OurColumn implements Column {
 	

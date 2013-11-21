@@ -74,7 +74,7 @@ public class SimpleTextFieldsOut implements TextFieldsOut, StringsOut {
 		
 		@Override
 		public String toString() {
-			return getClass().getSimpleName() + ": index=" + columnIndex;
+			return getClass().getSimpleName() + ": " + columnIndex;
 		}
 	}
 	
