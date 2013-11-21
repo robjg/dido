@@ -103,7 +103,9 @@ public class NumericCellTest extends TestCase {
 	 */
 	public void testValueConfiguredHow() throws IntrospectionException {
 		
-		logger.info("java.version=" + System.getProperty("java.version"));
+		String javaVersion = System.getProperty("java.version");
+		
+		logger.info("java.version=" + javaVersion);
 		logger.info("java.specification.version=" + System.getProperty("java.specification.version"));
 		logger.info("java.vm.version=" + System.getProperty("java.vm.version"));
 		logger.info("java.home=" + System.getProperty("java.home"));
@@ -124,15 +126,22 @@ public class NumericCellTest extends TestCase {
 		
 		BeanOverview overview = arooaClass.getBeanOverview(accessor);
 		
-		// Would expect String!
-		assertEquals(Object.class, overview.getPropertyType("foo"));
-		
 		ArooaBeanDescriptor descriptor = 			
-			session.getArooaDescriptor().getBeanDescriptor(
-				arooaClass, accessor);
-		
-		// Would expect Attribute!
-		assertEquals(ConfiguredHow.ELEMENT, 
-				descriptor.getConfiguredHow("foo"));
+				session.getArooaDescriptor().getBeanDescriptor(
+					arooaClass, accessor);
+			
+		// Looks like this bug is fixed in 1.7!
+		if ("1.7".compareTo(javaVersion) > 0) {
+			assertEquals(Object.class, overview.getPropertyType("foo"));
+			
+			assertEquals(ConfiguredHow.ELEMENT, 
+					descriptor.getConfiguredHow("foo"));
+		}
+		else {
+			assertEquals(String.class, overview.getPropertyType("foo"));
+			
+			assertEquals(ConfiguredHow.ATTRIBUTE, 
+					descriptor.getConfiguredHow("foo"));
+		}
 	}
 }
