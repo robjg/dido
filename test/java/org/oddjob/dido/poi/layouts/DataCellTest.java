@@ -75,7 +75,7 @@ public class DataCellTest extends TestCase {
 	public void testWrite() throws DataException {
 		
 		DataCell<String> test = new TextCell();
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		test.setLabel("Fruit");
 		
 		OurTupleOut tupleOut = new OurTupleOut();
@@ -149,7 +149,7 @@ public class DataCellTest extends TestCase {
 	public void testRead() throws DataException {
 		
 		DataCell<String> test = new TextCell();
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		test.setLabel("Fruit");
 		
 		OurTupleIn tupleIn = new OurTupleIn();
@@ -192,7 +192,7 @@ public class DataCellTest extends TestCase {
 		PoiWorkbook workbook = new PoiWorkbook();
 		
 		DataCell<String> test = new TextCell();
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		
 		DataRows rows = new DataRows();
 		rows.setFirstColumn(2);

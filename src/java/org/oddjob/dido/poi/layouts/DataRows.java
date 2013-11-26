@@ -1,5 +1,7 @@
 package org.oddjob.dido.poi.layouts;
 
+import java.util.Arrays;
+
 import org.apache.log4j.Logger;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataIn;
@@ -7,10 +9,13 @@ import org.oddjob.dido.DataOut;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.Layout;
+import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.bio.BeanBindingBean;
+import org.oddjob.dido.field.Field;
 import org.oddjob.dido.layout.LayoutNode;
 import org.oddjob.dido.layout.NullReader;
 import org.oddjob.dido.morph.MorphDefinition;
+import org.oddjob.dido.morph.MorphDefinitionBuilder;
 import org.oddjob.dido.morph.MorphProvider;
 import org.oddjob.dido.morph.Morphable;
 import org.oddjob.dido.poi.RowsIn;
@@ -30,7 +35,7 @@ import org.oddjob.dido.poi.utils.CellTypeFactory;
  * next sheet in the book is used.
  * <p>
  * This layout is a typical candidate for attaching an {@link BeanBindingBean}
- * too.
+ * to.
  * <p>
  * This layout is Morphable which means that a binding can ask it to 
  * generate it's children If no child nodes (cells) are already defined.
@@ -102,6 +107,15 @@ implements Morphable, MorphProvider {
 	 * @oddjob.required No. Defaults to false.
 	 */
 	private boolean autoFilter;
+	
+	/**
+	 * @oddjob.property
+	 * @oddjob.description Set when reading if there is a header row to
+	 * read headings from. Used to derive a binding type if one is required
+	 * and there an no child layouts to derive it from.
+	 * @oddjob.required No. Read only.
+	 */
+	private String[] headings;
 	
 	/**
 	 * @oddjob.property of
@@ -177,7 +191,35 @@ implements Morphable, MorphProvider {
 	@Override
 	public MorphDefinition morphOf() {
 	
-		return null;
+		Iterable<Layout> childLayouts = childLayouts();
+		
+		if (childLayouts == null) {
+			return null;
+		}
+		
+		MorphDefinitionBuilder morphBuilder = new MorphDefinitionBuilder();
+		
+		for (Layout child : childLayouts) {
+			String name = child.getName();
+			if (name == null) {
+				continue;
+			}
+			
+			if (!(child instanceof ValueNode)) {
+				continue;
+			}
+			
+			Class<?> type = ((ValueNode<?>) child).getType();
+			
+			String label = null;
+			if (child instanceof Field) {
+				label = ((Field) child).getLabel();
+			}
+
+			morphBuilder.add(name, label, type);
+		}
+		
+		return morphBuilder.build();
 	}
 	
 	class MainReader implements DataReader {
@@ -239,15 +281,18 @@ implements Morphable, MorphProvider {
 		
 		if (withHeadings) {
 			
-			if (rowsIn.headerRow()) {
-				logger.debug("[" + this + "] Read headings.");
+			this.headings = rowsIn.headerRow();
+			if (headings == null) {
+				logger.info("[" + this + "] No rows to provide reader from.");
+				return new NullReader();
 			}
 			else {
-				return new NullReader();
+				logger.info("[" + this + "] Read headings " + 
+						Arrays.toString(this.headings));
 			}
 		}
 		else {
-			logger.debug("[" + this + "] No headings.");
+			logger.debug("[" + this + "] Providing reader with no headings.");
 		}
 		
 		return new MainReader(rowsIn);
@@ -370,13 +415,6 @@ implements Morphable, MorphProvider {
 		this.headingsStyle = headingsStyle;
 	}
 	
-	@Override
-	public String toString() {
-		String name = getName();
-		return getClass().getSimpleName() + 
-				(name == null ? "" : " " + name);
-	}
-
 	public int getFirstRow() {
 		return firstRow;
 	}
@@ -408,4 +446,16 @@ implements Morphable, MorphProvider {
 	public int getLastColumn() {
 		return lastColumn;
 	}
+	
+	public String[] getHeadings() {
+		return headings;
+	}
+	
+	@Override
+	public String toString() {
+		String name = getName();
+		return getClass().getSimpleName() + 
+				(name == null ? "" : " " + name);
+	}
+
 }

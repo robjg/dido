@@ -34,7 +34,7 @@ public class PoiSheetsTest extends TestCase {
 		
 		rows.setOf(0, cell);
 		
-		cell.bind(new DirectBinding());
+		cell.setBinding(new DirectBinding());
 		
 		
 		DataWriter writer = rows.writerFor(test1);
@@ -79,7 +79,7 @@ public class PoiSheetsTest extends TestCase {
 		DataBook book = new DataBook();
 		book.setOf(0, rows);
 		
-		cell.bind(new DirectBinding());
+		cell.setBinding(new DirectBinding());
 		
 		DataWriter writer = book.writerFor(workbook);
 		

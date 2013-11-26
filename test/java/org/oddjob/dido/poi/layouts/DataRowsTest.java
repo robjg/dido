@@ -37,7 +37,7 @@ public class DataRowsTest extends TestCase {
 		test.setWithHeadings(true);
 		
 		TextCell cell = new TextCell();
-		cell.bind(new DirectBinding());
+		cell.setBinding(new DirectBinding());
 		cell.setLabel("Fruit");
 	
 		test.setOf(0, cell);

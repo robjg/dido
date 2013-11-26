@@ -73,7 +73,7 @@ public class AllStylesTest extends TestCase {
 		DataBook book = new DataBook();
 		book.setOf(0, rows);
 		
-		text.bind(new OurBinding());
+		text.setBinding(new OurBinding());
 		
 		StyleBean sb1 = new StyleBean();
 		sb1.setColour(IndexedColors.RED);
@@ -147,7 +147,7 @@ public class AllStylesTest extends TestCase {
 		DataBook book = new DataBook();
 		book.setOf(0, rows);
 		
-		text.bind(new OurBinding());
+		text.setBinding(new OurBinding());
 		
 		for (IndexedColors colour : IndexedColors.values()) {
 			

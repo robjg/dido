@@ -44,7 +44,7 @@ public class DataSheetTest extends TestCase {
 		TextCell text = new TextCell();
 		rows.setOf(0, text);
 		
-		text.bind(new DirectBinding());
+		text.setBinding(new DirectBinding());
 		
 		bookOut.createSheet("Decoy");
 		
@@ -94,7 +94,7 @@ public class DataSheetTest extends TestCase {
 		TextCell text = new TextCell();
 		rows.setOf(0, text);
 		
-		text.bind(new DirectBinding());
+		text.setBinding(new DirectBinding());
 		
 		// Write Side
 		/////////////
@@ -216,7 +216,7 @@ public class DataSheetTest extends TestCase {
 		}
 
 		@Override
-		public void bind(Binding bindings) {
+		public void setBinding(Binding bindings) {
 			throw new RuntimeException("Unexpected!");
 		}
 

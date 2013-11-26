@@ -7,6 +7,14 @@ import org.oddjob.dido.Layout;
 import org.oddjob.dido.text.StringTextIn;
 import org.oddjob.dido.text.StringTextOut;
 
+/**
+ * @oddjob.description Read to and from a series of cells. Currently only 
+ * the ability to read columns of data by nesting within a {@link DataRows}
+ * is supported but the ability to read rows will be added at some point.
+ * 
+ * @author rob
+ *
+ */
 public class TextCell extends DataCell<String> {
 
 	@Override

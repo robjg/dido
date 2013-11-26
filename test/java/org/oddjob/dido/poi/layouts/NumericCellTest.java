@@ -39,7 +39,7 @@ public class NumericCellTest extends TestCase {
 		
 		NumericCell test = new NumericCell();
 		test.setArooaSession(new StandardArooaSession());
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 
 		DataRows rows = new DataRows();
 		rows.setOf(0, test);

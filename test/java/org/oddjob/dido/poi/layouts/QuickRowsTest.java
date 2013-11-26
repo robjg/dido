@@ -118,7 +118,7 @@ public class QuickRowsTest extends TestCase {
 		
 		DataRows test = new DataRows();
 		test.setWithHeadings(true);
-		test.bind(binding);
+		test.setBinding(binding);
 
 		Workbook workbook = new HSSFWorkbook();
 		

@@ -63,19 +63,20 @@ public class PoiRowsIn implements RowsIn {
 	}
 	
 	@Override
-	public boolean headerRow() {
+	public String[] headerRow() {
 		
 		Row row = sheet.getRow(lastRowNum);
 		
 		if (row == null) {
-			return false;
+			return null;
 		}
 		else {
 			this.headings = new SimpleHeadings(row, columnOffset);
-			columnHelper.setHeadings(headings.getHeadings());
+			String[] headings = this.headings.getHeadings();
+			columnHelper.setHeadings(headings);
 			
 			++lastRowNum;
-			return true;
+			return headings;
 		}
 	}
 	

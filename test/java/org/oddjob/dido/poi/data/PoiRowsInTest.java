@@ -54,7 +54,7 @@ public class PoiRowsInTest extends TestCase {
 		assertEquals(2, test.getLastRow());
 		assertEquals(6, test.getLastColumn());
 		
-		assertTrue(test.headerRow());
+		assertNotNull(test.headerRow());
 		
 		assertEquals(3, test.getLastRow());
 		assertEquals(6, test.getLastColumn());

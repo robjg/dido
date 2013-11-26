@@ -11,12 +11,14 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.oddjob.Oddjob;
+import org.oddjob.OddjobLookup;
 import org.oddjob.OddjobSessionFactory;
 import org.oddjob.OurDirs;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
 import org.oddjob.arooa.life.SimpleArooaClass;
+import org.oddjob.arooa.reflect.ArooaPropertyException;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.types.ImportType;
 import org.oddjob.arooa.utils.DateHelper;
@@ -27,6 +29,7 @@ import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.bio.ValueBinding;
 import org.oddjob.dido.poi.data.PoiWorkbook;
+import org.oddjob.dido.poi.test.Fruit;
 import org.oddjob.dido.poi.test.Person;
 import org.oddjob.dido.poi.test.PersonBonus;
 import org.oddjob.io.FileType;
@@ -216,5 +219,43 @@ public class DataBookTest extends TestCase {
 		assertEquals(ParentState.COMPLETE, 
 				oddjob.lastStateEvent().getState());
 
+	}
+	
+	public void testSimpleWriteReadExample() throws ArooaPropertyException, ArooaConversionException, ParseException {
+		
+		OurDirs ourDirs = new OurDirs();
+		
+		Properties properties = new Properties();
+		properties.setProperty("work.dir", ourDirs.relative("work").getPath());
+		
+		File file = new File(getClass().getResource(
+				"DataBookWriteReadExample1.xml").getFile());
+		
+		Oddjob oddjob = new Oddjob();
+		oddjob.setFile(file);
+		oddjob.setProperties(properties);
+		
+		oddjob.run();
+		
+		assertEquals(ParentState.COMPLETE, 
+				oddjob.lastStateEvent().getState());
+		
+		OddjobLookup lookup = new OddjobLookup(oddjob);
+		
+		@SuppressWarnings("unchecked")
+		List<Fruit> fruits = lookup.lookup("data-book-read.beans",
+				List.class);
+		
+		Fruit fruit3 = fruits.get(2);
+		
+		assertEquals("Orange", fruit3.getFruit());
+		assertEquals(DateHelper.parseDate("2013-12-05"), fruit3.getBestBefore());
+		assertEquals("", fruit3.getColour());
+		assertEquals(5, fruit3.getQuantity());
+		assertEquals(215.0, fruit3.getPrice());
+		
+		assertEquals(5, fruits.size());
+		
+		oddjob.destroy();
 	}
 }

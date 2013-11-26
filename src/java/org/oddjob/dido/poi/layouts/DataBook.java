@@ -23,10 +23,13 @@ import org.oddjob.dido.poi.style.StyleFactoryRegistry;
  * 
  * @oddjob.example
  * 
- * Read data and then write it back out again. Note that as no type is 
- * specified in the binding, the headings are required to create the beans.
+ * Write a workbook and read it back again.
  * 
- * {@oddjob.xml.resource org/oddjob/dido/text/DelimitedSimplestReadWrite.xml}
+ * {@oddjob.xml.resource org/oddjob/dido/poi/layouts/DataBookWriteReadExample1.xml}
+ * 
+ * The first job sets up a property for the directory to write to. The
+ * second job sets up the data for the workbook to write. The third job
+ * writes the workbook and the fourth reads it back again.
  * 
  * @author rob
  *

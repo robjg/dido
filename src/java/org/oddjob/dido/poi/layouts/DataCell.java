@@ -66,9 +66,9 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 	 */
 	private String reference;
 	
-	private CellIn<T> columnIn;
+	private CellIn<T> cellIn;
 	
-	private CellOut<T> columnOut;
+	private CellOut<T> cellOut;
 	
 	/**
 	 * @oddjob.property cellType
@@ -119,9 +119,9 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 				return nextReader.read();
 			}
 			
-			T field = columnIn.getData();
+			T field = cellIn.getData();
 			
-			reference = columnIn.getCellReference();
+			reference = cellIn.getCellReference();
 			
 			value(field);
 
@@ -156,14 +156,14 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 	@Override
 	public DataReader readerFor(DataIn dataIn) throws DataException {
 		
-		if (columnIn == null) {
+		if (cellIn == null) {
 			
 			TupleIn in = dataIn.provideDataIn(TupleIn.class);
 			
-			columnIn = (CellIn<T>) in.inFor(this);
+			cellIn = (CellIn<T>) in.inFor(this);
 						
 			logger.trace("Create Reader for [" + DataCell.this + "], column is [" + 
-					columnIn.getColumnIndex() + "]");
+					cellIn.getColumnIndex() + "]");
 		}
 		
 		return new MainReader();
@@ -247,9 +247,9 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 				value(value);
 			}
 			
-			columnOut.setData(value);
+			cellOut.setData(value);
 			
-			reference = columnOut.getCellReference();
+			reference = cellOut.getCellReference();
 			
 			logger.trace("[" + DataCell.this + "] wrote value [" + 
 					value + "]");
@@ -301,14 +301,14 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 	@Override
 	public DataWriter writerFor(DataOut dataOut) throws DataException {
 		
-		if (columnOut == null) {
+		if (cellOut == null) {
 			
 			TupleOut tupleOut = dataOut.provideDataOut(TupleOut.class);
 			
-			columnOut = (CellOut<T>) tupleOut.outFor(this);
+			cellOut = (CellOut<T>) tupleOut.outFor(this);
 			
 			logger.trace("Created writer for [" + DataCell.this + "], column is [" + 
-					columnOut.getColumnIndex() + "]");
+					cellOut.getColumnIndex() + "]");
 			
 		}
 		
@@ -320,8 +320,8 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 		super.reset();
 		
 		reference = null;
-		columnIn = null;
-		columnOut = null;
+		cellIn = null;
+		cellOut = null;
 	}
 	
 	public String getReference() {
@@ -337,11 +337,11 @@ implements ArooaSessionAware, Column, CellLayout<T> {
 	}
 
 	public int getIndex() {
-		if (columnIn != null) {
-			return columnIn.getColumnIndex();
+		if (cellIn != null) {
+			return cellIn.getColumnIndex();
 		}
-		if (columnOut != null) {
-			return columnOut.getColumnIndex();
+		if (cellOut != null) {
+			return cellOut.getColumnIndex();
 		}
 		return columnIndex;
 	}

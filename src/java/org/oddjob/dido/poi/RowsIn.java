@@ -21,10 +21,9 @@ public interface RowsIn extends DataIn {
 	/**
 	 * Read a header row.
 	 * 
-	 * @return True if there is a header row , false if there
-	 * isn't.
+	 * @return The heading, or null if the header row doesn't exist.
 	 */
-	public boolean headerRow();
+	public String[] headerRow();
 	
 	/**
 	 * Advance the current row. 

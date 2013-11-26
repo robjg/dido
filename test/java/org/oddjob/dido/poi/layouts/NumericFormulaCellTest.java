@@ -36,7 +36,7 @@ public class NumericFormulaCellTest extends TestCase {
 		DataBook book = new DataBook();		
 		book.setOf(0, rows);
 		
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		
 		DataWriter writer = book.writerFor(workbook);
 		

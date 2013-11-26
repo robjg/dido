@@ -42,7 +42,7 @@ public class BeanCmprResultBindingTest extends TestCase {
 		BeanCmprResultBinding test = new BeanCmprResultBinding();
 		test.setArooaSession(session);
 		
-		rows.bind(test);
+		rows.setBinding(test);
 
 		PoiWorkbook workbook = new PoiWorkbook();
 		workbook.setArooaSession(session);

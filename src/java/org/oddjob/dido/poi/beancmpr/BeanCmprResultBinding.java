@@ -86,11 +86,11 @@ implements ArooaSessionAware {
 			
 			int i = 0;
 			for (final Layout layout : boundLayout.childLayouts()) {
-				layout.bind(new ChildBinding(initialiser.injectors.get(i++)));
+				layout.setBinding(new ChildBinding(initialiser.injectors.get(i++)));
 				resets.add(new Runnable() {
 					@Override
 					public void run() {
-						layout.bind(null);
+						layout.setBinding(null);
 					}
 				});
 			}
