@@ -39,7 +39,7 @@ public class LateBindingBeanTest extends TestCase {
 		root.setName("fruit");
 		root.setOf(0, typeNode);
 		
-		root.bind(test);
+		root.setBinding(test);
 		
 		Fruit fruit = new Fruit();
 		fruit.setType("apple");
@@ -76,7 +76,7 @@ public class LateBindingBeanTest extends TestCase {
 		DelimitedLayout root = new DelimitedLayout();
 		root.setOf(0, costNode);
 		
-		root.bind(test);
+		root.setBinding(test);
 		
 		Basket basket = new Basket();
 		basket.setCost(12.47);

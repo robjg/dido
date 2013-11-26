@@ -34,7 +34,7 @@ public class DelimitedLayoutTest extends TestCase {
 	public void testWriteLinesOutNoChildren() throws DataException {
 				
 		DelimitedLayout test = new DelimitedLayout();
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		
 		ListLinesOut dataOut = new ListLinesOut();
 				
@@ -101,9 +101,9 @@ public class DelimitedLayoutTest extends TestCase {
 		bindingC.setArooaSession(session);
 		bindingC.setValue("c");
 		
-		a.bind(bindingA);
-		b.bind(bindingB);
-		c.bind(bindingC);
+		a.setBinding(bindingA);
+		b.setBinding(bindingB);
+		c.setBinding(bindingC);
 		
 		writer.write(new Object());
 		writer.write(new Object());
@@ -122,7 +122,7 @@ public class DelimitedLayoutTest extends TestCase {
 		
 		DelimitedLayout test = new DelimitedLayout();
 
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 
 		StringTextOut dataOut = new StringTextOut();
 		
@@ -155,7 +155,7 @@ public class DelimitedLayoutTest extends TestCase {
 
 		test.setWithHeadings(true);
 		test.setHeadings(new String[] {"Fruit", "colour" });
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		DataWriter writer = test.writerFor(results);
 		
@@ -197,9 +197,9 @@ public class DelimitedLayoutTest extends TestCase {
 		bindingC.setArooaSession(session);
 		bindingC.setValue("c");
 		
-		a.bind(bindingA);
-		b.bind(bindingB);
-		c.bind(bindingC);
+		a.setBinding(bindingA);
+		b.setBinding(bindingB);
+		c.setBinding(bindingC);
 		
 		ListLinesOut dataOut = new ListLinesOut();
 		
@@ -229,7 +229,7 @@ public class DelimitedLayoutTest extends TestCase {
 		
 		DelimitedLayout test = new DelimitedLayout();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		DataReader reader = test.readerFor(lines);
 		
@@ -257,7 +257,7 @@ public class DelimitedLayoutTest extends TestCase {
 		TextIn dataIn = new StringTextIn("a,b,c");
 
 		DelimitedLayout test = new DelimitedLayout();
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		
 		DataReader reader = test.readerFor(dataIn);
 		
@@ -331,7 +331,7 @@ public class DelimitedLayoutTest extends TestCase {
 		BeanBindingBean binding = new BeanBindingBean();
 		binding.setArooaSession(session);
 		
-		test.bind(binding);
+		test.setBinding(binding);
 
 		DataReader reader = test.readerFor(linesIn);
 		

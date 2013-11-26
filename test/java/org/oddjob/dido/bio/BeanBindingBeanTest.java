@@ -57,7 +57,7 @@ public class BeanBindingBeanTest extends TestCase {
 		LinesLayout root = new LinesLayout();
 		root.setName("fruit");
 		
-		root.bind(test);
+		root.setBinding(test);
 		
 		ListLinesOut dataOut = new ListLinesOut();
 		
@@ -82,7 +82,7 @@ public class BeanBindingBeanTest extends TestCase {
 		LinesLayout root = new LinesLayout();
 		root.setName("fruit");
 		
-		root.bind(test);
+		root.setBinding(test);
 		
 		LinesIn dataIn = new ListLinesIn(
 				Arrays.asList("Apples", "Pears"));
@@ -116,7 +116,7 @@ public class BeanBindingBeanTest extends TestCase {
 		lines.setName("fruit");
 		lines.setOf(0, typeNode);
 		
-		lines.bind(test);
+		lines.setBinding(test);
 		
 		Fruit fruit = new Fruit();
 		fruit.setType("apple");
@@ -153,7 +153,7 @@ public class BeanBindingBeanTest extends TestCase {
 		root.setName("fruit");
 		root.setOf(0, typeNode);
 		
-		root.bind(test);
+		root.setBinding(test);
 		
 		DataReader reader = root.readerFor(dataIn);
 		
@@ -198,7 +198,7 @@ public class BeanBindingBeanTest extends TestCase {
 		root.setName("basket");
 		root.setOf(0, costNode);
 		
-		root.bind(test);
+		root.setBinding(test);
 		
 		ListLinesOut dataOut = new ListLinesOut();
 		
@@ -238,7 +238,7 @@ public class BeanBindingBeanTest extends TestCase {
 		root.setName("basket");
 		root.setOf(0, costNode);
 				
-		root.bind(test);
+		root.setBinding(test);
 		
 		LinesIn dataIn = new ListLinesIn(
 				Arrays.asList("12.47", "5.23"));
@@ -279,7 +279,7 @@ public class BeanBindingBeanTest extends TestCase {
 		DelimitedLayout root = new DelimitedLayout();
 		root.setOf(0, typeNode);
 		
-		root.bind(test);
+		root.setBinding(test);
 		
 		ListLinesOut dataOut = new ListLinesOut();
 		
@@ -319,7 +319,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		DelimitedLayout root = new DelimitedLayout();
 		root.setWithHeadings(true);
-		root.bind(test);
+		root.setBinding(test);
 		
 		ListLinesOut dataOut = new ListLinesOut();
 		
@@ -359,7 +359,7 @@ public class BeanBindingBeanTest extends TestCase {
 		
 		DelimitedLayout root = new DelimitedLayout();
 		root.setWithHeadings(true);
-		root.bind(test);
+		root.setBinding(test);
 		
 		LinesIn dataIn = new ListLinesIn(
 				Arrays.asList(

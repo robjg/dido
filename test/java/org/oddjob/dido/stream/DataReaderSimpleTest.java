@@ -29,7 +29,7 @@ public class DataReaderSimpleTest extends TestCase {
 		
 		Binding binding = new DirectBinding();
 		
-		node.bind(binding);
+		node.setBinding(binding);
 		
 		DataReader reader = node.readerFor(ioData);
 		

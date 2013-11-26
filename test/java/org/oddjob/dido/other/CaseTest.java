@@ -100,7 +100,7 @@ public class CaseTest extends TestCase {
 		
 		FixedWidthTextFieldsOut textOut = new FixedWidthTextFieldsOut();
 		
-		text1.bind(new DirectBinding());
+		text1.setBinding(new DirectBinding());
 		
 		DataWriter writer = test.writerFor(textOut);
 		

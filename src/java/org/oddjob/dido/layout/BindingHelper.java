@@ -13,7 +13,7 @@ public class BindingHelper {
 	
 	public void bind(Layout layout, Binding binding) {
 
-		layout.bind(binding);
+		layout.setBinding(binding);
 		
 		layoutsAndBindings.put(layout, binding);
 	}
@@ -23,7 +23,7 @@ public class BindingHelper {
 		for (Map.Entry<Layout, Binding> entry : layoutsAndBindings.entrySet()) {
 			
 			entry.getValue().free();
-			entry.getKey().bind(null);
+			entry.getKey().setBinding(null);
 		}
 		
 		layoutsAndBindings.clear();

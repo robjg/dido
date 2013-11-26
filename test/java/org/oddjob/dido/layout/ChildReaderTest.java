@@ -50,7 +50,7 @@ public class ChildReaderTest extends TestCase {
 		
 		TextLayout child1 = new TextLayout();
 		TextLayout child2 = new TextLayout();
-		child2.bind(valueBinding);
+		child2.setBinding(valueBinding);
 		TextLayout child3 = new TextLayout();
 
 		Iterable<? extends DataReaderFactory> children = 
@@ -74,9 +74,9 @@ public class ChildReaderTest extends TestCase {
 		
 		TextLayout child1 = new TextLayout();
 		TextLayout child2 = new TextLayout();
-		child2.bind(valueBinding);
+		child2.setBinding(valueBinding);
 		TextLayout child3 = new TextLayout();
-		child3.bind(valueBinding);
+		child3.setBinding(valueBinding);
 
 		Iterable<? extends DataReaderFactory> children = 
 				Arrays.asList(child1, child2, child3);

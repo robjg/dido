@@ -303,7 +303,7 @@ implements Binding, ArooaSessionAware {
 					
 					if (overview.hasWriteableProperty(nodeName)) {
 						
-						layout.bind(new ChildNodeBinding(layout));
+						layout.setBinding(new ChildNodeBinding(layout));
 					
 						logger.debug("Binding to child [" + layout + 
 								"] on writeable property [" + nodeName + "]");
@@ -311,7 +311,7 @@ implements Binding, ArooaSessionAware {
 						resets.add(new Runnable() {
 							@Override
 							public void run() {
-								layout.bind(null);
+								layout.setBinding(null);
 							}
 						});
 						
@@ -433,7 +433,7 @@ implements Binding, ArooaSessionAware {
 					
 					if (overview.hasReadableProperty(nodeName)) {
 						
-						layout.bind(new ChildNodeBinding(layout));
+						layout.setBinding(new ChildNodeBinding(layout));
 					
 						logger.debug("Binding to child [" + layout + 
 								"] on readable property [" + nodeName + "]");
@@ -441,7 +441,7 @@ implements Binding, ArooaSessionAware {
 						resets.add(new Runnable() {
 							@Override
 							public void run() {
-								layout.bind(null);
+								layout.setBinding(null);
 							}
 						});
 						

@@ -91,10 +91,10 @@ public class WhenTest extends TestCase {
 	public void testWritingSequenceTheory() throws DataException {
 		
 		TextLayout on = new TextLayout();
-		on.bind(new DirectBinding());
+		on.setBinding(new DirectBinding());
 		
 		TextLayout child = new TextLayout();
-		child.bind(new DirectBinding());
+		child.setBinding(new DirectBinding());
 		
 		When test = 
 			new When();

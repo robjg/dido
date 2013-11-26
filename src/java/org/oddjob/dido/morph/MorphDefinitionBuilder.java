@@ -37,6 +37,18 @@ public class MorphDefinitionBuilder {
 	 */
 	public void add(String name, String label, Class<?> type) {
 
+		if (name == null) {
+			throw new NullPointerException("No Name!");
+		}
+		
+		if (type == null) {
+			throw new NullPointerException("No Type!");
+		}
+		
+		if (label == null) {
+			label = name;
+		}
+		
 		nameHeadings.put(name, label);
 		nameTypes.put(name, type);
 	}

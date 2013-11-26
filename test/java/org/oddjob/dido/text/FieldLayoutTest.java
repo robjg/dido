@@ -21,7 +21,7 @@ public class FieldLayoutTest extends TestCase {
 		
 		TextLayout test = new TextLayout();
 
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		
 		SimpleTextFieldsOut dataOut = new SimpleTextFieldsOut();
 		
@@ -46,7 +46,7 @@ public class FieldLayoutTest extends TestCase {
 		
 		DirectBinding binding = new DirectBinding();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 
 		DataWriter writer = test.writerFor(fields);
 		
@@ -71,7 +71,7 @@ public class FieldLayoutTest extends TestCase {
 		
 		DirectBinding binding = new DirectBinding();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 
 		DataWriter writer = test.writerFor(fields);
 		
@@ -96,7 +96,7 @@ public class FieldLayoutTest extends TestCase {
 		
 		DirectBinding binding = new DirectBinding();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		DataReader reader = test.readerFor(fields);
 		
@@ -119,7 +119,7 @@ public class FieldLayoutTest extends TestCase {
 		
 		DirectBinding binding = new DirectBinding();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		DataReader reader = test.readerFor(fields);
 		
@@ -142,7 +142,7 @@ public class FieldLayoutTest extends TestCase {
 		fields.setHeadings(new String[] { "name" });
 		fields.setValues(new String[] { "John" });
 
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		
 		DataReader reader = test.readerFor(fields);
 		
@@ -212,7 +212,7 @@ public class FieldLayoutTest extends TestCase {
 		binding.setArooaSession(new StandardArooaSession());
 		binding.setType(new SimpleArooaClass(Fruit.class));
 		
-		layout.bind(binding);
+		layout.setBinding(binding);
 		
 		ListLinesOut dataOut = new ListLinesOut();
 		

@@ -133,7 +133,7 @@ public class BeanBindingTheoryTest extends TestCase {
 				"Banana" + EOL;
 		
 		LinesLayout lines = new LinesLayout();
-		lines.bind(new TwoLinesPerObjectBinding());
+		lines.setBinding(new TwoLinesPerObjectBinding());
 		
 		IOStreamData data = new IOStreamData();
 		data.setArooaSession(new StandardArooaSession());
@@ -282,10 +282,10 @@ public class BeanBindingTheoryTest extends TestCase {
 					boundLayout.childLayouts());
 			
 			Layout child1 = childLayouts.get(0);
-			child1.bind(binding1);
+			child1.setBinding(binding1);
 			
 			Layout child2 = childLayouts.get(1);
-			child2.bind(binding2);
+			child2.setBinding(binding2);
 			
 			return new DataWriter() {
 				
@@ -355,7 +355,7 @@ public class BeanBindingTheoryTest extends TestCase {
 		TextLayout field2 = new TextLayout();
 		layout.setOf(1,  field2);
 		
-		layout.bind(new TwoObjectsPerLineBinding());
+		layout.setBinding(new TwoObjectsPerLineBinding());
 		
 		DataReader reader = layout.readerFor(data);
 		

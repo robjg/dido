@@ -71,7 +71,7 @@ public class SubstitutionLayoutTest extends TestCase {
 		
 		DirectBinding binding = new DirectBinding();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		DataReader reader = test.readerFor(dataIn);
 
@@ -92,7 +92,7 @@ public class SubstitutionLayoutTest extends TestCase {
 		
 		DirectBinding binding = new DirectBinding();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		DataWriter writer = test.writerFor(dataOut);
 
@@ -121,7 +121,7 @@ public class SubstitutionLayoutTest extends TestCase {
 		
 		DirectBinding binding = new DirectBinding();
 		
-		textLayout.bind(binding);
+		textLayout.setBinding(binding);
 		
 		DataReader reader = test.readerFor(dataIn);
 
@@ -145,7 +145,7 @@ public class SubstitutionLayoutTest extends TestCase {
 		
 		DirectBinding binding = new DirectBinding();
 		
-		textLayout.bind(binding);
+		textLayout.setBinding(binding);
 		
 		DataWriter writer = test.writerFor(dataOut);
 

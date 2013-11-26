@@ -33,7 +33,7 @@ public class ColumnLayoutTest extends TestCase {
 		
 		assertEquals(0, test.getIndex());
 		
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		
 		DataReader reader = test.readerFor(dataIn);
 		
@@ -53,7 +53,7 @@ public class ColumnLayoutTest extends TestCase {
 		
 		assertEquals(0, test.getIndex());
 		
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		
 		DataWriter writer = test.writerFor(dataOut);
 		

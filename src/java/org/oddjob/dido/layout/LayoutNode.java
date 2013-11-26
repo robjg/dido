@@ -74,7 +74,7 @@ abstract public class LayoutNode implements Layout {
 	}
 	
 	@Override
-	public void bind(Binding binding) {
+	public void setBinding(Binding binding) {
 		this.binding = binding;
 	}
 	

@@ -100,7 +100,7 @@ public class SQLColumnTest extends TestCase {
 		
 		BeanBindingBean binding = new BeanBindingBean();
 		binding.setArooaSession(session);
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		ConnectionDataImpl connectionData = new ConnectionDataImpl();
 		connectionData.setArooaSession(session);
@@ -173,7 +173,7 @@ public class SQLColumnTest extends TestCase {
 		binding.setArooaSession(session);
 		binding.setBeanView(beanView.toValue());
 		
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		ConnectionDataImpl connectionData = new ConnectionDataImpl();
 		connectionData.setArooaSession(session);

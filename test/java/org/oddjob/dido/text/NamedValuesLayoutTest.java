@@ -24,7 +24,7 @@ public class NamedValuesLayoutTest extends TestCase {
 		
 		NamedValuesLayout test = new NamedValuesLayout();
 		
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		
 		DataReader reader = test.readerFor(dataIn);
 		
@@ -47,7 +47,7 @@ public class NamedValuesLayoutTest extends TestCase {
 
 		NamedValuesLayout test = new NamedValuesLayout();
 		
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		
 		DataWriter writer = test.writerFor(dataOut);
 		

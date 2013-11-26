@@ -29,7 +29,7 @@ public class LinesLayoutTest extends TestCase {
 		LinesIn dataIn = new StreamLinesIn(input);
 		
 		LinesLayout test = new LinesLayout();
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		
 		DataReader reader = test.readerFor(dataIn);
 		
@@ -67,7 +67,7 @@ public class LinesLayoutTest extends TestCase {
 		test.setOf(0, fixed);
 		
 		TextLayout text = new TextLayout();
-		text.bind(new DirectBinding());
+		text.setBinding(new DirectBinding());
 		fixed.setOf(0, text);
 		
 		DataReader reader = test.readerFor(dataIn);
@@ -110,7 +110,7 @@ public class LinesLayoutTest extends TestCase {
 		StreamLinesOut dataOut = new StreamLinesOut(output);
 		
 		LinesLayout test = new LinesLayout();
-		test.bind(new DirectBinding());
+		test.setBinding(new DirectBinding());
 		
 		DataWriter writer = test.writerFor(dataOut);
 		
@@ -140,7 +140,7 @@ public class LinesLayoutTest extends TestCase {
 		test.setOf(0, fixed);
 		
 		TextLayout text = new TextLayout();
-		text.bind(new DirectBinding());
+		text.setBinding(new DirectBinding());
 		
 		fixed.setOf(0, text);
 				

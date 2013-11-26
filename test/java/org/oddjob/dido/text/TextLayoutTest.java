@@ -25,7 +25,7 @@ public class TextLayoutTest extends TestCase {
 		
 		DirectBinding binding = new DirectBinding();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 
 		DataWriter writer = test.writerFor(dataOut);
 		
@@ -55,7 +55,7 @@ public class TextLayoutTest extends TestCase {
 		
 		DirectBinding binding = new DirectBinding();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 		test.setIndex(5);
 		test.setLength(3);
 
@@ -75,7 +75,7 @@ public class TextLayoutTest extends TestCase {
 		
 		DirectBinding binding = new DirectBinding();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		DataReader reader = test.readerFor(dataIn);
 		
@@ -113,7 +113,7 @@ public class TextLayoutTest extends TestCase {
 		
 		DirectBinding binding = new DirectBinding();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 		test.setIndex(4);
 		test.setLength(3);
 		
@@ -136,7 +136,7 @@ public class TextLayoutTest extends TestCase {
 		test.setLength(6);
 		
 		DirectBinding binding = new DirectBinding();
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		DataWriter writer = test.writerFor(textFieldsOut);
 		
@@ -159,7 +159,7 @@ public class TextLayoutTest extends TestCase {
 		test.setLength(6);
 		
 		DirectBinding binding = new DirectBinding();
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		DataReader reader = test.readerFor(textFieldsIn);
 		
@@ -223,8 +223,8 @@ public class TextLayoutTest extends TestCase {
 		fixedWidthLayout.setOf(0, textChild1);
 		fixedWidthLayout.setOf(1, textChild2);
 		
-		textChild1.bind(new DirectBinding());
-		textChild2.bind(new DirectBinding());
+		textChild1.setBinding(new DirectBinding());
+		textChild2.setBinding(new DirectBinding());
 		
 		FixedWidthTextFieldsOut dataOut = new FixedWidthTextFieldsOut();
 	
@@ -280,7 +280,7 @@ public class TextLayoutTest extends TestCase {
 		binding.setArooaSession(new StandardArooaSession());
 		binding.setType(new SimpleArooaClass(Fruit.class));
 		
-		layout.bind(binding);
+		layout.setBinding(binding);
 		
 		ListLinesOut dataOut = new ListLinesOut();
 		

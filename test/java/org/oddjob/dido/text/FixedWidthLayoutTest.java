@@ -27,7 +27,7 @@ public class FixedWidthLayoutTest extends TestCase {
 		
 		FixedWidthLayout test = new FixedWidthLayout();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		DataWriter writer = test.writerFor(results);
 		
@@ -50,7 +50,7 @@ public class FixedWidthLayoutTest extends TestCase {
 		
 		FixedWidthLayout test = new FixedWidthLayout();
 		
-		test.bind(binding);
+		test.setBinding(binding);
 		
 		DataReader reader = test.readerFor(lines);
 
@@ -85,7 +85,7 @@ public class FixedWidthLayoutTest extends TestCase {
 		FixedWidthLayout fixed = new FixedWidthLayout();
 		test.setOf(0, fixed);
 
-		fixed.bind(new DirectBinding());
+		fixed.setBinding(new DirectBinding());
 		
 		DataReader reader = test.readerFor(dataIn);
 

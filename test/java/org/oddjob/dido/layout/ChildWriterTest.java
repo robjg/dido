@@ -53,7 +53,7 @@ public class ChildWriterTest extends TestCase {
 		TextLayout child2 = new TextLayout();
 		child2.setIndex(1);
 		child2.setLength(10);
-		child2.bind(valueBinding);
+		child2.setBinding(valueBinding);
 		TextLayout child3 = new TextLayout();
 
 		Iterable<? extends DataWriterFactory> children = 
@@ -76,11 +76,11 @@ public class ChildWriterTest extends TestCase {
 		TextLayout child2 = new TextLayout();
 		child2.setIndex(1);
 		child2.setLength(10);
-		child2.bind(valueBinding);
+		child2.setBinding(valueBinding);
 		TextLayout child3 = new TextLayout();
 		child3.setIndex(11);
 		child3.setLength(10);
-		child3.bind(valueBinding);
+		child3.setBinding(valueBinding);
 
 		Iterable<? extends DataWriterFactory> children = 
 				Arrays.asList(child1, child2, child3);

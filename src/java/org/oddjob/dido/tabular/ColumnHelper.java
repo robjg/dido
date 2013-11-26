@@ -5,6 +5,15 @@ import java.util.Map;
 
 import org.oddjob.dido.field.Field;
 
+/**
+ * Helper class to track column positions.
+ * <p>
+ * If headings are provided then the headings will dictate the order
+ * of the columns, instead of the index of the column.
+ * 
+ * @author rob
+ *
+ */
 public class ColumnHelper {
 
 	private Map<String, Integer> indexForHeading;

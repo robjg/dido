@@ -37,7 +37,7 @@ public interface Layout extends DataReaderFactory, DataWriterFactory {
 	 * @param binding The binding. Setting to null will clear the current
 	 * binding.
 	 */
-	public void bind(Binding bindings);
+	public void setBinding(Binding bindings);
 	
 	/**
 	 * Provide the children of this Layout.

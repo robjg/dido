@@ -166,7 +166,7 @@ public class Case<TYPE> extends LayoutNode {
 						"No descriminator layout for Case.");
 			}
 			
-			discriminator.bind(new DirectBinding());
+			discriminator.setBinding(new DirectBinding());
 			
 			if (resets.size() == 0) {
 				resets.add(new Runnable() {
@@ -177,7 +177,7 @@ public class Case<TYPE> extends LayoutNode {
 						logger.trace("Removing Case binding from descriminator [" + 
 								discriminator + "]");
 						
-						discriminator.bind(null);
+						discriminator.setBinding(null);
 					}
 				});
 			}
@@ -326,7 +326,7 @@ public class Case<TYPE> extends LayoutNode {
 	}
 	
 	@Override
-	public void bind(Binding binding) {
+	public void setBinding(Binding binding) {
 		throw new UnsupportedOperationException("Binding not supported on Case.");
 	}	
 	

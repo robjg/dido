@@ -5,7 +5,7 @@ import org.oddjob.dido.bio.Binding;
 public class MockLayout implements Layout {
 	
 	@Override
-	public void bind(Binding bindings) {
+	public void setBinding(Binding bindings) {
 		throw new RuntimeException("Unexpected from " + getClass());
 	}
 	
