@@ -2,7 +2,7 @@ package org.oddjob.dido.text;
 
 import junit.framework.TestCase;
 
-import org.oddjob.Helper;
+import org.oddjob.OddjobTestHelper;
 import org.oddjob.arooa.ArooaParseException;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
@@ -274,7 +274,7 @@ public class TextLayoutTest extends TestCase {
 				"</dido:fixed>";
 		
 		Layout layout = (Layout) 
-				Helper.createTypeFromConfiguration(new XMLConfiguration("XML", xml));
+				OddjobTestHelper.createValueFromConfiguration(new XMLConfiguration("XML", xml));
 	
 		BeanBindingBean binding = new BeanBindingBean();
 		binding.setArooaSession(new StandardArooaSession());

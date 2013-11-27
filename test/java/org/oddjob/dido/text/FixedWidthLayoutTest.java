@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.oddjob.Helper;
+import org.oddjob.OddjobTestHelper;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
@@ -72,9 +72,9 @@ public class FixedWidthLayoutTest extends TestCase {
 	public void testReadingAsChildOfLines() throws DataException {
 		
 		String lines =
-				"apples" + Helper.LS +
-				"oranges" + Helper.LS +
-				"bananas" + Helper.LS;
+				"apples" + OddjobTestHelper.LS +
+				"oranges" + OddjobTestHelper.LS +
+				"bananas" + OddjobTestHelper.LS;
 			
 		InputStream input = new ByteArrayInputStream(lines.getBytes());
 
