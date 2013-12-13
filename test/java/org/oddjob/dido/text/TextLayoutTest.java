@@ -2,7 +2,6 @@ package org.oddjob.dido.text;
 
 import junit.framework.TestCase;
 
-import org.oddjob.OddjobTestHelper;
 import org.oddjob.arooa.ArooaParseException;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.standard.StandardArooaSession;
@@ -14,6 +13,7 @@ import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.stream.ListLinesOut;
+import org.oddjob.tools.OddjobTestHelper;
 
 public class TextLayoutTest extends TestCase {
 

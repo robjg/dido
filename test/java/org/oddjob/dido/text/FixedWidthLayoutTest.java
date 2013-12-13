@@ -6,7 +6,6 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.oddjob.OddjobTestHelper;
 import org.oddjob.dido.DataException;
 import org.oddjob.dido.DataReader;
 import org.oddjob.dido.DataWriter;
@@ -16,6 +15,7 @@ import org.oddjob.dido.stream.LinesLayout;
 import org.oddjob.dido.stream.ListLinesIn;
 import org.oddjob.dido.stream.ListLinesOut;
 import org.oddjob.dido.stream.StreamLinesIn;
+import org.oddjob.tools.OddjobTestHelper;
 
 public class FixedWidthLayoutTest extends TestCase {
 	

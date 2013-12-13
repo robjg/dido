@@ -81,7 +81,7 @@
 		<path id="test-classpath">
 			<path refid="classpath"/>
 			<pathelement path="${build.classes}" />
-			<pathelement location="${oddjob.src}/build/test"/>
+			<pathelement location="${oddjob.src}/build/tools/classes"/>
 			<fileset dir="${oddjob.src}/test/lib">
 				<include name="*.jar"/>
 			</fileset>
