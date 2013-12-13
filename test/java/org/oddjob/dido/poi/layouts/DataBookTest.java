@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
 import org.oddjob.OddjobSessionFactory;
-import org.oddjob.OurDirs;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
@@ -34,6 +33,7 @@ import org.oddjob.dido.poi.test.Person;
 import org.oddjob.dido.poi.test.PersonBonus;
 import org.oddjob.io.FileType;
 import org.oddjob.state.ParentState;
+import org.oddjob.tools.OurDirs;
 
 public class DataBookTest extends TestCase {
 	private static final Logger logger = Logger.getLogger(DataBookTest.class);

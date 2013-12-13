@@ -15,7 +15,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.oddjob.OurDirs;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
@@ -40,6 +39,7 @@ import org.oddjob.dido.poi.data.PoiSheetOut;
 import org.oddjob.dido.poi.data.PoiWorkbook;
 import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
+import org.oddjob.tools.OurDirs;
 
 public class QuickRowsTest extends TestCase {
 

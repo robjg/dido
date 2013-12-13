@@ -6,7 +6,6 @@ import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
-import org.oddjob.OurDirs;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.types.ArooaObject;
@@ -20,6 +19,7 @@ import org.oddjob.dido.poi.data.PoiWorkbook;
 import org.oddjob.dido.poi.layouts.DataBook;
 import org.oddjob.dido.poi.layouts.DataRows;
 import org.oddjob.dido.poi.layouts.TextCell;
+import org.oddjob.tools.OurDirs;
 
 public class AllStylesTest extends TestCase {
 

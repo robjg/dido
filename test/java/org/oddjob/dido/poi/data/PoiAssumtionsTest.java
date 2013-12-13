@@ -13,8 +13,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.oddjob.OurDirs;
 import org.oddjob.dido.DataException;
+import org.oddjob.tools.OurDirs;
 
 public class PoiAssumtionsTest extends TestCase {
 

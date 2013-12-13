@@ -10,6 +10,7 @@ import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConverter;
 import org.oddjob.arooa.convert.ConversionFailedException;
 import org.oddjob.arooa.convert.NoConversionAvailableException;
+import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.dido.DataException;
@@ -56,6 +57,7 @@ implements ArooaSessionAware {
 	
 	private boolean includeResultType;
 	
+	@ArooaHidden
 	@Override
 	public void setArooaSession(ArooaSession session) {
 		this.accessor = session.getTools().getPropertyAccessor();
