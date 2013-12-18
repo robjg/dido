@@ -30,7 +30,7 @@ import org.oddjob.dido.poi.layouts.DataRows;
 import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 
 /**
- * A {@link Binding} that will take a bean generated with the 
+ * @oddjob.description A {@link Binding} that will take a bean generated with the 
  * {@link org.oddjob.beancmpr.results.DidoBeanResultHandler} of the
  * {@code beancmpr} project and bind to columns in a Dido Layout.
  * <p>
@@ -49,13 +49,29 @@ implements ArooaSessionAware {
 	
 	private ArooaConverter converter;
 	
+	/**
+	 * @oddjob.property
+	 * @oddjob.description The prefix to use for the X properties.
+	 * @oddjob.required No. Defaults to x.
+	 */
 	private String xPrefix = "X";
 	
+	/**
+	 * @oddjob.property
+	 * @oddjob.description The prefix to use for the y properties.
+	 * @oddjob.required No. Defaults to y.
+	 */
 	private String yPrefix = "Y";
 	
-	private boolean initialised;
-	
+	/**
+	 * @oddjob.property
+	 * @oddjob.description Include the result type column.
+	 * @oddjob.required No. Defaults false.
+	 */
 	private boolean includeResultType;
+	
+	/** Internal flag for initialisation. */
+	private boolean initialised;
 	
 	@ArooaHidden
 	@Override
@@ -213,9 +229,10 @@ implements ArooaSessionAware {
 			
 			doSetValue(valueNode, bean.getKeys().get(keyName));
 			
-			int resultType = bean.getResultType();
-			String styleName;
 			if (valueNode instanceof DataCell) {
+				int resultType = bean.getResultType();
+				String styleName;
+				
 				switch (resultType) {
 				case 0:
 					styleName = DefaultStyleProivderFactory.BEANCMPR_KEY_MATCH_STYLE;

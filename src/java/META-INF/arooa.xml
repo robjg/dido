@@ -25,5 +25,8 @@
 		    className='org.oddjob.dido.poi.style.StyleBean'/>
         <arooa:bean-def element='workbook'
             className='org.oddjob.dido.poi.data.PoiWorkbook'/>
+        <arooa:bean-def element='beancmpr-binding'
+            className='org.oddjob.dido.poi.beancmpr.BeanCmprResultBinding'/>
+            
 	</values>
 </arooa:descriptor>
