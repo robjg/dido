@@ -248,13 +248,27 @@ implements Binding, ArooaSessionAware {
 			
 			for (String propertyName: metaData.getNames()) {
 
+				String label = metaData.labelFor(propertyName);
 				Class<?> propertyType = metaData.typeOf(propertyName);
 				
-				logger.debug("Adding property " + propertyName + 
-						" of type " + propertyType.getName());
+				if (propertyName.equals(label)) {
+					
+					logger.debug("Adding property [" + propertyName + 
+							"] of type " + propertyType.getName());
+					
+					beanDefinitionBuilder.addProperty(propertyName, 
+							propertyType);
+				}
+				else {
+					
+					logger.debug("Adding property [" + propertyName + 
+							"], label [" + label + "] of type " + 
+							propertyType.getName());
+					
+					beanDefinitionBuilder.addProperty(propertyName, label,
+							propertyType);
+				}
 				
-				beanDefinitionBuilder.addProperty(propertyName, 
-						propertyType);
 			}			
 		}
 		else {
