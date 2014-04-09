@@ -12,7 +12,7 @@ import org.oddjob.state.ParentState;
 
 public class TextCellTest extends TestCase {
 
-	public void testWriteAndRead() throws ArooaPropertyException, ArooaConversionException {
+	public void testWriteAndReadTextCellOfNamedValues() throws ArooaPropertyException, ArooaConversionException {
 		
 		File file = new File(getClass().getResource(
 				"TextCellOfNamedValues.xml").getFile());
@@ -36,6 +36,8 @@ public class TextCellTest extends TestCase {
 		assertEquals(expected[2], result[2]);
 		
 		assertEquals(expected.length, result.length);
+		
+		oddjob.destroy();
 	}
-	
+
 }

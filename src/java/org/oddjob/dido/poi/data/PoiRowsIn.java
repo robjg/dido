@@ -186,17 +186,19 @@ public class PoiRowsIn implements RowsIn {
 			if (columnIndex == 0) {
 				return null;
 			}
-			else {
-				int poiCellIndex = columnOffset + columnIndex - 1;
-				
-				Cell cell = row.getCell(poiCellIndex);
-				
-				cellReference = new CellReference(
-						cell.getRowIndex(), cell.getColumnIndex()
-							).formatAsString();
-				
-				return getCellValue(cell);
+			
+			int poiCellIndex = columnOffset + columnIndex - 1;
+			
+			Cell cell = row.getCell(poiCellIndex);
+			
+			cellReference = new CellReference(
+					row.getRowNum(), poiCellIndex).formatAsString();
+			
+			if (cell == null) {
+				return null;
 			}
+
+			return getCellValue(cell);
 		}
 		
 		@Override
@@ -213,6 +215,11 @@ public class PoiRowsIn implements RowsIn {
 		}
 	}
 	
+	/**
+	 * A cell when used with not a {@link DataCell}.
+	 * 
+	 * @param <T> The type of data in the cell.
+	 */
 	class GenericCell<T> extends PoiCellIn<T>{
 		
 		private final Class<T> type;

@@ -60,7 +60,7 @@ public class PoiAssumtionsTest extends TestCase {
 		
 		row4.createCell(0);
 		
-		// Not that last row and last cell are inconsistent!
+		// Note that last row and last cell are inconsistent!
 		assertEquals(1, row4.getLastCellNum());
 		
 		Cell cell7 = row4.createCell(7);

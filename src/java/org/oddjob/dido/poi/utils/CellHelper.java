@@ -4,9 +4,19 @@ import java.util.Date;
 
 import org.apache.poi.ss.usermodel.Cell;
 
+/**
+ * Helps with cell setting and getting based on cell type.
+ * 
+ * @author rob
+ *
+ */
 public class CellHelper {
 
 	public <T> T getCellValue(Cell cell, Class<T> type) {
+		
+		if (cell == null) {
+			throw new NullPointerException();
+		}
 		
 		Object value = null;
 		
@@ -36,7 +46,7 @@ public class CellHelper {
 					cell.getCellType());
 		}
 		
-		return (T) value;
+		return type.cast(value);
 	}
 	
 	public void setCellValue(final Cell cell, final Object value) {
