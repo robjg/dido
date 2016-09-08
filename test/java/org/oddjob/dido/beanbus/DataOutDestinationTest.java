@@ -46,13 +46,13 @@ public class DataOutDestinationTest extends TestCase {
 		oddjob.setFile(file);
 		
 		ConsoleCapture console = new ConsoleCapture();
-		console.capture(Oddjob.CONSOLE);
+		try (ConsoleCapture.Close close = console.captureConsole()) {
+			
+			oddjob.run();
+			
+			assertEquals(ParentState.COMPLETE, oddjob.lastStateEvent().getState());
+		}
 				
-		oddjob.run();
-		
-		assertEquals(ParentState.COMPLETE, oddjob.lastStateEvent().getState());
-		
-		console.close();
 		console.dump(logger);
 		
 		String[] lines = console.getLines();
