@@ -294,7 +294,9 @@ public class WhenTest extends TestCase {
 		readJob.setLayout(layout);
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
-		readJob.setBeans(new ArrayList<Object>());
+
+		List<Object> resultBeans = new ArrayList<Object>();
+		readJob.setBeans(resultBeans);
 		
 		ioData.setInput(new ArooaObject(
 				new ByteArrayInputStream(output.toByteArray())));
@@ -302,7 +304,7 @@ public class WhenTest extends TestCase {
 		
 		readJob.call();
 		
-		Object[] results = readJob.getBeans().toArray();
+		Object[] results = resultBeans.toArray();
 		assertEquals(4, results.length);
 		
 		person1 = (Person) results[0];
@@ -375,11 +377,12 @@ public class WhenTest extends TestCase {
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
 		readJob.setData(ioData);
-		readJob.setBeans(new ArrayList<Object>());
+		List<Object> resultBeans = new ArrayList<Object>();
+		readJob.setBeans(resultBeans);
 		
 		readJob.call();
 		
-		Object[] beans = readJob.getBeans().toArray();
+		Object[] beans = resultBeans.toArray();
 		assertEquals(4, beans.length);
 		
 		Person person1 = (Person) beans[0];
@@ -480,11 +483,12 @@ public class WhenTest extends TestCase {
 		readJob.setBindings("people", personBinding);
 		readJob.setBindings("fruit", fruitBinding);
 		readJob.setData(ioData);
-		readJob.setBeans(new ArrayList<Object>());
+		List<Object> resultBeans = new ArrayList<Object>();
+		readJob.setBeans(resultBeans);
 		
 		readJob.call();
 		
-		Object[] beans = readJob.getBeans().toArray();
+		Object[] beans = resultBeans.toArray();
 		assertEquals(4, beans.length);
 		
 		Person person1 = (Person) beans[0];

@@ -8,8 +8,8 @@ package org.oddjob.dido
  */
 class DataException(message: String, cause: Throwable)
 		extends Exception(message, cause) {
-	private val serialVersionUID: Long = 2010072700L;
-	
+	private val serialVersionUID: Long = 2010072700L
+
 	def this(message: String) = {
 		this(message, null)
 	}

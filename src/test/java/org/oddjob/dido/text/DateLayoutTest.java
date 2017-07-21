@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -77,19 +78,20 @@ public class DateLayoutTest extends TestCase {
 		readJob.setLayout(layout);
 		readJob.setBindings("employee", employeeBinding);
 		readJob.setData(ioData);
-		readJob.setBeans(new ArrayList<Object>());
+
+		List<Object> beans = new ArrayList<>();
+		readJob.setBeans(beans);
 		
 		readJob.call();
 		
-		Object[] beans = readJob.getBeans().toArray();
-		assertEquals(2, beans.length);
+		assertEquals(2, beans.size());
 		
-		Employee employee1 = (Employee) beans[0];
+		Employee employee1 = (Employee) beans.get(0);
 		assertEquals("23/11/10 17:34", 
 				new SimpleDateFormat("dd/MM/yy HH:mm").format(
 						employee1.getClockOut()));
 		
-		Employee employee2 = (Employee) beans[1];
+		Employee employee2 = (Employee) beans.get(1);
 		assertEquals("22/11/10 15:01", 
 				new SimpleDateFormat("dd/MM/yy HH:mm").format(
 						employee2.getClockOut()));
@@ -99,7 +101,7 @@ public class DateLayoutTest extends TestCase {
 		writeJob.setLayout(layout);
 		writeJob.setBindings("employee", employeeBinding);
 		
-		writeJob.setBeans(Arrays.asList(beans));
+		writeJob.setBeans(beans);
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		ioData.setOutput(new ArooaObject(output));

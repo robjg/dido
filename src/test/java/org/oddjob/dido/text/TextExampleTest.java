@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -88,11 +89,12 @@ public class TextExampleTest extends TestCase {
 		readJob.setLayout(layout);
 		readJob.setBindings("fruit", fruitBinding);
 		readJob.setData(ioData);
-		readJob.setBeans(new ArrayList<Object>());
+        List<Object> resultBeans = new ArrayList<Object>();
+		readJob.setBeans(resultBeans);
 		
 		readJob.call();
 		
-		Object[] beans = readJob.getBeans().toArray();
+		Object[] beans = resultBeans.toArray();
 		assertEquals(2, beans.length);
 		
 		Fruit fruit1 = (Fruit) beans[0];

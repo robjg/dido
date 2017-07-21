@@ -22,7 +22,7 @@ trait DataIn {
 	 * @throws DataException Any thing else that went wrong.
 	 */
 	@throws(classOf[DataException])
-	def provideDataIn[T <: DataIn](theType: Class[T] ): T
+	def provideDataIn[T <: DataIn](theType: Class[T]): T
 
 	
 }
