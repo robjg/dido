@@ -40,8 +40,8 @@
 		<!-- <property name="build.compiler" value="classic"/> -->
 
 		<property name="src.dir"      value="./src"/>
-		<property name="java.dir"     value="${src.dir}/main/java"/>
-		<property name="test.dir"     value="${src.dir}/test"/>
+		<property name="java.dir"     value="${src.dir}/java"/>
+		<property name="test.dir"     value="./test"/>
 		<property name="test.src"     value="${test.dir}/java"/>
 		<property name="work.dir"     value="./work"/>
 		<property name="lib.dir"      value="./lib"/>
