@@ -1,0 +1,48 @@
+<arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
+        prefix="dido" namespace="oddjob:dido">
+	<values>
+		<arooa:bean-def element='lines'
+		    className='org.oddjob.dido.stream.LinesLayout'/>
+		<arooa:bean-def element='delimited'
+		    className='org.oddjob.dido.text.DelimitedLayout'/>
+        <arooa:bean-def element='fixed'
+            className='org.oddjob.dido.text.FixedWidthLayout'/>
+		<arooa:bean-def element='text'
+		    className='org.oddjob.dido.text.TextLayout'/>
+		<arooa:bean-def element='date'
+		    className='org.oddjob.dido.text.DateLayout'/>
+		<arooa:bean-def element='named-values'
+		    className='org.oddjob.dido.text.NamedValuesLayout'/>
+        <arooa:bean-def element='number'
+            className='org.oddjob.dido.text.NumberLayout'/>
+		<arooa:bean-def element='case'
+		    className='org.oddjob.dido.other.Case'/>
+		<arooa:bean-def element='when'
+		    className='org.oddjob.dido.other.When'/>
+        <arooa:bean-def element='dynamic'
+            className='org.oddjob.dido.layout.ReconfigureLayout'/>
+        <arooa:bean-def element='hidden'
+            className='org.oddjob.dido.layout.HiddenLayout'/>
+        <arooa:bean-def element='substitution'
+            className='org.oddjob.dido.text.SubstitutionLayout'/>
+		<arooa:bean-def element='bean-binding'
+		    className='org.oddjob.dido.bio.BeanBindingBean'/>
+        <arooa:bean-def element='io'
+            className='org.oddjob.dido.stream.IOStreamData'/>
+	</values>
+	<components>
+		<arooa:bean-def element="data-out"
+						className="org.oddjob.dido.beanbus.DataOutDestination">
+			<annotations>
+				<arooa:annotation name="org.oddjob.framework.adapt.Start"
+								  method="run"/>
+				<arooa:annotation name="org.oddjob.framework.adapt.Stop"
+								  method="close"/>
+			</annotations>
+		</arooa:bean-def>
+    	<arooa:bean-def element='read'
+    	    className='org.oddjob.dido.DataReadJob'/>
+    	<arooa:bean-def element='write'
+    	    className='org.oddjob.dido.DataWriteJob'/>
+	</components>
+</arooa:descriptor>

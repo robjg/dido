@@ -1,5 +1,0 @@
-<delimited xmlns='oddjob:dido' name='employee' delimiter="|">
- <of>
-   <date format="dd/MM/yy HH:mm" name="clockOut"/>
- </of>
-</delimited>

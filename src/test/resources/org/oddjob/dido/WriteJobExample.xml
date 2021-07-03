@@ -1,0 +1,30 @@
+<oddjob xmlns:dido='oddjob:dido'>
+  <job>
+    <dido:write>
+      <layout>
+        <import resource="org/oddjob/dido/DelimitedExamplePlan.xml" />
+      </layout>
+      <bindings>
+        <dido:bean-binding key='person'>
+          <type>
+            <class name='org.oddjob.dido.Person' />
+          </type>
+        </dido:bean-binding>
+      </bindings>
+      <data>
+        <dido:io>
+          <output>
+            <identify id='results'>
+              <value>
+                <buffer />
+              </value>
+            </identify>
+          </output>
+        </dido:io>
+      </data>
+      <beans>
+        <value value='${beans}' />
+      </beans>
+    </dido:write>
+  </job>
+</oddjob>

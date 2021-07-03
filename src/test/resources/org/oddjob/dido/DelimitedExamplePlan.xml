@@ -1,0 +1,12 @@
+<lines xmlns='oddjob:dido'>
+ <of>
+  <delimited name='person'>
+   <of>
+    <text name='name'/>
+    <text name='age'/>
+    <text name='city'/>
+   </of>
+  </delimited>
+ </of>
+</lines>
+        

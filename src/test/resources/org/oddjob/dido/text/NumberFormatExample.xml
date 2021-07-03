@@ -1,0 +1,5 @@
+<delimited name='employee' delimiter="|" xmlns="oddjob:dido">
+  <of>
+    <number format="$#,#####,####0.00" name="salary" />
+  </of>
+</delimited>

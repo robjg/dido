@@ -1,3 +1,6 @@
 build
 work
 /classes
+/dido.iml
+/.idea/
+/target/

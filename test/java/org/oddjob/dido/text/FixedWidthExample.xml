@@ -1,7 +1,0 @@
-<fixed name='fruit' xmlns='oddjob:dido'>
- <of>
-  <text name='variety' index='1' length='12'/>
-  <text name='type' index='15' length='10'/>
-  <text name='colour' index='25' length='12'/>
- </of>
-</fixed>

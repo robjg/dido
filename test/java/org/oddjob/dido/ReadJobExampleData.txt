@@ -1,3 +1,0 @@
-John,24,London
-Fred,57,Paris
-Jane,32,New York
