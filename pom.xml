@@ -1,6 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <modules>
+    <module>dido-pickles</module>
+  </modules>
 
   <parent>
     <groupId>uk.co.rgordon</groupId>
@@ -9,7 +12,7 @@
   </parent>
 
   <artifactId>dido</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
   <name>DiDo</name>
   <description>Data In Data Out - A data binding framework for use with Oddjob.</description>
@@ -28,49 +31,13 @@
     </developer>
   </developers>
 
+  <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+  </properties>
+
   <dependencies>
 
-    <dependency>
-      <groupId>uk.co.rgordon</groupId>
-      <artifactId>arooa</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>uk.co.rgordon</groupId>
-      <artifactId>oddjob</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <version>${hsql.version}</version>
-      <scope>test</scope>
-    </dependency>
 
   </dependencies>
 
