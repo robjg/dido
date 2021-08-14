@@ -1,6 +1,6 @@
 build
 work
 /classes
-/dido.iml
+**/*.iml
 /.idea/
 target/

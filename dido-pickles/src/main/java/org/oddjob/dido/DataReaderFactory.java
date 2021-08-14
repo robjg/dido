@@ -15,12 +15,12 @@ public interface DataReaderFactory {
 	/**
 	 * Create a reader.
 	 * 
-	 * @param dataOut The place that data will be read from.
+	 * @param dataIn The place that data will be read from.
 	 * @return A reader. Never null.
 	 * 
 	 * @throws DataException If the reader can't be created.
 	 */
-	public DataReader readerFor(DataIn dataIn)
+	DataReader readerFor(DataIn dataIn)
 	throws DataException;
 	
 }

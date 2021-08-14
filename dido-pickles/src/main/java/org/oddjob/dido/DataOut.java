@@ -6,8 +6,8 @@ import org.oddjob.dido.other.When;
 /**
  * Provides a means of writing data out.
  * 
- * @see DataWriterFactory.
- * @see DataIn.
+ * @see DataWriterFactory
+ * @see DataIn
  * 
  * @author rob
  *

@@ -19,6 +19,6 @@ public interface DataWriterFactory {
 	 * 
 	 * @throws DataException If the writer can't be created.
 	 */
-	public DataWriter writerFor(DataOut dataOut)
+	DataWriter writerFor(DataOut dataOut)
 	throws DataException;
 }

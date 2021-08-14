@@ -3,7 +3,7 @@ package org.oddjob.dido;
 /**
  * Provides a means of reading data.
  * 
- * @see DataReaderFactory.
+ * @see DataReaderFactory
  * @see DataOut
  * 
  * @author rob
