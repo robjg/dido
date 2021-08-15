@@ -6,6 +6,7 @@
     <module>dido-pickles</module>
     <module>dido-json</module>
     <module>dido-csv</module>
+    <module>dido-poi</module>
   </modules>
 
   <parent>
@@ -37,6 +38,7 @@
   <properties>
     <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>8</maven.compiler.target>
+    <oddjob.version>1.6-SNAPSHOT</oddjob.version>
   </properties>
 
   <dependencyManagement>
