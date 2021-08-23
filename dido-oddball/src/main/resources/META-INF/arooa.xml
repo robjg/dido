@@ -1,0 +1,22 @@
+<arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
+        prefix="dido" namespace="oddjob:dido">
+	<conversions>
+		<arooa:conversion className="dido.oddjob.bean.ToBeanTransformer$Conversions"/>
+		<arooa:conversion className="dido.oddjob.schema.SchemaBean$Conversions"/>
+		<arooa:conversion className="dido.oddjob.schema.SchemaFieldBean$Conversions"/>
+	</conversions>
+	<values>
+		<arooa:bean-def element='schema'
+						className='dido.oddjob.schema.SchemaBean'/>
+		<arooa:bean-def element='field'
+						className='dido.oddjob.schema.SchemaFieldBean'/>
+		<arooa:bean-def element='to-bean'
+		    className='dido.oddjob.bean.ToBeanTransformer'/>
+	</values>
+	<components>
+		<arooa:bean-def element="stream-in"
+						className="dido.oddjob.stream.StreamInDriver"/>
+		<arooa:bean-def element="stream-out"
+						className="dido.oddjob.stream.StreamOutDestination"/>
+	</components>
+</arooa:descriptor>

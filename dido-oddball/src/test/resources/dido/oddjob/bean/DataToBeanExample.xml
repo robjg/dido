@@ -1,0 +1,25 @@
+<oddjob>
+    <job>
+        <bean-bus>
+            <parts>
+                <bus:iterable-driver xmlns:bus="oddjob:beanbus">
+                    <beans>
+                        <list>
+                            <values>
+                                <bean class="dido.oddjob.bean.FruitData" type="Apple" qty="5" price="27.2"/>
+                                <bean class="dido.oddjob.bean.FruitData" type="Orange" qty="10" price="31.6"/>
+                                <bean class="dido.oddjob.bean.FruitData" type="Pear" qty="7" price="22.1"/>
+                            </values>
+                        </list>
+                    </beans>
+                </bus:iterable-driver>
+                <bus:transformer xmlns:bus="oddjob:beanbus">
+                    <function>
+                        <dido:to-bean className="dido.oddjob.bean.Fruit" xmlns:dido="oddjob:dido"/>
+                    </function>
+                </bus:transformer>
+                <bus:capture xmlns:bus="oddjob:beanbus" id="capture"/>
+            </parts>
+        </bean-bus>
+    </job>
+</oddjob>

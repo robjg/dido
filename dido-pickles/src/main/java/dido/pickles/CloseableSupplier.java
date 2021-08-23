@@ -1,4 +1,4 @@
-package org.oddjob.dido;
+package dido.pickles;
 
 import java.io.Closeable;
 import java.util.function.Supplier;

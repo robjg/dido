@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <variables id="vars">
+                    <results>
+                        <buffer/>
+                    </results>
+                </variables>
+                <bean-bus>
+                    <parts>
+                        <dido:stream-in xmlns:dido="oddjob:dido">
+                            <input>
+                                <buffer>
+                                    <![CDATA[The
+Quick
+Brown
+Fox
+Jumped
+Over
+The
+Lazy
+Dog]]>
+                                </buffer>
+                            </input>
+                            <streamIn>
+                                <bean class="dido.oddjob.stream.StreamLines$In"/>
+                            </streamIn>
+                        </dido:stream-in>
+                        <dido:stream-out xmlns:dido="oddjob:dido">
+                            <output>
+                                <value value="${vars.results}"/>
+                            </output>
+                            <streamOut>
+                                <bean class="dido.oddjob.stream.StreamLines$Out"/>
+                            </streamOut>
+                        </dido:stream-out>
+                    </parts>
+                </bean-bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>

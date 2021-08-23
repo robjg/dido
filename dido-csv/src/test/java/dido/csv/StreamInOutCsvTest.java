@@ -2,8 +2,8 @@ package dido.csv;
 
 import dido.data.GenericData;
 import org.junit.jupiter.api.Test;
-import org.oddjob.dido.CloseableConsumer;
-import org.oddjob.dido.CloseableSupplier;
+import dido.pickles.CloseableConsumer;
+import dido.pickles.CloseableSupplier;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

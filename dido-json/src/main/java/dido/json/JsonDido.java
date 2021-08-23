@@ -1,8 +1,8 @@
 package dido.json;
 
 import dido.data.DataSchema;
-import org.oddjob.dido.StreamIn;
-import org.oddjob.dido.StreamOut;
+import dido.pickles.StreamIn;
+import dido.pickles.StreamOut;
 
 public class JsonDido {
 

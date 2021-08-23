@@ -1,8 +1,8 @@
 <arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
         prefix="dido" namespace="oddjob:dido">
 	<conversions>
-		<arooa:conversion className="dido.csv.CsvDido" method="toStreamOut"/>
-		<arooa:conversion className="dido.csv.CsvDido" method="toStreamIn"/>
+		<arooa:conversion className="dido.csv.CsvDido" methodName="toStreamOut"/>
+		<arooa:conversion className="dido.csv.CsvDido" methodName="toStreamIn"/>
 	</conversions>
 	<values>
 		<arooa:bean-def element='csv'

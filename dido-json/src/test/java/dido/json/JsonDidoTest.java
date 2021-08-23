@@ -6,8 +6,8 @@ import dido.data.MapRecord;
 import dido.data.SchemaBuilder;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
-import org.oddjob.dido.CloseableConsumer;
-import org.oddjob.dido.CloseableSupplier;
+import dido.pickles.CloseableConsumer;
+import dido.pickles.CloseableSupplier;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 

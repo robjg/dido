@@ -1,0 +1,15 @@
+<oddjob>
+    <job>
+        <variables id="vars">
+            <schema>
+                <dido:schema xmlns:dido="oddjob:dido">
+                    <of>
+                        <dido:field index="3" name="Fruit"/>
+                        <dido:field type="int" name="Qty"/>
+                        <dido:field type="double" index="8" name="Price"/>
+                    </of>
+                </dido:schema>
+            </schema>
+        </variables>
+    </job>
+</oddjob>

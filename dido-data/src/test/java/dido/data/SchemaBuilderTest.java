@@ -3,6 +3,8 @@ package dido.data;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -13,9 +15,9 @@ class SchemaBuilderTest {
     void testAddSequentiallyNoFields() {
 
         DataSchema<String> schema = SchemaBuilder.forStringFields()
-                .addNextIndex(String.class)
-                .addNextIndex(int.class)
-                .addNextIndex(double.class)
+                .addIndex(0, String.class)
+                .addIndex(0, int.class)
+                .addIndex(0, double.class)
                 .build();
 
         assertThat(schema.getFieldType(), is(String.class));
@@ -86,6 +88,18 @@ class SchemaBuilderTest {
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));
         assertThat(schema.getFields(), Matchers.contains("fruit", "qty", "price"));
+    }
+
+    @Test
+    void testAddNestedSchema() {
+
+        AtomicReference<DataSchema<String>> self = new AtomicReference<>();
+        DataSchema<String> schema = SchemaBuilder.forStringFields()
+                .addNestedField("node", self::get)
+                .build();
+        self.set(schema);
+
+        assertThat(schema.getSchema("node"), Matchers.sameInstance(schema));
     }
 
     @Test

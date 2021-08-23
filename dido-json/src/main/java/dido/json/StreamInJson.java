@@ -5,8 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import dido.data.DataSchema;
 import dido.data.GenericData;
-import org.oddjob.dido.CloseableSupplier;
-import org.oddjob.dido.StreamIn;
+import dido.pickles.CloseableSupplier;
+import dido.pickles.StreamIn;
 
 import java.io.IOException;
 import java.io.InputStream;

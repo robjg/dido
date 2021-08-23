@@ -4,6 +4,7 @@
   <modules>
     <module>dido-data</module>
     <module>dido-pickles</module>
+    <module>dido-oddball</module>
     <module>dido-json</module>
     <module>dido-csv</module>
     <module>dido-poi</module>
@@ -53,6 +54,12 @@
       <dependency>
         <groupId>uk.co.rgordon</groupId>
         <artifactId>dido-pickles</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>uk.co.rgordon</groupId>
+        <artifactId>dido-oddball</artifactId>
         <version>${project.version}</version>
       </dependency>
 

@@ -126,7 +126,7 @@ public interface DataSchema<F> {
      * @param field The field.
      * @return The nested schema.
      */
-    <N> DataSchema<N> getFieldSchema(F field);
+    <N> DataSchema<N> getSchema(F field);
 
     /**
      * Provide an empty schema.

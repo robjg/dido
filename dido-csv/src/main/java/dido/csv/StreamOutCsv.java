@@ -5,8 +5,8 @@ import dido.data.GenericData;
 import dido.data.IndexedData;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.oddjob.dido.CloseableConsumer;
-import org.oddjob.dido.StreamOut;
+import dido.pickles.CloseableConsumer;
+import dido.pickles.StreamOut;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -1,0 +1,28 @@
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <beanbus>
+                    <parts>
+                        <bean class="dido.oddjob.type.BeanExampleDriver"/>
+                        <bean class="dido.oddjob.type.DataTransformBean">
+                            <tranform>
+                                <dido:transform partial="true">
+                                    <fields>
+                                        <dido:format index="2" toName="Price" type="string" format=""/>
+                                        <dido:move index="2" toIndex="4" toName="Colour"/>
+                                    </fields>
+                                </dido:transform>
+                            </tranform>
+                        </bean>
+                        <bus:capture>
+                            <to>
+                                <list/>
+                            </to>
+                        </bus:capture>
+                    </parts>
+                </beanbus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>

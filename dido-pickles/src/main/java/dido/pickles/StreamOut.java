@@ -1,6 +1,7 @@
-package org.oddjob.dido;
+package dido.pickles;
 
 import dido.data.GenericData;
+import dido.pickles.CloseableConsumer;
 
 import java.io.IOException;
 import java.io.OutputStream;

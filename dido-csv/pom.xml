@@ -43,6 +43,19 @@
             <artifactId>hamcrest</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>uk.co.rgordon</groupId>
+            <artifactId>dido-oddball</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.co.rgordon</groupId>
+            <artifactId>oddjob</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

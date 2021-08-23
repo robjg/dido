@@ -2,8 +2,8 @@ package dido.csv;
 
 import dido.data.DataSchema;
 import org.apache.commons.csv.CSVFormat;
-import org.oddjob.dido.StreamIn;
-import org.oddjob.dido.StreamOut;
+import dido.pickles.StreamIn;
+import dido.pickles.StreamOut;
 
 public class CsvDido {
 
