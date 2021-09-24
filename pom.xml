@@ -23,6 +23,14 @@
   <description>Data In Data Out - A data binding framework for use with Oddjob.</description>
   <url>http://rgordon.co.uk/oddjob</url>
 
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <scm>
     <url>https://github.com/robjg/dido</url>
     <connection>scm:git:git://github.com/robjg/dido.git</connection>
@@ -65,11 +73,6 @@
 
     </dependencies>
   </dependencyManagement>
-
-  <dependencies>
-
-
-  </dependencies>
 
   <build>
     <plugins>

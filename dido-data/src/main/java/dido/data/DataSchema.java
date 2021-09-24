@@ -114,7 +114,9 @@ public interface DataSchema<F> {
      * @param field The field.
      * @return The type.
      */
-    Class<?> getType(F field);
+    default Class<?> getType(F field) {
+        return getTypeAt(getIndex(field));
+    }
 
     /**
      * Get the nested schema for the given field. If the
@@ -126,7 +128,9 @@ public interface DataSchema<F> {
      * @param field The field.
      * @return The nested schema.
      */
-    <N> DataSchema<N> getSchema(F field);
+    default <N> DataSchema<N> getSchema(F field) {
+        return getSchemaAt(getIndex(field));
+    }
 
     /**
      * Provide an empty schema.

@@ -14,9 +14,9 @@
 		    className='dido.oddjob.bean.ToBeanTransformer'/>
 	</values>
 	<components>
-		<arooa:bean-def element="stream-in"
-						className="dido.oddjob.stream.StreamInDriver"/>
-		<arooa:bean-def element="stream-out"
-						className="dido.oddjob.stream.StreamOutDestination"/>
+		<arooa:bean-def element="driver"
+						className="dido.oddjob.beanbus.DataInDriver"/>
+		<arooa:bean-def element="destination"
+						className="dido.oddjob.beanbus.DataOutDestination"/>
 	</components>
 </arooa:descriptor>

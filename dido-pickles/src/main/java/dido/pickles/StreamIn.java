@@ -1,7 +1,6 @@
 package dido.pickles;
 
 import dido.data.GenericData;
-import dido.pickles.CloseableSupplier;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +10,7 @@ import java.io.InputStream;
  *
  * @param <F> The field type of the GenericData.
  */
-public interface StreamIn<F> {
+public interface StreamIn<F> extends DataInHow<F, InputStream> {
 
-    CloseableSupplier<GenericData<F>> supplierFor(InputStream inputStream) throws IOException;
+    DataIn<F> inFrom(InputStream inputStream) throws IOException;
 }

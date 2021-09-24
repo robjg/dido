@@ -1,26 +1,29 @@
-package dido.oddjob.stream;
+package dido.oddjob.beanbus;
 
 import dido.data.GenericData;
+import dido.pickles.DataIn;
+import dido.pickles.DataInHow;
+import org.oddjob.arooa.ArooaSession;
+import org.oddjob.arooa.ArooaValue;
+import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.beanbus.Destination;
-import dido.pickles.CloseableSupplier;
-import dido.pickles.StreamIn;
-import org.oddjob.framework.adapt.Start;
 import org.oddjob.framework.adapt.Stop;
 
 import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class StreamInDriver<F> implements Runnable, Closeable {
+public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAware {
+
+    private ArooaSession session;
 
     private String name;
 
-    private StreamIn<F> streamIn;
+    private DataInHow<F, I> how;
 
-    private InputStream input;
+    private ArooaValue from;
 
     private Consumer<? super GenericData<F>> to;
 
@@ -28,16 +31,32 @@ public class StreamInDriver<F> implements Runnable, Closeable {
 
     private volatile boolean stop;
 
-    @Start
+    @Override
+    public void setArooaSession(ArooaSession session) {
+        this.session = session;
+    }
+
     @Override
     public void run() {
 
         stop = false;
 
         count = 0;
-        try (CloseableSupplier<GenericData<F>> supplier =
-                     Objects.requireNonNull(streamIn, "No In")
-                .supplierFor(Objects.requireNonNull(input, "No Output Stream"))) {
+
+        DataInHow<F, I> how = Objects.requireNonNull(this.how, "No How");
+
+        I from;
+        try {
+            from = session.getTools().getArooaConverter().convert(
+                    Objects.requireNonNull(this.from, "Nothing to Read From."),
+                    how.getInType());
+        }
+        catch (ArooaConversionException e) {
+            throw new IllegalArgumentException(e);
+        }
+
+        try (DataIn<F> supplier = how.inFrom(from)) {
+
             while (!stop) {
                 GenericData<F> data = supplier.get();
                 if (data == null) {
@@ -51,14 +70,14 @@ public class StreamInDriver<F> implements Runnable, Closeable {
                 }
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Stop
     @Override
-    public void close() throws IOException {
+    public void close() {
 
         stop = true;
     }
@@ -71,20 +90,20 @@ public class StreamInDriver<F> implements Runnable, Closeable {
         this.name = name;
     }
 
-    public StreamIn<F> getStreamIn() {
-        return streamIn;
+    public DataInHow<F, I> getHow() {
+        return how;
     }
 
-    public void setStreamIn(StreamIn<F> streamIn) {
-        this.streamIn = streamIn;
+    public void setHow(DataInHow<F, I> how) {
+        this.how = how;
     }
 
-    public InputStream getInput() {
-        return input;
+    public ArooaValue getFrom() {
+        return from;
     }
 
-    public void setInput(InputStream input) {
-        this.input = input;
+    public void setFrom(ArooaValue from) {
+        this.from = from;
     }
 
     public boolean isStop() {

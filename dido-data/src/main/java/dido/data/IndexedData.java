@@ -27,35 +27,35 @@ public interface IndexedData<F> {
     }
 
     default boolean getBooleanAt(int index) {
-        return getObjectAt(index, Boolean.class).booleanValue();
+        return getObjectAt(index, Boolean.class);
     }
 
     default byte getByteAt(int index) {
-        return getObjectAt(index, Number.class).byteValue();
+        return getObjectAt(index, Byte.class);
     }
 
     default char getCharAt(int index) {
-        return getObjectAt(index, Character.class).charValue();
+        return getObjectAt(index, Character.class);
     }
 
     default short getShortAt(int index) {
-        return getObjectAt(index, Number.class).shortValue();
+        return getObjectAt(index, Short.class);
     }
 
     default int getIntAt(int index) {
-        return getObjectAt(index, Number.class).intValue();
+        return getObjectAt(index, Integer.class);
     }
 
     default long getLongAt(int index) {
-        return getObjectAt(index, Number.class).longValue();
+        return (long) getObjectAt(index);
     }
 
     default float getFloatAt(int index) {
-        return getObjectAt(index, Number.class).floatValue();
+        return getObjectAt(index, Float.class);
     }
 
     default double getDoubleAt(int index) {
-        return getObjectAt(index, Number.class).doubleValue();
+        return (double) getObjectAt(index, Object.class);
     }
 
     static boolean equals(IndexedData<?> data1, IndexedData<?> data2) {

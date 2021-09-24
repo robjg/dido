@@ -2,13 +2,13 @@
     <job>
         <bean-bus>
             <parts>
-                <dido:stream-in xmlns:dido="oddjob:dido">
-                    <input>
+                <dido:driver xmlns:dido="oddjob:dido">
+                    <from>
                         <buffer>Apple,5,27.2
 Orange,10,31.6
 Pear,7,22.1</buffer>
-                    </input>
-                    <streamIn>
+                    </from>
+                    <how>
                         <dido:csv xmlns:dido="oddjob:dido">
                             <schema>
                                 <dido:schema>
@@ -20,8 +20,8 @@ Pear,7,22.1</buffer>
                                 </dido:schema>
                             </schema>
                         </dido:csv>
-                    </streamIn>
-                </dido:stream-in>
+                    </how>
+                </dido:driver>
                 <bus:transformer xmlns:bus="oddjob:beanbus">
                     <function>
                         <dido:to-bean className="dido.csv.Fruit" xmlns:dido="oddjob:dido"/>

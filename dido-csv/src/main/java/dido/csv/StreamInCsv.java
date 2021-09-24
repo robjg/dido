@@ -3,12 +3,12 @@ package dido.csv;
 import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.data.SchemaBuilder;
+import dido.pickles.DataIn;
+import dido.pickles.StreamIn;
 import dido.pickles.util.Primitives;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import dido.pickles.CloseableSupplier;
-import dido.pickles.StreamIn;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,9 +65,13 @@ public class StreamInCsv<F> implements StreamIn<F> {
         this.partialSchema = partialSchema;
     }
 
+    @Override
+    public Class<InputStream> getInType() {
+        return InputStream.class;
+    }
 
     @Override
-    public CloseableSupplier<GenericData<F>> supplierFor(InputStream inputStream) throws IOException {
+    public DataIn<F> inFrom(InputStream inputStream) throws IOException {
 
         CSVFormat csvFormat = this.csvFormat;
 
@@ -77,16 +81,17 @@ public class StreamInCsv<F> implements StreamIn<F> {
         Iterator<CSVRecord> iterator;
 
         if (this.schema == null || this.partialSchema) {
-            csvParser = csvFormat.parse(new InputStreamReader(inputStream));
-            iterator = csvParser.iterator();
+
+                csvParser = csvFormat.parse(new InputStreamReader(inputStream));
+                iterator = csvParser.iterator();
+
             if (iterator.hasNext()) {
                 schema = schemaFromHeader(iterator.next(), this.partialSchema ? ((DataSchema<String>) this.schema) : null);
             }
             else {
                 throw new IOException("No Header Record.");
             }
-        }
-        else {
+        } else {
             schema = this.schema;
             if (this.withHeaders) {
                 csvFormat = csvFormat.withFirstRecordAsHeader();
@@ -95,20 +100,20 @@ public class StreamInCsv<F> implements StreamIn<F> {
             iterator = csvParser.iterator();
         }
 
-        return new CloseableSupplier<GenericData<F>>() {
-            @Override
-            public void close() throws IOException {
-                csvParser.close();
-            }
+        return new DataIn<F>() {
 
             @Override
             public GenericData<F> get() {
                 if (iterator.hasNext()) {
                     return dataFrom(iterator.next(), schema);
-                }
-                else {
+                } else {
                     return null;
                 }
+            }
+
+            @Override
+            public void close() throws IOException {
+                csvParser.close();
             }
         };
     }

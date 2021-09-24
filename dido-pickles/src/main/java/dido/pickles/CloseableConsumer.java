@@ -1,6 +1,5 @@
 package dido.pickles;
 
-import java.io.Closeable;
 import java.util.function.Consumer;
 
 /**
@@ -8,6 +7,6 @@ import java.util.function.Consumer;
  *
  * @param <T> The type of the consumer.
  */
-public interface CloseableConsumer<T> extends Consumer<T>, Closeable {
+public interface CloseableConsumer<T> extends Consumer<T>, AutoCloseable {
 
 }

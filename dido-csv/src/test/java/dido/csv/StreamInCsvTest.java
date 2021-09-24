@@ -26,7 +26,7 @@ class StreamInCsvTest {
         StreamInCsv<String> test = new StreamInCsv<>(schema);
 
 
-        CloseableSupplier<GenericData<String>> supplier = test.supplierFor(new ByteArrayInputStream("Apple,5,27.2".getBytes()));
+        CloseableSupplier<GenericData<String>> supplier = test.inFrom(new ByteArrayInputStream("Apple,5,27.2".getBytes()));
 
         GenericData<String> data = supplier.get();
 

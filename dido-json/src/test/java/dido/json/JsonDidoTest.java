@@ -4,16 +4,15 @@ import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.data.MapRecord;
 import dido.data.SchemaBuilder;
-import org.json.JSONException;
-import org.junit.jupiter.api.Test;
-import dido.pickles.CloseableConsumer;
 import dido.pickles.CloseableSupplier;
+import dido.pickles.DataIn;
+import dido.pickles.DataOut;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +34,7 @@ class JsonDidoTest {
             "}";
 
     @Test
-    void testToJsonAndBackFixedSchema() throws JSONException, IOException {
+    void testToJsonAndBackFixedSchema() throws Exception {
 
         GenericData<String> data1 = MapRecord.newBuilderNoSchema()
                 .setString("type", "apple")
@@ -59,7 +58,7 @@ class JsonDidoTest {
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
-        try (CloseableConsumer<GenericData<String>> consumer = test.toStreamOut().consumerFor(results)) {
+        try (DataOut<String> consumer = test.toStreamOut().outTo(results)) {
 
             consumer.accept(data1);
             consumer.accept(data2);
@@ -73,7 +72,7 @@ class JsonDidoTest {
 
         List<GenericData<String>> copy = new ArrayList<>();
 
-        try (CloseableSupplier<GenericData<String>> supplier = test.toStreamIn().supplierFor(
+        try (CloseableSupplier<GenericData<String>> supplier = test.toStreamIn().inFrom(
                 new ByteArrayInputStream(results.toByteArray()))) {
 
             while (true) {
@@ -89,7 +88,7 @@ class JsonDidoTest {
     }
 
     @Test
-    void testToJsonOverrideSchema() throws IOException {
+    void testToJsonOverrideSchema() throws Exception {
 
         GenericData<String> data1 = MapRecord.newBuilderNoSchema()
                 .setString("type", "apple")
@@ -112,7 +111,7 @@ class JsonDidoTest {
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
-        try (CloseableConsumer<GenericData<String>> consumer = test.toStreamOut().consumerFor(results)) {
+        try (DataOut<String> consumer = test.toStreamOut().outTo(results)) {
 
             consumer.accept(data1);
             consumer.accept(data2);
@@ -120,7 +119,7 @@ class JsonDidoTest {
 
         List<GenericData<String>> copy = new ArrayList<>();
 
-        try (CloseableSupplier<GenericData<String>> supplier = test.toStreamIn().supplierFor(
+        try (DataIn<String> supplier = test.toStreamIn().inFrom(
                 new ByteArrayInputStream(results.toByteArray()))) {
 
             while (true) {

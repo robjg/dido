@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import dido.data.DataSchema;
 import dido.data.GenericData;
-import dido.pickles.CloseableSupplier;
+import dido.pickles.DataIn;
 import dido.pickles.StreamIn;
 
 import java.io.IOException;
@@ -28,9 +28,13 @@ public class StreamInJson implements StreamIn<String> {
         this.schema = schema == null ? DataSchema.emptyStringFieldSchema() : schema;
     }
 
+    @Override
+    public Class<InputStream> getInType() {
+        return InputStream.class;
+    }
 
     @Override
-    public CloseableSupplier<GenericData<String>> supplierFor(InputStream inputStream) throws IOException {
+    public DataIn<String> inFrom(InputStream inputStream) throws IOException {
 
         Gson gson = new GsonBuilder().registerTypeAdapter(GenericData.class,
                         new FieldRecordDeserializer(schema, partialSchema))
@@ -45,13 +49,7 @@ public class StreamInJson implements StreamIn<String> {
 
         reader.beginArray();
 
-        return new CloseableSupplier<GenericData<String>>() {
-
-            @Override
-            public void close() throws IOException {
-                reader.endArray();
-                reader.close();
-            }
+        return new DataIn<String>() {
 
             @Override
             public GenericData<String> get() {
@@ -65,6 +63,16 @@ public class StreamInJson implements StreamIn<String> {
                     }
                 } catch (IOException e) {
                     throw new IllegalArgumentException(e);
+                }
+            }
+
+            @Override
+            public void close() {
+                try {
+                    reader.endArray();
+                    reader.close();
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
                 }
             }
         };

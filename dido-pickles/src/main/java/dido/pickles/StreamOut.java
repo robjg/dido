@@ -1,7 +1,6 @@
 package dido.pickles;
 
 import dido.data.GenericData;
-import dido.pickles.CloseableConsumer;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,7 +10,7 @@ import java.io.OutputStream;
  *
  * @param <F> The field type of the GenericData.
  */
-public interface StreamOut<F> {
+public interface StreamOut<F> extends DataOutHow<F, OutputStream> {
 
-    CloseableConsumer<GenericData<F>> consumerFor(OutputStream outputStream) throws IOException;
+    DataOut<F> outTo(OutputStream outputStream) throws IOException;
 }

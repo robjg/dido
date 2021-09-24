@@ -3,10 +3,11 @@ package dido.csv;
 import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.data.IndexedData;
+import dido.pickles.CloseableConsumer;
+import dido.pickles.DataOut;
+import dido.pickles.StreamOut;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import dido.pickles.CloseableConsumer;
-import dido.pickles.StreamOut;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,18 +38,22 @@ public class StreamOutCsv<F> implements StreamOut<F> {
     }
 
     @Override
-    public CloseableConsumer<GenericData<F>> consumerFor(OutputStream outputStream) throws IOException {
+    public Class<OutputStream> getOutType() {
+        return OutputStream.class;
+    }
+
+    @Override
+    public DataOut<F> outTo(OutputStream outputStream) throws IOException{
 
         if (schema == null) {
             return new UnknownSchemaConsumer(outputStream);
-        }
-        else {
+        } else {
             return consumerWhenSchemaKnown(outputStream, schema);
         }
     }
 
-    protected CloseableConsumer<GenericData<F>> consumerWhenSchemaKnown(OutputStream outputStream,
-                                                                             DataSchema<F> schema) throws IOException {
+    protected DataOut<F> consumerWhenSchemaKnown(OutputStream outputStream,
+                                                 DataSchema<F> schema) throws IOException{
         CSVFormat csvFormat = this.csvFormat;
         if (this.withHeaders) {
             csvFormat = csvFormat.withHeader(headers(schema));
@@ -57,10 +62,10 @@ public class StreamOutCsv<F> implements StreamOut<F> {
         Writer writer = new OutputStreamWriter(outputStream);
         final CSVPrinter printer = csvFormat.print(writer);
 
-        return new KnownSchemaConsumer(printer);
+        return new KnownSchemaConsumer<>(printer);
     }
 
-    static class KnownSchemaConsumer<F> implements CloseableConsumer<GenericData<F>> {
+    static class KnownSchemaConsumer<F> implements DataOut<F> {
 
         final CSVPrinter printer;
 
@@ -83,7 +88,7 @@ public class StreamOutCsv<F> implements StreamOut<F> {
         }
     }
 
-    class UnknownSchemaConsumer implements CloseableConsumer<GenericData<F>> {
+    class UnknownSchemaConsumer implements DataOut<F> {
 
         private final OutputStream outputStream;
 
@@ -106,7 +111,7 @@ public class StreamOutCsv<F> implements StreamOut<F> {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() throws Exception {
             if (schemaKnownConsumer != null) {
                 schemaKnownConsumer.close();
             }
@@ -121,7 +126,7 @@ public class StreamOutCsv<F> implements StreamOut<F> {
         int column = 1;
         for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
             while (column++ < i) {
-                headers[i -1] = "";
+                headers[i - 1] = "";
             }
             headers[i - 1] = Optional.ofNullable(schema.getFieldAt(i))
                     .map(Object::toString)

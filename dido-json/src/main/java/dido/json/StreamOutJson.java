@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 import dido.data.GenericData;
-import dido.pickles.CloseableConsumer;
+import dido.pickles.DataOut;
 import dido.pickles.StreamOut;
 
 import java.io.IOException;
@@ -15,7 +15,12 @@ import java.nio.charset.StandardCharsets;
 public class StreamOutJson implements StreamOut<String> {
 
     @Override
-    public CloseableConsumer<GenericData<String>> consumerFor(OutputStream outputStream) throws IOException {
+    public Class<OutputStream> getOutType() {
+        return OutputStream.class;
+    }
+
+    @Override
+    public DataOut<String> outTo(OutputStream outputStream) throws IOException {
 
         Gson gson = new GsonBuilder().registerTypeAdapter(GenericData.class, new FieldRecordSerializer())
                 .create();
@@ -24,7 +29,7 @@ public class StreamOutJson implements StreamOut<String> {
         writer.setIndent("  ");
         writer.beginArray();
 
-        return new CloseableConsumer<GenericData<String>>() {
+        return new DataOut<String>() {
             @Override
             public void close() throws IOException {
                 writer.endArray();

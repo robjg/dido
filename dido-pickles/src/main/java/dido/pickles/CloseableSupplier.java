@@ -1,6 +1,5 @@
 package dido.pickles;
 
-import java.io.Closeable;
 import java.util.function.Supplier;
 
 /**
@@ -8,5 +7,6 @@ import java.util.function.Supplier;
  *
  * @param <T> The type of the Supplier.
  */
-public interface CloseableSupplier<T> extends Supplier<T>, Closeable {
+public interface CloseableSupplier<T> extends Supplier<T>, AutoCloseable {
+
 }
