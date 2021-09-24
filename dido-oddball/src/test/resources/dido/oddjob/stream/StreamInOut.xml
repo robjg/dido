@@ -10,8 +10,8 @@
                 </variables>
                 <bean-bus>
                     <parts>
-                        <dido:stream-in xmlns:dido="oddjob:dido">
-                            <input>
+                        <dido:driver xmlns:dido="oddjob:dido">
+                            <from>
                                 <buffer>
                                     <![CDATA[The
 Quick
@@ -23,19 +23,19 @@ The
 Lazy
 Dog]]>
                                 </buffer>
-                            </input>
-                            <streamIn>
+                            </from>
+                            <how>
                                 <bean class="dido.oddjob.stream.StreamLines$In"/>
-                            </streamIn>
-                        </dido:stream-in>
-                        <dido:stream-out xmlns:dido="oddjob:dido">
-                            <output>
+                            </how>
+                        </dido:driver>
+                        <dido:destination xmlns:dido="oddjob:dido">
+                            <to>
                                 <value value="${vars.results}"/>
-                            </output>
-                            <streamOut>
+                            </to>
+                            <how>
                                 <bean class="dido.oddjob.stream.StreamLines$Out"/>
-                            </streamOut>
-                        </dido:stream-out>
+                            </how>
+                        </dido:destination>
                     </parts>
                 </bean-bus>
             </jobs>
