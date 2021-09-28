@@ -1,6 +1,5 @@
 package dido.oddjob.bean;
 
-import dido.data.DataSchema;
 import dido.data.GenericData;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaValue;
@@ -13,13 +12,9 @@ import org.oddjob.arooa.reflect.PropertyAccessor;
 
 import java.util.function.Function;
 
-public class ToBeanTransformer implements ArooaSessionAware, ArooaValue {
+public class FromBeanTransformer implements ArooaSessionAware, ArooaValue {
 
     private ArooaClass arooaClass;
-
-    private Class<?> beanClass;
-
-    private DataSchema<String> schema;
 
     private ArooaSession session;
 
@@ -28,7 +23,7 @@ public class ToBeanTransformer implements ArooaSessionAware, ArooaValue {
         @Override
         public void registerWith(ConversionRegistry registry) {
 
-            registry.register(ToBeanTransformer.class, Function.class,
+            registry.register(FromBeanTransformer.class, Function.class,
                     from -> {
                         try {
                             return from.toBeanTransformer();
@@ -44,25 +39,17 @@ public class ToBeanTransformer implements ArooaSessionAware, ArooaValue {
         this.session = session;
     }
 
-    public <T> Function<GenericData<String>, T> toBeanTransformer() throws ClassNotFoundException {
+    public <T> Function<T, GenericData<String>> toBeanTransformer() throws ClassNotFoundException {
 
         PropertyAccessor accessor = session.getTools().getPropertyAccessor();
 
-        ToBeanArooa toBean = new ToBeanArooa(accessor);
-
-        if (this.schema != null) {
-            return toBean.ofSchema(schema);
-        }
-
-        if (this.beanClass != null) {
-            return toBean.ofClass((Class<T>) beanClass);
-        }
+        FromBeanArooa fromBean = new FromBeanArooa(accessor);
 
         if (arooaClass != null) {
-            return toBean.ofArooaClass(arooaClass);
+            return fromBean.ofArooaClass(arooaClass);
         }
 
-        return toBean.ofUnknown();
+        return fromBean.ofUnknown();
     }
 
     public ArooaClass getArooaClass() {
@@ -73,27 +60,10 @@ public class ToBeanTransformer implements ArooaSessionAware, ArooaValue {
         this.arooaClass = arooaClass;
     }
 
-    public Class<?> getBeanClass() {
-        return beanClass;
-    }
-
-    public void setBeanClass(Class<?> beanClass) {
-        this.beanClass = beanClass;
-    }
-
-    public DataSchema<String> getSchema() {
-        return schema;
-    }
-
-    public void setSchema(DataSchema<String> schema) {
-        this.schema = schema;
-    }
-
     @Override
     public String toString() {
         return "ToBeanTransformer{" +
                 "arooaClass=" + arooaClass +
-                ", schema=" + schema +
                 '}';
     }
 }

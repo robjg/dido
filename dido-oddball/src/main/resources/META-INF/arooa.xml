@@ -2,6 +2,7 @@
         prefix="dido" namespace="oddjob:dido">
 	<conversions>
 		<arooa:conversion className="dido.oddjob.bean.ToBeanTransformer$Conversions"/>
+		<arooa:conversion className="dido.oddjob.bean.FromBeanTransformer$Conversions"/>
 		<arooa:conversion className="dido.oddjob.schema.SchemaBean$Conversions"/>
 		<arooa:conversion className="dido.oddjob.schema.SchemaFieldBean$Conversions"/>
 	</conversions>
@@ -12,6 +13,8 @@
 						className='dido.oddjob.schema.SchemaFieldBean'/>
 		<arooa:bean-def element='to-bean'
 		    className='dido.oddjob.bean.ToBeanTransformer'/>
+		<arooa:bean-def element='from-bean'
+						className='dido.oddjob.bean.FromBeanTransformer'/>
 	</values>
 	<components>
 		<arooa:bean-def element="driver"

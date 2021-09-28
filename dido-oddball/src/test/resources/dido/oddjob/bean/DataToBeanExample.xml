@@ -15,7 +15,11 @@
                 </bus:iterable-driver>
                 <bus:transformer xmlns:bus="oddjob:beanbus">
                     <function>
-                        <dido:to-bean className="dido.oddjob.bean.Fruit" xmlns:dido="oddjob:dido"/>
+                        <dido:to-bean xmlns:dido="oddjob:dido">
+                            <beanClass>
+                                <class name="dido.oddjob.bean.Fruit"/>
+                            </beanClass>
+                        </dido:to-bean>
                     </function>
                 </bus:transformer>
                 <bus:capture xmlns:bus="oddjob:beanbus" id="capture"/>
