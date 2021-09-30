@@ -1,6 +1,5 @@
 package dido.data;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,6 +29,7 @@ public class DataSchemaTest {
 
         assertThat(schema1, is(schema2));
         assertThat(schema1.hashCode(), is(schema2.hashCode()));
-        assertThat(schema2, Matchers.not(schema3));
+        assertThat(schema2, is(schema3));
+        assertThat(schema2.hashCode(), is(schema3.hashCode()));
     }
 }

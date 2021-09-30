@@ -87,7 +87,12 @@ public class JsonDataWrapper {
             }
 
             @Override
-            public <T> T getObjectAt(int index, Class<T> type) {
+            public Object getAt(int index) {
+                return getAtAs(index, Object.class);
+            }
+
+            @Override
+            public <T> T getAtAs(int index, Class<T> type) {
                 Getter getter = getters[index];
                 if (getter == null) {
                     throw new IllegalArgumentException("No field defined at " + index);
@@ -103,6 +108,17 @@ public class JsonDataWrapper {
                             throw new IllegalStateException("Shouldn't happen.", e);
                         }
                     }
+                }
+            }
+
+            @Override
+            public <T> T getAs(String field, Class<T> type) {
+                int index = getSchema().getIndex(field);
+                if (index > 0) {
+                    return getAtAs(index, type);
+                }
+                else {
+                    return null;
                 }
             }
 
@@ -150,6 +166,51 @@ public class JsonDataWrapper {
             @Override
             public double getDoubleAt(int index) {
                 return ((DoubleGetter) getters[index]).get(jsonObject);
+            }
+
+            @Override
+            public boolean getBoolean(String field) {
+                return getAs(field, Boolean.class);
+            }
+
+            @Override
+            public byte getByte(String field) {
+                return getAs(field, Byte.class);
+            }
+
+            @Override
+            public char getChar(String field) {
+                return getAs(field, Character.class);
+            }
+
+            @Override
+            public short getShort(String field) {
+                return getAs(field, Short.class);
+            }
+
+            @Override
+            public int getInt(String field) {
+                return getAs(field, Integer.class);
+            }
+
+            @Override
+            public long getLong(String field) {
+                return getAs(field, Long.class);
+            }
+
+            @Override
+            public float getFloat(String field) {
+                return getAs(field, Float.class);
+            }
+
+            @Override
+            public double getDouble(String field) {
+                return getAs(field, Double.class);
+            }
+
+            @Override
+            public String getString(String field) {
+                return getAs(field, String.class);
             }
 
             @Override

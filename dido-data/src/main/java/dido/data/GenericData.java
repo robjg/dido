@@ -1,5 +1,7 @@
 package dido.data;
 
+import java.util.Iterator;
+
 /**
  * Provide a generic data structure for moving data in and out.
  *
@@ -7,61 +9,77 @@ package dido.data;
  */
 public interface GenericData<F> extends IndexedData<F> {
 
-    default Object getObject(F field) {
-        return getObject(field, Object.class);
-    }
-
-    default <T> T getObject(F field, Class<T> type) {
+    default Object get(F field) {
         int index = getSchema().getIndex(field);
         if (index > 0) {
-            return getObjectAt(index, type);
+            return getAt(index);
         }
         else {
             return null;
         }
     }
 
+    default <T> T getAs(F field, Class<T> type) {
+        return (T) get(field);
+    }
+
     default boolean hasField(F field) {
-        int index = getSchema().getIndex(field);
-        if (index > 0) {
-            return hasIndex(index);
-        }
-        else {
-            return false;
-        }
+        return get(field) != null;
     }
 
     default boolean getBoolean(F field) {
-        return getBooleanAt(getSchema().getIndex(field));
+        return (boolean) get(field);
     }
 
     default byte getByte(F field) {
-        return getByteAt(getSchema().getIndex(field));
+        return (byte) get(field);
     }
 
     default char getChar(F field) {
-        return getCharAt(getSchema().getIndex(field));
+        return (char) get(field);
     }
 
-    default int getShort(F field) {
-        return getShortAt(getSchema().getIndex(field));
+    default short getShort(F field) {
+        return (short) get(field);
     }
 
     default int getInt(F field) {
-        return getIntAt(getSchema().getIndex(field));
+        return (int) get(field);
     }
 
     default long getLong(F field) {
-        return getLongAt(getSchema().getIndex(field));
+        return (long) get(field);
     }
 
     default float getFloat(F field) {
-        return getFloatAt(getSchema().getIndex(field));
+        return (float) get(field);
     }
 
     default double getDouble(F field) {
-        return getDoubleAt(getSchema().getIndex(field));
+        return (double) get(field);
     }
 
-    default String getString(F field) { return getStringAt(getSchema().getIndex(field)); }
+    default String getString(F field) { return (String) get(field); }
+
+    static <F> String toStringFieldsOnly(String name, GenericData<F> data) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(name);
+        sb.append(": {");
+        Iterator<F> it = data.getSchema().getFields().iterator();
+        if (!it.hasNext()) {
+            sb.append("}");
+        }
+        for (;;) {
+            F field = it.next();
+            sb.append(field);
+            sb.append('=');
+            sb.append(data.get(field));
+            if (it.hasNext()) {
+                sb.append(", ");
+            }
+            else {
+                return sb.append("}").toString();
+            }
+        }
+    }
 }

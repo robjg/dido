@@ -2,7 +2,7 @@ package dido.oddjob.bean;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
-import dido.data.MapRecord;
+import dido.data.MapData;
 import dido.data.SchemaBuilder;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.types.ValueFactory;
@@ -53,7 +53,7 @@ public class FruitData implements ValueFactory<GenericData<String>> {
 
     @Override
     public GenericData<String> toValue() throws ArooaConversionException {
-        return MapRecord.newBuilder(schema)
+        return MapData.newBuilder(schema)
                 .setString(TYPE, type)
                 .setInt(QUANTITY, qty)
                 .setDouble(PRICE, price)

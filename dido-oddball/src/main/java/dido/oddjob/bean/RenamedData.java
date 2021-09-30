@@ -2,6 +2,7 @@ package dido.oddjob.bean;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
+import dido.data.IndexedData;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -88,13 +89,33 @@ public class RenamedData<F, T> implements GenericData<T> {
     }
 
     @Override
-    public <T1> T1 getObjectAt(int index, Class<T1> type) {
-        return original.getObjectAt(index, type);
+    public Object getAt(int index) {
+        return original.getAt(index);
     }
 
     @Override
     public boolean hasIndex(int index) {
         return original.hasIndex(index);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof IndexedData) {
+            return IndexedData.equals(this, (IndexedData<?>) o);
+        }
+        else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return IndexedData.hashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return IndexedData.toString(this);
     }
 
     static <F, T> DataSchema<T> renamedSchema(Map<F, T> mapping, DataSchema<F> fromSchema) {
@@ -165,6 +186,26 @@ public class RenamedData<F, T> implements GenericData<T> {
         public Collection<T> getFields() {
             return this.fieldMap.keySet();
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof DataSchema) {
+                return DataSchema.equals(this, (DataSchema<?>) o);
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return DataSchema.hashCode(this);
+        }
+
+        @Override
+        public String toString() {
+            return DataSchema.toString(this);
+        }
+
     }
 
 

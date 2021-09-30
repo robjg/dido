@@ -57,16 +57,81 @@ public class NumericCellTest extends TestCase {
 		
 		// Read side.
 		
-		rows.reset();
-		
-		DataReader reader = book.readerFor(workbook);
+		DataIn<String> reader = rows.inFrom(workbook);
 
-		Object result = reader.read();
+		GenericData<String> result = reader.get();
 		
-		assertEquals(new Double(12.3), result);
+		assertThat(result.getDoubleAt(1), is(12.3));
 		
-		assertNull(reader.read());
+		assertNull(reader.get());
 		
+		reader.close();
+	}
+
+	public void testWriteAndReadOtherNumericTypes() throws Exception {
+
+		PoiWorkbook workbook = new PoiWorkbook();
+
+		NumericCell<Integer> test = new NumericCell<>();
+		test.setType(int.class);
+
+		DataRows rows = new DataRows();
+		rows.setOf(0, test);
+
+		DataOut<String> writer = rows.outTo(workbook);
+
+		writer.accept(ArrayData.of(12));
+
+		writer.close();
+
+		// Read side.
+
+		DataIn<String> reader = rows.inFrom(workbook);
+
+		GenericData<String> result = reader.get();
+
+		assertThat(result.getAtAs(1, Integer.class), is(12));
+
+		assertNull(reader.get());
+
+		reader.close();
+	}
+
+	public void testWriteAndReadNull() throws Exception {
+
+		PoiWorkbook workbook = new PoiWorkbook();
+
+		DataSchema<String> schema = SchemaBuilder.forStringFields()
+				.addNextIndex(Double.class)
+				.build();
+
+		DataRows rows = new DataRows();
+		rows.setSchema(schema);
+
+		DataOut<String> writer = rows.outTo(workbook);
+
+		writer.accept(ArrayData.of((Double) null));
+
+		writer.close();
+
+		// Read side.
+
+		DataIn<String> reader = rows.inFrom(workbook);
+
+		GenericData<String> result = reader.get();
+
+		assertThat(result.getAtAs(1, Double.class), nullValue());
+		assertThat(result.hasIndex(1), is(false));
+
+		try {
+			result.getDoubleAt(1);
+			MatcherAssert.assertThat("Should throw NPE", false);
+		} catch (NullPointerException e) {
+			// expected.
+		}
+
+		assertNull(reader.get());
+
 		reader.close();
 	}
 	

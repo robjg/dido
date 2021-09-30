@@ -83,7 +83,7 @@ class JsonDataWrapperTest {
         assertThat(result.getLongAt(6), is(Long.MAX_VALUE));
         assertThat(result.getFloatAt(7), is(1.234F));
         assertThat(result.getDoubleAt(8), is(123456.78));
-        assertThat(result.getObjectAt(9, Number.class).doubleValue(), is(67.2));
+        assertThat(result.getAtAs(9, Number.class).doubleValue(), is(67.2));
     }
 
     @Test
@@ -137,15 +137,15 @@ class JsonDataWrapperTest {
 
         IndexedData<?> result = gson.fromJson(json, IndexedData.class);
 
-        assertThat(result.getObjectAt(1), is("Apple"));
-        assertThat(result.getObjectAt(2), is(true));
-        assertThat(result.getObjectAt(3), is(Byte.MAX_VALUE));
-        assertThat(result.getObjectAt(4), is(Short.MAX_VALUE));
-        assertThat(result.getObjectAt(5), is(Integer.MAX_VALUE));
-        assertThat(result.getObjectAt(6), is(Long.MAX_VALUE));
-        assertThat(result.getObjectAt(7), is(1.234F));
-        assertThat(result.getObjectAt(8), is(123456.78));
-        assertThat(((Number) result.getObjectAt(9)).doubleValue(), is(67.2));
+        assertThat(result.getAt(1), is("Apple"));
+        assertThat(result.getAt(2), is(true));
+        assertThat(result.getAt(3), is(Byte.MAX_VALUE));
+        assertThat(result.getAt(4), is(Short.MAX_VALUE));
+        assertThat(result.getAt(5), is(Integer.MAX_VALUE));
+        assertThat(result.getAt(6), is(Long.MAX_VALUE));
+        assertThat(result.getAt(7), is(1.234F));
+        assertThat(result.getAt(8), is(123456.78));
+        assertThat(((Number) result.getAt(9)).doubleValue(), is(67.2));
     }
 
     @Test
@@ -180,6 +180,6 @@ class JsonDataWrapperTest {
         assertThat(result.getLongAt(6), is(0L));
         assertThat(result.getFloatAt(7), is(0.0F));
         assertThat(result.getDoubleAt(8), is(0.0));
-        assertThat(result.getObjectAt(9, Number.class), nullValue());
+        assertThat(result.getAtAs(9, Number.class), nullValue());
     }
 }

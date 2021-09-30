@@ -2,6 +2,7 @@ package dido.oddjob.bean;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
+import dido.data.IndexedData;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 
 import java.util.function.Function;
@@ -26,18 +27,38 @@ public class FromBeanArooaWithSchema<T> implements Function<T, GenericData<Strin
             }
 
             @Override
-            public <T> T getObjectAt(int index, Class<T> type) {
-                return getObject(schema.getFieldAt(index), type);
+            public Object getAt(int index) {
+                return get(schema.getFieldAt(index));
             }
 
             @Override
-            public <T> T getObject(String field, Class<T> type) {
-                return type.cast(propertyAccessor.getProperty(t, field));
+            public Object get(String field) {
+                return propertyAccessor.getProperty(t, field);
             }
 
             @Override
             public boolean hasIndex(int index) {
                 return schema.getTypeAt(index) != null;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (o instanceof IndexedData) {
+                    return IndexedData.equals(this, (IndexedData<?>) o);
+                }
+                else {
+                    return false;
+                }
+            }
+
+            @Override
+            public int hashCode() {
+                return IndexedData.hashCode(this);
+            }
+
+            @Override
+            public String toString() {
+                return IndexedData.toString(this);
             }
         };
     }

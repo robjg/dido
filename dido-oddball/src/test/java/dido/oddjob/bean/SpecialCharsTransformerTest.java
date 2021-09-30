@@ -2,7 +2,7 @@ package dido.oddjob.bean;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
-import dido.data.MapRecord;
+import dido.data.MapData;
 import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ class SpecialCharsTransformerTest {
 
         Function<GenericData<String>, GenericData<String>> test = new SpecialCharsTransformer().toValue();
 
-        GenericData<String> data = MapRecord.newBuilder(schema)
+        GenericData<String> data = MapData.newBuilder(schema)
                 .setString("Fruit", "Apple")
                 .setString("Flavour (taste)", "Yummy")
                 .setDouble("Weight (lbs.)", 22.2)

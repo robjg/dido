@@ -15,7 +15,7 @@ public class StreamLines {
 
     public static class In implements StreamIn<String> {
 
-        DataBuilder<String> dataBuilder = MapRecord.newBuilder(schema);
+        DataBuilder<String> dataBuilder = MapData.newBuilder(schema);
 
         @Override
         public Class<InputStream> getInType() {

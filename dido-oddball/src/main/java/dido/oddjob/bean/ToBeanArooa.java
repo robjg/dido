@@ -108,7 +108,7 @@ public class ToBeanArooa {
                 }
 
                 Class<?> type = schema.getTypeAt(index);
-                Object value = data.getObject(propertyName, type);
+                Object value = data.getAs(propertyName, type);
 
                 accessor.setSimpleProperty(t, propertyName, value);
             }

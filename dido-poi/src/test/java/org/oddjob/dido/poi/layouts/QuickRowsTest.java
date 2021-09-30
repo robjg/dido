@@ -1,5 +1,13 @@
 package org.oddjob.dido.poi.layouts;
 
+import dido.data.GenericData;
+import dido.data.MapData;
+import dido.oddjob.beanbus.DataInDriver;
+import dido.oddjob.beanbus.DataOutDestination;
+import dido.pickles.DataIn;
+import dido.pickles.DataOut;
+import dido.poi.BookInProvider;
+import dido.poi.BookOutProvider;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -97,40 +105,22 @@ public class QuickRowsTest extends TestCase {
 		}
 	}
 
-	public void testIdea() throws DataException, InvalidFormatException,
-			IOException, ParseException {
+    public void testIdea() throws Exception {
 
-		StandardArooaSession session = new StandardArooaSession();
+        DataRows test = new DataRows();
+        test.setWithHeadings(true);
 
-		BeanViewBean beanView = new BeanViewBean();
-		beanView.setProperties("name, dateOfBirth, salary");
+        PoiWorkbook workbook = new PoiWorkbook();
 
-		BeanBindingBean binding = new BeanBindingBean();
-		binding.setArooaSession(session);
-		binding.setType(new SimpleArooaClass(Person.class));
-		binding.setBeanView(beanView.toValue());
-		
-		DataRows test = new DataRows();
-		test.setWithHeadings(true);
-		test.setBinding(binding);
+        GenericData<String> person = MapData.newBuilderNoSchema()
+                .setString("name", "John")
+                .setObject("dateOfBirth", DateHelper.parseDate("1970-03-25"))
+                .setDouble("salary", 45000.0)
+                .build();
 
-		Workbook workbook = new HSSFWorkbook();
-		
-		Sheet sheet = workbook.createSheet();
-	
-		StyleProvider styleProvider = new DefaultStyleProivderFactory().providerFor(
-				workbook);
-		
-		SheetOut sheetOut = new PoiSheetOut(sheet, styleProvider);
-		
-		Person person = new Person();
-		person.setName("John");
-		person.setDateOfBirth(DateHelper.parseDate("1970-03-25"));
-		person.setSalary(45000.0);
+        DataOut<String> writer = test.outTo(workbook);
 
-		DataWriter writer = test.writerFor(sheetOut);
-
-		writer.write(person);
+        writer.accept(person);
 
 		writer.close();
 		
@@ -172,19 +162,24 @@ public class QuickRowsTest extends TestCase {
 	public void doWriteRead(String resource) throws ParseException,
 			ArooaConversionException, IOException, DataException {
 
-		ArooaSession session = new StandardArooaSession();
-		
-		List<Object> beans = new ArrayList<Object>();
-		beans.add(new Person("John", DateHelper.parseDate("1970-03-25"),
-				45000.0));
-		beans.add(new Person("Jane", DateHelper.parseDate("1982-11-14"),
-				28000.0));
-		beans.add(new Person("Fred", DateHelper.parseDate("1986-08-07"),
-				22500.0));
+        ArooaSession session = new StandardArooaSession();
 
-		BeanBindingBean bindingBean = new BeanBindingBean();
-		bindingBean.setArooaSession(session);
-		bindingBean.setType(new SimpleArooaClass(Person.class));
+        List<GenericData<String>> beans = new ArrayList<>();
+        beans.add(MapData.newBuilderNoSchema()
+                .setString("name", "John")
+                .setObject("dateOfBirth", DateHelper.parseDate("1970-03-25"))
+                .setDouble("salary", 45000.0)
+                .build());
+        beans.add(MapData.newBuilderNoSchema()
+                .setString("name", "Jane")
+                .setObject("dateOfBirth", DateHelper.parseDate("1982-11-14"))
+                .setDouble("salary", 28000.0)
+                .build());
+        beans.add(MapData.newBuilderNoSchema()
+                .setString("name", "Fred")
+                .setObject("dateOfBirth", DateHelper.parseDate("1986-08-07"))
+                .setDouble("salary", 22500.0)
+                .build());
 
 		PoiWorkbook workbook = new PoiWorkbook();
 		workbook.setArooaSession(session);

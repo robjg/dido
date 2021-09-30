@@ -22,7 +22,7 @@ public class FieldRecordSerializer implements JsonSerializer<GenericData<String>
         DataSchema<String> schema = src.getSchema();
         for (String field: schema.getFields()) {
             if (src.hasField(field)) {
-                jsonObject.add(field, context.serialize(src.getObject(field)));
+                jsonObject.add(field, context.serialize(src.get(field)));
             }
         }
 

@@ -14,48 +14,48 @@ public interface IndexedData<F> {
 
     DataSchema<F> getSchema();
 
-    <T> T getObjectAt(int index, Class<T> type);
+    Object getAt(int index);
+
+    default <T> T getAtAs(int index, Class<T> type) {
+        return (T) getAt(index);
+    }
 
     boolean hasIndex(int index);
 
-    default Object getObjectAt(int index) {
-        return getObjectAt(index, Object.class);
-    }
-
     default String getStringAt(int index) {
-        return getObjectAt(index, String.class);
+        return (String) getAt(index);
     }
 
     default boolean getBooleanAt(int index) {
-        return getObjectAt(index, Boolean.class);
+        return (boolean) getAt(index);
     }
 
     default byte getByteAt(int index) {
-        return getObjectAt(index, Byte.class);
+        return (byte) getAt(index);
     }
 
     default char getCharAt(int index) {
-        return getObjectAt(index, Character.class);
+        return (char) getAt(index);
     }
 
     default short getShortAt(int index) {
-        return getObjectAt(index, Short.class);
+        return (short) getAt(index);
     }
 
     default int getIntAt(int index) {
-        return getObjectAt(index, Integer.class);
+        return (int) getAt(index);
     }
 
     default long getLongAt(int index) {
-        return (long) getObjectAt(index);
+        return (long) getAt(index);
     }
 
     default float getFloatAt(int index) {
-        return getObjectAt(index, Float.class);
+        return (float) getAt(index);
     }
 
     default double getDoubleAt(int index) {
-        return (double) getObjectAt(index, Object.class);
+        return (double) getAt(index);
     }
 
     static boolean equals(IndexedData<?> data1, IndexedData<?> data2) {
@@ -119,7 +119,7 @@ public interface IndexedData<F> {
                     }
                 }
             }
-            if (!Objects.equals(data1.getObjectAt(index), data2.getObjectAt(index))) {
+            if (!Objects.equals(data1.getAt(index), data2.getAt(index))) {
                 return false;
             }
         }
@@ -133,7 +133,7 @@ public interface IndexedData<F> {
             if (!data.hasIndex(index)) {
                 continue;
             }
-            Object value = data.getObjectAt(index);
+            Object value = data.getAt(index);
             hash = hash * 31 + (value == null ? 0 :value.hashCode());
         }
         return hash;
@@ -146,7 +146,7 @@ public interface IndexedData<F> {
             if (!data.hasIndex(index)) {
                 continue;
             }
-            list.add(data.getObjectAt(index));
+            list.add(data.getAt(index));
         }
         return list.toString();
     }

@@ -10,6 +10,8 @@ public class ArrayData<T> implements GenericData<T> {
 
     private final Object[] data;
 
+    private volatile int hash = 0;
+
     private ArrayData(DataSchema<T> schema, Object[] data) {
         this.schema = schema;
         this.data = data;
@@ -59,6 +61,26 @@ public class ArrayData<T> implements GenericData<T> {
             public Collection<T> getFields() {
                 return Collections.emptyList();
             }
+
+            @Override
+            public int hashCode() {
+                return DataSchema.hashCode(this);
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (obj instanceof DataSchema) {
+                    return DataSchema.equals(this, (DataSchema<?>) obj);
+                }
+                else {
+                    return false;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return DataSchema.toString(this);
+            }
         };
 
         return new ArrayData<>(schema, data);
@@ -70,12 +92,35 @@ public class ArrayData<T> implements GenericData<T> {
     }
 
     @Override
-    public <T1> T1 getObjectAt(int index, Class<T1> type) {
-        return type.cast(data[index -1]);
+    public Object getAt(int index) {
+        return data[index -1];
     }
 
     @Override
     public boolean hasIndex(int index) {
         return data[index -1] != null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof IndexedData) {
+            return IndexedData.equals(this, (IndexedData<?>) o);
+        }
+        else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        if (hash == 0) {
+            hash = IndexedData.hashCode(this);
+        }
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        return IndexedData.toString(this);
     }
 }

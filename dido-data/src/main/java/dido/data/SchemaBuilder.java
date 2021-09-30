@@ -347,7 +347,7 @@ public class SchemaBuilder<F> {
 
         @Override
         public String toString() {
-            return "DidoSchema" + indexToField;
+            return DataSchema.toString(this);
         }
     }
 }

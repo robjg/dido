@@ -2,6 +2,7 @@ package dido.csv;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
+import dido.data.IndexedData;
 import dido.data.SchemaBuilder;
 import dido.pickles.DataIn;
 import dido.pickles.StreamIn;
@@ -138,7 +139,12 @@ public class StreamInCsv<F> implements StreamIn<F> {
             }
 
             @Override
-            public <T> T getObjectAt(int index, Class<T> type) {
+            public Object getAt(int index) {
+                return record.get(index - 1);
+            }
+
+            @Override
+            public <T> T getAtAs(int index, Class<T> type) {
                 String value = record.get(index - 1);
                 if (value == null) {
                     return null;
@@ -154,6 +160,17 @@ public class StreamInCsv<F> implements StreamIn<F> {
                             ", only Primitives and their Box types are supported.");
                 }
                 return type.cast(conversion.apply(value));
+            }
+
+            @Override
+            public <T> T getAs(F field, Class<T> type) {
+                int index = getSchema().getIndex(field);
+                if (index > 0) {
+                    return getAtAs(index, type);
+                }
+                else {
+                    return null;
+                }
             }
 
             @Override
@@ -205,6 +222,71 @@ public class StreamInCsv<F> implements StreamIn<F> {
             @Override
             public double getDoubleAt(int index) {
                 return Double.parseDouble(getStringAt(index));
+            }
+
+            @Override
+            public boolean getBoolean(F field) {
+                return getAs(field, Boolean.class);
+            }
+
+            @Override
+            public byte getByte(F field) {
+                return getAs(field, Byte.class);
+            }
+
+            @Override
+            public char getChar(F field) {
+                return getAs(field, Character.class);
+            }
+
+            @Override
+            public short getShort(F field) {
+                return getAs(field, Short.class);
+            }
+
+            @Override
+            public int getInt(F field) {
+                return getAs(field, Integer.class);
+            }
+
+            @Override
+            public long getLong(F field) {
+                return getAs(field, Long.class);
+            }
+
+            @Override
+            public float getFloat(F field) {
+                return getAs(field, Float.class);
+            }
+
+            @Override
+            public double getDouble(F field) {
+                return getAs(field, Double.class);
+            }
+
+            @Override
+            public String getString(F field) {
+                return getAs(field, String.class);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (o instanceof IndexedData) {
+                    return IndexedData.equals(this, (IndexedData<?>) o);
+                }
+                else {
+                    return false;
+                }
+            }
+
+            @Override
+            public int hashCode() {
+                return IndexedData.hashCode(this);
+            }
+
+            @Override
+            public String toString() {
+                return IndexedData.toString(this);
             }
         };
     }

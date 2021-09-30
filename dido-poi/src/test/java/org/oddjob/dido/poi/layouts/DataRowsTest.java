@@ -1,9 +1,9 @@
 package org.oddjob.dido.poi.layouts;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
+import dido.data.GenericData;
+import dido.data.MapData;
+import dido.pickles.DataIn;
+import dido.pickles.DataOut;
 import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -42,12 +42,16 @@ public class DataRowsTest extends TestCase {
 	
 		test.setOf(0, cell);
 
-		DataBook book = new DataBook();
-		book.setOf(0, test);
-		
-		DataWriter writer = book.writerFor(workbook);
-		
-		writer.write("Apples");
+		DataOut<String> writer = test.outTo(workbook);
+
+		GenericData<String> data1 = MapData.newBuilderNoSchema()
+						.setString("Fruit", "Apples")
+								.build();
+		GenericData<String> data2 = MapData.newBuilderNoSchema()
+				.setString("Fruit", "Oranges")
+				.build();
+
+		writer.accept(data1);
 		
 		assertEquals(3, test.getLastRow());
 		assertEquals(3, test.getLastColumn());

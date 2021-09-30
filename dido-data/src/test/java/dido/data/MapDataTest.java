@@ -10,12 +10,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 
-class MapRecordTest {
+class MapDataTest {
 
     @Test
     void testNoSchema() throws ParseException {
 
-        DataBuilder<String> builder = MapRecord.newBuilderNoSchema();
+        DataBuilder<String> builder = MapData.newBuilderNoSchema();
 
         GenericData<String> data1 = builder
                 .setString("type", "apple")
@@ -55,4 +55,22 @@ class MapRecordTest {
         assertThat(schema2.getType("offer"), is(boolean.class));
     }
 
+    @Test
+    void testToString() {
+
+        DataSchema<String> schema = SchemaBuilder.forStringFields()
+                .addField("type", String.class)
+                .addField("qty", int.class)
+                .addField("price", double.class)
+                .build();
+
+        GenericData<String> data1 = MapData.newBuilder(schema)
+                .setString("type", "apple")
+                .setInt("qty", 2)
+                .setDouble("price", 26.3)
+                .build();
+
+        assertThat(data1.toString(), is("MapData: {type=apple, qty=2, price=26.3}"));
+
+    }
 }

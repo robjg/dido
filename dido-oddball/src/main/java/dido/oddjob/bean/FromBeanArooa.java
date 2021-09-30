@@ -2,6 +2,7 @@ package dido.oddjob.bean;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
+import dido.data.IndexedData;
 import dido.data.SchemaBuilder;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.ArooaClass;
@@ -20,7 +21,7 @@ public class FromBeanArooa {
 
     public <T> Function<T, GenericData<String>> ofUnknown() {
 
-        return new Unknown<T>();
+        return new Unknown<>();
     }
 
     public <T> Function<T, GenericData<String>> ofClass(Class<T> aClass) {
@@ -69,24 +70,17 @@ public class FromBeanArooa {
         }
 
         @Override
-        public <T> T getObjectAt(int index, Class<T> type) {
-            //noinspection unchecked
-            return (T) accessor.getProperty(bean, schema.getFieldAt(index));
+        public Object getAt(int index) {
+            return accessor.getProperty(bean, schema.getFieldAt(index));
         }
 
         @Override
         public boolean hasIndex(int index) {
-            return getObjectAt(index, Object.class) != null;
+            return getAtAs(index, Object.class) != null;
         }
 
         @Override
-        public <T> T getObject(String field, Class<T> type) {
-            //noinspection unchecked
-            return (T) accessor.getProperty(bean, field);
-        }
-
-        @Override
-        public Object getObject(String field) {
+        public Object get(String field) {
             return accessor.getProperty(bean, field);
         }
 
@@ -111,7 +105,7 @@ public class FromBeanArooa {
         }
 
         @Override
-        public int getShort(String field) {
+        public short getShort(String field) {
             return (short) accessor.getProperty(bean, field);
         }
 
@@ -138,6 +132,26 @@ public class FromBeanArooa {
         @Override
         public String getString(String field) {
             return (String) accessor.getProperty(bean, field);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof IndexedData) {
+                return IndexedData.equals(this, (IndexedData<?>) o);
+            }
+            else {
+                return false;
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return IndexedData.hashCode(this);
+        }
+
+        @Override
+        public String toString() {
+            return GenericData.toStringFieldsOnly("FromBean", this);
         }
     }
 

@@ -2,7 +2,7 @@ package dido.json;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
-import dido.data.MapRecord;
+import dido.data.MapData;
 import dido.data.SchemaBuilder;
 import dido.pickles.CloseableSupplier;
 import dido.pickles.DataIn;
@@ -36,12 +36,12 @@ class JsonDidoTest {
     @Test
     void testToJsonAndBackFixedSchema() throws Exception {
 
-        GenericData<String> data1 = MapRecord.newBuilderNoSchema()
+        GenericData<String> data1 = MapData.newBuilderNoSchema()
                 .setString("type", "apple")
                 .setInt("qty", 2)
                 .setDouble("price", 26.3)
                 .build();
-        GenericData<String> data2 = MapRecord.newBuilderNoSchema()
+        GenericData<String> data2 = MapData.newBuilderNoSchema()
                 .setString("type", "orange")
                 .setInt("qty", 3)
                 .setDouble("price", 31.4)
@@ -90,12 +90,12 @@ class JsonDidoTest {
     @Test
     void testToJsonOverrideSchema() throws Exception {
 
-        GenericData<String> data1 = MapRecord.newBuilderNoSchema()
+        GenericData<String> data1 = MapData.newBuilderNoSchema()
                 .setString("type", "apple")
                 .setInt("qty", 2)
                 .setDouble("price", 26.3)
                 .build();
-        GenericData<String> data2 = MapRecord.newBuilderNoSchema()
+        GenericData<String> data2 = MapData.newBuilderNoSchema()
                 .setString("type", "orange")
                 .setInt("qty", 3)
                 .setDouble("price", 31.4)

@@ -169,15 +169,15 @@ public class Concatenator<F> {
         }
 
         @Override
-        public Object getObjectAt(int index) {
+        public Object getAt(int index) {
             int i = dataByIndex[index - 1];
-            return data[i].getObjectAt(index - offsets[i]);
+            return data[i].getAt(index - offsets[i]);
         }
 
         @Override
-        public <T> T getObjectAt(int index, Class<T> type) {
+        public <T> T getAtAs(int index, Class<T> type) {
             int i = dataByIndex[index - 1];
-            return data[i].getObjectAt(index - offsets[i], type);
+            return data[i].getAtAs(index - offsets[i], type);
         }
 
         @Override
@@ -241,13 +241,13 @@ public class Concatenator<F> {
         }
 
         @Override
-        public Object getObject(F field) {
-            return data[dataByField.get(field)].getObject(field);
+        public Object get(F field) {
+            return data[dataByField.get(field)].get(field);
         }
 
         @Override
-        public <T> T getObject(F field, Class<T> type) {
-            return data[dataByField.get(field)].getObject(field, type);
+        public <T> T getAs(F field, Class<T> type) {
+            return data[dataByField.get(field)].getAs(field, type);
         }
 
         @Override
@@ -271,7 +271,7 @@ public class Concatenator<F> {
         }
 
         @Override
-        public int getShort(F field) {
+        public short getShort(F field) {
             return data[dataByField.get(field)].getShort(field);
         }
 

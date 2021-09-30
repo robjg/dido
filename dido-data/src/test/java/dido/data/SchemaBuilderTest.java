@@ -102,7 +102,7 @@ class SchemaBuilderTest {
     }
 
     @Test
-    void testEquals() {
+    void testEqualsAndHashCode() {
 
         DataSchema<String> schema1 = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
@@ -117,5 +117,20 @@ class SchemaBuilderTest {
                 .build();
 
         assertThat(schema1, is(schema2));
+        assertThat(schema1.hashCode(), is(schema2.hashCode()));
     }
+
+    @Test
+    void testToString() {
+
+        DataSchema<String> schema1 = SchemaBuilder.forStringFields()
+                .addField("fruit", String.class)
+                .addField("qty", int.class)
+                .addField("price", double.class)
+                .build();
+
+        assertThat(schema1.toString(),
+                is("DataSchema: [1(fruit) java.lang.String, 2(qty) int, 3(price) double]"));
+    }
+
 }

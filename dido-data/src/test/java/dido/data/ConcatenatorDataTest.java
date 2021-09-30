@@ -71,7 +71,7 @@ class ConcatenatorDataTest {
     void testConcatData() {
 
 
-        DataBuilder<String> builder = MapRecord.newBuilderNoSchema();
+        DataBuilder<String> builder = MapData.newBuilderNoSchema();
 
         GenericData<String> data1 = builder
                 .setString("type", "apple")

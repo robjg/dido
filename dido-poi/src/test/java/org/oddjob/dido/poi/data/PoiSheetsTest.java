@@ -1,17 +1,10 @@
 package org.oddjob.dido.poi.data;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.ss.usermodel.Sheet;
-import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataReader;
-import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.bio.DirectBinding;
-import org.oddjob.dido.poi.BookIn;
-import org.oddjob.dido.poi.BookOut;
-import org.oddjob.dido.poi.SheetIn;
-import org.oddjob.dido.poi.SheetOut;
-import org.oddjob.dido.poi.layouts.DataBook;
+import dido.data.GenericData;
+import dido.data.MapData;
+import dido.pickles.DataIn;
+import dido.pickles.DataOut;
+import org.junit.jupiter.api.Test;
 import org.oddjob.dido.poi.layouts.DataRows;
 import org.oddjob.dido.poi.layouts.TextCell;
 
@@ -33,14 +26,15 @@ public class PoiSheetsTest extends TestCase {
 		TextCell cell =  new TextCell();
 		
 		rows.setOf(0, cell);
-		
-		cell.setBinding(new DirectBinding());
-		
-		
-		DataWriter writer = rows.writerFor(test1);
-		
-		writer.write("Apples");
-		
+
+		DataOut<String> writer = rows.outTo(workbook);
+
+		GenericData<String> data = MapData.newBuilderNoSchema()
+				.setString("Fruit", "Apples")
+				.build();
+
+		writer.accept(data);
+
 		writer.close();
 		
 		////////////
@@ -75,15 +69,15 @@ public class PoiSheetsTest extends TestCase {
 		
 		DataRows rows = new DataRows();
 		rows.setOf(0, cell);
-		
-		DataBook book = new DataBook();
-		book.setOf(0, rows);
-		
-		cell.setBinding(new DirectBinding());
-		
-		DataWriter writer = book.writerFor(workbook);
-		
-		writer.write("Apples");
+
+
+		DataOut<String> writer = rows.outTo(workbook);
+
+		GenericData<String> data = MapData.newBuilderNoSchema()
+				.setString("Fruit", "Apples")
+				.build();
+
+		writer.accept(data);
 		
 		writer.close();
 		

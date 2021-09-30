@@ -2,7 +2,7 @@ package dido.csv;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
-import dido.data.MapRecord;
+import dido.data.MapData;
 import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ class StreamOutCsvTest {
     @Test
     void testDataOut() {
 
-        GenericData<String> data = MapRecord.newBuilderNoSchema()
+        GenericData<String> data = MapData.newBuilderNoSchema()
                 .setString("Fruit", "Apple")
                 .setInt("Qty", 5)
                 .setDouble("Price", 23.5)

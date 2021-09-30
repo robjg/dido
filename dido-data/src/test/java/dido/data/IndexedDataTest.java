@@ -21,12 +21,12 @@ class IndexedDataTest {
         }
 
         @Override
-        public Object getObjectAt(int index) {
+        public Object getAt(int index) {
             return data;
         }
 
         @Override
-        public <T> T getObjectAt(int index, Class<T> type) {
+        public <T> T getAtAs(int index, Class<T> type) {
             return (T) data;
         }
 

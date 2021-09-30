@@ -128,7 +128,6 @@ public interface DataSchema<F> {
     /**
      * Provide an empty schema.
      *
-     * @param fieldType The type of the field.
      * @param <F> The type of the field.
      *
      * @return An empty schema.
@@ -138,16 +137,8 @@ public interface DataSchema<F> {
     }
 
     /**
-     * Provide an empty schema for String fields.
-     *
-     * @return An empty schema.
-     */
-    static DataSchema<String> emptyStringFieldSchema() {
-        return emptySchema();
-    }
-
-    /**
-     * Compare two schemas for equality.
+     * Compare two schemas for equality. Because it's forbidden to provide default Object methods in
+     * interfaces each these statics are available as a convenience for implementations.
      *
      * @param schema1 The first schema. May be null.
      * @param schema2 The second schema. May be null.
@@ -200,6 +191,27 @@ public interface DataSchema<F> {
         return hash;
     }
 
+    static String toString(DataSchema<?> schema) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("DataSchema: [");
+        for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
+            if (i > schema.firstIndex()) {
+                sb.append(", ");
+            }
+            sb.append(i);
+            Object field = schema.getFieldAt(i);
+            if (field != null) {
+                sb.append('(');
+                sb.append(field);
+                sb.append(')');
+            }
+            sb.append(' ');
+            sb.append(schema.getTypeAt(i).getName());
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
     class EmptySchema<F> implements DataSchema<F> {
 
         @Override
@@ -240,6 +252,26 @@ public interface DataSchema<F> {
         @Override
         public Collection<F> getFields() {
             return Collections.emptyList();
+        }
+
+        @Override
+        public int hashCode() {
+            return DataSchema.hashCode(this);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof DataSchema) {
+                return DataSchema.equals(this, (DataSchema<?>) obj);
+            }
+            else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return DataSchema.toString(this);
         }
     }
 }

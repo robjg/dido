@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Provide an {@link GenericData} structure backed by a Map.
  */
-public class MapRecord implements GenericData<String> {
+public class MapData implements GenericData<String> {
 
     private final DataSchema<String> schema;
 
@@ -13,17 +13,17 @@ public class MapRecord implements GenericData<String> {
 
     private volatile int hash = 0;
 
-    private MapRecord(DataSchema<String> schema, Map<String, ?> map) {
+    private MapData(DataSchema<String> schema, Map<String, ?> map) {
         this.schema = schema;
         this.map = map;
     }
 
-    public static MapRecord from(DataSchema<String> schema, Map<String, ?> map) {
-        return new MapRecord(schema, map);
+    public static MapData from(DataSchema<String> schema, Map<String, ?> map) {
+        return new MapData(schema, map);
     }
 
-    public static MapRecord from(Map<String, ?> map) {
-        return new MapRecord(schemaFromMap(map), new HashMap<>(map));
+    public static MapData from(Map<String, ?> map) {
+        return new MapData(schemaFromMap(map), new HashMap<>(map));
     }
 
     public static DataSchema<String> schemaFromMap(Map<String, ?> map) {
@@ -46,8 +46,8 @@ public class MapRecord implements GenericData<String> {
     }
 
     @Override
-    public <T> T getObjectAt(int index, Class<T> type) {
-        return getObject(schema.getFieldAt(index), type);
+    public Object getAt(int index) {
+        return get(schema.getFieldAt(index));
     }
 
     @Override
@@ -55,10 +55,9 @@ public class MapRecord implements GenericData<String> {
         return hasField(schema.getFieldAt(index));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getObject(String field, Class<T> type) {
-        return (T) map.get(field);
+    public Object get(String field) {
+        return map.get(field);
     }
 
     @Override
@@ -75,7 +74,6 @@ public class MapRecord implements GenericData<String> {
     public boolean equals(Object o) {
         if (o instanceof IndexedData) {
             return IndexedData.equals(this, (IndexedData<?>) o);
-
         }
         else {
             return false;
@@ -92,7 +90,7 @@ public class MapRecord implements GenericData<String> {
 
     @Override
     public String toString() {
-        return "MapRecord" + map;
+        return GenericData.toStringFieldsOnly("MapData", this);
     }
 
     static class BuilderWithSchema extends AbstractDataBuilder<String, BuilderWithSchema> {
@@ -107,7 +105,7 @@ public class MapRecord implements GenericData<String> {
 
         @Override
         public GenericData<String> build() {
-            GenericData<String> data = new MapRecord(schema, map);
+            GenericData<String> data = new MapData(schema, map);
             this.map = new HashMap<>();
             return data;
         }
@@ -127,7 +125,7 @@ public class MapRecord implements GenericData<String> {
 
         @Override
         public GenericData<String> build() {
-            GenericData<String> data = new MapRecord(schemaBuilder.build(), map);
+            GenericData<String> data = new MapData(schemaBuilder.build(), map);
             this.map = new LinkedHashMap<>();
             this.schemaBuilder = SchemaBuilder.forStringFields();
             return data;

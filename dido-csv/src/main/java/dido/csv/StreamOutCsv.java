@@ -142,7 +142,7 @@ public class StreamOutCsv<F> implements StreamOut<F> {
         }
         Object[] values = new Object[schema.lastIndex()];
         for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
-            values[i - 1] = data.getObjectAt(i);
+            values[i - 1] = data.getAt(i);
         }
         return values;
     }

@@ -3,7 +3,7 @@ package dido.oddjob.bean;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
-import dido.data.MapRecord;
+import dido.data.MapData;
 import dido.data.SchemaBuilder;
 import org.apache.commons.beanutils.DynaBean;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ class ToBeanArooaTest {
     @Test
     void testToBean() {
 
-        GenericData<String> data = MapRecord.newBuilderNoSchema()
+        GenericData<String> data = MapData.newBuilderNoSchema()
                 .setString("type", "Apple")
                 .setInt("quantity", 5)
                 .setDouble("price", 27.3)
@@ -52,7 +52,7 @@ class ToBeanArooaTest {
         Function<GenericData<String>, Object> test = new ToBeanArooa(new BeanUtilsPropertyAccessor())
                 .ofSchema(schema);
 
-        GenericData<String> data = MapRecord.newBuilder(schema)
+        GenericData<String> data = MapData.newBuilder(schema)
                 .setBoolean("boolean", true)
                 .setByte("byte", (byte) 1)
                 .setChar("char", 'A')
