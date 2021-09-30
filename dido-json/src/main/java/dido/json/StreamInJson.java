@@ -25,7 +25,7 @@ public class StreamInJson implements StreamIn<String> {
 
     public StreamInJson(DataSchema<String> schema, boolean partialSchema) {
         this.partialSchema = partialSchema || schema == null;
-        this.schema = schema == null ? DataSchema.emptyStringFieldSchema() : schema;
+        this.schema = schema == null ? DataSchema.emptySchema() : schema;
     }
 
     @Override
@@ -77,6 +77,4 @@ public class StreamInJson implements StreamIn<String> {
             }
         };
     }
-
-
 }

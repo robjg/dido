@@ -127,11 +127,6 @@ public class RenamedData<F, T> implements GenericData<T> {
         }
 
         @Override
-        public Class<T> getFieldType() {
-            return null;
-        }
-
-        @Override
         public T getFieldAt(int index) {
             return toFields[index - 1];
         }
