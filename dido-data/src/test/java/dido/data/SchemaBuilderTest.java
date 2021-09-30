@@ -20,7 +20,6 @@ class SchemaBuilderTest {
                 .addIndex(0, double.class)
                 .build();
 
-        assertThat(schema.getFieldType(), is(String.class));
         assertThat(schema.firstIndex(), is(1));
         assertThat(schema.lastIndex(), is(3));
         assertThat(schema.getTypeAt(1), is(String.class));

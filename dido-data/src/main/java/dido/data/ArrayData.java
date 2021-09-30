@@ -19,10 +19,6 @@ public class ArrayData<T> implements GenericData<T> {
         Objects.requireNonNull(data);
 
         DataSchema<T> schema = new DataSchema<T>() {
-            @Override
-            public Class<T> getFieldType() {
-                throw new UnsupportedOperationException();
-            }
 
             @Override
             public T getFieldAt(int index) {

@@ -1,6 +1,7 @@
 package dido.data;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -16,14 +17,6 @@ import java.util.Objects;
  * @param <F> The type of the fields used in the schema.
  */
 public interface DataSchema<F> {
-
-    /**
-     * The type of the fields in this schema. Generally a String or an enum.
-     * Not to be confused with {@link #getType(F field)}.
-     *
-     * @return The type of the fields. Never null.
-     */
-    Class<F> getFieldType();
 
     /**
      * Get the field for the given index. If a field has not been allocated to the
@@ -140,8 +133,8 @@ public interface DataSchema<F> {
      *
      * @return An empty schema.
      */
-    static <F> DataSchema<F> emptySchema(Class<F> fieldType) {
-        return SchemaBuilder.forFieldType(fieldType).build();
+    static <F> DataSchema<F> emptySchema() {
+        return new EmptySchema<>();
     }
 
     /**
@@ -150,7 +143,7 @@ public interface DataSchema<F> {
      * @return An empty schema.
      */
     static DataSchema<String> emptyStringFieldSchema() {
-        return emptySchema(String.class);
+        return emptySchema();
     }
 
     /**
@@ -167,9 +160,6 @@ public interface DataSchema<F> {
             return true;
         }
         if (schema1 == null | schema2 == null) {
-            return false;
-        }
-        if (schema1.getFieldType() != schema2.getFieldType()) {
             return false;
         }
         if (schema1.lastIndex() != schema2.lastIndex()) {
@@ -208,5 +198,48 @@ public interface DataSchema<F> {
             hash = hash * 31 + Objects.hash(schema.getTypeAt(index), schema.getFieldAt(index), schema.getTypeAt(index));
         }
         return hash;
+    }
+
+    class EmptySchema<F> implements DataSchema<F> {
+
+        @Override
+        public F getFieldAt(int index) {
+            return null;
+        }
+
+        @Override
+        public Class<?> getTypeAt(int index) {
+            return null;
+        }
+
+        @Override
+        public <N> DataSchema<N> getSchemaAt(int index) {
+            return null;
+        }
+
+        @Override
+        public int getIndex(F field) {
+            return 0;
+        }
+
+        @Override
+        public int firstIndex() {
+            return 0;
+        }
+
+        @Override
+        public int nextIndex(int index) {
+            return 0;
+        }
+
+        @Override
+        public int lastIndex() {
+            return 0;
+        }
+
+        @Override
+        public Collection<F> getFields() {
+            return Collections.emptyList();
+        }
     }
 }

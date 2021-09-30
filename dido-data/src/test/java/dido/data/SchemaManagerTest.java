@@ -42,7 +42,6 @@ class SchemaManagerTest {
 
         DataSchema<FamilyFields> schema = schemaManager.getDefaultSchema();
 
-        assertThat(schema.getFieldType(), is(FamilyFields.class));
         assertThat(schema.firstIndex(), is(1));
         assertThat(schema.lastIndex(), is(4));
         assertThat(schema.getTypeAt(1), is(GenericData.class));

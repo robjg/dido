@@ -256,7 +256,6 @@ public class SchemaBuilder<F> {
             }
         }
 
-        @Override
         public Class<F> getFieldType() {
             return fieldType;
         }
