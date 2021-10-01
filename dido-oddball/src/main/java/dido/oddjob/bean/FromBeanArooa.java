@@ -4,6 +4,7 @@ import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.data.IndexedData;
 import dido.data.SchemaBuilder;
+import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.ArooaClass;
 import org.oddjob.arooa.reflect.BeanOverview;
@@ -17,6 +18,14 @@ public class FromBeanArooa {
 
     public FromBeanArooa(PropertyAccessor accessor) {
         this.accessor = accessor;
+    }
+
+    public static FromBeanArooa usingAccessor(PropertyAccessor accessor) {
+        return new FromBeanArooa(accessor);
+    }
+
+    public static FromBeanArooa fromSession(ArooaSession session) {
+        return usingAccessor(session.getTools().getPropertyAccessor());
     }
 
     public <T> Function<T, GenericData<String>> ofUnknown() {
@@ -71,7 +80,11 @@ public class FromBeanArooa {
 
         @Override
         public Object getAt(int index) {
-            return accessor.getProperty(bean, schema.getFieldAt(index));
+            String property = schema.getFieldAt(index);
+            if (property == null) {
+                throw new NullPointerException("No Property for index [" + index + "]");
+            }
+            return accessor.getProperty(bean, property);
         }
 
         @Override

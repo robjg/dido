@@ -1,11 +1,10 @@
 package org.oddjob.dido.poi.layouts;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import junit.framework.TestCase;
-
+import dido.data.ArrayData;
+import dido.data.GenericData;
+import dido.pickles.DataIn;
+import dido.pickles.DataOut;
+import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.ArooaBeanDescriptor;
 import org.oddjob.arooa.ArooaDescriptor;
 import org.oddjob.arooa.ConfiguredHow;
@@ -14,49 +13,44 @@ import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.arooa.standard.StandardArooaSession;
-import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataReader;
-import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.poi.data.PoiWorkbook;
 
-public class NumericFormulaCellTest extends TestCase {
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-	public void testReadWrite() throws DataException {
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+
+public class NumericFormulaCellTest {
+
+	@Test
+	public void testReadWrite() throws Exception {
 		
 		PoiWorkbook workbook = new PoiWorkbook();
 		
 		NumericFormulaCell test = new NumericFormulaCell();
-		test.setArooaSession(new StandardArooaSession());
 		test.setFormula("2 + 2");
 				
 		DataRows rows = new DataRows();
 		rows.setOf(0, test);
-		
-		DataBook book = new DataBook();		
-		book.setOf(0, rows);
-		
-		test.setBinding(new DirectBinding());
-		
-		DataWriter writer = book.writerFor(workbook);
-		
-		writer.write(new Object());
-		
-		assertEquals(1, test.getIndex());
-		
+
+		DataOut<String> writer = rows.outTo(workbook);
+
+		writer.accept(ArrayData.of());
+
 		writer.close();
 		
 		// read side.
 		
-		book.reset();
+		DataIn<String> reader = rows.inFrom(workbook);
 		
-		DataReader reader = book.readerFor(workbook);
+		GenericData<String> result = reader.get();
 		
-		Object result = reader.read();
-		
-		assertEquals(new Double(4), result);
-		
-		assertEquals(null, reader.read());
+		assertThat(result.getDoubleAt(1), is(4.0));
+
+		assertThat(reader.get(), nullValue());
 		
 		reader.close();
 	}
@@ -67,6 +61,7 @@ public class NumericFormulaCellTest extends TestCase {
 	 * couldn't be seen. However this had worked on my laptop. 
 	 * Different version of java maybe? 
 	 */
+	@Test
 	public void testFormulaType() {
 		
 		ClassPathDescriptorFactory descriptorFactory = 
@@ -83,27 +78,23 @@ public class NumericFormulaCellTest extends TestCase {
 		BeanOverview overview = propertyAccessor.getBeanOverview(
 				NumericFormulaCell.class);
 		
-		Set<String> properties = new HashSet<String>(
+		Set<String> properties = new HashSet<>(
 				Arrays.asList(overview.getProperties()));
 		
-		assertTrue(properties.contains("formula"));
+		assertThat(properties.contains("formula"), is(true));
 		
-		assertTrue(overview.hasWriteableProperty("formula"));
+		assertThat(overview.hasWriteableProperty("formula"), is(true));
 		
 		ArooaBeanDescriptor beanDescriptor = 
 			session.getArooaDescriptor().getBeanDescriptor(
 				new SimpleArooaClass(NumericFormulaCell.class), 
 				propertyAccessor);
 		
-		assertEquals(ConfiguredHow.HIDDEN, 
-				beanDescriptor.getConfiguredHow("arooaSession"));
-		assertEquals(ConfiguredHow.ATTRIBUTE, 
-				beanDescriptor.getConfiguredHow("name"));
-		assertEquals(ConfiguredHow.ATTRIBUTE, 
-				beanDescriptor.getConfiguredHow("label"));
-		assertEquals(ConfiguredHow.ATTRIBUTE, 
-				beanDescriptor.getConfiguredHow("style"));
-		assertEquals(ConfiguredHow.ATTRIBUTE, 
-				beanDescriptor.getConfiguredHow("formula"));
+		assertThat(beanDescriptor.getConfiguredHow("name"),
+				is(ConfiguredHow.ATTRIBUTE));
+		assertThat(beanDescriptor.getConfiguredHow("style"),
+				is(ConfiguredHow.ATTRIBUTE));
+		assertThat(beanDescriptor.getConfiguredHow("formula"),
+				is(ConfiguredHow.ATTRIBUTE));
 	}
 }

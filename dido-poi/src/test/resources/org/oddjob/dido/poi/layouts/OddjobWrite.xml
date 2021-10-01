@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <oddjob>
     <job>
-        <dido:write xmlns:dido="oddjob:dido">
-            <beans>
-                <import resource="org/oddjob/dido/poi/test/PersonList.xml"/>
-            </beans>
-            <data>
-                <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">
-                    <output>
-                        <file file="${work.dir}DataBookTest.xlsx"/>
-                    </output>
-                </dido-poi:workbook>
-            </data>
-            <layout>
-                <import resource="${layout.resource}"/>
-            </layout>
-            <bindings>
-                <dido:bean-binding key="person"/>
-            </bindings>
-        </dido:write>
+        <bean-bus>
+            <parts>
+                <bus:iterable-driver xmlns:bus="oddjob:beanbus">
+                    <beans>
+                        <import resource="org/oddjob/dido/poi/test/PersonList.xml"/>
+                    </beans>
+                </bus:iterable-driver>
+                <bus:transformer xmlns:bus="oddjob:beanbus">
+                    <function>
+                        <dido:from-bean xmlns:dido="oddjob:dido"/>
+                    </function>
+                </bus:transformer>
+                <dido:out xmlns:dido="oddjob:dido">
+                    <to>
+                        <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">
+                            <output>
+                                <file file="${work.dir}/DataBookTest.xlsx"/>
+                            </output>
+                        </dido-poi:workbook>
+                    </to>
+                    <how>
+                        <import resource="${layout.resource}"/>
+                    </how>
+                </dido:out>
+            </parts>
+        </bean-bus>
     </job>
 </oddjob>

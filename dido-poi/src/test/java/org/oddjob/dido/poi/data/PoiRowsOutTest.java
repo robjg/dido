@@ -1,98 +1,52 @@
 package org.oddjob.dido.poi.data;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataOut;
-import org.oddjob.dido.poi.CellOut;
-import org.oddjob.dido.poi.SheetOut;
-import org.oddjob.dido.poi.TupleOut;
-import org.oddjob.dido.tabular.Column;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.oddjob.dido.poi.HeaderRowOut;
+import org.oddjob.dido.poi.RowOut;
+import org.oddjob.dido.poi.style.StyleProvider;
 
-public class PoiRowsOutTest extends TestCase {
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
-	Sheet sheet;
-	
-	private class OurSheetOut implements SheetOut {
-		
-		@Override
-		public <T extends DataOut> T provideDataOut(Class<T> type)
-				throws DataException {
-			throw new RuntimeException("Unexpected!");
-		}
+public class PoiRowsOutTest {
 
-		@Override
-		public Sheet getTheSheet() {
-			return sheet;
-		}
-
-		@Override
-		public boolean isWrittenTo() {
-			throw new RuntimeException("Unexpected!");
-		}
-
-		@Override
-		public CellStyle styleFor(String styleName) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		
-		@Override
-		public void close() {
-			throw new RuntimeException("Unexpected.");
-		}
-	}
-
-	private class OurColumn implements Column {
-		
-		@Override
-		public int getIndex() {
-			return 2;
-		}
-		
-		@Override
-		public String getLabel() {
-			return "Quantity";
-		}
-	}	
-	
-	public void testCreateCellInWithHeader() throws DataException {
+	@Test
+	public void testCreateCellInWithHeader() {
 		
 		Workbook workbook = new XSSFWorkbook();
-		sheet = workbook.createSheet();
+		Sheet sheet = workbook.createSheet();
 
+		StyleProvider styleProvider = Mockito.mock(StyleProvider.class);
 		
-		PoiRowsOut test = new PoiRowsOut(new OurSheetOut(), 3, 7);
+		PoiRowsOut test = new PoiRowsOut(sheet, styleProvider, 3, 7);
 		
-		assertEquals(2, test.getLastRow());
-		assertEquals(6, test.getLastColumn());
-		
-		TupleOut tupleOut = test.provideDataOut(TupleOut.class);
-		test.headerRow(null);
-		
-		@SuppressWarnings("unchecked")
-		CellOut<Object> cellOut = (CellOut<Object>) tupleOut.outFor(new OurColumn());
+		assertThat(test.getLastRow(), is(2));
+		assertThat(test.getLastColumn(), is(6));
 
-		assertEquals(2, cellOut.getColumnIndex());
-		
-		assertEquals(3, test.getLastRow());
-		assertEquals(8, test.getLastColumn());
+		HeaderRowOut headerRowOut = test.headerRow(null);
+
+		headerRowOut.setHeader(2, "Quantity");
+
+		assertThat(test.getLastRow(), is(3));
+		assertThat(test.getLastColumn(), is(8));
 
 		Row row = sheet.getRow(2);
-		assertEquals("Quantity", row.getCell(7).getStringCellValue());
-		
+		assertThat(row.getCell(7).getStringCellValue(), is("Quantity"));
+
 		test.nextRow();
-		cellOut.setData(new Double(17));
+
+		RowOut rowOut = test.getRowOut();
+		Cell cellOut =  rowOut.getCell(2, CellType.NUMERIC);
+
+		cellOut.setCellValue(17);
 		
 		row = sheet.getRow(3);
-		assertEquals(17.0, (double) row.getCell(7).getNumericCellValue());
-		
-		assertEquals(4, test.getLastRow());
-		assertEquals(8, test.getLastColumn());
+		assertThat(row.getCell(7).getNumericCellValue(), is((17.0)));
+
+		assertThat(test.getLastRow(), is(4));
+		assertThat(test.getLastColumn(), is(8));
 	}
 }

@@ -1,10 +1,6 @@
 <arooa:descriptor xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
         prefix="dido-poi" namespace="oddjob:dido:poi">
 	<values>
-		<arooa:bean-def element='book'
-		    className='org.oddjob.dido.poi.layouts.DataBook'/>
-		<arooa:bean-def element='sheet'
-		    className='org.oddjob.dido.poi.layouts.DataSheet'/>
 		<arooa:bean-def element='rows'
 		    className='org.oddjob.dido.poi.layouts.DataRows'/>
 		<arooa:bean-def element='boolean'
@@ -25,8 +21,5 @@
 		    className='org.oddjob.dido.poi.style.StyleBean'/>
         <arooa:bean-def element='workbook'
             className='org.oddjob.dido.poi.data.PoiWorkbook'/>
-        <arooa:bean-def element='beancmpr-binding'
-            className='org.oddjob.dido.poi.beancmpr.BeanCmprResultBinding'/>
-            
 	</values>
 </arooa:descriptor>

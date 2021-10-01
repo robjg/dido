@@ -32,6 +32,7 @@ public class StreamInCsv<F> implements StreamIn<F> {
         CONVERSIONS.put(Long.class, Long::valueOf);
         CONVERSIONS.put(Float.class, Float::valueOf);
         CONVERSIONS.put(Double.class, Double::valueOf);
+        CONVERSIONS.put(Number.class, Double::valueOf);
     }
 
 

@@ -1,10 +1,2 @@
-<dido-poi:book xmlns:dido-poi="oddjob:dido:poi">
-	<of>
-		<dido-poi:sheet>
-			<of>
-				<dido-poi:rows autoWidth="true" autoFilter="true"
-					name="person" withHeadings="true"/>
-			</of>
-		</dido-poi:sheet>
-	</of>
-</dido-poi:book>
+<dido-poi:rows autoWidth="true" autoFilter="true"
+               withHeadings="true" xmlns:dido-poi="oddjob:dido:poi"/>

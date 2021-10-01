@@ -1,7 +1,6 @@
 package org.oddjob.dido.poi;
 
 import org.apache.poi.ss.usermodel.Sheet;
-import org.oddjob.dido.DataIn;
 
 /**
  * Something the can read data from a spreadsheet workbook.
@@ -9,7 +8,7 @@ import org.oddjob.dido.DataIn;
  * @author rob
  *
  */
-public interface BookIn extends DataIn {
+public interface BookIn {
 
 	/**
 	 * Get the next sheet in the book.

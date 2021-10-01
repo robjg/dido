@@ -2,6 +2,7 @@ package dido.oddjob.bean;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
+import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.beanutils.MagicBeanClassCreator;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.ArooaClass;
@@ -20,6 +21,14 @@ public class ToBeanArooa {
 
     public ToBeanArooa(PropertyAccessor accessor) {
         this.accessor = accessor;
+    }
+
+    public static ToBeanArooa usingAccessor(PropertyAccessor accessor) {
+        return new ToBeanArooa(accessor);
+    }
+
+    public static ToBeanArooa fromSession(ArooaSession session) {
+        return usingAccessor(session.getTools().getPropertyAccessor());
     }
 
     public <T> Function<GenericData<String>, T> ofArooaClass(ArooaClass arooaClass) {

@@ -1,5 +1,12 @@
 package org.oddjob.dido.poi.layouts;
 
+import dido.data.GenericData;
+import dido.oddjob.bean.FromBeanArooa;
+import dido.oddjob.bean.ToBeanArooa;
+import dido.oddjob.beanbus.DataInDriver;
+import dido.oddjob.beanbus.DataOutDestination;
+import dido.poi.BookInProvider;
+import dido.poi.BookOutProvider;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.oddjob.Oddjob;
@@ -12,27 +19,24 @@ import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.ArooaPropertyException;
 import org.oddjob.arooa.standard.StandardArooaSession;
+import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.types.ImportType;
 import org.oddjob.arooa.utils.DateHelper;
-import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataReadJob;
-import org.oddjob.dido.DataWriteJob;
-import org.oddjob.dido.Layout;
 import org.oddjob.dido.bio.BeanBindingBean;
-import org.oddjob.dido.bio.ValueBinding;
 import org.oddjob.dido.poi.data.PoiWorkbook;
 import org.oddjob.dido.poi.test.Fruit;
 import org.oddjob.dido.poi.test.Person;
 import org.oddjob.dido.poi.test.PersonBonus;
-import org.oddjob.io.FileType;
 import org.oddjob.state.ParentState;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Function;
 
 public class DataBookTest extends TestCase {
 	private static final Logger logger = Logger.getLogger(DataBookTest.class);
@@ -48,21 +52,21 @@ public class DataBookTest extends TestCase {
 		workDir = OurDirs.workPathDir(DataBookTest.class).toFile();
 	}
 	
-	public void testWriteReadWithHeadings() throws ParseException, ArooaConversionException, IOException, DataException {
+	public void testWriteReadWithHeadings() throws Exception {
 		
 		doWriteRead("org/oddjob/dido/poi/DataBookWithHeadings.xml");
 	}
 
-	public void testWriteReadWithoutHeadings() throws ParseException, ArooaConversionException, IOException, DataException {
+	public void testWriteReadWithoutHeadings() throws Exception {
 		
 		doWriteRead("org/oddjob/dido/poi/DataBookWithoutHeadings.xml");
 	}
 	
-	public void doWriteRead(String resource) throws ParseException, ArooaConversionException, IOException, DataException {
+	public void doWriteRead(String resource) throws Exception {
 		
 		ArooaSession session = new OddjobSessionFactory().createSession();
 		
-		List<Object> beans = new ArrayList<Object>();
+		List<Person> beans = new ArrayList<>();
 		beans.add(new Person("John", DateHelper.parseDate("1970-03-25"), 45000.0));
 		beans.add(new Person("Jane", DateHelper.parseDate("1982-11-14"), 28000.0));
 		beans.add(new Person("Fred", DateHelper.parseDate("1986-08-07"), 22500.0));
@@ -71,133 +75,116 @@ public class DataBookTest extends TestCase {
 		bindingBean.setArooaSession(session);
 		bindingBean.setType(new SimpleArooaClass(Person.class));
 		
-		ValueBinding valueBinding = new ValueBinding();
-		valueBinding.setArooaSession(session);
-		valueBinding.setValue("0.1");
-		
 		ImportType importType = new ImportType();
 		importType.setArooaSession(new StandardArooaSession(
 				new ClassPathDescriptorFactory(
 						).createDescriptor(getClass().getClassLoader())));
 		importType.setResource(resource);
 		
-		Layout layout = (Layout) importType.toObject();
+		DataRows layout = (DataRows) importType.toObject();
 
 		PoiWorkbook workbook = new PoiWorkbook();
-		workbook.setArooaSession(session);
-		
-		FileType file = new FileType();
-		file.setFile(new File(workDir, "BookTest.xlsx"));
-		
-		workbook.setOutput(file);
+
+		workbook.setOutput(new FileOutputStream(new File(workDir, "BookTest.xlsx")));
 				
-		DataWriteJob write = new DataWriteJob();
+		DataOutDestination<String, BookOutProvider> write = new DataOutDestination<>();
 		write.setArooaSession(session);
-		write.setLayout(layout);
-		write.setBeans(beans);
-		write.setBindings("person", bindingBean);
-		write.setBindings("percentage", valueBinding);
-		
-		write.setData(workbook);
-		
-		write.call();
-		
+		write.setTo(new ArooaObject(workbook));
+		write.setHow(layout);
+
+		write.run();
+
+		Function<Person, GenericData<String>> transformerFromBean =
+				FromBeanArooa.fromSession(session)
+				.ofClass(Person.class);
+
+		beans.stream().map(transformerFromBean).forEach(write);
+
+		write.close();
+
 		// Read Side
 		/////
-		
-		bindingBean.setType(new SimpleArooaClass(PersonBonus.class));
-		
-		DataReadJob read =  new DataReadJob();
-		read.setArooaSession(session);
-		read.setData(workbook);
-		read.setLayout(layout);
-		read.setBindings("person", bindingBean);
-		read.setBeans(new ArrayList<Object>());
-		
-		read.call();
-		
-		Object[] results = read.getBeans().toArray();
 
-		assertEquals(3, results.length);
+		Function<GenericData<String>, PersonBonus> transformerToBean =
+				ToBeanArooa.fromSession(session)
+						.ofClass(PersonBonus.class);
+
+		List<PersonBonus> results = new ArrayList<>(3);
+
+		DataInDriver<String, BookInProvider> read =  new DataInDriver<>();
+		read.setArooaSession(session);
+		read.setFrom(new ArooaObject(workbook));
+		read.setHow(layout);
+		read.setTo(data -> results.add(transformerToBean.apply(data)));
+
+		read.run();
 		
-		PersonBonus person1 = (PersonBonus) results[0];
+		assertEquals(3, results.size());
+		
+		PersonBonus person1 = results.get(0);
 		assertEquals("John", person1.getName());
 		assertEquals(DateHelper.parseDate("1970-03-25"), person1.getDateOfBirth());
 		assertEquals(45000.0, person1.getSalary());
 		assertEquals(0.1, person1.getPercentage());
-		assertEquals(10.0, person1.getBonus());
+		assertEquals(4500.0, person1.getBonus());
 
-		PersonBonus person2 = (PersonBonus) results[1];
+		PersonBonus person2 = results.get(1);
 		assertEquals("Jane", person2.getName());
 		assertEquals(DateHelper.parseDate("1982-11-14"), person2.getDateOfBirth());
 		assertEquals(28000.0, person2.getSalary());
 		assertEquals(0.1, person2.getPercentage());
-		assertEquals(10.0, person2.getBonus());
+		assertEquals(2800.0, person2.getBonus());
 		
-		PersonBonus person3 = (PersonBonus) results[2];
+		PersonBonus person3 =  results.get(2);
 		assertEquals("Fred", person3.getName());
 		assertEquals(DateHelper.parseDate("1986-08-07"), person3.getDateOfBirth());
 		assertEquals(22500.0, person3.getSalary());
 		assertEquals(0.1, person3.getPercentage());
-		assertEquals(10.0, person3.getBonus());
-		
-		assertEquals(3, results.length);
+		assertEquals(2250.0, person3.getBonus());
 	}
 	
-	public void testNoData() throws ParseException, ArooaConversionException, IOException, DataException {
-		
-		ArooaSession session = new OddjobSessionFactory().createSession();
+	public void testNoData() throws Exception {
 		
 		List<Object> beans = new ArrayList<Object>();
 
-		BeanBindingBean bindingBean = new BeanBindingBean();
-		bindingBean.setArooaSession(session);
-		bindingBean.setType(new SimpleArooaClass(Person.class));
-		
-		ImportType importType = new ImportType();
-		importType.setArooaSession(new StandardArooaSession(
+		ArooaSession session = new StandardArooaSession(
 				new ClassPathDescriptorFactory(
-						).createDescriptor(getClass().getClassLoader())));
+				).createDescriptor(getClass().getClassLoader()));
+
+		ImportType importType = new ImportType();
+		importType.setArooaSession(session);
 		importType.setResource("org/oddjob/dido/poi/DataBookWithHeadings.xml");
 		
-		Layout layout = (Layout) importType.toObject();
+		DataRows layout = (DataRows) importType.toObject();
 		
 
 		PoiWorkbook workbook = new PoiWorkbook();
-		workbook.setArooaSession(session);
+
+		workbook.setOutput(new FileOutputStream(
+				new File(workDir, "NoDataBookTest.xlsx")));
 		
-		FileType file = new FileType();
-		file.setFile(new File(workDir, "NoDataBookTest.xlsx"));
-		
-		workbook.setOutput(file);
-		
-		DataWriteJob write = new DataWriteJob();
+		DataOutDestination<String, BookOutProvider> write = new DataOutDestination<>();
 		write.setArooaSession(session);
-		write.setLayout(layout);
-		write.setBeans(beans);
-		write.setBindings("person", bindingBean);
+		write.setHow(layout);
+		write.setTo(new ArooaObject(workbook));
 		
-		write.setData(workbook);
-		
-		write.call();
-		
+		write.run();
+		write.close();
+
 		// Read Side
 		/////
-		
-		bindingBean.setType(new SimpleArooaClass(PersonBonus.class));
-		
-		DataReadJob read =  new DataReadJob();
+
+		List<GenericData<String>> results = new ArrayList<>(3);
+
+		DataInDriver<String, BookInProvider> read =  new DataInDriver<>();
 		read.setArooaSession(session);
-		read.setData(workbook);
-		read.setLayout(layout);
-		read.setBindings("person", bindingBean);
-		read.setBeans(new ArrayList<Object>());
+		read.setFrom(new ArooaObject(workbook));
+		read.setHow(layout);
+		read.setTo(results::add);
+
+		read.run();
 		
-		read.call();
-		
-		Object[] results = read.getBeans().toArray();
-				
-		assertEquals(0, results.length);
+		assertEquals(0, results.size());
 	}
 	
 	public void testDataBookWithHeadingsInOddjob() {

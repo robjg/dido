@@ -1,25 +1,27 @@
 package org.oddjob.dido.poi.layouts;
 
+import dido.data.GenericData;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.oddjob.dido.DataException;
 
-public abstract class FormulaCell<T> extends DataCell<T> {
+public abstract class FormulaCell<T> extends AbstractDataCell<T> {
 
 	private String formula;
 
 	@Override
-	public int getCellType() {
-		return Cell.CELL_TYPE_FORMULA;
+	public CellType getCellType() {
+		return CellType.FORMULA;
 	}
-	
+
 	@Override
-	public void insertValueInto(Cell cell, T value) throws DataException {
+	void insertValueInto(Cell cell, int index, GenericData<String> data) {
+
 		try {
 			cell.setCellFormula(formula);
 		} catch (FormulaParseException e) {
-			throw new DataException("Failed setting formula: " + formula, e);
+			throw new IllegalArgumentException("Failed setting formula: " + formula, e);
 		}
 		
 		FormulaEvaluator evaluator = cell.getRow().getSheet(

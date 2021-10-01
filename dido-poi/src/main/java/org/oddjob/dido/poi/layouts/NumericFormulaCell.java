@@ -11,6 +11,7 @@ public class NumericFormulaCell extends FormulaCell<Double> {
 		return Double.class;
 	}
 
+
 	@Override
 	public Double extractCellValue(Cell cell) {
 		FormulaEvaluator evaluator = cell.getRow().getSheet(
@@ -19,9 +20,5 @@ public class NumericFormulaCell extends FormulaCell<Double> {
 		CellValue cellValue = evaluator.evaluate(cell);
 		
 		return cellValue.getNumberValue();
-	}
-	
-	public Double getValue() {
-		return this.value();
 	}
 }

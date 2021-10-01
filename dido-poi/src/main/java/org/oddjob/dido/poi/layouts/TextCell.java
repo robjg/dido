@@ -1,85 +1,56 @@
 package org.oddjob.dido.poi.layouts;
 
+import dido.data.GenericData;
 import org.apache.poi.ss.usermodel.Cell;
-import org.oddjob.dido.DataIn;
-import org.oddjob.dido.DataOut;
-import org.oddjob.dido.Layout;
-import org.oddjob.dido.text.StringTextIn;
-import org.oddjob.dido.text.StringTextOut;
+import org.apache.poi.ss.usermodel.CellType;
+
+import java.util.Optional;
 
 /**
- * @oddjob.description Read to and from a series of cells. Currently only 
+ * @author rob
+ * @oddjob.description Read to and from a series of cells. Currently only
  * the ability to read columns of data by nesting within a {@link DataRows}
  * is supported but the ability to read rows will be added at some point.
- * 
- * @author rob
- *
  */
-public class TextCell extends DataCell<String> {
+public class TextCell extends AbstractDataCell<String> {
 
-	@Override
-	public Class<String> getType() {
-		return String.class;
-	}
-	
-	@Override
-	public int getCellType() {
-		return Cell.CELL_TYPE_STRING;
-	}
-	
-	public void setOf(int index, Layout child) {
-		addOrRemoveChild(index, child);
-	}
-	
-	@Override
-	public String extractCellValue(Cell cell) {
-		
-		// We need this because even if the cell is a formatted cell
-		// but contains a number we get a can't read from numeric cell
-		// exception.
-		if (cell.getCellType() != Cell.CELL_TYPE_STRING) {
-			cell.setCellType(Cell.CELL_TYPE_STRING);
-		}
-		return cell.getStringCellValue();
-	}
+    private volatile String value;
 
-	@Override
-	protected DataIn childDataIn() {
-		return new StringTextIn(value());
-	}
-	
-	@Override
-	public void insertValueInto(Cell cell, String value) {
-		cell.setCellValue(value);
-	}
+    @Override
+    public Class<String> getType() {
+        return String.class;
+    }
 
-	@Override
-	public DataOutControl<String> childDataOut() {
-		
-		return new DataOutControl<String>() {
-			
-			StringTextOut textOut = new StringTextOut();
-			
-			@Override
-			public DataOut dataOut() {
-				return textOut;
-			}
-			@Override
-			public boolean isWrittenTo() {
-				return textOut.isMultiLine();
-			}
-			@Override
-			public void resetWrittenTo() {
-				textOut.resetWrittenTo();
-			}
-			@Override
-			public String value() {
-				return textOut.toText();
-			}
-		};
-	}
-	
-	public String getValue() {
-		return this.value();
-	}
+    @Override
+    public CellType getCellType() {
+        return CellType.STRING;
+    }
+
+    @Override
+    public String extractCellValue(Cell cell) {
+
+        // We need this because even if the cell is a formatted cell
+        // but contains a number we get a can't read from numeric cell
+        // exception.
+//		if (cell.getCellType() != CellType.STRING) {
+//			cell.setCellType(CellType.STRING);
+//		}
+        return cell.getStringCellValue();
+    }
+
+    @Override
+    void insertValueInto(Cell cell, int index, GenericData<String> data) {
+        String value = Optional.ofNullable(this.value)
+                .orElseGet(() -> data.getStringAt(index));
+
+        cell.setCellValue(value);
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

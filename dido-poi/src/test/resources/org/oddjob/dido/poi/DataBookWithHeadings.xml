@@ -1,25 +1,17 @@
-<dido-poi:book xmlns:dido-poi="oddjob:dido:poi">
-	<styles>
-		<dido-poi:style key="heading" bold="true" colour="RED"/>
-		<dido-poi:style key="date" format="m/d/yy hh:mm" />
-		<dido-poi:style key="percentage" format="#0.00%" />
-	</styles>
-	<of>
-		<dido-poi:sheet>
-			<of>
-				<dido-poi:rows withHeadings="true" headingsStyle="heading" 
-						autoWidth="true" autoFilter="true" name="person">
-					<of>
-						<dido-poi:text name="name" label="Name" />
-						<dido-poi:date name="dateOfBirth" label="Date Of Birth" style="date" />
-						<dido-poi:numeric name="salary" label="Salary"/>
-						<dido-poi:numeric-formula name="bonus" label="Bonus"
-							formula="10" />
-						<dido-poi:numeric name="percentage" label="Percentage"
-								style="percentage"/>
-					</of>
-				</dido-poi:rows>
-			</of>
-		</dido-poi:sheet>
-	</of>
-</dido-poi:book>
+<dido-poi:rows xmlns:dido-poi="oddjob:dido:poi"
+               withHeadings="true" headingsStyle="heading"
+               autoWidth="true" autoFilter="true">
+    <styles>
+        <dido-poi:style key="heading" bold="true" colour="RED"/>
+        <dido-poi:style key="date" format="m/d/yy hh:mm"/>
+        <dido-poi:style key="percentage" format="#0.00%"/>
+    </styles>
+    <of>
+        <dido-poi:text name="name"/>
+        <dido-poi:date name="dateOfBirth" style="date"/>
+        <dido-poi:numeric name="salary"/>
+        <dido-poi:numeric-formula name="bonus" formula='INDIRECT("C"&amp;ROW()) * INDIRECT("E"&amp;ROW())'/>
+        <dido-poi:numeric name="percentage"
+                          style="percentage" value='0.1'/>
+    </of>
+</dido-poi:rows>

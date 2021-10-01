@@ -21,8 +21,4 @@ public class TextFormulaCell extends FormulaCell<String> {
 		
 		return cellValue.getStringValue();
 	}
-	
-	public String getValue() {
-		return this.value();
-	}
 }

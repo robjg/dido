@@ -1,13 +1,14 @@
 package org.oddjob.dido.poi.layouts;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-
+import dido.data.ArrayData;
+import dido.data.DataSchema;
+import dido.data.GenericData;
+import dido.data.SchemaBuilder;
+import dido.pickles.DataIn;
+import dido.pickles.DataOut;
 import junit.framework.TestCase;
-
 import org.apache.log4j.Logger;
+import org.hamcrest.MatcherAssert;
 import org.oddjob.arooa.ArooaBeanDescriptor;
 import org.oddjob.arooa.ConfiguredHow;
 import org.oddjob.arooa.life.SimpleArooaClass;
@@ -15,12 +16,17 @@ import org.oddjob.arooa.reflect.ArooaClass;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.arooa.standard.StandardArooaSession;
-import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataReader;
-import org.oddjob.dido.DataWriter;
 import org.oddjob.dido.ValueNode;
-import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.poi.data.PoiWorkbook;
+
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 public class NumericCellTest extends TestCase {
 	private static final Logger logger = Logger.getLogger(NumericCellTest.class);
@@ -33,26 +39,19 @@ public class NumericCellTest extends TestCase {
 				"   ----------------------");
 	}
 	
-	public void testReadWrite() throws DataException {
+	public void testWriteAndRead() throws Exception {
 		
 		PoiWorkbook workbook = new PoiWorkbook();
 		
-		NumericCell test = new NumericCell();
-		test.setArooaSession(new StandardArooaSession());
-		test.setBinding(new DirectBinding());
+		NumericCell<Double> test = new NumericCell<>();
 
 		DataRows rows = new DataRows();
 		rows.setOf(0, test);
-		
-		DataBook book = new DataBook();
-		book.setOf(0, rows);
-		
-		DataWriter writer = book.writerFor(workbook); 
-		
-		writer.write(12.3);
-		
-		assertEquals(1, test.getIndex());
 
+		DataOut<String> writer = rows.outTo(workbook);
+		
+		writer.accept(ArrayData.of(12.3));
+		
 		writer.close();
 		
 		// Read side.
@@ -134,7 +133,8 @@ public class NumericCellTest extends TestCase {
 
 		reader.close();
 	}
-	
+
+
 	public static class ParameterisedBean<T> {
 		
 		public T getFoo() {

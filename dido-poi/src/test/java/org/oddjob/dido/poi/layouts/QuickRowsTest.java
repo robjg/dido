@@ -10,100 +10,86 @@ import dido.poi.BookInProvider;
 import dido.poi.BookOutProvider;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.oddjob.OurDirs;
 import org.oddjob.arooa.ArooaSession;
-import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
-import org.oddjob.arooa.life.SimpleArooaClass;
-import org.oddjob.arooa.reflect.BeanViewBean;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.types.ImportType;
 import org.oddjob.arooa.utils.DateHelper;
-import org.oddjob.dido.*;
-import org.oddjob.dido.bio.BeanBindingBean;
-import org.oddjob.dido.layout.LayoutsByName;
-import org.oddjob.dido.poi.SheetIn;
-import org.oddjob.dido.poi.SheetOut;
-import org.oddjob.dido.poi.data.PoiSheetIn;
-import org.oddjob.dido.poi.data.PoiSheetOut;
 import org.oddjob.dido.poi.data.PoiWorkbook;
-import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
-import org.oddjob.dido.poi.style.StyleProvider;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 public class QuickRowsTest extends TestCase {
 
-	File workDir;
-	
-	private static final Logger logger = Logger.getLogger(QuickRowsTest.class);
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		logger.info("----------------------------    " + getName() + 
-				"   -------------------------");
+    File workDir;
 
-		workDir = OurDirs.workPathDir(QuickRowsTest.class).toFile();
-	}
-	
-	public static class Person {
+    private static final Logger logger = Logger.getLogger(QuickRowsTest.class);
 
-		private String name;
-		private Date dateOfBirth;
-		private Double salary;
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
 
-		public Person(String name, Date dateOfBirth, Double salery) {
-			this.name = name;
-			this.dateOfBirth = dateOfBirth;
-			this.salary = salery;
-		}
+        logger.info("----------------------------    " + getName() +
+                "   -------------------------");
 
-		public Person() {
-		}
+        workDir = OurDirs.workPathDir(QuickRowsTest.class).toFile();
+    }
 
-		public String getName() {
-			return name;
-		}
+    public static class Person {
 
-		public void setName(String name) {
-			this.name = name;
-		}
+        private String name;
+        private Date dateOfBirth;
+        private Double salary;
 
-		public Date getDateOfBirth() {
-			return dateOfBirth;
-		}
+        public Person(String name, Date dateOfBirth, Double salery) {
+            this.name = name;
+            this.dateOfBirth = dateOfBirth;
+            this.salary = salery;
+        }
 
-		public void setDateOfBirth(Date dateOfBirth) {
-			this.dateOfBirth = dateOfBirth;
-		}
+        public Person() {
+        }
 
-		public Double getSalary() {
-			return salary;
-		}
+        public String getName() {
+            return name;
+        }
 
-		public void setSalary(Double salery) {
-			this.salary = salery;
-		}
-		
-		@Override
-		public String toString() {
-			return "Person: name=" + name + ", dateOfBirth=" +
-				dateOfBirth + ", salary=" + salary;
-		}
-	}
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Date getDateOfBirth() {
+            return dateOfBirth;
+        }
+
+        public void setDateOfBirth(Date dateOfBirth) {
+            this.dateOfBirth = dateOfBirth;
+        }
+
+        public Double getSalary() {
+            return salary;
+        }
+
+        public void setSalary(Double salery) {
+            this.salary = salery;
+        }
+
+        @Override
+        public String toString() {
+            return "Person: name=" + name + ", dateOfBirth=" +
+                    dateOfBirth + ", salary=" + salary;
+        }
+    }
 
     public void testIdea() throws Exception {
 
@@ -122,47 +108,39 @@ public class QuickRowsTest extends TestCase {
 
         writer.accept(person);
 
-		writer.close();
-		
-		LayoutsByName nodes = new LayoutsByName(test);
-		assertNotNull(nodes.getLayout("name"));
-		assertNotNull(nodes.getLayout("dateOfBirth"));
-		assertNotNull(nodes.getLayout("salary"));
-		
-		assertEquals(1, sheet.getLastRowNum());
-		assertEquals(3, sheet.getRow(1).getLastCellNum());
+        writer.close();
 
-		assertEquals("name", sheet.getRow(0).getCell(0).toString());
-		assertEquals("dateOfBirth", sheet.getRow(0).getCell(1).toString());
-		assertEquals("salary", sheet.getRow(0).getCell(2).toString());
-		assertEquals("John", sheet.getRow(1).getCell(0).toString());
-		assertEquals("25-Mar-1970", sheet.getRow(1).getCell(1).toString());
-		assertEquals("45000.0", sheet.getRow(1).getCell(2).toString());
-				
-		binding.free();
-		test.reset();
-		
-		SheetIn sheetIn = new PoiSheetIn(sheet);
+        Sheet sheet = workbook.getWorkbook().getSheetAt(0);
 
-		DataReader reader = test.readerFor(sheetIn);
+        assertEquals(1, sheet.getLastRowNum());
+        assertEquals(3, sheet.getRow(1).getLastCellNum());
 
-		Person result = (Person) reader.read();
-		
-		assertEquals("John", result.getName());
-		assertEquals(DateHelper.parseDate("1970-03-25"), result.getDateOfBirth());
-		assertEquals(45000.0, result.getSalary());
-	}
+        assertEquals("name", sheet.getRow(0).getCell(0).toString());
+        assertEquals("dateOfBirth", sheet.getRow(0).getCell(1).toString());
+        assertEquals("salary", sheet.getRow(0).getCell(2).toString());
+        assertEquals("John", sheet.getRow(1).getCell(0).toString());
+        assertEquals("25-Mar-1970", sheet.getRow(1).getCell(1).toString());
+        assertEquals("45000.0", sheet.getRow(1).getCell(2).toString());
 
-	public void testWriteReadWithHeadings() throws ParseException,
-			ArooaConversionException, IOException, DataException {
+        DataIn<String> reader = test.inFrom(workbook);
 
-		doWriteRead("org/oddjob/dido/poi/QuickRowsWithHeadings.xml");
-	}
+        GenericData<String> result = reader.get();
 
-	public void doWriteRead(String resource) throws ParseException,
-			ArooaConversionException, IOException, DataException {
+        assertEquals("John", result.getString("name"));
+        assertThat(result.getAs("dateOfBirth", Date.class), is(DateHelper.parseDate("1970-03-25")));
+        assertEquals(45000.0, result.getDouble("salary"));
+    }
 
-        ArooaSession session = new StandardArooaSession();
+    public void testWriteReadWithHeadings() throws Exception {
+
+        doWriteRead("org/oddjob/dido/poi/QuickRowsWithHeadings.xml");
+    }
+
+    public void doWriteRead(String resource) throws Exception {
+
+        ArooaSession session = new StandardArooaSession(
+                new ClassPathDescriptorFactory(
+                ).createDescriptor(getClass().getClassLoader()));
 
         List<GenericData<String>> beans = new ArrayList<>();
         beans.add(MapData.newBuilderNoSchema()
@@ -181,64 +159,61 @@ public class QuickRowsTest extends TestCase {
                 .setDouble("salary", 22500.0)
                 .build());
 
-		PoiWorkbook workbook = new PoiWorkbook();
-		workbook.setArooaSession(session);
-		
-		workbook.setOutput(new ArooaObject(
-				new FileOutputStream(new File(workDir, 
-						"QuickRowsTest.xlsx"))));
+        PoiWorkbook workbook = new PoiWorkbook();
 
-		ImportType importType = new ImportType();
-		importType.setArooaSession(new StandardArooaSession(
-				new ClassPathDescriptorFactory(
-						).createDescriptor(getClass().getClassLoader())));
-		importType.setResource(resource);
-		
-		Layout layout = (Layout) importType.toObject();
-		
-		DataWriteJob write = new DataWriteJob();
-		write.setArooaSession(session);
-		write.setLayout(layout);
-		write.setBeans(beans);
-		write.setBindings("person", bindingBean);
+        workbook.setOutput(
+                new FileOutputStream(new File(workDir,
+                        "QuickRowsTest.xlsx")));
 
-		write.setData(workbook);
+        ImportType importType = new ImportType();
+        importType.setArooaSession(session);
+        importType.setResource(resource);
 
-		write.call();
+        DataRows layout = (DataRows) importType.toObject();
 
-		// Read Side
-		////
-		
-		bindingBean.setType(new SimpleArooaClass(Person.class));
+        DataOutDestination<String, BookOutProvider> write = new DataOutDestination();
+        write.setHow(layout);
+        write.setArooaSession(session);
+        write.setTo(new ArooaObject(workbook));
 
-		DataReadJob read = new DataReadJob();
-		read.setArooaSession(session);
-		read.setData(workbook);
-		read.setLayout(layout);
-		read.setBindings("person", bindingBean);
-		read.setBeans(new ArrayList<Object>());
-		read.call();
+        write.run();
 
-		Object[] results = read.getBeans().toArray();
+        beans.stream().forEach(write);
 
-		Person person1 = (Person) results[0];
-		assertEquals("John", person1.getName());
-		assertEquals(DateHelper.parseDate("1970-03-25"),
-				person1.getDateOfBirth());
-		assertEquals(45000.0, person1.getSalary());
+        write.close();
 
-		Person person2 = (Person) results[1];
-		assertEquals("Jane", person2.getName());
-		assertEquals(DateHelper.parseDate("1982-11-14"),
-				person2.getDateOfBirth());
-		assertEquals(28000.0, person2.getSalary());
+        // Read Side
+        ////
 
-		Person person3 = (Person) results[2];
-		assertEquals("Fred", person3.getName());
-		assertEquals(DateHelper.parseDate("1986-08-07"),
-				person3.getDateOfBirth());
-		assertEquals(22500.0, person3.getSalary());
+        List<GenericData<String>> results = new ArrayList<>(3);
 
-		assertEquals(3, results.length);
-	}
+        DataInDriver<String, BookInProvider> read = new DataInDriver<>();
+        read.setArooaSession(session);
+        read.setFrom(new ArooaObject(workbook));
+        read.setHow(layout);
+        read.setTo(results::add);
+        read.run();
+
+        read.close();
+
+        GenericData<String> person1 = results.get(0);
+        assertEquals("John", person1.getString("name"));
+        assertEquals(DateHelper.parseDate("1970-03-25"),
+                person1.get("dateOfBirth"));
+        assertEquals(45000.0, person1.getDouble("salary"));
+
+        GenericData<String> person2 = results.get(1);
+        assertEquals("Jane", person2.getString("name"));
+        assertEquals(DateHelper.parseDate("1982-11-14"),
+                person2.get("dateOfBirth"));
+        assertEquals(28000.0, person2.getDouble("salary"));
+
+        GenericData<String> person3 = results.get(2);
+        assertEquals("Fred", person3.getString("name"));
+        assertEquals(DateHelper.parseDate("1986-08-07"),
+                person3.get("dateOfBirth"));
+        assertEquals(22500.0, person3.getDouble("salary"));
+
+        assertEquals(3, results.size());
+    }
 }

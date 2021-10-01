@@ -9,7 +9,7 @@ import org.oddjob.dido.DataOut;
  * @author rob
  *
  */
-public interface RowsOut extends DataOut {
+public interface RowsOut {
 
 	/**
 	 * The 1 based index of the last row written to. If no row has been
@@ -17,7 +17,7 @@ public interface RowsOut extends DataOut {
 	 * 
 	 * @return The index. 0 or above.
 	 */
-	public int getLastRow();
+	int getLastRow();
 	
 	/**
 	 * The 1 based index of the last column in the table of rows. If no
@@ -25,29 +25,29 @@ public interface RowsOut extends DataOut {
 	 * 
 	 * @return The index. 0 or above.
 	 */
-	public int getLastColumn();
-	
+	int getLastColumn();
+
 	/**
 	 * Create a headings row. The row will be populated by the columns.
-	 * 
+	 *
 	 * @param headingStyle The name of the heading style to use.
 	 */
-	public void headerRow(String headingStyle);
-	
+	HeaderRowOut headerRow(String headingStyle);
+
 	/**
 	 * Create the next row for writing to.
 	 */
-	public void nextRow();
+	void nextRow();
+
+	RowOut getRowOut();
 
 	/**
 	 * Add auto filter to all the columns.
 	 */
-	public void autoFilter();
+	void autoFilter();
 	
 	/**
 	 * Auto width all the columns.
 	 */
-	public void autoWidth();
-	
-	
+	void autoWidth();
 }

@@ -1,43 +1,45 @@
 package org.oddjob.dido.poi.layouts;
 
+import dido.data.GenericData;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+
+import java.util.Optional;
 
 /**
- * @oddjob.description Create a column of boolean cells.
- * 
  * @author rob
- *
+ * @oddjob.description Create a column of boolean cells.
  */
-public class BooleanCell extends DataCell<Boolean> {
+public class BooleanCell extends AbstractDataCell<Boolean> {
 
-	@Override
-	public Class<Boolean> getType() {
-		return Boolean.class;
-	}
-	
-	@Override
-	public int getCellType() {
-		return Cell.CELL_TYPE_BOOLEAN;
-	}
-	
-	@Override
-	public Boolean extractCellValue(Cell cell) {
-		return cell.getBooleanCellValue();
-	}
-		
-	@Override
-	public void insertValueInto(Cell cell, Boolean value) {
-		cell.setCellValue(value);
-	}	
-	
-	/**
-	 * @oddjob.property value
-	 * @oddjob.description The last value set by this layout.
-	 * @oddjob.required Read only.
-	 * 
-	 * @return
-	 */
-	public Boolean getValue() {
-		return this.value();
-	}
+    private volatile Boolean value;
+
+    @Override
+    public Class<Boolean> getType() {
+        return Boolean.class;
+    }
+
+    @Override
+    public CellType getCellType() {
+        return CellType.BOOLEAN;
+    }
+
+    @Override
+    public Boolean extractCellValue(Cell cell) {
+        return cell.getBooleanCellValue();
+    }
+
+    @Override
+    void insertValueInto(Cell cell, int index, GenericData<String> data) {
+
+        Boolean value = Optional.ofNullable(this.value)
+                .orElseGet(() -> data.getAtAs(index, Boolean.class));
+
+        if (value == null) {
+            cell.setBlank();
+        } else {
+            cell.setCellValue(value);
+        }
+    }
+
 }

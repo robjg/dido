@@ -5,31 +5,26 @@ import dido.data.MapData;
 import dido.pickles.DataIn;
 import dido.pickles.DataOut;
 import junit.framework.TestCase;
-
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.standard.StandardArooaSession;
-import org.oddjob.arooa.types.ArooaObject;
-import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataReader;
-import org.oddjob.dido.DataWriter;
-import org.oddjob.dido.bio.DirectBinding;
 import org.oddjob.dido.poi.data.PoiWorkbook;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 public class DataRowsTest extends TestCase {
 
-	public void testWriteAndReadWithHeadings() throws DataException, InvalidFormatException, IOException {
+	public void testWriteAndReadWithHeadings() throws Exception {
 		
 		ArooaSession session = new StandardArooaSession();
 		
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		
 		PoiWorkbook workbook = new PoiWorkbook();
-		workbook.setArooaSession(session);
-		workbook.setOutput(new ArooaObject(output));
+		workbook.setOutput(output);
 		
 		DataRows test = new DataRows();
 		test.setFirstRow(2);
@@ -37,8 +32,7 @@ public class DataRowsTest extends TestCase {
 		test.setWithHeadings(true);
 		
 		TextCell cell = new TextCell();
-		cell.setBinding(new DirectBinding());
-		cell.setLabel("Fruit");
+		cell.setName("Fruit");
 	
 		test.setOf(0, cell);
 
@@ -54,14 +48,12 @@ public class DataRowsTest extends TestCase {
 		writer.accept(data1);
 		
 		assertEquals(3, test.getLastRow());
-		assertEquals(3, test.getLastColumn());
-		
+
 		// second row
-		writer.write("Oranges");
+		writer.accept(data2);
 		
 		assertEquals(4, test.getLastRow());
-		assertEquals(3, test.getLastColumn());
-		
+
 		writer.close();
 		
 		// Check
@@ -77,38 +69,27 @@ public class DataRowsTest extends TestCase {
 		////////////////////////////////
 		// Read Side
 		
-		book.reset();
-		
-		assertEquals(0, test.getLastRow());
-		assertEquals(0, test.getLastColumn());
-		
-		DataReader reader = book.readerFor(workbook);
-		
-		Object result = reader.read();
-		
-		assertEquals(1, cell.getIndex());
+//		assertEquals(0, test.getLastRow());
+//		assertEquals(0, test.getLastColumn());
+
+		DataIn<String> reader = test.inFrom(workbook);
+
+		GenericData<String> result = reader.get();
 		
 		assertEquals(3, test.getLastRow());
-		assertEquals(3, test.getLastColumn());
-		
-		assertEquals("Apples", cell.getValue());
-		assertEquals("Apples", result);
-		
-		result = reader.read();
+
+		assertEquals("Apples", result.getString("Fruit"));
+
+		result = reader.get();
 
 		assertEquals(4, test.getLastRow());
-		assertEquals(3, test.getLastColumn());
-		
-		assertEquals("Oranges", cell.getValue());
-		assertEquals("Oranges", result);
-		
-		
-		assertNull(reader.read());
+
+		assertEquals("Oranges", result.getString("Fruit"));
+
+		assertNull(reader.get());
 		
 		reader.close();
 		
 		assertEquals(4, test.getLastRow());
-		assertEquals(3, test.getLastColumn());
-		
 	}
 }

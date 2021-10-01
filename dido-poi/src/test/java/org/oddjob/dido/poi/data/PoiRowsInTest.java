@@ -1,81 +1,53 @@
 package org.oddjob.dido.poi.data;
 
-import junit.framework.TestCase;
-
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataIn;
-import org.oddjob.dido.field.Field;
-import org.oddjob.dido.poi.CellIn;
-import org.oddjob.dido.poi.SheetIn;
-import org.oddjob.dido.poi.TupleIn;
+import org.junit.jupiter.api.Test;
+import org.oddjob.dido.poi.RowIn;
 
-public class PoiRowsInTest extends TestCase {
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
-	Sheet sheet;
-	
-	private class OurSheetIn implements SheetIn {
-		
-		@Override
-		public <T extends DataIn> T provideDataIn(Class<T> type)
-				throws DataException {
-			throw new RuntimeException("Unexpected!");
-		}
+public class PoiRowsInTest {
 
-		@Override
-		public Sheet getTheSheet() {
-			return sheet;
-		}
-	}
 
-	private class OurColumn implements Field {
-		
-		@Override
-		public String getLabel() {
-			return "Quantity";
-		}
-	}	
-	
-	public void testCreateCellInWithHeader() throws DataException {
+	@Test
+	public void testCreateCellInWithHeader() {
 		
 		Workbook workbook = new XSSFWorkbook();
-		sheet = workbook.createSheet();
+		Sheet sheet = workbook.createSheet();
 
 		Row row = sheet.createRow(2);
 		row.createCell(6).setCellValue("Fruit");
 		row.createCell(7).setCellValue("Quantity");
 		row.createCell(8).setCellValue("Price");
 		
-		PoiRowsIn test = new PoiRowsIn(new OurSheetIn(), 3, 7);
+		PoiRowsIn test = new PoiRowsIn(sheet, 3, 7);
 		
-		assertEquals(2, test.getLastRow());
-		assertEquals(6, test.getLastColumn());
-		
-		assertNotNull(test.headerRow());
-		
-		assertEquals(3, test.getLastRow());
-		assertEquals(6, test.getLastColumn());
-		
-		TupleIn tupleIn = test.provideDataIn(TupleIn.class);
-		
-		CellIn<?> cellIn = tupleIn.inFor(new OurColumn());
+		assertThat(test.getLastRow(), is(2));
 
-		assertEquals(2, cellIn.getColumnIndex());
-		assertEquals(8, test.getLastColumn());
-		
+		assertThat(test.headerRow(), arrayContaining("Fruit", "Quantity", "Price"));
+
+		assertThat(test.getLastRow(), is(3));
+
+		assertThat(test.nextRow(), nullValue());
+
 		row = sheet.createRow(3);
 		row.createCell(6).setCellValue("Apple");
 		row.createCell(7).setCellValue(17);
 		row.createCell(8).setCellValue(24.3);
 		
-		assertTrue(test.nextRow());
-		
-		assertEquals(17.0, cellIn.getData());
-		
-		assertEquals(4, test.getLastRow());
-		assertEquals(8, test.getLastColumn());
+		RowIn rowIn = test.nextRow();
+		assertThat(rowIn, notNullValue());
+
+		Cell cell1 = rowIn.getCell(2);
+
+		assertThat(cell1.getColumnIndex(), is(7));
+		assertThat(cell1.getNumericCellValue(), is(17.0));
+
+		assertThat(test.getLastRow(), is(4));
 	}
 }

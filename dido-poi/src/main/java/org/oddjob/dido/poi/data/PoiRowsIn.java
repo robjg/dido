@@ -1,20 +1,12 @@
 package org.oddjob.dido.poi.data;
 
-import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataIn;
-import org.oddjob.dido.UnsupportedDataInException;
-import org.oddjob.dido.ValueNode;
-import org.oddjob.dido.field.Field;
-import org.oddjob.dido.poi.CellIn;
+import org.oddjob.dido.poi.RowIn;
 import org.oddjob.dido.poi.RowsIn;
-import org.oddjob.dido.poi.SheetIn;
-import org.oddjob.dido.poi.TupleIn;
-import org.oddjob.dido.poi.utils.CellHelper;
-import org.oddjob.dido.tabular.ColumnHelper;
+
+import java.util.Objects;
 
 /**
  * Implementation of {@link RowsIn}.
@@ -25,11 +17,7 @@ import org.oddjob.dido.tabular.ColumnHelper;
 public class PoiRowsIn implements RowsIn {
 
 	private final Sheet sheet;
-	
-	private final ColumnHelper columnHelper = new ColumnHelper();
-	
-	private SimpleHeadings headings;
-	
+
 	/** The offset from the first column. Used to calculate cell position
 	 * for columns. */
 	private final int columnOffset; 
@@ -37,18 +25,15 @@ public class PoiRowsIn implements RowsIn {
 	/** The 1 based index of the last row written. */
 	private int lastRowNum;
 	
-	/** The current row. */
-	private Row row;
-	
 	/**
 	 * Create an instance.
 	 * 
-	 * @param sheetIn
-	 * @param firstRow
-	 * @param firstColumn
+	 * @param sheet The Work Sheet.
+	 * @param firstRow The first row to read data from.
+	 * @param firstColumn The first column to read data from.
 	 */
-	public PoiRowsIn(SheetIn sheetIn, int firstRow, int firstColumn) {
-		this.sheet = sheetIn.getTheSheet();
+	public PoiRowsIn(Sheet sheet, int firstRow, int firstColumn) {
+		this.sheet = Objects.requireNonNull(sheet);
 		
 		if (firstRow < 1) {
 			firstRow = 1;
@@ -71,25 +56,35 @@ public class PoiRowsIn implements RowsIn {
 			return null;
 		}
 		else {
-			this.headings = new SimpleHeadings(row, columnOffset);
-			String[] headings = this.headings.getHeadings();
-			columnHelper.setHeadings(headings);
-			
+			SimpleHeadings headings1 = new SimpleHeadings(row, columnOffset);
+			String[] headings = headings1.getHeadings();
+
 			++lastRowNum;
 			return headings;
 		}
 	}
 	
 	@Override
-	public boolean nextRow() {
+	public RowIn nextRow() {
 		
-		row = sheet.getRow(lastRowNum);
+		Row row = sheet.getRow(lastRowNum);
 		if (row == null) {
-			return false;
+			return null;
 		}
 		else {
 			++lastRowNum;
-			return true;
+			return new PoiRowIn(row);
+		}
+	}
+
+	@Override
+	public RowIn peekRow() {
+		Row row = sheet.getRow(lastRowNum);
+		if (row == null) {
+			return null;
+		}
+		else {
+			return new PoiRowIn(row);
 		}
 	}
 
@@ -97,172 +92,27 @@ public class PoiRowsIn implements RowsIn {
 	public int getLastRow() {
 		return lastRowNum;
 	}
-	
-	@Override
-	public int getLastColumn() {
-//		return lastColumnNum;
-		return columnHelper.getMaxColumn() + columnOffset;
-	}
-	
-	@Override
-	public <T extends DataIn> T provideDataIn(Class<T> type) throws DataException {
 
-		if (type.isInstance(this)) {
-			return type.cast(this);
+	class PoiRowIn implements RowIn {
+
+		private final Row row;
+
+		PoiRowIn(Row row) {
+			this.row = Objects.requireNonNull((row), "No row. Check nextRow() returned true.");
 		}
-		
-		if (type.isAssignableFrom(TupleIn.class)) {
-			return type.cast(new PoiTupleIn());
+
+		@Override
+		public Cell getCell(int columnIndex) {
+			int poiCellIndex = columnOffset + columnIndex - 1;
+
+			return row.getCell(poiCellIndex);
 		}
-		
-		throw new UnsupportedDataInException(this.getClass(), type);
 	}
-	
+
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + ": " + sheet.getSheetName();
 	}
-	
-	
-	/**
-	 * Implementation of {@link TupleIn}.
-	 */
-	class PoiTupleIn implements TupleIn {
-		
-		@Override
-		public <T extends DataIn> T provideDataIn(Class<T> type) throws DataException {
-			
-			if (type.isInstance(this)) {
-				return type.cast(this);
-			}
-			
-			throw new UnsupportedDataInException(this.getClass(), type);
-		}
-		
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		@Override
-		public CellIn<?> inFor(Field column) {
 
-			final int columnIndex = columnHelper.columnIndexFor(column);
-			
-			if (column instanceof CellLayout) {
-				return createCellInWithInferredType(columnIndex, 
-						(CellLayout<?>) column);
-			}
-			else if (column instanceof ValueNode) {
-				return new GenericCell(columnIndex, ((ValueNode) column).getType());
-			}
-			else {
-				return new GenericCell(columnIndex, Object.class);
-			}
-		}
-		
-		@Override
-		public String toString() {
-			return getClass().getSimpleName() + 
-					(row == null ? "(unused)" : 
-						" row [" + row.getRowNum() + "]");
-		}
-	}
 
-	abstract class PoiCellIn<T> implements CellIn<T> {
-		
-		private final int columnIndex;
-		
-		private String cellReference;
-		
-		public PoiCellIn(int columnIndex) {
-			this.columnIndex = columnIndex;
-		}
-		
-		@Override
-		public int getColumnIndex() {
-			return columnIndex;
-		}
-		
-		@Override
-		public T getData() throws DataException {
-
-			if (columnIndex == 0) {
-				return null;
-			}
-			
-			int poiCellIndex = columnOffset + columnIndex - 1;
-			
-			Cell cell = row.getCell(poiCellIndex);
-			
-			cellReference = new CellReference(
-					row.getRowNum(), poiCellIndex).formatAsString();
-			
-			if (cell == null) {
-				return null;
-			}
-
-			return getCellValue(cell);
-		}
-		
-		@Override
-		public String getCellReference() {
-			return cellReference;
-		}
-		
-		abstract protected T getCellValue(Cell cell)
-		throws DataException;
-		
-		@Override
-		public String toString() {
-			return getClass().getSimpleName() + ": index=" + columnIndex;
-		}
-	}
-	
-	/**
-	 * A cell when used with not a {@link DataCell}.
-	 * 
-	 * @param <T> The type of data in the cell.
-	 */
-	class GenericCell<T> extends PoiCellIn<T>{
-		
-		private final Class<T> type;
-				
-		public GenericCell(int columnIndex, Class<T> type) {
-			super(columnIndex);
-			this.type = type;
-		}
-		
-		@Override
-		public Class<?> getType() {
-			return Object.class;
-		}
-		
-		@Override
-		protected T getCellValue(Cell cell) throws DataException {
-			return new CellHelper().getCellValue(cell, type);
-		}
-	}
-	
-	<T> DataCellIn<T> createCellInWithInferredType(int columnIndex, 
-			CellLayout<T> dataCell) {
-		return new DataCellIn<T>(columnIndex, dataCell);
-	}
-	
-	class DataCellIn<T> extends PoiCellIn<T> {
-		
-		private final CellLayout<T> dataCell;
-		
-		public DataCellIn(int columnIndex, CellLayout<T> dataCell) {
-			super(columnIndex);
-			this.dataCell = dataCell;
-		}
-		
-		@Override
-		public Class<?> getType() {
-			return dataCell.getType();
-		}
-
-		@Override
-		protected T getCellValue(Cell cell) throws DataException {
-
-			return dataCell.extractCellValue(cell);
-		}
-	}		
 }

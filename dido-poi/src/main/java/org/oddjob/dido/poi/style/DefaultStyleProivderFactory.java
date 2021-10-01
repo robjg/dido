@@ -3,7 +3,6 @@ package org.oddjob.dido.poi.style;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.oddjob.dido.poi.beancmpr.BeanCmprResultBinding;
 
 /**
  * Provide the default styles.
@@ -18,25 +17,26 @@ public class DefaultStyleProivderFactory implements StyleProviderFactory {
 	
 	/** The name of the style used for dates. */
 	public static String DATE_STYLE = "date";
-	
-	/** The name of the style used for a beancmpr difference. 
-	 * See {@link BeanCmprResultBinding}. */
+
+	public static String DATE_FORMAT = "d/m/yyyy";
+
+	/** The name of the style used for a beancmpr difference. */
 	public static String BEANCMPR_DIFF_STYLE = "beancmpr-difference";
 	
 	/** The name of the style used for a beancmpr key column for a matching 
-	 * row. See {@link BeanCmprResultBinding}. */
+	 * row. */
 	public static String BEANCMPR_MATCH_STYLE = "beancmpr-match";
 	
 	/** The name of the style used for a beancmpr key column for a row
-	 * that matches. See {@link BeanCmprResultBinding}. */
+	 * that matches. */
 	public static String BEANCMPR_KEY_MATCH_STYLE = "beancmpr-key-match";
 	
 	/** The name of the style used for a beancmpr key column for a row
-	 * with a difference. See {@link BeanCmprResultBinding}. */
+	 * with a difference. */
 	public static String BEANCMPR_KEY_DIFF_STYLE = "beancmpr-key-difference";
 
 	/** The name of the style used for a beancmpr key column for a row
-	 * with one side missing. See {@link BeanCmprResultBinding}. */
+	 * with one side missing. */
 	public static String BEANCMPR_MISSING_STYLE = "beancmpr-missing";
 	
 	private final StyleFactoryRegistry factory = new StyleFactoryRegistry();
@@ -50,7 +50,7 @@ public class DefaultStyleProivderFactory implements StyleProviderFactory {
 		heading.setBold(true);
 		
 		StyleBean date = new StyleBean();
-		date.setFormat("d/m/yyyy");
+		date.setFormat(DATE_FORMAT);
 		
 		StyleBean beanCmprDiff = new StyleBean();
 		beanCmprDiff.setFillForegroundColour(IndexedColors.RED);

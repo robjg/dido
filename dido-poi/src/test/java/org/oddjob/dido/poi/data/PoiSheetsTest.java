@@ -8,20 +8,20 @@ import org.junit.jupiter.api.Test;
 import org.oddjob.dido.poi.layouts.DataRows;
 import org.oddjob.dido.poi.layouts.TextCell;
 
-public class PoiSheetsTest extends TestCase {
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
-	public void testSheetCreatedAndRead() throws DataException {
+public class PoiSheetsTest  {
+
+	@Test
+	public void testSheetCreatedAndRead() throws Exception {
 		
 		PoiWorkbook workbook = new PoiWorkbook();
-		
-		BookOut bookOut = workbook.provideDataOut(BookOut.class);
-		
-		Sheet sheet1 = bookOut.createSheet("Fruit");
 
-		SheetOut test1 = new PoiSheetOut(sheet1);
-		
 		
 		DataRows rows = new DataRows();
+		rows.setSheetName("Fruit");
 		
 		TextCell cell =  new TextCell();
 		
@@ -40,28 +40,19 @@ public class PoiSheetsTest extends TestCase {
 		////////////
 		// Read Part
 
-		rows.reset();
+		DataIn<String> reader = rows.inFrom(workbook);
+		
+		GenericData<String> result = reader.get();
+		
+		assertThat(result.getStringAt(1), is("Apples"));
 
-		assertNull(cell.value());
-		
-		BookIn bookIn = workbook.provideDataIn(BookIn.class);
-		
-		Sheet sheet2 = bookIn.getSheet("Fruit");
-		
-		SheetIn test2 = new PoiSheetIn(sheet2);
-		
-		DataReader reader = rows.readerFor(test2);
-		
-		Object result = reader.read();
-		
-		assertEquals("Apples", result);
-		
-		assertEquals(null, reader.read());
-		
+		assertThat(reader.get(), nullValue());
+
 		reader.close();
 	}
-	
-	public void testSheetCreatedAndReadUnamed() throws DataException {
+
+	@Test
+	public void testSheetCreatedAndReadUnamed() throws Exception {
 		
 		PoiWorkbook workbook = new PoiWorkbook();
 		
@@ -84,17 +75,12 @@ public class PoiSheetsTest extends TestCase {
 		////////////
 		// Read Part
 
-		rows.reset();
+		DataIn<String> reader = rows.inFrom(workbook);
 
-		assertNull(cell.value());
-		
-		DataReader reader = book.readerFor(workbook);
-		
-		Object result = reader.read();
-		
-		assertEquals("Apples", result);
-		
-		assertEquals(null, reader.read());
+		GenericData<String> result = reader.get();
+
+		assertThat(result.getStringAt(1), is("Apples"));
+		assertThat(reader.get(), nullValue());
 		
 		reader.close();
 	}

@@ -1,98 +1,89 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <oddjob>
-  <job>
-    <sequential>
-      <jobs>
-        <properties>
-          <values>
-            <file file="./work" key="work.dir" />
-          </values>
-        </properties>
-        <dido:read id="test-data" name="Load Test Data"
-          xmlns:dido="oddjob:dido">
-          <beans>
-            <list />
-          </beans>
-          <data>
-            <dido:io>
-              <input>
-                <buffer><![CDATA[fruit,bestBefore,colour,quantity,price
+    <job>
+        <sequential>
+            <jobs>
+                <properties>
+                    <values>
+                        <file file="./work" key="work.dir"/>
+                    </values>
+                </properties>
+                <bean-bus>
+                    <parts>
+                        <dido:in id="test-data" name="Load Test Data"
+                                 xmlns:dido="oddjob:dido">
+                            <from>
+                                <buffer><![CDATA[fruit,bestBefore,colour,quantity,price
 Apple,2013-11-25,red,3,74.6
 Apple,2013-11-27,green,2,46.2
 Orange,2013-12-05,,5,215
 Pear,2013-11-30,green,1,24.3
 Banana,2013-11-21,,7,175.5
 ]]></buffer>
-              </input>
-            </dido:io>
-          </data>
-          <layout>
-            <dido:delimited withHeadings="true">
-              <binding>
-                <dido:bean-binding>
-                  <type>
-                    <class name="org.oddjob.dido.poi.test.Fruit" />
-                  </type>
-                </dido:bean-binding>
-              </binding>
-            </dido:delimited>
-          </layout>
-        </dido:read>
-        <dido:write xmlns:dido="oddjob:dido" id="data-book-write">
-          <beans>
-            <value value="${test-data.beans}" />
-          </beans>
-          <data>
-            <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">
-              <output>
-                <file file="${work.dir}/DataBookExample1.xlsx" />
-              </output>
-            </dido-poi:workbook>
-          </data>
-          <layout>
-            <dido-poi:book xmlns:dido-poi="oddjob:dido:poi">
-              <of>
-                <dido-poi:sheet sheetName="Fruit">
-                  <of>
-                    <dido-poi:rows autoFilter="true"
-                      autoWidth="true" name="fruit-data" withHeadings="true" />
-                  </of>
-                </dido-poi:sheet>
-              </of>
-              <styles>
-                <dido-poi:style key="heading" bold="true"
-                  colour="BLUE" />
-                <dido-poi:style key="date" format="yyyy-mm-dd" />
-              </styles>
-            </dido-poi:book>
-          </layout>
-          <bindings>
-            <dido:bean-binding key="fruit-data" />
-          </bindings>
-        </dido:write>
-        <dido:read xmlns:dido="oddjob:dido" id="data-book-read">
-          <beans>
-            <list />
-          </beans>
-          <data>
-            <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">
-              <input>
-                <file file="${work.dir}/DataBookExample1.xlsx" />
-              </input>
-            </dido-poi:workbook>
-          </data>
-          <layout>
-            <value value="${data-book-write.layout}" />
-          </layout>
-          <bindings>
-            <dido:bean-binding key="fruit-data">
-              <type>
-                <class name="org.oddjob.dido.poi.test.Fruit" />
-              </type>
-            </dido:bean-binding>
-          </bindings>
-        </dido:read>
-      </jobs>
-    </sequential>
-  </job>
+                            </from>
+                            <how>
+                                <dido:csv xmlns:dido="oddjob:dido" withHeadings="true"/>
+                            </how>
+                        </dido:in>
+                        <dido:out xmlns:dido="oddjob:dido" id="data-book-write">
+                            <to>
+                                <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">
+                                    <output>
+                                        <file file="${work.dir}/DataBookExample1.xlsx"/>
+                                    </output>
+                                </dido-poi:workbook>
+                            </to>
+                            <how>
+                                <dido-poi:rows xmlns:dido-poi="oddjob:dido:poi" sheetName="Fruit" autoFilter="true"
+                                               autoWidth="true" withHeadings="true">
+                                    <of>
+                                        <dido-poi:text name="fruit"/>
+                                        <dido-poi:date name="bestBefore"/>
+                                        <dido-poi:text name="colour"/>
+                                        <dido-poi:numeric name="quantity">
+                                            <type>
+                                                <class name="int"/>
+                                            </type>
+                                        </dido-poi:numeric>
+                                        <dido-poi:numeric name="price"/>
+                                    </of>
+                                    <styles>
+                                        <dido-poi:style key="heading" bold="true"
+                                                        colour="BLUE"/>
+                                        <dido-poi:style key="date" format="yyyy-mm-dd"/>
+                                    </styles>
+                                </dido-poi:rows>
+                            </how>
+                        </dido:out>
+                    </parts>
+                </bean-bus>
+                <bean-bus>
+                    <parts>
+                        <dido:in xmlns:dido="oddjob:dido">
+                            <from>
+                                <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">
+                                    <input>
+                                        <file file="${work.dir}/DataBookExample1.xlsx"/>
+                                    </input>
+                                </dido-poi:workbook>
+                            </from>
+                            <how>
+                                <value value="${data-book-write.how}"/>
+                            </how>
+                        </dido:in>
+                        <bus:transformer xmlns:bus="oddjob:beanbus">
+                            <function>
+                                <dido:to-bean xmlns:dido="oddjob:dido">
+                                    <beanClass>
+                                        <class name="org.oddjob.dido.poi.test.Fruit"/>
+                                    </beanClass>
+                                </dido:to-bean>
+                            </function>
+                        </bus:transformer>
+                        <bus:capture id="data-book-read" xmlns:bus="oddjob:beanbus"/>
+                    </parts>
+                </bean-bus>
+            </jobs>
+        </sequential>
+    </job>
 </oddjob>

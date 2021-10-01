@@ -49,7 +49,7 @@ public class StyleBean implements StyleFactory {
 	/**
 	 * Create a style.
 	 * 
-	 * @param workbook. The workbook. Must not be null.
+	 * @param workbook The workbook. Must not be null.
 	 * 
 	 * @return The style. Will not be null.
 	 */
@@ -58,10 +58,10 @@ public class StyleBean implements StyleFactory {
 		
 		CellStyle style = workbook.createCellStyle();
 		if (alignment != null) {
-			style.setAlignment((short) alignment.ordinal());
+			style.setAlignment(alignment);
 		}
 		if (verticalAlignment != null) {
-			style.setVerticalAlignment((short) verticalAlignment.ordinal());
+			style.setVerticalAlignment(verticalAlignment);
 		}
 		
 		if (format != null) {
@@ -83,7 +83,7 @@ public class StyleBean implements StyleFactory {
 		}
 		
 		if (fillPattern != null) {
-			style.setFillPattern((short) fillPattern.ordinal());
+			style.setFillPattern(fillPattern);
 		}
 		
 		style.setWrapText(wrapped);
@@ -119,7 +119,7 @@ public class StyleBean implements StyleFactory {
 		Font createFont() {
 			
 			if (bold) {
-				getOurFont().setBoldweight(Font.BOLDWEIGHT_BOLD);
+				getOurFont().setBold(true);
 			}
 			
 			if (colour != null) {

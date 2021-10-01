@@ -1,10 +1,11 @@
 package org.oddjob.dido.poi;
 
 import org.apache.poi.ss.usermodel.Sheet;
-import org.oddjob.dido.DataException;
-import org.oddjob.dido.DataOut;
 import org.oddjob.dido.poi.style.StyleProvider;
 import org.oddjob.dido.poi.style.StyleProviderFactory;
+
+import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * Something that can write data to a spreadsheet workbook.
@@ -12,7 +13,7 @@ import org.oddjob.dido.poi.style.StyleProviderFactory;
  * @author rob
  *
  */
-public interface BookOut extends DataOut, StyleProvider {
+public interface BookOut extends Closeable {
 	
 	/**
 	 * Create a sheet in the workbook.
@@ -21,20 +22,20 @@ public interface BookOut extends DataOut, StyleProvider {
 	 * 
 	 * @return A spreadsheet sheet.
 	 */
-	public Sheet createSheet(String name);
+	Sheet getOrCreateSheet(String name);
 	
 	/**
 	 * Close the workbook. This will be called by a layout to ensure
 	 * all data is written out to any output stream.
 	 * 
-	 * @throws DataException
 	 */
-	public void close() throws DataException;
+	@Override
+	void close() throws IOException;
 	
 	/**
 	 * Add a style factory to this Style Provider.
 	 * 
 	 * @param styleProviderFactory The factory used to create the style
 	 */
-	public void addStyleFactory(StyleProviderFactory styleProviderFactory);
+	StyleProvider createStyles(StyleProviderFactory styleProviderFactory);
 }

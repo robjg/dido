@@ -1,8 +1,6 @@
 package org.oddjob.dido.poi;
 
-import org.oddjob.dido.DataIn;
-
-public interface RowsIn extends DataIn {
+public interface RowsIn {
 
 	/**
 	 * The 1 based index of the last row read. If no row has been
@@ -10,26 +8,22 @@ public interface RowsIn extends DataIn {
 	 * 
 	 * @return The index. 0 or above.
 	 */
-	public int getLastRow();
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public int getLastColumn();
-	
+	int getLastRow();
+
 	/**
 	 * Read a header row.
 	 * 
 	 * @return The heading, or null if the header row doesn't exist.
 	 */
-	public String[] headerRow();
+	String[] headerRow();
 	
 	/**
-	 * Advance the current row. 
+	 * Advance the current row and return it.
 	 * 
-	 * @return True if there is another row , false if there
+	 * @return Return another row if there is one, null if there
 	 * isn't.
 	 */
-	public boolean nextRow();
+	RowIn nextRow();
+
+	RowIn peekRow();
 }

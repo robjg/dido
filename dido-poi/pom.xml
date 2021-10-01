@@ -11,20 +11,16 @@
 
     <artifactId>dido-poi</artifactId>
 
+    <description>DiDo for Apache Poi.</description>
+
     <properties>
-        <poi.version>3.9</poi.version>
+        <poi.version>4.1.2</poi.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>uk.co.rgordon</groupId>
             <artifactId>dido-pickles</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.co.rgordon</groupId>
-            <artifactId>arooa</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -67,22 +63,33 @@
         </dependency>
 
         <dependency>
-            <groupId>uk.co.rgordon</groupId>
-            <artifactId>arooa</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>uk.co.rgordon</groupId>
+            <version>${project.version}</version>
             <artifactId>oddjob</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.co.rgordon</groupId>
+            <artifactId>dido-oddball</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.co.rgordon</groupId>
+            <artifactId>dido-csv</artifactId>
             <scope>test</scope>
         </dependency>
 

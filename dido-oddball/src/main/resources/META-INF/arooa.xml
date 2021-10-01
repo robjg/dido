@@ -21,5 +21,9 @@
 						className="dido.oddjob.beanbus.DataInDriver"/>
 		<arooa:bean-def element="destination"
 						className="dido.oddjob.beanbus.DataOutDestination"/>
+		<arooa:bean-def element="in"
+						className="dido.oddjob.beanbus.DataInDriver"/>
+		<arooa:bean-def element="out"
+						className="dido.oddjob.beanbus.DataOutDestination"/>
 	</components>
 </arooa:descriptor>
