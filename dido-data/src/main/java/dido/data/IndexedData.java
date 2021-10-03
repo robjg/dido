@@ -1,7 +1,5 @@
 package dido.data;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -17,6 +15,7 @@ public interface IndexedData<F> {
     Object getAt(int index);
 
     default <T> T getAtAs(int index, Class<T> type) {
+        //noinspection unchecked
         return (T) getAt(index);
     }
 
@@ -141,13 +140,18 @@ public interface IndexedData<F> {
 
     static String toString(IndexedData<?> data) {
         DataSchema<?> schema = data.getSchema();
-        List<Object> list = new ArrayList<>(schema.lastIndex());
+        StringBuilder sb = new StringBuilder(schema.lastIndex() * 16);
+        sb.append('{');
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
-            if (!data.hasIndex(index)) {
-                continue;
+            sb.append('[');
+            sb.append(index);
+            sb.append("]=");
+            sb.append(data.getAt(index));
+            if (index != schema.lastIndex()) {
+                sb.append(", ");
             }
-            list.add(data.getAt(index));
         }
-        return list.toString();
+        sb.append('}');
+        return sb.toString();
     }
 }

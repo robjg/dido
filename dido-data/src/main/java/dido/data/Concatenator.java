@@ -121,6 +121,11 @@ public class Concatenator<F> {
         return schema;
     }
 
+    /**
+     * Compares previous schemas so we can maybe shortcut.
+     *
+     * @param <F> Field Type.
+     */
     public static class Factory<F> {
 
         private Concatenator<F> last;
@@ -155,6 +160,9 @@ public class Concatenator<F> {
         }
     }
 
+    /**
+     * The Data
+     */
     class ConcatenatedData implements GenericData<F> {
 
         private final GenericData<F>[] data;
@@ -182,61 +190,61 @@ public class Concatenator<F> {
 
         @Override
         public boolean hasIndex(int index) {
-            int i = dataByIndex[index];
+            int i = dataByIndex[index - 1];
             return data[i].hasIndex(index - offsets[i]);
         }
 
         @Override
         public String getStringAt(int index) {
-            int i = dataByIndex[index];
+            int i = dataByIndex[index - 1];
             return data[i].getStringAt(index - offsets[i]);
         }
 
         @Override
         public boolean getBooleanAt(int index) {
-            int i = dataByIndex[index];
+            int i = dataByIndex[index - 1];
             return data[i].getBooleanAt(index - offsets[i]);
         }
 
         @Override
         public byte getByteAt(int index) {
-            int i = dataByIndex[index];
+            int i = dataByIndex[index - 1];
             return data[i].getByteAt(index - offsets[i]);
         }
 
         @Override
         public char getCharAt(int index) {
-            int i = dataByIndex[index];
+            int i = dataByIndex[index - 1];
             return data[i].getCharAt(index - offsets[i]);
         }
 
         @Override
         public short getShortAt(int index) {
-            int i = dataByIndex[index];
+            int i = dataByIndex[index - 1];
             return data[i].getShortAt(index - offsets[i]);
         }
 
         @Override
         public int getIntAt(int index) {
-            int i = dataByIndex[index];
+            int i = dataByIndex[index - 1];
             return data[i].getIntAt(index - offsets[i]);
         }
 
         @Override
         public long getLongAt(int index) {
-            int i = dataByIndex[index];
+            int i = dataByIndex[index - 1];
             return data[i].getLongAt(index - offsets[i]);
         }
 
         @Override
         public float getFloatAt(int index) {
-            int i = dataByIndex[index];
+            int i = dataByIndex[index - 1];
             return data[i].getFloatAt(index - offsets[i]);
         }
 
         @Override
         public double getDoubleAt(int index) {
-            int i = dataByIndex[index];
+            int i = dataByIndex[index - 1];
             return data[i].getDoubleAt(index - offsets[i]);
         }
 
@@ -299,9 +307,33 @@ public class Concatenator<F> {
         public String getString(F field) {
             return data[dataByField.get(field)].getString(field);
         }
+
+        @Override
+        public int hashCode() {
+            return IndexedData.hashCode(this);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof IndexedData) {
+                return IndexedData.equals(this, (IndexedData<?>) obj);
+            }
+            else {
+                return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return GenericData.toString(this);
+        }
     }
 
-
+    /**
+     * Almost a Schema with offset.
+     *
+     * @param <F> Field Type.
+     */
     static class OffsetSchema<F>  {
 
         private final DataSchema<F> originalSchema;
@@ -330,7 +362,11 @@ public class Concatenator<F> {
         }
     }
 
-
+    /**
+     * The Schema.
+     *
+     * @param <F> Field Type.
+     */
     static class CompositeSchema<F> implements DataSchema<F> {
 
         private final OffsetSchema<F>[] schemaByIndex;
@@ -395,6 +431,25 @@ public class Concatenator<F> {
         public Collection<F> getFields() {
             return schemaByField.keySet();
         }
-    }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof DataSchema) {
+                return DataSchema.equals(this, (DataSchema<?>) obj);
+            }
+            else {
+                return false;
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return DataSchema.hashCode(this);
+        }
+
+        @Override
+        public String toString() {
+            return DataSchema.toString(this);
+        }
+    }
 }

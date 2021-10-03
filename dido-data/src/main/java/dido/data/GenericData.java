@@ -20,6 +20,7 @@ public interface GenericData<F> extends IndexedData<F> {
     }
 
     default <T> T getAs(F field, Class<T> type) {
+        //noinspection unchecked
         return (T) get(field);
     }
 
@@ -61,18 +62,18 @@ public interface GenericData<F> extends IndexedData<F> {
 
     default String getString(F field) { return (String) get(field); }
 
-    static <F> String toStringFieldsOnly(String name, GenericData<F> data) {
+    static <F> String toStringFieldsOnly(GenericData<F> data) {
         StringBuilder sb = new StringBuilder();
-        sb.append(name);
-        sb.append(": {");
+        sb.append('{');
         Iterator<F> it = data.getSchema().getFields().iterator();
         if (!it.hasNext()) {
             sb.append("}");
         }
         for (;;) {
             F field = it.next();
+            sb.append('[');
             sb.append(field);
-            sb.append('=');
+            sb.append("]=");
             sb.append(data.get(field));
             if (it.hasNext()) {
                 sb.append(", ");
@@ -81,5 +82,27 @@ public interface GenericData<F> extends IndexedData<F> {
                 return sb.append("}").toString();
             }
         }
+    }
+
+    static <F> String toString(GenericData<F> data) {
+        DataSchema<F> schema = data.getSchema();
+        StringBuilder sb = new StringBuilder(schema.lastIndex() * 16);
+        sb.append('{');
+        for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
+            sb.append('[');
+            F field = schema.getFieldAt(index);
+            sb.append(index);
+            if (field != null) {
+                sb.append(':');
+                sb.append(field);
+            }
+            sb.append("]=");
+            sb.append(data.getAt(index));
+            if (index != schema.lastIndex()) {
+                sb.append(", ");
+            }
+        }
+        sb.append('}');
+        return sb.toString();
     }
 }

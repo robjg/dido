@@ -130,7 +130,7 @@ class SchemaBuilderTest {
                 .build();
 
         assertThat(schema1.toString(),
-                is("DataSchema: [1(fruit) java.lang.String, 2(qty) int, 3(price) double]"));
+                is("{[1:fruit]=java.lang.String, [2:qty]=int, [3:price]=double}"));
     }
 
 }

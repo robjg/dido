@@ -20,7 +20,7 @@ public class FromBeanArooaWithSchema<T> implements Function<T, GenericData<Strin
 
     @Override
     public GenericData<String> apply(T t) {
-        return new GenericData<String>() {
+        return new GenericData<>() {
             @Override
             public DataSchema<String> getSchema() {
                 return schema;
@@ -58,7 +58,7 @@ public class FromBeanArooaWithSchema<T> implements Function<T, GenericData<Strin
 
             @Override
             public String toString() {
-                return IndexedData.toString(this);
+                return GenericData.toStringFieldsOnly(this);
             }
         };
     }

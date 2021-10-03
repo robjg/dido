@@ -234,7 +234,7 @@ public class JsonDataWrapper {
 
             @Override
             public String toString() {
-                return IndexedData.toString(this);
+                return GenericData.toStringFieldsOnly(this);
             }
         };
     }

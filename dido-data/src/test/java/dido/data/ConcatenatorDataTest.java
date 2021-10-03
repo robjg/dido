@@ -2,6 +2,9 @@ package dido.data;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
@@ -65,6 +68,8 @@ class ConcatenatorDataTest {
         assertThat(schema.nextIndex(6), is(0));
 
         assertThat(schema.getFields(), contains("fruit", "qty", "price", "supplier", "checked", "good"));
+
+        assertThat(schema.toString(), is("{[1:fruit]=java.lang.String, [2:qty]=int, [3:price]=double, [4:supplier]=java.lang.String, [5:checked]=java.lang.String, [6:good]=boolean}"));
     }
 
     @Test
@@ -91,10 +96,74 @@ class ConcatenatorDataTest {
         GenericData<String> result = Concatenator.of(data1, data2, data3);
 
         assertThat(result.getString("type"), is("apple"));
+        assertThat(result.getStringAt(1), is("apple"));
         assertThat(result.getInt("qty"), is(2));
+        assertThat(result.getIntAt(2), is(2));
         assertThat(result.getDouble("price"), is(26.3));
+        assertThat(result.getDoubleAt(3), is(26.3));
         assertThat(result.getString("supplier"), is("Alice"));
+        assertThat(result.getStringAt(4), is("Alice"));
         assertThat(result.getString("checked"), is("Bob"));
+        assertThat(result.getStringAt(5), is("Bob"));
         assertThat(result.getBoolean("good"), is(true));
+        assertThat(result.getBooleanAt(6), is(true));
+
+        assertThat(result.toString(), is("{[1:type]=apple, [2:qty]=2, [3:price]=26.3, [4:supplier]=Alice, [5:checked]=Bob, [6:good]=true}"));
+    }
+
+    @Test
+    void testOtherTypes() {
+
+        DataBuilder<String> builder = MapData.newBuilderNoSchema();
+
+        builder.setString("first", "Ignored" );
+        GenericData<String> data1 = builder.build();
+
+        builder.setObject("object", Arrays.asList("Foo") );
+        GenericData<String> data2 = builder.build();
+
+        builder.setBoolean("boolean", true );
+        GenericData<String> data3 = builder.build();
+
+        builder.setByte("byte", (byte) 32 );
+        GenericData<String> data4 = builder.build();
+
+        builder.setChar("char", 'A' );
+        GenericData<String> data5 = builder.build();
+
+        builder.setShort("short", (short) 42 );
+        GenericData<String> data6 = builder.build();
+
+        builder.setLong("long", 42L );
+        GenericData<String> data7 = builder.build();
+
+        builder.setFloat("float", 42.42F );
+        GenericData<String> data8 = builder.build();
+
+        GenericData<String> result1 = Concatenator.of(data1, data2, data3, data4, data5, data6, data7, data8);
+
+        assertThat(result1.get("object"), is(Arrays.asList("Foo")));
+        assertThat(result1.getAt(2), is(Arrays.asList("Foo")));
+        assertThat(result1.getAs("object", List.class), is(Arrays.asList("Foo")));
+        assertThat(result1.getAtAs(2, List.class), is(Arrays.asList("Foo")));
+        assertThat(result1.getBoolean("boolean"), is(true));
+        assertThat(result1.getBooleanAt(3), is(true));
+        assertThat(result1.getByte("byte"), is((byte) 32));
+        assertThat(result1.getByteAt(4), is((byte) 32));
+        assertThat(result1.getChar("char"), is('A'));
+        assertThat(result1.getCharAt(5), is('A'));
+        assertThat(result1.getChar("char"), is('A'));
+        assertThat(result1.getCharAt(5), is('A'));
+        assertThat(result1.getShort("short"), is((short) 42));
+        assertThat(result1.getShortAt(6), is((short) 42));
+        assertThat(result1.getLong("long"), is(42L));
+        assertThat(result1.getLongAt(7), is(42L));
+        assertThat(result1.getFloat("float"), is(42.42F));
+        assertThat(result1.getFloatAt(8), is(42.42F));
+
+        GenericData<String> result2 = Concatenator.of(data1, data2, data3, data4, data5, data6, data7, data8);
+
+        assertThat(result1, is(result2));
+        assertThat(result1.hashCode(), is(result2.hashCode()));
     }
 }

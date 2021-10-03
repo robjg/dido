@@ -70,7 +70,25 @@ class MapDataTest {
                 .setDouble("price", 26.3)
                 .build();
 
-        assertThat(data1.toString(), is("MapData: {type=apple, qty=2, price=26.3}"));
+        assertThat(data1.toString(), is("{[type]=apple, [qty]=2, [price]=26.3}"));
+    }
 
+    @Test
+    void testEqualsAndHashCode() {
+
+        GenericData<String> data1 = MapData.newBuilderNoSchema()
+                .setString("type", "apple")
+                .setInt("qty", 2)
+                .setDouble("price", 26.3)
+                .build();
+
+        GenericData<String> data2 = MapData.newBuilderNoSchema()
+                .setString("type", "apple")
+                .setInt("qty", 2)
+                .setDouble("price", 26.3)
+                .build();
+
+        assertThat(data1, is(data2));
+        assertThat(data1.hashCode(), is(data2.hashCode()));
     }
 }

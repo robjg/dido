@@ -27,6 +27,7 @@ class IndexedDataTest {
 
         @Override
         public <T> T getAtAs(int index, Class<T> type) {
+            //noinspection unchecked
             return (T) data;
         }
 
@@ -54,5 +55,14 @@ class IndexedDataTest {
 
         // This is allowed though
         assertThat((long) data.getIntAt(1), is(42L));
+    }
+
+    @Test
+    void testToString() {
+
+        GenericData<String> data1 = ArrayData.of("Apple", null, 15, 26.5);
+
+        assertThat(IndexedData.toString(data1),
+                is("{[1]=Apple, [2]=null, [3]=15, [4]=26.5}"));
     }
 }

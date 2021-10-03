@@ -193,22 +193,22 @@ public interface DataSchema<F> {
 
     static String toString(DataSchema<?> schema) {
         StringBuilder sb = new StringBuilder();
-        sb.append("DataSchema: [");
+        sb.append("{");
         for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
             if (i > schema.firstIndex()) {
                 sb.append(", ");
             }
+            sb.append('[');
             sb.append(i);
             Object field = schema.getFieldAt(i);
             if (field != null) {
-                sb.append('(');
+                sb.append(':');
                 sb.append(field);
-                sb.append(')');
             }
-            sb.append(' ');
+            sb.append("]=");
             sb.append(schema.getTypeAt(i).getName());
         }
-        sb.append("]");
+        sb.append("}");
         return sb.toString();
     }
 

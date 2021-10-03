@@ -90,7 +90,7 @@ public class MapData implements GenericData<String> {
 
     @Override
     public String toString() {
-        return GenericData.toStringFieldsOnly("MapData", this);
+        return GenericData.toStringFieldsOnly(this);
     }
 
     static class BuilderWithSchema extends AbstractDataBuilder<String, BuilderWithSchema> {

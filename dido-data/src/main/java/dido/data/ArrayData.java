@@ -1,5 +1,6 @@
 package dido.data;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -102,9 +103,9 @@ public class ArrayData<T> implements GenericData<T> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o instanceof IndexedData) {
-            return IndexedData.equals(this, (IndexedData<?>) o);
+    public boolean equals(Object obj) {
+        if (obj instanceof IndexedData) {
+            return IndexedData.equals(this, (IndexedData<?>) obj);
         }
         else {
             return false;
@@ -121,6 +122,6 @@ public class ArrayData<T> implements GenericData<T> {
 
     @Override
     public String toString() {
-        return IndexedData.toString(this);
+        return Arrays.toString(data);
     }
 }

@@ -164,7 +164,7 @@ public class FromBeanArooa {
 
         @Override
         public String toString() {
-            return GenericData.toStringFieldsOnly("FromBean", this);
+            return GenericData.toStringFieldsOnly(this);
         }
     }
 

@@ -37,4 +37,23 @@ class ArrayDataTest {
         assertThat(schema.nextIndex(3), is(4));
         assertThat(schema.nextIndex(4), is(0));
     }
+
+    @Test
+    void testToString() {
+
+        GenericData<String> data1 = ArrayData.of("Apple", null, 15, 26.5);
+
+        assertThat(data1.toString(), is("[Apple, null, 15, 26.5]"));
+    }
+
+    @Test
+    void testEqualsAndHashCode() {
+
+        GenericData<String> data1 = ArrayData.of("Apple", null, 15, 26.5);
+
+        GenericData<String> data2 = ArrayData.of("Apple", null, 15, 26.5);
+
+        assertThat(data1, is(data2));
+        assertThat(data1.hashCode(), is(data2.hashCode()));
+    }
 }

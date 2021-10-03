@@ -115,7 +115,7 @@ public class RenamedData<F, T> implements GenericData<T> {
 
     @Override
     public String toString() {
-        return IndexedData.toString(this);
+        return GenericData.toString(this);
     }
 
     static <F, T> DataSchema<T> renamedSchema(Map<F, T> mapping, DataSchema<F> fromSchema) {
