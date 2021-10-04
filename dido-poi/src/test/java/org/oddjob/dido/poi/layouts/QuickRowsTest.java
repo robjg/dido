@@ -100,7 +100,7 @@ public class QuickRowsTest extends TestCase {
 
         GenericData<String> person = MapData.newBuilderNoSchema()
                 .setString("name", "John")
-                .setObject("dateOfBirth", DateHelper.parseDate("1970-03-25"))
+                .set("dateOfBirth", DateHelper.parseDate("1970-03-25"))
                 .setDouble("salary", 45000.0)
                 .build();
 
@@ -145,17 +145,17 @@ public class QuickRowsTest extends TestCase {
         List<GenericData<String>> beans = new ArrayList<>();
         beans.add(MapData.newBuilderNoSchema()
                 .setString("name", "John")
-                .setObject("dateOfBirth", DateHelper.parseDate("1970-03-25"))
+                .set("dateOfBirth", DateHelper.parseDate("1970-03-25"))
                 .setDouble("salary", 45000.0)
                 .build());
         beans.add(MapData.newBuilderNoSchema()
                 .setString("name", "Jane")
-                .setObject("dateOfBirth", DateHelper.parseDate("1982-11-14"))
+                .set("dateOfBirth", DateHelper.parseDate("1982-11-14"))
                 .setDouble("salary", 28000.0)
                 .build());
         beans.add(MapData.newBuilderNoSchema()
                 .setString("name", "Fred")
-                .setObject("dateOfBirth", DateHelper.parseDate("1986-08-07"))
+                .set("dateOfBirth", DateHelper.parseDate("1986-08-07"))
                 .setDouble("salary", 22500.0)
                 .build());
 

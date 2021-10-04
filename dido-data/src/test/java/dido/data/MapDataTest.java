@@ -21,7 +21,7 @@ class MapDataTest {
                 .setString("type", "apple")
                 .setInt("qty", 2)
                 .setDouble("price", 26.3)
-                .setObject("date", new SimpleDateFormat("yyyy-MM-dd").parse("2021-09-22"))
+                .set("date", new SimpleDateFormat("yyyy-MM-dd").parse("2021-09-22"))
                 .build();
 
         assertThat(data1.getString("type"), is("apple"));

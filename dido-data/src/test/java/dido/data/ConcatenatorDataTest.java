@@ -119,7 +119,7 @@ class ConcatenatorDataTest {
         builder.setString("first", "Ignored" );
         GenericData<String> data1 = builder.build();
 
-        builder.setObject("object", Arrays.asList("Foo") );
+        builder.set("object", Arrays.asList("Foo") );
         GenericData<String> data2 = builder.build();
 
         builder.setBoolean("boolean", true );
@@ -150,8 +150,6 @@ class ConcatenatorDataTest {
         assertThat(result1.getBooleanAt(3), is(true));
         assertThat(result1.getByte("byte"), is((byte) 32));
         assertThat(result1.getByteAt(4), is((byte) 32));
-        assertThat(result1.getChar("char"), is('A'));
-        assertThat(result1.getCharAt(5), is('A'));
         assertThat(result1.getChar("char"), is('A'));
         assertThat(result1.getCharAt(5), is('A'));
         assertThat(result1.getShort("short"), is((short) 42));

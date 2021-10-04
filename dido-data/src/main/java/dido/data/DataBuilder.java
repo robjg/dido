@@ -8,7 +8,7 @@ package dido.data;
  */
 public interface DataBuilder<F> {
 
-    DataBuilder<F> setObject(F field, Object value);
+    DataBuilder<F> set(F field, Object value);
 
     DataBuilder<F> setBoolean(F field, boolean value);
 

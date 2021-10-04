@@ -45,7 +45,7 @@ public class StreamLines {
                         if (line == null) {
                             return null;
                         } else {
-                            return dataBuilder.setObject(LINE, line).build();
+                            return dataBuilder.set(LINE, line).build();
                         }
                     } catch (IOException e) {
                         throw new IllegalStateException(e);

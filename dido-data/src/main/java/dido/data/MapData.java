@@ -111,7 +111,7 @@ public class MapData implements GenericData<String> {
         }
 
         @Override
-        public BuilderWithSchema setObject(String field, Object value) {
+        public BuilderWithSchema set(String field, Object value) {
             map.put(field, value);
             return this;
         }
@@ -132,7 +132,7 @@ public class MapData implements GenericData<String> {
         }
 
         @Override
-        public BuilderNoSchema setObject(String field, Object value) {
+        public BuilderNoSchema set(String field, Object value) {
             map.put(field, value);
             schemaBuilder.addField(field, value == null ? void.class : value.getClass());
             return this;
