@@ -2,8 +2,6 @@ package dido.data;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.EnumMap;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
@@ -62,7 +60,7 @@ class EnumMapDataTest {
     @Test
     void builderWithNoSchema() {
 
-        DataBuilder<Fields> builderNoSchema = EnumMapData.newBuilderNoSchema(Fields.class);
+        DataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
 
         GenericData<Fields> data3 = builderNoSchema
                 .setString(Fields.Fruit, "Apple")
@@ -109,7 +107,7 @@ class EnumMapDataTest {
         assertThat(data2.getString(Fields.Fruit), is("Orange"));
         assertThat(data2.getStringAt(1), is("Orange"));
 
-        DataBuilder<Fields> builderNoSchema = EnumMapData.newBuilderNoSchema(Fields.class);
+        DataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
 
         GenericData<Fields> data3 = builderNoSchema
                 .setString(Fields.Fruit, "Apple")

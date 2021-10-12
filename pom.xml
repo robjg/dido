@@ -1,101 +1,102 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <modules>
-    <module>dido-data</module>
-    <module>dido-pickles</module>
-    <module>dido-oddball</module>
-    <module>dido-json</module>
-    <module>dido-csv</module>
-    <module>dido-poi</module>
-  </modules>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <modules>
+        <module>dido-data</module>
+        <module>dido-pickles</module>
+        <module>dido-oddball</module>
+        <module>dido-json</module>
+        <module>dido-text</module>
+        <module>dido-csv</module>
+        <module>dido-poi</module>
+    </modules>
 
-  <parent>
-    <groupId>uk.co.rgordon</groupId>
-    <artifactId>oj-parent</artifactId>
-    <version>1.6-SNAPSHOT</version>
-  </parent>
-
-  <artifactId>dido</artifactId>
-  <packaging>pom</packaging>
-
-  <name>DiDo</name>
-  <description>Data In Data Out - A data binding framework for use with Oddjob.</description>
-  <url>http://rgordon.co.uk/oddjob</url>
-
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <scm>
-    <url>https://github.com/robjg/dido</url>
-    <connection>scm:git:git://github.com/robjg/dido.git</connection>
-  </scm>
-
-  <developers>
-    <developer>
-      <id>rob</id>
-      <name>Rob</name>
-      <email>contact@rgordon.co.uk</email>
-    </developer>
-  </developers>
-
-  <properties>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-    <oddjob.version>1.6-SNAPSHOT</oddjob.version>
-  </properties>
-
-  <dependencyManagement>
-    <dependencies>
-
-      <dependency>
+    <parent>
         <groupId>uk.co.rgordon</groupId>
-        <artifactId>dido-data</artifactId>
-        <version>${project.version}</version>
-      </dependency>
+        <artifactId>oj-parent</artifactId>
+        <version>1.6-SNAPSHOT</version>
+    </parent>
 
-      <dependency>
-        <groupId>uk.co.rgordon</groupId>
-        <artifactId>dido-pickles</artifactId>
-        <version>${project.version}</version>
-      </dependency>
+    <artifactId>dido</artifactId>
+    <packaging>pom</packaging>
 
-      <dependency>
-        <groupId>uk.co.rgordon</groupId>
-        <artifactId>dido-oddball</artifactId>
-        <version>${project.version}</version>
-      </dependency>
+    <name>DiDo</name>
+    <description>Data In Data Out - A data binding framework for use with Oddjob.</description>
+    <url>http://rgordon.co.uk/oddjob</url>
 
-      <dependency>
-        <groupId>uk.co.rgordon</groupId>
-        <artifactId>dido-csv</artifactId>
-        <version>${project.version}</version>
-      </dependency>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
-    </dependencies>
-  </dependencyManagement>
+    <scm>
+        <url>https://github.com/robjg/dido</url>
+        <connection>scm:git:git://github.com/robjg/dido.git</connection>
+    </scm>
 
-  <build>
-    <plugins>
+    <developers>
+        <developer>
+            <id>rob</id>
+            <name>Rob</name>
+            <email>contact@rgordon.co.uk</email>
+        </developer>
+    </developers>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.1</version>
-        <configuration>
-          <systemPropertyVariables>
-            <propertyName>propertyValue</propertyName>
-            <buildDirectory>${project.build.directory}</buildDirectory>
-          </systemPropertyVariables>
-        </configuration>
-      </plugin>
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <oddjob.version>1.6-SNAPSHOT</oddjob.version>
+    </properties>
 
-    </plugins>
-  </build>
-  
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>uk.co.rgordon</groupId>
+                <artifactId>dido-data</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.co.rgordon</groupId>
+                <artifactId>dido-pickles</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.co.rgordon</groupId>
+                <artifactId>dido-oddball</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.co.rgordon</groupId>
+                <artifactId>dido-csv</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.1</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <propertyName>propertyValue</propertyName>
+                        <buildDirectory>${project.build.directory}</buildDirectory>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
 </project>

@@ -302,4 +302,30 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
             }
         };
     }
+
+    interface Builder<E extends Enum<E>> extends DataBuilder<E> {
+
+        Builder<E> set(E field, Object value);
+
+        Builder<E> setBoolean(E field, boolean value);
+
+        Builder<E> setByte(E field, byte value);
+
+        Builder<E> setChar(E field, char value);
+
+        Builder<E> setShort(E field, short value);
+
+        Builder<E> setInt(E field, int value);
+
+        Builder<E> setLong(E field, long value);
+
+        Builder<E> setFloat(E field, float value);
+
+        Builder<E> setDouble(E field, double value);
+
+        Builder<E> setString(E field, String value);
+
+        @Override
+        EnumData<E> build();
+    }
 }

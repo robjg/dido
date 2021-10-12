@@ -66,7 +66,7 @@ public class EnumMapData<E extends Enum<E>> implements EnumData<E> {
         return new BuilderWithSchema<>(schema);
     }
 
-    public static <E extends Enum<E>> DataBuilder<E> newBuilderNoSchema(Class<E> enumClass) {
+    public static <E extends Enum<E>> EnumData.Builder<E> builderForEnum(Class<E> enumClass) {
 
         return new BuilderNoSchema<>(enumClass);
     }
@@ -154,7 +154,7 @@ public class EnumMapData<E extends Enum<E>> implements EnumData<E> {
     }
 
     static class BuilderWithSchema<E extends Enum<E>>
-            extends AbstractDataBuilder<E, BuilderWithSchema<E>> {
+            extends AbstractDataBuilder<E, BuilderWithSchema<E>> implements EnumData.Builder<E> {
 
         private final EnumSchema<E> schema;
 
@@ -166,8 +166,8 @@ public class EnumMapData<E extends Enum<E>> implements EnumData<E> {
         }
 
         @Override
-        public GenericData<E> build() {
-            GenericData<E> data = new EnumMapData<>(schema, map);
+        public EnumData<E> build() {
+            EnumData<E> data = new EnumMapData<>(schema, map);
             this.map = new EnumMap<>(schema.getFieldType());
             return data;
         }
@@ -179,7 +179,7 @@ public class EnumMapData<E extends Enum<E>> implements EnumData<E> {
         }
     }
 
-    static class BuilderNoSchema<E extends Enum<E>> implements DataBuilder<E> {
+    static class BuilderNoSchema<E extends Enum<E>> implements EnumData.Builder<E> {
 
         private final Class<E> enumClass;
 
@@ -194,10 +194,10 @@ public class EnumMapData<E extends Enum<E>> implements EnumData<E> {
         }
 
         @Override
-        public GenericData<E> build() {
+        public EnumData<E> build() {
             @SuppressWarnings({"unchecked", "rawtypes"}) EnumSchema<E> schema = EnumSchema.schemaFor(enumClass, e ->
                     Optional.ofNullable(typeMap.get(e)).orElse((Class) void.class));
-            GenericData<E> data = new EnumMapData<>(schema, map);
+            EnumData<E> data = new EnumMapData<>(schema, map);
             this.typeMap = new HashMap<>();
             this.map = new EnumMap<>(enumClass);
             return data;
@@ -211,63 +211,63 @@ public class EnumMapData<E extends Enum<E>> implements EnumData<E> {
         }
 
         @Override
-        public DataBuilder<E> setBoolean(E field, boolean value) {
+        public EnumData.Builder<E> setBoolean(E field, boolean value) {
             map.put(field, value);
             typeMap.put(field, boolean.class);
             return this;
         }
 
         @Override
-        public DataBuilder<E> setByte(E field, byte value) {
+        public EnumData.Builder<E> setByte(E field, byte value) {
             map.put(field, value);
             typeMap.put(field, byte.class);
             return this;
         }
 
         @Override
-        public DataBuilder<E> setChar(E field, char value) {
+        public EnumData.Builder<E> setChar(E field, char value) {
             map.put(field, value);
             typeMap.put(field, char.class);
             return this;
         }
 
         @Override
-        public DataBuilder<E> setShort(E field, short value) {
+        public EnumData.Builder<E> setShort(E field, short value) {
             map.put(field, value);
             typeMap.put(field, short.class);
             return this;
         }
 
         @Override
-        public DataBuilder<E> setInt(E field, int value) {
+        public EnumData.Builder<E> setInt(E field, int value) {
             map.put(field, value);
             typeMap.put(field, int.class);
             return this;
         }
 
         @Override
-        public DataBuilder<E> setLong(E field, long value) {
+        public EnumData.Builder<E> setLong(E field, long value) {
             map.put(field, value);
             typeMap.put(field, long.class);
             return this;
         }
 
         @Override
-        public DataBuilder<E> setFloat(E field, float value) {
+        public EnumData.Builder<E> setFloat(E field, float value) {
             map.put(field, value);
             typeMap.put(field, float.class);
             return this;
         }
 
         @Override
-        public DataBuilder<E> setDouble(E field, double value) {
+        public EnumData.Builder<E> setDouble(E field, double value) {
             map.put(field, value);
             typeMap.put(field, double.class);
             return this;
         }
 
         @Override
-        public DataBuilder<E> setString(E field, String value) {
+        public EnumData.Builder<E> setString(E field, String value) {
             map.put(field, value);
             typeMap.put(field, String.class);
             return this;

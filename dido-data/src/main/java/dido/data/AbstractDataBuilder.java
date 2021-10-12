@@ -26,7 +26,7 @@ abstract public class AbstractDataBuilder<F, B extends AbstractDataBuilder<F, B>
     }
 
     @Override
-    public DataBuilder<F> setChar(F field, char value) {
+    public B setChar(F field, char value) {
         return set(field, value);
     }
 

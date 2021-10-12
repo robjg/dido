@@ -10,8 +10,6 @@ import java.util.function.Supplier;
  */
 public class SchemaBuilder<F> {
 
-    private final Class<F> fieldType;
-
     private final Map<Integer, FieldMeta<?>> indexToMeta = new HashMap<>();
 
     private final Map<F, Integer> fieldToIndex = new LinkedHashMap<>();
@@ -24,16 +22,19 @@ public class SchemaBuilder<F> {
 
     private int lastIndex;
 
-    public SchemaBuilder(Class<F> fieldType) {
-        this.fieldType = Objects.requireNonNull(fieldType);
+    private SchemaBuilder() {
     }
 
     public static SchemaBuilder<String> forStringFields() {
-        return new SchemaBuilder<>(String.class);
+        return new SchemaBuilder<>();
     }
 
-    public static <F> SchemaBuilder<F> forFieldType(Class<F> fieldType) {
-        return new SchemaBuilder<>(fieldType);
+    public static <F> SchemaBuilder<F> forFieldType(Class<F> ignored) {
+        return new SchemaBuilder<>();
+    }
+
+    public static <F> SchemaBuilder<F> impliedType() {
+        return new SchemaBuilder<>();
     }
 
     public SchemaBuilder<F> addNextIndex(Class<?> fieldType) {
@@ -164,11 +165,7 @@ public class SchemaBuilder<F> {
                 addMetaField(0, null, priorityMeta);
             } else {
                 Integer existingIndex = fieldToIndex.get(priorityField);
-                if (existingIndex == null) {
-                    addMetaField(0, priorityField, priorityMeta);
-                } else {
-                    addMetaField(existingIndex, priorityField, priorityMeta);
-                }
+                addMetaField(Objects.requireNonNullElse(existingIndex, 0), priorityField, priorityMeta);
             }
         }
         return this;
@@ -220,8 +217,6 @@ public class SchemaBuilder<F> {
 
     static class Impl<F> implements DataSchema<F> {
 
-        private final Class<F> fieldType;
-
         private final Map<Integer, Class<?>> indexToType;
 
         private final Map<F, Integer> fieldToIndex;
@@ -237,12 +232,11 @@ public class SchemaBuilder<F> {
         private final int lastIndex;
 
         Impl(SchemaBuilder<F> builder) {
-            this.fieldType = builder.fieldType;
             this.indexToType = new HashMap<>();
             this.fieldToIndex = new LinkedHashMap<>(builder.fieldToIndex);
             this.indexToField = new HashMap<>(builder.indexToField);
             this.nextIndex = new HashMap<>(builder.nextIndex);
-            this.nestedSchemas = new HashMap<Integer, Supplier<? extends DataSchema<?>>>();
+            this.nestedSchemas = new HashMap<>();
             this.firstIndex = builder.firstIndex;
             this.lastIndex = builder.lastIndex;
 
@@ -254,10 +248,6 @@ public class SchemaBuilder<F> {
                     nestedSchemas.put(index, meta.nestedSchemaRef);
                 }
             }
-        }
-
-        public Class<F> getFieldType() {
-            return fieldType;
         }
 
         @Override
@@ -273,11 +263,7 @@ public class SchemaBuilder<F> {
         @Override
         public int nextIndex(int index) {
             Integer nextIndex = this.nextIndex.get(index);
-            if (nextIndex == null) {
-                return 0;
-            } else {
-                return nextIndex;
-            }
+            return Objects.requireNonNullElse(nextIndex, 0);
         }
 
         @Override
