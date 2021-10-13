@@ -4,7 +4,7 @@ import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
-import dido.pickles.util.Primitives;
+import dido.how.util.Primitives;
 import org.nocrala.tools.texttablefmt.BorderStyle;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.ShownBorders;
@@ -47,7 +47,7 @@ public class TextTableOut<F> implements DataOutHow<F, OutputStream> {
     }
 
     @Override
-    public DataOut<F> outTo(OutputStream dataOut) throws Exception {
+    public DataOut<F> outTo(OutputStream dataOut) {
 
         return Optional.ofNullable(this.schema)
                 .<DataOut<F>>map(s -> new WithSchema<>(s, dataOut))
