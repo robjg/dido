@@ -3,14 +3,14 @@ package org.oddjob.dido.poi.layouts;
 import dido.data.GenericData;
 import dido.poi.CellIn;
 import dido.poi.CellOut;
-import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.oddjob.dido.poi.HeaderRowOut;
-import org.oddjob.dido.poi.RowIn;
 import org.oddjob.dido.poi.RowOut;
 import org.oddjob.dido.poi.data.DataCell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -23,7 +23,7 @@ import java.util.Optional;
  */
 abstract public class AbstractDataCell<T> implements DataCell<T> {
 	
-	private static final Logger logger = Logger.getLogger(AbstractDataCell.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractDataCell.class);
 
 	/**
 	 * @oddjob.property
@@ -60,15 +60,11 @@ abstract public class AbstractDataCell<T> implements DataCell<T> {
 	@Override
 	public CellIn<T> provideCellIn(int index) {
 
-		return new CellIn<T>() {
+		return rowIn -> {
 
-			@Override
-			public T getValue(RowIn rowIn) {
+			Cell cell = rowIn.getCell(index);
 
-				Cell cell = rowIn.getCell(index);
-
-				return extractCellValue(cell);
-			}
+			return extractCellValue(cell);
 		};
 	}
 
@@ -77,7 +73,7 @@ abstract public class AbstractDataCell<T> implements DataCell<T> {
 
 		String header = Optional.ofNullable(getName()).orElse("Unnamed");
 
-		return new CellOut<T>() {
+		return new CellOut<>() {
 
 			@Override
 			public void writeHeader(HeaderRowOut headerRowOut) {
@@ -87,22 +83,22 @@ abstract public class AbstractDataCell<T> implements DataCell<T> {
 			@Override
 			public void setValue(RowOut rowOut, GenericData<String> data) {
 
-					Cell cell = rowOut.getCell(index, getCellType());
+				Cell cell = rowOut.getCell(index, getCellType());
 
-					String style = Optional.ofNullable(getStyle()).orElse(getDefaultStyle());
+				String style = Optional.ofNullable(getStyle()).orElse(getDefaultStyle());
 
-					if (style != null) {
-						CellStyle cellStyle = rowOut.styleFor(style);
+				if (style != null) {
+					CellStyle cellStyle = rowOut.styleFor(style);
 
-						if (cellStyle == null) {
-							throw new IllegalArgumentException("No style available of name [" +
-									style + "] from cell [" + this + "]");
-						}
-
-						cell.setCellStyle(cellStyle);
+					if (cellStyle == null) {
+						throw new IllegalArgumentException("No style available of name [" +
+								style + "] from cell [" + this + "]");
 					}
 
-					insertValueInto(cell, index, data);
+					cell.setCellStyle(cellStyle);
+				}
+
+				insertValueInto(cell, index, data);
 			}
 		};
 	}
@@ -119,7 +115,8 @@ abstract public class AbstractDataCell<T> implements DataCell<T> {
 	 * Write a value into the cell.
 	 *
 	 * @param cell The Excel Cell.
-	 * @param value The value. May be null.
+	 * @param index The cell index.
+	 * @param data   The data. May be null.
 	 *
 	 */
 	abstract void insertValueInto(Cell cell, int index,  GenericData<String> data);
@@ -135,7 +132,7 @@ abstract public class AbstractDataCell<T> implements DataCell<T> {
 	/**
 	 * Setter for name.
 	 *
-	 * @param name
+	 * @param name The optional name which will be the field name.
 	 */
 	public void setName(String name) {
 		this.name = name;

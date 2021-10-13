@@ -1,8 +1,11 @@
 package dido.json;
 
 import dido.data.DataSchema;
-import dido.pickles.StreamIn;
-import dido.pickles.StreamOut;
+import dido.how.DataInHow;
+import dido.how.DataOutHow;
+
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class JsonDido {
 
@@ -10,12 +13,12 @@ public class JsonDido {
 
     private boolean partialSchema;
 
-    public StreamOut<String> toStreamOut() {
+    public DataOutHow<String, OutputStream> toStreamOut() {
 
         return new StreamOutJson();
     }
 
-    public StreamIn<String> toStreamIn() {
+    public DataInHow<String, InputStream> toStreamIn() {
 
         return new StreamInJson(schema, partialSchema);
     }

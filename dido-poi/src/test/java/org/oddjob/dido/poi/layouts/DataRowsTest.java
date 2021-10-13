@@ -2,8 +2,8 @@ package org.oddjob.dido.poi.layouts;
 
 import dido.data.GenericData;
 import dido.data.MapData;
-import dido.pickles.DataIn;
-import dido.pickles.DataOut;
+import dido.how.DataIn;
+import dido.how.DataOut;
 import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;

@@ -1,8 +1,8 @@
 package dido.oddjob.beanbus;
 
 import dido.data.GenericData;
-import dido.pickles.DataIn;
-import dido.pickles.DataInHow;
+import dido.how.DataIn;
+import dido.how.DataInHow;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;

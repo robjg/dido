@@ -1,8 +1,8 @@
 package org.oddjob.dido.poi.layouts;
 
 import dido.data.ArrayData;
-import dido.pickles.DataIn;
-import dido.pickles.DataOut;
+import dido.how.DataIn;
+import dido.how.DataOut;
 import junit.framework.TestCase;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;

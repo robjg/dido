@@ -1,8 +1,8 @@
 package dido.csv;
 
 import dido.data.GenericData;
-import dido.pickles.DataIn;
-import dido.pickles.DataOut;
+import dido.how.DataIn;
+import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -24,9 +24,9 @@ class StreamInOutCsvTest {
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
-        try (DataIn<String> supplier = new StreamInCsv<String>(true)
+        try (DataIn<String> supplier = new StreamInCsv(true)
                 .inFrom(new ByteArrayInputStream(records.getBytes(StandardCharsets.UTF_8)));
-             DataOut<String> consumer = new StreamOutCsv<String>(true)
+             DataOut<String> consumer = new StreamOutCsv(true)
                      .outTo(results)) {
 
             while (true) {

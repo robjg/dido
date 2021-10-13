@@ -1,4 +1,4 @@
-package dido.pickles;
+package dido.how;
 
 /**
  * Something that can create a {@link DataOut}. This is the starting

@@ -1,4 +1,4 @@
-package dido.pickles.util;
+package dido.how.util;
 
 /**
  * Copied from Google... as only Json pulls in the dependency.

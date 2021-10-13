@@ -2,7 +2,7 @@ package dido.poi.utils;
 
 import dido.data.DataSchema;
 import dido.data.SchemaBuilder;
-import dido.pickles.util.Primitives;
+import dido.how.util.Primitives;
 import org.apache.poi.ss.usermodel.Cell;
 import org.oddjob.dido.poi.RowIn;
 import org.oddjob.dido.poi.data.DataCell;

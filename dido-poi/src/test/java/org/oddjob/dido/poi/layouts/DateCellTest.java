@@ -2,8 +2,8 @@ package org.oddjob.dido.poi.layouts;
 
 import dido.data.ArrayData;
 import dido.data.GenericData;
-import dido.pickles.DataIn;
-import dido.pickles.DataOut;
+import dido.how.DataIn;
+import dido.how.DataOut;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;

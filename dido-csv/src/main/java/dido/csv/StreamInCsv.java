@@ -4,9 +4,9 @@ import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.data.IndexedData;
 import dido.data.SchemaBuilder;
-import dido.pickles.DataIn;
-import dido.pickles.StreamIn;
-import dido.pickles.util.Primitives;
+import dido.how.DataIn;
+import dido.how.DataInHow;
+import dido.how.util.Primitives;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
 
-public class StreamInCsv<F> implements StreamIn<F> {
+public class StreamInCsv implements DataInHow<String, InputStream> {
 
     private static final Map<Class<?>, Function<String, Object>> CONVERSIONS = new HashMap<>();
 
@@ -38,7 +38,7 @@ public class StreamInCsv<F> implements StreamIn<F> {
 
     private final CSVFormat csvFormat;
 
-    private final DataSchema<F> schema;
+    private final DataSchema<String> schema;
 
     private final boolean withHeaders;
 
@@ -48,19 +48,19 @@ public class StreamInCsv<F> implements StreamIn<F> {
         this(null, null, withHeaders, false);
     }
 
-    public StreamInCsv(DataSchema<F> schema) {
+    public StreamInCsv(DataSchema<String> schema) {
         this(null, schema, false, false);
     }
 
-    public StreamInCsv(DataSchema<F> schema, boolean withHeaders) {
+    public StreamInCsv(DataSchema<String> schema, boolean withHeaders) {
         this(null, schema, withHeaders, false);
     }
 
-    public StreamInCsv(DataSchema<F> schema, boolean withHeaders, boolean partialSchema) {
+    public StreamInCsv(DataSchema<String> schema, boolean withHeaders, boolean partialSchema) {
         this(null, schema, withHeaders, partialSchema);
     }
 
-    public StreamInCsv(CSVFormat csvFormat, DataSchema<F> schema, boolean withHeaders, boolean partialSchema) {
+    public StreamInCsv(CSVFormat csvFormat, DataSchema<String> schema, boolean withHeaders, boolean partialSchema) {
         this.csvFormat = csvFormat == null ? CSVFormat.DEFAULT : csvFormat;
         this.schema = schema;
         this.withHeaders = withHeaders;
@@ -73,12 +73,11 @@ public class StreamInCsv<F> implements StreamIn<F> {
     }
 
     @Override
-    public DataIn<F> inFrom(InputStream inputStream) throws IOException {
+    public DataIn<String> inFrom(InputStream inputStream) throws IOException {
 
         CSVFormat csvFormat = this.csvFormat;
 
-        // We don't know if the type is String or not.
-        @SuppressWarnings("rawtypes") DataSchema schema;
+        DataSchema<String> schema;
         CSVParser csvParser;
         Iterator<CSVRecord> iterator;
 
@@ -88,7 +87,7 @@ public class StreamInCsv<F> implements StreamIn<F> {
                 iterator = csvParser.iterator();
 
             if (iterator.hasNext()) {
-                schema = schemaFromHeader(iterator.next(), this.partialSchema ? ((DataSchema<String>) this.schema) : null);
+                schema = schemaFromHeader(iterator.next(), this.partialSchema ? this.schema : null);
             }
             else {
                 throw new IOException("No Header Record.");
@@ -102,10 +101,10 @@ public class StreamInCsv<F> implements StreamIn<F> {
             iterator = csvParser.iterator();
         }
 
-        return new DataIn<F>() {
+        return new DataIn<>() {
 
             @Override
-            public GenericData<F> get() {
+            public GenericData<String> get() {
                 if (iterator.hasNext()) {
                     return dataFrom(iterator.next(), schema);
                 } else {
@@ -132,10 +131,10 @@ public class StreamInCsv<F> implements StreamIn<F> {
         return schemaBuilder.build();
     }
 
-    public static <F> GenericData<F> dataFrom(CSVRecord record, DataSchema<F> schema) {
-        return new GenericData<F>() {
+    public static GenericData<String> dataFrom(CSVRecord record, DataSchema<String> schema) {
+        return new GenericData<>() {
             @Override
-            public DataSchema<F> getSchema() {
+            public DataSchema<String> getSchema() {
                 return schema;
             }
 
@@ -164,12 +163,11 @@ public class StreamInCsv<F> implements StreamIn<F> {
             }
 
             @Override
-            public <T> T getAs(F field, Class<T> type) {
+            public <T> T getAs(String field, Class<T> type) {
                 int index = getSchema().getIndex(field);
                 if (index > 0) {
                     return getAtAs(index, type);
-                }
-                else {
+                } else {
                     return null;
                 }
             }
@@ -226,56 +224,55 @@ public class StreamInCsv<F> implements StreamIn<F> {
             }
 
             @Override
-            public boolean getBoolean(F field) {
-                return getAs(field, Boolean.class);
+            public boolean getBoolean(String field) {
+                return getBooleanAt(schema.getIndex(field));
             }
 
             @Override
-            public byte getByte(F field) {
-                return getAs(field, Byte.class);
+            public byte getByte(String field) {
+                return getByteAt(schema.getIndex(field));
             }
 
             @Override
-            public char getChar(F field) {
-                return getAs(field, Character.class);
+            public char getChar(String field) {
+                return getCharAt(schema.getIndex(field));
             }
 
             @Override
-            public short getShort(F field) {
-                return getAs(field, Short.class);
+            public short getShort(String field) {
+                return getShortAt(schema.getIndex(field));
             }
 
             @Override
-            public int getInt(F field) {
-                return getAs(field, Integer.class);
+            public int getInt(String field) {
+                return getIntAt(schema.getIndex(field));
             }
 
             @Override
-            public long getLong(F field) {
-                return getAs(field, Long.class);
+            public long getLong(String field) {
+                return getLongAt(schema.getIndex(field));
             }
 
             @Override
-            public float getFloat(F field) {
-                return getAs(field, Float.class);
+            public float getFloat(String field) {
+                return getFloatAt(schema.getIndex(field));
             }
 
             @Override
-            public double getDouble(F field) {
-                return getAs(field, Double.class);
+            public double getDouble(String field) {
+                return getDoubleAt(schema.getIndex(field));
             }
 
             @Override
-            public String getString(F field) {
-                return getAs(field, String.class);
+            public String getString(String field) {
+                return getStringAt(schema.getIndex(field));
             }
 
             @Override
             public boolean equals(Object o) {
                 if (o instanceof IndexedData) {
                     return IndexedData.equals(this, (IndexedData<?>) o);
-                }
-                else {
+                } else {
                     return false;
                 }
             }
@@ -287,7 +284,7 @@ public class StreamInCsv<F> implements StreamIn<F> {
 
             @Override
             public String toString() {
-                return IndexedData.toString(this);
+                return GenericData.toString(this);
             }
         };
     }

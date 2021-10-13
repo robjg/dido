@@ -1,15 +1,16 @@
 package org.oddjob.dido.poi.data;
 
-import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.oddjob.dido.poi.RowsIn;
-import org.oddjob.dido.tabular.ColumnHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Manage Heading for {@link RowsIn}.
@@ -17,7 +18,7 @@ import java.util.Map;
  * @author rob
  */
 class SimpleHeadings {
-    private static final Logger logger = Logger.getLogger(SimpleHeadings.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleHeadings.class);
 
     private final Map<String, Integer> headings;
 
@@ -89,14 +90,26 @@ class SimpleHeadings {
             return ++columnCursor;
         }
         Integer column = headings.get(heading);
-        if (column == null) {
-            return 0;
-        } else {
-            return column;
-        }
+        return Objects.requireNonNullElse(column, 0);
     }
 
     public String[] getHeadings() {
-        return ColumnHelper.toArray(headingsByColumn);
+        int maxColumn = 0;
+        for (Integer i : headingsByColumn.keySet() ) {
+            int index = i;
+            if (index > maxColumn) {
+                maxColumn = index;
+            }
+        }
+
+        String[] a = new String[maxColumn];
+
+        for (int i = 0; i < maxColumn; ++i) {
+            String thing = headingsByColumn.get(i + 1);
+            a[i] = thing;
+        }
+
+        return a;
+
     }
 }

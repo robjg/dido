@@ -1,9 +1,12 @@
 package dido.csv;
 
 import dido.data.DataSchema;
+import dido.how.DataInHow;
+import dido.how.DataOutHow;
 import org.apache.commons.csv.CSVFormat;
-import dido.pickles.StreamIn;
-import dido.pickles.StreamOut;
+
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class CsvDido {
 
@@ -15,12 +18,12 @@ public class CsvDido {
 
     private boolean partialSchema;
 
-    public StreamOut<String> toStreamOut() {
+    public DataOutHow<String, OutputStream> toStreamOut() {
 
         return new StreamOutCsv(csvFormat, schema, withHeadings);
     }
 
-    public StreamIn<String> toStreamIn() {
+    public DataInHow<String, InputStream> toStreamIn() {
 
         return new StreamInCsv(csvFormat, schema, withHeadings, partialSchema);
     }

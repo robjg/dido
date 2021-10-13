@@ -1,9 +1,9 @@
 package org.oddjob.dido.tabular;
 
+import org.oddjob.dido.field.Field;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.oddjob.dido.field.Field;
 
 /**
  * Helper class to track column positions.
@@ -93,8 +93,8 @@ public class ColumnHelper {
 	/**
 	 * Provide the column index for the column.
 	 * 
-	 * @param column
-	 * @return
+	 * @param field The field.
+	 * @return The column index or 0 if it doesn't exist.
 	 */
 	public int columnIndexFor(Field field) {
 		
@@ -143,7 +143,7 @@ public class ColumnHelper {
 	
 	/**
 	 * Helper method to convert a map keyed by an integer that is the index
-	 * of the thing. Not that things with a key of less than 1 will be 
+	 * of the thing. Note that things with a key of less than 1 will be
 	 * ignored.
 	 * 
 	 * @param things Map of things.

@@ -3,9 +3,9 @@ package dido.csv;
 import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.data.IndexedData;
-import dido.pickles.CloseableConsumer;
-import dido.pickles.DataOut;
-import dido.pickles.StreamOut;
+import dido.how.CloseableConsumer;
+import dido.how.DataOut;
+import dido.how.DataOutHow;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -15,11 +15,11 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Optional;
 
-public class StreamOutCsv<F> implements StreamOut<F> {
+public class StreamOutCsv implements DataOutHow<String, OutputStream> {
 
     private final CSVFormat csvFormat;
 
-    private final DataSchema<F> schema;
+    private final DataSchema<String> schema;
 
     private final boolean withHeaders;
 
@@ -27,11 +27,11 @@ public class StreamOutCsv<F> implements StreamOut<F> {
         this(null, null, withHeaders);
     }
 
-    public StreamOutCsv(DataSchema<F> schema, boolean withHeaders) {
+    public StreamOutCsv(DataSchema<String> schema, boolean withHeaders) {
         this(null, schema, withHeaders);
     }
 
-    public StreamOutCsv(CSVFormat csvFormat, DataSchema<F> schema, boolean withHeaders) {
+    public StreamOutCsv(CSVFormat csvFormat, DataSchema<String> schema, boolean withHeaders) {
         this.csvFormat = csvFormat == null ? CSVFormat.DEFAULT : csvFormat;
         this.schema = schema;
         this.withHeaders = withHeaders;
@@ -43,7 +43,7 @@ public class StreamOutCsv<F> implements StreamOut<F> {
     }
 
     @Override
-    public DataOut<F> outTo(OutputStream outputStream) throws IOException{
+    public DataOut<String> outTo(OutputStream outputStream) throws IOException{
 
         if (schema == null) {
             return new UnknownSchemaConsumer(outputStream);
@@ -52,8 +52,8 @@ public class StreamOutCsv<F> implements StreamOut<F> {
         }
     }
 
-    protected DataOut<F> consumerWhenSchemaKnown(OutputStream outputStream,
-                                                 DataSchema<F> schema) throws IOException{
+    protected DataOut<String> consumerWhenSchemaKnown(OutputStream outputStream,
+                                                 DataSchema<String> schema) throws IOException{
         CSVFormat csvFormat = this.csvFormat;
         if (this.withHeaders) {
             csvFormat = csvFormat.withHeader(headers(schema));
@@ -88,18 +88,18 @@ public class StreamOutCsv<F> implements StreamOut<F> {
         }
     }
 
-    class UnknownSchemaConsumer implements DataOut<F> {
+    class UnknownSchemaConsumer implements DataOut<String> {
 
         private final OutputStream outputStream;
 
-        private CloseableConsumer<GenericData<F>> schemaKnownConsumer;
+        private CloseableConsumer<GenericData<String>> schemaKnownConsumer;
 
         UnknownSchemaConsumer(OutputStream outputStream) {
             this.outputStream = outputStream;
         }
 
         @Override
-        public void accept(GenericData<F> data) {
+        public void accept(GenericData<String> data) {
             if (schemaKnownConsumer == null) {
                 try {
                     schemaKnownConsumer = consumerWhenSchemaKnown(outputStream, data.getSchema());

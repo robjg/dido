@@ -1,6 +1,8 @@
 package dido.oddjob.stream;
 
 import dido.data.*;
+import dido.how.DataIn;
+import dido.how.DataOut;
 import dido.pickles.*;
 
 import java.io.*;

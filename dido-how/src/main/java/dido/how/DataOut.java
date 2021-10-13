@@ -1,4 +1,4 @@
-package dido.pickles;
+package dido.how;
 
 import dido.data.GenericData;
 

@@ -4,15 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 import dido.data.GenericData;
-import dido.pickles.DataOut;
-import dido.pickles.StreamOut;
+import dido.how.DataOut;
+import dido.how.DataOutHow;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
-public class StreamOutJson implements StreamOut<String> {
+public class StreamOutJson implements DataOutHow<String, OutputStream> {
 
     @Override
     public Class<OutputStream> getOutType() {
@@ -29,7 +29,7 @@ public class StreamOutJson implements StreamOut<String> {
         writer.setIndent("  ");
         writer.beginArray();
 
-        return new DataOut<String>() {
+        return new DataOut<>() {
             @Override
             public void close() throws IOException {
                 writer.endArray();

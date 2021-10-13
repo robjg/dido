@@ -2,7 +2,7 @@ package org.oddjob.dido.poi.style;
 
 import dido.data.ArrayData;
 import dido.data.GenericData;
-import dido.pickles.DataOut;
+import dido.how.DataOut;
 import dido.poi.CellIn;
 import dido.poi.CellOut;
 import junit.framework.TestCase;

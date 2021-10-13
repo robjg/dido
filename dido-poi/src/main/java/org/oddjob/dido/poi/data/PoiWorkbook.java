@@ -2,19 +2,18 @@ package org.oddjob.dido.poi.data;
 
 import dido.poi.BookInProvider;
 import dido.poi.BookOutProvider;
-import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.oddjob.dido.DataReadJob;
-import org.oddjob.dido.DataWriteJob;
 import org.oddjob.dido.poi.BookIn;
 import org.oddjob.dido.poi.BookOut;
 import org.oddjob.dido.poi.style.StyleProvider;
 import org.oddjob.dido.poi.style.StyleProviderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,13 +24,11 @@ import java.io.OutputStream;
  * @oddjob.description A source or sink of data that is a Microsoft
  * Excel Spreadsheet.
  * <p>
- * This will generally be used to set the data property of a
- * {@link DataReadJob} or {@link DataWriteJob} when the layout definition
- * is a {@link org.oddjob.dido.poi.layouts.DataRows}.
+ * @see org.oddjob.dido.poi.layouts.DataRows
  */
 public class PoiWorkbook implements BookInProvider, BookOutProvider {
 
-    private static final Logger logger = Logger.getLogger(PoiWorkbook.class);
+    private static final Logger logger = LoggerFactory.getLogger(PoiWorkbook.class);
 
     /**
      * The workbook created or read.

@@ -2,16 +2,16 @@ package org.oddjob.dido.poi.layouts;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
-import dido.pickles.DataHow;
-import dido.pickles.DataIn;
-import dido.pickles.DataOut;
+import dido.how.DataIn;
+import dido.how.DataInHow;
+import dido.how.DataOut;
+import dido.how.DataOutHow;
 import dido.poi.BookInProvider;
 import dido.poi.BookOutProvider;
 import dido.poi.CellOut;
 import dido.poi.CellOutProvider;
 import dido.poi.utils.DataRowFactory;
 import dido.poi.utils.SchemaAndCells;
-import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.oddjob.dido.poi.*;
 import org.oddjob.dido.poi.data.DataCell;
@@ -21,6 +21,8 @@ import org.oddjob.dido.poi.style.CompositeStyleFactory;
 import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 import org.oddjob.dido.poi.style.StyleBean;
 import org.oddjob.dido.poi.style.StyleFactoryRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -29,9 +31,9 @@ import java.util.*;
  * @oddjob.description Define an area in a spreadsheet sheet for reading
  * and writing rows to.
  */
-public class DataRows implements DataHow<String, BookInProvider, BookOutProvider> {
+public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<String, BookOutProvider> {
 
-    private static final Logger logger = Logger.getLogger(DataRows.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataRows.class);
 
     /**
      * @oddjob.property
@@ -111,7 +113,7 @@ public class DataRows implements DataHow<String, BookInProvider, BookOutProvider
      */
     private final StyleFactoryRegistry styles = new StyleFactoryRegistry();
 
-    private List<DataCell<?>> of = new LinkedList<>();
+    private final List<DataCell<?>> of = new LinkedList<>();
 
     private DataSchema<String> schema;
 

@@ -1,6 +1,5 @@
 package org.oddjob.dido.poi.data;
 
-import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.oddjob.dido.poi.HeaderRowOut;
@@ -8,6 +7,8 @@ import org.oddjob.dido.poi.RowOut;
 import org.oddjob.dido.poi.RowsOut;
 import org.oddjob.dido.poi.style.DefaultStyleProivderFactory;
 import org.oddjob.dido.poi.style.StyleProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -19,7 +20,7 @@ import java.util.Objects;
  */
 public class PoiRowsOut implements RowsOut {
 
-	private static final Logger logger = Logger.getLogger(PoiRowsOut.class);
+	private static final Logger logger = LoggerFactory.getLogger(PoiRowsOut.class);
 
 	/** The sheet these rows are being written on. */
 	private final Sheet sheet;

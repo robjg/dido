@@ -15,7 +15,7 @@
 
         <dependency>
             <groupId>uk.co.rgordon</groupId>
-            <artifactId>dido-data</artifactId>
+            <artifactId>dido-how</artifactId>
             <scope>compile</scope>
         </dependency>
 

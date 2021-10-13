@@ -1,6 +1,8 @@
 package dido.pickles;
 
 import dido.data.GenericData;
+import dido.how.DataOut;
+import dido.how.DataOutHow;
 
 import java.io.IOException;
 import java.io.OutputStream;

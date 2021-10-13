@@ -2,8 +2,8 @@ package dido.text;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
-import dido.pickles.DataOut;
-import dido.pickles.DataOutHow;
+import dido.how.DataOut;
+import dido.how.DataOutHow;
 import dido.pickles.util.Primitives;
 import org.nocrala.tools.texttablefmt.BorderStyle;
 import org.nocrala.tools.texttablefmt.CellStyle;

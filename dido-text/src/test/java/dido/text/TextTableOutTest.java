@@ -4,7 +4,7 @@ import dido.data.ArrayData;
 import dido.data.EnumData;
 import dido.data.EnumMapData;
 import dido.data.GenericData;
-import dido.pickles.DataOut;
+import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;

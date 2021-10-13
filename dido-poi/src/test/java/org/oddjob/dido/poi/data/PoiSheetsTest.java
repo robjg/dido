@@ -2,8 +2,8 @@ package org.oddjob.dido.poi.data;
 
 import dido.data.GenericData;
 import dido.data.MapData;
-import dido.pickles.DataIn;
-import dido.pickles.DataOut;
+import dido.how.DataIn;
+import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
 import org.oddjob.dido.poi.layouts.DataRows;
 import org.oddjob.dido.poi.layouts.TextCell;

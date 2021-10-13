@@ -4,7 +4,7 @@ import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
-import dido.pickles.CloseableSupplier;
+import dido.how.CloseableSupplier;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -23,7 +23,7 @@ class StreamInCsvTest {
                 .addField("Price", double.class)
                 .build();
 
-        StreamInCsv<String> test = new StreamInCsv<>(schema);
+        StreamInCsv test = new StreamInCsv(schema);
 
 
         CloseableSupplier<GenericData<String>> supplier = test.inFrom(new ByteArrayInputStream("Apple,5,27.2".getBytes()));

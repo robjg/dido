@@ -1,7 +1,7 @@
 package org.oddjob.dido.poi.layouts;
 
 import dido.data.GenericData;
-import dido.pickles.util.Primitives;
+import dido.how.util.Primitives;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
@@ -15,6 +15,7 @@ public class NumericCell<T extends Number> extends AbstractDataCell<T> {
 
     @Override
     public Class<T> getType() {
+        //noinspection unchecked
         return Optional.ofNullable(type).orElse((Class<T>) Double.class);
     }
 
@@ -37,21 +38,27 @@ public class NumericCell<T extends Number> extends AbstractDataCell<T> {
 
         double value = cell.getNumericCellValue();
         if (type == Double.class) {
+            //noinspection unchecked
             return (T) Double.valueOf(value);
         }
         if (type == Integer.class) {
+            //noinspection unchecked
             return (T) Integer.valueOf((int) value);
         }
         if (type == Long.class) {
+            //noinspection unchecked
             return (T) Long.valueOf((long) value);
         }
         if (type == Float.class) {
+            //noinspection unchecked
             return (T) Float.valueOf((float) value);
         }
         if (type == Short.class) {
+            //noinspection unchecked
             return (T) Short.valueOf((short) value);
         }
         if (type == Byte.class) {
+            //noinspection unchecked
             return (T) Byte.valueOf((byte) value);
         }
         throw new IllegalArgumentException("Not Numeric type " + type);

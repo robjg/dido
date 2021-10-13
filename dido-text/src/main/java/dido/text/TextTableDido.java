@@ -1,8 +1,8 @@
 package dido.text;
 
 import dido.data.DataSchema;
-import dido.pickles.DataOut;
-import dido.pickles.DataOutHow;
+import dido.how.DataOut;
+import dido.how.DataOutHow;
 
 import java.io.OutputStream;
 

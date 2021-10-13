@@ -5,15 +5,15 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import dido.data.DataSchema;
 import dido.data.GenericData;
-import dido.pickles.DataIn;
-import dido.pickles.StreamIn;
+import dido.how.DataIn;
+import dido.how.DataInHow;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
-public class StreamInJson implements StreamIn<String> {
+public class StreamInJson implements DataInHow<String, InputStream> {
 
     private final DataSchema<String> schema;
 
@@ -41,24 +41,18 @@ public class StreamInJson implements StreamIn<String> {
                 .create();
 
         JsonReader reader;
-        try {
-            reader = new JsonReader(new InputStreamReader(inputStream, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new IOException(e);
-        }
+        reader = new JsonReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
         reader.beginArray();
 
-        return new DataIn<String>() {
+        return new DataIn<>() {
 
             @Override
             public GenericData<String> get() {
                 try {
                     if (reader.hasNext()) {
-                        GenericData<String> genericData = gson.fromJson(reader, GenericData.class);
-                        return genericData;
-                    }
-                    else {
+                        return gson.fromJson(reader, GenericData.class);
+                    } else {
                         return null;
                     }
                 } catch (IOException e) {

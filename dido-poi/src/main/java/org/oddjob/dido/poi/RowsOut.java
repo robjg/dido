@@ -1,9 +1,8 @@
 package org.oddjob.dido.poi;
 
-import org.oddjob.dido.DataOut;
 
 /**
- * Provide a {@link DataOut} for writing a set of rows (i.e. a table) to
+ * Something for writing a set of rows (i.e. a table) to
  * a sheet of a spreadsheet.
  * 
  * @author rob
