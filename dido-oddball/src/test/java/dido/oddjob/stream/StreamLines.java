@@ -2,8 +2,9 @@ package dido.oddjob.stream;
 
 import dido.data.*;
 import dido.how.DataIn;
+import dido.how.DataInHow;
 import dido.how.DataOut;
-import dido.pickles.*;
+import dido.how.DataOutHow;
 
 import java.io.*;
 
@@ -15,7 +16,7 @@ public class StreamLines {
             .addField(LINE, String.class)
             .build();
 
-    public static class In implements StreamIn<String> {
+    public static class In implements DataInHow<String, InputStream> {
 
         DataBuilder<String> dataBuilder = MapData.newBuilder(schema);
 
@@ -57,7 +58,7 @@ public class StreamLines {
         }
     }
 
-    public static class Out implements StreamOut<String> {
+    public static class Out implements DataOutHow<String, OutputStream> {
 
         @Override
         public Class<OutputStream> getOutType() {

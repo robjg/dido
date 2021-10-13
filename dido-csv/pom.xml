@@ -26,6 +26,7 @@
             <artifactId>commons-csv</artifactId>
             <version>${csv-parser.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
