@@ -4,7 +4,7 @@
     <modules>
         <module>dido-data</module>
         <module>dido-how</module>
-        <module>dido-pickles</module>
+        <module>dido-attic</module>
         <module>dido-oddball</module>
         <module>dido-json</module>
         <module>dido-text</module>
