@@ -8,7 +8,6 @@ import dido.oddjob.beanbus.DataOutDestination;
 import dido.poi.BookInProvider;
 import dido.poi.BookOutProvider;
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
 import org.oddjob.OddjobSessionFactory;
@@ -16,18 +15,18 @@ import org.oddjob.OurDirs;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
-import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.ArooaPropertyException;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.types.ImportType;
 import org.oddjob.arooa.utils.DateHelper;
-import org.oddjob.dido.bio.BeanBindingBean;
 import org.oddjob.dido.poi.data.PoiWorkbook;
 import org.oddjob.dido.poi.test.Fruit;
 import org.oddjob.dido.poi.test.Person;
 import org.oddjob.dido.poi.test.PersonBonus;
 import org.oddjob.state.ParentState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,11 +34,13 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Function;
 
 public class DataBookTest extends TestCase {
-	private static final Logger logger = Logger.getLogger(DataBookTest.class);
+
+	private static final Logger logger = LoggerFactory.getLogger(DataBookTest.class);
 
 	File workDir;
 	
@@ -71,10 +72,6 @@ public class DataBookTest extends TestCase {
 		beans.add(new Person("Jane", DateHelper.parseDate("1982-11-14"), 28000.0));
 		beans.add(new Person("Fred", DateHelper.parseDate("1986-08-07"), 22500.0));
 
-		BeanBindingBean bindingBean = new BeanBindingBean();
-		bindingBean.setArooaSession(session);
-		bindingBean.setType(new SimpleArooaClass(Person.class));
-		
 		ImportType importType = new ImportType();
 		importType.setArooaSession(new StandardArooaSession(
 				new ClassPathDescriptorFactory(
@@ -145,8 +142,6 @@ public class DataBookTest extends TestCase {
 	
 	public void testNoData() throws Exception {
 		
-		List<Object> beans = new ArrayList<Object>();
-
 		ArooaSession session = new StandardArooaSession(
 				new ClassPathDescriptorFactory(
 				).createDescriptor(getClass().getClassLoader()));
@@ -194,7 +189,8 @@ public class DataBookTest extends TestCase {
 		properties.setProperty("layout.resource", 
 				"org/oddjob/dido/poi/DataBookWithHeadings.xml");
 		
-		String config = getClass().getResource("OddjobWrite.xml").getFile();
+		String config = Objects.requireNonNull(getClass().getResource("OddjobWrite.xml"))
+				.getFile();
 		
 		Oddjob oddjob = new Oddjob();
 		oddjob.setProperties(properties);
@@ -212,8 +208,8 @@ public class DataBookTest extends TestCase {
 		Properties properties = new Properties();
 		properties.setProperty("work.dir", OurDirs.workPathDir(DataBookTest.class).toString());
 		
-		File file = new File(getClass().getResource(
-				"DataBookWriteReadExample1.xml").getFile());
+		File file = new File(Objects.requireNonNull(getClass().getResource(
+				"DataBookWriteReadExample1.xml")).getFile());
 		
 		Oddjob oddjob = new Oddjob();
 		oddjob.setFile(file);

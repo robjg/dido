@@ -7,7 +7,6 @@ import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
 import org.hamcrest.MatcherAssert;
 import org.oddjob.arooa.ArooaBeanDescriptor;
 import org.oddjob.arooa.ConfiguredHow;
@@ -16,8 +15,9 @@ import org.oddjob.arooa.reflect.ArooaClass;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.arooa.standard.StandardArooaSession;
-import org.oddjob.dido.ValueNode;
 import org.oddjob.dido.poi.data.PoiWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -29,7 +29,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 public class NumericCellTest extends TestCase {
-	private static final Logger logger = Logger.getLogger(NumericCellTest.class);
+
+	private static final Logger logger = LoggerFactory.getLogger(NumericCellTest.class);
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -162,7 +163,7 @@ public class NumericCellTest extends TestCase {
 	 * recognise a that value was an attribute but test from eclipse worked
 	 * fine.
 	 * <p>
-	 * All to do with a Jave bug. See {@link ValueNode}.
+	 * All to do with <a href="http://bugs.sun.com/view_bug.do?bug-id=6528714">this bug</a>.
 	 * 
 	 * @throws IntrospectionException 
 	 */

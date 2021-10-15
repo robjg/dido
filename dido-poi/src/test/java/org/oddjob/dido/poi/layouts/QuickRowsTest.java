@@ -2,14 +2,13 @@ package org.oddjob.dido.poi.layouts;
 
 import dido.data.GenericData;
 import dido.data.MapData;
-import dido.oddjob.beanbus.DataInDriver;
-import dido.oddjob.beanbus.DataOutDestination;
 import dido.how.DataIn;
 import dido.how.DataOut;
+import dido.oddjob.beanbus.DataInDriver;
+import dido.oddjob.beanbus.DataOutDestination;
 import dido.poi.BookInProvider;
 import dido.poi.BookOutProvider;
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.oddjob.OurDirs;
 import org.oddjob.arooa.ArooaSession;
@@ -19,6 +18,8 @@ import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.types.ImportType;
 import org.oddjob.arooa.utils.DateHelper;
 import org.oddjob.dido.poi.data.PoiWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,7 +34,7 @@ public class QuickRowsTest extends TestCase {
 
     File workDir;
 
-    private static final Logger logger = Logger.getLogger(QuickRowsTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(QuickRowsTest.class);
 
     @Override
     protected void setUp() throws Exception {
@@ -171,14 +172,14 @@ public class QuickRowsTest extends TestCase {
 
         DataRows layout = (DataRows) importType.toObject();
 
-        DataOutDestination<String, BookOutProvider> write = new DataOutDestination();
+        DataOutDestination<String, BookOutProvider> write = new DataOutDestination<>();
         write.setHow(layout);
         write.setArooaSession(session);
         write.setTo(new ArooaObject(workbook));
 
         write.run();
 
-        beans.stream().forEach(write);
+        beans.forEach(write);
 
         write.close();
 

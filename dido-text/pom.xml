@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>uk.co.rgordon</groupId>
-            <artifactId>dido-pickles</artifactId>
+            <artifactId>dido-how</artifactId>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.nocrala.tools.texttablefmt/text-table-formatter -->
