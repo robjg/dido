@@ -15,15 +15,77 @@
 		    className='dido.oddjob.bean.ToBeanTransformer'/>
 		<arooa:bean-def element='from-bean'
 						className='dido.oddjob.bean.FromBeanTransformer'/>
+		<arooa:bean-def element='transpose'
+						className='dido.oddjob.transpose.Transpose'/>
+		<arooa:bean-def element='copy'
+						className='dido.oddjob.transpose.DataCopy'>
+			<design>
+				<design:form xmlns:design="arooa:design">
+					<formItems>
+						<design:group bordered="true" title="From">
+							<formItems>
+								<design:single property="index" title="Index"/>
+								<design:single property="field" title="Field"/>
+							</formItems>
+						</design:group>
+						<design:group bordered="true" title="To">
+							<formItems>
+								<design:text property="at" title="Index"/>
+								<design:single property="to" title="Field"/>
+							</formItems>
+						</design:group>
+					</formItems>
+				</design:form>
+			</design>
+		</arooa:bean-def>
 	</values>
 	<components>
 		<arooa:bean-def element="driver"
-						className="dido.oddjob.beanbus.DataInDriver"/>
+						className="dido.oddjob.beanbus.DataInDriver">
+		</arooa:bean-def>
 		<arooa:bean-def element="destination"
 						className="dido.oddjob.beanbus.DataOutDestination"/>
-		<arooa:bean-def element="in"
-						className="dido.oddjob.beanbus.DataInDriver"/>
-		<arooa:bean-def element="out"
-						className="dido.oddjob.beanbus.DataOutDestination"/>
+		<arooa:bean-def element="data-in"
+						className="dido.oddjob.beanbus.DataInDriver">
+			<design>
+				<design:form xmlns:design="arooa:design">
+					<formItems>
+						<design:group bordered="true" title="Required">
+							<formItems>
+								<design:single property="how" title="How"/>
+								<design:single property="from" title="From"/>
+							</formItems>
+						</design:group>
+						<design:group bordered="true" title="Optional">
+							<formItems>
+								<design:text property="name" title="Name"/>
+								<design:single property="to" title="To"/>
+							</formItems>
+						</design:group>
+					</formItems>
+				</design:form>
+			</design>
+		</arooa:bean-def>
+		<arooa:bean-def element="data-out"
+						className="dido.oddjob.beanbus.DataOutDestination">
+			<design>
+				<design:form xmlns:design="arooa:design">
+					<formItems>
+						<design:group bordered="true" title="Required">
+							<formItems>
+								<design:single property="how" title="How"/>
+								<design:single property="to" title="To"/>
+							</formItems>
+						</design:group>
+						<design:group bordered="true" title="Optional">
+							<formItems>
+								<design:text property="name" title="Name"/>
+								<design:single property="next" title="Next"/>
+							</formItems>
+						</design:group>
+					</formItems>
+				</design:form>
+			</design>
+		</arooa:bean-def>
 	</components>
 </arooa:descriptor>

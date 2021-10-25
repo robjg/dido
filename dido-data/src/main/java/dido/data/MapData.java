@@ -97,9 +97,9 @@ public class MapData<F> implements GenericData<F> {
         return schemaBuilder.build();
     }
 
-    public static DataBuilder<String> newBuilder(DataSchema<String> schema) {
+    public static <F> DataBuilder<F> newBuilder(DataSchema<F> schema) {
 
-        return new BuilderWithSchema(schema);
+        return new BuilderWithSchema<>(schema);
     }
 
     public static DataBuilder<String> newBuilderNoSchema() {
@@ -156,25 +156,25 @@ public class MapData<F> implements GenericData<F> {
         return GenericData.toStringFieldsOnly(this);
     }
 
-    static class BuilderWithSchema extends AbstractDataBuilder<String, BuilderWithSchema> {
+    static class BuilderWithSchema<F> extends AbstractDataBuilder<F, BuilderWithSchema<F>> {
 
-        private final DataSchema<String> schema;
+        private final DataSchema<F> schema;
 
-        private Map<String, Object> map = new HashMap<>();
+        private Map<F, Object> map = new HashMap<>();
 
-        BuilderWithSchema(DataSchema<String> schema) {
+        BuilderWithSchema(DataSchema<F> schema) {
             this.schema = Objects.requireNonNull(schema);
         }
 
         @Override
-        public GenericData<String> build() {
-            GenericData<String> data = new MapData<>(schema, map);
+        public GenericData<F> build() {
+            GenericData<F> data = new MapData<>(schema, map);
             this.map = new HashMap<>();
             return data;
         }
 
         @Override
-        public BuilderWithSchema set(String field, Object value) {
+        public BuilderWithSchema<F> set(F field, Object value) {
             map.put(field, value);
             return this;
         }

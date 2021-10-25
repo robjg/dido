@@ -1,0 +1,25 @@
+<arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
+        prefix="dido" namespace="oddjob:dido">
+	<values>
+		<arooa:bean-def element='sql'
+		    className='dido.sql.SqlDido'>
+			<design>
+				<design:form xmlns:design="arooa:design">
+					<formItems>
+						<design:group bordered="true" title="Required">
+							<formItems>
+								<design:text property="sql" title="SQL"/>
+							</formItems>
+						</design:group>
+						<design:group bordered="true" title="Optional">
+							<formItems>
+								<design:text property="batchSize" title="Batch Size"/>
+								<design:single property="classLoader" title="Class Loader"/>
+							</formItems>
+						</design:group>
+					</formItems>
+				</design:form>
+			</design>
+		</arooa:bean-def>
+	</values>
+</arooa:descriptor>

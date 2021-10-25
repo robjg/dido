@@ -21,10 +21,6 @@ public interface IndexedData<F> {
 
     boolean hasIndex(int index);
 
-    default String getStringAt(int index) {
-        return (String) getAt(index);
-    }
-
     default boolean getBooleanAt(int index) {
         return (boolean) getAt(index);
     }
@@ -55,6 +51,10 @@ public interface IndexedData<F> {
 
     default double getDoubleAt(int index) {
         return (double) getAt(index);
+    }
+
+    default String getStringAt(int index) {
+        return (String) getAt(index);
     }
 
     static boolean equals(IndexedData<?> data1, IndexedData<?> data2) {

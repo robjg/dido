@@ -217,42 +217,53 @@ public class SchemaBuilder<F> {
 
     static class Impl<F> implements DataSchema<F> {
 
-        private final Map<Integer, Class<?>> indexToType;
+        private final Class<?>[] indexToType;
 
         private final Map<F, Integer> fieldToIndex;
 
-        private final Map<Integer, F> indexToField;
+        private final F[] indexToField;
 
-        private final Map<Integer, Integer> nextIndex;
+        private final int[] nextIndex;
 
-        private final Map<Integer, Supplier<? extends DataSchema<?>>> nestedSchemas;
+        private final Supplier<? extends DataSchema<?>>[] nestedSchemas;
 
         private final int firstIndex;
 
         private final int lastIndex;
 
         Impl(SchemaBuilder<F> builder) {
-            this.indexToType = new HashMap<>();
             this.fieldToIndex = new LinkedHashMap<>(builder.fieldToIndex);
-            this.indexToField = new HashMap<>(builder.indexToField);
-            this.nextIndex = new HashMap<>(builder.nextIndex);
-            this.nestedSchemas = new HashMap<>();
             this.firstIndex = builder.firstIndex;
             this.lastIndex = builder.lastIndex;
+
+            Class<?>[] indexToType = new Class<?>[this.lastIndex];
+            Object[] indexToField =  new Object[this.lastIndex];
+            int[] nextIndex = new int[this.lastIndex];
+            Supplier<? extends DataSchema<?>>[] nestedSchemas = new Supplier[this.lastIndex];
 
             for (Map.Entry<Integer, FieldMeta<?>> entry : builder.indexToMeta.entrySet()) {
                 Integer index = entry.getKey();
                 FieldMeta<?> meta = entry.getValue();
-                indexToType.put(index, meta.type);
+
+                indexToType[index - 1] = meta.type;
+                indexToField[index - 1] = builder.indexToField.get(index);
+                nextIndex[index - 1] = Objects.requireNonNullElse(
+                        builder.nextIndex.get(index), 0);
+
                 if (meta.nestedSchemaRef != null) {
-                    nestedSchemas.put(index, meta.nestedSchemaRef);
+                    nestedSchemas[index - 1] = meta.nestedSchemaRef;
                 }
             }
+
+            this.indexToType = indexToType;
+            this.indexToField = (F[]) indexToField;
+            this.nextIndex = nextIndex;
+            this.nestedSchemas = nestedSchemas;
         }
 
         @Override
         public Class<?> getTypeAt(int index) {
-            return indexToType.get(index);
+            return indexToType[index - 1];
         }
 
         @Override
@@ -262,8 +273,7 @@ public class SchemaBuilder<F> {
 
         @Override
         public int nextIndex(int index) {
-            Integer nextIndex = this.nextIndex.get(index);
-            return Objects.requireNonNullElse(nextIndex, 0);
+            return this.nextIndex[index - 1];
         }
 
         @Override
@@ -283,7 +293,7 @@ public class SchemaBuilder<F> {
 
         @Override
         public F getFieldAt(int index) {
-            return indexToField.get(index);
+            return indexToField[index - 1];
         }
 
         @Override
@@ -299,7 +309,7 @@ public class SchemaBuilder<F> {
         @SuppressWarnings("unchecked")
         @Override
         public <N> DataSchema<N> getSchemaAt(int index) {
-            Supplier<? extends DataSchema<?>> schemaRef = nestedSchemas.get(index);
+            Supplier<? extends DataSchema<?>> schemaRef = nestedSchemas[index - 1];
             if (schemaRef == null) {
                 return null;
             } else {

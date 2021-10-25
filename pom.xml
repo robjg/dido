@@ -10,6 +10,7 @@
         <module>dido-text</module>
         <module>dido-csv</module>
         <module>dido-poi</module>
+        <module>dido-sql</module>
     </modules>
 
     <parent>
@@ -51,6 +52,8 @@
         <maven.compiler.target>11</maven.compiler.target>
         <oddjob.version>1.6-SNAPSHOT</oddjob.version>
 
+        <javax.inject.version>1</javax.inject.version>
+
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
     </properties>
@@ -86,6 +89,18 @@
                 <groupId>uk.co.rgordon</groupId>
                 <artifactId>dido-how</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.co.rgordon</groupId>
+                <artifactId>oddjob</artifactId>
+                <version>${oddjob.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${javax.inject.version}</version>
             </dependency>
 
             <dependency>

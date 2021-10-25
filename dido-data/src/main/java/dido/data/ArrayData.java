@@ -21,7 +21,7 @@ public class ArrayData<T> implements GenericData<T> {
     public static <T> GenericData<T> of(Object... data) {
         Objects.requireNonNull(data);
 
-        DataSchema<T> schema = new DataSchema<T>() {
+        DataSchema<T> schema = new DataSchema<>() {
 
             @Override
             public T getFieldAt(int index) {
@@ -72,8 +72,7 @@ public class ArrayData<T> implements GenericData<T> {
             public boolean equals(Object obj) {
                 if (obj instanceof DataSchema) {
                     return DataSchema.equals(this, (DataSchema<?>) obj);
-                }
-                else {
+                } else {
                     return false;
                 }
             }
@@ -86,6 +85,12 @@ public class ArrayData<T> implements GenericData<T> {
 
         return new ArrayData<>(schema, data);
     }
+
+    public static <T> Builder<T> builderForSchema(DataSchema<T> schema) {
+
+        return new Builder<>(Objects.requireNonNull(schema));
+    }
+
 
     @Override
     public DataSchema<T> getSchema() {
@@ -123,5 +128,28 @@ public class ArrayData<T> implements GenericData<T> {
     @Override
     public String toString() {
         return Arrays.toString(data);
+    }
+
+    public static class Builder<F> {
+
+        private final DataSchema<F> schema;
+
+        private Object[] values;
+
+        public Builder(DataSchema<F> schema) {
+            this.schema = schema;
+            values = new Object[schema.lastIndex()];
+        }
+
+        public Builder setAt(int index, Object value) {
+            values[index - 1] = value;
+            return this;
+        }
+
+        public GenericData<F> build() {
+            Object[] values = this.values;
+            this.values = new Object[schema.lastIndex()];
+            return new ArrayData<>(schema, values);
+        }
     }
 }

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <variables id="vars">
+                    <connection>
+                        <connection driver="org.hsqldb.jdbcDriver" password="" url="jdbc:hsqldb:mem:test" username="sa"/>
+                    </connection>
+                </variables>
+                <sql>
+                    <connection>
+                        <value value="${vars.connection}"/>
+                    </connection>
+                    <input>
+                        <buffer>
+                            <![CDATA[
+              DROP TABLE fruit IF EXISTS
+
+              CREATE TABLE fruit(
+              TYPE VARCHAR(20),
+              QUANTITY INTEGER)]]>
+                        </buffer>
+                    </input>
+                </sql>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:csv>
+                                    <schema>
+                                        <dido:schema>
+                                            <of>
+                                                <dido:field name="TYPE" type="java.lang.String"/>
+                                                <dido:field name="QUANTITY" type="int"/>
+                                            </of>
+                                        </dido:schema>
+                                    </schema>
+                                </dido:csv>
+                            </how>
+                            <from>
+                                <buffer>
+                                    <![CDATA[Apple,20
+Orange,30
+Pear,40
+Grape,55]]>
+                                </buffer>
+                            </from>
+                        </dido:data-in>
+                        <dido:data-out xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:sql sql="insert into fruit (type, quantity) values (?,?)"/>
+                            </how>
+                            <to>
+                                <value value="${vars.connection}"/>
+                            </to>
+                        </dido:data-out>
+                    </of>
+                </bus:bus>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:sql sql="select * from fruit"/>
+                            </how>
+                            <from>
+                                <value value="${vars.connection}"/>
+                            </from>
+                        </dido:data-in>
+                        <bus:map>
+                            <function>
+                                <dido:transpose xmlns:dido="oddjob:dido"/>
+                            </function>
+                        </bus:map>
+                        <bus:collect id="results"/>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>

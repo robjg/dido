@@ -6,6 +6,7 @@ import dido.how.DataInHow;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.beanbus.Destination;
 import org.oddjob.framework.adapt.Stop;
@@ -31,6 +32,7 @@ public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAwar
 
     private volatile boolean stop;
 
+    @ArooaHidden
     @Override
     public void setArooaSession(ArooaSession session) {
         this.session = session;
@@ -108,10 +110,6 @@ public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAwar
 
     public boolean isStop() {
         return stop;
-    }
-
-    public void setStop(boolean stop) {
-        this.stop = stop;
     }
 
     public Consumer<? super GenericData<F>> getTo() {

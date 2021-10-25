@@ -6,6 +6,7 @@ import dido.how.DataOutHow;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.beanbus.Destination;
 import org.oddjob.framework.adapt.Start;
@@ -32,6 +33,7 @@ public class DataOutDestination<F, O>
 
     private volatile int count;
 
+    @ArooaHidden
     @Override
     public void setArooaSession(ArooaSession session) {
         this.session = session;
