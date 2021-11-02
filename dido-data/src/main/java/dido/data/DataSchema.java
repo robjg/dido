@@ -158,7 +158,7 @@ public interface DataSchema<F> {
         }
 
         for (int index1 = schema1.firstIndex(), index2 = schema2.firstIndex();
-             index1 > 0 && index2 > 0;
+             index1 > 0 || index2 > 0;
              index1 = schema1.nextIndex(index1), index2 = schema2.nextIndex(index2)) {
 
             if (index1 != index2) {

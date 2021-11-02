@@ -62,7 +62,7 @@ public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<S
      * @oddjob.description Should a header row be written (true/false).
      * @oddjob.required No. Defaults to false.
      */
-    private boolean withHeadings;
+    private boolean withHeader;
 
     /**
      * @oddjob.property
@@ -192,7 +192,7 @@ public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<S
 
         RowsIn rowsIn = new PoiRowsIn(sheet, firstRow, firstColumn);
 
-        if (withHeadings) {
+        if (withHeader) {
 
             this.headings = rowsIn.headerRow();
             if (headings == null) {
@@ -356,7 +356,7 @@ public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<S
                 cellOuts.add(cellProvider.provideCellOut(lastIndex));
             }
 
-            if (withHeadings) {
+            if (withHeader) {
                 HeaderRowOut headerRowOut = rowsOut.headerRow(headingsStyle);
 
                 cellOuts.forEach(cs -> cs.writeHeader(headerRowOut));
@@ -371,12 +371,12 @@ public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<S
     }
 
 
-    public boolean isWithHeadings() {
-        return withHeadings;
+    public boolean isWithHeader() {
+        return withHeader;
     }
 
-    public void setWithHeadings(boolean withHeading) {
-        this.withHeadings = withHeading;
+    public void setWithHeader(boolean withHeading) {
+        this.withHeader = withHeading;
     }
 
     public boolean isAutoWidth() {

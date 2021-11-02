@@ -30,7 +30,7 @@ public class TextCellTest extends TestCase {
 
 		DataRows rows = new DataRows();
 		rows.setOf(0, test);
-		rows.setWithHeadings(true);
+		rows.setWithHeader(true);
 
 		PoiWorkbook workbook = new PoiWorkbook();
 

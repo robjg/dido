@@ -24,9 +24,13 @@ class StreamInOutCsvTest {
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
-        try (DataIn<String> supplier = new StreamInCsv(true)
-                .inFrom(new ByteArrayInputStream(records.getBytes(StandardCharsets.UTF_8)));
-             DataOut<String> consumer = new StreamOutCsv(true)
+        try (DataIn<String> supplier = CsvDataInHow.withOptions()
+                    .withHeader(true)
+                    .make()
+                    .inFrom(new ByteArrayInputStream(records.getBytes(StandardCharsets.UTF_8)));
+             DataOut<String> consumer = CsvDataOutHow.withOptions()
+                     .withHeader(true)
+                     .make()
                      .outTo(results)) {
 
             while (true) {

@@ -13,28 +13,57 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Objects;
 import java.util.Optional;
 
-public class StreamOutCsv implements DataOutHow<String, OutputStream> {
+public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
 
     private final CSVFormat csvFormat;
 
     private final DataSchema<String> schema;
 
-    private final boolean withHeaders;
+    private final boolean withHeader;
 
-    public StreamOutCsv(boolean withHeaders) {
-        this(null, null, withHeaders);
+    public static class Options {
+
+        private CSVFormat csvFormat;
+
+        private DataSchema<String> schema;
+
+        private boolean withHeader;
+
+        public Options csvFormat(CSVFormat csvFormat) {
+            this.csvFormat = csvFormat;
+            return this;
+        }
+
+        public Options schema(DataSchema<String> schema) {
+            this.schema = schema;
+            return this;
+        }
+
+        public Options withHeader(boolean withHeader) {
+            this.withHeader = withHeader;
+            return this;
+        }
+
+        public DataOutHow<String, OutputStream> make() {
+            return new CsvDataOutHow(this);
+        }
     }
 
-    public StreamOutCsv(DataSchema<String> schema, boolean withHeaders) {
-        this(null, schema, withHeaders);
+    private CsvDataOutHow(Options options) {
+        this.csvFormat = Objects.requireNonNullElse(options.csvFormat, CSVFormat.DEFAULT);
+        this.schema = options.schema;
+        this.withHeader = options.withHeader;
     }
 
-    public StreamOutCsv(CSVFormat csvFormat, DataSchema<String> schema, boolean withHeaders) {
-        this.csvFormat = csvFormat == null ? CSVFormat.DEFAULT : csvFormat;
-        this.schema = schema;
-        this.withHeaders = withHeaders;
+    public static Options withOptions() {
+        return new Options();
+    }
+
+    public static DataOutHow<String, OutputStream> withDefaultOptions() {
+        return new Options().make();
     }
 
     @Override
@@ -55,8 +84,8 @@ public class StreamOutCsv implements DataOutHow<String, OutputStream> {
     protected DataOut<String> consumerWhenSchemaKnown(OutputStream outputStream,
                                                  DataSchema<String> schema) throws IOException{
         CSVFormat csvFormat = this.csvFormat;
-        if (this.withHeaders) {
-            csvFormat = csvFormat.withHeader(headers(schema));
+        if (this.withHeader) {
+            csvFormat = csvFormat.withHeader(headerFrom(schema));
         }
 
         Writer writer = new OutputStreamWriter(outputStream);
@@ -118,7 +147,7 @@ public class StreamOutCsv implements DataOutHow<String, OutputStream> {
         }
     }
 
-    public static String[] headers(DataSchema<?> schema) {
+    public static String[] headerFrom(DataSchema<?> schema) {
         if (schema.lastIndex() < 1) {
             return new String[0];
         }

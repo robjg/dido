@@ -185,9 +185,9 @@ public class PoiRowsTest extends TestCase {
 		RowsIn testIn = new PoiRowsIn(bookIn.getSheet(null),
 				8, 4);
 				
-		String[] headers = testIn.headerRow();
+		String[] headings = testIn.headerRow();
 
-		assertThat(headers, is(new String[] { "Name", "Age"}));
+		assertThat(headings, is(new String[] { "Name", "Age"}));
 
 		CellIn<String> cellIn1 = cell1.provideCellIn(1);
 		CellIn<Double> cellIn2 = cell2.provideCellIn(2);

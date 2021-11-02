@@ -107,6 +107,10 @@ public class MapData<F> implements GenericData<F> {
         return new BuilderNoSchema<>();
     }
 
+    public static <T> BuilderOf<T> builderOf(DataSchema<T> schema) {
+
+        return new BuilderOf<>(schema);
+    }
 
     @Override
     public Object getAt(int index) {
@@ -262,6 +266,27 @@ public class MapData<F> implements GenericData<F> {
             map.put(field, value);
             schemaBuilder.addField(field, String.class);
             return this;
+        }
+    }
+
+    public static class BuilderOf<F> {
+
+        private final DataSchema<F> schema;
+
+        BuilderOf(DataSchema<F> schema) {
+            this.schema = Objects.requireNonNull(schema);
+        }
+
+        public GenericData<F> of(Object... values) {
+            Map<F, Object> map = new HashMap<>();
+            for (int i = 0; i < values.length; ++i) {
+                F field = schema.getFieldAt(i + 1);
+                if (field == null) {
+                    throw new IllegalArgumentException("No field for index " + i + 1);
+                }
+                map.put(field, values[i]);
+            }
+            return new MapData<>(schema, map);
         }
     }
 }

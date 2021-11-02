@@ -29,7 +29,7 @@ public class DataRowsTest extends TestCase {
 		DataRows test = new DataRows();
 		test.setFirstRow(2);
 		test.setFirstColumn(3);
-		test.setWithHeadings(true);
+		test.setWithHeader(true);
 		
 		TextCell cell = new TextCell();
 		cell.setName("Fruit");

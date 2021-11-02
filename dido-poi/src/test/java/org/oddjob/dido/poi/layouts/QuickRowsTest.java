@@ -95,7 +95,7 @@ public class QuickRowsTest extends TestCase {
     public void testIdea() throws Exception {
 
         DataRows test = new DataRows();
-        test.setWithHeadings(true);
+        test.setWithHeader(true);
 
         PoiWorkbook workbook = new PoiWorkbook();
 

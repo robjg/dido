@@ -5,7 +5,7 @@
             <parts>
                 <dido:driver xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:csv withHeadings="true"/>
+                        <dido:csv withHeader="true"/>
                     </how>
                     <from>
                         <buffer>
@@ -18,7 +18,7 @@ Pear,7,22.1]]>
                 </dido:driver>
                 <dido:destination xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:csv withHeadings="true"/>
+                        <dido:csv withHeader="true"/>
                     </how>
                     <to>
                         <identify id="results">

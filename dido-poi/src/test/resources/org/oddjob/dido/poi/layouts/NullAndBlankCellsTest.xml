@@ -31,7 +31,7 @@
                                 </dido-poi:workbook>
                             </to>
                             <how>
-                                <dido-poi:rows withHeadings="true" xmlns:dido-poi="oddjob:dido:poi"/>
+                                <dido-poi:rows withHeader="true" xmlns:dido-poi="oddjob:dido:poi"/>
                             </how>
                         </dido:destination>
                     </parts>

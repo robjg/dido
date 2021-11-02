@@ -137,7 +137,7 @@ public class SchemaBuilder<F> {
             lastIndex = index;
         } else {
             if (index <= lastIndex) {
-                if (!nextIndex.containsKey(index)) {
+                if (!nextIndex.containsKey(index) && index != lastIndex) {
                     throw new IllegalArgumentException("Index + " + index + " must be greater than Last index " +
                             lastIndex + ", unless overwriting an existing index.");
                 }

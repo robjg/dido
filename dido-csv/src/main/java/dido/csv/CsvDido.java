@@ -14,18 +14,27 @@ public class CsvDido {
 
     private DataSchema<String> schema;
 
-    private boolean withHeadings;
+    private boolean withHeader;
 
     private boolean partialSchema;
 
     public DataOutHow<String, OutputStream> toStreamOut() {
 
-        return new StreamOutCsv(csvFormat, schema, withHeadings);
+        return CsvDataOutHow.withOptions()
+                .csvFormat(csvFormat)
+                .schema(schema)
+                .withHeader(withHeader)
+                .make();
     }
 
     public DataInHow<String, InputStream> toStreamIn() {
 
-        return new StreamInCsv(csvFormat, schema, withHeadings, partialSchema);
+        return CsvDataInHow.withOptions()
+                .csvFormat(csvFormat)
+                .schema(schema)
+                .withHeader(withHeader)
+                .partialSchema(partialSchema)
+                .make();
     }
 
     public CSVFormat getCsvFormat() {
@@ -52,11 +61,11 @@ public class CsvDido {
         this.partialSchema = partialSchema;
     }
 
-    public boolean isWithHeadings() {
-        return withHeadings;
+    public boolean isWithHeader() {
+        return withHeader;
     }
 
-    public void setWithHeadings(boolean withHeadings) {
-        this.withHeadings = withHeadings;
+    public void setWithHeader(boolean withHeader) {
+        this.withHeader = withHeader;
     }
 }

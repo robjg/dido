@@ -91,4 +91,23 @@ class MapDataTest {
         assertThat(data1, is(data2));
         assertThat(data1.hashCode(), is(data2.hashCode()));
     }
+
+    @Test
+    void testBuilderOf() {
+
+        DataSchema<String> schema = SchemaBuilder.forStringFields()
+                .addField("type", String.class)
+                .addField("foo", String.class)
+                .addField("qty", int.class)
+                .addField("price", double.class)
+                .build();
+
+        GenericData<String> data1 = ArrayData.builderOf(schema)
+                .of("Apple", null, 15, 26.5);
+
+        GenericData<String> data2 = MapData.builderOf(schema)
+                .of("Apple", null, 15, 26.5);
+
+        assertThat(data1, is(data2));
+    }
 }

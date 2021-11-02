@@ -88,9 +88,13 @@ public class ArrayData<T> implements GenericData<T> {
 
     public static <T> Builder<T> builderForSchema(DataSchema<T> schema) {
 
-        return new Builder<>(Objects.requireNonNull(schema));
+        return new Builder<>(schema);
     }
 
+    public static <T> BuilderOf<T> builderOf(DataSchema<T> schema) {
+
+        return new BuilderOf<>(schema);
+    }
 
     @Override
     public DataSchema<T> getSchema() {
@@ -136,8 +140,8 @@ public class ArrayData<T> implements GenericData<T> {
 
         private Object[] values;
 
-        public Builder(DataSchema<F> schema) {
-            this.schema = schema;
+        Builder(DataSchema<F> schema) {
+            this.schema = Objects.requireNonNull(schema);
             values = new Object[schema.lastIndex()];
         }
 
@@ -150,6 +154,19 @@ public class ArrayData<T> implements GenericData<T> {
             Object[] values = this.values;
             this.values = new Object[schema.lastIndex()];
             return new ArrayData<>(schema, values);
+        }
+    }
+
+    public static class BuilderOf<F> {
+
+        private final DataSchema<F> schema;
+
+        BuilderOf(DataSchema<F> schema) {
+            this.schema = Objects.requireNonNull(schema);
+        }
+
+        public GenericData<F> of(Object... values) {
+            return new ArrayData<>(schema, Arrays.copyOf(values, schema.lastIndex()));
         }
     }
 }

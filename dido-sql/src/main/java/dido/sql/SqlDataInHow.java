@@ -22,7 +22,7 @@ public class SqlDataInHow implements DataInHow<String, Connection> {
 
 	private final ClassLoader classLoader;
 
-	public  static class Options {
+	public static class Options {
 
 		private final String sql;
 

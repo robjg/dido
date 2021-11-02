@@ -17,9 +17,10 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
-public class StreamInCsv implements DataInHow<String, InputStream> {
+public class CsvDataInHow implements DataInHow<String, InputStream> {
 
     private static final Map<Class<?>, Function<String, Object>> CONVERSIONS = new HashMap<>();
 
@@ -35,36 +36,62 @@ public class StreamInCsv implements DataInHow<String, InputStream> {
         CONVERSIONS.put(Number.class, Double::valueOf);
     }
 
-
     private final CSVFormat csvFormat;
 
     private final DataSchema<String> schema;
 
-    private final boolean withHeaders;
+    private final boolean withHeader;
 
     private final boolean partialSchema;
 
-    public StreamInCsv(boolean withHeaders) {
-        this(null, null, withHeaders, false);
+    public static class Options {
+
+        private CSVFormat csvFormat;
+
+        private DataSchema<String> schema;
+
+        private boolean withHeader;
+
+        private boolean partialSchema;
+
+        public Options csvFormat(CSVFormat csvFormat) {
+            this.csvFormat = csvFormat;
+            return this;
+        }
+
+        public Options schema(DataSchema<String> schema) {
+            this.schema = schema;
+            return this;
+        }
+
+        public Options withHeader(boolean withHeader) {
+            this.withHeader = withHeader;
+            return this;
+        }
+
+        public Options partialSchema(boolean partialSchema) {
+            this.partialSchema = partialSchema;
+            return this;
+        }
+
+        public DataInHow<String, InputStream> make() {
+            return new CsvDataInHow(this);
+        }
     }
 
-    public StreamInCsv(DataSchema<String> schema) {
-        this(null, schema, false, false);
+    private CsvDataInHow(Options options) {
+        this.csvFormat = Objects.requireNonNullElse(options.csvFormat, CSVFormat.DEFAULT);
+        this.schema = options.schema;
+        this.withHeader = options.withHeader;
+        this.partialSchema = options.partialSchema;
     }
 
-    public StreamInCsv(DataSchema<String> schema, boolean withHeaders) {
-        this(null, schema, withHeaders, false);
+    public static Options withOptions() {
+        return new Options();
     }
 
-    public StreamInCsv(DataSchema<String> schema, boolean withHeaders, boolean partialSchema) {
-        this(null, schema, withHeaders, partialSchema);
-    }
-
-    public StreamInCsv(CSVFormat csvFormat, DataSchema<String> schema, boolean withHeaders, boolean partialSchema) {
-        this.csvFormat = csvFormat == null ? CSVFormat.DEFAULT : csvFormat;
-        this.schema = schema;
-        this.withHeaders = withHeaders;
-        this.partialSchema = partialSchema;
+    public static DataInHow<String, InputStream> withDefaultOptions() {
+        return new Options().make();
     }
 
     @Override
@@ -83,30 +110,43 @@ public class StreamInCsv implements DataInHow<String, InputStream> {
 
         if (this.schema == null || this.partialSchema) {
 
-                csvParser = csvFormat.parse(new InputStreamReader(inputStream));
-                iterator = csvParser.iterator();
+            csvParser = csvFormat.parse(new InputStreamReader(inputStream));
+            iterator = csvParser.iterator();
 
-            if (iterator.hasNext()) {
-                schema = schemaFromHeader(iterator.next(), this.partialSchema ? this.schema : null);
+            if (this.withHeader || this.partialSchema) {
+                if (iterator.hasNext()) {
+                    schema = schemaFromHeader(iterator.next(), this.partialSchema ? this.schema : null);
+                } else {
+                    throw new IOException("No Header Record.");
+                }
             }
             else {
-                throw new IOException("No Header Record.");
+                if (iterator.hasNext()) {
+                    CSVRecord record = iterator.next();
+                    schema = schemaNoHeader(record);
+                    iterator = new OneAheadIterator<>(iterator, record);
+                }
+                else {
+                    schema = DataSchema.emptySchema();
+                }
             }
         } else {
             schema = this.schema;
-            if (this.withHeaders) {
+            if (this.withHeader) {
                 csvFormat = csvFormat.withFirstRecordAsHeader();
             }
             csvParser = csvFormat.parse(new InputStreamReader(inputStream));
             iterator = csvParser.iterator();
         }
 
+        final Iterator<CSVRecord> finalIterator = iterator;
+
         return new DataIn<>() {
 
             @Override
             public GenericData<String> get() {
-                if (iterator.hasNext()) {
-                    return dataFrom(iterator.next(), schema);
+                if (finalIterator.hasNext()) {
+                    return dataFrom(finalIterator.next(), schema);
                 } else {
                     return null;
                 }
@@ -119,7 +159,16 @@ public class StreamInCsv implements DataInHow<String, InputStream> {
         };
     }
 
-    public static DataSchema<String> schemaFromHeader(CSVRecord record, DataSchema<String> partialSchema) {
+    static DataSchema<String> schemaNoHeader(CSVRecord record) {
+        SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
+
+        for (String ignored : record) {
+            schemaBuilder.addNextIndex(String.class);
+        }
+        return schemaBuilder.build();
+    }
+
+    static DataSchema<String> schemaFromHeader(CSVRecord record, DataSchema<String> partialSchema) {
         SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
 
         for (String field : record) {
@@ -131,7 +180,7 @@ public class StreamInCsv implements DataInHow<String, InputStream> {
         return schemaBuilder.build();
     }
 
-    public static GenericData<String> dataFrom(CSVRecord record, DataSchema<String> schema) {
+    static GenericData<String> dataFrom(CSVRecord record, DataSchema<String> schema) {
         return new GenericData<>() {
             @Override
             public DataSchema<String> getSchema() {
@@ -289,4 +338,34 @@ public class StreamInCsv implements DataInHow<String, InputStream> {
         };
     }
 
+    static class OneAheadIterator<E> implements Iterator<E> {
+
+        private final Iterator<E> original;
+
+        private E current;
+
+        OneAheadIterator(Iterator<E> original, E current) {
+            this.original = original;
+            this.current = current;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public E next() {
+            try {
+                return current;
+            }
+            finally {
+                if (original.hasNext()) {
+                    current = original.next();
+                } else {
+                    current = null;
+                }
+            }
+        }
+    }
 }

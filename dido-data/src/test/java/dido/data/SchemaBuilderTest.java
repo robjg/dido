@@ -71,22 +71,23 @@ class SchemaBuilderTest {
 
         DataSchema<String> correction = SchemaBuilder.forStringFields()
                 .addField("qty", int.class)
+                .addField("price", double.class)
                 .build();
 
         DataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
-                .addField("qty", double.class)
-                .addField("price", double.class)
+                .addField("qty", String.class)
+                .addField("price", String.class)
                 .merge(correction)
                 .build();
 
-        assertThat(schema.firstIndex(), is(1));
-        assertThat(schema.lastIndex(), is(3));
-        assertThat(schema.getTypeAt(2), is(int.class));
-        assertThat(schema.getType("qty"), is(int.class));
-        assertThat(schema.nextIndex(1), is(2));
-        assertThat(schema.nextIndex(2), is(3));
-        assertThat(schema.getFields(), Matchers.contains("fruit", "qty", "price"));
+        DataSchema<String> expected = SchemaBuilder.forStringFields()
+                .addField("fruit", String.class)
+                .addField("qty", int.class)
+                .addField("price", double.class)
+                .build();
+
+        assertThat(schema, is(expected));
     }
 
     @Test
