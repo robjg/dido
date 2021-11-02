@@ -56,7 +56,7 @@ public class SqlDataInHow implements DataInHow<String, Connection> {
 	private SqlDataInHow(Options options) {
 		this.sql = Objects.requireNonNull(options.sql);
 		this.batchSize = options.batchSize;
-		this.classLoader = options.classLoader;
+		this.classLoader = Objects.requireNonNullElse(options.classLoader, getClass().getClassLoader());
 	}
 
 	@Override

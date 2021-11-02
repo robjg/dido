@@ -57,7 +57,7 @@ public class SqlDataOutHow implements DataOutHow<String, Connection> {
     private SqlDataOutHow(Options options) {
         this.sql = Objects.requireNonNull(options.sql);
         this.batchSize = options.batchSize;
-        this.classLoader = options.classLoader;
+        this.classLoader = Objects.requireNonNullElse(options.classLoader, getClass().getClassLoader());
     }
 
     @Override
@@ -98,17 +98,22 @@ public class SqlDataOutHow implements DataOutHow<String, Connection> {
 
                 DataSchema<String> schema = data.getSchema();
 
-                try {
                     for (int index = schema.firstIndex(); index != 0; index = schema.nextIndex(index)) {
 
                         Object item = data.getAt(index);
-                        if (item == null) {
-                            stmt.setNull(index, sqlTypes[index - 1]);
-                        } else {
-                            stmt.setObject(index, item);
+                        try {
+                            if (item == null) {
+                                stmt.setNull(index, sqlTypes[index - 1]);
+                            } else {
+                                stmt.setObject(index, item);
+                            }
+                        } catch (SQLException e) {
+                            throw new DataException("Failed setting column " + index + " with ["
+                                    + item + "]", e);
                         }
                     }
 
+                try {
                     if (batchSize > 0) {
                         stmt.addBatch();
                         if (++count % batchSize == 0) {

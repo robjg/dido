@@ -1,0 +1,38 @@
+<oddjob>
+  <job>
+    <sequential>
+      <jobs>
+        <variables id="vars">
+          <connection>
+            <connection driver="org.hsqldb.jdbcDriver" url="jdbc:hsqldb:mem:test"
+              username="sa" password="">
+            </connection>
+          </connection>
+        </variables>
+        <sql>
+          <connection>
+            <value value="${vars.connection}"/>
+          </connection>
+          <input>
+            <buffer>
+              DROP TABLE Numbers IF EXISTS
+
+              CREATE TABLE Numbers(
+              Description VARCHAR(32),
+              A_TinyInt TINYINT,
+              A_SmallInt SMALLINT,
+              A_Integer INTEGER,
+              A_BigInt BIGINT,
+              A_Numeric NUMERIC(10,2),
+              A_Decimal DECIMAL(10,2),
+              A_Real REAL,
+              A_Float FLOAT,
+              A_Double DOUBLE
+              )
+            </buffer>
+          </input>
+        </sql>
+      </jobs>
+    </sequential>
+  </job>
+</oddjob>

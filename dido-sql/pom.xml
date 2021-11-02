@@ -45,6 +45,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>uk.co.rgordon</groupId>
             <artifactId>dido-oddball</artifactId>
             <scope>test</scope>

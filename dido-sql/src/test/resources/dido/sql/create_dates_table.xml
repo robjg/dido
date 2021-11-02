@@ -1,0 +1,34 @@
+<oddjob>
+  <job>
+    <sequential>
+      <jobs>
+        <variables id="vars">
+          <connection>
+            <connection driver="org.hsqldb.jdbcDriver" url="jdbc:hsqldb:mem:test"
+              username="sa" password="">
+            </connection>
+          </connection>
+        </variables>
+        <sql>
+          <connection>
+            <value value="${vars.connection}"/>
+          </connection>
+          <input>
+            <buffer>
+              DROP TABLE Dates IF EXISTS
+
+              CREATE TABLE Dates(
+              Description VARCHAR(32),
+              A_Date DATE,
+              A_Time TIME,
+              A_Zoned_Time TIME WITH TIME ZONE,
+              A_TimeStamp TIMESTAMP,
+              A_Zoned_TimeStamp TIMESTAMP WITH TIME ZONE
+              )
+            </buffer>
+          </input>
+        </sql>
+      </jobs>
+    </sequential>
+  </job>
+</oddjob>

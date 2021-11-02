@@ -2,6 +2,7 @@ package dido.sql;
 
 import dido.data.DataSchema;
 import dido.data.SchemaBuilder;
+import dido.how.util.ClassUtils;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -19,8 +20,8 @@ public class SchemaUtils {
 
             String columnClassName = metaData.getColumnClassName(column);
 
-            Class<?> columnClass = Class.forName(
-                    columnClassName, true, classLoader);
+            Class<?> columnClass = ClassUtils.classFor(
+                    columnClassName, classLoader);
 
             String columnName = metaData.getColumnName(column);
 
