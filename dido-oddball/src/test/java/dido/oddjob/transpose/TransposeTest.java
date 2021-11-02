@@ -4,6 +4,8 @@ import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.data.MapData;
 import org.junit.jupiter.api.Test;
+import org.oddjob.arooa.ArooaSession;
+import org.oddjob.arooa.standard.StandardArooaSession;
 
 import java.util.function.Function;
 
@@ -12,11 +14,13 @@ import static org.hamcrest.Matchers.is;
 
 class TransposeTest {
 
-
     @Test
     void testSimpleFieldCopy() {
 
+        ArooaSession session = new StandardArooaSession();
+
         DataCopy copy1 = new DataCopy();
+        copy1.setArooaSession(session);
         copy1.setField("fruit");
         copy1.setTo("food");
 
@@ -45,7 +49,10 @@ class TransposeTest {
     @Test
     void testPartialFieldCopy() {
 
+        ArooaSession session = new StandardArooaSession();
+
         DataCopy copy1 = new DataCopy();
+        copy1.setArooaSession(session);
         copy1.setField("fruit");
         copy1.setTo("food");
 

@@ -1,17 +1,50 @@
 package dido.oddjob.transpose;
 
 import dido.data.DataSchema;
+import org.oddjob.arooa.ArooaSession;
+import org.oddjob.arooa.convert.ArooaConverter;
+import org.oddjob.arooa.convert.ConversionFailedException;
+import org.oddjob.arooa.convert.ConversionPath;
+import org.oddjob.arooa.deploy.annotations.ArooaHidden;
+import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.arooa.types.ValueFactory;
 
-public class DataCopy implements ValueFactory<TransposerFactory<String, String>> {
+import java.util.function.Function;
 
+/**
+ * Copy a field from one position and/or field and/or type to another.
+ */
+public class DataCopy implements ValueFactory<TransposerFactory<String, String>>, ArooaSessionAware {
+
+    /**
+     * From field.
+     */
     private String field;
 
+    /**
+     * From index.
+     */
     private int index;
 
+    /**
+     * To field.
+     */
     private String to;
 
+    /**
+     * To Index.
+     */
     private int at;
+
+    private Class<?> type;
+
+    private ArooaSession session;
+
+    @Override
+    @ArooaHidden
+    public void setArooaSession(ArooaSession session) {
+        this.session = session;
+    }
 
     @Override
     public TransposerFactory<String, String> toValue() {
@@ -50,6 +83,14 @@ public class DataCopy implements ValueFactory<TransposerFactory<String, String>>
         this.at = at;
     }
 
+    public Class<?> getType() {
+        return type;
+    }
+
+    public void setType(Class<?> type) {
+        this.type = type;
+    }
+
     static class CopyTransposerFactory implements TransposerFactory<String, String> {
 
         private final String from;
@@ -60,11 +101,18 @@ public class DataCopy implements ValueFactory<TransposerFactory<String, String>>
 
         private final int at;
 
+        private final Class<?> type;
+
+        private final ArooaConverter converter;
+
         CopyTransposerFactory(DataCopy from) {
             this.from = from.field;
             this.to = from.to;
             this.index = from.index;
             this.at = from.at;
+            this.type = from.type;
+            this.converter = from.session.getTools().getArooaConverter();
+
         }
 
         @Override
@@ -100,7 +148,8 @@ public class DataCopy implements ValueFactory<TransposerFactory<String, String>>
                 index = this.index;
             }
 
-            Transposer<String, String> transposer = (from, into) -> into.setAt(at, from.getAt(index));
+            Function<Function<Object,Object>, Transposer<String, String>> transposerFn = (conversion) ->
+                    (from, into) -> into.setAt(at, conversion.apply(from.getAt(index)));
 
             if (this.to == null) {
                 if (this.from == null) {
@@ -113,23 +162,49 @@ public class DataCopy implements ValueFactory<TransposerFactory<String, String>>
                 }
                 else {
                     to = this.from;
-                    transposer = (from, into) -> into.setAt(at, from.get(this.from));
+                    transposerFn = (conversion) ->
+                            (from, into) -> into.setAt(at, conversion.apply(from.get(this.from)));
                 }
             }
             else {
                 to = this.to;
                 if (this.from == null) {
-                    transposer = (from, into) -> into.set(to, from.getAt(index));
+                    transposerFn = (conversion) ->
+                            (from, into) -> into.set(to, conversion.apply(from.getAt(index)));
                 }
                 else {
-                    transposer = (from, into) -> into.set(to, from.get(this.from));
+                    transposerFn = (conversion) ->
+                            (from, into) -> into.set(to, conversion.apply(from.get(this.from)));
                 }
             }
 
+            Class<?> toType;
+            Function<Object, Object> conversion;
+            if (type == null) {
+                conversion = Function.identity();
+                toType = fromSchema.getTypeAt(index);
+            }
+            else {
+                Class<?> fromType = fromSchema.getTypeAt(index);
+                toType = type;
+                ConversionPath conversionPath = converter.findConversion(
+                        fromType, toType);
+                if (conversionPath == null) {
+                    throw new IllegalArgumentException("No Conversion from " +
+                            fromType.getName() + " to " + toType.getName());
+                }
+                conversion = in -> {
+                    try {
+                        return conversionPath.convert(in, converter);
+                    } catch (ConversionFailedException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                };
+            }
 
-            schemaSetter.setFieldAt(at, to, fromSchema.getTypeAt(index));
+            schemaSetter.setFieldAt(at, to, toType);
 
-            return transposer;
+            return transposerFn.apply(conversion);
         }
     }
 

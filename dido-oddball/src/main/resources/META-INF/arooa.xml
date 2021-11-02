@@ -24,14 +24,15 @@
 					<formItems>
 						<design:group bordered="true" title="From">
 							<formItems>
-								<design:single property="index" title="Index"/>
-								<design:single property="field" title="Field"/>
+								<design:text property="index" title="Index"/>
+								<design:text property="field" title="Field"/>
 							</formItems>
 						</design:group>
 						<design:group bordered="true" title="To">
 							<formItems>
 								<design:text property="at" title="Index"/>
-								<design:single property="to" title="Field"/>
+								<design:text property="to" title="Field"/>
+								<design:single property="type" title="Type"/>
 							</formItems>
 						</design:group>
 					</formItems>

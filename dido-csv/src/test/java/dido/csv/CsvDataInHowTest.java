@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 
@@ -132,7 +133,26 @@ class CsvDataInHowTest {
     }
 
     @Test
-    public void testOneAheadIterator() {
+    void testEmptyValues() throws Exception {
+
+        DataIn<String> dataIn = CsvDataInHow.withDefaultOptions()
+                .inFrom(new ByteArrayInputStream(",,".getBytes(StandardCharsets.UTF_8)));
+
+        GenericData<String> data = dataIn.get();
+
+        DataSchema<String> schema = data.getSchema();
+
+        assertThat(schema.lastIndex(), is(3));
+
+        assertThat(data.getStringAt(1), is(""));
+        assertThat(data.getStringAt(2), is(""));
+        assertThat(data.getStringAt(3), is(""));
+
+        assertThat(dataIn.get(), nullValue());
+    }
+
+    @Test
+    void testOneAheadIterator() {
 
         Iterator<String> original = List.of("one", "two", "three").iterator();
 
