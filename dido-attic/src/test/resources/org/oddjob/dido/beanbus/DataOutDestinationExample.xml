@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <oddjob>
     <job>
-        <bean-bus>
-            <parts>
-                <bus:iterable-driver xmlns:bus="oddjob:beanbus">
-                    <beans>
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <bus:driver xmlns:bus="oddjob:beanbus">
+                    <values>
                         <list>
                             <values>
                                 <bean class="org.oddjob.dido.beanbus.DataOutDestinationTest$Fruit" quantity="5" type="Apple"/>
@@ -12,8 +12,8 @@
                                 <bean class="org.oddjob.dido.beanbus.DataOutDestinationTest$Fruit" quantity="7" type="Pear"/>
                             </values>
                         </list>
-                    </beans>
-                </bus:iterable-driver>
+                    </values>
+                </bus:driver>
                 <dido:data-out xmlns:dido="oddjob:dido">
                     <layout>
                         <dido:delimited name="top" withHeadings="true"/>
@@ -33,7 +33,7 @@
                         </dido:bean-binding>
                     </bindings>
                 </dido:data-out>
-            </parts>
-        </bean-bus>
+            </of>
+        </bus:bus>
     </job>
 </oddjob>

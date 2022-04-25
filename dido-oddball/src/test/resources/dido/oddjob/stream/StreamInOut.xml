@@ -8,9 +8,9 @@
                         <buffer/>
                     </results>
                 </variables>
-                <bean-bus>
-                    <parts>
-                        <dido:driver xmlns:dido="oddjob:dido">
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in xmlns:dido="oddjob:dido">
                             <from>
                                 <buffer>
                                     <![CDATA[The
@@ -27,17 +27,17 @@ Dog]]>
                             <how>
                                 <bean class="dido.oddjob.stream.StreamLines$In"/>
                             </how>
-                        </dido:driver>
-                        <dido:destination xmlns:dido="oddjob:dido">
+                        </dido:data-in>
+                        <dido:data-out xmlns:dido="oddjob:dido">
                             <to>
                                 <value value="${vars.results}"/>
                             </to>
                             <how>
                                 <bean class="dido.oddjob.stream.StreamLines$Out"/>
                             </how>
-                        </dido:destination>
-                    </parts>
-                </bean-bus>
+                        </dido:data-out>
+                    </of>
+                </bus:bus>
             </jobs>
         </sequential>
     </job>

@@ -1,8 +1,8 @@
 <oddjob>
     <job>
-        <bean-bus>
-            <parts>
-                <dido:driver xmlns:dido="oddjob:dido">
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <dido:data-in xmlns:dido="oddjob:dido">
                     <from>
                         <buffer>Apple,5,27.2
 Orange,10,31.6
@@ -21,8 +21,8 @@ Pear,7,22.1</buffer>
                             </schema>
                         </dido:csv>
                     </how>
-                </dido:driver>
-                <bus:transformer xmlns:bus="oddjob:beanbus">
+                </dido:data-in>
+                <bus:map xmlns:bus="oddjob:beanbus">
                     <function>
                         <dido:to-bean xmlns:dido="oddjob:dido">
                             <beanClass>
@@ -30,9 +30,9 @@ Pear,7,22.1</buffer>
                             </beanClass>
                         </dido:to-bean>
                     </function>
-                </bus:transformer>
-                <bus:capture xmlns:bus="oddjob:beanbus" id="capture"/>
-            </parts>
-        </bean-bus>
+                </bus:map>
+                <bus:collect xmlns:bus="oddjob:beanbus" id="capture"/>
+            </of>
+        </bus:bus>
     </job>
 </oddjob>

@@ -1,9 +1,9 @@
 <oddjob>
     <job>
-        <bean-bus>
-            <parts>
-                <bus:iterable-driver xmlns:bus="oddjob:beanbus">
-                    <beans>
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <bus:driver xmlns:bus="oddjob:beanbus">
+                    <values>
                         <list>
                             <values>
                                 <bean class="dido.oddjob.bean.FruitData" type="Apple" qty="5" price="27.2"/>
@@ -11,9 +11,9 @@
                                 <bean class="dido.oddjob.bean.FruitData" type="Pear" qty="7" price="22.1"/>
                             </values>
                         </list>
-                    </beans>
-                </bus:iterable-driver>
-                <bus:transformer xmlns:bus="oddjob:beanbus">
+                    </values>
+                </bus:driver>
+                <bus:map xmlns:bus="oddjob:beanbus">
                     <function>
                         <dido:to-bean xmlns:dido="oddjob:dido">
                             <beanClass>
@@ -21,9 +21,9 @@
                             </beanClass>
                         </dido:to-bean>
                     </function>
-                </bus:transformer>
-                <bus:capture xmlns:bus="oddjob:beanbus" id="capture"/>
-            </parts>
-        </bean-bus>
+                </bus:map>
+                <bus:collect xmlns:bus="oddjob:beanbus" id="capture"/>
+            </of>
+        </bus:bus>
     </job>
 </oddjob>

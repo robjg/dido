@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <oddjob>
     <job>
-        <bean-bus>
-            <parts>
-                <dido:driver xmlns:dido="oddjob:dido">
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <dido:data-in xmlns:dido="oddjob:dido">
                     <how>
                         <dido:csv withHeader="true"/>
                     </how>
@@ -15,8 +15,8 @@ Orange,10,31.6
 Pear,7,22.1]]>
                         </buffer>
                     </from>
-                </dido:driver>
-                <dido:destination xmlns:dido="oddjob:dido">
+                </dido:data-in>
+                <dido:data-out xmlns:dido="oddjob:dido">
                     <how>
                         <dido:csv withHeader="true"/>
                     </how>
@@ -27,8 +27,8 @@ Pear,7,22.1]]>
                             </value>
                         </identify>
                     </to>
-                </dido:destination>
-            </parts>
-        </bean-bus>
+                </dido:data-out>
+            </of>
+        </bus:bus>
     </job>
 </oddjob>

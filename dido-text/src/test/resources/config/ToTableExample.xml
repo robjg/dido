@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <oddjob>
     <job>
-        <bean-bus>
-            <parts>
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
                 <bus:driver xmlns:bus="oddjob:beanbus">
-                    <beans>
+                    <values>
                         <bean class="dido.text.SomeData"/>
-                    </beans>
+                    </values>
                 </bus:driver>
-                <dido:destination xmlns:dido="oddjob:dido">
+                <dido:data-out xmlns:dido="oddjob:dido">
                     <how>
                         <dido:table/>
                     </how>
@@ -19,8 +19,8 @@
                             </value>
                         </identify>
                     </to>
-                </dido:destination>
-            </parts>
-        </bean-bus>
+                </dido:data-out>
+            </of>
+        </bus:bus>
     </job>
 </oddjob>

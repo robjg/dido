@@ -41,11 +41,6 @@
 		</arooa:bean-def>
 	</values>
 	<components>
-		<arooa:bean-def element="driver"
-						className="dido.oddjob.beanbus.DataInDriver">
-		</arooa:bean-def>
-		<arooa:bean-def element="destination"
-						className="dido.oddjob.beanbus.DataOutDestination"/>
 		<arooa:bean-def element="data-in"
 						className="dido.oddjob.beanbus.DataInDriver">
 			<design>
