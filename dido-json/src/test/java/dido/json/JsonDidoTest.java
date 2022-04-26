@@ -55,6 +55,7 @@ class JsonDidoTest {
 
         JsonDido test = new JsonDido();
         test.setSchema(schema);
+        test.setArrayFormat(true);
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 

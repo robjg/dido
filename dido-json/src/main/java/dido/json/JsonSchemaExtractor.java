@@ -33,6 +33,10 @@ public class JsonSchemaExtractor {
 
             String field = entry.getKey();
             if (existingFields.contains(field)) {
+
+                // So the field from the priority schema is in the same place.
+                schemaBuilder.addField(field, Void.class);
+
                 continue;
             }
 

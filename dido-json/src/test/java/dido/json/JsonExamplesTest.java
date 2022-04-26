@@ -31,6 +31,32 @@ public class JsonExamplesTest {
 
         String results = lookup.lookup("results", String.class);
 
+        String expected =
+                "{ \"Fruit\"=\"Apple\", \"Qty\"=5, \"Price\"=27.2 }\n" +
+                "{ \"Fruit\"=\"Orange\", \"Qty\"=10, \"Price\"=31.6 }\n" +
+                "{ \"Fruit\"=\"Pear\", \"Qty\"=7, \"Price\"=22.1 }\n";
+
+        JSONAssert.assertEquals(
+                results,
+                expected,
+                JSONCompareMode.LENIENT);
+    }
+
+    @Test
+    void testReadAndWriteArrayFormatNoSchema() throws ArooaConversionException, JSONException {
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setFile(new File(Objects.requireNonNull(
+                getClass().getResource("FromToJsonArrayExample.xml")).getFile()));
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        String results = lookup.lookup("results", String.class);
+
         String expected = "[\n" +
                 "    { \"Fruit\"=\"Apple\", \"Qty\"=5, \"Price\"=27.2 },\n" +
                 "    { \"Fruit\"=\"Orange\", \"Qty\"=10, \"Price\"=31.6 },\n" +

@@ -91,6 +91,29 @@ class SchemaBuilderTest {
     }
 
     @Test
+    void testOverwriteMiddleFieldSchema() {
+
+        DataSchema<String> correction = SchemaBuilder.forStringFields()
+                .addField("qty", int.class)
+                .build();
+
+        DataSchema<String> schema = SchemaBuilder.forStringFields()
+                .addField("fruit", String.class)
+                .addField("qty", String.class)
+                .addField("price", double.class)
+                .merge(correction)
+                .build();
+
+        DataSchema<String> expected = SchemaBuilder.forStringFields()
+                .addField("fruit", String.class)
+                .addField("qty", int.class)
+                .addField("price", double.class)
+                .build();
+
+        assertThat(schema, is(expected));
+    }
+
+    @Test
     void testAddNestedSchema() {
 
         AtomicReference<DataSchema<String>> self = new AtomicReference<>();

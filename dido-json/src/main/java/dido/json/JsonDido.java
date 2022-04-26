@@ -13,14 +13,17 @@ public class JsonDido {
 
     private boolean partialSchema;
 
+    private boolean arrayFormat;
+
     public DataOutHow<String, OutputStream> toStreamOut() {
 
-        return new StreamOutJson();
+        return arrayFormat ? new StreamOutJson() : new StreamOutJsonLines();
     }
 
     public DataInHow<String, InputStream> toStreamIn() {
 
-        return new StreamInJson(schema, partialSchema);
+        return arrayFormat ? new StreamInJson(schema, partialSchema)
+                : new StreamInJsonLines(schema, partialSchema);
     }
 
     public DataSchema<String> getSchema() {
@@ -37,5 +40,20 @@ public class JsonDido {
 
     public void setPartialSchema(boolean partialSchema) {
         this.partialSchema = partialSchema;
+    }
+
+    public boolean isArrayFormat() {
+        return arrayFormat;
+    }
+
+    public void setArrayFormat(boolean arrayFormat) {
+        this.arrayFormat = arrayFormat;
+    }
+
+    @Override
+    public String toString() {
+        return "JsonHow{" +
+                "arrayFormat=" + arrayFormat +
+                '}';
     }
 }

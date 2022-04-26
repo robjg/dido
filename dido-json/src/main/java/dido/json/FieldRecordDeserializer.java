@@ -16,10 +16,12 @@ public class FieldRecordDeserializer implements JsonDeserializer<GenericData<Str
 
     public FieldRecordDeserializer(DataSchema<String> schema, boolean partialSchema) {
         if (partialSchema) {
-            dataExtractor = (jsonObject, serializationContext) -> JsonDataWrapper.from(
-                    JsonSchemaExtractor.from(schema).fromElement(jsonObject)).wrap(jsonObject, serializationContext);
-        }
-        else {
+            dataExtractor = (jsonObject, serializationContext) ->
+                    JsonDataWrapper.from(
+                                    JsonSchemaExtractor.from(schema)
+                                            .fromElement(jsonObject))
+                            .wrap(jsonObject, serializationContext);
+        } else {
             dataExtractor = JsonDataWrapper.from(schema)::wrap;
         }
     }
