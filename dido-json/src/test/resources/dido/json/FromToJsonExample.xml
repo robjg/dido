@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <dido:data-in xmlns:dido="oddjob:dido">
+                    <how>
+                        <dido:json/>
+                    </how>
+                    <from>
+                        <buffer>
+                            <![CDATA[
+[
+    { "Fruit"="Apple", "Qty"=5, "Price"=27.2 },
+    { "Fruit"="Orange", "Qty"=10, "Price"=31.6 },
+    { "Fruit"="Pear", "Qty"=7, "Price"=22.1 }
+]
+]]>
+
+                        </buffer>
+                    </from>
+                </dido:data-in>
+                <dido:data-out xmlns:dido="oddjob:dido">
+                    <how>
+                        <dido:json/>
+                    </how>
+                    <to>
+                        <identify id="results">
+                            <value>
+                                <buffer/>
+                            </value>
+                        </identify>
+                    </to>
+                </dido:data-out>
+            </of>
+        </bus:bus>
+    </job>
+</oddjob>

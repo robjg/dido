@@ -12,6 +12,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Provide an {@link DataOut} that writes an array of JSON records.
+ */
 public class StreamOutJson implements DataOutHow<String, OutputStream> {
 
     @Override
@@ -22,7 +25,8 @@ public class StreamOutJson implements DataOutHow<String, OutputStream> {
     @Override
     public DataOut<String> outTo(OutputStream outputStream) throws IOException {
 
-        Gson gson = new GsonBuilder().registerTypeAdapter(GenericData.class, new FieldRecordSerializer())
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(GenericData.class, new FieldRecordSerializer())
                 .create();
 
         JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
