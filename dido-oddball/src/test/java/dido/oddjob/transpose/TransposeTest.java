@@ -19,7 +19,7 @@ class TransposeTest {
 
         ArooaSession session = new StandardArooaSession();
 
-        DataCopy copy1 = new DataCopy();
+        ValueCopyFactory copy1 = new ValueCopyFactory();
         copy1.setArooaSession(session);
         copy1.setField("fruit");
         copy1.setTo("food");
@@ -51,7 +51,7 @@ class TransposeTest {
 
         ArooaSession session = new StandardArooaSession();
 
-        DataCopy copy1 = new DataCopy();
+        ValueCopyFactory copy1 = new ValueCopyFactory();
         copy1.setArooaSession(session);
         copy1.setField("fruit");
         copy1.setTo("food");

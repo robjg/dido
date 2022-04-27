@@ -13,7 +13,7 @@ import org.oddjob.arooa.types.ValueFactory;
 /**
  * Copy a field from one position and/or field and/or type to another.
  */
-public class DataSet implements ValueFactory<TransposerFactory<String, String>>, ArooaSessionAware {
+public class ValueSetFactory implements ValueFactory<TransposerFactory<String, String>>, ArooaSessionAware {
 
     /**
      * From field.
@@ -86,7 +86,7 @@ public class DataSet implements ValueFactory<TransposerFactory<String, String>>,
 
         private final ArooaConverter converter;
 
-        CopyTransposerFactory(DataSet config) {
+        CopyTransposerFactory(ValueSetFactory config) {
             this.from = config.field;
             this.index = config.index;
             this.value = config.value;

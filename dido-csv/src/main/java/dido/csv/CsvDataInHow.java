@@ -119,14 +119,12 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
                 } else {
                     throw new IOException("No Header Record.");
                 }
-            }
-            else {
+            } else {
                 if (iterator.hasNext()) {
                     CSVRecord record = iterator.next();
                     schema = schemaNoHeader(record);
                     iterator = new OneAheadIterator<>(iterator, record);
-                }
-                else {
+                } else {
                     schema = DataSchema.emptySchema();
                 }
             }
@@ -358,8 +356,7 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
         public E next() {
             try {
                 return current;
-            }
-            finally {
+            } finally {
                 if (original.hasNext()) {
                     current = original.next();
                 } else {
@@ -367,5 +364,25 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
                 }
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("CSV");
+        if (this.schema != null) {
+            if (partialSchema) {
+                builder.append(", with partial schema");
+            } else {
+                builder.append(", with schema");
+            }
+        } else {
+            builder.append(", with no schema");
+        }
+        if (withHeader) {
+            builder.append(" and header");
+        } else {
+            builder.append(" and no header");
+        }
+        return builder.toString();
     }
 }

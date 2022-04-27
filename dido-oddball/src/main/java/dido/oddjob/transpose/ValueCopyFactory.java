@@ -14,7 +14,7 @@ import java.util.function.Function;
 /**
  * Copy a field from one position and/or field and/or type to another.
  */
-public class DataCopy implements ValueFactory<TransposerFactory<String, String>>, ArooaSessionAware {
+public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, String>>, ArooaSessionAware {
 
     /**
      * From field.
@@ -105,7 +105,7 @@ public class DataCopy implements ValueFactory<TransposerFactory<String, String>>
 
         private final ArooaConverter converter;
 
-        CopyTransposerFactory(DataCopy from) {
+        CopyTransposerFactory(ValueCopyFactory from) {
             this.from = from.field;
             this.to = from.to;
             this.index = from.index;

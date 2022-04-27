@@ -67,4 +67,19 @@ public class StreamInJson implements DataInHow<String, InputStream> {
             }
         };
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("JsonArray");
+        if (this.schema != null) {
+            if (partialSchema) {
+                builder.append(", with partial schema");
+            } else {
+                builder.append(", with schema");
+            }
+        } else {
+            builder.append(", with no schema");
+        }
+        return builder.toString();
+    }
 }

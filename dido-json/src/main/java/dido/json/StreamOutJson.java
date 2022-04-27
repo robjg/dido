@@ -48,4 +48,8 @@ public class StreamOutJson implements DataOutHow<String, OutputStream> {
         };
     }
 
+    @Override
+    public String toString() {
+        return "JsonArray";
+    }
 }

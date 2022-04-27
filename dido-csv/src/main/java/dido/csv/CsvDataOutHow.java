@@ -72,7 +72,7 @@ public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
     }
 
     @Override
-    public DataOut<String> outTo(OutputStream outputStream) throws IOException{
+    public DataOut<String> outTo(OutputStream outputStream) throws IOException {
 
         if (schema == null) {
             return new UnknownSchemaConsumer(outputStream);
@@ -82,7 +82,7 @@ public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
     }
 
     protected DataOut<String> consumerWhenSchemaKnown(OutputStream outputStream,
-                                                 DataSchema<String> schema) throws IOException{
+                                                      DataSchema<String> schema) throws IOException {
         CSVFormat csvFormat = this.csvFormat;
         if (this.withHeader) {
             csvFormat = csvFormat.withHeader(headerFrom(schema));
@@ -174,5 +174,21 @@ public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
             values[i - 1] = data.getAt(i);
         }
         return values;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("CSV");
+        if (this.schema != null) {
+            builder.append(", with schema");
+        } else {
+            builder.append(", with no schema");
+        }
+        if (withHeader) {
+            builder.append(" and header");
+        } else {
+            builder.append(" and no header");
+        }
+        return builder.toString();
     }
 }

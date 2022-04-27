@@ -14,6 +14,7 @@ import org.oddjob.framework.adapt.Stop;
 import java.io.Closeable;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAware {
@@ -28,7 +29,7 @@ public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAwar
 
     private Consumer<? super GenericData<F>> to;
 
-    private volatile int count;
+    private final AtomicInteger count = new AtomicInteger();
 
     private volatile boolean stop;
 
@@ -43,7 +44,7 @@ public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAwar
 
         stop = false;
 
-        count = 0;
+        count.set(0);
 
         DataInHow<F, I> how = Objects.requireNonNull(this.how, "No How");
 
@@ -65,7 +66,7 @@ public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAwar
                     break;
                 }
 
-                ++count;
+                count.incrementAndGet();
 
                 if (to != null) {
                     to.accept(data);
@@ -122,7 +123,7 @@ public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAwar
     }
 
     public int getCount() {
-        return count;
+        return count.get();
     }
 
     @Override

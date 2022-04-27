@@ -18,7 +18,7 @@
 		<arooa:bean-def element='transpose'
 						className='dido.oddjob.transpose.Transpose'/>
 		<arooa:bean-def element='copy'
-						className='dido.oddjob.transpose.DataCopy'>
+						className='dido.oddjob.transpose.ValueCopyFactory'>
 			<design>
 				<design:form xmlns:design="arooa:design">
 					<formItems>
@@ -40,7 +40,7 @@
 			</design>
 		</arooa:bean-def>
 		<arooa:bean-def element='set'
-						className='dido.oddjob.transpose.DataSet'>
+						className='dido.oddjob.transpose.ValueSetFactory'>
 			<design>
 				<design:form xmlns:design="arooa:design">
 					<formItems>

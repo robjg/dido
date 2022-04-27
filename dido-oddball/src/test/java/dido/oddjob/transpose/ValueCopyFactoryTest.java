@@ -11,14 +11,14 @@ import org.oddjob.arooa.standard.StandardArooaSession;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-class DataCopyTest {
+class ValueCopyFactoryTest {
 
     @Test
     void testNewType() {
 
         ArooaSession session = new StandardArooaSession();
 
-        DataCopy test =  new DataCopy();
+        ValueCopyFactory test =  new ValueCopyFactory();
         test.setArooaSession(session);
         test.setType(Integer.class);
         test.setTo("FooAmount");

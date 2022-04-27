@@ -48,4 +48,8 @@ public class StreamOutJsonLines implements DataOutHow<String, OutputStream> {
         };
     }
 
+    @Override
+    public String toString() {
+        return "JsonLines";
+    }
 }

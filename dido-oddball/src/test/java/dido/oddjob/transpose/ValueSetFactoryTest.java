@@ -15,7 +15,7 @@ import java.util.Objects;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class DataSetTest {
+class ValueSetFactoryTest {
 
     @Test
     void testSimpleExample() throws ArooaConversionException {
@@ -35,9 +35,9 @@ class DataSetTest {
 
         assertThat(results.size(), is(3));
 
-        GenericData<String> result = results.get(0);
+        GenericData<String> result1 = results.get(0);
 
-        DataSchema<String> schema = result.getSchema();
+        DataSchema<String> schema = result1.getSchema();
 
         assertThat(schema.getFieldAt(1), is("type"));
         assertThat(schema.getType("type"), is(String.class));
@@ -46,11 +46,16 @@ class DataSetTest {
         assertThat(schema.getFieldAt(3), is("price"));
         assertThat(schema.getType("price"), is(double.class));
 
-        assertThat(result.get("type"), is("Apple"));
-        assertThat(result.getInt("quantity"), is(20));
-        assertThat(result.getDouble("price"), is(27.2));
+        assertThat(result1.get("type"), is("Apple"));
+        assertThat(result1.getInt("quantity"), is(20));
+        assertThat(result1.getDouble("price"), is(27.2));
+
+        GenericData<String> result2 = results.get(1);
+
+        assertThat(result2.getAt(1), is("Orange"));
+        assertThat(result2.getIntAt(2), is(20));
+        assertThat(result2.getDoubleAt(3), is(31.6));
 
         oddjob.destroy();
-
     }
 }
