@@ -39,6 +39,23 @@
 				</design:form>
 			</design>
 		</arooa:bean-def>
+		<arooa:bean-def element='set'
+						className='dido.oddjob.transpose.DataSet'>
+			<design>
+				<design:form xmlns:design="arooa:design">
+					<formItems>
+						<design:group bordered="true" title="Properties">
+							<formItems>
+								<design:text property="index" title="Index"/>
+								<design:text property="field" title="Field"/>
+								<design:single property="value" title="Value"/>
+								<design:single property="type" title="Type"/>
+							</formItems>
+						</design:group>
+					</formItems>
+				</design:form>
+			</design>
+		</arooa:bean-def>
 	</values>
 	<components>
 		<arooa:bean-def element="data-in"
