@@ -62,7 +62,7 @@ class ArrayDataTest {
 
         GenericData<String> data1 = ArrayData.of("Apple", null, 15, 26.5);
 
-        GenericData<String> data2 = ArrayData.builderOf(data1.getSchema())
+        GenericData<String> data2 = ArrayData.valuesFor(data1.getSchema())
                 .of("Apple", null, 15, 26.5);
 
         assertThat(data1, is(data2));

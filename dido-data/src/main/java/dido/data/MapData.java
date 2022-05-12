@@ -107,9 +107,9 @@ public class MapData<F> implements GenericData<F> {
         return new BuilderNoSchema<>();
     }
 
-    public static <T> BuilderOf<T> builderOf(DataSchema<T> schema) {
+    public static <T> Values<T> valuesFor(DataSchema<T> schema) {
 
-        return new BuilderOf<>(schema);
+        return new Values<>(schema);
     }
 
     @Override
@@ -269,11 +269,11 @@ public class MapData<F> implements GenericData<F> {
         }
     }
 
-    public static class BuilderOf<F> {
+    public static class Values<F> {
 
         private final DataSchema<F> schema;
 
-        BuilderOf(DataSchema<F> schema) {
+        Values(DataSchema<F> schema) {
             this.schema = Objects.requireNonNull(schema);
         }
 

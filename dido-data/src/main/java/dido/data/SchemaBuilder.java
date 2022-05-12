@@ -10,6 +10,10 @@ import java.util.function.Supplier;
  */
 public class SchemaBuilder<F> {
 
+    public static final Class<?> NESTED_TYPE = IndexedData.class;
+
+    public static final Class<?> NESTED_REPEATING_TYPE = IndexedData[].class;
+
     private final Map<Integer, FieldMeta<?>> indexToMeta = new HashMap<>();
 
     private final Map<F, Integer> fieldToIndex = new LinkedHashMap<>();
@@ -70,57 +74,57 @@ public class SchemaBuilder<F> {
 
     public <N> SchemaBuilder<F> addNestedIndexedField(int index, F field,
                                                       DataSchema<N> nestedSchema) {
-        return addMetaField(index, field, FieldMeta.from(GenericData.class, nestedSchema));
+        return addMetaField(index, field, FieldMeta.from(NESTED_TYPE, nestedSchema));
     }
 
     //
 
     public <N> SchemaBuilder<F> addNestedIndex(int index,
                                                Supplier<DataSchema<N>> nestedSchemaRef) {
-        return addMetaField(index, null, FieldMeta.from(GenericData.class, nestedSchemaRef));
+        return addMetaField(index, null, FieldMeta.from(NESTED_TYPE, nestedSchemaRef));
     }
 
     public <N> SchemaBuilder<F> addNestedField(F field,
                                                Supplier<DataSchema<N>> nestedSchemaRef) {
-        return addMetaField(0, field, FieldMeta.from(GenericData.class, nestedSchemaRef));
+        return addMetaField(0, field, FieldMeta.from(NESTED_TYPE, nestedSchemaRef));
     }
 
     public <N> SchemaBuilder<F> addNestedIndexedField(int index, F field,
                                                       Supplier<DataSchema<N>> nestedSchemaRef) {
-        return addMetaField(index, field, FieldMeta.from(GenericData.class, nestedSchemaRef));
+        return addMetaField(index, field, FieldMeta.from(NESTED_TYPE, nestedSchemaRef));
     }
 
     //
 
-    public <N> SchemaBuilder<F> addNestedRepeatingField(F field,
-                                                        DataSchema<N> nestedSchema) {
-        return addNestedRepeatingIndexedField(0, field, nestedSchema);
+    public <N> SchemaBuilder<F> addRepeatingField(F field,
+                                                  DataSchema<N> nestedSchema) {
+        return addRepeatingIndexedField(0, field, nestedSchema);
     }
 
     public <N> SchemaBuilder<F> addNestedRepeatingIndex(int index,
                                                         DataSchema<N> nestedSchema) {
-        return addNestedRepeatingIndexedField(index, null, nestedSchema);
+        return addRepeatingIndexedField(index, null, nestedSchema);
     }
 
-    public <N> SchemaBuilder<F> addNestedRepeatingIndexedField(int index, F field,
-                                                               DataSchema<N> nestedSchema) {
-        return addMetaField(index, field, FieldMeta.from(GenericData[].class, nestedSchema));
+    public <N> SchemaBuilder<F> addRepeatingIndexedField(int index, F field,
+                                                         DataSchema<N> nestedSchema) {
+        return addMetaField(index, field, FieldMeta.from(NESTED_REPEATING_TYPE, nestedSchema));
     }
 
     //
-    public <N> SchemaBuilder<F> addNestedRepeatingField(F field,
-                                                        Supplier<DataSchema<N>> nestedSchemaRef) {
-        return addNestedRepeatingIndexedField(0, field, nestedSchemaRef);
+    public <N> SchemaBuilder<F> addRepeatingField(F field,
+                                                  Supplier<DataSchema<N>> nestedSchemaRef) {
+        return addRepeatingIndexedField(0, field, nestedSchemaRef);
     }
 
     public <N> SchemaBuilder<F> addNestedRepeatingIndex(int index,
                                                         Supplier<DataSchema<N>> nestedSchemaRef) {
-        return addNestedRepeatingIndexedField(index, null, nestedSchemaRef);
+        return addRepeatingIndexedField(index, null, nestedSchemaRef);
     }
 
-    public <N> SchemaBuilder<F> addNestedRepeatingIndexedField(int index, F field,
-                                                               Supplier<DataSchema<N>> nestedSchemaRef) {
-        return addMetaField(index, field, FieldMeta.from(GenericData[].class, nestedSchemaRef));
+    public <N> SchemaBuilder<F> addRepeatingIndexedField(int index, F field,
+                                                         Supplier<DataSchema<N>> nestedSchemaRef) {
+        return addMetaField(index, field, FieldMeta.from(NESTED_REPEATING_TYPE, nestedSchemaRef));
     }
 
     //
@@ -239,6 +243,7 @@ public class SchemaBuilder<F> {
             Class<?>[] indexToType = new Class<?>[this.lastIndex];
             Object[] indexToField =  new Object[this.lastIndex];
             int[] nextIndex = new int[this.lastIndex];
+            @SuppressWarnings("unchecked")
             Supplier<? extends DataSchema<?>>[] nestedSchemas = new Supplier[this.lastIndex];
 
             for (Map.Entry<Integer, FieldMeta<?>> entry : builder.indexToMeta.entrySet()) {
@@ -256,6 +261,7 @@ public class SchemaBuilder<F> {
             }
 
             this.indexToType = indexToType;
+            //noinspection unchecked
             this.indexToField = (F[]) indexToField;
             this.nextIndex = nextIndex;
             this.nestedSchemas = nestedSchemas;
@@ -294,16 +300,6 @@ public class SchemaBuilder<F> {
         @Override
         public F getFieldAt(int index) {
             return indexToField[index - 1];
-        }
-
-        @Override
-        public Class<?> getType(F field) {
-            Integer index = fieldToIndex.get(field);
-            if (index == null) {
-                return null;
-            } else {
-                return getTypeAt(index);
-            }
         }
 
         @SuppressWarnings("unchecked")

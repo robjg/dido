@@ -11,14 +11,14 @@ public interface EnumSchema<E extends Enum<E>> extends DataSchema<E> {
     Class<E> getFieldType();
 
     static <E extends Enum<E>> EnumSchema<E> schemaFor(Class<E> enumClass, Function<E, Class<?>> typeMapping) {
-        return new EnumMapData.Schema<>(enumClass, typeMapping);
+        return EnumSchemaBuilder.forTypeMapping(enumClass, typeMapping);
     }
 
     static <E extends Enum<E>> EnumSchema<E> enumSchemaFrom(DataSchema<String> delegate, Class<E> enumClass) {
 
         E[] enumConstants = enumClass.getEnumConstants();
 
-        return new EnumSchema<E>() {
+        return new EnumSchema<>() {
             @Override
             public Class<E> getFieldType() {
                 return enumClass;
@@ -68,8 +68,7 @@ public interface EnumSchema<E extends Enum<E>> extends DataSchema<E> {
             public boolean equals(Object obj) {
                 if (obj instanceof DataSchema) {
                     return DataSchema.equals(this, (DataSchema<?>) obj);
-                }
-                else {
+                } else {
                     return false;
                 }
             }
@@ -88,7 +87,7 @@ public interface EnumSchema<E extends Enum<E>> extends DataSchema<E> {
 
     static <E extends Enum<E>> DataSchema<String> stringSchemaFrom(EnumSchema<E> delegate) {
 
-        return new DataSchema<String>() {
+        return new DataSchema<>() {
 
             @Override
             public String getFieldAt(int index) {
@@ -136,8 +135,7 @@ public interface EnumSchema<E extends Enum<E>> extends DataSchema<E> {
             public boolean equals(Object obj) {
                 if (obj instanceof DataSchema) {
                     return DataSchema.equals(this, (DataSchema<?>) obj);
-                }
-                else {
+                } else {
                     return false;
                 }
             }

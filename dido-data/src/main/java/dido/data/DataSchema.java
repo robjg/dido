@@ -44,8 +44,8 @@ public interface DataSchema<F> {
      * index does not exist behaviour is undefined.
      * If the data at the index is not nested this
      * method will return null. If the type of
-     * this index is {@link GenericData} or an
-     * array of {@link GenericData} then this method
+     * this index is {@link IndexedData} or an
+     * array of {@link IndexedData} then this method
      * will not return null.
      *
      * @param index The field.

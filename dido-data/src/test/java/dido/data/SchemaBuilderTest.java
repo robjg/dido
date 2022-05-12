@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 
 class SchemaBuilderTest {
 
@@ -122,7 +121,21 @@ class SchemaBuilderTest {
                 .build();
         self.set(schema);
 
-        assertThat(schema.getSchema("node"), Matchers.sameInstance(schema));
+        assertThat(schema.getSchema("node"), sameInstance(schema));
+    }
+
+    @Test
+    void testAddRepeatingSchema() {
+
+        DataSchema<String> nested = SchemaBuilder.forStringFields()
+                .addField("fruit", String.class)
+                .build();
+
+        DataSchema<String> schema = SchemaBuilder.forStringFields()
+                .addRepeatingField("list", nested)
+                .build();
+
+        assertThat(schema.getSchema("list"), sameInstance(nested));
     }
 
     @Test

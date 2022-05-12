@@ -10,9 +10,6 @@ abstract public class AbstractDataBuilder<F, B extends AbstractDataBuilder<F, B>
         implements DataBuilder<F> {
 
     @Override
-    abstract public GenericData<F> build();
-
-    @Override
     abstract public B set(F field, Object value);
 
     @Override

@@ -118,7 +118,7 @@ public class SchemaManager {
         public <N> B addNestedRepeatingField(F field, String schemaName) {
             Supplier<DataSchema<N>> nestedSchema = () -> (DataSchema<N>)  Objects.requireNonNull(
                     SchemaManager.this.schemaMap.get(schemaName), "No Schema " + schemaName);
-            this.schemaBuilder.addNestedRepeatingField(field, nestedSchema);
+            this.schemaBuilder.addRepeatingField(field, nestedSchema);
             return self();
         }
 

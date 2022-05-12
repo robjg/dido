@@ -44,9 +44,9 @@ class SchemaManagerTest {
 
         assertThat(schema.firstIndex(), is(1));
         assertThat(schema.lastIndex(), is(4));
-        assertThat(schema.getTypeAt(1), is(GenericData.class));
-        assertThat(schema.getType(FamilyFields.WIFE), is(GenericData.class));
-        assertThat(schema.getType(FamilyFields.CHILDREN), is(GenericData[].class));
+        assertThat(schema.getTypeAt(1), is(SchemaBuilder.NESTED_TYPE));
+        assertThat(schema.getType(FamilyFields.WIFE), is(SchemaBuilder.NESTED_TYPE));
+        assertThat(schema.getType(FamilyFields.CHILDREN), is(SchemaBuilder.NESTED_REPEATING_TYPE));
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));
         assertThat(schema.nextIndex(3), is(4));
@@ -77,7 +77,7 @@ class SchemaManagerTest {
         DataSchema<String> schema = schemaManager.getSchema("person");
 
         assertThat(schema.getTypeAt(1), is(String.class));
-        assertThat(schema.getTypeAt(2), is(GenericData.class));
+        assertThat(schema.getTypeAt(2), is(SchemaBuilder.NESTED_TYPE));
     }
 
     @Test
@@ -90,7 +90,7 @@ class SchemaManagerTest {
 
         DataSchema<String> schema = schemaManager.getSchema("node");
 
-        assertThat(schema.getTypeAt(1), is(GenericData[].class));
+        assertThat(schema.getTypeAt(1), is(SchemaBuilder.NESTED_REPEATING_TYPE));
 
     }
 }

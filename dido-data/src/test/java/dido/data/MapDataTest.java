@@ -102,10 +102,10 @@ class MapDataTest {
                 .addField("price", double.class)
                 .build();
 
-        GenericData<String> data1 = ArrayData.builderOf(schema)
+        GenericData<String> data1 = ArrayData.valuesFor(schema)
                 .of("Apple", null, 15, 26.5);
 
-        GenericData<String> data2 = MapData.builderOf(schema)
+        GenericData<String> data2 = MapData.valuesFor(schema)
                 .of("Apple", null, 15, 26.5);
 
         assertThat(data1, is(data2));

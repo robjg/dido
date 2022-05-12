@@ -52,7 +52,7 @@ class CsvDataOutHowTest {
                 .addField("Price", double.class)
                 .build();
 
-        MapData.BuilderOf builder = MapData.builderOf(schema);
+        MapData.Values<String> values = MapData.valuesFor(schema);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
@@ -63,8 +63,8 @@ class CsvDataOutHowTest {
                         .make()
                         .outTo(output);
 
-        dataOut.accept(builder.of("Apple", null, 5, 19.50));
-        dataOut.accept(builder.of("Orange", null, 2, 35.24));
+        dataOut.accept(values.of("Apple", null, 5, 19.50));
+        dataOut.accept(values.of("Orange", null, 2, 35.24));
 
         dataOut.close();
 
