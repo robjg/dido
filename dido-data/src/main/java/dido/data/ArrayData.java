@@ -24,6 +24,11 @@ public class ArrayData<T> implements GenericData<T> {
         DataSchema<T> schema = new DataSchema<>() {
 
             @Override
+            public SchemaField<T> getSchemaFieldAt(int index) {
+                return SchemaFields.of(index, Object.class);
+            }
+
+            @Override
             public T getFieldAt(int index) {
                 return null;
             }
@@ -145,7 +150,7 @@ public class ArrayData<T> implements GenericData<T> {
             values = new Object[schema.lastIndex()];
         }
 
-        public Builder setAt(int index, Object value) {
+        public Builder<F> setAt(int index, Object value) {
             values[index - 1] = value;
             return this;
         }

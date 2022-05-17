@@ -3,8 +3,6 @@ package dido.data;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -14,9 +12,9 @@ class SchemaBuilderTest {
     void testAddSequentiallyNoFields() {
 
         DataSchema<String> schema = SchemaBuilder.forStringFields()
-                .addIndex(0, String.class)
-                .addIndex(0, int.class)
-                .addIndex(0, double.class)
+                .addAt(0, String.class)
+                .addAt(0, int.class)
+                .addAt(0, double.class)
                 .build();
 
         assertThat(schema.firstIndex(), is(1));
@@ -32,9 +30,9 @@ class SchemaBuilderTest {
     void testAddSparseIndexes() {
 
         DataSchema<String> schema = SchemaBuilder.forStringFields()
-                .addIndex(5, String.class)
-                .addNextIndex(int.class)
-                .addIndex(20, double.class)
+                .addAt(5, String.class)
+                .add(int.class)
+                .addAt(20, double.class)
                 .build();
 
         assertThat(schema.firstIndex(), is(5));
@@ -113,11 +111,58 @@ class SchemaBuilderTest {
     }
 
     @Test
+    void testOverwriteWithIndexOnlySchema() {
+
+        DataSchema<String> correction = SchemaBuilder.forStringFields()
+                .addAt(2, int.class)
+                .build();
+
+        DataSchema<String> schema = SchemaBuilder.forStringFields()
+                .addField("fruit", String.class)
+                .addField("qty", String.class)
+                .addField("price", double.class)
+                .merge(correction)
+                .build();
+
+        DataSchema<String> expected = SchemaBuilder.forStringFields()
+                .addField("fruit", String.class)
+                .addField("qty", int.class)
+                .addField("price", double.class)
+                .build();
+
+        assertThat(schema, is(expected));
+    }
+
+    @Test
+    void testMergeExtraFieldSchema() {
+
+        DataSchema<String> extra = SchemaBuilder.forStringFields()
+                .addField("colour", String.class)
+                .build();
+
+        DataSchema<String> schema = SchemaBuilder.forStringFields()
+                .addField("fruit", String.class)
+                .addField("qty", int.class)
+                .addField("price", double.class)
+                .merge(extra)
+                .build();
+
+        DataSchema<String> expected = SchemaBuilder.forStringFields()
+                .addField("fruit", String.class)
+                .addField("qty", int.class)
+                .addField("price", double.class)
+                .addField("colour", String.class)
+                .build();
+
+        assertThat(schema, is(expected));
+    }
+
+    @Test
     void testAddNestedSchema() {
 
-        AtomicReference<DataSchema<String>> self = new AtomicReference<>();
+        SchemaReference<String> self = SchemaReference.blank();
         DataSchema<String> schema = SchemaBuilder.forStringFields()
-                .addNestedField("node", self::get)
+                .addNestedField("node", self)
                 .build();
         self.set(schema);
 

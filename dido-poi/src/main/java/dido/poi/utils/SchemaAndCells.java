@@ -147,7 +147,7 @@ public class SchemaAndCells {
 
             Class<?> type = child.getType();
 
-            schemaBuilder.addIndexedField(child.getIndex(), name, type);
+            schemaBuilder.addFieldAt(child.getIndex(), name, type);
         }
 
         return schemaBuilder.build();

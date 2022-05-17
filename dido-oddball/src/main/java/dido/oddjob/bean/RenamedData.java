@@ -3,8 +3,8 @@ package dido.oddjob.bean;
 import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.data.IndexedData;
+import dido.data.SchemaBuilder;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -120,94 +120,10 @@ public class RenamedData<F, T> implements GenericData<T> {
 
     static <F, T> DataSchema<T> renamedSchema(Map<F, T> mapping, DataSchema<F> fromSchema) {
 
-        @SuppressWarnings("unchecked")
-        T[] fields = (T[]) new Object[fromSchema.lastIndex()];
-        Map<T, Integer> indexes = new LinkedHashMap<>();
-
-        for (Map.Entry<F, T> entry : mapping.entrySet()) {
-            int index = fromSchema.getIndex(entry.getKey());
-            fields[index - 1] = entry.getValue();
-            indexes.put(entry.getValue(),  index);
-        }
-
-        return new RenamedSchema<>(indexes, fields, fromSchema);
+        return fromSchema.getSchemaFields().stream()
+                .reduce(SchemaBuilder.<T>impliedType(),
+                        (b, sf) -> b.addSchemaField(sf.mapToField(mapping.get(sf.getField()))),
+                        (b1, b2) -> b1)
+                .build();
     }
-
-    static class RenamedSchema<F, T> implements DataSchema<T> {
-
-        private final Map<T, Integer> fieldMap;
-
-        private final T[] toFields;
-
-        private final DataSchema<F> original;
-
-        RenamedSchema(Map<T, Integer> fieldIndexes, T[] toFields, DataSchema<F> original) {
-            this.fieldMap = fieldIndexes;
-            this.original = original;
-            this.toFields = toFields;
-        }
-
-        @Override
-        public T getFieldAt(int index) {
-            return toFields[index - 1];
-        }
-
-        @Override
-        public Class<?> getTypeAt(int index) {
-            return original.getTypeAt(index);
-        }
-
-        @Override
-        public <N> DataSchema<N> getSchemaAt(int index) {
-            return original.getSchemaAt(index);
-        }
-
-        @Override
-        public int getIndex(T field) {
-            return this.fieldMap.get(field);
-        }
-
-        @Override
-        public int firstIndex() {
-            return original.firstIndex();
-        }
-
-        @Override
-        public int nextIndex(int index) {
-            return original.nextIndex(index);
-        }
-
-        @Override
-        public int lastIndex() {
-            return original.lastIndex();
-        }
-
-        @Override
-        public Collection<T> getFields() {
-            return this.fieldMap.keySet();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof DataSchema) {
-                return DataSchema.equals(this, (DataSchema<?>) o);
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return DataSchema.hashCode(this);
-        }
-
-        @Override
-        public String toString() {
-            return DataSchema.toString(this);
-        }
-
-    }
-
-
-
 }

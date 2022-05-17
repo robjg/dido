@@ -209,11 +209,11 @@ class EnumMapDataTest {
                 .addRepeatingField(Node.CHILDREN, nodeSchemaRef)
                 .build();
 
-        assertThat(nodeSchema.toString(), is("{[1:NAME]=java.lang.String, [2:CHILDREN]=dido.data.IndexedData}"));
+        assertThat(nodeSchema.toString(), is("{[1:NAME]=java.lang.String, [2:CHILDREN]=[SchemaReference (unset)]}"));
 
         nodeSchemaRef.set(nodeSchema);
 
-        assertThat(nodeSchema.toString(), is("{[1:NAME]=java.lang.String, [2:CHILDREN]=dido.data.IndexedData}"));
+        assertThat(nodeSchema.toString(), is("{[1:NAME]=java.lang.String, [2:CHILDREN]=[SchemaReference]}"));
 
         EnumData<Node> george = EnumMapData.newBuilder(nodeSchema)
                 .set(Node.NAME, "George")

@@ -5,6 +5,11 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.function.Function;
 
+/**
+ * Builder for an {@link EnumSchema}.
+ *
+ * @param <E> The Enum type.
+ */
 public class EnumSchemaBuilder<E extends Enum<E>> {
 
     private final Class<E> type;
@@ -73,6 +78,11 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         Schema(Class<E> enumClass, SchemaField<E>[] fields) {
             this.enumClass = enumClass;
             this.fields = fields;
+        }
+
+        @Override
+        public SchemaField<E> getSchemaFieldAt(int index) {
+            return fields[index - 1];
         }
 
         @Override

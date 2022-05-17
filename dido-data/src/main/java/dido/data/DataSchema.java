@@ -1,8 +1,6 @@
 package dido.data;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Define a Schema for Data. A schema is always defined by index but
@@ -19,6 +17,16 @@ import java.util.Objects;
 public interface DataSchema<F> {
 
     /**
+     * Get the {@link SchemaField} for the given index. A Schema Field will exist for
+     * all valid indexes. Behaviour is undefined when the index is out of bounds.
+     *
+     * @param index The index, from 1.
+     *
+     * @return The Schema Field.
+     */
+    SchemaField<F> getSchemaFieldAt(int index);
+
+    /**
      * Get the field for the given index. If a field has not been allocated to the
      * given index null will be returned. Behaviour is undefined when
      * the index is out of bounds.
@@ -27,7 +35,9 @@ public interface DataSchema<F> {
      *
      * @return F the field or null.
      */
-    F getFieldAt(int index);
+    default F getFieldAt(int index) {
+        return getSchemaFieldAt(index).getField();
+    }
 
 
     /**
@@ -37,7 +47,9 @@ public interface DataSchema<F> {
      * @param index The field.
      * @return The type.
      */
-    Class<?> getTypeAt(int index);
+    default Class<?> getTypeAt(int index) {
+        return getSchemaFieldAt(index).getType();
+    }
 
     /**
      * Get the nested schema a given index. If the
@@ -51,7 +63,9 @@ public interface DataSchema<F> {
      * @param index The field.
      * @return The nested schema.
      */
-    <N> DataSchema<N> getSchemaAt(int index);
+    default <N> DataSchema<N> getSchemaAt(int index) {
+        return getSchemaFieldAt(index).getNestedSchema();
+    }
 
     /**
      * Get the index for a given field. If the field does not
@@ -98,7 +112,40 @@ public interface DataSchema<F> {
      *
      * @return A collection of fields. May be empty. Never null.
      */
-    Collection<F> getFields();
+    default Collection<F> getFields() {
+        List<F> fields = new ArrayList<>(lastIndex());
+        for (int i = firstIndex(); i > 0; i = nextIndex(i)) {
+            F field = getFieldAt(i);
+            if (field != null) {
+                fields.add(field);
+            }
+        }
+        return fields;
+    }
+
+    /**
+     * Get all the {@link SchemaField}s in this schema.
+     *
+     * @return A collection of Schema Fields. May be empty. Never null.
+     */
+    default Collection<SchemaField<F>> getSchemaFields() {
+        List<SchemaField<F>> schemaFields = new ArrayList<>(lastIndex());
+        for (int i = firstIndex(); i > 0; i = nextIndex(i)) {
+            schemaFields.add(getSchemaFieldAt(i));
+        }
+        return schemaFields;
+    }
+
+    /**
+     * Get the {@link SchemaField} for the given field. If the
+     * field does not exist behaviour is undefined.
+     *
+     * @param field The field.
+     * @return The type.
+     */
+    default SchemaField<F> getSchemaField(F field) {
+        return getSchemaFieldAt(getIndex(field));
+    }
 
     /**
      * Get the type that a value is at a given field. If the
@@ -198,21 +245,18 @@ public interface DataSchema<F> {
             if (i > schema.firstIndex()) {
                 sb.append(", ");
             }
-            sb.append('[');
-            sb.append(i);
-            Object field = schema.getFieldAt(i);
-            if (field != null) {
-                sb.append(':');
-                sb.append(field);
-            }
-            sb.append("]=");
-            sb.append(schema.getTypeAt(i).getName());
+            sb.append(schema.getSchemaFieldAt(i));
         }
         sb.append("}");
         return sb.toString();
     }
 
     class EmptySchema<F> implements DataSchema<F> {
+
+        @Override
+        public SchemaField<F> getSchemaFieldAt(int index) {
+            return null;
+        }
 
         @Override
         public F getFieldAt(int index) {

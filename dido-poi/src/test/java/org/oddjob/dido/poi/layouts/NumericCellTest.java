@@ -102,7 +102,7 @@ public class NumericCellTest extends TestCase {
 		PoiWorkbook workbook = new PoiWorkbook();
 
 		DataSchema<String> schema = SchemaBuilder.forStringFields()
-				.addNextIndex(Double.class)
+				.add(Double.class)
 				.build();
 
 		DataRows rows = new DataRows();

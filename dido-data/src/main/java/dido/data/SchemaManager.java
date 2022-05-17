@@ -1,10 +1,6 @@
 package dido.data;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Supplier;
+import java.util.*;
 
 /**
  * Manage schemas by name so that nested schemas can easily be constructed.
@@ -14,6 +10,8 @@ public class SchemaManager {
     public static final String DEFAULT_SCHEMA_NAME = "default";
 
     private final Map<String, DataSchema<?>> schemaMap = new HashMap<>();
+
+    private final Map<String, List<SchemaReference<?>>> schemaRefs = new HashMap<>();
 
     public static SchemaManager newInstance() {
         return new SchemaManager();
@@ -37,62 +35,57 @@ public class SchemaManager {
 
         //
 
+        public B addAt(int index, Class<?> type) {
+            return addFieldAt(index, null, type);
+        }
+
         public B addField(F field, Class<?> type) {
-            return addIndexedField(0, field, type);
+            return addFieldAt(0, field, type);
         }
 
-        public B addIndex(int index, Class<?> type) {
-            return addIndexedField(index, null, type);
-        }
-
-        public B addIndexedField(int index, F field, Class<?> type) {
-            this.schemaBuilder.addIndexedField(index, field, type);
+        public B addFieldAt(int index, F field, Class<?> type) {
+            this.schemaBuilder.addFieldAt(index, field, type);
             return self();
         }
 
         //
+
+        public B addNestedAt(int index, String schemaName) {
+            return addNestedFieldAt(index, null, schemaName);
+        }
 
         public B addNestedField(F field, String schemaName) {
-            return addNestedIndexedField(0, field, schemaName);
+            return addNestedFieldAt(0, field, schemaName);
         }
 
-        public B addNestedIndex(int index, String schemaName) {
-            return addNestedIndexedField(index, null, schemaName);
-        }
+        public <N> B addNestedFieldAt(int index, F field, String schemaName) {
 
-        public <N> B addNestedIndexedField(int index, F field, String schemaName) {
-            Supplier<DataSchema<N>> nestedSchema = () -> (DataSchema<N>) Objects.requireNonNull(
-                    SchemaManager.this.schemaMap.get(schemaName), "No Schema " + schemaName);
-            return addNestedIndexedField(index, field, nestedSchema);
-        }
-
-        //
-
-        public <N> B addNestedField(F field, DataSchema<N> nestedSchema) {
-            return this.addNestedIndexedField(0, field, nestedSchema);
-        }
-
-        public <N> B addNestedIndex(int index, DataSchema<N> nestedSchema) {
-            return this.addNestedIndexedField(index,null , nestedSchema);
-        }
-
-        public <N> B addNestedIndexedField(int index, F field, DataSchema<N> nestedSchema) {
-            this.schemaBuilder.addNestedIndexedField(index, field, nestedSchema);
+            @SuppressWarnings("unchecked")
+            DataSchema<N> schema = (DataSchema<N>) schemaMap.get(schemaName);
+            if (schema == null) {
+                SchemaReference<N> schemaRef = SchemaReference.named(schemaName);
+                schemaRefs.computeIfAbsent(schemaName, k -> new ArrayList<>())
+                        .add(schemaRef);
+                schemaBuilder.addNestedFieldAt(index, field, schemaRef);
+            }
+            else {
+                schemaBuilder.addNestedFieldAt(index, field, schema);
+            }
             return self();
         }
 
         //
 
-        public <N> B addNestedField(F field, Supplier<DataSchema<N>> nestedSchemaRef) {
-            return this.addNestedIndexedField(0, field, nestedSchemaRef);
+        public <N> B addNestedAt(int index, DataSchema<N> nestedSchema) {
+            return this.addNestedFieldAt(index,null , nestedSchema);
         }
 
-        public <N> B addNestedIndex(int index, Supplier<DataSchema<N>> nestedSchemaRef) {
-            return this.addNestedIndexedField(index,null , nestedSchemaRef);
+        public <N> B addNestedField(F field, DataSchema<N> nestedSchema) {
+            return this.addNestedFieldAt(0, field, nestedSchema);
         }
 
-        public <N> B addNestedIndexedField(int index, F field, Supplier<DataSchema<N>> nestedSchemaRef) {
-            this.schemaBuilder.addNestedIndexedField(index, field, nestedSchemaRef);
+        public <N> B addNestedFieldAt(int index, F field, DataSchema<N> nestedSchema) {
+            this.schemaBuilder.addNestedFieldAt(index, field, nestedSchema);
             return self();
         }
 
@@ -115,10 +108,42 @@ public class SchemaManager {
 
         //
 
-        public <N> B addNestedRepeatingField(F field, String schemaName) {
-            Supplier<DataSchema<N>> nestedSchema = () -> (DataSchema<N>)  Objects.requireNonNull(
-                    SchemaManager.this.schemaMap.get(schemaName), "No Schema " + schemaName);
-            this.schemaBuilder.addRepeatingField(field, nestedSchema);
+        public <N> B addRepeatingAt(int index, String schemaName) {
+            return this.addRepeatingFieldAt(index,null , schemaName);
+        }
+
+        public <N> B addRepeatingField(F field, String schemaName) {
+            return this.addRepeatingFieldAt(0, field, schemaName);
+        }
+
+        public <N> B addRepeatingFieldAt(int index, F field, String schemaName) {
+
+            @SuppressWarnings("unchecked")
+            DataSchema<N> schema = (DataSchema<N>) schemaMap.get(schemaName);
+            if (schema == null) {
+                SchemaReference<N> schemaRef = SchemaReference.named(schemaName);
+                schemaRefs.computeIfAbsent(schemaName, k -> new ArrayList<>())
+                        .add(schemaRef);
+                schemaBuilder.addRepeatingFieldAt(index, field, schemaRef);
+            }
+            else {
+                schemaBuilder.addRepeatingFieldAt(index, field, schema);
+            }
+            return self();
+        }
+
+        //
+
+        public <N> B addRepeatingAt(int index, DataSchema<N> nestedSchema) {
+            return this.addRepeatingFieldAt(index,null , nestedSchema);
+        }
+
+        public <N> B addRepeatingField(F field, DataSchema<N> nestedSchema) {
+            return this.addRepeatingFieldAt(0, field, nestedSchema);
+        }
+
+        public <N> B addRepeatingFieldAt(int index, F field, DataSchema<N> nestedSchema) {
+            schemaBuilder.addRepeatingFieldAt(index, field, nestedSchema);
             return self();
         }
 
@@ -148,7 +173,14 @@ public class SchemaManager {
 
         @Override
         public void add() {
-            SchemaManager.this.schemaMap.put(name, this.schemaBuilder.build());
+            DataSchema<F> schema = this.schemaBuilder.build();
+            List<SchemaReference<?>> schemaReferences =
+                    SchemaManager.this.schemaRefs.remove(name);
+            if (schemaReferences != null) {
+                //noinspection unchecked
+                schemaReferences.forEach(ref -> ((SchemaReference<F>) ref).set(schema));
+            }
+            SchemaManager.this.schemaMap.put(name, schema);
         }
     }
 
@@ -189,7 +221,7 @@ public class SchemaManager {
         }
 
         public void add() {
-            this.parentSchema.schemaBuilder.addNestedIndexedField(
+            this.parentSchema.schemaBuilder.addNestedFieldAt(
                     index, field, this.schemaBuilder.build());
         }
 
@@ -200,10 +232,12 @@ public class SchemaManager {
     }
 
     public <F> DataSchema<F> getDefaultSchema() {
+        //noinspection unchecked
         return (DataSchema<F>) schemaMap.get(DEFAULT_SCHEMA_NAME);
     }
 
     public <F> DataSchema<F> getSchema(String schemaName) {
+        //noinspection unchecked
         return (DataSchema<F>) schemaMap.get(schemaName);
     }
 }

@@ -68,7 +68,7 @@ public class Transpose<F, T> implements ValueFactory<Function<GenericData<F>, Ge
 
         SchemaBuilder<T> schemaBuilder = SchemaBuilder.impliedType();
 
-        SchemaSetter<T> schemaSetter = schemaBuilder::addIndexedField;
+        SchemaSetter<T> schemaSetter = schemaBuilder::addFieldAt;
 
         List<Transposer<F, T>> transposers = new ArrayList<>(factories.size());
 
@@ -85,12 +85,12 @@ public class Transpose<F, T> implements ValueFactory<Function<GenericData<F>, Ge
             int n = schema.firstIndex();
             for (int i = schemaFrom.firstIndex(); i > 0; i = schemaFrom.nextIndex(i)) {
                 if (i == n) {
-                    completeBuilder.addIndexedField(n, schema.getFieldAt(n), schema.getTypeAt(n));
+                    completeBuilder.addFieldAt(n, schema.getFieldAt(n), schema.getTypeAt(n));
                     n = schema.nextIndex(n);
                 }
                 else {
                     //noinspection unchecked - we assume from and to the same for partials.
-                    completeBuilder.addIndexedField(i, (T) schemaFrom.getFieldAt(i), schemaFrom.getTypeAt(i));
+                    completeBuilder.addFieldAt(i, (T) schemaFrom.getFieldAt(i), schemaFrom.getTypeAt(i));
                     final int index = i;
                     transposers.add((in, setter) -> setter.setAt(index, in.getAt(index)));
                 }
@@ -99,7 +99,7 @@ public class Transpose<F, T> implements ValueFactory<Function<GenericData<F>, Ge
             // Indexes greater than the original schema.
             if (n > schemaFrom.lastIndex()) {
                 for (; n > 0; n = schema.nextIndex(n)) {
-                    completeBuilder.addIndexedField(n, schema.getFieldAt(n), schema.getTypeAt(n));
+                    completeBuilder.addFieldAt(n, schema.getFieldAt(n), schema.getTypeAt(n));
                 }
             }
 

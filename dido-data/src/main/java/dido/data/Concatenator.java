@@ -338,26 +338,36 @@ public class Concatenator<F> {
 
         private final DataSchema<F> originalSchema;
 
+        private final SchemaField<F>[] schemaFields;
+
         private final int offset;
 
         OffsetSchema(DataSchema<F> originalSchema, int offset) {
             this.originalSchema = originalSchema;
+            this.schemaFields = new SchemaField[originalSchema.lastIndex()];
+            for (int i = originalSchema.firstIndex(); i > 0; i = originalSchema.nextIndex(i)) {
+                this.schemaFields[i - 1] = originalSchema.getSchemaFieldAt(i).mapToIndex(i + offset);
+            }
             this.offset = offset;
+        }
+
+        SchemaField getSchemaFieldAt(int index) {
+            return schemaFields[index - offset - 1];
         }
 
         public F getFieldAt(int index) {
             return originalSchema.getFieldAt(index - offset);
         }
 
-        public Class<?> getTypeAt(int index) {
+        Class<?> getTypeAt(int index) {
             return originalSchema.getTypeAt(index - offset);
         }
 
-        public <N> DataSchema<N> getSchemaAt(int index) {
+        <N> DataSchema<N> getSchemaAt(int index) {
             return originalSchema.getSchemaAt(index - offset);
         }
 
-        public int getIndex(F field) {
+        int getIndex(F field) {
             return originalSchema.getIndex(field) + offset;
         }
     }
@@ -389,6 +399,11 @@ public class Concatenator<F> {
             this.firstIndex = firstIndex;
             this.lastIndex = lastIndex;
             this.nextIndex = nextIndex;
+        }
+
+        @Override
+        public SchemaField<F> getSchemaFieldAt(int index) {
+            return schemaByIndex[index - 1].getSchemaFieldAt(index);
         }
 
         @Override

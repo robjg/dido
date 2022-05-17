@@ -1,6 +1,6 @@
 package dido.oddjob.schema;
 
-public interface SchemaField {
+public interface SchemaFieldDef {
 
     String getFieldName();
 

@@ -14,7 +14,7 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
 
         EnumSchema<E> enumSchema = EnumSchema.enumSchemaFrom(data.getSchema(), enumClass);
 
-        return new EnumData<E>() {
+        return new EnumData<>() {
             @Override
             public EnumSchema<E> getSchema() {
                 return enumSchema;
@@ -139,8 +139,7 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
             public boolean equals(Object obj) {
                 if (obj instanceof IndexedData) {
                     return IndexedData.equals(this, (IndexedData<?>) obj);
-                }
-                else {
+                } else {
                     return false;
                 }
             }
@@ -160,7 +159,7 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
 
         Class<E> enumClass = enumSchema.getFieldType();
 
-        return new GenericData<String>() {
+        return new GenericData<>() {
             @Override
             public DataSchema<String> getSchema() {
                 return schema;
@@ -290,8 +289,7 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
             public boolean equals(Object obj) {
                 if (obj instanceof IndexedData) {
                     return IndexedData.equals(this, (IndexedData<?>) obj);
-                }
-                else {
+                } else {
                     return false;
                 }
             }

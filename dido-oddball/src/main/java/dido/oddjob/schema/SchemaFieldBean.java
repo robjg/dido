@@ -21,12 +21,12 @@ public class SchemaFieldBean implements ArooaValue {
     public static class Conversions implements ConversionProvider {
         @Override
         public void registerWith(ConversionRegistry registry) {
-            registry.register(SchemaFieldBean.class, SchemaField.class,
+            registry.register(SchemaFieldBean.class, SchemaFieldDef.class,
                     from -> from.toSchemaField());
         }
     }
 
-    public SchemaField toSchemaField() throws ArooaConversionException {
+    public SchemaFieldDef toSchemaField() throws ArooaConversionException {
 
         Class<?> type;
         if (this.type == null) {
@@ -43,7 +43,7 @@ public class SchemaFieldBean implements ArooaValue {
             }
         }
 
-        return new SchemaFieldImpl(name,
+        return new SchemaFieldDefImpl(name,
                 index,
                 type,
                 nested);
@@ -65,7 +65,7 @@ public class SchemaFieldBean implements ArooaValue {
         this.nested = nested;
     }
 
-    static class SchemaFieldImpl implements SchemaField {
+    static class SchemaFieldDefImpl implements SchemaFieldDef {
 
         private final String name;
 
@@ -75,7 +75,7 @@ public class SchemaFieldBean implements ArooaValue {
 
         private final SchemaWrapper nested;
 
-        SchemaFieldImpl(String name, int index, Class<?> type, SchemaWrapper nested) {
+        SchemaFieldDefImpl(String name, int index, Class<?> type, SchemaWrapper nested) {
             this.name = name;
             this.index = index;
             this.type = type;

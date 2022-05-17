@@ -90,7 +90,7 @@ class JsonDataWrapperTest {
     void testWithAutoBoxedVersions() {
 
         DataSchema<String> schema = SchemaBuilder.forStringFields()
-                .addIndexedField(3, "aByte", Byte.class)
+                .addFieldAt(3, "aByte", Byte.class)
                 .addField("aShort", Short.class)
                 .addField("anInt", Integer.class)
                 .addField("aLong", Long.class)

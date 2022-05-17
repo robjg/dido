@@ -8,5 +8,5 @@ public interface SchemaWrapper {
 
     String getSchemaRefName();
 
-    List<SchemaField> getSchemaFields();
+    List<SchemaFieldDef> getSchemaFields();
 }

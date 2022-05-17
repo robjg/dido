@@ -25,7 +25,7 @@ public class SchemaUtils {
 
             String columnName = metaData.getColumnName(column);
 
-            schemaBuilder.addIndexedField(column, columnName, columnClass);
+            schemaBuilder.addFieldAt(column, columnName, columnClass);
         }
 
         return schemaBuilder.build();

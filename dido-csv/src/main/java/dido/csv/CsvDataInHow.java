@@ -161,7 +161,7 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
         SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
 
         for (String ignored : record) {
-            schemaBuilder.addNextIndex(String.class);
+            schemaBuilder.add(String.class);
         }
         return schemaBuilder.build();
     }

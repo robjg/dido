@@ -20,19 +20,19 @@ public class SchemaBean implements ArooaValue {
 
     private String named;
 
-    private List<SchemaField> of = new LinkedList<>();
+    private final List<SchemaFieldDef> of = new LinkedList<>();
 
-    private List<SchemaWrapper> list = new LinkedList<>();
+    private final List<SchemaWrapper> list = new LinkedList<>();
 
     public static class Conversions implements ConversionProvider {
 
         @Override
         public void registerWith(ConversionRegistry registry) {
             registry.register(SchemaBean.class, DataSchema.class,
-                    from -> from.toSchema());
+                    SchemaBean::toSchema);
 
             registry.register(SchemaBean.class, SchemaWrapper.class,
-                    from -> from.toSchemaWrapper());
+                    SchemaBean::toSchemaWrapper);
         }
 
     }
@@ -41,8 +41,8 @@ public class SchemaBean implements ArooaValue {
 
         if (list.isEmpty()) {
             SchemaBuilder<String> builder = SchemaBuilder.forStringFields();
-            for (SchemaField field : of) {
-                builder.addIndexedField(field.getIndex(), field.getFieldName(), field.getType());
+            for (SchemaFieldDef field : of) {
+                builder.addFieldAt(field.getIndex(), field.getFieldName(), field.getType());
             }
             return builder.build();
         } else {
@@ -60,8 +60,8 @@ public class SchemaBean implements ArooaValue {
             }
 
             DataSchema<?> schema = Optional.ofNullable(name)
-                    .map(n -> schemaManager.getSchema(n))
-                    .orElseGet(() -> schemaManager.getDefaultSchema());
+                    .map(schemaManager::getSchema)
+                    .orElseGet(schemaManager::getDefaultSchema);
 
             if (schema == null) {
                 throw new ArooaConversionException("No such schema.");
@@ -74,14 +74,14 @@ public class SchemaBean implements ArooaValue {
 
     <B extends SchemaManager.NewSchema<String, B>> void addNested(SchemaManager.NewSchema<String, B> builder,
                                                                   SchemaWrapper wrapper ) {
-        for (SchemaField field : wrapper.getSchemaFields()) {
+        for (SchemaFieldDef field : wrapper.getSchemaFields()) {
             int index = field.getIndex();
             String fieldName = field.getFieldName();
 
             SchemaWrapper nested = field.getNested();
 
             if (nested == null) {
-                builder.addIndexedField(index, fieldName, field.getType());
+                builder.addFieldAt(index, fieldName, field.getType());
             }
             else {
                 String ref = nested.getSchemaRefName();
@@ -92,7 +92,7 @@ public class SchemaBean implements ArooaValue {
                     addNested(next, nested);
                 }
                 else {
-                    builder.addNestedIndexedField(field.getIndex(), field.getFieldName(), ref);
+                    builder.addNestedFieldAt(field.getIndex(), field.getFieldName(), ref);
                 }
             }
         }
@@ -125,11 +125,11 @@ public class SchemaBean implements ArooaValue {
         this.named = named;
     }
 
-    public SchemaField getOf(int index) {
+    public SchemaFieldDef getOf(int index) {
         return of.get(index);
     }
 
-    public void setOf(int index, SchemaField of) {
+    public void setOf(int index, SchemaFieldDef of) {
         new ListSetterHelper<>(this.of).set(index, of);
     }
 
@@ -147,12 +147,12 @@ public class SchemaBean implements ArooaValue {
 
         private final String schemaRefName;
 
-        private final List<SchemaField> schemaFields;
+        private final List<SchemaFieldDef> schemaFieldDefs;
 
-        SchemaWrapperImpl(String schemaName, String schemaRefName, List<SchemaField> schemaFields) {
+        SchemaWrapperImpl(String schemaName, String schemaRefName, List<SchemaFieldDef> schemaFieldDefs) {
             this.schemaName = schemaName;
             this.schemaRefName = schemaRefName;
-            this.schemaFields = new ArrayList<>(schemaFields);
+            this.schemaFieldDefs = new ArrayList<>(schemaFieldDefs);
         }
 
         @Override
@@ -166,8 +166,8 @@ public class SchemaBean implements ArooaValue {
         }
 
         @Override
-        public List<SchemaField> getSchemaFields() {
-            return schemaFields;
+        public List<SchemaFieldDef> getSchemaFields() {
+            return schemaFieldDefs;
         }
 
         @Override
@@ -175,7 +175,7 @@ public class SchemaBean implements ArooaValue {
             return "SchemaWrapperImpl{" +
                     "schemaName='" + schemaName + '\'' +
                     ", schemaRefName='" + schemaRefName + '\'' +
-                    ", schemaFields=" + schemaFields +
+                    ", schemaFields=" + schemaFieldDefs +
                     '}';
         }
     }
