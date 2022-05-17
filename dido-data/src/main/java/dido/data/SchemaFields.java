@@ -18,12 +18,12 @@ class SchemaFields {
 
     public static <F, N> SchemaField<F> ofNested(int index, DataSchema<N> nested) {
         return new Nested<>(new Indexed<>(index, SchemaField.NESTED_TYPE),
-                nested, SchemaField.Is.NESTED);
+                nested, false);
     }
 
     public static <F, N> SchemaField<F> ofNested(int index, SchemaReference<N> nestedRef) {
         return new NestedRef<>(new Indexed<>(index, SchemaField.NESTED_TYPE),
-                nestedRef, SchemaField.Is.NESTED);
+                nestedRef, false);
     }
 
     public static <F, N> SchemaField<F> ofNested(int index, F field, SchemaReference<N> nestedRef) {
@@ -31,7 +31,7 @@ class SchemaFields {
             return ofNested(index, nestedRef);
         } else {
             return new NestedRef<>(new Simple<>(index, field, SchemaField.NESTED_TYPE),
-                    nestedRef, SchemaField.Is.NESTED);
+                    nestedRef, false);
         }
     }
 
@@ -40,18 +40,18 @@ class SchemaFields {
             return ofNested(index, nested);
         } else {
             return new Nested<>(new Simple<>(index, field, SchemaField.NESTED_TYPE),
-                    nested, SchemaField.Is.NESTED);
+                    nested, false);
         }
     }
 
     public static <F, N> SchemaField<F> ofRepeating(int index, DataSchema<N> nested) {
         return new Nested<>(new Indexed<>(index, SchemaField.NESTED_REPEATING_TYPE),
-                nested, SchemaField.Is.REPEATING);
+                nested, true);
     }
 
     public static <F, N> SchemaField<F> ofRepeating(int index, SchemaReference<N> nestedRef) {
         return new NestedRef<>(new Indexed<>(index, SchemaField.NESTED_REPEATING_TYPE),
-                nestedRef, SchemaField.Is.REPEATING);
+                nestedRef, true);
     }
 
     public static <F, N> SchemaField<F> ofRepeating(int index, F field, DataSchema<N> nested) {
@@ -59,7 +59,7 @@ class SchemaFields {
             return ofRepeating(index, nested);
         } else {
             return new Nested<>(new Simple<>(index, field, SchemaField.NESTED_REPEATING_TYPE),
-                    nested, SchemaField.Is.REPEATING);
+                    nested, true);
         }
     }
 
@@ -68,7 +68,7 @@ class SchemaFields {
             return ofRepeating(index, nestedRef);
         } else {
             return new NestedRef<>(new Simple<>(index, field, SchemaField.NESTED_REPEATING_TYPE),
-                    nestedRef, SchemaField.Is.REPEATING);
+                    nestedRef, true);
         }
     }
 
@@ -97,8 +97,13 @@ class SchemaFields {
         }
 
         @Override
-        public Is getIs() {
-            return Is.SIMPLE;
+        public boolean isNested() {
+            return false;
+        }
+
+        @Override
+        public boolean isRepeating() {
+            return false;
         }
 
         @Override
@@ -128,7 +133,8 @@ class SchemaFields {
             }
             if (obj instanceof SchemaField) {
                 SchemaField<?> other = (SchemaField<?>) obj;
-                return other.getIs() == Is.SIMPLE
+                return !other.isNested()
+                        && !other.isRepeating()
                         && other.getIndex() == this.index
                         && other.getType() == this.type;
             }
@@ -163,8 +169,13 @@ class SchemaFields {
         }
 
         @Override
-        public Is getIs() {
-            return Is.SIMPLE;
+        public boolean isNested() {
+            return false;
+        }
+
+        @Override
+        public boolean isRepeating() {
+            return false;
         }
 
         @Override
@@ -194,7 +205,8 @@ class SchemaFields {
             }
             if (obj instanceof SchemaField) {
                 SchemaField<?> other = (SchemaField<?>) obj;
-                return other.getIs() == Is.SIMPLE
+                return !other.isNested()
+                        && !other.isRepeating()
                         && other.getIndex() == this.indexed.index
                         && other.getType() == this.indexed.type
                         && this.field.equals(other.getField());
@@ -214,12 +226,12 @@ class SchemaFields {
 
         private final DataSchema<?> nested;
 
-        private final Is is;
+        private final boolean repeating;
 
-        private Nested(SchemaField<F> simple, DataSchema<?> nested, Is is) {
+        private Nested(SchemaField<F> simple, DataSchema<?> nested, boolean repeating) {
             this.simple = simple;
             this.nested = Objects.requireNonNull(nested);
-            this.is = Objects.requireNonNull(is);
+            this.repeating = repeating;
         }
 
 
@@ -234,8 +246,13 @@ class SchemaFields {
         }
 
         @Override
-        public Is getIs() {
-            return is;
+        public boolean isNested() {
+            return true;
+        }
+
+        @Override
+        public boolean isRepeating() {
+            return repeating;
         }
 
         @Override
@@ -251,7 +268,7 @@ class SchemaFields {
 
         @Override
         public int hashCode() {
-            return Objects.hash(simple, is, nested);
+            return Objects.hash(simple, repeating, nested);
         }
 
         @Override
@@ -261,7 +278,8 @@ class SchemaFields {
             }
             if (obj instanceof SchemaField) {
                 SchemaField<?> other = (SchemaField<?>) obj;
-                return other.getIs() == this.is
+                return other.isNested()
+                        && other.isRepeating() == repeating
                         && other.getIndex() == this.simple.getIndex()
                         && Objects.equals(other.getField(), this.simple.getField())
                         && this.nested.equals(other.getNestedSchema());
@@ -279,7 +297,7 @@ class SchemaFields {
                 field = ":" + f;
             }
             String nested;
-            if (is.isRepeating()) {
+            if (repeating) {
                 nested = "[" + this.nested + "]";
             }
             else {
@@ -296,14 +314,15 @@ class SchemaFields {
 
         private final SchemaReference<?> nestedRef;
 
-        private final Is is;
+        private final boolean repeating;
 
-        private NestedRef(SchemaField<F> simple, SchemaReference<?> nestedRef, Is is) {
+        private NestedRef(SchemaField<F> simple,
+                          SchemaReference<?> nestedRef,
+                          boolean repeating) {
             this.simple = simple;
             this.nestedRef = Objects.requireNonNull(nestedRef);
-            this.is = Objects.requireNonNull(is);
+            this.repeating = repeating;
         }
-
 
         @Override
         public int getIndex() {
@@ -316,8 +335,13 @@ class SchemaFields {
         }
 
         @Override
-        public Is getIs() {
-            return is;
+        public boolean isNested() {
+            return true;
+        }
+
+        @Override
+        public boolean isRepeating() {
+            return repeating;
         }
 
         @Override
@@ -333,7 +357,7 @@ class SchemaFields {
 
         @Override
         public int hashCode() {
-            return Objects.hash(simple, is, nestedRef);
+            return Objects.hash(simple, repeating, nestedRef);
         }
 
         @Override
@@ -346,7 +370,8 @@ class SchemaFields {
             }
             if (obj instanceof SchemaField) {
                 SchemaField<?> other = (SchemaField<?>) obj;
-                return other.getIs() == this.is
+                return other.isNested()
+                        && other.isRepeating() == repeating
                         && other.getIndex() == this.simple.getIndex()
                         && Objects.equals(other.getField(), this.simple.getField())
                         && this.nestedRef.get().equals(other.getNestedSchema());
@@ -364,7 +389,7 @@ class SchemaFields {
                 field = ":" + f;
             }
             String nested;
-            if (is.isRepeating()) {
+            if (repeating) {
                 nested = "[" + this.nestedRef + "]";
             }
             else {

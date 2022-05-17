@@ -13,54 +13,13 @@ public interface SchemaField<F> {
 
     Class<?> NESTED_REPEATING_TYPE = IndexedData[].class;
 
-    enum Is {
-
-        SIMPLE() {
-            @Override
-            boolean isNested() {
-                return false;
-            }
-
-            @Override
-            boolean isRepeating() {
-                return false;
-            }
-        },
-
-        NESTED() {
-            @Override
-            boolean isNested() {
-                return true;
-            }
-
-            @Override
-            boolean isRepeating() {
-                return false;
-            }
-        },
-
-        REPEATING() {
-            @Override
-            boolean isNested() {
-                return true;
-            }
-
-            @Override
-            boolean isRepeating() {
-                return true;
-            }
-        };
-
-        abstract boolean isNested();
-
-        abstract boolean isRepeating();
-    }
-
     int getIndex();
 
     Class<?> getType();
 
-    Is getIs();
+    boolean isNested();
+
+    boolean isRepeating();
 
     F getField();
 
@@ -85,17 +44,16 @@ public interface SchemaField<F> {
             toField = (T) getField();
         }
 
-        if (getIs() == SchemaField.Is.SIMPLE) {
-            return of(toIndex, toField, getType() );
-        }
-        else if (getIs() == SchemaField.Is.NESTED) {
-            return ofNested(toIndex, toField, getNestedSchema());
-        }
-        else if (getIs() == SchemaField.Is.REPEATING) {
-            return ofRepeating(toIndex, toField, getNestedSchema());
+        if (isNested()) {
+            if (isRepeating()) {
+                return ofRepeating(toIndex, toField, getNestedSchema());
+            }
+            else {
+                return ofNested(toIndex, toField, getNestedSchema());
+            }
         }
         else {
-            throw new UnsupportedOperationException();
+            return of(toIndex, toField, getType() );
         }
     }
 
@@ -144,14 +102,16 @@ public interface SchemaField<F> {
                 schemaField.getIndex(),
                 schemaField.getType(),
                 schemaField.getField(),
-                schemaField.getIs(),
+                schemaField.isNested(),
+                schemaField.isRepeating(),
                 schemaField.getNestedSchema());
     }
 
     static boolean equals(SchemaField<?> schemaField1, SchemaField<?> schemaField2) {
         return schemaField1.getIndex() == schemaField2.getIndex()
                 && schemaField1.getType() == schemaField2.getType()
-                && schemaField1.getIs() == schemaField2.getIs()
+                && schemaField1.isNested() == schemaField2.isNested()
+                && schemaField1.isRepeating() == schemaField2.isRepeating()
                 && Objects.equals(schemaField1.getField(), schemaField2.getField())
                 && Objects.equals(schemaField1.getNestedSchema(), schemaField2.getNestedSchema());
     }
