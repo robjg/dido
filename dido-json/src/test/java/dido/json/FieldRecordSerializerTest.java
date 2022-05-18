@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dido.data.*;
 import org.json.JSONException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -36,7 +35,6 @@ class FieldRecordSerializerTest {
         JSONAssert.assertEquals(expected, json, JSONCompareMode.LENIENT);
     }
 
-    @Disabled("TODO: Implement nested JSON.")
     @Test
     void whenGenericDataOfNestedGenericDataThenCorrectJsonProduced() throws JSONException {
 
@@ -56,20 +54,18 @@ class FieldRecordSerializerTest {
                 .build();
 
         GenericData<String> data = MapData.valuesFor(schema)
-                .of("foo", MapData.valuesFor(fooSchema)
-                                .of("foo", "Stuff", "qty", 15),
-                        "pos", MapData.valuesFor(posSchema)
-                                .of("x", 1.2, "y", 3.4));
+                .of(MapData.valuesFor(fooSchema)
+                                .of("Stuff", 15),
+                        MapData.valuesFor(posSchema)
+                                .of(1.2, 3.4));
 
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(IndexedData.class, new FieldRecordSerializer())
+                .registerTypeHierarchyAdapter(IndexedData.class, new FieldRecordSerializer())
                 .create();
 
         String json = gson.toJson(data, IndexedData.class);
 
-        System.out.println(json);
-
-        String expected = "{\"type\":\"Apple\",\"qty\":15,\"price\":26.5}";
+        String expected = "{\"foo\":{\"foo\":\"Stuff\",\"qty\":15},\"pos\":{\"x\":1.2,\"y\":3.4}}";
 
         JSONAssert.assertEquals(expected, json, JSONCompareMode.LENIENT);
     }

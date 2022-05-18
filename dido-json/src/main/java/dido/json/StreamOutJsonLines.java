@@ -3,6 +3,7 @@ package dido.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dido.data.GenericData;
+import dido.data.IndexedData;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
 
@@ -24,7 +25,7 @@ public class StreamOutJsonLines implements DataOutHow<String, OutputStream> {
     public DataOut<String> outTo(OutputStream outputStream) {
 
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(GenericData.class, new FieldRecordSerializer())
+                .registerTypeHierarchyAdapter(IndexedData.class, new FieldRecordSerializer())
                 .create();
 
         OutputStreamWriter appendable = new OutputStreamWriter(outputStream);

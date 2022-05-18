@@ -87,7 +87,12 @@ class JsonSchemaExtractorTest {
         assertThat(result.getType("aNumber"), is(double.class));
         assertThat(result.getType("anArray"), is(Object[].class));
         assertThat(result.getType("aDate"), is(String.class));
-        assertThat(result.getType("aNested"), is(Object.class));
+
+        assertThat(result.getSchemaField("aNested").isNested(), is(true));
+
+        DataSchema<String> nestedSchema = result.getSchema("aNested");
+        assertThat(nestedSchema.getType("nestedString"), is(String.class));
+
         assertThat(result.firstIndex(), is(1));
         assertThat(result.lastIndex(), is(12));
     }

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 import dido.data.GenericData;
+import dido.data.IndexedData;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
 
@@ -26,7 +27,7 @@ public class StreamOutJson implements DataOutHow<String, OutputStream> {
     public DataOut<String> outTo(OutputStream outputStream) throws IOException {
 
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(GenericData.class, new FieldRecordSerializer())
+                .registerTypeHierarchyAdapter(IndexedData.class, new FieldRecordSerializer())
                 .create();
 
         JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
@@ -42,7 +43,7 @@ public class StreamOutJson implements DataOutHow<String, OutputStream> {
 
             @Override
             public void accept(GenericData<String> stringRecordData) {
-                gson.toJson(stringRecordData, GenericData.class, writer);
+                gson.toJson(stringRecordData, IndexedData.class, writer);
 
             }
         };

@@ -62,7 +62,10 @@ public class JsonSchemaExtractor {
             }
             else {
 
-                schemaBuilder.addField(field, Object.class);
+                DataSchema<String> nestedSchema = new JsonSchemaExtractor(DataSchema.emptySchema())
+                        .fromElement((JsonObject) element);
+
+                schemaBuilder.addNestedField(field, nestedSchema);
             }
         }
 
