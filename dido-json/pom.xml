@@ -12,7 +12,7 @@
     <artifactId>dido-json</artifactId>
 
     <properties>
-        <gson.version>2.8.6</gson.version>
+        <gson.version>2.8.9</gson.version>
 
         <jsonassert.version>1.5.0</jsonassert.version>
     </properties>
