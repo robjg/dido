@@ -1,0 +1,52 @@
+<oddjob>
+  <job>
+    <sequential>
+      <jobs>
+        <variables id="vars">
+          <connection>
+            <connection driver="org.hsqldb.jdbcDriver" url="jdbc:hsqldb:mem:test"
+              username="sa" password="">
+            </connection>
+          </connection>
+        </variables>
+        <sql>
+          <connection>
+            <value value="${vars.connection}"/>
+          </connection>
+          <input>
+            <buffer>
+              DROP TABLE All_Types IF EXISTS
+
+              CREATE TABLE All_Types (
+              BIT BIT,
+              TINYINT TINYINT,
+              SMALLINT SMALLINT,
+              INTEGER INTEGER,
+              BIGINT BIGINT,
+              FLOAT FLOAT,
+              REAL REAL,
+              DOUBLE DOUBLE,
+              NUMERIC NUMERIC,
+              DECIMAL DECIMAL,
+              CHAR CHAR,
+              VARCHAR VARCHAR(10),
+              LONGVARCHAR LONGVARCHAR(10),
+              DATE DATE,
+              TIME TIME,
+              TIMESTAMP TIMESTAMP,
+              BINARY BINARY,
+              VARBINARY VARBINARY(10),
+              OTHER OTHER,
+              BLOB BLOB,
+              CLOB CLOB,
+              BOOLEAN BOOLEAN,
+              TIME_WITH_TIMEZONE TIME WITH TIME ZONE,
+              TIMESTAMP_WITH_TIMEZONE TIMESTAMP WITH TIME ZONE,
+              )
+            </buffer>
+          </input>
+        </sql>
+      </jobs>
+    </sequential>
+  </job>
+</oddjob>

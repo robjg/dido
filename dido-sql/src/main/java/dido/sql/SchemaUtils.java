@@ -9,8 +9,17 @@ import java.sql.SQLException;
 
 public class SchemaUtils {
 
+    public static DataSchema<String> schemaFrom(ResultSetMetaData metaData)
+            throws SQLException, ClassNotFoundException {
+        return schemaFrom(metaData, null);
+    }
+
     public static DataSchema<String> schemaFrom(ResultSetMetaData metaData, ClassLoader classLoader)
             throws SQLException, ClassNotFoundException {
+
+        if (classLoader == null) {
+            classLoader = Thread.currentThread().getContextClassLoader();
+        }
 
         int columnCount = metaData.getColumnCount();
 
@@ -30,5 +39,4 @@ public class SchemaUtils {
 
         return schemaBuilder.build();
     }
-
 }

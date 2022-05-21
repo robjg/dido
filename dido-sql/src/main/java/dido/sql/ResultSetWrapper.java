@@ -2,6 +2,7 @@ package dido.sql;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
+import dido.data.IndexedData;
 import dido.how.DataException;
 
 import java.sql.ResultSet;
@@ -243,5 +244,25 @@ public class ResultSetWrapper implements GenericData<String> {
         } catch (SQLException e) {
             throw new DataException(e);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return IndexedData.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof IndexedData) {
+            return IndexedData.equals(this, (IndexedData<?>) obj);
+        }
+        else {
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return GenericData.toStringFieldsOnly(this);
     }
 }
