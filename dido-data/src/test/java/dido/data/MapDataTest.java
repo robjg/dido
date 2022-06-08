@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.is;
 class MapDataTest {
 
     @Test
-    void testNoSchema() throws ParseException {
+    void testBuilderNoSchema() throws ParseException {
 
         DataBuilder<String> builder = MapData.newBuilderNoSchema();
 
@@ -53,6 +53,28 @@ class MapDataTest {
         assertThat(schema2.getType("qty"), is(long.class));
         assertThat(schema2.getType("price"), is(float.class));
         assertThat(schema2.getType("offer"), is(boolean.class));
+    }
+
+    @Test
+    void testCreateWithOf() {
+
+        GenericData<String> data = MapData.of(
+                "type", "apple",
+                "qty", 2,
+                "price", 26.3F,
+                "offer", true);
+
+        assertThat(data.getString("type"), is("apple"));
+        assertThat(data.getInt("qty"), is(2));
+        assertThat((double) data.getFloat("price"), closeTo(26.3, 0.01));
+        assertThat(data.getBoolean("offer"), is(true));
+
+        DataSchema<String> schema = data.getSchema();
+
+        assertThat(schema.getType("type"), is(String.class));
+        assertThat(schema.getType("qty"), is(Integer.class));
+        assertThat(schema.getType("price"), is(Float.class));
+        assertThat(schema.getType("offer"), is(Boolean.class));
     }
 
     @Test

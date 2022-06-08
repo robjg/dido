@@ -1,0 +1,38 @@
+<oddjob>
+    <job>
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <dido:data-in xmlns:dido="oddjob:dido">
+                    <from>
+                        <buffer>Apple,5,27.2
+Orange,10,31.6
+Pear,7,22.1</buffer>
+                    </from>
+                    <how>
+                        <dido:csv xmlns:dido="oddjob:dido">
+                            <schema>
+                                <dido:schema>
+                                    <of>
+                                        <dido:field name="type"/>
+                                        <dido:field type="int" name="quantity"/>
+                                        <dido:field type="double" name="price"/>
+                                    </of>
+                                </dido:schema>
+                            </schema>
+                        </dido:csv>
+                    </how>
+                </dido:data-in>
+                <bus:map xmlns:bus="oddjob:beanbus">
+                    <function>
+                        <dido:to-bean xmlns:dido="oddjob:dido">
+                            <beanClass>
+                                <class name="dido.csv.Fruit"/>
+                            </beanClass>
+                        </dido:to-bean>
+                    </function>
+                </bus:map>
+                <bus:collect xmlns:bus="oddjob:beanbus" id="capture"/>
+            </of>
+        </bus:bus>
+    </job>
+</oddjob>

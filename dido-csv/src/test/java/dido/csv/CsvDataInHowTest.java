@@ -80,6 +80,9 @@ class CsvDataInHowTest {
             assertThat(data.getString("Type"), is("Apple"));
             assertThat(data.getInt("Quantity"), is(5));
             assertThat(data.getDouble("Price"), is(27.2));
+
+            assertThat(data.get("Quantity"), is(5));
+            assertThat(data.get("Price"), is(27.2));
         }
 
         assertThat(supplier.get(), nullValue());

@@ -1,5 +1,7 @@
 package dido.csv;
 
+import dido.data.DataSchema;
+import dido.data.GenericData;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
@@ -15,11 +17,42 @@ import static org.hamcrest.Matchers.is;
 public class CsvExampleTest {
 
     @Test
-    void testReadInOddjobAndTransformToBeans() throws ArooaConversionException {
+    void testReadInOddjobAndCapture() throws ArooaConversionException {
 
         Oddjob oddjob = new Oddjob();
         oddjob.setFile(new File(Objects.requireNonNull(
                 getClass().getResource("FromCsvExample.xml")).getFile()));
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        @SuppressWarnings("unchecked")
+        List<GenericData<String>> results = lookup.lookup("csv.to", List.class);
+
+        DataSchema<String> schema = results.get(0).getSchema();
+        assertThat(schema.getType("type"), is(String.class));
+        assertThat(schema.getType("quantity"), is(int.class));
+        assertThat(schema.getType("price"), is(double.class));
+
+        GenericData<String> data1 = results.get(0);
+
+        assertThat(data1.get("type"), is("Apple"));
+        assertThat(data1.get("quantity"), is(5));
+        assertThat(data1.get("price"), is(27.2));
+
+        assertThat(results.get(1).get("type"), is("Orange"));
+        assertThat(results.get(2).get("type"), is("Pear"));
+    }
+
+    @Test
+    void testReadInOddjobAndTransformToBeans() throws ArooaConversionException {
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setFile(new File(Objects.requireNonNull(
+                getClass().getResource("FromCsvExampleToBeans.xml")).getFile()));
 
         oddjob.run();
 
@@ -49,7 +82,6 @@ public class CsvExampleTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        @SuppressWarnings("unchecked")
         String[] results = lookup.lookup("results", String[].class);
 
         assertThat(results[0], is("Fruit,Qty,Price"));

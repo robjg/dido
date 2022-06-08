@@ -187,7 +187,7 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
 
             @Override
             public Object getAt(int index) {
-                return record.get(index - 1);
+                return getAtAs(index, schema.getTypeAt(index));
             }
 
             @Override
