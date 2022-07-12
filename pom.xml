@@ -11,6 +11,7 @@
         <module>dido-csv</module>
         <module>dido-poi</module>
         <module>dido-sql</module>
+        <module>dido-operators</module>
     </modules>
 
     <groupId>uk.co.rgordon</groupId>

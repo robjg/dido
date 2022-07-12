@@ -5,15 +5,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-public class ArrayData<T> implements GenericData<T> {
+/**
+ * {@link GenericData} stored in an Array.
+ *
+ * @param <F> The field type.
+ */
+public class ArrayData<F> extends AbstractGenericData<F> implements GenericData<F> {
 
-    private final DataSchema<T> schema;
+    private final DataSchema<F> schema;
 
     private final Object[] data;
 
     private volatile int hash = 0;
 
-    private ArrayData(DataSchema<T> schema, Object[] data) {
+    private ArrayData(DataSchema<F> schema, Object[] data) {
         this.schema = schema;
         this.data = data;
     }
@@ -102,7 +107,7 @@ public class ArrayData<T> implements GenericData<T> {
     }
 
     @Override
-    public DataSchema<T> getSchema() {
+    public DataSchema<F> getSchema() {
         return schema;
     }
 
@@ -158,6 +163,10 @@ public class ArrayData<T> implements GenericData<T> {
         public GenericData<F> build() {
             Object[] values = this.values;
             this.values = new Object[schema.lastIndex()];
+            return new ArrayData<>(schema, values);
+        }
+
+        public GenericData<F> build(Object... values) {
             return new ArrayData<>(schema, values);
         }
     }

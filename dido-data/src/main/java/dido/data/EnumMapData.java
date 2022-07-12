@@ -2,7 +2,7 @@ package dido.data;
 
 import java.util.*;
 
-public class EnumMapData<E extends Enum<E>> implements EnumData<E> {
+public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> implements EnumData<E> {
 
     private final EnumSchema<E> schema;
 
@@ -40,19 +40,6 @@ public class EnumMapData<E extends Enum<E>> implements EnumData<E> {
     @Override
     public EnumSchema<E> getSchema() {
         return schema;
-    }
-
-    @Override
-    public int hashCode() {
-        return IndexedData.hashCode(this);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof IndexedData) {
-            return IndexedData.equals(this, (IndexedData<?>) obj);
-        }
-        return false;
     }
 
     @Override

@@ -18,7 +18,7 @@ public class Concatenator<F> {
 
     private final Map<F, Integer> dataByField;
 
-    public Concatenator(DataSchema<F> schema,
+    private Concatenator(DataSchema<F> schema,
                         int[] dataByIndex,
                         int[] offsets,
                         Map<F, Integer> dataByField) {
@@ -103,7 +103,7 @@ public class Concatenator<F> {
         return new Concatenator<>(compositeSchema, dataByIndex, offsets, dataByField);
     }
 
-    public static <F> GenericData<F> of(GenericData<F>... data) {
+    public static <F> GenericData<F> of(IndexedData<F>... data) {
         return new Factory<F>().concat(data);
     }
 
@@ -112,7 +112,7 @@ public class Concatenator<F> {
         return new Factory<>();
     }
 
-    public GenericData<F> concat(GenericData<F>... data) {
+    public GenericData<F> concat(IndexedData<F>... data) {
 
         return new ConcatenatedData(data);
     }
@@ -132,7 +132,7 @@ public class Concatenator<F> {
 
         private DataSchema<F>[] previous;
 
-        private GenericData<F> concat(GenericData<F>[] data) {
+        private GenericData<F> concat(IndexedData<F>[] data) {
 
             boolean recreate = false;
             if (last == null) {
@@ -163,12 +163,17 @@ public class Concatenator<F> {
     /**
      * The Data
      */
-    class ConcatenatedData implements GenericData<F> {
+    class ConcatenatedData extends AbstractGenericData<F> implements GenericData<F> {
 
         private final GenericData<F>[] data;
 
-        ConcatenatedData(GenericData<F>[] data) {
-            this.data = data;
+        ConcatenatedData(IndexedData<F>[] data) {
+            //noinspection unchecked
+            this.data = new GenericData[data.length];
+            for (int i = 0; i < data.length; ++i) {
+                this.data[i] = GenericData.from(data[i]);
+
+            }
         }
 
         @Override
@@ -344,6 +349,7 @@ public class Concatenator<F> {
 
         OffsetSchema(DataSchema<F> originalSchema, int offset) {
             this.originalSchema = originalSchema;
+            //noinspection unchecked
             this.schemaFields = new SchemaField[originalSchema.lastIndex()];
             for (int i = originalSchema.firstIndex(); i > 0; i = originalSchema.nextIndex(i)) {
                 this.schemaFields[i - 1] = originalSchema.getSchemaFieldAt(i).mapToIndex(i + offset);
@@ -351,7 +357,7 @@ public class Concatenator<F> {
             this.offset = offset;
         }
 
-        SchemaField getSchemaFieldAt(int index) {
+        SchemaField<F> getSchemaFieldAt(int index) {
             return schemaFields[index - offset - 1];
         }
 

@@ -5,13 +5,11 @@ import java.util.*;
 /**
  * Provide an {@link GenericData} structure backed by a Map.
  */
-public class MapData<F> implements GenericData<F> {
+public class MapData<F> extends AbstractGenericData<F> {
 
     private final DataSchema<F> schema;
 
     private final Map<F, ?> map;
-
-    private volatile int hash = 0;
 
     private MapData(DataSchema<F> schema, Map<F, ?> map) {
         this.schema = schema;
@@ -135,24 +133,6 @@ public class MapData<F> implements GenericData<F> {
     @Override
     public DataSchema<F> getSchema() {
         return schema;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof IndexedData) {
-            return IndexedData.equals(this, (IndexedData<?>) o);
-        }
-        else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        if (hash == 0) {
-            hash = IndexedData.hashCode(this);
-        }
-        return hash;
     }
 
     @Override

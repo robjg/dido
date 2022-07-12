@@ -105,4 +105,78 @@ public interface GenericData<F> extends IndexedData<F> {
         sb.append('}');
         return sb.toString();
     }
+
+    static <F> GenericData<F> from(IndexedData<F> indexedData) {
+
+        if (indexedData instanceof GenericData) {
+            return (GenericData<F>) indexedData;
+        }
+
+        return new AbstractGenericData<>() {
+            @Override
+            public DataSchema<F> getSchema() {
+                return indexedData.getSchema();
+            }
+
+            @Override
+            public Object getAt(int index) {
+                return indexedData.getAt(index);
+            }
+
+            @Override
+            public boolean hasIndex(int index) {
+                return indexedData.hasIndex(index);
+            }
+
+            @Override
+            public <T> T getAtAs(int index, Class<T> type) {
+                return indexedData.getAtAs(index, type);
+            }
+
+            @Override
+            public boolean getBooleanAt(int index) {
+                return indexedData.getBooleanAt(index);
+            }
+
+            @Override
+            public byte getByteAt(int index) {
+                return indexedData.getByteAt(index);
+            }
+
+            @Override
+            public char getCharAt(int index) {
+                return indexedData.getCharAt(index);
+            }
+
+            @Override
+            public short getShortAt(int index) {
+                return indexedData.getShortAt(index);
+            }
+
+            @Override
+            public int getIntAt(int index) {
+                return indexedData.getIntAt(index);
+            }
+
+            @Override
+            public long getLongAt(int index) {
+                return indexedData.getLongAt(index);
+            }
+
+            @Override
+            public float getFloatAt(int index) {
+                return indexedData.getFloatAt(index);
+            }
+
+            @Override
+            public double getDoubleAt(int index) {
+                return indexedData.getDoubleAt(index);
+            }
+
+            @Override
+            public String getStringAt(int index) {
+                return indexedData.getStringAt(index);
+            }
+        };
+    }
 }

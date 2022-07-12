@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.is;
 
 class IndexedDataTest {
 
-    static class MyData implements IndexedData<Void> {
+    static class MyData extends AbstractIndexedData<Void> {
 
         private final Object data;
 
