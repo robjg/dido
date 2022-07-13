@@ -1,0 +1,55 @@
+<arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
+        prefix="dido" namespace="oddjob:dido">
+	<conversions>
+		<arooa:conversion className="dido.operators.LeftStreamJoinType"
+						  methodName="get"/>
+	</conversions>
+	<values>
+		<arooa:bean-def element='left-join' className='dido.operators.LeftStreamJoinType'>
+			<properties>
+				<arooa:property name="primaryIndices" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
+				<arooa:property name="foreignIndices" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
+				<arooa:property name="secondaryIndices" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
+			</properties>
+			<design>
+				<design:form xmlns:design="arooa:design">
+					<formItems>
+						<design:group bordered="true" title="From">
+							<formItems>
+								<design:text property="primaryIndices" title="Primary Indices"/>
+								<design:text property="foreignIndices" title="Foreign Key Indices"/>
+								<design:text property="secondaryIndices" title="Secondary Indices"/>
+							</formItems>
+						</design:group>
+					</formItems>
+				</design:form>
+			</design>
+		</arooa:bean-def>
+	</values>
+	<components>
+		<arooa:bean-def element="stream-join"
+						className="dido.operators.StreamJoinService">
+			<properties>
+				<arooa:property name="to" annotation="org.oddjob.beanbus.Destination"/>
+			</properties>
+			<annotations>
+				<arooa:annotation name="org.oddjob.framework.adapt.Start"
+								  method="run"/>
+				<arooa:annotation name="org.oddjob.framework.adapt.Stop"
+								  method="close"/>
+			</annotations>
+			<design>
+				<design:form xmlns:design="arooa:design">
+					<formItems>
+						<design:group bordered="true" title="Required">
+							<formItems>
+								<design:single property="join" title="Join"/>
+								<design:single property="to" title="To"/>
+							</formItems>
+						</design:group>
+					</formItems>
+				</design:form>
+			</design>
+		</arooa:bean-def>
+	</components>
+</arooa:descriptor>

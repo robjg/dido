@@ -52,11 +52,9 @@ class LeftStreamJoinTest {
         GenericData<String> expected2 = expectedBuilder.build("Pears", 7, 1, 1, "Brown");
         GenericData<String> expected3 = expectedBuilder.build("Carrots", 15, 2, 2, "Giles");
 
-
-
         List<GenericData<String>> results = new ArrayList<>(3);
 
-        StreamJoin<String> join = LeftStreamJoin.with()
+        StreamJoin<String> join = LeftStreamJoin.<String>with()
                 .setPrimaryIndices(1)
                 .setSecondaryIndices(1)
                 .setForeignIndices(3)

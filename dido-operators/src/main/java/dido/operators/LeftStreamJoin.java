@@ -42,7 +42,7 @@ public class LeftStreamJoin<F> implements StreamJoin<F> {
 
         private int[] secondaryIndices;
 
-        public With setPrimaryIndices(int... primaryIndices) {
+        public With<F> setPrimaryIndices(int... primaryIndices) {
             this.primaryIndices = primaryIndices;
             return this;
         }
