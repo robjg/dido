@@ -8,17 +8,35 @@
 		<arooa:bean-def element='left-join' className='dido.operators.LeftStreamJoinType'>
 			<properties>
 				<arooa:property name="primaryIndices" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
+				<arooa:property name="primaryFields" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
 				<arooa:property name="foreignIndices" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
+				<arooa:property name="foreignFields" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
 				<arooa:property name="secondaryIndices" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
+				<arooa:property name="secondaryFields" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
 			</properties>
 			<design>
 				<design:form xmlns:design="arooa:design">
 					<formItems>
 						<design:group bordered="true" title="From">
 							<formItems>
-								<design:text property="primaryIndices" title="Primary Indices"/>
-								<design:text property="foreignIndices" title="Foreign Key Indices"/>
-								<design:text property="secondaryIndices" title="Secondary Indices"/>
+								<design:radio>
+									<formItems>
+										<design:text property="primaryIndices" title="Primary Indices"/>
+										<design:text property="primaryFields" title="Primary Fields"/>
+									</formItems>
+								</design:radio>
+								<design:radio>
+									<formItems>
+										<design:text property="foreignIndices" title="Foreign Key Indices"/>
+										<design:text property="foreignFields" title="Foreign Key Fields"/>
+									</formItems>
+								</design:radio>
+								<design:radio>
+									<formItems>
+										<design:text property="secondaryIndices" title="Secondary Indices"/>
+										<design:text property="secondaryFields" title="Secondary Fields"/>
+									</formItems>
+								</design:radio>
 							</formItems>
 						</design:group>
 					</formItems>

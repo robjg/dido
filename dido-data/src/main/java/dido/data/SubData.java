@@ -21,15 +21,22 @@ public class SubData<F> extends AbstractGenericData<F> implements GenericData<F>
         this.original = original;
     }
 
-    public static class MappingFunc<F> implements Function<IndexedData<F>, GenericData<F>> {
+    private static class MappingFunc<F> implements Function<IndexedData<F>, GenericData<F>> {
 
         private final int[] indices;
+
+        private final boolean withFields;
 
         private DataSchema<F> lastSchema;
 
         private DataSchema<F> subSchema;
         private MappingFunc(int[] indices) {
+            this(indices, false);
+        }
+
+        private MappingFunc(int[] indices, boolean withFields) {
             this.indices = indices;
+            this.withFields = withFields;
         }
 
         @Override
@@ -39,7 +46,13 @@ public class SubData<F> extends AbstractGenericData<F> implements GenericData<F>
                 lastSchema = original.getSchema();
                 SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
                 for (int i = 0; i < indices.length; ++i) {
-                    schemaBuilder.add(lastSchema.getTypeAt(indices[i]));
+                    if (withFields) {
+                        schemaBuilder.addField(lastSchema.getFieldAt(indices[i]),
+                                lastSchema.getTypeAt(indices[i]));
+                    }
+                    else {
+                        schemaBuilder.add(lastSchema.getTypeAt(indices[i]));
+                    }
                 }
                 subSchema = schemaBuilder.build();
             }
@@ -47,11 +60,90 @@ public class SubData<F> extends AbstractGenericData<F> implements GenericData<F>
         }
     }
 
-    public static <F> MappingFunc<F> ofIndices(int... indices) {
+    public static class FieldMappingFunc<F> implements Function<IndexedData<F>, GenericData<F>> {
+
+        private final F[] fields;
+
+        private final boolean withFields;
+        private DataSchema<F> lastSchema;
+
+        private DataSchema<F> subSchema;
+
+        private int[] indices;
+
+        private FieldMappingFunc(F[] fields) {
+            this(fields, false);
+        }
+
+        private FieldMappingFunc(F[] fields, boolean withFields) {
+            this.fields = fields;
+            this.withFields = withFields;
+        }
+        @Override
+        public GenericData<F> apply(IndexedData<F> original) {
+
+            if (lastSchema == null || !lastSchema.equals(original.getSchema())) {
+                lastSchema = original.getSchema();
+                indices = new int[fields.length];
+                SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
+                for (int i = 0; i < indices.length; ++i) {
+                    F field = fields[i];
+                    int index = lastSchema.getIndex(field);
+                    indices[i] = index;
+                    if (withFields) {
+                        schemaBuilder.addField(field, lastSchema.getType(field));
+                    }
+                    else {
+                        schemaBuilder.add(lastSchema.getType(field));
+                    }
+                }
+                subSchema = schemaBuilder.build();
+            }
+            return new SubData<>(subSchema, indices, original);
+        }
+    }
+
+    public static class Configuration<F> {
+
+        private boolean fields;
+
+        public Configuration<F> fields(boolean withFields) {
+            this.fields = withFields;
+            return this;
+        }
+
+        public Configuration<F> fields() {
+            return fields(true);
+        }
+
+        public <F> Function<IndexedData<F>, GenericData<F>> andIndices(int... indices) {
+
+            return new MappingFunc<>(indices, fields);
+        }
+
+        public <F> Function<IndexedData<F>, GenericData<F>> andFields(F... fields) {
+
+            return new FieldMappingFunc<>(fields);
+        }
+    }
+
+    public static <F> Configuration<F> with() {
+        return new Configuration<>();
+    }
+
+    public static <F> Configuration<F> withFields() {
+        return new Configuration<F>().fields();
+    }
+
+    public static <F> Function<IndexedData<F>, GenericData<F>> ofIndices(int... indices) {
 
         return new MappingFunc<>(indices);
     }
 
+    public static <F> Function<IndexedData<F>, GenericData<F>> ofFields(F... fields) {
+
+        return new FieldMappingFunc<>(fields);
+    }
     @Override
     public DataSchema<F> getSchema() {
         return dataSchema;

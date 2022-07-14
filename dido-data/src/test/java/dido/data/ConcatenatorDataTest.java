@@ -1,5 +1,6 @@
 package dido.data;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -163,5 +164,13 @@ class ConcatenatorDataTest {
 
         assertThat(result1, is(result2));
         assertThat(result1.hashCode(), is(result2.hashCode()));
+    }
+
+    @Test
+    void testConcatWithSameFieldNames() {
+
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                Concatenator.of(
+                        MapData.of("Fruit", "Apple"), MapData.of("Fruit", "Pear")));
     }
 }

@@ -10,6 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Copies fields from one data to another allowing for chane of field names, indexes and type.
+ *
+ * @param <F>
+ * @param <T>
+ */
 public class Transpose<F, T> implements ValueFactory<Function<GenericData<F>, GenericData<T>>> {
 
     private final ListSetterHelper<TransposerFactory<F, T>> of = new ListSetterHelper<>();

@@ -63,4 +63,23 @@ class SubDataTest {
         assertThat(subData2, is(subData1));
         assertThat(subData2.hashCode(), is(subData1.hashCode()));
     }
+
+    @Test
+    void testSubDataWithFieldNames() {
+
+        GenericData<String> data1 = MapData.of("Name", "Alice",  "Id", 1234, "Colour", "Green");
+
+        GenericData<String> subData1 = SubData.ofFields("Name").apply(data1);
+
+        assertThat(subData1.getSchema().toString(), is("{[1]=java.lang.String}"));
+        assertThat(subData1.toString(), is("{[1]=Alice}"));
+
+        GenericData<String> data2 = MapData.of("Occupation", "Programmer", "Age", 47, "Called", "Alice");
+
+        GenericData<String> subData2 = SubData.ofFields("Called").apply(data2);
+
+        assertThat(subData2.getSchema(), is(subData1.getSchema()));
+        assertThat(subData2, is(subData1));
+        assertThat(subData2.hashCode(), is(subData1.hashCode()));
+    }
 }

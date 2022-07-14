@@ -29,32 +29,80 @@ public class LeftStreamJoin<F> implements StreamJoin<F> {
     private volatile Consumer<? super GenericData<F>> to;
 
     private LeftStreamJoin(With<F> with) {
-        this.primaryIndices = SubData.ofIndices(Objects.requireNonNull(with.primaryIndices));
-        this.foreignIndices = SubData.ofIndices(Objects.requireNonNull(with.foreignIndices));
-        this.secondaryIndices = SubData.ofIndices(Objects.requireNonNull(with.secondaryIndices));
+        this.primaryIndices = with.primaryIndices();
+        this.foreignIndices = with.foreignIndices();
+        this.secondaryIndices = with.secondaryIndices();
     }
 
     public static class With<F> {
 
         private int[] primaryIndices;
 
+        private F[] primaryFields;
+
         private int[] foreignIndices;
+
+        private F[] foreignFields;
 
         private int[] secondaryIndices;
 
-        public With<F> setPrimaryIndices(int... primaryIndices) {
+        private F[] secondaryFields;
+
+        public With<F> primaryIndices(int... primaryIndices) {
             this.primaryIndices = primaryIndices;
             return this;
         }
 
-        public With<F> setForeignIndices(int... foreignIndices) {
+        public With<F> foreignIndices(int... foreignIndices) {
             this.foreignIndices = foreignIndices;
             return this;
         }
 
-        public With<F> setSecondaryIndices(int... secondaryIndices) {
+        public With<F> secondaryIndices(int... secondaryIndices) {
             this.secondaryIndices = secondaryIndices;
             return this;
+        }
+
+        public With<F> primaryFields(F... primaryFields) {
+            this.primaryFields = primaryFields;
+            return this;
+        }
+
+        public With<F> foreignFields(F... foreignFields) {
+            this.foreignFields = foreignFields;
+            return this;
+        }
+
+        public With<F> secondaryFields(F... secondaryFields) {
+            this.secondaryFields = secondaryFields;
+            return this;
+        }
+
+        private Function<IndexedData<F>, GenericData<F>> primaryIndices() {
+            if (primaryIndices == null) {
+                return SubData.ofFields(Objects.requireNonNull(primaryFields));
+            }
+            else {
+                return SubData.ofIndices(primaryIndices);
+            }
+        }
+
+        private Function<IndexedData<F>, GenericData<F>> foreignIndices() {
+            if (foreignIndices == null) {
+                return SubData.ofFields(Objects.requireNonNull(foreignFields));
+            }
+            else {
+                return SubData.ofIndices(foreignIndices);
+            }
+        }
+
+        private Function<IndexedData<F>, GenericData<F>> secondaryIndices() {
+            if (secondaryIndices == null) {
+                return SubData.ofFields(Objects.requireNonNull(secondaryFields));
+            }
+            else {
+                return SubData.ofIndices(secondaryIndices);
+            }
         }
 
         public StreamJoin<F> make() {

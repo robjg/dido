@@ -55,9 +55,9 @@ class LeftStreamJoinTest {
         List<GenericData<String>> results = new ArrayList<>(3);
 
         StreamJoin<String> join = LeftStreamJoin.<String>with()
-                .setPrimaryIndices(1)
-                .setSecondaryIndices(1)
-                .setForeignIndices(3)
+                .primaryIndices(1)
+                .secondaryIndices(1)
+                .foreignIndices(3)
                 .make();
 
         Consumer<IndexedData<String>> primary = join.getPrimary();
