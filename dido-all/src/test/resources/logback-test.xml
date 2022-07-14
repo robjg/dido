@@ -1,0 +1,20 @@
+<configuration>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are assigned the type
+         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <encoder>
+      <pattern>%5p [%t] %X{ojpad}\(%F:%L\) [%X{ojname}] - %m%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT" />
+  </root>
+  
+  <logger name="org.oddjob" level="INFO"/>
+  <logger name="org.oddjob.arooa" level="INFO"/>
+  <logger name="org.oddjob.schedules" level="INFO"/>
+  <logger name="dido" level="DEBUG"/>
+
+</configuration>

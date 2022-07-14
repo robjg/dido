@@ -12,6 +12,7 @@
         <module>dido-poi</module>
         <module>dido-sql</module>
         <module>dido-operators</module>
+        <module>dido-all</module>
     </modules>
 
     <groupId>uk.co.rgordon</groupId>
@@ -84,7 +85,37 @@
 
             <dependency>
                 <groupId>uk.co.rgordon</groupId>
+                <artifactId>dido-sql</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.co.rgordon</groupId>
+                <artifactId>dido-poi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.co.rgordon</groupId>
+                <artifactId>dido-text</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.co.rgordon</groupId>
+                <artifactId>dido-json</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.co.rgordon</groupId>
                 <artifactId>dido-how</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.co.rgordon</groupId>
+                <artifactId>dido-operators</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
