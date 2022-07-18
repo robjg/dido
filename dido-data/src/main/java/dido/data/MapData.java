@@ -1,6 +1,9 @@
 package dido.data;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Provide an {@link GenericData} structure backed by a Map.
@@ -78,7 +81,7 @@ public class MapData<F> extends AbstractGenericData<F> {
 
     private static <F> GenericData<F> fromInputs(Object... args) {
 
-        DataBuilder<F> builder = new BuilderNoSchema<>();
+        GenericDataBuilder<F> builder = new BuilderNoSchema<>();
         for (int i = 0; i < args.length; i = i + 2) {
             //noinspection unchecked
             builder.set((F) args[i], args[i+1]);
@@ -95,19 +98,24 @@ public class MapData<F> extends AbstractGenericData<F> {
         return schemaBuilder.build();
     }
 
-    public static <F> DataBuilder<F> newBuilder(DataSchema<F> schema) {
+    public static <F> GenericDataBuilder<F> newBuilder(DataSchema<F> schema) {
 
         return new BuilderWithSchema<>(schema);
     }
 
-    public static DataBuilder<String> newBuilderNoSchema() {
+    public static GenericDataBuilder<String> newBuilderNoSchema() {
 
         return new BuilderNoSchema<>();
     }
 
-    public static <T> Values<T> valuesFor(DataSchema<T> schema) {
+    public static <T> DataBuilders.Values<T> valuesFor(DataSchema<T> schema) {
 
-        return new Values<>(schema);
+        return new BuilderWithSchema(schema).values();
+    }
+
+    public static <F> BuilderWithSchema<F> copy(IndexedData<F> from) {
+
+        return new BuilderWithSchema<>(from.getSchema()).copy(from);
     }
 
     @Override
@@ -140,19 +148,22 @@ public class MapData<F> extends AbstractGenericData<F> {
         return GenericData.toStringFieldsOnly(this);
     }
 
-    static class BuilderWithSchema<F> extends AbstractDataBuilder<F, BuilderWithSchema<F>> {
-
-        private final DataSchema<F> schema;
+    /**
+     * A Builder that knows the schema. Setter don't validate the type.
+     *
+     * @param <F> The field type.
+     */
+    public static class BuilderWithSchema<F> extends DataBuilders.KnownSchema<F, BuilderWithSchema<F>> {
 
         private Map<F, Object> map = new HashMap<>();
 
         BuilderWithSchema(DataSchema<F> schema) {
-            this.schema = Objects.requireNonNull(schema);
+            super(schema);
         }
 
         @Override
         public GenericData<F> build() {
-            GenericData<F> data = new MapData<>(schema, map);
+            GenericData<F> data = new MapData<>(getSchema(), map);
             this.map = new HashMap<>();
             return data;
         }
@@ -162,9 +173,20 @@ public class MapData<F> extends AbstractGenericData<F> {
             map.put(field, value);
             return this;
         }
+
+        @Override
+        public BuilderWithSchema<F> setAt(int index, Object value) {
+            set(getSchema().getFieldAt(index), value);
+            return this;
+        }
+
+        @Override
+        protected BuilderWithSchema<F> self() {
+            return this;
+        }
     }
 
-    static class BuilderNoSchema<F> implements DataBuilder<F> {
+    static class BuilderNoSchema<F> extends  DataBuilders.Fields<F, BuilderNoSchema<F>> {
 
         private Map<F, Object> map = new LinkedHashMap<>();
 
@@ -179,76 +201,87 @@ public class MapData<F> extends AbstractGenericData<F> {
         }
 
         @Override
-        public DataBuilder<F> set(F field, Object value) {
+        protected BuilderNoSchema<F> self() {
+            return this;
+        }
+
+        @Override
+        public BuilderNoSchema<F> set(F field, Object value) {
             map.put(field, value);
             schemaBuilder.addField(field, value == null ? void.class : value.getClass());
             return this;
         }
 
         @Override
-        public DataBuilder<F> setBoolean(F field, boolean value) {
+        public BuilderNoSchema<F> setBoolean(F field, boolean value) {
             map.put(field, value);
             schemaBuilder.addField(field, boolean.class);
             return this;
         }
 
         @Override
-        public DataBuilder<F> setByte(F field, byte value) {
+        public BuilderNoSchema<F> setByte(F field, byte value) {
             map.put(field, value);
             schemaBuilder.addField(field, byte.class);
             return this;
         }
 
         @Override
-        public DataBuilder<F> setChar(F field, char value) {
+        public BuilderNoSchema<F> setChar(F field, char value) {
             map.put(field, value);
             schemaBuilder.addField(field, char.class);
             return this;
         }
 
         @Override
-        public DataBuilder<F> setShort(F field, short value) {
+        public BuilderNoSchema<F> setShort(F field, short value) {
             map.put(field, value);
             schemaBuilder.addField(field, short.class);
             return this;
         }
 
         @Override
-        public DataBuilder<F> setInt(F field, int value) {
+        public BuilderNoSchema<F> setInt(F field, int value) {
             map.put(field, value);
             schemaBuilder.addField(field, int.class);
             return this;
         }
 
         @Override
-        public DataBuilder<F> setLong(F field, long value) {
+        public BuilderNoSchema<F> setLong(F field, long value) {
             map.put(field, value);
             schemaBuilder.addField(field, long.class);
             return this;
         }
 
         @Override
-        public DataBuilder<F> setFloat(F field, float value) {
+        public BuilderNoSchema<F> setFloat(F field, float value) {
             map.put(field, value);
             schemaBuilder.addField(field, float.class);
             return this;
         }
 
         @Override
-        public DataBuilder<F> setDouble(F field, double value) {
+        public BuilderNoSchema<F> setDouble(F field, double value) {
             map.put(field, value);
             schemaBuilder.addField(field, double.class);
             return this;
         }
 
         @Override
-        public DataBuilder<F> setString(F field, String value) {
+        public BuilderNoSchema<F> setString(F field, String value) {
             map.put(field, value);
             schemaBuilder.addField(field, String.class);
             return this;
         }
+
     }
 
+    /**
+     * For A fluent way of providing MapData
+     *
+     * @param <F> The field type.
+     */
     public static class Values<F> {
 
         private final DataSchema<F> schema;

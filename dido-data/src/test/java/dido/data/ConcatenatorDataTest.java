@@ -77,7 +77,7 @@ class ConcatenatorDataTest {
     void testConcatData() {
 
 
-        DataBuilder<String> builder = MapData.newBuilderNoSchema();
+        GenericDataBuilder<String> builder = MapData.newBuilderNoSchema();
 
         GenericData<String> data1 = builder
                 .setString("type", "apple")
@@ -115,7 +115,7 @@ class ConcatenatorDataTest {
     @Test
     void testOtherTypes() {
 
-        DataBuilder<String> builder = MapData.newBuilderNoSchema();
+        GenericDataBuilder<String> builder = MapData.newBuilderNoSchema();
 
         builder.setString("first", "Ignored" );
         GenericData<String> data1 = builder.build();

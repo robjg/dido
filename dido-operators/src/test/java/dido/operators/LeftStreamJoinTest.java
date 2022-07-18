@@ -1,9 +1,7 @@
 package dido.operators;
 
-import dido.data.ArrayData;
-import dido.data.GenericData;
-import dido.data.IndexedData;
-import dido.data.SchemaBuilder;
+import dido.data.*;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -79,9 +77,15 @@ class LeftStreamJoinTest {
         primary.accept(produce2);
 
         assertThat(results, contains(expected1, expected2));
+        assertThat(expected1.getSchema(), Matchers.is(expected2.getSchema()));
 
         primary.accept(produce3);
 
         assertThat(results, contains(expected1, expected2, expected3));
+        assertThat(expected2.getSchema(), Matchers.is(expected3.getSchema()));
+
+        MapData.copy(produce1).setInt("Quantity", 7)
+                .to(primary);
+
     }
 }

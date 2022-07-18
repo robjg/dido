@@ -1,9 +1,6 @@
 package dido.csv;
 
-import dido.data.DataSchema;
-import dido.data.GenericData;
-import dido.data.MapData;
-import dido.data.SchemaBuilder;
+import dido.data.*;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
 
@@ -52,7 +49,7 @@ class CsvDataOutHowTest {
                 .addField("Price", double.class)
                 .build();
 
-        MapData.Values<String> values = MapData.valuesFor(schema);
+        DataBuilders.Values<String> values = MapData.valuesFor(schema);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 

@@ -301,7 +301,7 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
         };
     }
 
-    interface Builder<E extends Enum<E>> extends DataBuilder<E> {
+    interface Builder<E extends Enum<E>> extends GenericDataBuilder<E> {
 
         Builder<E> set(E field, Object value);
 

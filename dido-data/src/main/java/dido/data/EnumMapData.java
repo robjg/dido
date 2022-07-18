@@ -58,7 +58,7 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
     }
 
     static class BuilderWithSchema<E extends Enum<E>>
-            extends AbstractDataBuilder<E, BuilderWithSchema<E>> implements EnumData.Builder<E> {
+            extends DataBuilders.Fields<E, BuilderWithSchema<E>> implements EnumData.Builder<E> {
 
         private final EnumSchema<E> schema;
 
@@ -67,6 +67,11 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
         BuilderWithSchema(EnumSchema<E> schema) {
             this.schema = Objects.requireNonNull(schema);
             this.map = new EnumMap<>(schema.getFieldType());
+        }
+
+        @Override
+        protected BuilderWithSchema<E> self() {
+            return this;
         }
 
         @Override

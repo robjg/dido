@@ -62,7 +62,7 @@ class EnumMapDataTest {
     @Test
     void builderWithNoSchema() {
 
-        DataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
+        GenericDataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
 
         GenericData<Fields> data3 = builderNoSchema
                 .setString(Fields.Fruit, "Apple")
@@ -82,7 +82,7 @@ class EnumMapDataTest {
 
         EnumSchema<Fields> schema = EnumSchema.schemaFor(Fields.class, Fields::getType);
 
-        DataBuilder<Fields> builder = EnumMapData.newBuilder(schema);
+        GenericDataBuilder<Fields> builder = EnumMapData.newBuilder(schema);
 
         GenericData<Fields> data1 = builder
                 .set(Fields.Fruit, "Apple")
@@ -109,7 +109,7 @@ class EnumMapDataTest {
         assertThat(data2.getString(Fields.Fruit), is("Orange"));
         assertThat(data2.getStringAt(1), is("Orange"));
 
-        DataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
+        GenericDataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
 
         GenericData<Fields> data3 = builderNoSchema
                 .setString(Fields.Fruit, "Apple")

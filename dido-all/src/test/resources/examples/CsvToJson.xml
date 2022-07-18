@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in id="fruit" name="Fruit Data" xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:csv>
+                                    <schema>
+                                        <dido:schema>
+                                            <of>
+                                                <dido:field name="Type" type="java.lang.String"/>
+                                                <dido:field name="Quantity" type="int"/>
+                                                <dido:field name="FarmId" type="int"/>
+                                            </of>
+                                        </dido:schema>
+                                    </schema>
+                                </dido:csv>
+                            </how>
+                            <from>
+                                <buffer>
+                                    <![CDATA[Apples,12,2
+Pears,7,1
+Carrots,15,2
+]]>
+                                </buffer>
+                            </from>
+                            <to>
+                                <value value="${join.primary}"/>
+                            </to>
+                        </dido:data-in>
+                        <bean class="dido.oddjob.util.AnalyseSchema"/>
+                        <dido:data-out xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:json/>
+                            </how>
+                            <to>
+                                <stdout/>
+                            </to>
+                        </dido:data-out>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>

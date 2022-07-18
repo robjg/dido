@@ -15,7 +15,7 @@ class MapDataTest {
     @Test
     void testBuilderNoSchema() throws ParseException {
 
-        DataBuilder<String> builder = MapData.newBuilderNoSchema();
+        GenericDataBuilder<String> builder = MapData.newBuilderNoSchema();
 
         GenericData<String> data1 = builder
                 .setString("type", "apple")

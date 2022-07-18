@@ -1,6 +1,6 @@
 package dido.oddjob.transpose;
 
-import dido.data.DataBuilder;
+import dido.data.GenericDataBuilder;
 import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.data.MapData;
@@ -9,7 +9,7 @@ public class MapDataSetterProvider<F> implements SetterProvider<F> {
 
     @Override
     public DataFactory<F> provideSetter(DataSchema<F> schema) {
-        DataBuilder<F> builder = MapData.newBuilder(schema);
+        GenericDataBuilder<F> builder = MapData.newBuilder(schema);
 
         DataSetter<F> setter = new DataSetter<>() {
 

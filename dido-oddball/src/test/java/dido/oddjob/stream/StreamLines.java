@@ -18,7 +18,7 @@ public class StreamLines {
 
     public static class In implements DataInHow<String, InputStream> {
 
-        DataBuilder<String> dataBuilder = MapData.newBuilder(schema);
+        GenericDataBuilder<String> dataBuilder = MapData.newBuilder(schema);
 
         @Override
         public Class<InputStream> getInType() {
