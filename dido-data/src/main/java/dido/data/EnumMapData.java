@@ -70,11 +70,6 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
         }
 
         @Override
-        protected BuilderWithSchema<E> self() {
-            return this;
-        }
-
-        @Override
         public EnumData<E> build() {
             EnumData<E> data = new EnumMapData<>(schema, map);
             this.map = new EnumMap<>(schema.getFieldType());

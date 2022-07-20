@@ -108,7 +108,7 @@ public class MapData<F> extends AbstractGenericData<F> {
         return new BuilderNoSchema<>();
     }
 
-    public static <T> DataBuilders.Values<T> valuesFor(DataSchema<T> schema) {
+    public static <F> DataBuilders.Values<F> valuesFor(DataSchema<F> schema) {
 
         return new BuilderWithSchema(schema).values();
     }
@@ -179,11 +179,6 @@ public class MapData<F> extends AbstractGenericData<F> {
             set(getSchema().getFieldAt(index), value);
             return this;
         }
-
-        @Override
-        protected BuilderWithSchema<F> self() {
-            return this;
-        }
     }
 
     static class BuilderNoSchema<F> extends  DataBuilders.Fields<F, BuilderNoSchema<F>> {
@@ -198,11 +193,6 @@ public class MapData<F> extends AbstractGenericData<F> {
             this.map = new LinkedHashMap<>();
             this.schemaBuilder = SchemaBuilder.impliedType();
             return data;
-        }
-
-        @Override
-        protected BuilderNoSchema<F> self() {
-            return this;
         }
 
         @Override

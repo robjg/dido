@@ -3,6 +3,7 @@ package dido.data;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
 class ArrayDataTest {
@@ -68,4 +69,24 @@ class ArrayDataTest {
         assertThat(data1, is(data2));
     }
 
+    @Test
+    void whenUsingBuilderThenSchemaDerived() {
+
+        GenericData<String> data1 = ArrayData.<String>newBuilder()
+                .setString("Fruit", "Apple")
+                .setString("Flavour", null)
+                .setInt("Qty", 15)
+                .setDouble("Price", 26.5)
+                .build();
+
+        DataSchema<String> schema = data1.getSchema();
+
+        assertThat(schema.getFields(), contains("Fruit", "Flavour", "Qty", "Price"));
+
+        assertThat(schema.getTypeAt(3), is(int.class));
+        assertThat(schema.getType("Price"), is(double.class));
+
+        assertThat(IndexedData.equalsIgnoringSchema(data1, ArrayData.of("Apple", null, 15, 26.5)),
+                is(true));
+    }
 }

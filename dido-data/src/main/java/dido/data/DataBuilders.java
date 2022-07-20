@@ -12,7 +12,11 @@ import java.util.function.Consumer;
 abstract public class DataBuilders<F, B extends DataBuilders<F, B>> {
 
     private DataBuilders() {}
-    abstract protected B self();
+
+    @SuppressWarnings("unchecked")
+    protected B self() {
+        return (B) this;
+    }
 
     public abstract GenericData<F> build();
     abstract public static class Indexed<F, B extends Indexed<F, B>> extends DataBuilders<F, B>
