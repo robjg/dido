@@ -28,6 +28,9 @@ public class LeftStreamJoin<F> implements StreamJoin<F> {
 
     private volatile Consumer<? super GenericData<F>> to;
 
+    private final Concatenator.Factory<F> concatenator = Concatenator.<F>withSettings()
+            .skipDuplicates(true).factory();
+
     private LeftStreamJoin(With<F> with) {
         this.primaryIndices = with.primaryIndices();
         this.foreignIndices = with.foreignIndices();
@@ -143,7 +146,7 @@ public class LeftStreamJoin<F> implements StreamJoin<F> {
             singleJoin.primaries.mappedByKey.put(keyOfPrimary, primaryData);
             // ok so long as this is always called on the same thread.
             if (singleJoin.secondary != null) {
-                to.accept(Concatenator.of(primaryData, singleJoin.secondary));
+                to.accept(concatenator.concat(primaryData, singleJoin.secondary));
             }
         }
     }
@@ -160,7 +163,7 @@ public class LeftStreamJoin<F> implements StreamJoin<F> {
             singleJoin.secondary = secondaryData;
 
             singleJoin.primaries.mappedByKey.values()
-                    .forEach(primary -> to.accept(Concatenator.of(primary, secondaryData)));
+                    .forEach(primary -> to.accept(concatenator.concat(primary, secondaryData)));
         }
     }
 

@@ -91,4 +91,41 @@ class StreamJoinServiceTest {
         assertThat(results, containsInAnyOrder(expected1, expected2, expected3));
     }
 
+    @Test
+    void testMultiKeyExample() throws ArooaConversionException, InterruptedException {
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setFile(new File(Objects.requireNonNull(
+                getClass().getResource("LeftJoinMultiKeyExample.xml")).getFile()));
+
+        StateSteps state = new StateSteps(oddjob);
+        state.startCheck(ParentState.READY, ParentState.EXECUTING,
+                ParentState.ACTIVE, ParentState.STARTED, ParentState.COMPLETE);
+
+        oddjob.run();
+
+        state.checkWait();
+
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        @SuppressWarnings("unchecked")
+        List<GenericData<String>> results = lookup.lookup("results.beans", List.class);
+
+        ArrayData.Builder<String> expectedBuilder = ArrayData.builderForSchema(
+                SchemaBuilder.forStringFields()
+                        .addField("Type", String.class)
+                        .addField("Variety", String.class)
+                        .addField("Quantity", int.class)
+                        .addField("FarmId", int.class)
+                        .addField("Country", String.class)
+                        .addField("Id", int.class)
+                        .addField("Farmer", String.class)
+                        .build());
+
+        GenericData<String> expected1 = expectedBuilder.build("Apples", "Cox", 12, 2, "UK", 2, "Giles");
+        GenericData<String> expected2 = expectedBuilder.build("Pears", "Conference", 7, 1, "FR", 1, "Brun");
+        GenericData<String> expected3 = expectedBuilder.build("Carrots", "", 15, 2, "UK", 2, "Giles");
+
+        assertThat(results, containsInAnyOrder(expected1, expected2, expected3));
+    }
 }

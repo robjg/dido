@@ -172,5 +172,42 @@ class ConcatenatorDataTest {
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 Concatenator.of(
                         MapData.of("Fruit", "Apple"), MapData.of("Fruit", "Pear")));
+
+        assertThat(
+                Concatenator.withSettings().skipDuplicates(true)
+                        .of(MapData.of("Fruit", "Apple"), MapData.of("Fruit", "Pear")),
+                is(MapData.of("Fruit", "Apple")));
+
     }
+
+    @Test
+    void fieldsCanBeExcluded() {
+
+        GenericData<String> data1 = MapData.of(
+                "Type","Apples",
+                "Variety", "Cox",
+                "Quantity", 12,
+                "FarmId", 2);
+
+        GenericData<String> data2 = MapData.of(
+                "Id", "2",
+                "Country", "UK",
+                "Farmer", "Giles");
+
+        GenericData<String> expected = MapData.of(
+                "Type","Apples",
+                "Quantity", 12,
+                "FarmId", 2,
+                "Country", "UK",
+                "Farmer", "Giles");
+
+        assertThat(
+                Concatenator.<String>withSettings()
+                        .excludeFields("Variety", "Id")
+                        .of(data1, data2),
+                is(expected));
+
+    }
+
+
 }

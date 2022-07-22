@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <parallel>
+                            <jobs>
+                                <dido:data-in id="fruit" name="Fruit Data" xmlns:dido="oddjob:dido">
+                                    <how>
+                                        <dido:csv>
+                                            <schema>
+                                                <dido:schema>
+                                                    <of>
+                                                        <dido:field name="Type" type="java.lang.String"/>
+                                                        <dido:field name="Variety" type="java.lang.String"/>
+                                                        <dido:field name="Quantity" type="int"/>
+                                                        <dido:field name="FarmId" type="int"/>
+                                                        <dido:field name="Country" type="java.lang.String"/>
+                                                    </of>
+                                                </dido:schema>
+                                            </schema>
+                                        </dido:csv>
+                                    </how>
+                                    <from>
+                                        <buffer>
+                                            <![CDATA[Apples,Cox,12,2,UK
+Pears,Conference,7,1,FR
+Carrots,,15,2,UK
+]]>
+                                        </buffer>
+                                    </from>
+                                    <to>
+                                        <value value="${join.primary}"/>
+                                    </to>
+                                </dido:data-in>
+                                <dido:data-in id="farmers" name="Farmer Data" xmlns:dido="oddjob:dido">
+                                    <how>
+                                        <dido:csv>
+                                            <schema>
+                                                <dido:schema>
+                                                    <of>
+                                                        <dido:field name="Id" type="int"/>
+                                                        <dido:field name="Country" type="java.lang.String"/>
+                                                        <dido:field name="Farmer" type="java.lang.String"/>
+                                                    </of>
+                                                </dido:schema>
+                                            </schema>
+                                        </dido:csv>
+                                    </how>
+                                    <from>
+                                        <buffer>
+                                            <![CDATA[1,FR,Brun
+2,UK,Giles
+]]>
+                                        </buffer>
+                                    </from>
+                                    <to>
+                                        <value value="${join.secondary}"/>
+                                    </to>
+                                </dido:data-in>
+                            </jobs>
+                        </parallel>
+                        <dido:stream-join id="join" xmlns:dido="oddjob:dido">
+                            <join>
+                                <dido:left-join foreignFields="FarmId, Country" primaryFields="Type, Variety" secondaryFields="Id, Country"/>
+                            </join>
+                        </dido:stream-join>
+                        <bus:collect id="results"/>
+                        <dido:data-out xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:csv/>
+                            </how>
+                            <to>
+                                <stdout/>
+                            </to>
+                        </dido:data-out>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>

@@ -3,24 +3,24 @@ package dido.operators;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-public class LeftStreamJoinType<F> implements Supplier<StreamJoin<F>> {
+public class LeftStreamJoinType implements Supplier<StreamJoin<String>> {
 
     private int[] primaryIndices;
 
-    private F[] primaryFields;
+    private String[] primaryFields;
 
     private int[] foreignIndices;
 
-    private F[] foreignFields;
+    private String[] foreignFields;
 
     private int[] secondaryIndices;
 
-    private F[] secondaryFields;
+    private String[] secondaryFields;
 
     @Override
-    public StreamJoin<F> get() {
+    public StreamJoin<String> get() {
 
-        return LeftStreamJoin.<F>with()
+        return LeftStreamJoin.<String>with()
                 .primaryIndices(primaryIndices)
                 .primaryFields(primaryFields)
                 .foreignIndices(foreignIndices)
@@ -54,27 +54,27 @@ public class LeftStreamJoinType<F> implements Supplier<StreamJoin<F>> {
         this.secondaryIndices = secondaryIndices;
     }
 
-    public F[] getPrimaryFields() {
+    public String[] getPrimaryFields() {
         return primaryFields;
     }
 
-    public void setPrimaryFields(F[] primaryFields) {
+    public void setPrimaryFields(String[] primaryFields) {
         this.primaryFields = primaryFields;
     }
 
-    public F[] getForeignFields() {
+    public String[] getForeignFields() {
         return foreignFields;
     }
 
-    public void setForeignFields(F[] foreignFields) {
+    public void setForeignFields(String[] foreignFields) {
         this.foreignFields = foreignFields;
     }
 
-    public F[] getSecondaryFields() {
+    public String[] getSecondaryFields() {
         return secondaryFields;
     }
 
-    public void setSecondaryFields(F[] secondaryFields) {
+    public void setSecondaryFields(String[] secondaryFields) {
         this.secondaryFields = secondaryFields;
     }
 

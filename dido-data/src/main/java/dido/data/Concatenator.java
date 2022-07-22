@@ -6,110 +6,124 @@ import java.util.*;
  * Provides the ability to Concatenate {@link GenericData}. The data isn't copied but linked in a new master
  * {@code GenericData} object.
  *
- * @param <F>
+ * Concatenation won't cope with repeated or nest fields yet.
+ *
+ * @param <F> The type of field.
  */
 public class Concatenator<F> {
 
+
+    static class Location {
+        private final int dataIndex;
+        private final int index;
+
+        Location(int dataSet, int index) {
+            this.dataIndex = dataSet;
+            this.index = index;
+        }
+    }
+
     private final DataSchema<F> schema;
 
-    private final int[] dataByIndex;
+    private final Location[] locations;
 
-    private final int[] offsets;
-
-    private final Map<F, Integer> dataByField;
+    private final Map<F, Location> fieldLocations;
 
     private Concatenator(DataSchema<F> schema,
-                        int[] dataByIndex,
-                        int[] offsets,
-                        Map<F, Integer> dataByField) {
+                         Location[] locations,
+                         Map<F, Location> fieldLocations) {
         this.schema = schema;
-        this.dataByIndex = dataByIndex;
-        this.offsets = offsets;
-        this.dataByField = dataByField;
+        this.locations = locations;
+        this.fieldLocations = fieldLocations;
+    }
+
+    public static class Settings<F> {
+
+        private final Set<F> excludeFields = new HashSet<>();
+
+        private boolean skipDuplicates;
+
+        public Settings<F> excludeFields(F... exclusions) {
+            excludeFields.addAll(List.of(exclusions));
+            return this;
+        }
+
+        public Settings<F> skipDuplicates(boolean skipDuplicates) {
+            this.skipDuplicates = skipDuplicates;
+            return this;
+        }
+
+        public Concatenator<F> makeFromSchemas(DataSchema<F>... schemas) {
+
+            List<Location> locations = new LinkedList<>();
+            Map<F, Location> fieldLocations = new HashMap<>();
+
+            SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
+
+            int locationIndex = 0;
+            int dataIndex = 0;
+            for (DataSchema<F> schema : schemas) {
+                for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
+                    Location location = new Location(dataIndex, i);
+                    F field = schema.getFieldAt(i);
+                    if (field != null) {
+                        if (excludeFields.contains(field)) {
+                            continue;
+                        }
+                        if (fieldLocations.containsKey(field)) {
+                            if (skipDuplicates) {
+                                continue;
+                            }
+                            else {
+                                throw new IllegalArgumentException("Fields must be unique: " + field);
+                            }
+                        }
+                        fieldLocations.put(field, location);
+                    }
+                    locations.add(location);
+                    schemaBuilder.addSchemaField(SchemaField.of(
+                            ++locationIndex, field, schema.getTypeAt(i)));
+                }
+                ++dataIndex;
+            }
+
+            return new Concatenator<>(schemaBuilder.build(),
+                    locations.toArray(new Location[0]),
+                    fieldLocations);
+        }
+
+        public Factory<F> factory() {
+            return new Factory<>(this);
+        }
+
+        public GenericData<F> of(IndexedData<F>... data) {
+            return factory().concat(data);
+        }
     }
 
     /**
      * Create a new {@code Concatenator}.
      *
      * @param schemas The schemas of the records that will be concatenated.
-     * @param <F> The type of the field.
-     *
+     * @param <F>     The type of the field.
      * @return A {@code Concatenator}.
      */
     public static <F> Concatenator<F> fromSchemas(DataSchema<F>... schemas) {
 
-        List<F> allFields = new LinkedList<>();
+        return new Settings<F>().makeFromSchemas(schemas);
+    }
 
-        int firstIndex = 0;
-        int lastIndex = 0;
-        for (DataSchema<F> schema : schemas) {
-            if (firstIndex == 0) {
-                firstIndex = schema.firstIndex();
-            }
-            lastIndex = lastIndex + schema.lastIndex();
-        }
-
-        @SuppressWarnings("unchecked")
-        OffsetSchema<F>[] schemaByIndex = new OffsetSchema[lastIndex];
-        int[] dataByIndex = new int[lastIndex];
-        int[] offsets = new int[schemas.length];
-        int[] nextIndex = new int[lastIndex];
-
-        Map<F, OffsetSchema<F>> schemaByField = new LinkedHashMap<>();
-        Map<F, Integer> dataByField = new HashMap<>();
-
-        int offset = 0;
-
-        lastIndex = 0;
-
-        for (int which = 0; which < schemas.length; ++which) {
-            DataSchema<F> schema = schemas[which];
-
-            if (allFields.removeAll(schema.getFields())) {
-                throw new IllegalArgumentException("Fields must be unique.");
-            }
-
-            allFields.addAll(schema.getFields());
-
-            OffsetSchema<F> offsetSchema = new OffsetSchema<>(schema, offset);
-
-            for (F field : schema.getFields()) {
-                schemaByField.put(field, offsetSchema);
-                dataByField.put(field, which);
-            }
-
-            for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
-                int index = i + offset;
-                if (lastIndex > 0) {
-                    nextIndex[lastIndex - 1] = index;
-                }
-                lastIndex = index;
-                schemaByIndex[index - 1] = offsetSchema;
-                nextIndex[index - 1] =
-                dataByIndex[index - 1] = which;
-            }
-            offsets[which] = offset;
-
-            offset = offset + schema.lastIndex();
-        }
-        nextIndex[lastIndex - 1] = 0;
-
-        DataSchema<F> compositeSchema = new CompositeSchema<>(schemaByIndex,
-                schemaByField,
-                firstIndex,
-                lastIndex,
-                nextIndex);
-
-        return new Concatenator<>(compositeSchema, dataByIndex, offsets, dataByField);
+    public static <F> Settings<F> withSettings() {
+        return new Settings<>();
     }
 
     public static <F> GenericData<F> of(IndexedData<F>... data) {
-        return new Factory<F>().concat(data);
+        return new Factory<F>(new Settings<>()).concat(data);
     }
 
     public static <F> Factory<F> factory() {
 
-        return new Factory<>();
+        return new Factory<>(new Settings<>());
     }
 
     public GenericData<F> concat(IndexedData<F>... data) {
@@ -128,11 +142,17 @@ public class Concatenator<F> {
      */
     public static class Factory<F> {
 
+        private final Settings<F> settings;
+
         private Concatenator<F> last;
 
         private DataSchema<F>[] previous;
 
-        private GenericData<F> concat(IndexedData<F>[] data) {
+        public Factory(Settings<F> settings) {
+            this.settings = settings;
+        }
+
+        public GenericData<F> concat(IndexedData<F>... data) {
 
             boolean recreate = false;
             if (last == null) {
@@ -142,8 +162,7 @@ public class Concatenator<F> {
                 for (int i = 0; i < data.length; ++i) {
                     previous[i] = data[i].getSchema();
                 }
-            }
-            else {
+            } else {
                 for (int i = 0; i < data.length; ++i) {
                     if (previous[i] != data[i].getSchema()) {
                         recreate = true;
@@ -153,7 +172,7 @@ public class Concatenator<F> {
             }
 
             if (recreate) {
-                last = fromSchemas(previous);
+                last = settings.makeFromSchemas(previous);
             }
 
             return last.concat(data);
@@ -165,15 +184,10 @@ public class Concatenator<F> {
      */
     class ConcatenatedData extends AbstractGenericData<F> implements GenericData<F> {
 
-        private final GenericData<F>[] data;
+        private final IndexedData<F>[] data;
 
         ConcatenatedData(IndexedData<F>[] data) {
-            //noinspection unchecked
-            this.data = new GenericData[data.length];
-            for (int i = 0; i < data.length; ++i) {
-                this.data[i] = GenericData.from(data[i]);
-
-            }
+            this.data = data;
         }
 
         @Override
@@ -183,163 +197,157 @@ public class Concatenator<F> {
 
         @Override
         public Object getAt(int index) {
-            int i = dataByIndex[index - 1];
-            return data[i].getAt(index - offsets[i]);
+            Location loc = locations[index - 1];
+            return data[loc.dataIndex].getAt(loc.index);
         }
 
         @Override
         public <T> T getAtAs(int index, Class<T> type) {
-            int i = dataByIndex[index - 1];
-            return data[i].getAtAs(index - offsets[i], type);
+            Location loc = locations[index - 1];
+            return data[loc.dataIndex].getAtAs(loc.index, type);
         }
 
         @Override
         public boolean hasIndex(int index) {
-            int i = dataByIndex[index - 1];
-            return data[i].hasIndex(index - offsets[i]);
+            Location loc = locations[index - 1];
+            return data[loc.dataIndex].hasIndex(loc.index);
         }
 
         @Override
         public String getStringAt(int index) {
-            int i = dataByIndex[index - 1];
-            return data[i].getStringAt(index - offsets[i]);
+            Location loc = locations[index - 1];
+            return data[loc.dataIndex].getStringAt(loc.index);
         }
 
         @Override
         public boolean getBooleanAt(int index) {
-            int i = dataByIndex[index - 1];
-            return data[i].getBooleanAt(index - offsets[i]);
+            Location loc = locations[index - 1];
+            return data[loc.dataIndex].getBooleanAt(loc.index);
         }
 
         @Override
         public byte getByteAt(int index) {
-            int i = dataByIndex[index - 1];
-            return data[i].getByteAt(index - offsets[i]);
+            Location loc = locations[index - 1];
+            return data[loc.dataIndex].getByteAt(loc.index);
         }
 
         @Override
         public char getCharAt(int index) {
-            int i = dataByIndex[index - 1];
-            return data[i].getCharAt(index - offsets[i]);
+            Location loc = locations[index - 1];
+            return data[loc.dataIndex].getCharAt(loc.index);
         }
 
         @Override
         public short getShortAt(int index) {
-            int i = dataByIndex[index - 1];
-            return data[i].getShortAt(index - offsets[i]);
+            Location loc = locations[index - 1];
+            return data[loc.dataIndex].getShortAt(loc.index);
         }
 
         @Override
         public int getIntAt(int index) {
-            int i = dataByIndex[index - 1];
-            return data[i].getIntAt(index - offsets[i]);
+            Location loc = locations[index - 1];
+            return data[loc.dataIndex].getIntAt(loc.index);
         }
 
         @Override
         public long getLongAt(int index) {
-            int i = dataByIndex[index - 1];
-            return data[i].getLongAt(index - offsets[i]);
+            Location loc = locations[index - 1];
+            return data[loc.dataIndex].getLongAt(loc.index);
         }
 
         @Override
         public float getFloatAt(int index) {
-            int i = dataByIndex[index - 1];
-            return data[i].getFloatAt(index - offsets[i]);
+            Location loc = locations[index - 1];
+            return data[loc.dataIndex].getFloatAt(loc.index);
         }
 
         @Override
         public double getDoubleAt(int index) {
-            int i = dataByIndex[index - 1];
-            return data[i].getDoubleAt(index - offsets[i]);
+            Location loc = locations[index - 1];
+            return data[loc.dataIndex].getDoubleAt(loc.index);
         }
 
         @Override
         public Object get(F field) {
-            return data[dataByField.get(field)].get(field);
+            Location loc = fieldLocations.get(field);
+            return data[loc.dataIndex].getAt(loc.index);
         }
 
         @Override
         public <T> T getAs(F field, Class<T> type) {
-            return data[dataByField.get(field)].getAs(field, type);
+            Location loc = fieldLocations.get(field);
+            return data[loc.dataIndex].getAtAs(loc.index, type);
         }
 
         @Override
         public boolean hasField(F field) {
-            return data[dataByField.get(field)].hasField(field);
+            Location loc = fieldLocations.get(field);
+            return data[loc.dataIndex].hasIndex(loc.index);
         }
 
         @Override
         public boolean getBoolean(F field) {
-            return data[dataByField.get(field)].getBoolean(field);
+            Location loc = fieldLocations.get(field);
+            return data[loc.dataIndex].getBooleanAt(loc.index);
         }
 
         @Override
         public byte getByte(F field) {
-            return data[dataByField.get(field)].getByte(field);
+            Location loc = fieldLocations.get(field);
+            return data[loc.dataIndex].getByteAt(loc.index);
         }
 
         @Override
         public char getChar(F field) {
-            return data[dataByField.get(field)].getChar(field);
+            Location loc = fieldLocations.get(field);
+            return data[loc.dataIndex].getCharAt(loc.index);
         }
 
         @Override
         public short getShort(F field) {
-            return data[dataByField.get(field)].getShort(field);
+            Location loc = fieldLocations.get(field);
+            return data[loc.dataIndex].getShortAt(loc.index);
         }
 
         @Override
         public int getInt(F field) {
-            return data[dataByField.get(field)].getInt(field);
+            Location loc = fieldLocations.get(field);
+            return data[loc.dataIndex].getIntAt(loc.index);
         }
 
         @Override
         public long getLong(F field) {
-            return data[dataByField.get(field)].getLong(field);
+            Location loc = fieldLocations.get(field);
+            return data[loc.dataIndex].getLongAt(loc.index);
         }
 
         @Override
         public float getFloat(F field) {
-            return data[dataByField.get(field)].getFloat(field);
+            Location loc = fieldLocations.get(field);
+            return data[loc.dataIndex].getFloatAt(loc.index);
         }
 
         @Override
         public double getDouble(F field) {
-            return data[dataByField.get(field)].getDouble(field);
+            Location loc = fieldLocations.get(field);
+            return data[loc.dataIndex].getDoubleAt(loc.index);
         }
 
         @Override
         public String getString(F field) {
-            return data[dataByField.get(field)].getString(field);
-        }
-
-        @Override
-        public int hashCode() {
-            return IndexedData.hashCode(this);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof IndexedData) {
-                return IndexedData.equals(this, (IndexedData<?>) obj);
-            }
-            else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return GenericData.toString(this);
+            Location loc = fieldLocations.get(field);
+            return data[loc.dataIndex].getStringAt(loc.index);
         }
     }
+
+
 
     /**
      * Almost a Schema with offset.
      *
      * @param <F> Field Type.
      */
-    static class OffsetSchema<F>  {
+    static class OffsetSchema<F> {
 
         private final DataSchema<F> originalSchema;
 
@@ -457,8 +465,7 @@ public class Concatenator<F> {
         public boolean equals(Object obj) {
             if (obj instanceof DataSchema) {
                 return DataSchema.equals(this, (DataSchema<?>) obj);
-            }
-            else {
+            } else {
                 return false;
             }
         }
