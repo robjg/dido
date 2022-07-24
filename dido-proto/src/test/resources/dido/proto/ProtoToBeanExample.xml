@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in id="fruit" name="Fruit Data" xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:csv>
+                                    <schema>
+                                        <dido:schema>
+                                            <of>
+                                                <dido:field name="name" type="java.lang.String"/>
+                                                <dido:field name="id" type="int"/>
+                                                <dido:field name="email" type="java.lang.String"/>
+                                            </of>
+                                        </dido:schema>
+                                    </schema>
+                                </dido:csv>
+                            </how>
+                            <from>
+                                <buffer>
+                                    <![CDATA[Alice,234,alice@foo.com
+Bob,456,bob@foo.com
+]]>
+                                </buffer>
+                            </from>
+                            <to>
+                                <value value="${join.primary}"/>
+                            </to>
+                        </dido:data-in>
+                        <bus:map>
+                            <function>
+                                <dido:proto-bytes xmlns:dido="oddjob:dido">
+                                    <protoClass>
+                                        <class name="dido.foo.Person"/>
+                                    </protoClass>
+                                </dido:proto-bytes>
+                            </function>
+                        </bus:map>
+                        <bus:map>
+                            <function>
+                                <dido:proto-bean xmlns:dido="oddjob:dido">
+                                    <protoClass>
+                                        <class name="dido.foo.Person"/>
+                                    </protoClass>
+                                </dido:proto-bean>
+                            </function>
+                        </bus:map>
+                        <bus:collect id="results"/>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>
