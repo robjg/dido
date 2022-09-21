@@ -1,7 +1,6 @@
 package dido.oddjob.schema;
 
 import dido.data.DataSchema;
-import dido.data.SchemaBuilder;
 import dido.data.SchemaManager;
 import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;
@@ -34,28 +33,53 @@ public class SchemaBean implements ArooaValue {
             registry.register(SchemaBean.class, SchemaWrapper.class,
                     SchemaBean::toSchemaWrapper);
         }
-
     }
 
     DataSchema<String> toSchema() throws ArooaConversionException {
 
+        SchemaManager schemaManager = new SchemaManager();
+
         if (list.isEmpty()) {
-            SchemaBuilder<String> builder = SchemaBuilder.forStringFields();
+
+            SchemaManager.NewTopLevelSchema<String> builder =
+                    schemaManager.newDefaultSchema(String.class);
+
             for (SchemaFieldDef field : of) {
-                builder.addFieldAt(field.getIndex(), field.getFieldName(), field.getType());
+                SchemaWrapper wrapper = field.getNested();
+                if (wrapper == null) {
+                    builder.addFieldAt(field.getIndex(), field.getFieldName(), field.getType());
+                }
+                else {
+                    if (field.isRepeating()) {
+                        addNested(builder.addRepeatingIndexedField(field.getIndex(),
+                                field.getFieldName(), String.class),
+                                wrapper);
+                    }
+                    else {
+                        addNested(builder.addNestedIndexedField(field.getIndex(),
+                                        field.getFieldName(), String.class),
+                                wrapper);
+                    }
+                }
             }
-            return builder.build();
+
+            return builder.addToManager().getDefaultSchema();
+
         } else {
+
             if (!of.isEmpty()) {
                 throw new ArooaConversionException("Can't have both 'list' and 'of' set.");
             }
-            SchemaManager schemaManager = new SchemaManager();
+
             for (SchemaWrapper wrapper : list) {
+
                 if (wrapper.getSchemaRefName() != null) {
                     throw new ArooaConversionException("Schema Reference is only for nested schemas.");
                 }
+
                 SchemaManager.NewTopLevelSchema<String> builder =
                         schemaManager.newSchema(wrapper.getSchemaName(), String.class);
+
                 addNested(builder, wrapper);
             }
 
@@ -67,13 +91,14 @@ public class SchemaBean implements ArooaValue {
                 throw new ArooaConversionException("No such schema.");
             }
             else {
+                //noinspection unchecked
                 return (DataSchema<String>) schema;
             }
         }
     }
 
     <B extends SchemaManager.NewSchema<String, B>> void addNested(SchemaManager.NewSchema<String, B> builder,
-                                                                  SchemaWrapper wrapper ) {
+                                                                  SchemaWrapper wrapper) {
         for (SchemaFieldDef field : wrapper.getSchemaFields()) {
             int index = field.getIndex();
             String fieldName = field.getFieldName();
@@ -84,15 +109,25 @@ public class SchemaBean implements ArooaValue {
                 builder.addFieldAt(index, fieldName, field.getType());
             }
             else {
+                boolean repeatingField = field.isRepeating();
                 String ref = nested.getSchemaRefName();
                 if (ref == null) {
-                    SchemaManager.NewSchema<String, ? extends SchemaManager.NewSchema<String, ?>> next =
-                            builder.addNestedIndexedField(index, fieldName, String.class);
-
+                    SchemaManager.NewSchema<String, ? extends SchemaManager.NewSchema<String, ?>> next;
+                    if (repeatingField) {
+                        next = builder.addRepeatingIndexedField(index, fieldName, String.class);
+                    }
+                    else {
+                        next = builder.addNestedIndexedField(index, fieldName, String.class);
+                    }
                     addNested(next, nested);
                 }
                 else {
-                    builder.addNestedFieldAt(field.getIndex(), field.getFieldName(), ref);
+                    if (repeatingField) {
+                        builder.addRepeatingFieldAt(field.getIndex(), field.getFieldName(), ref);
+                    }
+                    else {
+                        builder.addNestedFieldAt(field.getIndex(), field.getFieldName(), ref);
+                    }
                 }
             }
         }

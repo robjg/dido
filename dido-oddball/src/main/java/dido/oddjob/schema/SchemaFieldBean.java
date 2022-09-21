@@ -18,51 +18,85 @@ public class SchemaFieldBean implements ArooaValue {
 
     private SchemaWrapper nested;
 
+    private boolean repeating;
+
     public static class Conversions implements ConversionProvider {
         @Override
         public void registerWith(ConversionRegistry registry) {
             registry.register(SchemaFieldBean.class, SchemaFieldDef.class,
-                    from -> from.toSchemaField());
+                    SchemaFieldBean::toSchemaField);
         }
     }
 
     public SchemaFieldDef toSchemaField() throws ArooaConversionException {
 
         Class<?> type;
-        if (this.type == null) {
-            type = String.class;
+
+        if (nested == null) {
+            if (this.type == null) {
+                type = String.class;
+            }
+            else {
+                ClassLoader classLoader = Optional.ofNullable(
+                                Thread.currentThread().getContextClassLoader())
+                        .orElseGet(() -> getClass().getClassLoader());
+                try {
+                    type = ClassUtils.classFor(this.type, classLoader);
+                } catch (ClassNotFoundException e) {
+                    throw new ArooaConversionException(e);
+                }
+            }
         }
         else {
-            ClassLoader classLoader = Optional.ofNullable(
-                            Thread.currentThread().getContextClassLoader())
-                    .orElseGet(() -> getClass().getClassLoader());
-            try {
-                type = ClassUtils.classFor(this.type, classLoader);
-            } catch (ClassNotFoundException e) {
-                throw new ArooaConversionException(e);
-            }
+            type = null;
         }
 
         return new SchemaFieldDefImpl(name,
                 index,
                 type,
-                nested);
+                nested,
+                repeating);
     }
 
+    public String getName() {
+        return name;
+    }
     public void setName(String name) {
         this.name = name;
     }
 
+
     public void setIndex(int index) {
         this.index = index;
+    }
+
+
+    public int getIndex() {
+        return index;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public void setType(String type) {
         this.type = type;
     }
 
+    public SchemaWrapper getNested() {
+        return nested;
+    }
+
     public void setNested(SchemaWrapper nested) {
         this.nested = nested;
+    }
+
+    public boolean isRepeating() {
+        return repeating;
+    }
+
+    public void setRepeating(boolean repeating) {
+        this.repeating = repeating;
     }
 
     static class SchemaFieldDefImpl implements SchemaFieldDef {
@@ -75,11 +109,18 @@ public class SchemaFieldBean implements ArooaValue {
 
         private final SchemaWrapper nested;
 
-        SchemaFieldDefImpl(String name, int index, Class<?> type, SchemaWrapper nested) {
+        private final boolean repeating;
+
+        SchemaFieldDefImpl(String name,
+                           int index,
+                           Class<?> type,
+                           SchemaWrapper nested,
+                           boolean repeating) {
             this.name = name;
             this.index = index;
             this.type = type;
             this.nested = nested;
+            this.repeating = repeating;
         }
 
         @Override
@@ -103,12 +144,18 @@ public class SchemaFieldBean implements ArooaValue {
         }
 
         @Override
+        public boolean isRepeating() {
+            return repeating;
+        }
+
+        @Override
         public String toString() {
             return "SchemaFieldImpl{" +
                     "name='" + name + '\'' +
                     ", index=" + index +
                     ", type=" + type +
                     ", nested=" + nested +
+                    ", repeating=" + repeating +
                     '}';
         }
     }

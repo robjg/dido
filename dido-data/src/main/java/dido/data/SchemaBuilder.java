@@ -153,7 +153,7 @@ public class SchemaBuilder<F> {
             if (priorityField == null) {
                 addSchemaField(schemaField.mapTo(schemaField.getIndex(),
                         Optional.ofNullable(indexToFields.get(schemaField.getIndex()))
-                                .map(sf -> sf.getField())
+                                .map(SchemaField::getField)
                                 .orElse(null)));
             }
             else {
@@ -192,7 +192,8 @@ public class SchemaBuilder<F> {
     }
 
     public DataSchema<F> build() {
-        return new Impl<>(this);
+        return SchemaImpl.fromFields(indexToFields.values(),
+                firstIndex, lastIndex);
     }
 
     // Implementation
@@ -209,139 +210,6 @@ public class SchemaBuilder<F> {
         else {
             lastIndex = index;
             return index;
-        }
-    }
-
-    static class Impl<F> implements DataSchema<F> {
-
-        private final Class<?>[] indexToType;
-
-        private final Map<F, Integer> fieldToIndex;
-
-        private final F[] indexToField;
-
-        private final int[] nextIndex;
-
-        private final SchemaField<F>[] indexToSchemaField;
-
-        private final int firstIndex;
-
-        private final int lastIndex;
-
-        @SuppressWarnings("unchecked")
-        Impl(SchemaBuilder<F> builder) {
-            this.fieldToIndex = new LinkedHashMap<>();
-            this.firstIndex = builder.firstIndex;
-            this.lastIndex = builder.lastIndex;
-
-            Class<?>[] indexToType = new Class<?>[this.lastIndex];
-            Object[] indexToField =  new Object[this.lastIndex];
-            int[] nextIndex = new int[this.lastIndex];
-            SchemaField<F>[] indexToSchemaField = new SchemaField[this.lastIndex];
-
-            int last = 0;
-            for (SchemaField<F> meta : builder.indexToFields.values()) {
-                int index = meta.getIndex();
-
-                indexToSchemaField[index -1] = meta;
-                indexToType[index - 1] = meta.getType();
-                indexToField[index - 1] = meta.getField();
-
-                F field = meta.getField();
-                if (field != null) {
-                    fieldToIndex.put(field, index);
-                }
-
-                if (last != 0) {
-                    nextIndex[last - 1] = index;
-                }
-                last = index;
-            }
-
-            this.indexToType = indexToType;
-            //noinspection unchecked
-            this.indexToField = (F[]) indexToField;
-            this.nextIndex = nextIndex;
-            this.indexToSchemaField = indexToSchemaField;
-        }
-
-        @Override
-        public SchemaField<F> getSchemaFieldAt(int index) {
-            return indexToSchemaField[index - 1];
-        }
-
-        @Override
-        public Class<?> getTypeAt(int index) {
-            return indexToType[index - 1];
-        }
-
-        @Override
-        public int getIndex(F field) {
-            return fieldToIndex.get(field);
-        }
-
-        @Override
-        public int nextIndex(int index) {
-            return this.nextIndex[index - 1];
-        }
-
-        @Override
-        public int firstIndex() {
-            return firstIndex;
-        }
-
-        @Override
-        public int lastIndex() {
-            return lastIndex;
-        }
-
-        @Override
-        public Collection<F> getFields() {
-            return fieldToIndex.keySet();
-        }
-
-        @Override
-        public F getFieldAt(int index) {
-            return indexToField[index - 1];
-        }
-
-        @Override
-        public <N> DataSchema<N> getSchemaAt(int index) {
-            SchemaField<F> schemaField = indexToSchemaField[index -1];
-            if (schemaField == null) {
-                return null;
-            } else {
-                return schemaField.getNestedSchema();
-            }
-        }
-
-        @Override
-        public <N> DataSchema<N> getSchema(F field) {
-            Integer index = fieldToIndex.get(field);
-            if (index == null) {
-                return null;
-            } else {
-                return getSchemaAt(index);
-            }
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof DataSchema) {
-                return DataSchema.equals(this, (DataSchema<?>) o);
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return DataSchema.hashCode(this);
-        }
-
-        @Override
-        public String toString() {
-            return DataSchema.toString(this);
         }
     }
 }

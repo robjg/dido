@@ -69,7 +69,7 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         return new Schema<>(enumClass, fields);
     }
 
-    static class Schema<E extends Enum<E>> implements EnumSchema<E> {
+    static class Schema<E extends Enum<E>> extends AbstractDataSchema<E> implements EnumSchema<E> {
 
         private final Class<E> enumClass;
 

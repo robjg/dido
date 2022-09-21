@@ -8,6 +8,10 @@ import dido.how.DataOutHow;
 
 import java.io.*;
 
+/**
+ * Streams a lines of text in and out, creating a {@link GenericData} record with the
+ * single filed 'Line'.
+ */
 public class StreamLines {
 
     private static final String LINE = "Line";

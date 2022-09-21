@@ -3,15 +3,28 @@ package dido.data;
 import java.util.Objects;
 
 /**
- * Provide indexed access to data.
+ * Provide indexed access to data. Indexes are always 1 based.
  *
  * @param <F> The type of field the schema uses. When using data as {@code IndexedData} this type can normally be
  *           the "?" wildcard. It is here to provide a consistent return type for {@link GenericData}.
  */
 public interface IndexedData<F> {
 
+    /**
+     * Get the Data Schema associated with this data.
+     *
+     * @return A Data Schema, never null.
+     */
     DataSchema<F> getSchema();
 
+    /**
+     * Get the data at the given index. If the index is in the schema then this
+     * method will either return the data or null if there is none. If the index is not
+     * int the schema then behaviour is undefined.
+     *
+     * @param index The index.
+     * @return Either some data or null.
+     */
     Object getAt(int index);
 
     default <T> T getAtAs(int index, Class<T> type) {
@@ -19,7 +32,9 @@ public interface IndexedData<F> {
         return (T) getAt(index);
     }
 
-    boolean hasIndex(int index);
+    default boolean hasIndex(int index) {
+        return getAt(index) != null;
+    }
 
     default boolean getBooleanAt(int index) {
         return (boolean) getAt(index);
@@ -69,56 +84,7 @@ public interface IndexedData<F> {
             return false;
         }
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
-            if (data1.hasIndex(index) != data1.hasIndex(index)) {
-                return false;
-            }
-            if (!data1.hasIndex(index)) {
-                continue;
-            }
-            Class<?> type = schema.getTypeAt(index);
-            if (type.isPrimitive()) {
-                if (int.class == type) {
-                    if (data1.getIntAt(index) != data2.getIntAt(index)) {
-                        return false;
-                    }
-                }
-                else if (double.class == type) {
-                    if (data1.getDoubleAt(index) != data2.getDoubleAt(index)) {
-                        return false;
-                    }
-                }
-                else if (long.class == type) {
-                    if (data1.getLongAt(index) != data2.getLongAt(index)) {
-                        return false;
-                    }
-                }
-                else if (boolean.class == type) {
-                    if (data1.getBooleanAt(index) != data2.getBooleanAt(index)) {
-                        return false;
-                    }
-                }
-                else if (byte.class == type) {
-                    if (data1.getByteAt(index) != data2.getByteAt(index)) {
-                        return false;
-                    }
-                }
-                else if (char.class == type) {
-                    if (data1.getCharAt(index) != data2.getCharAt(index)) {
-                        return false;
-                    }
-                }
-                else if (short.class == type) {
-                    if (data1.getShortAt(index) != data2.getShortAt(index)) {
-                        return false;
-                    }
-                }
-                else if (float.class == type) {
-                    if (data1.getFloatAt(index) != data2.getFloatAt(index)) {
-                        return false;
-                    }
-                }
-            }
-            if (!Objects.equals(data1.getAt(index), data2.getAt(index))) {
+            if (! Objects.equals(data1.getAt(index), data2.getAt(index))) {
                 return false;
             }
         }
@@ -134,56 +100,7 @@ public interface IndexedData<F> {
         }
         DataSchema<?> schema = data1.getSchema();
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
-            if (data1.hasIndex(index) != data1.hasIndex(index)) {
-                return false;
-            }
-            if (!data1.hasIndex(index)) {
-                continue;
-            }
-            Class<?> type = schema.getTypeAt(index);
-            if (type.isPrimitive()) {
-                if (int.class == type) {
-                    if (data1.getIntAt(index) != data2.getIntAt(index)) {
-                        return false;
-                    }
-                }
-                else if (double.class == type) {
-                    if (data1.getDoubleAt(index) != data2.getDoubleAt(index)) {
-                        return false;
-                    }
-                }
-                else if (long.class == type) {
-                    if (data1.getLongAt(index) != data2.getLongAt(index)) {
-                        return false;
-                    }
-                }
-                else if (boolean.class == type) {
-                    if (data1.getBooleanAt(index) != data2.getBooleanAt(index)) {
-                        return false;
-                    }
-                }
-                else if (byte.class == type) {
-                    if (data1.getByteAt(index) != data2.getByteAt(index)) {
-                        return false;
-                    }
-                }
-                else if (char.class == type) {
-                    if (data1.getCharAt(index) != data2.getCharAt(index)) {
-                        return false;
-                    }
-                }
-                else if (short.class == type) {
-                    if (data1.getShortAt(index) != data2.getShortAt(index)) {
-                        return false;
-                    }
-                }
-                else if (float.class == type) {
-                    if (data1.getFloatAt(index) != data2.getFloatAt(index)) {
-                        return false;
-                    }
-                }
-            }
-            if (!Objects.equals(data1.getAt(index), data2.getAt(index))) {
+            if (! Objects.equals(data1.getAt(index), data2.getAt(index))) {
                 return false;
             }
         }

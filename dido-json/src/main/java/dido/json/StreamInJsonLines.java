@@ -1,7 +1,5 @@
 package dido.json;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import dido.data.DataSchema;
 import dido.data.GenericData;
@@ -13,23 +11,81 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.util.function.Function;
 
 public class StreamInJsonLines implements DataInHow<String, InputStream> {
 
     private static final Type stringGenericDataType =
-            new TypeToken<GenericData<String>>() {}.getType();
+            new TypeToken<GenericData<String>>() {
+            }.getType();
 
-    private final DataSchema<String> schema;
+    private final Function<String, GenericData<String>> function;
 
-    private final boolean partialSchema;
+    private StreamInJsonLines(Function<String, GenericData<String>> function) {
 
-    public StreamInJsonLines() {
-        this(null, true);
+        this.function = function;
     }
 
-    public StreamInJsonLines(DataSchema<String> schema, boolean partialSchema) {
-        this.partialSchema = partialSchema || schema == null;
-        this.schema = schema == null ? DataSchema.emptySchema() : schema;
+    public static DataInHow<String, InputStream> asWrapperWithSchema(DataSchema<String> schema) {
+
+        return new Settings()
+                .setSchema(schema)
+                .make();
+    }
+
+    public static DataInHow<String, InputStream> asWrapperWithPartialSchema(DataSchema<String> partialSchema) {
+
+        return new Settings()
+                .setSchema(partialSchema)
+                .setPartial(true)
+                .make();
+    }
+
+    public static DataInHow<String, InputStream> asCopyWithSchema(DataSchema<String> schema) {
+
+        return new Settings()
+                .setCopy(true)
+                .setSchema(schema)
+                .make();
+    }
+
+    public static DataInHow<String, InputStream> asCopyWithPartialSchema(DataSchema<String> partialSchema) {
+
+        return new Settings()
+                .setCopy(true)
+                .setSchema(partialSchema)
+                .setPartial(true)
+                .make();
+    }
+
+    public static Settings settings() {
+
+        return new Settings();
+    }
+
+    public static class Settings {
+
+        private final JsonStringToData.Settings settings = JsonStringToData.withSettings();
+
+        public Settings setSchema(DataSchema<String> schema) {
+            this.settings.setSchema(schema);
+            return this;
+        }
+
+        public Settings setPartial(boolean partial) {
+            this.settings.setPartial(partial);
+            return this;
+        }
+
+        public Settings setCopy(boolean copy) {
+            this.settings.setCopy(copy);
+            return this;
+        }
+
+        public DataInHow<String, InputStream> make() {
+
+            return new StreamInJsonLines(this.settings.make());
+        }
     }
 
     @Override
@@ -39,10 +95,6 @@ public class StreamInJsonLines implements DataInHow<String, InputStream> {
 
     @Override
     public DataIn<String> inFrom(InputStream inputStream) {
-
-        Gson gson = new GsonBuilder().registerTypeAdapter(GenericData.class,
-                        new FieldRecordDeserializer(schema, partialSchema))
-                .create();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -55,7 +107,7 @@ public class StreamInJsonLines implements DataInHow<String, InputStream> {
                     if (line == null) {
                         return null;
                     } else {
-                        return gson.fromJson(line, stringGenericDataType);
+                        return function.apply(line);
                     }
                 } catch (IOException e) {
                     throw new IllegalArgumentException(e);
@@ -71,16 +123,6 @@ public class StreamInJsonLines implements DataInHow<String, InputStream> {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("JsonLines");
-        if (this.schema != null) {
-            if (partialSchema) {
-                builder.append(", with partial schema");
-            } else {
-                builder.append(", with schema");
-            }
-        } else {
-            builder.append(", with no schema");
-        }
-        return builder.toString();
+        return "JsonLines " + function;
     }
 }

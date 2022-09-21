@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 /**
  * Gson serializer for {@link GenericData}s.
  */
-public class FieldRecordSerializer implements JsonSerializer<GenericData<String>> {
+public class DataSerializer implements JsonSerializer<GenericData<String>> {
 
     @Override
     public JsonElement serialize(GenericData<String> src, Type typeOfSrc, JsonSerializationContext context) {

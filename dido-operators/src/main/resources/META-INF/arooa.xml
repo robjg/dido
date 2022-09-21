@@ -3,6 +3,8 @@
 	<conversions>
 		<arooa:conversion className="dido.operators.LeftStreamJoinType"
 						  methodName="get"/>
+		<arooa:conversion className="dido.operators.FlattenType"
+						  methodName="get"/>
 	</conversions>
 	<values>
 		<arooa:bean-def element='left-join' className='dido.operators.LeftStreamJoinType'>
@@ -42,6 +44,8 @@
 					</formItems>
 				</design:form>
 			</design>
+		</arooa:bean-def>
+		<arooa:bean-def element='flatten' className='dido.operators.FlattenType'>
 		</arooa:bean-def>
 	</values>
 	<components>

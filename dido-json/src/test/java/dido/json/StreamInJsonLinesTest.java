@@ -25,7 +25,8 @@ class StreamInJsonLinesTest {
         });
         bufferType.configured();
 
-        DataIn<String> in = new StreamInJsonLines().inFrom(bufferType.toInputStream());
+        DataIn<String> in = StreamInJsonLines.asWrapperWithPartialSchema(null)
+                .inFrom(bufferType.toInputStream());
 
         GenericData<String> data1 = in.get();
 
@@ -65,7 +66,7 @@ class StreamInJsonLinesTest {
                 .addField("Price", Double.class)
                 .build();
 
-        DataIn<String> in = new StreamInJsonLines(schema, true)
+        DataIn<String> in = StreamInJsonLines.asWrapperWithPartialSchema(schema)
                 .inFrom(bufferType.toInputStream());
 
         GenericData<String> data1 = in.get();

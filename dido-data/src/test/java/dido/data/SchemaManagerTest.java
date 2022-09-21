@@ -36,8 +36,8 @@ class SchemaManagerTest {
                 .addNestedField(FamilyFields.WIFE, "person")
                 .addRepeatingField(FamilyFields.CHILDREN, "person")
                 .addNestedField(FamilyFields.HOUSE, HouseFields.class)
-                        .addField(HouseFields.BEDROOMS, int.class)
-                        .addBack()
+                .addField(HouseFields.BEDROOMS, int.class)
+                .addBack()
                 .addToManager();
 
         DataSchema<FamilyFields> schema = schemaManager.getDefaultSchema();
@@ -92,5 +92,77 @@ class SchemaManagerTest {
 
         assertThat(schema.getTypeAt(1), is(SchemaField.NESTED_REPEATING_TYPE));
 
+    }
+
+    @Test
+    void testRepeatingNest() {
+
+        SchemaManager schemaManager = SchemaManager.newInstance()
+                .newDefaultSchema(String.class)
+                .addField("Name", String.class)
+                .addRepeatingField("Hobbies", String.class)
+                .addField("Title", String.class)
+                .addField("Cost", double.class)
+                .addBack()
+                .addToManager();
+
+        DataSchema<String> schema = schemaManager.getDefaultSchema();
+
+        DataSchema<String> expectedNested = SchemaBuilder.forStringFields()
+                .addField("Title", String.class)
+                .addField("Cost", double.class)
+                .build();
+
+        assertThat(schema.getTypeAt(2), is(SchemaField.NESTED_REPEATING_TYPE));
+
+        DataSchema<String> nested = schema.getSchema("Hobbies");
+
+        assertThat(nested, is(expectedNested));
+    }
+
+    @Test
+    void testEmptySchema() {
+
+        SchemaManager schemaManager = SchemaManager.newInstance()
+                .newDefaultSchema(String.class)
+                .addToManager();
+
+        DataSchema<String> dataSchema = schemaManager.getDefaultSchema();
+
+        assertThat(dataSchema, is(DataSchema.emptySchema()));
+    }
+
+    @Test
+    void testEmptyNestedSchema() {
+
+        SchemaManager schemaManager = SchemaManager.newInstance()
+                .newDefaultSchema(String.class)
+                .addNestedField("Foo", String.class)
+                .addBack()
+                .addToManager();
+
+        DataSchema<String> dataSchema = schemaManager.getDefaultSchema();
+
+        SchemaField<String> nestedField = dataSchema.getSchemaField("Foo");
+
+        assertThat(nestedField.getNestedSchema(), is(DataSchema.emptySchema()));
+        assertThat(nestedField.isRepeating(), is(false));
+    }
+
+    @Test
+    void testEmptyRepeatingSchema() {
+
+        SchemaManager schemaManager = SchemaManager.newInstance()
+                .newDefaultSchema(String.class)
+                .addRepeatingField("Foo", String.class)
+                .addBack()
+                .addToManager();
+
+        DataSchema<String> dataSchema = schemaManager.getDefaultSchema();
+
+        SchemaField<String> nestedField = dataSchema.getSchemaField("Foo");
+
+        assertThat(nestedField.getNestedSchema(), is(DataSchema.emptySchema()));
+        assertThat(nestedField.isRepeating(), is(true));
     }
 }

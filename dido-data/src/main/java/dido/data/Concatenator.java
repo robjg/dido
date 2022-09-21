@@ -391,7 +391,7 @@ public class Concatenator<F> {
      *
      * @param <F> Field Type.
      */
-    static class CompositeSchema<F> implements DataSchema<F> {
+    static class CompositeSchema<F> extends AbstractDataSchema<F> {
 
         private final OffsetSchema<F>[] schemaByIndex;
 

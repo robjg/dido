@@ -25,7 +25,7 @@ public class StreamOutJsonLines implements DataOutHow<String, OutputStream> {
     public DataOut<String> outTo(OutputStream outputStream) {
 
         Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(IndexedData.class, new FieldRecordSerializer())
+                .registerTypeHierarchyAdapter(IndexedData.class, new DataSerializer())
                 .create();
 
         OutputStreamWriter appendable = new OutputStreamWriter(outputStream);

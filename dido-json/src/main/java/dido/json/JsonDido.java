@@ -6,24 +6,60 @@ import dido.how.DataOutHow;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 
 public class JsonDido {
+
+    enum Format {
+        SINGLE,
+        ARRAY,
+        LINES,
+    }
 
     private DataSchema<String> schema;
 
     private boolean partialSchema;
 
-    private boolean arrayFormat;
+    private Format format;
+
+    private boolean copy;
 
     public DataOutHow<String, OutputStream> toStreamOut() {
 
-        return arrayFormat ? new StreamOutJson() : new StreamOutJsonLines();
+        Format format = Objects.requireNonNullElse(this.format, Format.LINES);
+        switch (format) {
+            case SINGLE:
+                return StreamOutJson.streamOutSingle();
+            case ARRAY:
+                return StreamOutJson.streamOutArray();
+            case LINES:
+                return new StreamOutJsonLines();
+            default:
+                throw new IllegalArgumentException("Unknown " + format);
+        }
     }
 
     public DataInHow<String, InputStream> toStreamIn() {
 
-        return arrayFormat ? new StreamInJson(schema, partialSchema)
-                : new StreamInJsonLines(schema, partialSchema);
+        Format format = Objects.requireNonNullElse(this.format, Format.LINES);
+        switch (format) {
+            case SINGLE:
+            case ARRAY:
+                return StreamInJson.settings()
+                        .setSchema(schema)
+                        .setPartial(partialSchema)
+                        .setCopy(copy)
+                        .setIsArray(format == Format.ARRAY)
+                        .make();
+            case LINES:
+                return StreamInJsonLines.settings()
+                        .setSchema(schema)
+                        .setPartial(partialSchema)
+                        .setCopy(copy)
+                        .make();
+            default:
+                throw new IllegalArgumentException("Unknown " + format);
+        }
     }
 
     public DataSchema<String> getSchema() {
@@ -42,18 +78,26 @@ public class JsonDido {
         this.partialSchema = partialSchema;
     }
 
-    public boolean isArrayFormat() {
-        return arrayFormat;
+    public Format getFormat() {
+        return format;
     }
 
-    public void setArrayFormat(boolean arrayFormat) {
-        this.arrayFormat = arrayFormat;
+    public void setFormat(Format format) {
+        this.format = format;
+    }
+
+    public boolean isCopy() {
+        return copy;
+    }
+
+    public void setCopy(boolean copy) {
+        this.copy = copy;
     }
 
     @Override
     public String toString() {
         return "JsonHow{" +
-                "arrayFormat=" + arrayFormat +
+                "arrayFormat=" + format +
                 '}';
     }
 }

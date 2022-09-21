@@ -48,7 +48,7 @@ public class SchemaManager {
             return self();
         }
 
-        //
+        // Nested Schemas from references.
 
         public B addNestedAt(int index, String schemaName) {
             return addNestedFieldAt(index, null, schemaName);
@@ -74,7 +74,7 @@ public class SchemaManager {
             return self();
         }
 
-        //
+        // Nested Schemas from previously defined schemas.
 
         public <N> B addNestedAt(int index, DataSchema<N> nestedSchema) {
             return this.addNestedFieldAt(index,null , nestedSchema);
@@ -89,7 +89,7 @@ public class SchemaManager {
             return self();
         }
 
-        //
+        // Nested Schemas from new inline schema definitions.
 
         public <N> NewNestedSchema<F, B, N> addNestedField(F field, Class<N> fieldType) {
 
@@ -103,10 +103,10 @@ public class SchemaManager {
 
         public <N> NewNestedSchema<F, B, N> addNestedIndexedField(int index, F field, Class<N> fieldType) {
 
-            return new NewNestedSchema<>(fieldType, this, index, field);
+            return new NewNestedSchema<>(fieldType, this, index, field, false);
         }
 
-        //
+        // Repeating Nested Schema from references.
 
         public <N> B addRepeatingAt(int index, String schemaName) {
             return this.addRepeatingFieldAt(index,null , schemaName);
@@ -132,7 +132,7 @@ public class SchemaManager {
             return self();
         }
 
-        //
+        // Repeating Nested schemas from previously defined schemas.
 
         public <N> B addRepeatingAt(int index, DataSchema<N> nestedSchema) {
             return this.addRepeatingFieldAt(index,null , nestedSchema);
@@ -146,6 +146,25 @@ public class SchemaManager {
             schemaBuilder.addRepeatingFieldAt(index, field, nestedSchema);
             return self();
         }
+
+        // Repeating Nested Schemas from new inline schema definitions.
+
+        public <N> NewNestedSchema<F, B, N> addRepeatingField(F field, Class<N> fieldType) {
+
+            return addRepeatingIndexedField(0, field, fieldType);
+        }
+
+        public <N> NewNestedSchema<F, B, N> addRepeatingIndex(int index, Class<N> fieldType) {
+
+            return addRepeatingIndexedField(index, null, fieldType);
+        }
+
+        public <N> NewNestedSchema<F, B, N> addRepeatingIndexedField(int index, F field, Class<N> fieldType) {
+
+            return new NewNestedSchema<>(fieldType, this, index, field, true);
+        }
+
+
 
         protected abstract B self();
 
@@ -193,11 +212,18 @@ public class SchemaManager {
 
         private final P field;
 
-        public NewNestedSchema(Class<F> fieldType, NewSchema<P, B> parentSchema, int index, P field) {
+        private final boolean repeating;
+
+        public NewNestedSchema(Class<F> fieldType,
+                               NewSchema<P, B> parentSchema,
+                               int index,
+                               P field,
+                               boolean repeating) {
             super(fieldType);
             this.parentSchema = parentSchema;
             this.index = index;
             this.field = field;
+            this.repeating = repeating;
         }
 
         public NewSchema<P, B> addNested() {
@@ -221,8 +247,14 @@ public class SchemaManager {
         }
 
         public void add() {
-            this.parentSchema.schemaBuilder.addNestedFieldAt(
-                    index, field, this.schemaBuilder.build());
+            if (repeating) {
+                this.parentSchema.schemaBuilder.addRepeatingFieldAt(
+                        index, field, this.schemaBuilder.build());
+            }
+            else {
+                this.parentSchema.schemaBuilder.addNestedFieldAt(
+                        index, field, this.schemaBuilder.build());
+            }
         }
 
         @Override

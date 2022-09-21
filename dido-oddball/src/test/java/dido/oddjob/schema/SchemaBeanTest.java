@@ -1,6 +1,7 @@
 package dido.oddjob.schema;
 
 import dido.data.DataSchema;
+import dido.data.SchemaField;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
@@ -67,4 +68,59 @@ class SchemaBeanTest {
         oddjob.destroy();
     }
 
+    @Test
+    void testRepeatingSchema() throws ArooaConversionException {
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setFile(new File(Objects.requireNonNull(
+                getClass().getResource("RepeatingSchema.xml")).getFile()));
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        @SuppressWarnings("unchecked")
+        DataSchema<String> schema = lookup.lookup("vars.schema", DataSchema.class);
+
+        assertThat(schema, notNullValue());
+        assertThat(schema.getType("Name"), is(String.class));
+
+        assertThat(schema.getType("Fruit"), is(SchemaField.NESTED_REPEATING_TYPE));
+        DataSchema<String> fruitSchema = schema.getSchema("Fruit");
+        assertThat(fruitSchema.getType("Fruit"), is(String.class));
+        assertThat(fruitSchema.getType("Qty"), is(int.class));
+
+        assertThat(schema.getType("Drink"), is(SchemaField.NESTED_REPEATING_TYPE));
+        DataSchema<String> drinkSchema = schema.getSchema("Drink");
+        assertThat(drinkSchema.getType("Volume"), is(double.class));
+
+        oddjob.destroy();
+    }
+
+    @Test
+    void testEmptyNestedRepeatingSchema() throws ArooaConversionException {
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setFile(new File(Objects.requireNonNull(
+                getClass().getResource("EmptyRepeatingSchema.xml")).getFile()));
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        @SuppressWarnings("unchecked")
+        DataSchema<String> schema = lookup.lookup("vars.schema", DataSchema.class);
+
+        assertThat(schema, notNullValue());
+
+        assertThat(schema.getType("OrderLines"), is(SchemaField.NESTED_REPEATING_TYPE));
+        DataSchema<String> nestedSchema = schema.getSchema("OrderLines");
+        assertThat(nestedSchema, is(DataSchema.emptySchema()));
+
+        oddjob.destroy();
+    }
 }

@@ -15,18 +15,89 @@ import java.nio.charset.StandardCharsets;
 
 public class StreamInJson implements DataInHow<String, InputStream> {
 
-    private final DataSchema<String> schema;
+    private final Gson gson;
 
-    private final boolean partialSchema;
+    private final boolean isArray;
 
-    public StreamInJson() {
-        this(null, true);
+    private StreamInJson(Gson gson, boolean isArray) {
+        this.gson = gson;
+        this.isArray = isArray;
     }
 
-    public StreamInJson(DataSchema<String> schema, boolean partialSchema) {
-        this.partialSchema = partialSchema || schema == null;
-        this.schema = schema == null ? DataSchema.emptySchema() : schema;
+    public static DataInHow<String, InputStream> asCopyWithPartialSchema(DataSchema<String> partialSchema,
+                                                                         boolean isArray) {
+        return new StreamInJson(JsonDataPartialCopy
+                .registerPartialSchema(new GsonBuilder(), partialSchema)
+                .create(), isArray);
     }
+
+    public static DataInHow<String, InputStream> asCopyWithSchema(DataSchema<String> partialSchema,
+                                                                         boolean isArray) {
+        return new StreamInJson(JsonDataCopy
+                .registerSchema(new GsonBuilder(), partialSchema)
+                .create(), isArray);
+    }
+
+    public static DataInHow<String, InputStream> asWrapperWithSchema(DataSchema<String> schema,
+                                                                  boolean isArray) {
+        return new StreamInJson(JsonDataWrapper
+                .registerSchema(new GsonBuilder(), schema)
+                .create(), isArray);
+    }
+
+    public static Settings settings() {
+
+        return new Settings();
+    }
+
+    public static class Settings {
+
+        private DataSchema<String> schema;
+
+        private boolean partial;
+
+        private boolean copy;
+
+        private boolean isArray;
+
+
+        public Settings setSchema(DataSchema<String> schema) {
+            this.schema = schema;
+            return this;
+        }
+
+        public Settings setPartial(boolean partial) {
+            this.partial = partial;
+            return this;
+        }
+
+        public Settings setIsArray(boolean isArray) {
+            this.isArray = isArray;
+            return this;
+        }
+
+        public Settings setCopy(boolean copy) {
+            this.copy = copy;
+            return this;
+        }
+
+        public DataInHow<String, InputStream> make() {
+
+            if (schema == null || partial) {
+                return asCopyWithPartialSchema(schema, isArray);
+            }
+            else {
+                if (copy) {
+                    return asCopyWithSchema(schema, isArray);
+
+                }
+                else {
+                    return asWrapperWithSchema(schema, isArray);
+                }
+            }
+        }
+    }
+
 
     @Override
     public Class<InputStream> getInType() {
@@ -36,14 +107,11 @@ public class StreamInJson implements DataInHow<String, InputStream> {
     @Override
     public DataIn<String> inFrom(InputStream inputStream) throws IOException {
 
-        Gson gson = new GsonBuilder().registerTypeAdapter(GenericData.class,
-                        new FieldRecordDeserializer(schema, partialSchema))
-                .create();
+        final JsonReader reader = new JsonReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-        JsonReader reader;
-        reader = new JsonReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-
-        reader.beginArray();
+        if (isArray) {
+            reader.beginArray();
+        }
 
         return new DataIn<>() {
 
@@ -62,7 +130,9 @@ public class StreamInJson implements DataInHow<String, InputStream> {
 
             @Override
             public void close() throws IOException {
-                reader.endArray();
+                if (isArray) {
+                    reader.endArray();
+                }
                 reader.close();
             }
         };
@@ -70,16 +140,6 @@ public class StreamInJson implements DataInHow<String, InputStream> {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("JsonArray");
-        if (this.schema != null) {
-            if (partialSchema) {
-                builder.append(", with partial schema");
-            } else {
-                builder.append(", with schema");
-            }
-        } else {
-            builder.append(", with no schema");
-        }
-        return builder.toString();
+        return "Stream In Json" + (isArray ? " from Array" : "");
     }
 }

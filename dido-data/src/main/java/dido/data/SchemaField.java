@@ -9,9 +9,9 @@ import java.util.Objects;
  */
 public interface SchemaField<F> {
 
-    Class<?> NESTED_TYPE = IndexedData.class;
+    Class<?> NESTED_TYPE = GenericData.class;
 
-    Class<?> NESTED_REPEATING_TYPE = IndexedData[].class;
+    Class<?> NESTED_REPEATING_TYPE = RepeatingData.class;
 
     int getIndex();
 

@@ -23,7 +23,7 @@ public class ArrayData<F> extends AbstractGenericData<F> implements GenericData<
     public static <T> GenericData<T> of(Object... data) {
         Objects.requireNonNull(data);
 
-        DataSchema<T> schema = new DataSchema<>() {
+        DataSchema<T> schema = new AbstractDataSchema<>() {
 
             @Override
             public SchemaField<T> getSchemaFieldAt(int index) {

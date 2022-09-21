@@ -33,11 +33,6 @@ public interface EnumSchema<E extends Enum<E>> extends DataSchema<E> {
             }
 
             @Override
-            public SchemaField<E> getSchemaFieldAt(int index) {
-                return delegate.getSchemaFieldAt(index);
-            }
-
-            @Override
             public int getIndex(E field) {
                 return delegate.getIndex(field);
             }
@@ -55,6 +50,46 @@ public interface EnumSchema<E extends Enum<E>> extends DataSchema<E> {
             @Override
             public int lastIndex() {
                 return delegate.lastIndex();
+            }
+
+            @Override
+            public SchemaField<E> getSchemaFieldAt(int index) {
+                return delegate.getSchemaFieldAt(index);
+            }
+
+            @Override
+            public E getFieldAt(int index) {
+                return delegate.getFieldAt(index);
+            }
+
+            @Override
+            public Class<?> getTypeAt(int index) {
+                return delegate.getTypeAt(index);
+            }
+
+            @Override
+            public <N> DataSchema<N> getSchemaAt(int index) {
+                return delegate.getSchemaAt(index);
+            }
+
+            @Override
+            public Collection<SchemaField<E>> getSchemaFields() {
+                return delegate.getSchemaFields();
+            }
+
+            @Override
+            public SchemaField<E> getSchemaField(E field) {
+                return delegate.getSchemaField(field);
+            }
+
+            @Override
+            public Class<?> getType(E field) {
+                return delegate.getType(field);
+            }
+
+            @Override
+            public <N> DataSchema<N> getSchema(E field) {
+                return delegate.getSchema(field);
             }
 
             @Override

@@ -29,6 +29,8 @@ public class DataSchemaTest {
 
         DataSchema<Integer> schema3 = DataSchema.emptySchema();
 
+        assertThat(schema1.hashCode(), is(0));
+
         assertThat(schema1, is(schema2));
         assertThat(schema1.hashCode(), is(schema2.hashCode()));
         assertThat(schema2, is(schema3));

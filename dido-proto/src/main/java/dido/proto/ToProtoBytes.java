@@ -9,6 +9,9 @@ import dido.data.SchemaField;
 
 import java.util.function.Function;
 
+/**
+ * Converts {@link IndexedData} into a Protobuf message as a byte array using the provided protobuf descriptor.
+ */
 public class ToProtoBytes implements Function<IndexedData<?>, byte[]> {
 
     private final Descriptors.Descriptor descriptor;

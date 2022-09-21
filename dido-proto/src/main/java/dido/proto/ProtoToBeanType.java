@@ -6,6 +6,10 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * Provide a function that can be used to transform a
+ * @param <T>
+ */
 public class ProtoToBeanType<T> implements Supplier<Function<byte[], T>> {
 
     private Class<T> protoClass;

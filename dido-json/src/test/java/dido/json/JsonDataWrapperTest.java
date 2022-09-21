@@ -1,12 +1,9 @@
 package dido.json;
 
-import com.google.gson.*;
-import dido.data.DataSchema;
-import dido.data.SchemaBuilder;
-import dido.data.IndexedData;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import dido.data.*;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Type;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -35,23 +32,6 @@ class JsonDataWrapperTest {
         Number aNumber = 67.2;
     }
 
-    public static class TestDeserializer implements JsonDeserializer<IndexedData<?>> {
-
-        private final JsonDataWrapper test;
-
-        public TestDeserializer(DataSchema<String> schema) {
-            this.test = JsonDataWrapper.from(schema);
-        }
-
-        @Override
-        public IndexedData<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-
-            JsonObject jsonObject = (JsonObject) json;
-
-            return test.wrap(jsonObject, context);
-        }
-    }
-
     @Test
     void testWithAllFields() {
 
@@ -67,13 +47,12 @@ class JsonDataWrapperTest {
                 .addField("aNumber", Number.class)
                 .build();
 
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(IndexedData.class, new TestDeserializer(schema))
+        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                 .create();
 
         String json = gson.toJson(new AllFields());
 
-        IndexedData<?> result = gson.fromJson(json, IndexedData.class);
+        IndexedData<?> result = gson.fromJson(json, GenericData.class);
 
         assertThat(result.getStringAt(1), is("Apple"));
         assertThat(result.getBooleanAt(2), is(true));
@@ -98,13 +77,12 @@ class JsonDataWrapperTest {
                 .addField("aDouble", Double.class)
                 .build();
 
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(IndexedData.class, new TestDeserializer(schema))
+        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                 .create();
 
         String json = gson.toJson(new AllFields());
 
-        IndexedData<?> result = gson.fromJson(json, IndexedData.class);
+        IndexedData<?> result = gson.fromJson(json, GenericData.class);
 
         assertThat(result.getByteAt(3), is(Byte.MAX_VALUE));
         assertThat(result.getShortAt(4), is(Short.MAX_VALUE));
@@ -129,13 +107,12 @@ class JsonDataWrapperTest {
                 .addField("aNumber", Number.class)
                 .build();
 
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(IndexedData.class, new TestDeserializer(schema))
+        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                 .create();
 
         String json = gson.toJson(new AllFields());
 
-        IndexedData<?> result = gson.fromJson(json, IndexedData.class);
+        IndexedData<?> result = gson.fromJson(json, GenericData.class);
 
         assertThat(result.getAt(1), is("Apple"));
         assertThat(result.getAt(2), is(true));
@@ -163,23 +140,64 @@ class JsonDataWrapperTest {
                 .addField("aNumber", Number.class)
                 .build();
 
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(IndexedData.class, new TestDeserializer(schema))
+        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                 .create();
 
         String json = "{}";
 
-        IndexedData<?> result = gson.fromJson(json, IndexedData.class);
-
+        IndexedData<?> result = gson.fromJson(json, GenericData.class);
 
         assertThat(result.getStringAt(1), nullValue());
-        assertThat(result.getBooleanAt(2), is(false));
-        assertThat(result.getByteAt(3), is((byte) 0));
-        assertThat(result.getShortAt(4), is((short) 0));
-        assertThat(result.getIntAt(5), is(0));
-        assertThat(result.getLongAt(6), is(0L));
-        assertThat(result.getFloatAt(7), is(0.0F));
-        assertThat(result.getDoubleAt(8), is(0.0));
+        assertThat(result.hasIndex(2), is(false));
+        assertThat(result.hasIndex(3), is(false));
+        assertThat(result.hasIndex(4), is(false));
+        assertThat(result.hasIndex(5), is(false));
+        assertThat(result.hasIndex(6), is(false));
+        assertThat(result.hasIndex(7), is(false));
+        assertThat(result.hasIndex(8), is(false));
         assertThat(result.getAtAs(9, Number.class), nullValue());
+    }
+
+    @Test
+    void testNestedData() {
+
+        String json = "{ \"OrderId\": \"A123\", \n" +
+                "    \"OrderLines\": [ \n" +
+                "      {\"Fruit\": \"Apple\", \"Qty\": 4}, \n" +
+                "      {\"Fruit\": \"Pear\", \"Qty\": 5}\n" +
+                "    ]\n" +
+                "  }";
+
+
+        DataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+                .addField("Fruit", String.class)
+                .addField("Qty", int.class)
+                .build();
+
+        DataSchema<String> schema = SchemaBuilder.forStringFields()
+                .addField("OrderId", String.class)
+                .addRepeatingField("OrderLines", nestedSchema)
+                .build();
+
+        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+                .create();
+
+        GenericData<String> result = (GenericData<String>) gson.fromJson(json, GenericData.class);
+
+        RepeatingData<String> repeatingData = (RepeatingData<String>) result.getAt(2);
+
+
+        System.out.println(GenericData.toString(repeatingData.get(0)));
+
+
+        IndexedData<String> expectedData = ArrayData.valuesFor(schema)
+                .of("A123",
+                        RepeatingData.of(ArrayData.valuesFor(nestedSchema)
+                                        .of("Apple", 4),
+                                ArrayData.valuesFor(nestedSchema)
+                                        .of("Pear", 5)));
+
+        assertThat(result, is(expectedData));
+
     }
 }

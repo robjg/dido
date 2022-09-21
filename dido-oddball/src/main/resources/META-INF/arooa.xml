@@ -8,9 +8,64 @@
 	</conversions>
 	<values>
 		<arooa:bean-def element='schema'
-						className='dido.oddjob.schema.SchemaBean'/>
+						className='dido.oddjob.schema.SchemaBean'>
+			<design>
+				<design:form xmlns:design="arooa:design">
+					<formItems>
+						<design:group bordered="true" title="General">
+							<formItems>
+								<design:text property="name" title="Name"/>
+							</formItems>
+						</design:group>
+						<design:group bordered="true" title="One Of">
+								<formItems>
+									<design:radio>
+										<formItems>
+											<design:text property="named" title="Named"/>
+											<design:indexed property="of" title="Of"/>
+											<design:indexed property="list" title="List"/>
+										</formItems>
+									</design:radio>
+								</formItems>
+						</design:group>
+					</formItems>
+				</design:form>
+			</design>
+		</arooa:bean-def>
 		<arooa:bean-def element='field'
-						className='dido.oddjob.schema.SchemaFieldBean'/>
+						className='dido.oddjob.schema.SchemaFieldBean'>
+			<design>
+				<design:form xmlns:design="arooa:design">
+					<formItems>
+						<design:group bordered="true" title="General">
+							<formItems>
+								<design:text property="name" title="Name"/>
+								<design:text property="index" title="Index"/>
+							</formItems>
+						</design:group>
+						<design:group bordered="true" title="Either Or">
+							<formItems>
+								<design:radio>
+									<formItems>
+										<design:group bordered="true" title="Simple">
+											<formItems>
+												<design:text property="type" title="Type"/>
+											</formItems>
+										</design:group>
+										<design:group bordered="true" title="Nested">
+											<formItems>
+												<design:single property="nested" title="Schema"/>
+												<design:text property="repeating" title="Repeating"/>
+											</formItems>
+										</design:group>
+									</formItems>
+								</design:radio>
+							</formItems>
+						</design:group>
+					</formItems>
+				</design:form>
+			</design>
+		</arooa:bean-def>
 		<arooa:bean-def element='to-bean'
 		    className='dido.oddjob.bean.ToBeanTransformer'/>
 		<arooa:bean-def element='from-bean'

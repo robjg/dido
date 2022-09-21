@@ -9,7 +9,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
 
-class FieldRecordSerializerTest {
+class DataSerializerTest {
 
     @Test
     void whenGenericDataOfPrimitivesThenCorrectJsonProduced() throws JSONException {
@@ -25,7 +25,7 @@ class FieldRecordSerializerTest {
                 .of("Apple", null, 15, 26.5);
 
         Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(IndexedData.class, new FieldRecordSerializer())
+                .registerTypeHierarchyAdapter(IndexedData.class, new DataSerializer())
                 .create();
 
         String json = gson.toJson(data, IndexedData.class);
@@ -60,7 +60,7 @@ class FieldRecordSerializerTest {
                                 .of(1.2, 3.4));
 
         Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(IndexedData.class, new FieldRecordSerializer())
+                .registerTypeHierarchyAdapter(IndexedData.class, new DataSerializer())
                 .create();
 
         String json = gson.toJson(data, IndexedData.class);

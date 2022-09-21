@@ -35,21 +35,16 @@ public interface DataSchema<F> {
      *
      * @return F the field or null.
      */
-    default F getFieldAt(int index) {
-        return getSchemaFieldAt(index).getField();
-    }
-
+    F getFieldAt(int index);
 
     /**
      * Get the type that a value is at a given index. If the
      * index does not exist behaviour is undefined.
      *
-     * @param index The field.
+     * @param index The index.
      * @return The type.
      */
-    default Class<?> getTypeAt(int index) {
-        return getSchemaFieldAt(index).getType();
-    }
+    Class<?> getTypeAt(int index);
 
     /**
      * Get the nested schema a given index. If the
@@ -63,9 +58,7 @@ public interface DataSchema<F> {
      * @param index The field.
      * @return The nested schema.
      */
-    default <N> DataSchema<N> getSchemaAt(int index) {
-        return getSchemaFieldAt(index).getNestedSchema();
-    }
+    <N> DataSchema<N> getSchemaAt(int index);
 
     /**
      * Get the index for a given field. If the field does not
@@ -112,29 +105,14 @@ public interface DataSchema<F> {
      *
      * @return A collection of fields. May be empty. Never null.
      */
-    default Collection<F> getFields() {
-        List<F> fields = new ArrayList<>(lastIndex());
-        for (int i = firstIndex(); i > 0; i = nextIndex(i)) {
-            F field = getFieldAt(i);
-            if (field != null) {
-                fields.add(field);
-            }
-        }
-        return fields;
-    }
+    Collection<F> getFields();
 
     /**
      * Get all the {@link SchemaField}s in this schema.
      *
      * @return A collection of Schema Fields. May be empty. Never null.
      */
-    default Collection<SchemaField<F>> getSchemaFields() {
-        List<SchemaField<F>> schemaFields = new ArrayList<>(lastIndex());
-        for (int i = firstIndex(); i > 0; i = nextIndex(i)) {
-            schemaFields.add(getSchemaFieldAt(i));
-        }
-        return schemaFields;
-    }
+    Collection<SchemaField<F>> getSchemaFields();
 
     /**
      * Get the {@link SchemaField} for the given field. If the
@@ -143,9 +121,7 @@ public interface DataSchema<F> {
      * @param field The field.
      * @return The type.
      */
-    default SchemaField<F> getSchemaField(F field) {
-        return getSchemaFieldAt(getIndex(field));
-    }
+    SchemaField<F> getSchemaField(F field);
 
     /**
      * Get the type that a value is at a given field. If the
@@ -154,23 +130,17 @@ public interface DataSchema<F> {
      * @param field The field.
      * @return The type.
      */
-    default Class<?> getType(F field) {
-        return getTypeAt(getIndex(field));
-    }
+    Class<?> getType(F field);
 
     /**
      * Get the nested schema for the given field. If the
-     * field does not exist behaviour is undefined.
-     * If the type of data for this field is {@link GenericData} or an
-     * array of {@link GenericData} then this method
-     * will not return null, otherwise it will return null.
+     * field does not exist this method should return null, or if
+     * there is not nested schema it will return null.
      *
      * @param field The field.
-     * @return The nested schema.
+     * @return The nested schema or null.
      */
-    default <N> DataSchema<N> getSchema(F field) {
-        return getSchemaAt(getIndex(field));
-    }
+    <N> DataSchema<N> getSchema(F field);
 
     /**
      * Provide an empty schema.
@@ -254,6 +224,21 @@ public interface DataSchema<F> {
     class EmptySchema<F> implements DataSchema<F> {
 
         @Override
+        public Collection<SchemaField<F>> getSchemaFields() {
+            return null;
+        }
+
+        @Override
+        public SchemaField<F> getSchemaField(F field) {
+            return null;
+        }
+
+        @Override
+        public Class<?> getType(F field) {
+            return null;
+        }
+
+        @Override
         public SchemaField<F> getSchemaFieldAt(int index) {
             return null;
         }
@@ -296,6 +281,11 @@ public interface DataSchema<F> {
         @Override
         public Collection<F> getFields() {
             return Collections.emptyList();
+        }
+
+        @Override
+        public <N> DataSchema<N> getSchema(F field) {
+            return null;
         }
 
         @Override

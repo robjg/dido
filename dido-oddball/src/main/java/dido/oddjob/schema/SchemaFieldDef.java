@@ -9,4 +9,6 @@ public interface SchemaFieldDef {
     Class<?> getType();
 
     SchemaWrapper getNested();
+
+    boolean isRepeating();
 }

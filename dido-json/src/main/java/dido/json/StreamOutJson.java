@@ -18,6 +18,25 @@ import java.nio.charset.StandardCharsets;
  */
 public class StreamOutJson implements DataOutHow<String, OutputStream> {
 
+    private final Gson gson = new GsonBuilder()
+            .registerTypeHierarchyAdapter(IndexedData.class, new DataSerializer())
+            .create();
+
+    final private boolean array;
+
+    private StreamOutJson(boolean array) {
+        this.array = array;
+    }
+
+    public static DataOutHow<String, OutputStream> streamOutSingle() {
+        return new StreamOutJson(false);
+    }
+
+    public static DataOutHow<String, OutputStream> streamOutArray() {
+        return new StreamOutJson(true);
+    }
+
+
     @Override
     public Class<OutputStream> getOutType() {
         return OutputStream.class;
@@ -26,13 +45,11 @@ public class StreamOutJson implements DataOutHow<String, OutputStream> {
     @Override
     public DataOut<String> outTo(OutputStream outputStream) throws IOException {
 
-        Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(IndexedData.class, new FieldRecordSerializer())
-                .create();
-
         JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
         writer.setIndent("  ");
-        writer.beginArray();
+        if (array) {
+            writer.beginArray();
+        }
 
         return new DataOut<>() {
             @Override
@@ -51,6 +68,6 @@ public class StreamOutJson implements DataOutHow<String, OutputStream> {
 
     @Override
     public String toString() {
-        return "JsonArray";
+        return "Json " + (array ? "array" : "single") + "  to OutputStream";
     }
 }

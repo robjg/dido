@@ -42,7 +42,14 @@ class SchemaBuilderTest {
         assertThat(schema.nextIndex(6), is(20));
         assertThat(schema.nextIndex(20), is(0));
         assertThat(schema.getFields().isEmpty(), is(true));
-        assertThat(schema.getFieldAt(2), nullValue());
+
+        try {
+            assertThat(schema.getFieldAt(2), nullValue());
+            assertThat("Expected to fail", false);
+        }
+        catch (IndexOutOfBoundsException e) {
+            // expected
+        }
     }
 
     @Test
@@ -215,4 +222,14 @@ class SchemaBuilderTest {
                 is("{[1:fruit]=java.lang.String, [2:qty]=int, [3:price]=double}"));
     }
 
+    @Test
+    void builtEmptySchemaEqualsEmptySchema() {
+
+        DataSchema<?> schema1 = SchemaBuilder.impliedType().build();
+
+        DataSchema<?> schema2 = DataSchema.emptySchema();
+
+        assertThat(schema1.hashCode(), is(schema2.hashCode()));
+        assertThat(schema1, is(schema2));
+    }
 }

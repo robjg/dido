@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in name="Data" xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:json-stream format="ARRAY" partialSchema="true">
+                                    <schema>
+                                        <dido:schema>
+                                            <of>
+                                                <dido:field name="OrderLines" repeating="true">
+                                                    <nested>
+                                                        <dido:schema>
+                                                            <of>
+                                                                <dido:field name="Qty" type="int"/>
+                                                            </of>
+                                                        </dido:schema>
+                                                    </nested>
+                                                </dido:field>
+                                            </of>
+                                        </dido:schema>
+                                    </schema>
+                                </dido:json-stream>
+                            </how>
+                            <from>
+                                <buffer>
+                                    <![CDATA[[
+  { "OrderId": "A123", 
+    "OrderLines": [ 
+      {"Fruit": "Apple", "Qty": 4}, 
+      {"Fruit": "Pear", "Qty": 5}
+    ]
+  }
+]]]>
+                                </buffer>
+                            </from>
+                        </dido:data-in>
+                        <bus:map>
+                            <function>
+                                <dido:flatten field="OrderLines" xmlns:dido="oddjob:dido"/>
+                            </function>
+                        </bus:map>
+                        <bean class="org.oddjob.beanbus.destinations.UnPack"/>
+                        <bus:collect id="results"/>
+                        <dido:data-out xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:csv/>
+                            </how>
+                            <to>
+                                <stdout/>
+                            </to>
+                        </dido:data-out>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>
