@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.contains;
 class FlattenTest {
 
     @Test
-    void testFlattenList() {
+    void testFlattenRepeatingField() {
 
         DataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
                 .addField("Fruit", String.class)
@@ -45,5 +45,19 @@ class FlattenTest {
                 .of("A123", "Pear", 5);
 
         assertThat(results, contains(expected1, expected2));
+    }
+
+    @Test
+    void testFlattenListField() {
+
+        GenericData<Object> data = ArrayData.of("Foo", List.of(1, 2, 3), List.of("X", "Y"));
+
+        List<GenericData<Object>> results = Flatten.indices(2, 3)
+                .apply(data);
+
+        assertThat(results, contains(
+                ArrayData.of("Foo", 1, "X"),
+                ArrayData.of("Foo", 2, "Y"),
+                ArrayData.of("Foo", 3, null)));
     }
 }

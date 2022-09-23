@@ -40,7 +40,7 @@
                         </dido:data-in>
                         <bus:map>
                             <function>
-                                <dido:flatten field="OrderLines" xmlns:dido="oddjob:dido"/>
+                                <dido:flatten fields="OrderLines" xmlns:dido="oddjob:dido"/>
                             </function>
                         </bus:map>
                         <bean class="org.oddjob.beanbus.destinations.UnPack"/>

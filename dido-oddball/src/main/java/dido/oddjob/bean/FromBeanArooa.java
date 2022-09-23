@@ -1,9 +1,6 @@
 package dido.oddjob.bean;
 
-import dido.data.DataSchema;
-import dido.data.GenericData;
-import dido.data.IndexedData;
-import dido.data.SchemaBuilder;
+import dido.data.*;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.ArooaClass;
@@ -12,6 +9,9 @@ import org.oddjob.arooa.reflect.PropertyAccessor;
 
 import java.util.function.Function;
 
+/**
+ * Converts a Java Bean to {@link GenericData} using an Arooa {@link PropertyAccessor}.
+ */
 public class FromBeanArooa {
 
     private final PropertyAccessor accessor;
@@ -62,7 +62,7 @@ public class FromBeanArooa {
         }
     }
 
-    class Impl implements GenericData<String> {
+    class Impl extends AbstractGenericData<String> {
 
         private final DataSchema<String> schema;
 
@@ -145,21 +145,6 @@ public class FromBeanArooa {
         @Override
         public String getString(String field) {
             return (String) accessor.getProperty(bean, field);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof IndexedData) {
-                return IndexedData.equals(this, (IndexedData<?>) o);
-            }
-            else {
-                return false;
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return IndexedData.hashCode(this);
         }
 
         @Override

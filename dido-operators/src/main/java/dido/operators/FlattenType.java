@@ -4,6 +4,7 @@ import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.data.IndexedData;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,26 +13,37 @@ import java.util.function.Supplier;
 
 public class FlattenType implements Supplier<Function<IndexedData<String>, List<GenericData<String>>>> {
 
-    private String field;
+    private String[] fields;
+
+    private boolean columns;
 
     private DataSchema<String> schema;
 
     @Override
     public Function<IndexedData<String>, List<GenericData<String>>> get() {
 
-        String field = Objects.requireNonNull(this.field, "Field must be provided");
+        String[] fields = Objects.requireNonNull(this.fields, "Field must be provided");
 
-        return Optional.ofNullable(schema)
-                .map(s -> Flatten.fieldOfSchema(field, s))
-                .orElseGet(() -> Flatten.field(field));
+        if (columns) {
+
+            return Flatten.fields(fields);
+        }
+        else {
+            String field = fields[0];
+
+            return Optional.ofNullable(schema)
+                    .map(s -> Flatten.fieldOfSchema(field, s))
+                    .orElseGet(() -> Flatten.field(field));
+        }
+
     }
 
-    public String getField() {
-        return field;
+    public String[] getFields() {
+        return fields;
     }
 
-    public void setField(String field) {
-        this.field = field;
+    public void setFields(String[] field) {
+        this.fields = field;
     }
 
     public DataSchema<String> getSchema() {
@@ -42,10 +54,18 @@ public class FlattenType implements Supplier<Function<IndexedData<String>, List<
         this.schema = schema;
     }
 
+    public boolean isColumns() {
+        return columns;
+    }
+
+    public void setColumns(boolean columns) {
+        this.columns = columns;
+    }
+
     @Override
     public String toString() {
         return "Flatten{" +
-                "field='" + field + '\'' +
+                "fields='" + Arrays.toString(fields) + '\'' +
                 '}';
     }
 }

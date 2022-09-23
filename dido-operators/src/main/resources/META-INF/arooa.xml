@@ -46,6 +46,9 @@
 			</design>
 		</arooa:bean-def>
 		<arooa:bean-def element='flatten' className='dido.operators.FlattenType'>
+			<properties>
+				<arooa:property name="fields" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
+			</properties>
 		</arooa:bean-def>
 	</values>
 	<components>

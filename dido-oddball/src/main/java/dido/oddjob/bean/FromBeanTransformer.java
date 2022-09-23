@@ -12,6 +12,9 @@ import org.oddjob.arooa.reflect.PropertyAccessor;
 
 import java.util.function.Function;
 
+/**
+ * @oddjob.description Transform a Bean to Generic Data.
+ */
 public class FromBeanTransformer implements ArooaSessionAware, ArooaValue {
 
     private ArooaClass arooaClass;
