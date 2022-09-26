@@ -58,7 +58,7 @@ class TransposeTest {
 
         Transpose<String, String> transpose = new Transpose<>();
         transpose.setOf(0, copy1.toValue());
-        transpose.setPartial(true);
+        transpose.setStrategy(SchemaStrategy.NEW);
 
         Function<GenericData<String>, GenericData<String>> func = transpose.toValue();
 

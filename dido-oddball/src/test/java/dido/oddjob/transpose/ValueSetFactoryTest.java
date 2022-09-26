@@ -41,13 +41,13 @@ class ValueSetFactoryTest {
 
         assertThat(schema.getFieldAt(1), is("type"));
         assertThat(schema.getType("type"), is(String.class));
-        assertThat(schema.getFieldAt(2), is("quantity"));
-        assertThat(schema.getType("quantity"), is(int.class));
+        assertThat(schema.getFieldAt(2), is("qty"));
+        assertThat(schema.getType("qty"), is(int.class));
         assertThat(schema.getFieldAt(3), is("price"));
         assertThat(schema.getType("price"), is(double.class));
 
         assertThat(result1.get("type"), is("Apple"));
-        assertThat(result1.getInt("quantity"), is(20));
+        assertThat(result1.getInt("qty"), is(20));
         assertThat(result1.getDouble("price"), is(27.2));
 
         GenericData<String> result2 = results.get(1);

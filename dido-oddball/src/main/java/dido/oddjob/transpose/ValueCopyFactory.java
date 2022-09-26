@@ -8,6 +8,8 @@ import org.oddjob.arooa.convert.ConversionPath;
 import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.arooa.types.ValueFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Function;
 
@@ -15,6 +17,8 @@ import java.util.function.Function;
  * Copy a field from one position and/or field and/or type to another.
  */
 public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, String>>, ArooaSessionAware {
+
+    private static final Logger logger = LoggerFactory.getLogger(ValueCopyFactory.class);
 
     /**
      * From field.
@@ -120,61 +124,68 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
                                                DataSchema<String> fromSchema,
                                                SchemaSetter<String> schemaSetter) {
 
-            String to;
-            int at;
+            String from;
+            int index;
 
-            if (this.at == 0) {
+            if (this.from == null) {
                 if (this.index == 0) {
-                    if (this.from == null) {
-                        at = position;
-                    }
-                    else {
-                        at = fromSchema.getIndex(this.from);
-                    }
+                    index = position;
                 }
                 else {
-                    at = this.index;
+                    index = this.index;
                 }
+                from = fromSchema.getFieldAt(index);
+            }
+            else {
+                from = this.from;
+                // ignore index
+                index = fromSchema.getIndex(from);
+                if (index < 1) {
+                    throw new IllegalArgumentException("No field [" + from + "]");
+                }
+            }
+
+            int at;
+            if (this.at == 0) {
+                at = index;
             }
             else {
                 at = this.at;
             }
 
-            int index;
-            if (this.index == 0) {
-                index = position;
-            }
-            else {
-                index = this.index;
-            }
-
-            Function<Function<Object,Object>, Transposer<String, String>> transposerFn = (conversion) ->
-                    (from, into) -> into.setAt(at, conversion.apply(from.getAt(index)));
-
+            String to;
             if (this.to == null) {
-                if (this.from == null) {
-                    if (this.index == 0) {
-                        to = null;
-                    }
-                    else {
-                        to = fromSchema.getFieldAt(this.index);
-                    }
-                }
-                else {
-                    to = this.from;
-                    transposerFn = (conversion) ->
-                            (from, into) -> into.setAt(at, conversion.apply(from.get(this.from)));
-                }
+                to = from;
             }
             else {
                 to = this.to;
-                if (this.from == null) {
+            }
+
+            Function<Function<Object,Object>, Transposer<String, String>> transposerFn;
+
+            if (to == null) {
+                if (from == null) {
+                    logger.info("Creating Copy from {} to {}", index, at);
                     transposerFn = (conversion) ->
-                            (from, into) -> into.set(to, conversion.apply(from.getAt(index)));
+                            (fromData, into) -> into.setAt(at, conversion.apply(fromData.getAt(index)));
                 }
                 else {
+                    logger.info("Creating Copy from {} to {}", from, at);
                     transposerFn = (conversion) ->
-                            (from, into) -> into.set(to, conversion.apply(from.get(this.from)));
+                            (fromData, into) -> into.setAt(at, conversion.apply(fromData.get(from)));
+                }
+            }
+            else {
+                if (from == null) {
+                    logger.info("Creating Copy from {} to {}", index, to);
+                    transposerFn = (conversion) ->
+                            (fromData, into) -> into.set(to, conversion.apply(fromData.getAt(index)));
+                }
+                else {
+                    logger.info("Creating Copy from {} to {}", from, to);
+                    transposerFn = (conversion) ->
+                            (fromData, into) -> into.set(to, conversion.apply(fromData.get(from)));
+
                 }
             }
 
@@ -195,7 +206,12 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
                 }
                 conversion = in -> {
                     try {
-                        return conversionPath.convert(in, converter);
+                        if (in == null) {
+                            return  null;
+                        }
+                        else {
+                            return conversionPath.convert(in, converter);
+                        }
                     } catch (ConversionFailedException e) {
                         throw new IllegalArgumentException(e);
                     }

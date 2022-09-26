@@ -18,7 +18,7 @@
                     <function>
                         <dido:transpose xmlns:dido="oddjob:dido">
                             <of>
-                                <dido:set field="quantity">
+                                <dido:set field="qty">
                                     <value>
                                         <value value="20"/>
                                     </value>

@@ -1,5 +1,11 @@
 package dido.oddjob.transpose;
 
+/**
+ * Provides the ability to set data. Intended to sit in front of {@link dido.data.DataBuilders} and
+ * not provide the ability to build.
+ *
+ * @param <F> The field type.
+ */
 public interface DataSetter<F> {
 
     void set(F field, Object value);

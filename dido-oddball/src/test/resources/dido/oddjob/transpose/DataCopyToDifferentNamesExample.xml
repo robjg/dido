@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <bus:driver>
+                    <values>
+                        <list>
+                            <values>
+                                <bean class="dido.oddjob.types.GenericDataType">
+                                    <schema>
+                                        <dido:schema xmlns:dido="oddjob:dido">
+                                            <of>
+                                                <dido:field name="One" type="int"/>
+                                                <dido:field name="Two" type="int"/>
+                                                <dido:field name="Three" type="int"/>
+                                                <dido:field name="Four" type="int"/>
+                                                <dido:field name="Five" type="int"/>
+                                                <dido:field name="Six" type="int"/>
+                                                <dido:field name="Seven" type="int"/>
+                                            </of>
+                                        </dido:schema>
+                                    </schema>
+                                    <values>
+                                        <list>
+                                            <values>
+                                                <value value="1"/>
+                                                <value value="2"/>
+                                                <value value="3"/>
+                                                <value value="4"/>
+                                                <value value="5"/>
+                                                <value value="6"/>
+                                                <value value="7"/>
+                                            </values>
+                                        </list>
+                                    </values>
+                                </bean>
+                            </values>
+                        </list>
+                    </values>
+                </bus:driver>
+                <bus:map>
+                    <function>
+                        <dido:transpose strategy="MERGE" xmlns:dido="oddjob:dido">
+                            <of>
+                                <dido:copy field="Six" to="SomeSix"/>
+                                <dido:copy field="Three" to="SomeThree"/>
+                                <dido:copy field="One" to="SomeOne"/>
+                            </of>
+                        </dido:transpose>
+                    </function>
+                </bus:map>
+                <bus:collect id="results"/>
+            </of>
+        </bus:bus>
+    </job>
+</oddjob>

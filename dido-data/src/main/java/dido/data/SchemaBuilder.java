@@ -205,7 +205,7 @@ public class SchemaBuilder<F> {
         }
         else if (index <= lastIndex) {
             throw new IllegalArgumentException(
-                    "Index + " + index + " must be greater than Last index " + lastIndex);
+                    "Index [" + index + "] must be greater than Last index [" + lastIndex + "]");
         }
         else {
             lastIndex = index;

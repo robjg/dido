@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <bus:driver>
+                    <values>
+                        <list>
+                            <values>
+                                <bean class="dido.oddjob.transpose.ManyTypesRecord"/>
+                            </values>
+                        </list>
+                    </values>
+                </bus:driver>
+                <bus:map>
+                    <function>
+                        <dido:transpose xmlns:dido="oddjob:dido" strategy="NEW">
+                            <of>
+                                <dido:copy field="AnIntString" to="AByte">
+                                    <type>
+                                        <class name="byte"/>
+                                    </type>
+                                </dido:copy>
+                                <dido:copy field="AnIntString" to="AShort">
+                                    <type>
+                                        <class name="short"/>
+                                    </type>
+                                </dido:copy>
+                                <dido:copy field="AnIntString" to="AChar">
+                                    <type>
+                                        <class name="char"/>
+                                    </type>
+                                </dido:copy>
+                                <dido:copy field="AnIntString" to="AnInt">
+                                    <type>
+                                        <class name="int"/>
+                                    </type>
+                                </dido:copy>
+                                <dido:copy field="AnIntString" to="ALong">
+                                    <type>
+                                        <class name="long"/>
+                                    </type>
+                                </dido:copy>
+                                <dido:copy field="ADoubleString" to="ADouble">
+                                    <type>
+                                        <class name="double"/>
+                                    </type>
+                                </dido:copy>
+                                <dido:copy field="ADoubleString" to="AFloat">
+                                    <type>
+                                        <class name="float"/>
+                                    </type>
+                                </dido:copy>
+                                <dido:copy field="ABooleanString" to="ABoolean">
+                                    <type>
+                                        <class name="boolean"/>
+                                    </type>
+                                </dido:copy>
+                            </of>
+                        </dido:transpose>
+                    </function>
+                </bus:map>
+                <bus:collect id="results"/>
+            </of>
+        </bus:bus>
+    </job>
+</oddjob>

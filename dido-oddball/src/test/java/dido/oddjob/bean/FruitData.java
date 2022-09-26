@@ -10,7 +10,7 @@ import org.oddjob.arooa.types.ValueFactory;
 public class FruitData implements ValueFactory<GenericData<String>> {
 
     public static final String TYPE = "type";
-    public static final String QUANTITY = "quantity";
+    public static final String QUANTITY = "qty";
     public static final String PRICE = "price";
 
 
