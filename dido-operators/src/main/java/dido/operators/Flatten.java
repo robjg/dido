@@ -173,7 +173,29 @@ public class Flatten {
                 List<Object> list;
                 Class<?> type = extractor.getType(schema);
                 if (type.isArray()) {
-                    list = Arrays.asList((Object[]) value);
+                    Class<?> component = type.getComponentType();
+                    if (component.isPrimitive()) {
+                        if (component == int.class) {
+                            int[] ia = (int[]) value;
+                            list = Arrays.stream(ia).mapToObj(Integer::valueOf).collect(Collectors.toList());
+                        }
+                        else if (component == double.class) {
+                            double[] da = (double[]) value;
+                            list = Arrays.stream(da).mapToObj(Double::valueOf).collect(Collectors.toList());
+
+                        }
+                        else if (component == long.class) {
+                            long[] la = (long[]) value;
+                            list = Arrays.stream(la).mapToObj(Long::valueOf).collect(Collectors.toList());
+
+                        }
+                        else {
+                            throw new IllegalArgumentException("No implemented " + type);
+                        }
+                    }
+                    else {
+                        list = Arrays.asList((Object[]) value);
+                    }
                 }
                 else {
                     list = StreamSupport.stream(((Iterable<Object>) value).spliterator(), false)

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in name="Data" xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:json-stream format="ARRAY" partialSchema="true">
+                                    <schema>
+                                        <dido:schema>
+                                            <of>
+                                                <dido:field name="Numbers" type="[I"/>
+                                            </of>
+                                        </dido:schema>
+                                    </schema>
+                                </dido:json-stream>
+                            </how>
+                            <from>
+                                <buffer>
+                                    <![CDATA[[
+  { "Name": "Foo", 
+    "Numbers": [ 1, 2, 3 ],
+    "Letters": [ "X", "Y" ]
+  }
+]]]>
+                                </buffer>
+                            </from>
+                        </dido:data-in>
+                        <bus:map>
+                            <function>
+                                <dido:flatten columns="true" fields="Numbers,Letters" xmlns:dido="oddjob:dido"/>
+                            </function>
+                        </bus:map>
+                        <bean class="org.oddjob.beanbus.destinations.UnPack"/>
+                        <bus:collect id="results"/>
+                        <dido:data-out xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:csv/>
+                            </how>
+                            <to>
+                                <stdout/>
+                            </to>
+                        </dido:data-out>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>
