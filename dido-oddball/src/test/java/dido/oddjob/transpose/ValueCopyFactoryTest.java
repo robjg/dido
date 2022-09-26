@@ -10,10 +10,13 @@ import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.state.ParentState;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -162,5 +165,81 @@ class ValueCopyFactoryTest {
 
         oddjob.destroy();
 
+    }
+
+    @Test
+    void testCopyFunctionExample() throws ArooaConversionException {
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setFile(new File(Objects.requireNonNull(
+                getClass().getResource("DataCopyFunctionExample.xml")).getFile()));
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState(), is(ParentState.COMPLETE));
+
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        @SuppressWarnings("unchecked")
+        GenericData<String> result1 = lookup.lookup("results.list.value[0]", GenericData.class);
+
+
+        DataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
+                .addField("AnInt", int.class)
+                .addField("BlankString", String.class)
+                .addField("CsvString", int[].class)
+                .addField("NullString", String.class)
+                .build();
+
+        DataSchema<String> schema = result1.getSchema();
+
+        assertThat(schema, is(expectedSchema));
+
+        assertThat(result1.get("AnInt"), is(2));
+        assertThat(result1.get("BlankString"), nullValue());
+        assertThat(result1.get("CsvString"), is(new int[] { 1, 2 }));
+        assertThat(result1.get("NullString"), is("Nada"));
+
+        oddjob.destroy();
+
+    }
+
+    public static class AddOne implements Function<Integer, Integer> {
+
+        @Override
+        public Integer apply(Integer integer) {
+            return integer + 1;
+        }
+    }
+
+    public static class NullWhenBlank implements Function<String, String> {
+
+        @Override
+        public String apply(String s) {
+            if (s.isBlank()) {
+                return null;
+            }
+            else {
+                return s;
+            }
+        }
+    }
+
+    public static class SplitAndConvert implements Function<String, int[]> {
+
+        @Override
+        public int[] apply(String s) {
+            return Arrays.stream(s.split(","))
+                    .mapToInt(Integer::valueOf)
+                    .toArray();
+        }
+    }
+
+    public static class WhenNull implements Function<Object, String> {
+
+        @Override
+        public String apply(Object o) {
+            return Objects.requireNonNullElse(o, "Nada").toString();
+        }
     }
 }

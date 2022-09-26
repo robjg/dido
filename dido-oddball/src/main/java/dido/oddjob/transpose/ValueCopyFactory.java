@@ -4,7 +4,7 @@ import dido.data.DataSchema;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConverter;
 import org.oddjob.arooa.convert.ConversionFailedException;
-import org.oddjob.arooa.convert.ConversionPath;
+import org.oddjob.arooa.convert.NoConversionAvailableException;
 import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.arooa.types.ValueFactory;
@@ -40,7 +40,15 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
      */
     private int at;
 
+    /**
+     * The to type
+     */
     private Class<?> type;
+
+    /**
+     * Function
+     */
+    private Function<Object, Object> function;
 
     private ArooaSession session;
 
@@ -95,6 +103,14 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
         this.type = type;
     }
 
+    public Function<Object, Object> getFunction() {
+        return function;
+    }
+
+    public void setFunction(Function<Object, Object> function) {
+        this.function = function;
+    }
+
     static class CopyTransposerFactory implements TransposerFactory<String, String> {
 
         private final String from;
@@ -107,6 +123,8 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
 
         private final Class<?> type;
 
+        private final Function<Object, Object> function;
+
         private final ArooaConverter converter;
 
         CopyTransposerFactory(ValueCopyFactory from) {
@@ -115,6 +133,7 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
             this.index = from.index;
             this.at = from.at;
             this.type = from.type;
+            this.function = from.function;
             this.converter = from.session.getTools().getArooaConverter();
 
         }
@@ -138,7 +157,7 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
             }
             else {
                 from = this.from;
-                // ignore index
+                // ignore index - should we warn?
                 index = fromSchema.getIndex(from);
                 if (index < 1) {
                     throw new IllegalArgumentException("No field [" + from + "]");
@@ -191,31 +210,23 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
 
             Class<?> toType;
             Function<Object, Object> conversion;
-            if (type == null) {
+            if (this.type == null) {
                 conversion = Function.identity();
                 toType = fromSchema.getTypeAt(index);
             }
             else {
-                Class<?> fromType = fromSchema.getTypeAt(index);
                 toType = type;
-                ConversionPath conversionPath = converter.findConversion(
-                        fromType, toType);
-                if (conversionPath == null) {
-                    throw new IllegalArgumentException("No Conversion from " +
-                            fromType.getName() + " to " + toType.getName());
-                }
                 conversion = in -> {
                     try {
-                        if (in == null) {
-                            return  null;
-                        }
-                        else {
-                            return conversionPath.convert(in, converter);
-                        }
-                    } catch (ConversionFailedException e) {
+                        return converter.convert(in, toType);
+                    } catch (ConversionFailedException | NoConversionAvailableException e) {
                         throw new IllegalArgumentException(e);
                     }
                 };
+            }
+
+            if (function != null) {
+                conversion = function;
             }
 
             schemaSetter.setFieldAt(at, to, toType);

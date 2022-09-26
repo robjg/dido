@@ -88,6 +88,7 @@
 								<design:text property="at" title="Index"/>
 								<design:text property="to" title="Field"/>
 								<design:single property="type" title="Type"/>
+								<design:single property="function" title="Function"/>
 							</formItems>
 						</design:group>
 					</formItems>
