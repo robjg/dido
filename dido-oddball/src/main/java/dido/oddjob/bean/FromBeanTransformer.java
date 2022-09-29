@@ -1,5 +1,6 @@
 package dido.oddjob.bean;
 
+import dido.data.DataSchema;
 import dido.data.GenericData;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaValue;
@@ -18,6 +19,10 @@ import java.util.function.Function;
 public class FromBeanTransformer implements ArooaSessionAware, ArooaValue {
 
     private ArooaClass arooaClass;
+
+    private DataSchema<String> schema;
+
+    private boolean partial;
 
     private ArooaSession session;
 
@@ -46,13 +51,32 @@ public class FromBeanTransformer implements ArooaSessionAware, ArooaValue {
 
         PropertyAccessor accessor = session.getTools().getPropertyAccessor();
 
-        FromBeanArooa fromBean = new FromBeanArooa(accessor);
+        FromBeanArooa.With fromBean = new FromBeanArooa(accessor)
+                .with()
+                .schema(schema)
+                .partial(partial);
 
         if (arooaClass != null) {
             return fromBean.ofArooaClass(arooaClass);
         }
 
-        return fromBean.ofUnknown();
+        return fromBean.ofUnknownClass();
+    }
+
+    public DataSchema<String> getSchema() {
+        return schema;
+    }
+
+    public void setSchema(DataSchema<String> schema) {
+        this.schema = schema;
+    }
+
+    public boolean isPartial() {
+        return partial;
+    }
+
+    public void setPartial(boolean partial) {
+        this.partial = partial;
     }
 
     public ArooaClass getArooaClass() {

@@ -191,6 +191,10 @@ public class SchemaBuilder<F> {
         return this;
     }
 
+    public int getLastIndex() {
+        return lastIndex;
+    }
+
     public DataSchema<F> build() {
         return SchemaImpl.fromFields(indexToFields.values(),
                 firstIndex, lastIndex);
