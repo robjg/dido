@@ -58,7 +58,7 @@ public class Transpose<F, T> implements ValueFactory<Function<GenericData<F>, Ge
         @Override
         public GenericData<T> apply(GenericData<F> dataIn) {
 
-            if (delegate == null || lastSchema != dataIn.getSchema()) {
+            if (delegate == null || !dataIn.getSchema().equals(lastSchema)) {
                 lastSchema = dataIn.getSchema();
                 delegate = functionFor(transposerFactories, lastSchema, strategy);
             }

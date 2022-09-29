@@ -65,41 +65,47 @@ class FromBeanArooaTest {
 
     public static class OrderLine {
 
-        private final String fruit;
+        private String fruit;
 
-        private final int qty;
-
-        public OrderLine(String fruit, int qty) {
-            this.fruit = fruit;
-            this.qty = qty;
-        }
+        private int qty;
 
         public String getFruit() {
             return fruit;
         }
 
+        public void setFruit(String fruit) {
+            this.fruit = fruit;
+        }
+
         public int getQty() {
             return qty;
+        }
+
+        public void setQty(int qty) {
+            this.qty = qty;
         }
     }
 
     public static class Order {
 
-        private final String orderId;
+        private String orderId;
 
-        private final List<OrderLine> orderLines;
-
-        public Order(String orderId, List<OrderLine> orderLines) {
-            this.orderId = orderId;
-            this.orderLines = orderLines;
-        }
+        private List<OrderLine> orderLines;
 
         public String getOrderId() {
             return orderId;
         }
 
+        public void setOrderId(String orderId) {
+            this.orderId = orderId;
+        }
+
         public List<OrderLine> getOrderLines() {
             return orderLines;
+        }
+
+        public void setOrderLines(List<OrderLine> orderLines) {
+            this.orderLines = orderLines;
         }
     }
 
@@ -122,9 +128,19 @@ class FromBeanArooaTest {
                         .schema(partialIn).partial(true)
                         .ofClass(Order.class);
 
-        GenericData<String> result = fromBean.apply(new Order("A123",
-                List.of(new OrderLine("Apple", 5), new OrderLine("Pear", 4))));
+        OrderLine orderLine1 = new OrderLine();
+        orderLine1.setFruit("Apple");
+                orderLine1.setQty(5);
 
+        OrderLine orderLine2 = new OrderLine();
+        orderLine2.setFruit("Pear");
+        orderLine2.setQty(4);
+
+        Order order = new Order();
+        order.setOrderId("A123");
+        order.setOrderLines(List.of(orderLine1, orderLine2));
+
+        GenericData<String> result = fromBean.apply(order);
 
         RepeatingData<String> repeatingData =
                 RepeatingData.of(ArrayData.valuesFor(nestedSchema)
@@ -152,14 +168,24 @@ class FromBeanArooaTest {
                 .addRepeatingField("orderLines", nestedSchema)
                 .build();
 
-
         Function<Order, GenericData<String>> fromBean =
                 fromBeanArooa.with()
                         .schema(schema)
                         .ofUnknownClass();
 
-        GenericData<String> result = fromBean.apply(new Order("A123",
-                List.of(new OrderLine("Apple", 5), new OrderLine("Pear", 4))));
+        OrderLine orderLine1 = new OrderLine();
+        orderLine1.setFruit("Apple");
+        orderLine1.setQty(5);
+
+        OrderLine orderLine2 = new OrderLine();
+        orderLine2.setFruit("Pear");
+        orderLine2.setQty(4);
+
+        Order order = new Order();
+        order.setOrderId("A123");
+        order.setOrderLines(List.of(orderLine1, orderLine2));
+
+        GenericData<String> result = fromBean.apply(order);
 
         assertThat(result.getSchema(), is(schema));
 

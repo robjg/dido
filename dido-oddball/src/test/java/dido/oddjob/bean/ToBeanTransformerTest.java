@@ -12,7 +12,7 @@ import java.util.Objects;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class NumToBeanTransformerTest {
+class ToBeanTransformerTest {
 
     @Test
     void testInOddjob() throws ArooaConversionException {
@@ -33,5 +33,5 @@ class NumToBeanTransformerTest {
         assertThat(results.get(0).getType(), is("Apple"));
         assertThat(results.get(1).getType(), is("Orange"));
         assertThat(results.get(2).getType(), is("Pear"));
-
-    }}
+    }
+}

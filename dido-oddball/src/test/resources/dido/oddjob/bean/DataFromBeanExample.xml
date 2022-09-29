@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <bus:driver>
+                    <values>
+                        <list>
+                            <values>
+                                <bean class="dido.oddjob.bean.FromBeanArooaTest$Order" orderId="A123">
+                                    <orderLines>
+                                        <list>
+                                            <values>
+                                                <bean class="dido.oddjob.bean.FromBeanArooaTest$OrderLine" fruit="Apple" qty="5"/>
+                                                <bean class="dido.oddjob.bean.FromBeanArooaTest$OrderLine" fruit="Pear" qty="4"/>
+                                            </values>
+                                        </list>
+                                    </orderLines>
+                                </bean>
+                            </values>
+                        </list>
+                    </values>
+                </bus:driver>
+                <bus:map>
+                    <function>
+                        <dido:from-bean xmlns:dido="oddjob:dido">
+                            <schema>
+                                <dido:schema>
+                                    <of>
+                                        <dido:field name="orderId" type="java.lang.String"/>
+                                        <dido:field name="orderLines" repeating="true">
+                                            <nested>
+                                                <dido:schema>
+                                                    <of>
+                                                        <dido:field name="fruit" type="java.lang.String"/>
+                                                        <dido:field name="qty" type="int"/>
+                                                    </of>
+                                                </dido:schema>
+                                            </nested>
+                                        </dido:field>
+                                    </of>
+                                </dido:schema>
+                            </schema>
+                        </dido:from-bean>
+                    </function>
+                </bus:map>
+                <bus:collect id="capture"/>
+            </of>
+        </bus:bus>
+    </job>
+</oddjob>
