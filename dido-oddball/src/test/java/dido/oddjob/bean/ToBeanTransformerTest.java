@@ -1,9 +1,11 @@
 package dido.oddjob.bean;
 
+import dido.data.*;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.arooa.types.ValueFactory;
 
 import java.io.File;
 import java.util.List;
@@ -34,4 +36,66 @@ class ToBeanTransformerTest {
         assertThat(results.get(1).getType(), is("Orange"));
         assertThat(results.get(2).getType(), is("Pear"));
     }
+
+    public static class SomeNestedGenericData implements ValueFactory<List<GenericData<String>>> {
+
+
+        @Override
+        public List<GenericData<String>> toValue() {
+
+            DataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+                    .addField("fruit", String.class)
+                    .addField("qty", int.class)
+                    .build();
+
+            DataSchema<String> schema = SchemaBuilder.forStringFields()
+                    .addField("orderId", String.class)
+                    .addRepeatingField("orderLines", nestedSchema)
+                    .build();
+
+            GenericData<String> data = ArrayData.valuesFor(schema)
+                    .of("A123",
+                            RepeatingData.of(ArrayData.valuesFor(nestedSchema)
+                                            .of("Apple", 5),
+                                    ArrayData.valuesFor(nestedSchema)
+                                            .of("Pear", 4)));
+
+            return List.of(data);
+        }
+    }
+
+    @Test
+    void testNestedDataInOddjob() throws ArooaConversionException {
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setFile(new File(Objects.requireNonNull(
+                getClass().getResource("DataToNestedBeanExample.xml")).getFile()));
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        @SuppressWarnings("unchecked")
+        List<Order> results = lookup.lookup("capture.beans", List.class);
+
+        Order order = results.get(0);
+
+        Order.OrderLine orderLine1 = new Order.OrderLine();
+        orderLine1.setFruit("Apple");
+        orderLine1.setQty(5);
+
+        Order.OrderLine orderLine2 = new Order.OrderLine();
+        orderLine2.setFruit("Pear");
+        orderLine2.setQty(4);
+
+        Order expected = new Order();
+        expected.setOrderId("A123");
+        expected.setOrderLines(List.of(orderLine1, orderLine2));
+
+        assertThat(order, is(expected));
+
+    }
+
 }

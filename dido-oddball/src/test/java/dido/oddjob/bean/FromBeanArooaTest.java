@@ -63,52 +63,6 @@ class FromBeanArooaTest {
         assertThat(data1.getSchema(), sameInstance(data2.getSchema()));
     }
 
-    public static class OrderLine {
-
-        private String fruit;
-
-        private int qty;
-
-        public String getFruit() {
-            return fruit;
-        }
-
-        public void setFruit(String fruit) {
-            this.fruit = fruit;
-        }
-
-        public int getQty() {
-            return qty;
-        }
-
-        public void setQty(int qty) {
-            this.qty = qty;
-        }
-    }
-
-    public static class Order {
-
-        private String orderId;
-
-        private List<OrderLine> orderLines;
-
-        public String getOrderId() {
-            return orderId;
-        }
-
-        public void setOrderId(String orderId) {
-            this.orderId = orderId;
-        }
-
-        public List<OrderLine> getOrderLines() {
-            return orderLines;
-        }
-
-        public void setOrderLines(List<OrderLine> orderLines) {
-            this.orderLines = orderLines;
-        }
-    }
-
     @Test
     void whenNestedBeanPartialSchemaThenNestedData() {
 
@@ -128,11 +82,11 @@ class FromBeanArooaTest {
                         .schema(partialIn).partial(true)
                         .ofClass(Order.class);
 
-        OrderLine orderLine1 = new OrderLine();
+        Order.OrderLine orderLine1 = new Order.OrderLine();
         orderLine1.setFruit("Apple");
                 orderLine1.setQty(5);
 
-        OrderLine orderLine2 = new OrderLine();
+        Order.OrderLine orderLine2 = new Order.OrderLine();
         orderLine2.setFruit("Pear");
         orderLine2.setQty(4);
 
@@ -173,11 +127,11 @@ class FromBeanArooaTest {
                         .schema(schema)
                         .ofUnknownClass();
 
-        OrderLine orderLine1 = new OrderLine();
+        Order.OrderLine orderLine1 = new Order.OrderLine();
         orderLine1.setFruit("Apple");
         orderLine1.setQty(5);
 
-        OrderLine orderLine2 = new OrderLine();
+        Order.OrderLine orderLine2 = new Order.OrderLine();
         orderLine2.setFruit("Pear");
         orderLine2.setQty(4);
 

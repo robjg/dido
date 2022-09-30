@@ -2,6 +2,8 @@ package dido.oddjob.bean;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
+import dido.data.SchemaField;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.beanutils.MagicBeanClassCreator;
 import org.oddjob.arooa.life.SimpleArooaClass;
@@ -9,9 +11,14 @@ import org.oddjob.arooa.reflect.ArooaClass;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class ToBeanArooa {
 
@@ -75,7 +82,7 @@ public class ToBeanArooa {
         }
     }
 
-    static class Impl<T> implements Function<GenericData<String>, T> {
+    class Impl<T> implements Function<GenericData<String>, T> {
 
         private final ArooaClass arooaClass;
 
@@ -89,6 +96,7 @@ public class ToBeanArooa {
             this.beanOverview = arooaClass.getBeanOverview(accessor);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public T apply(GenericData<String> data) {
 
@@ -116,8 +124,56 @@ public class ToBeanArooa {
                     continue;
                 }
 
-                Class<?> type = schema.getTypeAt(index);
-                Object value = data.getAs(propertyName, type);
+                Class<?> type = beanOverview.getPropertyType(propertyName);
+
+                SchemaField<String> schemaField = schema.getSchemaFieldAt(index);
+
+                Object value;
+                if (schemaField.isNested()) {
+                    if (schemaField.isRepeating()) {
+                        Class<?> componentType;
+                        if (type.isArray()) {
+                            componentType = type.getComponentType();
+                            Function<GenericData<String>, ?> func = ofClass(componentType);
+
+                            value = Arrays.stream((GenericData<String>[]) data.get(propertyName))
+                                    .map(func)
+                                    .toArray();
+                        }
+                        else if (Iterable.class.isAssignableFrom(type)) {
+                            // Bodge until Oddjob 1.7 provides this.
+                            try {
+                                PropertyDescriptor propertyDescriptor =
+                                        PropertyUtils.getPropertyDescriptor(t, propertyName);
+                                componentType = org.oddjob.arooa.utils.ClassUtils.getComponentTypeOfParameter(
+                                        propertyDescriptor.getWriteMethod(), 0);
+                            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                                throw new IllegalArgumentException(
+                                        "Failed to find iterable type for " + propertyName, e);
+                            }
+                            Function<GenericData<String>, ?> func = ofClass(componentType);
+
+                            value = StreamSupport.stream(
+                                    ((Iterable<GenericData<String>>) data.get(propertyName)).spliterator(), false)
+                                    .map(func)
+                                    .collect(Collectors.toList());
+                        }
+                        else {
+                            componentType = null;
+                            value = null;
+                        }
+
+                        if (componentType == null) {
+                            throw new IllegalArgumentException("Unable to work out component type for " + propertyName);
+                        }
+                    }
+                    else {
+                        value = ofClass(type).apply((GenericData<String>) data.get(propertyName));
+                    }
+                }
+                else {
+                    value = data.getAs(propertyName, type);
+                }
 
                 accessor.setSimpleProperty(t, propertyName, value);
             }
@@ -125,4 +181,5 @@ public class ToBeanArooa {
             return t;
         }
     }
+
 }

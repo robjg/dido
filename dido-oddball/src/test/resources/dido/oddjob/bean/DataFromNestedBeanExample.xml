@@ -7,12 +7,12 @@
                     <values>
                         <list>
                             <values>
-                                <bean class="dido.oddjob.bean.FromBeanArooaTest$Order" orderId="A123">
+                                <bean class="dido.oddjob.bean.Order" orderId="A123">
                                     <orderLines>
                                         <list>
                                             <values>
-                                                <bean class="dido.oddjob.bean.FromBeanArooaTest$OrderLine" fruit="Apple" qty="5"/>
-                                                <bean class="dido.oddjob.bean.FromBeanArooaTest$OrderLine" fruit="Pear" qty="4"/>
+                                                <bean class="dido.oddjob.bean.Order$OrderLine" fruit="Apple" qty="5"/>
+                                                <bean class="dido.oddjob.bean.Order$OrderLine" fruit="Pear" qty="4"/>
                                             </values>
                                         </list>
                                     </orderLines>

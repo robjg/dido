@@ -1,0 +1,23 @@
+<oddjob>
+    <job>
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <bus:driver xmlns:bus="oddjob:beanbus">
+                    <values>
+                        <bean class="dido.oddjob.bean.ToBeanTransformerTest$SomeNestedGenericData"/>
+                    </values>
+                </bus:driver>
+                <bus:map xmlns:bus="oddjob:beanbus">
+                    <function>
+                        <dido:to-bean xmlns:dido="oddjob:dido">
+                            <beanClass>
+                                <class name="dido.oddjob.bean.Order"/>
+                            </beanClass>
+                        </dido:to-bean>
+                    </function>
+                </bus:map>
+                <bus:collect xmlns:bus="oddjob:beanbus" id="capture"/>
+            </of>
+        </bus:bus>
+    </job>
+</oddjob>

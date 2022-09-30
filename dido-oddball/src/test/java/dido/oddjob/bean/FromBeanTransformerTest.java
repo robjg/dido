@@ -16,11 +16,11 @@ import static org.hamcrest.Matchers.is;
 class FromBeanTransformerTest {
 
     @Test
-    void testInOddjob() throws ArooaConversionException {
+    void testNestedExampleInOddjob() throws ArooaConversionException {
 
         Oddjob oddjob = new Oddjob();
         oddjob.setFile(new File(Objects.requireNonNull(
-                getClass().getResource("DataFromBeanExample.xml")).getFile()));
+                getClass().getResource("DataFromNestedBeanExample.xml")).getFile()));
 
         oddjob.run();
 
