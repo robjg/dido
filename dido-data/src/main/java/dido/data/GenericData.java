@@ -9,65 +9,36 @@ import java.util.Iterator;
  */
 public interface GenericData<F> extends IndexedData<F> {
 
-    default Object get(F field) {
-        int index = getSchema().getIndex(field);
-        if (index > 0) {
-            return getAt(index);
-        }
-        else {
-            return null;
-        }
-    }
+    Object get(F field);
 
-    default <T> T getAs(F field, Class<T> type) {
-        //noinspection unchecked
-        return (T) get(field);
-    }
+    <T> T getAs(F field, Class<T> type);
 
-    default boolean hasField(F field) {
-        return get(field) != null;
-    }
+    boolean hasField(F field);
 
-    default boolean getBoolean(F field) {
-        return (boolean) get(field);
-    }
+    boolean getBoolean(F field);
 
-    default byte getByte(F field) {
-        return (byte) get(field);
-    }
+    byte getByte(F field);
 
-    default char getChar(F field) {
-        return (char) get(field);
-    }
+    char getChar(F field);
 
-    default short getShort(F field) {
-        return (short) get(field);
-    }
+    short getShort(F field);
 
-    default int getInt(F field) {
-        return (int) get(field);
-    }
+    int getInt(F field);
 
-    default long getLong(F field) {
-        return (long) get(field);
-    }
+    long getLong(F field);
 
-    default float getFloat(F field) {
-        return (float) get(field);
-    }
+    float getFloat(F field);
 
-    default double getDouble(F field) {
-        return (double) get(field);
-    }
+    double getDouble(F field);
 
-    default String getString(F field) { return (String) get(field); }
+    String getString(F field);
 
     static <F> String toStringFieldsOnly(GenericData<F> data) {
         StringBuilder sb = new StringBuilder();
         sb.append('{');
         Iterator<F> it = data.getSchema().getFields().iterator();
         if (!it.hasNext()) {
-            sb.append("}");
+            return sb.append("}").toString();
         }
         for (;;) {
             F field = it.next();
@@ -178,5 +149,22 @@ public interface GenericData<F> extends IndexedData<F> {
                 return indexedData.getStringAt(index);
             }
         };
+    }
+
+    class EmptyData<F> extends AbstractGenericData<F> {
+
+        @Override
+        public DataSchema<F> getSchema() {
+            return DataSchema.emptySchema();
+        }
+
+        @Override
+        public Object getAt(int index) {
+            throw new IndexOutOfBoundsException("No Index " + index);
+        }
+    }
+
+    static <F> GenericData<F> emptyData() {
+        return new EmptyData<>();
     }
 }

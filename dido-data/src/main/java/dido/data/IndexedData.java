@@ -27,50 +27,29 @@ public interface IndexedData<F> {
      */
     Object getAt(int index);
 
-    default <T> T getAtAs(int index, Class<T> type) {
-        //noinspection unchecked
-        return (T) getAt(index);
-    }
+    <T> T getAtAs(int index, Class<T> type);
 
-    default boolean hasIndex(int index) {
-        return getAt(index) != null;
-    }
+    boolean hasIndex(int index);
 
-    default boolean getBooleanAt(int index) {
-        return (boolean) getAt(index);
-    }
-
-    default byte getByteAt(int index) {
-        return (byte) getAt(index);
-    }
+    boolean getBooleanAt(int index);
 
     default char getCharAt(int index) {
         return (char) getAt(index);
     }
 
-    default short getShortAt(int index) {
-        return (short) getAt(index);
-    }
+    byte getByteAt(int index);
 
-    default int getIntAt(int index) {
-        return (int) getAt(index);
-    }
+    short getShortAt(int index);
 
-    default long getLongAt(int index) {
-        return (long) getAt(index);
-    }
+    int getIntAt(int index);
 
-    default float getFloatAt(int index) {
-        return (float) getAt(index);
-    }
+    long getLongAt(int index);
 
-    default double getDoubleAt(int index) {
-        return (double) getAt(index);
-    }
+    float getFloatAt(int index);
 
-    default String getStringAt(int index) {
-        return (String) getAt(index);
-    }
+    double getDoubleAt(int index);
+
+    String getStringAt(int index);
 
     static boolean equals(IndexedData<?> data1, IndexedData<?> data2) {
         if (data1 == data2) {

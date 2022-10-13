@@ -1,9 +1,6 @@
 package dido.csv;
 
-import dido.data.DataSchema;
-import dido.data.GenericData;
-import dido.data.IndexedData;
-import dido.data.SchemaBuilder;
+import dido.data.*;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import dido.how.util.Primitives;
@@ -179,7 +176,7 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
     }
 
     static GenericData<String> dataFrom(CSVRecord record, DataSchema<String> schema) {
-        return new GenericData<>() {
+        return new AbstractGenericData<>() {
             @Override
             public DataSchema<String> getSchema() {
                 return schema;
@@ -315,24 +312,6 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
                 return getStringAt(schema.getIndex(field));
             }
 
-            @Override
-            public boolean equals(Object o) {
-                if (o instanceof IndexedData) {
-                    return IndexedData.equals(this, (IndexedData<?>) o);
-                } else {
-                    return false;
-                }
-            }
-
-            @Override
-            public int hashCode() {
-                return IndexedData.hashCode(this);
-            }
-
-            @Override
-            public String toString() {
-                return GenericData.toString(this);
-            }
         };
     }
 

@@ -1,15 +1,12 @@
 package dido.oddjob.bean;
 
-import dido.data.DataSchema;
-import dido.data.GenericData;
-import dido.data.IndexedData;
-import dido.data.SchemaBuilder;
+import dido.data.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class RenamedData<F, T> implements GenericData<T> {
+public class RenamedData<F, T> extends AbstractGenericData<T> {
 
     private final DataSchema<T> toSchema;
 
@@ -96,26 +93,6 @@ public class RenamedData<F, T> implements GenericData<T> {
     @Override
     public boolean hasIndex(int index) {
         return original.hasIndex(index);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof IndexedData) {
-            return IndexedData.equals(this, (IndexedData<?>) o);
-        }
-        else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        return IndexedData.hashCode(this);
-    }
-
-    @Override
-    public String toString() {
-        return GenericData.toString(this);
     }
 
     static <F, T> DataSchema<T> renamedSchema(Map<F, T> mapping, DataSchema<F> fromSchema) {

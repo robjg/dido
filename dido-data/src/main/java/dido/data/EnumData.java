@@ -14,7 +14,7 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
 
         EnumSchema<E> enumSchema = EnumSchema.enumSchemaFrom(data.getSchema(), enumClass);
 
-        return new EnumData<>() {
+        return new AbstractEnumData<>() {
             @Override
             public EnumSchema<E> getSchema() {
                 return enumSchema;
@@ -159,7 +159,7 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
 
         Class<E> enumClass = enumSchema.getFieldType();
 
-        return new GenericData<>() {
+        return new AbstractGenericData<>() {
             @Override
             public DataSchema<String> getSchema() {
                 return schema;

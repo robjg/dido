@@ -1,5 +1,6 @@
 package dido.poi.utils;
 
+import dido.data.AbstractGenericData;
 import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.poi.CellIn;
@@ -42,7 +43,7 @@ public class DataRowFactory<F> {
     }
 
     public GenericData<F> wrap(RowIn row) {
-        return new GenericData<F>() {
+        return new AbstractGenericData<>() {
             @Override
             public DataSchema<F> getSchema() {
                 return schema;

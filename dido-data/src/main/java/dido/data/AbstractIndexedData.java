@@ -12,6 +12,62 @@ abstract public class AbstractIndexedData<F> implements IndexedData<F> {
     private volatile int hash = 0;
 
     @Override
+    public <T> T getAtAs(int index, Class<T> type) {
+        //noinspection unchecked
+        return (T) getAt(index);
+    }
+
+    @Override
+    public boolean hasIndex(int index) {
+        return getAt(index) != null;
+    }
+
+    @Override
+    public boolean getBooleanAt(int index) {
+        return (boolean) getAt(index);
+    }
+
+    @Override
+    public byte getByteAt(int index) {
+        return (byte) getAt(index);
+    }
+
+    @Override
+    public char getCharAt(int index) {
+        return (char) getAt(index);
+    }
+
+    @Override
+    public short getShortAt(int index) {
+        return (short) getAt(index);
+    }
+
+    @Override
+    public int getIntAt(int index) {
+        return (int) getAt(index);
+    }
+
+    @Override
+    public long getLongAt(int index) {
+        return (long) getAt(index);
+    }
+
+    @Override
+    public float getFloatAt(int index) {
+        return (float) getAt(index);
+    }
+
+    @Override
+    public double getDoubleAt(int index) {
+        return (double) getAt(index);
+    }
+
+    @Override
+    public String getStringAt(int index) {
+        return (String) getAt(index);
+    }
+
+    @Override
     public int hashCode() {
         if (hash == 0) {
             hash = IndexedData.hashCode(this);

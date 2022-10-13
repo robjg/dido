@@ -10,6 +10,71 @@ package dido.data;
 abstract public class AbstractGenericData<F> extends AbstractIndexedData<F> implements GenericData<F> {
 
     @Override
+    public Object get(F field) {
+        int index = getSchema().getIndex(field);
+        if (index > 0) {
+            return getAt(index);
+        }
+        else {
+            return null;
+        }
+    }
+
+    @Override
+    public <T> T getAs(F field, Class<T> type) {
+        //noinspection unchecked
+        return (T) get(field);
+    }
+
+    @Override
+    public boolean hasField(F field) {
+        return get(field) != null;
+    }
+
+    @Override
+    public boolean getBoolean(F field) {
+        return (boolean) get(field);
+    }
+
+    @Override
+    public byte getByte(F field) {
+        return (byte) get(field);
+    }
+
+    @Override
+    public char getChar(F field) {
+        return (char) get(field);
+    }
+
+    @Override
+    public short getShort(F field) {
+        return (short) get(field);
+    }
+
+    @Override
+    public int getInt(F field) {
+        return (int) get(field);
+    }
+
+    @Override
+    public long getLong(F field) {
+        return (long) get(field);
+    }
+
+    @Override
+    public float getFloat(F field) {
+        return (float) get(field);
+    }
+
+    @Override
+    public double getDouble(F field) {
+        return (double) get(field);
+    }
+
+    @Override
+    public String getString(F field) { return (String) get(field); }
+
+    @Override
     public String toString() {
         return GenericData.toString(this);
     }
