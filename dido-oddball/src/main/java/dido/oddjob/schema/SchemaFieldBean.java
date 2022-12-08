@@ -1,14 +1,16 @@
 package dido.oddjob.schema;
 
+import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaValue;
+import org.oddjob.arooa.ClassResolver;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.convert.ConversionProvider;
 import org.oddjob.arooa.convert.ConversionRegistry;
-import org.oddjob.arooa.utils.ClassUtils;
+import org.oddjob.arooa.life.ArooaSessionAware;
 
-import java.util.Optional;
+import java.util.Arrays;
 
-public class SchemaFieldBean implements ArooaValue {
+public class SchemaFieldBean implements ArooaValue, ArooaSessionAware {
 
     private String name;
 
@@ -20,12 +22,19 @@ public class SchemaFieldBean implements ArooaValue {
 
     private boolean repeating;
 
+    private ArooaSession arooaSession;
+
     public static class Conversions implements ConversionProvider {
         @Override
         public void registerWith(ConversionRegistry registry) {
             registry.register(SchemaFieldBean.class, SchemaFieldDef.class,
                     SchemaFieldBean::toSchemaField);
         }
+    }
+
+    @Override
+    public void setArooaSession(ArooaSession session) {
+        this.arooaSession = session;
     }
 
     public SchemaFieldDef toSchemaField() throws ArooaConversionException {
@@ -37,13 +46,11 @@ public class SchemaFieldBean implements ArooaValue {
                 type = String.class;
             }
             else {
-                ClassLoader classLoader = Optional.ofNullable(
-                                Thread.currentThread().getContextClassLoader())
-                        .orElseGet(() -> getClass().getClassLoader());
-                try {
-                    type = ClassUtils.classFor(this.type, classLoader);
-                } catch (ClassNotFoundException e) {
-                    throw new ArooaConversionException(e);
+                ClassResolver classResolver = this.arooaSession.getArooaDescriptor().getClassResolver();
+                type = classResolver.findClass(this.type);
+                if (type == null) {
+                    throw new ArooaConversionException("Failed to find class " + this.type +
+                            " from class loaders " + Arrays.toString(classResolver.getClassLoaders()));
                 }
             }
         }
