@@ -12,7 +12,7 @@
     <artifactId>dido-sql</artifactId>
 
     <properties>
-        <hsql.version>2.6.1</hsql.version>
+        <hsql.version>2.7.1</hsql.version>
     </properties>
 
     <dependencies>
