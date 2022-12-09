@@ -54,5 +54,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>uk.co.rgordon</groupId>
+            <artifactId>arooa</artifactId>
+            <version>${oddjob.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

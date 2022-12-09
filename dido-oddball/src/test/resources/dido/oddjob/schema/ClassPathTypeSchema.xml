@@ -1,0 +1,30 @@
+<oddjob>
+    <job>
+        <oddjob id="main">
+            <classLoader>
+                <url-class-loader>
+                    <files>
+                        <file file='${class.dir}'/>
+                    </files>
+                </url-class-loader>
+            </classLoader>
+            <configuration>
+                <xml>
+                    <oddjob>
+                        <job>
+                            <variables id="vars">
+                                <schema>
+                                    <dido:schema xmlns:dido="oddjob:dido">
+                                        <of>
+                                            <dido:field type="foo.stuff.SomeType" name="CustomType"/>
+                                        </of>
+                                    </dido:schema>
+                                </schema>
+                            </variables>
+                        </job>
+                    </oddjob>
+                </xml>
+            </configuration>
+        </oddjob>
+    </job>
+</oddjob>

@@ -5,10 +5,15 @@ import dido.data.SchemaField;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
+import org.oddjob.OurDirs;
 import org.oddjob.arooa.convert.ArooaConversionException;
+import org.oddjob.tools.CompileJob;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Properties;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -120,6 +125,44 @@ class SchemaBeanTest {
         assertThat(schema.getType("OrderLines"), is(SchemaField.NESTED_REPEATING_TYPE));
         DataSchema<String> nestedSchema = schema.getSchema("OrderLines");
         assertThat(nestedSchema, is(DataSchema.emptySchema()));
+
+        oddjob.destroy();
+    }
+
+    @Test
+    void typeFromOddjobCustomClassLoader() throws ArooaConversionException, IOException {
+
+        Path workDir = OurDirs.workPathDir(
+                getClass().getSimpleName() + "-typeFromOddjobCustomClassLoader",
+                true);
+
+        CompileJob compileJob = new CompileJob();
+        compileJob.setFiles(new File[] {
+                new File(Objects.requireNonNull(
+                        getClass().getResource("/types/foo/stuff/SomeType.java")).getFile())
+        });
+        compileJob.setDest(workDir.toFile());
+        compileJob.run();
+
+        Properties properties = new Properties();
+        properties.setProperty("class.dir", workDir.toAbsolutePath().toString());
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setProperties(properties);
+        oddjob.setFile(new File(Objects.requireNonNull(
+                getClass().getResource("ClassPathTypeSchema.xml")).getFile()));
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        @SuppressWarnings("unchecked")
+        DataSchema<String> schema = lookup.lookup("main/vars.schema", DataSchema.class);
+
+        assertThat(schema, notNullValue());
+        assertThat(schema.getType("CustomType").getName(), is("foo.stuff.SomeType"));
 
         oddjob.destroy();
     }
