@@ -6,6 +6,9 @@ import dido.data.*;
 import java.lang.reflect.Type;
 import java.util.LinkedList;
 
+/**
+ * Adds Deserialisers to a GsonBuilder for create GenericData. Done in this way to support nested JSON.
+ */
 public class JsonDataCopy {
 
     private final LinkedList<DataSchema<String>> stack = new LinkedList<>();

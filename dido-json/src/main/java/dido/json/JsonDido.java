@@ -8,6 +8,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 
+/**
+ * Provide a {@link DataInHow} and a {@link DataOutHow} fro JSON. Designed to be used as a bean in Oddjob.
+ */
 public class JsonDido {
 
     enum Format {

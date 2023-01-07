@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 import dido.data.GenericData;
 import dido.data.IndexedData;
+import dido.data.RepeatingData;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
 
@@ -20,6 +21,7 @@ public class StreamOutJson implements DataOutHow<String, OutputStream> {
 
     private final Gson gson = new GsonBuilder()
             .registerTypeHierarchyAdapter(IndexedData.class, new DataSerializer())
+            .registerTypeHierarchyAdapter(RepeatingData.class, new RepeatingSerializer())
             .create();
 
     final private boolean array;
@@ -54,7 +56,9 @@ public class StreamOutJson implements DataOutHow<String, OutputStream> {
         return new DataOut<>() {
             @Override
             public void close() throws IOException {
-                writer.endArray();
+                if (array) {
+                    writer.endArray();
+                }
                 writer.close();
             }
 

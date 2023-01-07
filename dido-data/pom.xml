@@ -12,6 +12,13 @@
     <artifactId>dido-data</artifactId>
 
     <dependencies>
+
+        <dependency>
+            <groupId>uk.co.rgordon</groupId>
+            <artifactId>arooa</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
