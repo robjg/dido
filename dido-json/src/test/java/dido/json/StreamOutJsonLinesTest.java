@@ -17,7 +17,7 @@ class StreamOutJsonLinesTest {
         GenericData<String> data1 = MapData.of(
                 "Fruit", "Apple", "Qty", 5, "Price", 27.2);
         GenericData<String> data2 = MapData.of(
-                "Fruit", "Orange", "Qty", 10, "Price", 31.6);
+                "Fruit", "Orange", "Qty", 10, "Price", Double.NaN);
         GenericData<String> data3 = MapData.of(
                 "Fruit", "Pear", "Qty", 7, "Price", 22.1);
 
@@ -36,7 +36,7 @@ class StreamOutJsonLinesTest {
 
         assertThat(lines.length, is(3));
         assertThat(lines[0], is("{\"Fruit\":\"Apple\",\"Qty\":5,\"Price\":27.2}"));
-        assertThat(lines[1], is("{\"Fruit\":\"Orange\",\"Qty\":10,\"Price\":31.6}"));
+        assertThat(lines[1], is("{\"Fruit\":\"Orange\",\"Qty\":10,\"Price\":NaN}"));
         assertThat(lines[2], is("{\"Fruit\":\"Pear\",\"Qty\":7,\"Price\":22.1}"));
     }
 }

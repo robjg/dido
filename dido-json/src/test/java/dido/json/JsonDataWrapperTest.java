@@ -65,6 +65,37 @@ class JsonDataWrapperTest {
         assertThat(result.getAtAs(9, Number.class).doubleValue(), is(67.2));
     }
 
+    static class NumberNaNs {
+
+        String aString = null;
+
+        float aFloat = Float.NaN;
+
+        double aDouble = Double.NaN;
+    }
+
+    @Test
+    void testNaNs() {
+
+        DataSchema<String> schema = SchemaBuilder.forStringFields()
+                .addField("aString", String.class)
+                .addField("aFloat", float.class)
+                .addField("aDouble", double.class)
+                .build();
+
+        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+                .serializeSpecialFloatingPointValues()
+                .create();
+
+        String json = gson.toJson(new NumberNaNs());
+
+        GenericData<String> result = gson.fromJson(json, GenericData.class);
+
+        assertThat(result.getStringAt(1), nullValue());
+        assertThat(Float.isNaN(result.getFloat("aFloat")), is(true));
+        assertThat(Double.isNaN(result.getDouble("aDouble")), is(true));
+    }
+
     @Test
     void testWithAutoBoxedVersions() {
 

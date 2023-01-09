@@ -98,7 +98,7 @@ class StreamInJsonLinesTest {
         BufferType bufferType = new BufferType();
         bufferType.setLines(new String[]{
                 "{\"Fruit\":\"Apple\",\"Qty\":5,\"Price\":27.2}",
-                "{\"Fruit\":\"Orange\",\"Qty\":10,\"Price\":31.6}",
+                "{\"Fruit\":\"Orange\",\"Qty\":10,\"Price\":NaN}",
                 "{\"Fruit\":\"Pear\",\"Qty\":7,\"Price\":22.1}"
         });
         bufferType.configured();
@@ -125,7 +125,7 @@ class StreamInJsonLinesTest {
         GenericData<String> data2 = in.get();
 
         assertThat(data2, is(MapData.of(
-                "Fruit", "Orange", "Qty", 10, "Price", 31.6)));
+                "Fruit", "Orange", "Qty", 10, "Price", Double.NaN)));
 
         GenericData<String> data3 = in.get();
 
