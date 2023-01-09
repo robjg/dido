@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob id="oddjob">
+    <job>
+        <sequential>
+            <jobs>
+                <properties>
+                    <values>
+                        <file file="${java.io.tmpdir}" key="work.dir"/>
+                        <value value="stuff-" key="replay.files.prefix"/>
+                    </values>
+                </properties>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in id="csv" xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:csv>
+                                    <schema>
+                                        <dido:schema>
+                                            <of>
+                                                <dido:field name="type"/>
+                                                <dido:field name="quantity" type="int"/>
+                                                <dido:field name="price" type="double"/>
+                                            </of>
+                                        </dido:schema>
+                                    </schema>
+                                </dido:csv>
+                            </how>
+                            <from>
+                                <buffer>
+                                    <![CDATA[Apple,5,27.2
+Orange,10,31.6
+Pear,7,22.1]]>
+                                </buffer>
+                            </from>
+                        </dido:data-in>
+                        <dido:record filesPrefix="${replay.files.prefix}" xmlns:dido="oddjob:dido">
+                            <dir>
+                                <file file="${work.dir}"/>
+                            </dir>
+                        </dido:record>
+                    </of>
+                </bus:bus>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:play filesPrefix="${replay.files.prefix}" id="play" xmlns:dido="oddjob:dido">
+                            <to>
+                                <list/>
+                            </to>
+                            <dir>
+                                <file file="${work.dir}"/>
+                            </dir>
+                        </dido:play>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>

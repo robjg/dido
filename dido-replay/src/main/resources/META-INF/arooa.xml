@@ -1,0 +1,27 @@
+<arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
+        prefix="dido" namespace="oddjob:dido">
+	<components>
+		<arooa:bean-def element="record"
+						className="dido.replay.DataRecorderService">
+			<properties>
+				<arooa:property name="to" annotation="org.oddjob.beanbus.Destination"/>
+			</properties>
+			<annotations>
+				<arooa:annotation name="org.oddjob.framework.adapt.Start"
+								  method="start"/>
+				<arooa:annotation name="org.oddjob.framework.adapt.Stop"
+								  method="stop"/>
+			</annotations>
+		</arooa:bean-def>
+		<arooa:bean-def element="play"
+						className="dido.replay.DataPlayerJob">
+			<properties>
+				<arooa:property name="to" annotation="org.oddjob.beanbus.Destination"/>
+			</properties>
+			<annotations>
+				<arooa:annotation name="org.oddjob.framework.adapt.Stop"
+								  method="close"/>
+			</annotations>
+		</arooa:bean-def>
+	</components>
+</arooa:descriptor>

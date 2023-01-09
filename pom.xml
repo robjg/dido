@@ -14,6 +14,7 @@
         <module>dido-operators</module>
         <module>dido-all</module>
         <module>dido-proto</module>
+        <module>dido-replay</module>
     </modules>
 
     <groupId>uk.co.rgordon</groupId>
@@ -123,6 +124,12 @@
             <dependency>
                 <groupId>uk.co.rgordon</groupId>
                 <artifactId>dido-proto</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.co.rgordon</groupId>
+                <artifactId>dido-replay</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

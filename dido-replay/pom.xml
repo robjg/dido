@@ -9,37 +9,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>dido-all</artifactId>
+    <artifactId>dido-replay</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>uk.co.rgordon</groupId>
-            <artifactId>dido-csv</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>uk.co.rgordon</groupId>
             <artifactId>dido-json</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.co.rgordon</groupId>
-            <artifactId>dido-sql</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.co.rgordon</groupId>
-            <artifactId>dido-poi</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.co.rgordon</groupId>
-            <artifactId>dido-text</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.co.rgordon</groupId>
-            <artifactId>dido-replay</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -50,12 +27,14 @@
 
         <dependency>
             <groupId>uk.co.rgordon</groupId>
-            <artifactId>dido-operators</artifactId>
+            <artifactId>dido-csv</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>uk.co.rgordon</groupId>
-            <artifactId>dido-proto</artifactId>
+            <artifactId>oddjob</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -77,8 +56,8 @@
         </dependency>
 
         <dependency>
-            <groupId>uk.co.rgordon</groupId>
-            <artifactId>oddjob</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
 

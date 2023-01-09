@@ -81,13 +81,18 @@ public class JsonDataWrapper {
 
                 SchemaField<String> schemaField = schema.getSchemaFieldAt(index);
 
+                DataSchema<String> restore = null;
                 if (schemaField.isNested()) {
+                    restore = deserializer.schema;
                     deserializer.schema = schemaField.getNestedSchema();
-
                 }
 
                 value = context.deserialize(element, schemaField.getType());
                 values[index - 1] = value;
+
+                if (restore != null) {
+                    deserializer.schema = restore;
+                }
 
                 return value;
             }
