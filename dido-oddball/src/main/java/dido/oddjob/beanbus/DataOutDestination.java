@@ -16,6 +16,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Implements a Bean Bus Destination that accepts {@link GenericData} and write it out to the given
+ * {@link #to} according to the given {@link #how}
+ *
+ * @param <F> The field type of the Generic Data
+ * @param <O> The type of the output.
+ */
 public class DataOutDestination<F, O>
         implements Runnable, AutoCloseable, Consumer<GenericData<F>>, ArooaSessionAware {
 
