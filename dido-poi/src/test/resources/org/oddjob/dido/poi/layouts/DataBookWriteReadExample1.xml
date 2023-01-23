@@ -8,9 +8,9 @@
                         <file file="./work" key="work.dir"/>
                     </values>
                 </properties>
-                <bean-bus>
-                    <parts>
-                        <dido:in id="test-data" name="Load Test Data"
+                <bus:bus id="bean-bus" xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in id="test-data" name="Load Test Data"
                                  xmlns:dido="oddjob:dido">
                             <from>
                                 <buffer><![CDATA[fruit,bestBefore,colour,quantity,price
@@ -22,10 +22,10 @@ Banana,2013-11-21,,7,175.5
 ]]></buffer>
                             </from>
                             <how>
-                                <dido:csv xmlns:dido="oddjob:dido" withHeadings="true"/>
+                                <dido:csv xmlns:dido="oddjob:dido" withHeader="true"/>
                             </how>
-                        </dido:in>
-                        <dido:out xmlns:dido="oddjob:dido" id="data-book-write">
+                        </dido:data-in>
+                        <dido:data-out xmlns:dido="oddjob:dido" id="data-book-write">
                             <to>
                                 <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">
                                     <output>
@@ -35,7 +35,7 @@ Banana,2013-11-21,,7,175.5
                             </to>
                             <how>
                                 <dido-poi:rows xmlns:dido-poi="oddjob:dido:poi" sheetName="Fruit" autoFilter="true"
-                                               autoWidth="true" withHeadings="true">
+                                               autoWidth="true" withHeader="true">
                                     <of>
                                         <dido-poi:text name="fruit"/>
                                         <dido-poi:date name="bestBefore"/>
@@ -54,12 +54,12 @@ Banana,2013-11-21,,7,175.5
                                     </styles>
                                 </dido-poi:rows>
                             </how>
-                        </dido:out>
-                    </parts>
-                </bean-bus>
-                <bean-bus>
-                    <parts>
-                        <dido:in xmlns:dido="oddjob:dido">
+                        </dido:data-out>
+                    </of>
+                </bus:bus>
+                <bus:bus id="bean-bus" xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in xmlns:dido="oddjob:dido">
                             <from>
                                 <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">
                                     <input>
@@ -70,8 +70,8 @@ Banana,2013-11-21,,7,175.5
                             <how>
                                 <value value="${data-book-write.how}"/>
                             </how>
-                        </dido:in>
-                        <bus:transformer xmlns:bus="oddjob:beanbus">
+                        </dido:data-in>
+                        <bus:map xmlns:bus="oddjob:beanbus">
                             <function>
                                 <dido:to-bean xmlns:dido="oddjob:dido">
                                     <beanClass>
@@ -79,10 +79,10 @@ Banana,2013-11-21,,7,175.5
                                     </beanClass>
                                 </dido:to-bean>
                             </function>
-                        </bus:transformer>
-                        <bus:capture id="data-book-read" xmlns:bus="oddjob:beanbus"/>
-                    </parts>
-                </bean-bus>
+                        </bus:map>
+                        <bus:collect id="data-book-read" xmlns:bus="oddjob:beanbus"/>
+                    </of>
+                </bus:bus>
             </jobs>
         </sequential>
     </job>

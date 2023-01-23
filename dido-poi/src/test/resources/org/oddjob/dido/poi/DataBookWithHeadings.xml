@@ -1,5 +1,5 @@
 <dido-poi:rows xmlns:dido-poi="oddjob:dido:poi"
-               withHeadings="true" headingsStyle="heading"
+               withHeader="true" headingsStyle="heading"
                autoWidth="true" autoFilter="true">
     <styles>
         <dido-poi:style key="heading" bold="true" colour="RED"/>

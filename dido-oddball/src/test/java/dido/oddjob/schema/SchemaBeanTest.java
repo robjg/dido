@@ -2,10 +2,10 @@ package dido.oddjob.schema;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
+import dido.test.OurDirs;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
-import org.oddjob.OurDirs;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.tools.CompileJob;
 

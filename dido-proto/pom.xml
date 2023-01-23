@@ -36,7 +36,7 @@
     </scm>
 
     <properties>
-        <proto.version>3.21.2</proto.version>
+        <proto.version>3.21.7</proto.version>
         <xolstice.protobuf.plugin.version>0.6.1</xolstice.protobuf.plugin.version>
     </properties>
 
@@ -141,7 +141,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.0.0</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>

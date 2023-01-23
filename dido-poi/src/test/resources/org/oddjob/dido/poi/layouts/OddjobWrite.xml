@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <oddjob>
     <job>
-        <bean-bus>
-            <parts>
-                <bus:iterable-driver xmlns:bus="oddjob:beanbus">
-                    <beans>
+        <bus:bus id="bean-bus" xmlns:bus="oddjob:beanbus">
+            <of>
+                <bus:driver xmlns:bus="oddjob:beanbus">
+                    <values>
                         <import resource="org/oddjob/dido/poi/test/PersonList.xml"/>
-                    </beans>
-                </bus:iterable-driver>
-                <bus:transformer xmlns:bus="oddjob:beanbus">
+                    </values>
+                </bus:driver>
+                <bus:map xmlns:bus="oddjob:beanbus">
                     <function>
                         <dido:from-bean xmlns:dido="oddjob:dido"/>
                     </function>
-                </bus:transformer>
-                <dido:out xmlns:dido="oddjob:dido">
+                </bus:map>
+                <dido:data-out xmlns:dido="oddjob:dido">
                     <to>
                         <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">
                             <output>
@@ -24,8 +24,8 @@
                     <how>
                         <import resource="${layout.resource}"/>
                     </how>
-                </dido:out>
-            </parts>
-        </bean-bus>
+                </dido:data-out>
+            </of>
+        </bus:bus>
     </job>
 </oddjob>

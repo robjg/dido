@@ -75,10 +75,7 @@
 
         <dependency>
             <groupId>uk.co.rgordon</groupId>
-            <artifactId>arooa</artifactId>
-            <version>${oddjob.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <artifactId>dido-test</artifactId>
         </dependency>
 
     </dependencies>

@@ -10,7 +10,7 @@ public class ReplayFileHelper {
 
     public static final String SCHEMA_FILE_NAME = "schema.json";
 
-    public static final String TIME_FILE_NAME = "time.json";
+    public static final String TIME_FILE_NAME = "time.txt";
 
     private final Path dataFile;
 

@@ -1,2 +1,2 @@
 <dido-poi:rows autoWidth="true" autoFilter="true"
-               withHeadings="true" xmlns:dido-poi="oddjob:dido:poi"/>
+               withHeader="true" xmlns:dido-poi="oddjob:dido:poi"/>

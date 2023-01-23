@@ -2,14 +2,18 @@ package dido.replay;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
+import dido.test.OurDirs;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
 import org.oddjob.arooa.convert.ArooaConversionException;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -17,9 +21,15 @@ import static org.hamcrest.Matchers.is;
 class OddjobRecordReplayTest {
 
     @Test
-    void simpleExample() throws ArooaConversionException {
+    void simpleExample() throws ArooaConversionException, IOException {
+
+        Path workDir = OurDirs.workPathDir(OddjobRecordReplayTest.class);
+
+        Properties properties = new Properties();
+        properties.setProperty("work.dir", workDir.toString());
 
         Oddjob oddjob = new Oddjob();
+        oddjob.setProperties(properties);
         oddjob.setFile(new File(Objects.requireNonNull(
                 getClass().getResource("RecordPlayExample.xml")).getFile()));
 

@@ -85,6 +85,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>uk.co.rgordon</groupId>
+            <artifactId>dido-test</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

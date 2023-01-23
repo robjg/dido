@@ -6,8 +6,11 @@ import dido.data.GenericData;
 import dido.how.*;
 import dido.how.util.ClassUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class SchemaAsJson {
 
@@ -30,7 +33,11 @@ public class SchemaAsJson {
                 }
             });
         }
+    }
 
+    public static DataSchema<String> fromJson(String string) throws Exception {
+
+        return fromJson(new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8)));
     }
 
     public static void toJson(DataSchema<String> schema, OutputStream output) throws Exception {
@@ -41,6 +48,13 @@ public class SchemaAsJson {
 
             out.accept(data);
         }
+    }
+
+    public static String toJson(DataSchema<String> schema) throws Exception {
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        toJson(schema, output);
+        return output.toString(StandardCharsets.UTF_8);
     }
 
     public static CloseableSupplier<DataSchema<String>> fromJsonStream(InputStream input) throws Exception {

@@ -26,6 +26,12 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
 
     private volatile InputStream timeIn;
 
+    private volatile Instant fromTime;
+
+    private volatile Instant toTime;
+
+    private volatile int playBackSpeed;
+
     private volatile Consumer<? super GenericData<String>> to;
 
     private final AtomicInteger count = new AtomicInteger();
@@ -33,6 +39,8 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
     private final AtomicReference<Thread> currentThread = new AtomicReference<>();
 
     private volatile Instant lastTime;
+
+    private volatile long wait;
 
     @Override
     public void close() {
@@ -70,9 +78,17 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
                     break;
                 }
 
-                long wait = ChronoUnit.MILLIS.between(lastTime, timedData.getTimestamp());
-                lastTime = timedData.getTimestamp();
-
+                Instant timestamp = timedData.getTimestamp();
+                if (fromTime != null && timestamp.isBefore(fromTime)) {
+                    continue;
+                }
+                if (toTime != null && timestamp.isAfter(toTime)) {
+                    break;
+                }
+                wait = ChronoUnit.MILLIS.between(lastTime, timestamp);
+                if (playBackSpeed != 0) {
+                    wait = wait / playBackSpeed;
+                }
                 if (wait > 0) {
                     try {
                         Thread.sleep(wait);
@@ -81,6 +97,7 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
                     }
                 }
 
+                lastTime = timedData.getTimestamp();
                 to.accept(timedData.getData());
 
                 count.incrementAndGet();
@@ -138,6 +155,30 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
 
     public void setTimeIn(InputStream timeIn) {
         this.timeIn = timeIn;
+    }
+
+    public Instant getFromTime() {
+        return fromTime;
+    }
+
+    public void setFromTime(Instant fromTime) {
+        this.fromTime = fromTime;
+    }
+
+    public Instant getToTime() {
+        return toTime;
+    }
+
+    public void setToTime(Instant toTime) {
+        this.toTime = toTime;
+    }
+
+    public int getPlayBackSpeed() {
+        return playBackSpeed;
+    }
+
+    public void setPlayBackSpeed(int playBackSpeed) {
+        this.playBackSpeed = playBackSpeed;
     }
 
     public Consumer<? super GenericData<String>> getTo() {

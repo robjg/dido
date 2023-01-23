@@ -2,6 +2,7 @@ package org.oddjob.dido.poi.layouts;
 
 import dido.data.GenericData;
 import dido.how.DataIn;
+import dido.test.OurDirs;
 import junit.framework.TestCase;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -9,7 +10,6 @@ import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
-import org.oddjob.OurDirs;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.reflect.ArooaPropertyException;
 import org.oddjob.dido.poi.data.PoiWorkbook;

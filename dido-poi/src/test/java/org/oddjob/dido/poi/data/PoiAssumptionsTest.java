@@ -1,5 +1,6 @@
 package org.oddjob.dido.poi.data;
 
+import dido.test.OurDirs;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -7,7 +8,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.oddjob.OurDirs;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -11,6 +11,7 @@
 
     <artifactId>dido-all</artifactId>
     <packaging>pom</packaging>
+
     <name>Dido All</name>
     <description>All Dido dependencies collected together.</description>
     <url>https://github.com/robjg/dido</url>
