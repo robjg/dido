@@ -11,7 +11,29 @@
 
     <artifactId>dido-poi</artifactId>
 
+    <name>Dido Poi</name>
     <description>DiDo for Apache Poi.</description>
+    <url>https://github.com/robjg/dido</url>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>rob</id>
+            <name>Rob</name>
+            <email>contact@rgordon.co.uk</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/robjg/dido</url>
+        <connection>scm:git:git://github.com/robjg/dido</connection>
+    </scm>
 
     <properties>
         <poi.version>4.1.2</poi.version>

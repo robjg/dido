@@ -11,10 +11,31 @@
 
     <artifactId>dido-proto</artifactId>
 
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+    <name>Dido Protobuf</name>
+    <description>Protobuf data in and out.</description>
+    <url>https://github.com/robjg/dido</url>
 
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>rob</id>
+            <name>Rob</name>
+            <email>contact@rgordon.co.uk</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/robjg/dido</url>
+        <connection>scm:git:git://github.com/robjg/dido</connection>
+    </scm>
+
+    <properties>
         <proto.version>3.21.2</proto.version>
         <xolstice.protobuf.plugin.version>0.6.1</xolstice.protobuf.plugin.version>
     </properties>
