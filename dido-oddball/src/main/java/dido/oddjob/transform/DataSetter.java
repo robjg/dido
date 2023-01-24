@@ -1,4 +1,4 @@
-package dido.oddjob.transpose;
+package dido.oddjob.transform;
 
 /**
  * Provides the ability to set data. Intended to sit in front of {@link dido.data.DataBuilders} and

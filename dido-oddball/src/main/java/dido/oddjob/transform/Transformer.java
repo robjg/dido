@@ -1,4 +1,4 @@
-package dido.oddjob.transpose;
+package dido.oddjob.transform;
 
 import dido.data.GenericData;
 
@@ -9,7 +9,7 @@ import dido.data.GenericData;
  * @param <T> The field type of the outgoing data.
  */
 @FunctionalInterface
-public interface Transposer<F, T> {
+public interface Transformer<F, T> {
 
-    void transpose(GenericData<F> from, DataSetter<T> into);
+    void transform(GenericData<F> from, DataSetter<T> into);
 }

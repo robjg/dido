@@ -41,13 +41,13 @@
                 </bus:driver>
                 <bus:map>
                     <function>
-                        <dido:transpose strategy="MERGE" xmlns:dido="oddjob:dido">
+                        <dido:transform strategy="MERGE" xmlns:dido="oddjob:dido">
                             <of>
                                 <dido:copy field="Six" to="SomeSix"/>
                                 <dido:copy field="Three" to="SomeThree"/>
                                 <dido:copy field="One" to="SomeOne"/>
                             </of>
-                        </dido:transpose>
+                        </dido:transform>
                     </function>
                 </bus:map>
                 <bus:collect id="results"/>

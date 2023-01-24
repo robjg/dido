@@ -1,115 +1,114 @@
-package dido.oddjob.transpose;
+package dido.oddjob.transform;
 
-import dido.data.GenericDataBuilder;
-import dido.data.DataSchema;
-import dido.data.GenericData;
-import dido.data.MapData;
+import dido.data.*;
 
-public class MapDataSetterProvider<F> implements SetterProvider<F> {
+public class ArrayDataSetterProvider<F> implements SetterProvider<F> {
 
     @Override
     public DataFactory<F> provideSetter(DataSchema<F> schema) {
-        GenericDataBuilder<F> builder = MapData.newBuilder(schema);
 
-        DataSetter<F> setter = new DataSetter<>() {
+        ArrayData.Builder<F> builder = ArrayData.builderForSchema(schema);
+
+        DataSetter<F> setter = new DataSetter<F>() {
 
             @Override
             public void set(F field, Object value) {
-                builder.set(field, value);
+                builder.setAt(schema.getIndex(field), value);
             }
 
             @Override
             public void setBoolean(F field, boolean value) {
-                builder.set(field, value);
+                set(field, value);
             }
 
             @Override
             public void setByte(F field, byte value) {
-                builder.set(field, value);
+                set(field, value);
             }
 
             @Override
             public void setChar(F field, char value) {
-                builder.set(field, value);
+                set(field, value);
             }
 
             @Override
             public void setShort(F field, short value) {
-                builder.set(field, value);
+                set(field, value);
             }
 
             @Override
             public void setInt(F field, int value) {
-                builder.set(field, value);
+                set(field, value);
             }
 
             @Override
             public void setLong(F field, long value) {
-                builder.set(field, value);
+                set(field, value);
             }
 
             @Override
             public void setFloat(F field, float value) {
-                builder.set(field, value);
+                set(field, value);
             }
 
             @Override
             public void setDouble(F field, double value) {
-                builder.set(field, value);
+                set(field, value);
             }
 
             @Override
             public void setString(F field, String value) {
-                builder.set(field, value);
+                set(field, value);
             }
 
             @Override
             public void setAt(int index, Object value) {
-                builder.set(schema.getFieldAt(index), value);
+                builder.setAt(index, value);
             }
 
             @Override
             public void setBooleanAt(int index, boolean value) {
-                builder.set(schema.getFieldAt(index), value);
+                setAt(index, value);
             }
 
             @Override
             public void setByteAt(int index, byte value) {
-                builder.set(schema.getFieldAt(index), value);
+                setAt(index, value);
             }
 
             @Override
             public void setShortAt(int index, short value) {
-                builder.set(schema.getFieldAt(index), value);
+                setAt(index, value);
             }
 
             @Override
             public void setIntAt(int index, int value) {
-                builder.set(schema.getFieldAt(index), value);
+                setAt(index, value);
             }
 
             @Override
             public void setLongAt(int index, long value) {
-                builder.set(schema.getFieldAt(index), value);
+                setAt(index, value);
             }
 
             @Override
             public void setFloatAt(int index, float value) {
-                builder.set(schema.getFieldAt(index), value);
+                setAt(index, value);
             }
 
             @Override
             public void setDoubleAt(int index, double value) {
-                builder.set(schema.getFieldAt(index), value);
+                setAt(index, value);
             }
 
             @Override
             public void setStringAt(int index, String value) {
-                builder.set(schema.getFieldAt(index), value);
+                setAt(index, value);
             }
+
         };
 
-        return new DataFactory<>() {
+        return new DataFactory<F>() {
             @Override
             public DataSetter<F> getSetter() {
                 return setter;

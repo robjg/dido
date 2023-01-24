@@ -34,16 +34,16 @@
                 </bus:driver>
                 <bus:map>
                     <function>
-                        <dido:transpose xmlns:dido="oddjob:dido">
+                        <dido:transform xmlns:dido="oddjob:dido">
                             <of>
                                 <dido:copy>
                                     <function>
-                                        <bean class="dido.oddjob.transpose.ValueCopyFactoryTest$AddOne"/>
+                                        <bean class="dido.oddjob.transform.ValueCopyFactoryTest$AddOne"/>
                                     </function>
                                 </dido:copy>
                                 <dido:copy>
                                     <function>
-                                        <bean class="dido.oddjob.transpose.ValueCopyFactoryTest$NullWhenBlank"/>
+                                        <bean class="dido.oddjob.transform.ValueCopyFactoryTest$NullWhenBlank"/>
                                     </function>
                                 </dido:copy>
                                 <dido:copy>
@@ -51,16 +51,16 @@
                                         <class name="[I"/>
                                     </type>
                                     <function>
-                                        <bean class="dido.oddjob.transpose.ValueCopyFactoryTest$SplitAndConvert"/>
+                                        <bean class="dido.oddjob.transform.ValueCopyFactoryTest$SplitAndConvert"/>
                                     </function>
                                 </dido:copy>
                                 <dido:copy>
                                     <function>
-                                        <bean class="dido.oddjob.transpose.ValueCopyFactoryTest$WhenNull"/>
+                                        <bean class="dido.oddjob.transform.ValueCopyFactoryTest$WhenNull"/>
                                     </function>
                                 </dido:copy>
                             </of>
-                        </dido:transpose>
+                        </dido:transform>
                     </function>
                 </bus:map>
                 <bus:collect id="results"/>

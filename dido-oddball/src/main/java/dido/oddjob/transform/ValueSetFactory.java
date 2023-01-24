@@ -1,4 +1,4 @@
-package dido.oddjob.transpose;
+package dido.oddjob.transform;
 
 import dido.data.DataSchema;
 import org.oddjob.arooa.ArooaSession;
@@ -13,7 +13,7 @@ import org.oddjob.arooa.types.ValueFactory;
 /**
  * Copy a field from one position and/or field and/or type to another.
  */
-public class ValueSetFactory implements ValueFactory<TransposerFactory<String, String>>, ArooaSessionAware {
+public class ValueSetFactory implements ValueFactory<TransformerFactory<String, String>>, ArooaSessionAware {
 
     /**
      * From field.
@@ -38,8 +38,8 @@ public class ValueSetFactory implements ValueFactory<TransposerFactory<String, S
     }
 
     @Override
-    public TransposerFactory<String, String> toValue() {
-        return new CopyTransposerFactory(this);
+    public TransformerFactory<String, String> toValue() {
+        return new CopyTransformerFactory(this);
     }
 
     public String getField() {
@@ -74,7 +74,7 @@ public class ValueSetFactory implements ValueFactory<TransposerFactory<String, S
         this.type = type;
     }
 
-    static class CopyTransposerFactory implements TransposerFactory<String, String> {
+    static class CopyTransformerFactory implements TransformerFactory<String, String> {
 
         private final String from;
 
@@ -86,7 +86,7 @@ public class ValueSetFactory implements ValueFactory<TransposerFactory<String, S
 
         private final ArooaConverter converter;
 
-        CopyTransposerFactory(ValueSetFactory config) {
+        CopyTransformerFactory(ValueSetFactory config) {
             this.from = config.field;
             this.index = config.index;
             this.value = config.value;
@@ -95,9 +95,9 @@ public class ValueSetFactory implements ValueFactory<TransposerFactory<String, S
         }
 
         @Override
-        public Transposer<String, String> create(int position,
-                                               DataSchema<String> fromSchema,
-                                               SchemaSetter<String> schemaSetter) {
+        public Transformer<String, String> create(int position,
+                                                  DataSchema<String> fromSchema,
+                                                  SchemaSetter<String> schemaSetter) {
 
             int at;
 

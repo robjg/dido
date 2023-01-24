@@ -1,4 +1,4 @@
-package dido.oddjob.transpose;
+package dido.oddjob.transform;
 
 import dido.data.*;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class ValueCopyFactoryTest {
         test.setType(Integer.class);
         test.setTo("FooAmount");
 
-        TransposerFactory<String, String> transposerFactory = test.toValue();
+        TransformerFactory<String, String> transformerFactory = test.toValue();
 
         DataSchema<String> inSchema = SchemaBuilder.forStringFields()
                 .addField("Foo", String.class)
@@ -40,7 +40,7 @@ class ValueCopyFactoryTest {
 
         SchemaSetter<String> schemaSetter = mock(SchemaSetter.class);
 
-        Transposer<String, String> transposer = transposerFactory.create(1, inSchema, schemaSetter);
+        Transformer<String, String> transformer = transformerFactory.create(1, inSchema, schemaSetter);
 
         verify(schemaSetter).setFieldAt(1, "FooAmount", Integer.class);
 
@@ -48,7 +48,7 @@ class ValueCopyFactoryTest {
 
         GenericData<String> data = MapData.of("Foo", "423");
 
-        transposer.transpose(data, dataSetter);
+        transformer.transform(data, dataSetter);
 
         verify(dataSetter).set("FooAmount", 423);
     }
@@ -63,7 +63,7 @@ class ValueCopyFactoryTest {
         test.setType(int.class);
         test.setTo("FooAmount");
 
-        TransposerFactory<String, String> transposerFactory = test.toValue();
+        TransformerFactory<String, String> transformerFactory = test.toValue();
 
         DataSchema<String> inSchema = SchemaBuilder.forStringFields()
                 .addField("Foo", String.class)
@@ -71,7 +71,7 @@ class ValueCopyFactoryTest {
 
         SchemaSetter<String> schemaSetter = mock(SchemaSetter.class);
 
-        Transposer<String, String> transposer = transposerFactory.create(1, inSchema, schemaSetter);
+        Transformer<String, String> transformer = transformerFactory.create(1, inSchema, schemaSetter);
 
         verify(schemaSetter).setFieldAt(1, "FooAmount", int.class);
 
@@ -79,7 +79,7 @@ class ValueCopyFactoryTest {
 
         GenericData<String> data = MapData.of("Foo", "423");
 
-        transposer.transpose(data, dataSetter);
+        transformer.transform(data, dataSetter);
 
         verify(dataSetter).set("FooAmount", 423);
     }

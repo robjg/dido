@@ -22,7 +22,7 @@ Converts Generic Data to a Java Bean.
 Converts a Java Bean to Generic Data.
 
 
-- [**dido:transpose**](src/main/java/dido/oddjob/transpose/Transpose.java)  
+- [**dido:transform**](src/main/java/dido/oddjob/transform/Transform.java)  
 Converts data to a new Data by copying fields and applying a function 
 or setting new fields.
 

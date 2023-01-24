@@ -7,14 +7,14 @@
                     <values>
                         <list>
                             <values>
-                                <bean class="dido.oddjob.transpose.ManyTypesRecord"/>
+                                <bean class="dido.oddjob.transform.ManyTypesRecord"/>
                             </values>
                         </list>
                     </values>
                 </bus:driver>
                 <bus:map>
                     <function>
-                        <dido:transpose xmlns:dido="oddjob:dido" strategy="NEW">
+                        <dido:transform xmlns:dido="oddjob:dido" strategy="NEW">
                             <of>
                                 <dido:copy field="AnIntString" to="AByte">
                                     <type>
@@ -57,7 +57,7 @@
                                     </type>
                                 </dido:copy>
                             </of>
-                        </dido:transpose>
+                        </dido:transform>
                     </function>
                 </bus:map>
                 <bus:collect id="results"/>

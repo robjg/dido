@@ -70,10 +70,10 @@
 		    className='dido.oddjob.bean.ToBeanTransformer'/>
 		<arooa:bean-def element='from-bean'
 						className='dido.oddjob.bean.FromBeanTransformer'/>
-		<arooa:bean-def element='transpose'
-						className='dido.oddjob.transpose.Transpose'/>
+		<arooa:bean-def element='transform'
+						className='dido.oddjob.transform.Transform'/>
 		<arooa:bean-def element='copy'
-						className='dido.oddjob.transpose.ValueCopyFactory'>
+						className='dido.oddjob.transform.ValueCopyFactory'>
 			<design>
 				<design:form xmlns:design="arooa:design">
 					<formItems>
@@ -96,7 +96,7 @@
 			</design>
 		</arooa:bean-def>
 		<arooa:bean-def element='set'
-						className='dido.oddjob.transpose.ValueSetFactory'>
+						className='dido.oddjob.transform.ValueSetFactory'>
 			<design>
 				<design:form xmlns:design="arooa:design">
 					<formItems>

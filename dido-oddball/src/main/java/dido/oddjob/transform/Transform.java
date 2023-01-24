@@ -1,4 +1,4 @@
-package dido.oddjob.transpose;
+package dido.oddjob.transform;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
@@ -11,25 +11,26 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * Copies fields from one data to another allowing for chane of field names, indexes and type.
+ * Copies fields from one data item to another allowing for change of field names, indexes
+ * and type.
  *
  * @param <F>
  * @param <T>
  */
-public class Transpose<F, T> implements ValueFactory<Function<GenericData<F>, GenericData<T>>> {
+public class Transform<F, T> implements ValueFactory<Function<GenericData<F>, GenericData<T>>> {
 
-    private final ListSetterHelper<TransposerFactory<F, T>> of = new ListSetterHelper<>();
+    private final ListSetterHelper<TransformerFactory<F, T>> of = new ListSetterHelper<>();
 
     private SchemaStrategy strategy;
 
     @Override
     public Function<GenericData<F>, GenericData<T>> toValue() {
 
-        return new TransposeFunctionInitial<>(of.getList(), strategy);
+        return new TransformerFunctionInitial<>(of.getList(), strategy);
     }
 
-    public void setOf(int index, TransposerFactory<F, T> transposer) {
-        this.of.set(index, transposer);
+    public void setOf(int index, TransformerFactory<F, T> transformer) {
+        this.of.set(index, transformer);
     }
 
     public SchemaStrategy getStrategy() {
@@ -40,9 +41,9 @@ public class Transpose<F, T> implements ValueFactory<Function<GenericData<F>, Ge
         this.strategy = strategy;
     }
 
-    static class TransposeFunctionInitial<F, T> implements Function<GenericData<F>, GenericData<T>> {
+    static class TransformerFunctionInitial<F, T> implements Function<GenericData<F>, GenericData<T>> {
 
-        private final List<TransposerFactory<F, T>> transposerFactories;
+        private final List<TransformerFactory<F, T>> transformerFactories;
 
         private final SchemaStrategy strategy;
 
@@ -50,8 +51,8 @@ public class Transpose<F, T> implements ValueFactory<Function<GenericData<F>, Ge
 
         private DataSchema<F> lastSchema;
 
-        TransposeFunctionInitial(List<TransposerFactory<F, T>> transposerFactories, SchemaStrategy strategy) {
-            this.transposerFactories = new ArrayList<>(transposerFactories);
+        TransformerFunctionInitial(List<TransformerFactory<F, T>> transformerFactories, SchemaStrategy strategy) {
+            this.transformerFactories = new ArrayList<>(transformerFactories);
             this.strategy = strategy;
         }
 
@@ -60,15 +61,15 @@ public class Transpose<F, T> implements ValueFactory<Function<GenericData<F>, Ge
 
             if (delegate == null || !dataIn.getSchema().equals(lastSchema)) {
                 lastSchema = dataIn.getSchema();
-                delegate = functionFor(transposerFactories, lastSchema, strategy);
+                delegate = functionFor(transformerFactories, lastSchema, strategy);
             }
             return delegate.apply(dataIn);
         }
     }
 
-    static <T, F> TransposeFunctionKnown<F, T> functionFor(List<TransposerFactory<F, T>> factories,
-                                                           DataSchema<F> schemaFrom,
-                                                           SchemaStrategy partial) {
+    static <T, F> TransformerFunctionKnown<F, T> functionFor(List<TransformerFactory<F, T>> factories,
+                                                             DataSchema<F> schemaFrom,
+                                                             SchemaStrategy partial) {
 
         int position = 0;
 
@@ -80,11 +81,11 @@ public class Transpose<F, T> implements ValueFactory<Function<GenericData<F>, Ge
             newFields.add(SchemaFieldOptions.of(index, (F) field, fieldType));
         };
 
-        List<Transposer<F, T>> transposers = new ArrayList<>(factories.size());
+        List<Transformer<F, T>> transformers = new ArrayList<>(factories.size());
 
-        for (TransposerFactory<F, T> factory : factories) {
+        for (TransformerFactory<F, T> factory : factories) {
 
-            transposers.add(factory.create(++position, schemaFrom, schemaSetter));
+            transformers.add(factory.create(++position, schemaFrom, schemaSetter));
         }
 
         SchemaStrategy schemaStrategy = Objects.requireNonNullElse(partial, SchemaStrategy.MERGE);
@@ -93,28 +94,28 @@ public class Transpose<F, T> implements ValueFactory<Function<GenericData<F>, Ge
         @SuppressWarnings("unchecked")
         DataSchema<T> schema = schemaStrategy.newSchemaFrom((DataSchema) schemaFrom,
                 newFields,
-                i -> transposers.add((in, setter) -> setter.setAt(i, in.getAt(i))));
+                i -> transformers.add((in, setter) -> setter.setAt(i, in.getAt(i))));
 
         DataFactory<T> dataFactory = new ArrayDataSetterProvider<T>().provideSetter(schema);
 
-        return new TransposeFunctionKnown<>(dataFactory, transposers);
+        return new TransformerFunctionKnown<>(dataFactory, transformers);
     }
 
-    static class TransposeFunctionKnown<F, T> implements Function<GenericData<F>, GenericData<T>> {
+    static class TransformerFunctionKnown<F, T> implements Function<GenericData<F>, GenericData<T>> {
 
         private final DataFactory<T> dataFactory;
 
-        private final List<Transposer<F, T>> transposers;
+        private final List<Transformer<F, T>> transformers;
 
-        TransposeFunctionKnown(DataFactory<T> dataFactory, List<Transposer<F, T>> transposers) {
+        TransformerFunctionKnown(DataFactory<T> dataFactory, List<Transformer<F, T>> transformers) {
             this.dataFactory = dataFactory;
-            this.transposers = transposers;
+            this.transformers = transformers;
         }
 
         @Override
         public GenericData<T> apply(GenericData<F> dataIn) {
-            for (Transposer<F, T> transposer : transposers) {
-                transposer.transpose(dataIn, dataFactory.getSetter());
+            for (Transformer<F, T> transformer : transformers) {
+                transformer.transform(dataIn, dataFactory.getSetter());
             }
 
             return dataFactory.toData();

@@ -1,4 +1,4 @@
-package dido.oddjob.transpose;
+package dido.oddjob.transform;
 
 import dido.data.DataSchema;
 import dido.data.SchemaBuilder;

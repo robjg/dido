@@ -1,4 +1,4 @@
-package dido.oddjob.transpose;
+package dido.oddjob.transform;
 
 import dido.data.DataSchema;
 import dido.data.GenericData;
@@ -12,7 +12,7 @@ import java.util.function.Function;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class TransposeTest {
+class TransformTest {
 
     @Test
     void testSimpleFieldCopy() {
@@ -24,10 +24,10 @@ class TransposeTest {
         copy1.setField("fruit");
         copy1.setTo("food");
 
-        Transpose<String, String> transpose = new Transpose<>();
-        transpose.setOf(0, copy1.toValue());
+        Transform<String, String> transform = new Transform<>();
+        transform.setOf(0, copy1.toValue());
 
-        Function<GenericData<String>, GenericData<String>> func = transpose.toValue();
+        Function<GenericData<String>, GenericData<String>> func = transform.toValue();
 
         GenericData<String> data = MapData.of("fruit", "apple", "quantity", 12);
 
@@ -56,11 +56,11 @@ class TransposeTest {
         copy1.setField("fruit");
         copy1.setTo("food");
 
-        Transpose<String, String> transpose = new Transpose<>();
-        transpose.setOf(0, copy1.toValue());
-        transpose.setStrategy(SchemaStrategy.NEW);
+        Transform<String, String> transform = new Transform<>();
+        transform.setOf(0, copy1.toValue());
+        transform.setStrategy(SchemaStrategy.NEW);
 
-        Function<GenericData<String>, GenericData<String>> func = transpose.toValue();
+        Function<GenericData<String>, GenericData<String>> func = transform.toValue();
 
         GenericData<String> data = MapData.of("fruit", "apple", "quantity", 12);
 
@@ -79,9 +79,9 @@ class TransposeTest {
     @Test
     void testCopyAll() {
 
-        Transpose<String, String> transpose = new Transpose<>();
+        Transform<String, String> transform = new Transform<>();
 
-        Function<GenericData<String>, GenericData<String>> func = transpose.toValue();
+        Function<GenericData<String>, GenericData<String>> func = transform.toValue();
 
         GenericData<String> data = MapData.of("fruit", "apple", "quantity", 12);
 

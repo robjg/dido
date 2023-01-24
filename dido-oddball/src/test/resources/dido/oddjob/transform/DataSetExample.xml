@@ -16,7 +16,7 @@
                 </bus:driver>
                 <bus:map>
                     <function>
-                        <dido:transpose xmlns:dido="oddjob:dido">
+                        <dido:transform xmlns:dido="oddjob:dido">
                             <of>
                                 <dido:set field="qty">
                                     <value>
@@ -24,7 +24,7 @@
                                     </value>
                                 </dido:set>
                             </of>
-                        </dido:transpose>
+                        </dido:transform>
                     </function>
                 </bus:map>
                 <bus:collect id="capture"/>

@@ -1,4 +1,4 @@
-package dido.oddjob.transpose;
+package dido.oddjob.transform;
 
 import dido.data.DataSchema;
 import org.oddjob.arooa.ArooaSession;
@@ -16,7 +16,7 @@ import java.util.function.Function;
 /**
  * Copy a field from one position and/or field and/or type to another.
  */
-public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, String>>, ArooaSessionAware {
+public class ValueCopyFactory implements ValueFactory<TransformerFactory<String, String>>, ArooaSessionAware {
 
     private static final Logger logger = LoggerFactory.getLogger(ValueCopyFactory.class);
 
@@ -59,8 +59,8 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
     }
 
     @Override
-    public TransposerFactory<String, String> toValue() {
-        return new CopyTransposerFactory(this);
+    public TransformerFactory<String, String> toValue() {
+        return new CopyTransformerFactory(this);
     }
 
     public String getField() {
@@ -111,7 +111,7 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
         this.function = function;
     }
 
-    static class CopyTransposerFactory implements TransposerFactory<String, String> {
+    static class CopyTransformerFactory implements TransformerFactory<String, String> {
 
         private final String from;
 
@@ -127,7 +127,7 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
 
         private final ArooaConverter converter;
 
-        CopyTransposerFactory(ValueCopyFactory from) {
+        CopyTransformerFactory(ValueCopyFactory from) {
             this.from = from.field;
             this.to = from.to;
             this.index = from.index;
@@ -139,9 +139,9 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
         }
 
         @Override
-        public Transposer<String, String> create(int position,
-                                               DataSchema<String> fromSchema,
-                                               SchemaSetter<String> schemaSetter) {
+        public Transformer<String, String> create(int position,
+                                                  DataSchema<String> fromSchema,
+                                                  SchemaSetter<String> schemaSetter) {
 
             String from;
             int index;
@@ -180,29 +180,29 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
                 to = this.to;
             }
 
-            Function<Function<Object,Object>, Transposer<String, String>> transposerFn;
+            Function<Function<Object,Object>, Transformer<String, String>> transformerFn;
 
             if (to == null) {
                 if (from == null) {
                     logger.info("Creating Copy from {} to {}", index, at);
-                    transposerFn = (conversion) ->
+                    transformerFn = (conversion) ->
                             (fromData, into) -> into.setAt(at, conversion.apply(fromData.getAt(index)));
                 }
                 else {
                     logger.info("Creating Copy from {} to {}", from, at);
-                    transposerFn = (conversion) ->
+                    transformerFn = (conversion) ->
                             (fromData, into) -> into.setAt(at, conversion.apply(fromData.get(from)));
                 }
             }
             else {
                 if (from == null) {
                     logger.info("Creating Copy from {} to {}", index, to);
-                    transposerFn = (conversion) ->
+                    transformerFn = (conversion) ->
                             (fromData, into) -> into.set(to, conversion.apply(fromData.getAt(index)));
                 }
                 else {
                     logger.info("Creating Copy from {} to {}", from, to);
-                    transposerFn = (conversion) ->
+                    transformerFn = (conversion) ->
                             (fromData, into) -> into.set(to, conversion.apply(fromData.get(from)));
 
                 }
@@ -231,7 +231,7 @@ public class ValueCopyFactory implements ValueFactory<TransposerFactory<String, 
 
             schemaSetter.setFieldAt(at, to, toType);
 
-            return transposerFn.apply(conversion);
+            return transformerFn.apply(conversion);
         }
     }
 
