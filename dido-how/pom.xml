@@ -40,7 +40,6 @@
         <dependency>
             <groupId>uk.co.rgordon</groupId>
             <artifactId>dido-data</artifactId>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>

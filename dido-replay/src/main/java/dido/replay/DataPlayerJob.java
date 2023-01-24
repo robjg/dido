@@ -197,6 +197,10 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
         return lastTime;
     }
 
+    public long getWait() {
+        return wait;
+    }
+
     @Override
     public String toString() {
         return Objects.requireNonNullElseGet(name, () -> getClass().getSimpleName());
