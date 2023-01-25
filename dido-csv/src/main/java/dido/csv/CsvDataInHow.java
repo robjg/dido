@@ -1,9 +1,13 @@
 package dido.csv;
 
-import dido.data.*;
+import dido.data.AbstractGenericData;
+import dido.data.DataSchema;
+import dido.data.GenericData;
+import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataInHow;
-import dido.how.util.Primitives;
+import dido.how.conversion.DefaultConverter;
+import dido.how.conversion.DidoConverter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -11,27 +15,11 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 
 public class CsvDataInHow implements DataInHow<String, InputStream> {
 
-    private static final Map<Class<?>, Function<String, Object>> CONVERSIONS = new HashMap<>();
-
-    static {
-        CONVERSIONS.put(Boolean.class, Boolean::valueOf);
-        CONVERSIONS.put(Byte.class, Byte::valueOf);
-        CONVERSIONS.put(Character.class, s -> s.isEmpty() ? null : s.charAt(0));
-        CONVERSIONS.put(Short.class, Short::valueOf);
-        CONVERSIONS.put(Integer.class, Integer::valueOf);
-        CONVERSIONS.put(Long.class, Long::valueOf);
-        CONVERSIONS.put(Float.class, Float::valueOf);
-        CONVERSIONS.put(Double.class, Double::valueOf);
-        CONVERSIONS.put(Number.class, Double::valueOf);
-    }
 
     private final CSVFormat csvFormat;
 
@@ -40,6 +28,8 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
     private final boolean withHeader;
 
     private final boolean partialSchema;
+
+    private final DidoConverter converter;
 
     public static class Options {
 
@@ -50,6 +40,8 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
         private boolean withHeader;
 
         private boolean partialSchema;
+
+        private DidoConverter converter;
 
         public Options csvFormat(CSVFormat csvFormat) {
             this.csvFormat = csvFormat;
@@ -71,6 +63,11 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
             return this;
         }
 
+        public Options converter(DidoConverter converter) {
+            this.converter = converter;
+            return this;
+        }
+
         public DataInHow<String, InputStream> make() {
             return new CsvDataInHow(this);
         }
@@ -81,6 +78,7 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
         this.schema = options.schema;
         this.withHeader = options.withHeader;
         this.partialSchema = options.partialSchema;
+        this.converter = Objects.requireNonNullElse(options.converter, new DefaultConverter());
     }
 
     public static Options withOptions() {
@@ -141,7 +139,7 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
             @Override
             public GenericData<String> get() {
                 if (finalIterator.hasNext()) {
-                    return dataFrom(finalIterator.next(), schema);
+                    return dataFrom(finalIterator.next(), schema, converter);
                 } else {
                     return null;
                 }
@@ -175,7 +173,7 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
         return schemaBuilder.build();
     }
 
-    static GenericData<String> dataFrom(CSVRecord record, DataSchema<String> schema) {
+    static GenericData<String> dataFrom(CSVRecord record, DataSchema<String> schema, DidoConverter converter) {
         return new AbstractGenericData<>() {
             @Override
             public DataSchema<String> getSchema() {
@@ -190,20 +188,7 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
             @Override
             public <T> T getAtAs(int index, Class<T> type) {
                 String value = record.get(index - 1);
-                if (value == null) {
-                    return null;
-                }
-                if (type.isAssignableFrom(String.class)) {
-                    return type.cast(value);
-                }
-
-                type = Primitives.wrap(type);
-                Function<String, ?> conversion = CONVERSIONS.get(type);
-                if (conversion == null) {
-                    throw new IllegalArgumentException("Unsupported CSV type " + type +
-                            ", only Primitives and their Box types are supported.");
-                }
-                return type.cast(conversion.apply(value));
+                return converter.convertFromString(value, type);
             }
 
             @Override

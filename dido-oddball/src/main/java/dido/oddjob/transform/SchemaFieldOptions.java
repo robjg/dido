@@ -1,5 +1,10 @@
 package dido.oddjob.transform;
 
+/**
+ * Container for field options for new fields.
+ *
+ * @param <F> The field type.
+ */
 public class SchemaFieldOptions<F> {
     
     private final int index;

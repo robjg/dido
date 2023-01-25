@@ -21,6 +21,7 @@ public class Transform<F, T> implements ValueFactory<Function<GenericData<F>, Ge
 
     private final ListSetterHelper<TransformerFactory<F, T>> of = new ListSetterHelper<>();
 
+    /** Strategy for creating the new schema for outgoing data. Defaults to merge. */
     private SchemaStrategy strategy;
 
     @Override

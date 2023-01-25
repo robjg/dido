@@ -7,8 +7,15 @@ import dido.data.SchemaField;
 import java.util.*;
 import java.util.function.IntConsumer;
 
+/**
+ * Provided to {@link Transform} to decide how to handle the {@link DataSchema} of the outgoing
+ * type.
+ */
 public enum SchemaStrategy {
 
+    /**
+     * The schema is just created from the {@link Transformer}s used.
+     */
     NEW {
         public <F> DataSchema<F> newSchemaFrom(DataSchema<F> existingSchema,
                                                List<SchemaFieldOptions<F>> fields,
@@ -33,6 +40,10 @@ public enum SchemaStrategy {
         }
     },
 
+    /**
+     * The schema is a combination of the existing schema and the new fields defined by
+     * the transform.
+     */
     MERGE {
         public <F> DataSchema<F> newSchemaFrom(DataSchema<F> existingSchema,
                                                List<SchemaFieldOptions<F>> fields,

@@ -11,6 +11,9 @@ import org.oddjob.arooa.types.ValueFactory;
 
 import java.util.List;
 
+/**
+ * Create an item of Generic Data from values and possibly a schema. Used for testing.
+ */
 public class GenericDataType implements ValueFactory<GenericData<String>>, ArooaSessionAware {
 
     private DataSchema<String> schema;

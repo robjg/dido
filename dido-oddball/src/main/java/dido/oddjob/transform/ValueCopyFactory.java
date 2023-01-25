@@ -15,6 +15,12 @@ import java.util.function.Function;
 
 /**
  * Copy a field from one position and/or field and/or type to another.
+ * <p>
+ * When the {@link Transform} schema strategy is {@link SchemaStrategy#MERGE} then
+ * this acts like Rename which is probably wrong. There should be a rename
+ * and also a remove as well.
+ *
+ * </p>
  */
 public class ValueCopyFactory implements ValueFactory<TransformerFactory<String, String>>, ArooaSessionAware {
 
@@ -149,13 +155,11 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory<String,
             if (this.from == null) {
                 if (this.index == 0) {
                     index = position;
-                }
-                else {
+                } else {
                     index = this.index;
                 }
                 from = fromSchema.getFieldAt(index);
-            }
-            else {
+            } else {
                 from = this.from;
                 // ignore index - should we warn?
                 index = fromSchema.getIndex(from);
@@ -167,40 +171,31 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory<String,
             int at;
             if (this.at == 0) {
                 at = index;
-            }
-            else {
+            } else {
                 at = this.at;
             }
 
             String to;
             if (this.to == null) {
                 to = from;
-            }
-            else {
+            } else {
                 to = this.to;
             }
 
-            Function<Function<Object,Object>, Transformer<String, String>> transformerFn;
+            Function<Function<Object, Object>, Transformer<String, String>> transformerFn;
 
             if (to == null) {
-                if (from == null) {
-                    logger.info("Creating Copy from {} to {}", index, at);
-                    transformerFn = (conversion) ->
-                            (fromData, into) -> into.setAt(at, conversion.apply(fromData.getAt(index)));
-                }
-                else {
-                    logger.info("Creating Copy from {} to {}", from, at);
-                    transformerFn = (conversion) ->
-                            (fromData, into) -> into.setAt(at, conversion.apply(fromData.get(from)));
-                }
-            }
-            else {
+                // from must also be null
+                logger.info("Creating Copy from {} to {}", index, at);
+                transformerFn = (conversion) ->
+                        (fromData, into) -> into.setAt(at, conversion.apply(fromData.getAt(index)));
+
+            } else {
                 if (from == null) {
                     logger.info("Creating Copy from {} to {}", index, to);
                     transformerFn = (conversion) ->
                             (fromData, into) -> into.set(to, conversion.apply(fromData.getAt(index)));
-                }
-                else {
+                } else {
                     logger.info("Creating Copy from {} to {}", from, to);
                     transformerFn = (conversion) ->
                             (fromData, into) -> into.set(to, conversion.apply(fromData.get(from)));
@@ -213,8 +208,7 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory<String,
             if (this.type == null) {
                 conversion = Function.identity();
                 toType = fromSchema.getTypeAt(index);
-            }
-            else {
+            } else {
                 toType = type;
                 conversion = in -> {
                     try {
