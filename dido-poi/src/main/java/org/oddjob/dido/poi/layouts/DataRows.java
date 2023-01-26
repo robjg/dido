@@ -27,9 +27,10 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * @author rob
  * @oddjob.description Define an area in a spreadsheet sheet for reading
  * and writing rows to.
+ *
+ * @author rob
  */
 public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<String, BookOutProvider> {
 

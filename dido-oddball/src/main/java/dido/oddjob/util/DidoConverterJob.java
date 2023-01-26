@@ -5,23 +5,30 @@ import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConverter;
 import org.oddjob.arooa.convert.ConversionFailedException;
 import org.oddjob.arooa.convert.NoConversionAvailableException;
+import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.arooa.registry.ServiceProvider;
 import org.oddjob.arooa.registry.Services;
 import org.oddjob.framework.adapt.HardReset;
 import org.oddjob.framework.adapt.SoftReset;
 
+import java.util.Objects;
+import java.util.Optional;
+
 /**
  * Provides a {@link DidoConverter} using Oddjob's conversions.
  */
 public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSessionAware {
 
-    private static final String DIDO_CONVERTER_SERVICE_NAME = "DidoConverter";
+    public static final String DIDO_CONVERTER_SERVICE_NAME = "DidoConverter";
 
     private volatile ArooaSession arooaSession;
 
-    private volatile Services services;
+    private volatile String name;
 
+    private volatile ConverterServices services;
+
+    @ArooaHidden
     @Override
     public void setArooaSession(ArooaSession session) {
         this.arooaSession = session;
@@ -45,6 +52,20 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
     @Override
     public Services getServices() {
         return this.services;
+    }
+
+    public DidoConverter getConverter() {
+        return Optional.ofNullable(this.services)
+                .map(s -> s.didoConverter)
+                .orElse(null);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     static class ConverterServices implements Services {
@@ -108,5 +129,10 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
         public String convertToString(Object from) {
             return convert(from, String.class);
         }
+    }
+
+    @Override
+    public String toString() {
+        return Objects.requireNonNullElseGet(this.name, () -> getClass().getSimpleName());
     }
 }

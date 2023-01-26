@@ -2,7 +2,7 @@
     <job>
         <sequential>
             <jobs>
-                <dido:converter xmlns:dido="oddjob:dido"/>
+                <dido:converter xmlns:dido="oddjob:dido" id="converter"/>
                 <bean id="foo" class="dido.oddjob.util.DidoConverterJobTest$NeedConverter"/>
             </jobs>
         </sequential>

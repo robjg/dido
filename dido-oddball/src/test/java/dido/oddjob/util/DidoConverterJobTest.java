@@ -4,6 +4,7 @@ import dido.how.conversion.DidoConverter;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
+import org.oddjob.Resettable;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.state.ParentState;
 
@@ -12,8 +13,7 @@ import java.io.File;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 class DidoConverterJobTest {
 
@@ -49,8 +49,20 @@ class DidoConverterJobTest {
 
         assertThat(oddjob.lastStateEvent().getState(), is(ParentState.COMPLETE));
 
-        DidoConverter converter = new OddjobLookup(oddjob).lookup("foo.converter", DidoConverter.class);
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        DidoConverter converter = lookup.lookup("foo.converter", DidoConverter.class);
 
         assertThat(converter, notNullValue());
+
+        DidoConverter converter2 = lookup.lookup("converter.converter", DidoConverter.class);
+
+        assertThat(converter2, sameInstance(converter));
+
+        lookup.lookup("converter", Resettable.class).hardReset();
+
+        assertThat(lookup.lookup("converter.converter"), nullValue());
+        assertThat(lookup.lookup("converter.services"), nullValue());
     }
+
 }

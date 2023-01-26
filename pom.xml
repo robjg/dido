@@ -8,7 +8,7 @@
     <packaging>pom</packaging>
 
     <name>Dido</name>
-    <description>Data In Data Out - A data framework for use with Oddjob.</description>
+    <description>Data In Data Out - A data framework for use standalone or with Oddjob.</description>
     <url>http://rgordon.co.uk/oddjob</url>
 
     <licenses>
