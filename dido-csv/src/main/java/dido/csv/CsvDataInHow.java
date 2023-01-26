@@ -78,7 +78,8 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
         this.schema = options.schema;
         this.withHeader = options.withHeader;
         this.partialSchema = options.partialSchema;
-        this.converter = Objects.requireNonNullElse(options.converter, new DefaultConverter());
+        this.converter = Objects.requireNonNullElse(options.converter,
+                DefaultConverter.defaultInstance());
     }
 
     public static Options withOptions() {

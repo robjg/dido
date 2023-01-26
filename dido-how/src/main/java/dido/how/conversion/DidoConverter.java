@@ -2,10 +2,10 @@ package dido.how.conversion;
 
 public interface DidoConverter {
 
-    <T> T convert(Object thing, Class<T> type);
+    <T> T convert(Object from, Class<T> to);
 
-    <T> T convertFromString(String string, Class<T> type);
+    <T> T convertFromString(String string, Class<T> to);
 
-    String convertToString(Object thing);
+    String convertToString(Object from);
 
 }

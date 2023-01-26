@@ -96,7 +96,7 @@ public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
 
     static class KnownSchemaConsumer<F> implements DataOut<F> {
 
-        final CSVPrinter printer;
+        private final CSVPrinter printer;
 
         KnownSchemaConsumer(CSVPrinter printer) {
             this.printer = printer;

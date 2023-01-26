@@ -114,6 +114,8 @@
 		</arooa:bean-def>
 	</values>
 	<components>
+		<arooa:bean-def element='converter'
+						className='dido.oddjob.util.DidoConverterJob'/>
 		<arooa:bean-def element="data-in"
 						className="dido.oddjob.beanbus.DataInDriver">
 			<design>

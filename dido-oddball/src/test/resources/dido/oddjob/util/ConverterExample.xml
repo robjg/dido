@@ -1,0 +1,10 @@
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <dido:converter xmlns:dido="oddjob:dido"/>
+                <bean id="foo" class="dido.oddjob.util.DidoConverterJobTest$NeedConverter"/>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>
