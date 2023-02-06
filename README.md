@@ -1,5 +1,5 @@
-Dido-0.0.1
-=============
+Dido
+====
 
 Dido stands for Data-In/Data-Out and is a  framework for reading and 
 writing data. It is designed to be used within Oddjob but most modules can be used in code 
