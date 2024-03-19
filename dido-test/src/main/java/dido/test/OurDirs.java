@@ -14,11 +14,6 @@ import static dido.test.OurDirs.BuildType.*;
 /**
  * Used to work out relative directories, when running tests individually
  * from an IDE or from Ant or from Maven.
- * <p/>
- * When running from ant the property basedir should be set which is the
- * project root.
- * <p/>
- * When running from maven
  *
  * @author rob
  */

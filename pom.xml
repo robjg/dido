@@ -4,7 +4,7 @@
 
     <groupId>uk.co.rgordon</groupId>
     <artifactId>dido</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Dido</name>
@@ -36,7 +36,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <oddjob.version>1.6.0</oddjob.version>
+        <oddjob.version>1.7.0-SNAPSHOT</oddjob.version>
 
         <javax.inject.version>1</javax.inject.version>
 
@@ -64,7 +64,6 @@
         <module>dido-test</module>
         <module>dido-data</module>
         <module>dido-how</module>
-        <module>dido-attic</module>
         <module>dido-oddball</module>
         <module>dido-json</module>
         <module>dido-text</module>
@@ -215,6 +214,82 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.6.4-SNAPSHOT</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <quiet/>
+                                    <additionalOptions>--ignore-source-errors,-Xdoclint:none</additionalOptions>
+                                    <taglets>
+                                        <taglet>
+                                            <tagletClass>org.oddjob.doc.taglet.PropertyTaglet</tagletClass>
+                                        </taglet>
+                                        <taglet>
+                                            <tagletClass>org.oddjob.doc.taglet.DescriptionTaglet</tagletClass>
+                                        </taglet>
+                                        <taglet>
+                                            <tagletClass>org.oddjob.doc.taglet.ExampleTaglet</tagletClass>
+                                        </taglet>
+                                        <taglet>
+                                            <tagletClass>org.oddjob.doc.taglet.RequiredTaglet</tagletClass>
+                                        </taglet>
+                                        <taglet>
+                                            <tagletClass>org.oddjob.doc.taglet.XmlResourceTaglet</tagletClass>
+                                        </taglet>
+                                        <taglet>
+                                            <tagletClass>org.oddjob.doc.taglet.PlainTextResourceTaglet</tagletClass>
+                                        </taglet>
+                                    </taglets>
+                                    <tagletArtifacts>
+                                        <tagletArtifact>
+                                            <groupId>uk.co.rgordon</groupId>
+                                            <artifactId>oj-doc</artifactId>
+                                            <version>${oddjob.version}</version>
+                                        </tagletArtifact>
+                                        <tagletArtifact>
+                                            <groupId>uk.co.rgordon</groupId>
+                                            <artifactId>arooa</artifactId>
+                                            <version>${oddjob.version}</version>
+                                        </tagletArtifact>
+                                    </tagletArtifacts>
+                                    <tagletpath>${project.basedir}/src/test/resources</tagletpath>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -254,6 +329,60 @@
                     <version>3.0.0</version>
                 </plugin>
 
+                <!-- Running against a local version of the javadoc plugin with the
+                taglet path fixed. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.6.4-SNAPSHOT</version>
+                    <executions>
+                        <execution>
+                            <id>reference</id>
+                            <goals>
+                                <goal>javadoc</goal>
+                            </goals>
+                            <phase>none</phase>
+                            <configuration>
+                                <doclet>org.oddjob.doc.doclet.ReferenceDoclet</doclet>
+                                <docletArtifacts>
+                                    <docletArtifact>
+                                        <groupId>uk.co.rgordon</groupId>
+                                        <artifactId>oj-doc</artifactId>
+                                        <version>${oddjob.version}</version>
+                                    </docletArtifact>
+                                    <docletArtifact>
+                                        <groupId>uk.co.rgordon</groupId>
+                                        <artifactId>oddjob</artifactId>
+                                        <version>${oddjob.version}</version>
+                                    </docletArtifact>
+                                    <docletArtifact>
+                                        <groupId>${project.groupId}</groupId>
+                                        <artifactId>${project.artifactId}</artifactId>
+                                        <version>${project.version}</version>
+                                    </docletArtifact>
+                                </docletArtifacts>
+                                <show>private</show>
+                                <additionalJOptions>
+                                    <additionalJOption>-J-Dlogback.configurationFile=logback-oj-doc.xml</additionalJOption>
+                                </additionalJOptions>
+                                <additionalOptions>
+                                    <additionalOption>-d</additionalOption>
+                                    <additionalOption>${project.basedir}/docs/reference</additionalOption>
+                                    <additionalOption>-loaderpath</additionalOption>
+                                    <additionalOption>${project.basedir}/src/test/resources;${project.basedir}/src/test/java</additionalOption>
+                                    <additionalOption>-descriptorurl</additionalOption>
+                                    <additionalOption>file:${project.basedir}/src/main/resources/META-INF/arooa.xml</additionalOption>
+                                    <additionalOption>-writerfactory</additionalOption>
+                                    <additionalOption>org.oddjob.doc.markdown.MdReferenceWriterFactory</additionalOption>
+                                    <additionalOption>-apiurl</additionalOption>
+                                    <additionalOption>http://rgordon.co.uk/oddjob/1.6.0/api</additionalOption>
+                                </additionalOptions>
+                                <useStandardDocletOptions>false</useStandardDocletOptions>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
             </plugins>
         </pluginManagement>
 
@@ -279,46 +408,5 @@
 
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                                <configuration> <!-- add this to disable checking -->
-                                    <additionalOptions>-Xdoclint:none</additionalOptions>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

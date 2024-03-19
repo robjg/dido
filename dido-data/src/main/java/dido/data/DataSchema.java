@@ -8,9 +8,10 @@ import java.util.*;
  * and index may be not be sequential. The intention is to support reading
  * or writing column data (such as a csv file) where only some of the
  * columns are of interest.
- * <p/>
+ * <p>
  * Instance of this type will be effectively immutable. Calling the same method repeatedly
  * with the same argument will always return the same value.
+ * </p>
  *
  * @param <F> The type of the fields used in the schema.
  */
@@ -56,6 +57,8 @@ public interface DataSchema<F> {
      * will not return null.
      *
      * @param index The field.
+     * @param <N> The field type of the nested schema.
+     *
      * @return The nested schema.
      */
     <N> DataSchema<N> getSchemaAt(int index);
@@ -138,6 +141,8 @@ public interface DataSchema<F> {
      * there is not nested schema it will return null.
      *
      * @param field The field.
+     * @param <N> The field type of the nested schema.
+     *
      * @return The nested schema or null.
      */
     <N> DataSchema<N> getSchema(F field);
