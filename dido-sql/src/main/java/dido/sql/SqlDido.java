@@ -8,12 +8,35 @@ import dido.how.DataOutHow;
 import javax.inject.Inject;
 import java.sql.Connection;
 
+/**
+ * @oddjob.description Export and Import with SQL.
+ *
+ * @oddjob.example Insert and Extract data.
+ * <p>
+ * {@oddjob.xml.resource dido/sql/SimpleSqlExample.xml}
+ *
+ *
+ */
 public class SqlDido implements DataInHow<String, Connection>, DataOutHow<String, Connection> {
 
+
+    /**
+     * @oddjob.description The SQL that will extract or insert the data.
+     * @oddjob.required Yes.
+     */
     private String sql;
 
+    /**
+     * @oddjob.description The classloader used to derive the schema from a query. Only required if the
+     * table include custom data types.
+     * @oddjob.required No.
+     */
     private ClassLoader classLoader;
 
+    /**
+     * @oddjob.description Batch size. This is passed directly to JDBC.
+     * @oddjob.required No.
+     */
     private int batchSize;
 
     @Override

@@ -1,0 +1,15 @@
+<oddjob id="oddjob">
+    <job>
+        <bean class="org.oddjob.doc.processor.ProcessCopyDocs" pattern="*.md" format="MD">
+            <baseDir>
+                <file file="."/>
+            </baseDir>
+            <fromDir>
+                <file file="${oddjob.dir}"/>
+            </fromDir>
+            <toDir>
+                <file file=".."/>
+            </toDir>
+        </bean>
+    </job>
+</oddjob>

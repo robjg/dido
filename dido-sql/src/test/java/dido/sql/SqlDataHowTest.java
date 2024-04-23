@@ -26,6 +26,12 @@ import static org.hamcrest.Matchers.*;
 
 public class SqlDataHowTest {
 
+    static final long SECOND = 1000L;
+
+    static final long MINUTE = 60 * SECOND;
+
+    static final long HOUR = 60 * MINUTE;
+
     private static final Logger logger = LoggerFactory.getLogger(
             SqlDataHowTest.class);
 
@@ -364,11 +370,15 @@ public class SqlDataHowTest {
             assertThat(dates.getString("A_Date"), is("2008-08-22"));
 
             assertThat(dates.get("A_Time").getClass(), is(java.sql.Time.class));
-            assertThat(Instant.ofEpochMilli(
-                            dates.getAs("A_Time", java.sql.Time.class).getTime()),
-                    is(localTime.truncatedTo(ChronoUnit.SECONDS).atDate(LocalDate.ofEpochDay(0))
-                            .atZone(ZoneOffset.systemDefault()).toInstant()));
-            assertThat(dates.getString("A_Time"), is("20:08:08"));
+            java.sql.Time aTime = dates.getAs("A_Time", java.sql.Time.class);
+            assertThat(dates.getAs("A_Time", java.sql.Time.class).getTime(),
+                    is(20 * HOUR +  8 * MINUTE + 8 * SECOND));
+            // HSQLDB stores time with zone. This will depend on your default time zone.
+//            assertThat(aTime.toString(), is("20:08:08"));
+            ZonedDateTime utcDateTime = localTime.truncatedTo(ChronoUnit.SECONDS)
+                    .atDate(LocalDate.now()).atZone(ZoneId.of("UTC"));
+            assertThat(dates.getString("A_Time"),
+                    is(utcDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalTime().toString()));
 
             assertThat(dates.get("A_Zoned_Time").getClass(), is(java.time.OffsetTime.class));
             assertThat(dates.getAs("A_Zoned_Time", java.time.OffsetTime.class),
@@ -424,4 +434,14 @@ public class SqlDataHowTest {
         reader.close();
     }
 
+
+    @Test
+    void dateAssumptions() {
+
+        LocalTime localTime = LocalTime.parse("20:09:37");
+
+        ZonedDateTime zonedDateTime = localTime.atDate(LocalDate.now()).atZone(ZoneId.of("UTC"));
+
+        assertThat(zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalTime().toString(), is("21:09:37"));
+    }
 }

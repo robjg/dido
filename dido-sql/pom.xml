@@ -35,10 +35,6 @@
         <connection>scm:git:git://github.com/robjg/dido</connection>
     </scm>
 
-    <properties>
-        <hsql.version>2.6.1</hsql.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>uk.co.rgordon</groupId>
@@ -95,8 +91,11 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>${hsql.version}</version>
-            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
         </dependency>
 
     </dependencies>

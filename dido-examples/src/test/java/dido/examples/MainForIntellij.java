@@ -1,4 +1,4 @@
-package dido.all;
+package dido.examples;
 
 import org.oddjob.Main;
 

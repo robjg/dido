@@ -40,13 +40,13 @@
 
         <javax.inject.version>1</javax.inject.version>
 
-        <slf4j.version>1.7.25</slf4j.version>
-        <logback.version>1.2.3</logback.version>
+        <slf4j.version>2.0.12</slf4j.version>
+        <logback.version>1.5.3</logback.version>
 
         <junit5.version>5.7.0</junit5.version>
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>3.6.0</mockito.version>
-
+        <hsql.version>2.7.2</hsql.version>
     </properties>
 
     <distributionManagement>
@@ -74,6 +74,7 @@
         <module>dido-all</module>
         <module>dido-proto</module>
         <module>dido-replay</module>
+        <module>dido-examples</module>
     </modules>
 
     <dependencyManagement>
@@ -173,6 +174,7 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -201,6 +203,13 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsql.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -374,8 +383,10 @@
                                     <additionalOption>file:${project.basedir}/src/main/resources/META-INF/arooa.xml</additionalOption>
                                     <additionalOption>-writerfactory</additionalOption>
                                     <additionalOption>org.oddjob.doc.markdown.MdReferenceWriterFactory</additionalOption>
-                                    <additionalOption>-apiurl</additionalOption>
+                                    <additionalOption>-link</additionalOption>
                                     <additionalOption>http://rgordon.co.uk/oddjob/1.6.0/api</additionalOption>
+                                    <additionalOption>-link</additionalOption>
+                                    <additionalOption>https://docs.oracle.com/en/java/javase/11/docs/api</additionalOption>
                                 </additionalOptions>
                                 <useStandardDocletOptions>false</useStandardDocletOptions>
                             </configuration>

@@ -11,6 +11,8 @@ import dido.how.conversion.DidoConverter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +21,6 @@ import java.util.Iterator;
 import java.util.Objects;
 
 public class CsvDataInHow implements DataInHow<String, InputStream> {
-
 
     private final CSVFormat csvFormat;
 
