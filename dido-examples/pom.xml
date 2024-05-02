@@ -57,12 +57,15 @@
 
     <build>
         <plugins>
+            <!-- Parses the contents of src/docs to create the top level README and other docs
+                 by including Code Samples.
+                 Run in this directory with maven exec:java@docs -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.2.0</version>
                 <executions>
                     <execution>
+                        <id>docs</id>
                         <goals>
                             <goal>java</goal>
                         </goals>

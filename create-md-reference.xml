@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob id="oddjob">
+    <job>
+        <sequential>
+            <jobs>
+                <properties>
+                    <values>
+                        <file file="${oddjob.dir}/docs/reference" key="reference.dir"/>
+                        <value key="oddjob.version" value="1.7.0-SNAPSHOT"/>
+                        <value key="project.version" value="1.1.0-SNAPSHOT"/>
+                    </values>
+                </properties>
+                <variables id="vars">
+                    <descriptorUrls>
+                        <list>
+                            <values>
+                                <value value="file:${oddjob.dir}/dido-csv/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="file:${oddjob.dir}/dido-json/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="file:${oddjob.dir}/dido-sql/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="file:${oddjob.dir}/dido-text/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="file:${oddjob.dir}/dido-poi/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="file:${oddjob.dir}/dido-oddball/src/main/resources/META-INF/arooa.xml"/>
+                            </values>
+                        </list>
+                    </descriptorUrls>
+                    <sources>
+                        <files>
+                            <list>
+                                <file file="${oddjob.dir}/dido-data/src/main/java"/>
+                                <file file="${oddjob.dir}/dido-how/src/main/java"/>
+                                <file file="${oddjob.dir}/dido-csv/src/main/java"/>
+                                <file file="${oddjob.dir}/dido-json/src/main/java"/>
+                                <file file="${oddjob.dir}/dido-sql/src/main/java"/>
+                                <file file="${oddjob.dir}/dido-text/src/main/java"/>
+                                <file file="${oddjob.dir}/dido-poi/src/main/java"/>
+                                <file file="${oddjob.dir}/dido-oddball/src/main/java"/>
+                            </list>
+                        </files>
+                    </sources>
+                </variables>
+                <resolve:resolve id="docletResolve" name="Doclet Resolve" xmlns:resolve="oddjob:resolve">
+                    <dependencies>
+                        <resolve:dependencies>
+                            <dependencies>
+                                <resolve:dependency artifactId="oj-doc" groupId="uk.co.rgordon" version="${oddjob.version}"/>
+                                <resolve:dependency artifactId="oddjob" groupId="uk.co.rgordon" version="${oddjob.version}"/>
+                                <resolve:dependency artifactId="dido-all" groupId="uk.co.rgordon" type="pom" version="${project.version}"/>
+                            </dependencies>
+                        </resolve:dependencies>
+                    </dependencies>
+                </resolve:resolve>
+                <resolve:resolve id="didoResolve" name="Dido Resolve" xmlns:resolve="oddjob:resolve">
+                    <dependencies>
+                        <resolve:dependency artifactId="dido-all" groupId="uk.co.rgordon" type="pom" version="${project.version}"/>
+                    </dependencies>
+                </resolve:resolve>
+                <bean class="org.oddjob.doc.doclet.ReferenceMain" classPath="${didoResolve.resolvedFilesArray}" directory="${reference.dir}" docletPath="${docletResolve.resolvedFilesArray}" packages="dido" sourcepath="${vars.sources}" writerFactory="org.oddjob.doc.markdown.MdReferenceWriterFactory">
+                    <descriptorUrls>
+                        <value value="${vars.descriptorUrls}"/>
+                    </descriptorUrls>
+                    <links>
+                        <list>
+                            <values>
+                                <value value="https://docs.oracle.com/en/java/javase/11/docs/api"/>
+                            </values>
+                        </list>
+                    </links>
+                </bean>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>
