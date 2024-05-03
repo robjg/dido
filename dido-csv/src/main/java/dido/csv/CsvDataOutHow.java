@@ -16,6 +16,9 @@ import java.io.Writer;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * How to write CSV Data Out.
+ */
 public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
 
     private final CSVFormat csvFormat;

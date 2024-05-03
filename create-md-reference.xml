@@ -37,24 +37,49 @@
                             </list>
                         </files>
                     </sources>
+                    <loaderPath>
+                        <files>
+                            <list>
+                                <file file="${oddjob.dir}/dido-csv/src/test/resources"/>
+                                <file file="${oddjob.dir}/dido-csv/src/test/java"/>
+                                <file file="${oddjob.dir}/dido-json/src/test/resources"/>
+                                <file file="${oddjob.dir}/dido-json/src/test/java"/>
+                                <file file="${oddjob.dir}/dido-sql/src/test/resources"/>
+                                <file file="${oddjob.dir}/dido-sql/src/test/java"/>
+                                <file file="${oddjob.dir}/dido-text/src/test/resources"/>
+                                <file file="${oddjob.dir}/dido-text/src/test/java"/>
+                                <file file="${oddjob.dir}/dido-poi/src/test/resources"/>
+                                <file file="${oddjob.dir}/dido-poi/src/test/java"/>
+                                <file file="${oddjob.dir}/dido-oddball/src/test/resources"/>
+                                <file file="${oddjob.dir}/dido-oddball/src/test/java"/>
+                            </list>
+                        </files>
+                    </loaderPath>
                 </variables>
                 <resolve:resolve id="docletResolve" name="Doclet Resolve" xmlns:resolve="oddjob:resolve">
                     <dependencies>
                         <resolve:dependencies>
                             <dependencies>
-                                <resolve:dependency artifactId="oj-doc" groupId="uk.co.rgordon" version="${oddjob.version}"/>
-                                <resolve:dependency artifactId="oddjob" groupId="uk.co.rgordon" version="${oddjob.version}"/>
-                                <resolve:dependency artifactId="dido-all" groupId="uk.co.rgordon" type="pom" version="${project.version}"/>
+                                <resolve:dependency artifactId="oj-doc" groupId="uk.co.rgordon"
+                                                    version="${oddjob.version}"/>
+                                <resolve:dependency artifactId="oddjob" groupId="uk.co.rgordon"
+                                                    version="${oddjob.version}"/>
+                                <resolve:dependency artifactId="dido-all" groupId="uk.co.rgordon" type="pom"
+                                                    version="${project.version}"/>
                             </dependencies>
                         </resolve:dependencies>
                     </dependencies>
                 </resolve:resolve>
                 <resolve:resolve id="didoResolve" name="Dido Resolve" xmlns:resolve="oddjob:resolve">
                     <dependencies>
-                        <resolve:dependency artifactId="dido-all" groupId="uk.co.rgordon" type="pom" version="${project.version}"/>
+                        <resolve:dependency artifactId="dido-all" groupId="uk.co.rgordon" type="pom"
+                                            version="${project.version}"/>
                     </dependencies>
                 </resolve:resolve>
-                <bean class="org.oddjob.doc.doclet.ReferenceMain" classPath="${didoResolve.resolvedFilesArray}" directory="${reference.dir}" docletPath="${docletResolve.resolvedFilesArray}" packages="dido" sourcepath="${vars.sources}" writerFactory="org.oddjob.doc.markdown.MdReferenceWriterFactory">
+                <bean class="org.oddjob.doc.doclet.ReferenceMain" classPath="${didoResolve.resolvedFilesArray}"
+                      directory="${reference.dir}" docletPath="${docletResolve.resolvedFilesArray}" packages="dido"
+                      sourcepath="${vars.sources}" writerFactory="org.oddjob.doc.markdown.MdReferenceWriterFactory"
+                      loaderPath="${vars.loaderPath}">
                     <descriptorUrls>
                         <value value="${vars.descriptorUrls}"/>
                     </descriptorUrls>

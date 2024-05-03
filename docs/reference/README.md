@@ -9,7 +9,7 @@
 ### Types
 
 - [dido:copy](dido/oddjob/transform/ValueCopyFactory.md) - 
-- [dido:csv](dido/csv/CsvDido.md) - 
+- [dido:csv](dido/csv/CsvDido.md) - Creates an In or Out for CSV Data.
 - [dido:field](dido/oddjob/schema/SchemaFieldBean.md) - 
 - [dido:from-bean](dido/oddjob/bean/FromBeanTransformer.md) - Transform a Bean to Generic Data.
 - [dido:from-json](dido/json/FromJsonStringType.md) - 
