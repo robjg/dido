@@ -1,8 +1,6 @@
 package dido.sql;
 
-import dido.how.DataIn;
 import dido.how.DataInHow;
-import dido.how.DataOut;
 import dido.how.DataOutHow;
 
 import javax.inject.Inject;
@@ -17,7 +15,7 @@ import java.sql.Connection;
  *
  *
  */
-public class SqlDido implements DataInHow<String, Connection>, DataOutHow<String, Connection> {
+public class SqlDido {
 
 
     /**
@@ -39,32 +37,19 @@ public class SqlDido implements DataInHow<String, Connection>, DataOutHow<String
      */
     private int batchSize;
 
-    @Override
-    public Class<Connection> getInType() {
-        return Connection.class;
-    }
 
-    @Override
-    public DataIn<String> inFrom(Connection dataIn) throws Exception {
+    public DataInHow<String, Connection> toIn()  {
         return SqlDataInHow.fromSql(sql)
                 .classLoader(classLoader)
                 .batchSize(batchSize)
-                .make()
-                .inFrom(dataIn);
+                .make();
     }
 
-    @Override
-    public Class<Connection> getOutType() {
-        return Connection.class;
-    }
-
-    @Override
-    public DataOut<String> outTo(Connection connection) throws Exception {
+    public DataOutHow<String, Connection> toOut() {
         return SqlDataOutHow.fromSql(sql)
                 .classLoader(classLoader)
                 .batchSize(batchSize)
-                .make()
-                .outTo(connection);
+                .make();
     }
 
     public String getSql() {

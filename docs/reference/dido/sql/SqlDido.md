@@ -9,8 +9,6 @@ Export and Import with SQL.
 | -------- | ----------- |
 | [batchSize](#propertybatchSize) | Batch size. | 
 | [classLoader](#propertyclassLoader) | The classloader used to derive the schema from a query. | 
-| [inType](#propertyinType) |  | 
-| [outType](#propertyoutType) |  | 
 | [sql](#propertysql) | The SQL that will extract or insert the data. | 
 
 
@@ -42,22 +40,6 @@ Batch size. This is passed directly to JDBC.
 
 The classloader used to derive the schema from a query. Only required if the
 table include custom data types.
-
-#### inType <a name="propertyinType"></a>
-
-<table style='font-size:smaller'>
-      <tr><td><i>Access</i></td><td>READ_ONLY</td></tr>
-</table>
-
-
-
-#### outType <a name="propertyoutType"></a>
-
-<table style='font-size:smaller'>
-      <tr><td><i>Access</i></td><td>READ_ONLY</td></tr>
-</table>
-
-
 
 #### sql <a name="propertysql"></a>
 

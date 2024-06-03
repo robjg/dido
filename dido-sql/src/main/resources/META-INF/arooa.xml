@@ -1,5 +1,9 @@
 <arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
         prefix="dido" namespace="oddjob:dido">
+	<conversions>
+		<arooa:conversion className="dido.sql.SqlDido" methodName="toOut"/>
+		<arooa:conversion className="dido.sql.SqlDido" methodName="toIn"/>
+	</conversions>
 	<values>
 		<arooa:bean-def element='sql'
 		    className='dido.sql.SqlDido'>
