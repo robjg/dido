@@ -8,7 +8,13 @@ import dido.data.RepeatingData;
 import java.util.function.Function;
 
 /**
- * Provide an {@link java.util.function.Function} that writes to a JSON String.
+ *
+ * @oddjob.description Provides a Mapping Function that will convert a Dido Data
+ * into a JSON String.
+ *
+ * @oddjob.example From JSON Strings using a Mapping function and back again.
+ * {@oddjob.xml.resource dido/json/FromJsonMapExample.xml}
+ *
  */
 public class ToJsonStringType implements Function<IndexedData<String>, String> {
 

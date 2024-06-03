@@ -50,6 +50,7 @@ for more information.
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
       <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No, defaults to false.</td></tr>
 </table>
 
 When reading data in, indicates that the provided Schema is partial. The

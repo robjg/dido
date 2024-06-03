@@ -42,6 +42,7 @@ public class CsvDido {
     /**
      * @oddjob.description When reading data in, indicates that the provided Schema is partial. The
      * rest of the schema will be taken from the header.
+     * @oddjob.required No, defaults to false.
      */
     private boolean partialSchema;
 
