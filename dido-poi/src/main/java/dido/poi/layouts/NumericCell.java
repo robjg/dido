@@ -7,8 +7,17 @@ import org.apache.poi.ss.usermodel.CellType;
 
 import java.util.Optional;
 
+/**
+ * @oddjob.description Define a number column. Nests within a {@link DataRows}.
+ *
+ * @param <T>
+ */
 public class NumericCell<T extends Number> extends AbstractDataCell<T> {
 
+    /**
+     * @oddjob.description The type of Number.
+     * @oddjob.required No. Defaults to Double.
+     */
     private volatile Class<T> type;
 
     private volatile Double value;

@@ -22,14 +22,14 @@
 - [dido:to-json](dido/json/ToJsonStringType.md) - Provides a Mapping Function that will convert a Dido Data into a JSON String.
 - [dido:transform](dido/oddjob/transform/Transform.md) - 
 - [dido-poi:blank](dido/poi/layouts/BlankCell.md) - Create a column cells that are blank.
-- [dido-poi:boolean](dido/poi/layouts/BooleanCell.md) - Create a column of boolean cells.
-- [dido-poi:date](dido/poi/layouts/DateCell.md) - 
-- [dido-poi:numeric](dido/poi/layouts/NumericCell.md) - 
-- [dido-poi:numeric-formula](dido/poi/layouts/NumericFormulaCell.md) - 
+- [dido-poi:boolean](dido/poi/layouts/BooleanCell.md) - Define a column of Boolean cells.
+- [dido-poi:date](dido/poi/layouts/DateCell.md) - Define a date column.
+- [dido-poi:numeric](dido/poi/layouts/NumericCell.md) - Define a number column.
+- [dido-poi:numeric-formula](dido/poi/layouts/NumericFormulaCell.md) - Define a Numeric Formula column.
 - [dido-poi:rows](dido/poi/layouts/DataRows.md) - Define an area in a spreadsheet sheet for reading and writing rows to.
 - [dido-poi:style](dido/poi/style/StyleBean.md) - 
-- [dido-poi:text](dido/poi/layouts/TextCell.md) - Read to and from a series of cells.
-- [dido-poi:text-formula](dido/poi/layouts/TextFormulaCell.md) - 
+- [dido-poi:text](dido/poi/layouts/TextCell.md) - Define a text column.
+- [dido-poi:text-formula](dido/poi/layouts/TextFormulaCell.md) - Define a Text Formula Column.
 - [dido-poi:workbook](dido/poi/data/PoiWorkbook.md) - A source or sink of data that is a Microsoft Excel Spreadsheet.
 
 -----------------------

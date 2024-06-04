@@ -10,6 +10,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
+/**
+ * @oddjob.description Define a date column. Nests within a {@link DataRows}.
+ *
+ * @author rob
+ */
 public class DateCell extends AbstractDataCell<Date> {
 
 	public static final String DEFAULT_DATE_STYLE = "date";

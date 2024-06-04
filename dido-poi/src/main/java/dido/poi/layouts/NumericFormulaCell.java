@@ -4,6 +4,11 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
+/**
+ * @oddjob.description Define a Numeric Formula column.
+ *
+ * @author rob
+ */
 public class NumericFormulaCell extends FormulaCell<Double> {
 
 	@Override

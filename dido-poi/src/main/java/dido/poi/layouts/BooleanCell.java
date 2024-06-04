@@ -7,8 +7,9 @@ import org.apache.poi.ss.usermodel.CellType;
 import java.util.Optional;
 
 /**
+ * @oddjob.description Define a column of Boolean cells.
+ *
  * @author rob
- * @oddjob.description Create a column of boolean cells.
  */
 public class BooleanCell extends AbstractDataCell<Boolean> {
 

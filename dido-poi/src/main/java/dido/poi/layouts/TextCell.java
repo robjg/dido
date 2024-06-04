@@ -7,10 +7,9 @@ import org.apache.poi.ss.usermodel.CellType;
 import java.util.Optional;
 
 /**
+ * @oddjob.description Define a text column. Nests within a {@link DataRows}.
+ *
  * @author rob
- * @oddjob.description Read to and from a series of cells. Currently only
- * the ability to read columns of data by nesting within a {@link DataRows}
- * is supported but the ability to read rows will be added at some point.
  */
 public class TextCell extends AbstractDataCell<String> {
 

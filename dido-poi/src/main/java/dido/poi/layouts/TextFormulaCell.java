@@ -4,6 +4,11 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
+/**
+ * @oddjob.description Define a Text Formula Column.
+ *
+ * @author rob
+ */
 public class TextFormulaCell extends FormulaCell<String> {
 
 	@Override

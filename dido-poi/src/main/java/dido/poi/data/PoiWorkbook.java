@@ -21,11 +21,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * @author rob
  * @oddjob.description A source or sink of data that is a Microsoft
  * Excel Spreadsheet.
  * <p>
  * @see DataRows
+ *
+ * @author rob
  */
 public class PoiWorkbook implements BookInProvider, BookOutProvider {
 

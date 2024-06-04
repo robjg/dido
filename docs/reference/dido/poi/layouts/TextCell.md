@@ -1,9 +1,7 @@
 [HOME](../../../README.md)
 # dido-poi:text
 
-Read to and from a series of cells. Currently only
-the ability to read columns of data by nesting within a [dido-poi:rows](../../../dido/poi/layouts/DataRows.md)
-is supported but the ability to read rows will be added at some point.
+Define a text column. Nests within a [dido-poi:rows](../../../dido/poi/layouts/DataRows.md).
 
 ### Property Summary
 

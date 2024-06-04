@@ -1,7 +1,7 @@
 [HOME](../../../README.md)
 # dido-poi:boolean
 
-Create a column of boolean cells.
+Define a column of Boolean cells.
 
 ### Property Summary
 

@@ -5,9 +5,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
 /**
- * @author rob
  * @oddjob.description Create a column cells that are blank. Provided for
  * completeness - not sure of the use case for this.
+ *
+ * @author rob
  */
 public class BlankCell extends AbstractDataCell<Void> {
 
