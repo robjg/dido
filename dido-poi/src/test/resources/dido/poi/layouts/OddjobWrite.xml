@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <bus:bus id="bean-bus" xmlns:bus="oddjob:beanbus">
+            <of>
+                <bus:driver xmlns:bus="oddjob:beanbus">
+                    <values>
+                        <import resource="dido/poi/test/PersonList.xml"/>
+                    </values>
+                </bus:driver>
+                <bus:map xmlns:bus="oddjob:beanbus">
+                    <function>
+                        <dido:from-bean xmlns:dido="oddjob:dido"/>
+                    </function>
+                </bus:map>
+                <dido:data-out xmlns:dido="oddjob:dido">
+                    <to>
+                        <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">
+                            <output>
+                                <file file="${work.dir}/DataBookTest.xlsx"/>
+                            </output>
+                        </dido-poi:workbook>
+                    </to>
+                    <how>
+                        <import resource="${layout.resource}"/>
+                    </how>
+                </dido:data-out>
+            </of>
+        </bus:bus>
+    </job>
+</oddjob>

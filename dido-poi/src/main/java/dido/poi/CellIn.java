@@ -1,7 +1,5 @@
 package dido.poi;
 
-import org.oddjob.dido.poi.RowIn;
-
 /**
  * Represents a spreadsheet cell for reading data from.
  * 

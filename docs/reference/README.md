@@ -17,20 +17,20 @@
 - [dido:schema](dido/oddjob/schema/SchemaBean.md) - 
 - [dido:set](dido/oddjob/transform/ValueSetFactory.md) - 
 - [dido:sql](dido/sql/SqlDido.md) - Export and Import with SQL.
-- [dido:table](dido/text/TextTableDido.md) - 
+- [dido:table](dido/text/TextTableDido.md) - Creates an Out that write data to a text table.
 - [dido:to-bean](dido/oddjob/bean/ToBeanTransformer.md) - 
 - [dido:to-json](dido/json/ToJsonStringType.md) - Provides a Mapping Function that will convert a Dido Data into a JSON String.
 - [dido:transform](dido/oddjob/transform/Transform.md) - 
-- [dido-poi:blank](org/oddjob/dido/poi/layouts/BlankCell.md) - 
-- [dido-poi:boolean](org/oddjob/dido/poi/layouts/BooleanCell.md) - 
-- [dido-poi:date](org/oddjob/dido/poi/layouts/DateCell.md) - 
-- [dido-poi:numeric](org/oddjob/dido/poi/layouts/NumericCell.md) - 
-- [dido-poi:numeric-formula](org/oddjob/dido/poi/layouts/NumericFormulaCell.md) - 
-- [dido-poi:rows](org/oddjob/dido/poi/layouts/DataRows.md) - 
-- [dido-poi:style](org/oddjob/dido/poi/style/StyleBean.md) - 
-- [dido-poi:text](org/oddjob/dido/poi/layouts/TextCell.md) - 
-- [dido-poi:text-formula](org/oddjob/dido/poi/layouts/TextFormulaCell.md) - 
-- [dido-poi:workbook](org/oddjob/dido/poi/data/PoiWorkbook.md) - 
+- [dido-poi:blank](dido/poi/layouts/BlankCell.md) - Create a column cells that are blank.
+- [dido-poi:boolean](dido/poi/layouts/BooleanCell.md) - Create a column of boolean cells.
+- [dido-poi:date](dido/poi/layouts/DateCell.md) - 
+- [dido-poi:numeric](dido/poi/layouts/NumericCell.md) - 
+- [dido-poi:numeric-formula](dido/poi/layouts/NumericFormulaCell.md) - 
+- [dido-poi:rows](dido/poi/layouts/DataRows.md) - Define an area in a spreadsheet sheet for reading and writing rows to.
+- [dido-poi:style](dido/poi/style/StyleBean.md) - 
+- [dido-poi:text](dido/poi/layouts/TextCell.md) - Read to and from a series of cells.
+- [dido-poi:text-formula](dido/poi/layouts/TextFormulaCell.md) - 
+- [dido-poi:workbook](dido/poi/data/PoiWorkbook.md) - A source or sink of data that is a Microsoft Excel Spreadsheet.
 
 -----------------------
 

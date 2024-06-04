@@ -1,8 +1,6 @@
 package dido.poi;
 
 import dido.data.GenericData;
-import org.oddjob.dido.poi.HeaderRowOut;
-import org.oddjob.dido.poi.RowOut;
 
 /**
  * Represents a spreadsheet cell for writing data too.

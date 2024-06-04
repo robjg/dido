@@ -2,24 +2,24 @@
         prefix="dido-poi" namespace="oddjob:dido:poi">
 	<values>
 		<arooa:bean-def element='rows'
-		    className='org.oddjob.dido.poi.layouts.DataRows'/>
+		    className='dido.poi.layouts.DataRows'/>
 		<arooa:bean-def element='boolean'
-		    className='org.oddjob.dido.poi.layouts.BooleanCell'/>
+		    className='dido.poi.layouts.BooleanCell'/>
 		<arooa:bean-def element='date'
-		    className='org.oddjob.dido.poi.layouts.DateCell'/>
+		    className='dido.poi.layouts.DateCell'/>
 		<arooa:bean-def element='numeric'
-		    className='org.oddjob.dido.poi.layouts.NumericCell'/>
+		    className='dido.poi.layouts.NumericCell'/>
 		<arooa:bean-def element='text'
-		    className='org.oddjob.dido.poi.layouts.TextCell'/>
+		    className='dido.poi.layouts.TextCell'/>
 		<arooa:bean-def element='numeric-formula'
-		    className='org.oddjob.dido.poi.layouts.NumericFormulaCell'/>
+		    className='dido.poi.layouts.NumericFormulaCell'/>
 		<arooa:bean-def element='text-formula'
-		    className='org.oddjob.dido.poi.layouts.TextFormulaCell'/>
+		    className='dido.poi.layouts.TextFormulaCell'/>
 		<arooa:bean-def element='blank'
-		    className='org.oddjob.dido.poi.layouts.BlankCell'/>
+		    className='dido.poi.layouts.BlankCell'/>
 		<arooa:bean-def element='style'
-		    className='org.oddjob.dido.poi.style.StyleBean'/>
+		    className='dido.poi.style.StyleBean'/>
         <arooa:bean-def element='workbook'
-            className='org.oddjob.dido.poi.data.PoiWorkbook'/>
+            className='dido.poi.data.PoiWorkbook'/>
 	</values>
 </arooa:descriptor>

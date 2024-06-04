@@ -3,8 +3,8 @@ package dido.poi.utils;
 import dido.data.GenericData;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.oddjob.dido.poi.RowIn;
-import org.oddjob.dido.poi.data.DataCell;
+import dido.poi.RowIn;
+import dido.poi.data.DataCell;
 
 import java.util.Arrays;
 import java.util.Collections;

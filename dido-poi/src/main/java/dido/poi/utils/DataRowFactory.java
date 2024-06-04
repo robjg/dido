@@ -5,7 +5,7 @@ import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.poi.CellIn;
 import dido.poi.CellInProvider;
-import org.oddjob.dido.poi.RowIn;
+import dido.poi.RowIn;
 
 import java.util.Collection;
 import java.util.Objects;

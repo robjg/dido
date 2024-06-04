@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <properties>
+                    <values>
+                        <file file="./work" key="work.dir"/>
+                    </values>
+                </properties>
+                <bus:bus id="bean-bus" xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in id="test-data" name="Load Test Data"
+                                 xmlns:dido="oddjob:dido">
+                            <from>
+                                <buffer><![CDATA[fruit,bestBefore,colour,quantity,price
+Apple,2013-11-25,red,3,74.6
+Apple,2013-11-27,green,2,46.2
+Orange,2013-12-05,,5,215
+Pear,2013-11-30,green,1,24.3
+Banana,2013-11-21,,7,175.5
+]]></buffer>
+                            </from>
+                            <how>
+                                <dido:csv xmlns:dido="oddjob:dido" withHeader="true"/>
+                            </how>
+                        </dido:data-in>
+                        <dido:data-out xmlns:dido="oddjob:dido" id="data-book-write">
+                            <to>
+                                <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">
+                                    <output>
+                                        <file file="${work.dir}/DataBookExample1.xlsx"/>
+                                    </output>
+                                </dido-poi:workbook>
+                            </to>
+                            <how>
+                                <dido-poi:rows xmlns:dido-poi="oddjob:dido:poi" sheetName="Fruit" autoFilter="true"
+                                               autoWidth="true" withHeader="true">
+                                    <of>
+                                        <dido-poi:text name="fruit"/>
+                                        <dido-poi:date name="bestBefore"/>
+                                        <dido-poi:text name="colour"/>
+                                        <dido-poi:numeric name="quantity">
+                                            <type>
+                                                <class name="int"/>
+                                            </type>
+                                        </dido-poi:numeric>
+                                        <dido-poi:numeric name="price"/>
+                                    </of>
+                                    <styles>
+                                        <dido-poi:style key="heading" bold="true"
+                                                        colour="BLUE"/>
+                                        <dido-poi:style key="date" format="yyyy-mm-dd"/>
+                                    </styles>
+                                </dido-poi:rows>
+                            </how>
+                        </dido:data-out>
+                    </of>
+                </bus:bus>
+                <bus:bus id="bean-bus" xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in xmlns:dido="oddjob:dido">
+                            <from>
+                                <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">
+                                    <input>
+                                        <file file="${work.dir}/DataBookExample1.xlsx"/>
+                                    </input>
+                                </dido-poi:workbook>
+                            </from>
+                            <how>
+                                <value value="${data-book-write.how}"/>
+                            </how>
+                        </dido:data-in>
+                        <bus:map xmlns:bus="oddjob:beanbus">
+                            <function>
+                                <dido:to-bean xmlns:dido="oddjob:dido">
+                                    <beanClass>
+                                        <class name="dido.poi.test.Fruit"/>
+                                    </beanClass>
+                                </dido:to-bean>
+                            </function>
+                        </bus:map>
+                        <bus:collect id="data-book-read" xmlns:bus="oddjob:beanbus"/>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>
