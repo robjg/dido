@@ -1,7 +1,7 @@
 [HOME](../../../README.md)
 # dido:converter
 
-
+Provides a `dido.how.conversion.DidoConverter` using Oddjob's conversions.
 
 ### Property Summary
 

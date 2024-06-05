@@ -2,9 +2,9 @@
 
 ### Jobs
 
-- [dido:converter](dido/oddjob/util/DidoConverterJob.md) - 
-- [dido:data-in](dido/oddjob/beanbus/DataInDriver.md) - 
-- [dido:data-out](dido/oddjob/beanbus/DataOutDestination.md) - 
+- [dido:converter](dido/oddjob/util/DidoConverterJob.md) - Provides a `dido.how.conversion.DidoConverter` using Oddjob's conversions.
+- [dido:data-in](dido/oddjob/beanbus/DataInDriver.md) - A Bean Bus Driver that reads data from [dido:data-in](.//dido/oddjob/beanbus/DataInDriver.md) according to the given [dido:data-in](.//dido/oddjob/beanbus/DataInDriver.md) and forward the `dido.data.GenericData` to the next component.
+- [dido:data-out](dido/oddjob/beanbus/DataOutDestination.md) - A Bean Bus Destination that accepts `dido.data.GenericData` and writes it out to the given [dido:data-out](.//dido/oddjob/beanbus/DataOutDestination.md) according to the given [dido:data-out](.//dido/oddjob/beanbus/DataOutDestination.md).
 
 ### Types
 
@@ -15,7 +15,7 @@
 - [dido:from-json](dido/json/FromJsonStringType.md) - Provides a Mapping Function that will convert a GSON String into Dido Data.
 - [dido:json-stream](dido/json/JsonDido.md) - Creates an In or an Out for JSON data.
 - [dido:schema](dido/oddjob/schema/SchemaBean.md) - Define a Schema.
-- [dido:set](dido/oddjob/transform/ValueSetFactory.md) - 
+- [dido:set](dido/oddjob/transform/ValueSetFactory.md) - Set the value for a field or index.
 - [dido:sql](dido/sql/SqlDido.md) - Export and Import with SQL.
 - [dido:table](dido/text/TextTableDido.md) - Creates an Out that write data to a text table.
 - [dido:to-bean](dido/oddjob/bean/ToBeanTransformer.md) - 

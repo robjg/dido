@@ -17,20 +17,56 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+/**
+ * @oddjob.description A Bean Bus Driver that reads data from {@link #from} according to the
+ * given {@link #how} and forward the {@link GenericData} to the next component.
+ * See any of the formatters for examples of how to use.
+ *
+ * @oddjob.example Read lines in.
+ * {@oddjob.xml.resource dido/oddjob/stream/StreamInOut.xml}
+ *
+ *
+ * @param <F> The field type.
+ * @param <I> The Input type.
+ */
 public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAware {
 
     private ArooaSession session;
 
+    /**
+     * @oddjob.description The name of the component.
+     * @oddjob.required No.
+     */
     private String name;
 
+    /**
+     * @oddjob.description How to read the data in.
+     * @oddjob.required Yes.
+     */
     private DataInHow<F, I> how;
 
+    /**
+     * @oddjob.description Where to read data from.
+     * @oddjob.required Yes.
+     */
     private ArooaValue from;
 
+    /**
+     * @oddjob.description If set, data will be forwarded here. Set automatically by BeanBus.
+     * @oddjob.required No, but fairly pointless if missing.
+     */
     private Consumer<? super GenericData<F>> to;
 
+    /**
+     * @oddjob.description Count of data items read in.
+     * @oddjob.required Read only.
+     */
     private final AtomicInteger count = new AtomicInteger();
 
+    /**
+     * @oddjob.description Internal stop flag. Set by calling stop.
+     * @oddjob.required Read only.
+     */
     private volatile boolean stop;
 
     @ArooaHidden

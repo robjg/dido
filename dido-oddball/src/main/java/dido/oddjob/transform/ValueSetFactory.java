@@ -11,22 +11,37 @@ import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.arooa.types.ValueFactory;
 
 /**
- * Copy a field from one position and/or field and/or type to another.
+ * @oddjob.description Set the value for a field or index. Participates in an {@link Transform}. If
+ * no field or index is specified the index is taken by the position in the transform.
+ *
+ * @oddjob.example Set a value.
+ * {@oddjob.xml.resource dido/oddjob/transform/DataSetExample.xml}
  */
 public class ValueSetFactory implements ValueFactory<TransformerFactory<String, String>>, ArooaSessionAware {
 
     /**
-     * From field.
+     * @oddjob.description The field name.
+     * @oddjob.required No
      */
     private String field;
 
     /**
-     * From index.
+     * @oddjob.description The index.
+     * @oddjob.required No
      */
     private int index;
 
+    /**
+     * @oddjob.description The value.
+     * @oddjob.required No. If not specified null will be attempted to be set on the field.
+     */
     private ArooaValue value;
 
+    /**
+     * @oddjob.description The type. A conversion will be attempted from the value to this type.
+     * This type will also be used for a new schema field.
+     * @oddjob.required No. Defaults to that from the existing schema.
+     */
     private Class<?> type;
 
     private ArooaSession session;

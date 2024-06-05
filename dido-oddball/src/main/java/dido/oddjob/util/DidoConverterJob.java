@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Provides a {@link DidoConverter} using Oddjob's conversions.
+ * @oddjob.description Provides a {@link DidoConverter} using Oddjob's conversions.
  */
 public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSessionAware {
 

@@ -17,8 +17,12 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * Implements a Bean Bus Destination that accepts {@link GenericData} and write it out to the given
- * {@link #to} according to the given {@link #how}
+ * @oddjob.description A Bean Bus Destination that accepts {@link GenericData} and writes it out to the given
+ * {@link #to} according to the given {@link #how}.
+ * See any of the formatters for examples of how to use.
+ *
+ * @oddjob.example Writes lines out.
+ * {@oddjob.xml.resource dido/oddjob/stream/StreamInOut.xml}
  *
  * @param <F> The field type of the Generic Data
  * @param <O> The type of the output.
@@ -28,16 +32,37 @@ public class DataOutDestination<F, O>
 
     private ArooaSession session;
 
+    /**
+     * @oddjob.description The name of the component.
+     * @oddjob.required No.
+     */
     private String name;
 
+    /**
+     * @oddjob.description How to write the data out.
+     * @oddjob.required Yes.
+     */
     private DataOutHow<F, O> how;
 
+    /**
+     * @oddjob.description Where to write data to.
+     * @oddjob.required Yes.
+     */
     private ArooaValue to;
 
+    /**
+     * @oddjob.description If set, data will be forwarded here. Set automatically by BeanBus.
+     * @oddjob.required No.
+     */
     private Consumer<? super GenericData<F>> next;
 
+    /** Consumer created by applying the how. */
     private DataOut<F> consumer;
 
+    /**
+     * @oddjob.description Count of data sent out.
+     * @oddjob.required Read only.
+     */
     private volatile int count;
 
     @ArooaHidden
