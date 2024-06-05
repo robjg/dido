@@ -36,7 +36,8 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <oddjob.version>1.7.0-SNAPSHOT</oddjob.version>
+        <oddjob.version>1.6.0</oddjob.version>
+        <oj-doc.version>1.7.0-SNAPSHOT</oj-doc.version>
 
         <javax.inject.version>1</javax.inject.version>
 
@@ -265,12 +266,12 @@
                                         <tagletArtifact>
                                             <groupId>uk.co.rgordon</groupId>
                                             <artifactId>oj-doc</artifactId>
-                                            <version>${oddjob.version}</version>
+                                            <version>${oj-doc.version}</version>
                                         </tagletArtifact>
                                         <tagletArtifact>
                                             <groupId>uk.co.rgordon</groupId>
                                             <artifactId>arooa</artifactId>
-                                            <version>${oddjob.version}</version>
+                                            <version>${oj-doc.version}</version>
                                         </tagletArtifact>
                                     </tagletArtifacts>
                                     <tagletpath>${project.basedir}/src/test/resources</tagletpath>

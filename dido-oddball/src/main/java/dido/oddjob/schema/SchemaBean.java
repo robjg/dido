@@ -13,14 +13,47 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @oddjob.description Define a Schema.
+ *
+ * @oddjob.example Define a simple schema.
+ * {@oddjob.xml.resource dido/oddjob/schema/SimpleSchema.xml}
+ *
+ * @oddjob.example Define a simple schema.
+ * {@oddjob.xml.resource dido/oddjob/schema/SimpleSchema.xml}
+ *
+ * @oddjob.example Define a nested schema.
+ * {@oddjob.xml.resource dido/oddjob/schema/NestedSchema.xml}
+ *
+ * @oddjob.example Define a repeating schema.
+ * {@oddjob.xml.resource dido/oddjob/schema/RepeatingSchema.xml}
+ */
 public class SchemaBean implements ArooaValue {
 
+    /**
+     * @oddjob.description The name of the schema. This is so this schema  may be
+     * referenced elsewhere in the definition.
+     * @oddjob.required No.
+     */
     private String name;
 
+    /**
+     * @oddjob.description Reference a schema by name. Used when a schema is a nested schema and pulls in
+     * a schema definition named elsewhere in the overall schema definition.
+     * @oddjob.required No.
+     */
     private String named;
 
+    /**
+     * @oddjob.description The fields. These are generally defined with {@link SchemaFieldBean}s.
+     * @oddjob.required No.
+     */
     private final List<SchemaFieldDef> of = new LinkedList<>();
 
+    /**
+     * @oddjob.description Nested Schemas.
+     * @oddjob.required No.
+     */
     private final List<SchemaWrapper> list = new LinkedList<>();
 
     public static class Conversions implements ConversionProvider {

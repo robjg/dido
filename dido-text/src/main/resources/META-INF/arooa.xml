@@ -1,5 +1,8 @@
 <arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
         prefix="dido" namespace="oddjob:dido">
+	<conversions>
+		<arooa:conversion className="dido.text.TextTableDido" methodName="toOut"/>
+	</conversions>
 	<values>
 		<arooa:bean-def element='table'
 		    className='dido.text.TextTableDido'/>

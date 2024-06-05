@@ -10,11 +10,11 @@
 
 - [dido:copy](dido/oddjob/transform/ValueCopyFactory.md) - 
 - [dido:csv](dido/csv/CsvDido.md) - Creates an In or Out for CSV Data.
-- [dido:field](dido/oddjob/schema/SchemaFieldBean.md) - 
+- [dido:field](dido/oddjob/schema/SchemaFieldBean.md) - Define the field of a Schema.
 - [dido:from-bean](dido/oddjob/bean/FromBeanTransformer.md) - Transform a Bean to Generic Data.
 - [dido:from-json](dido/json/FromJsonStringType.md) - Provides a Mapping Function that will convert a GSON String into Dido Data.
 - [dido:json-stream](dido/json/JsonDido.md) - Creates an In or an Out for JSON data.
-- [dido:schema](dido/oddjob/schema/SchemaBean.md) - 
+- [dido:schema](dido/oddjob/schema/SchemaBean.md) - Define a Schema.
 - [dido:set](dido/oddjob/transform/ValueSetFactory.md) - 
 - [dido:sql](dido/sql/SqlDido.md) - Export and Import with SQL.
 - [dido:table](dido/text/TextTableDido.md) - Creates an Out that write data to a text table.

@@ -6,20 +6,44 @@ import org.oddjob.arooa.ClassResolver;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.convert.ConversionProvider;
 import org.oddjob.arooa.convert.ConversionRegistry;
+import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 
 import java.util.Arrays;
 
+/**
+ * @oddjob.description Define the field of a Schema. See {@link SchemaBean} for examples.
+ */
 public class SchemaFieldBean implements ArooaValue, ArooaSessionAware {
 
+    /**
+     * @oddjob.description The name of the field.
+     * @oddjob.required No.
+     */
     private String name;
 
+    /**
+     * @oddjob.description The index of the field.
+     * @oddjob.required No. The next available field will be used.
+     */
     private int index;
 
+    /**
+     * @oddjob.description The type of the field.
+     * @oddjob.required Yes, unless nested.
+     */
     private String type;
 
+    /**
+     * @oddjob.description The nested schema.
+     * @oddjob.required No.
+     */
     private SchemaWrapper nested;
 
+    /**
+     * @oddjob.description Is the nested schema repeating.
+     * @oddjob.required No, defaults to false.
+     */
     private boolean repeating;
 
     private ArooaSession arooaSession;
@@ -33,6 +57,7 @@ public class SchemaFieldBean implements ArooaValue, ArooaSessionAware {
     }
 
     @Override
+    @ArooaHidden
     public void setArooaSession(ArooaSession session) {
         this.arooaSession = session;
     }

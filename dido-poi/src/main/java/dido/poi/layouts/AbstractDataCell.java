@@ -145,22 +145,20 @@ abstract public class AbstractDataCell<T> implements DataCell<T> {
 
 	/**
 	 * @oddjob.property defaultStyle
-	 * @oddjob.description The default style for the cell. This is a 
-	 * visible property of the layout so that users can see which style
-	 * name to use if they wish to override the style at the
-	 * {@link PoiWorkbook} level.
+	 * @oddjob.description The default style for the cell. This
+	 * maybe overridden at the {@link PoiWorkbook} level.
 	 * @oddjob.required Read only.
 	 * 
-	 * @return
+	 * @return The default style.
 	 */
 	public String getDefaultStyle() {
 		return null;
 	}
 
 	/**
-	 * Get the type. Note that this can't be Class&lt;T&gt; because of Java's
-	 * inability to resolve an expression such as
-	 * <code>List&lt;Integer&gt;.class</code>.
+	 * @oddjob.property type
+	 * @oddjob.description The Java type of the column.
+	 * @oddjob.required Read only.
 	 *
 	 * @return The type that must be of Class&lt;T&gt;
 	 */

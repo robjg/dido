@@ -7,7 +7,6 @@ Creates an Out that write data to a text table.
 
 | Property | Description |
 | -------- | ----------- |
-| [outType](#propertyoutType) |  | 
 | [schema](#propertyschema) | The schema to use when writing out the schema will be used to limit the number of fields written. | 
 
 
@@ -19,14 +18,6 @@ Creates an Out that write data to a text table.
 
 
 ### Property Detail
-#### outType <a name="propertyoutType"></a>
-
-<table style='font-size:smaller'>
-      <tr><td><i>Access</i></td><td>READ_ONLY</td></tr>
-</table>
-
-
-
 #### schema <a name="propertyschema"></a>
 
 <table style='font-size:smaller'>

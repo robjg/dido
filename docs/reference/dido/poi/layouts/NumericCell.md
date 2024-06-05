@@ -13,7 +13,7 @@ Define a number column. Nests within a [dido-poi:rows](../../../dido/poi/layouts
 | [name](#propertyname) | The name of this layout. | 
 | [reference](#propertyreference) | The Excel reference of the last row of this column that has been written. | 
 | [style](#propertystyle) | The name of the style to use. | 
-| [type](#propertytype) | The type of Number. | 
+| [type](#propertytype) | The Java type of the column. | 
 | [value](#propertyvalue) |  | 
 
 
@@ -34,10 +34,8 @@ The Excel type of this column.
       <tr><td><i>Required</i></td><td>Read only.</td></tr>
 </table>
 
-The default style for the cell. This is a
-visible property of the layout so that users can see which style
-name to use if they wish to override the style at the
-[dido-poi:workbook](../../../dido/poi/data/PoiWorkbook.md) level.
+The default style for the cell. This
+maybe overridden at the [dido-poi:workbook](../../../dido/poi/data/PoiWorkbook.md) level.
 
 #### index <a name="propertyindex"></a>
 
@@ -87,10 +85,10 @@ been defined with the [dido-poi:workbook](../../../dido/poi/data/PoiWorkbook.md)
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
       <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
-      <tr><td><i>Required</i></td><td>No. Defaults to Double.</td></tr>
+      <tr><td><i>Required</i></td><td>Read only.</td></tr>
 </table>
 
-The type of Number.
+The Java type of the column.
 
 #### value <a name="propertyvalue"></a>
 
