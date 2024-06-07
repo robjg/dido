@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 
@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-public class StreamInJson implements DataInHow<String, InputStream> {
+public class StreamInJson implements DataInHow<InputStream> {
 
     private final Gson gson;
 
@@ -24,21 +24,21 @@ public class StreamInJson implements DataInHow<String, InputStream> {
         this.isArray = isArray;
     }
 
-    public static DataInHow<String, InputStream> asCopyWithPartialSchema(DataSchema<String> partialSchema,
+    public static DataInHow<InputStream> asCopyWithPartialSchema(DataSchema<String> partialSchema,
                                                                          boolean isArray) {
         return new StreamInJson(JsonDataPartialCopy
                 .registerPartialSchema(new GsonBuilder(), partialSchema)
                 .create(), isArray);
     }
 
-    public static DataInHow<String, InputStream> asCopyWithSchema(DataSchema<String> partialSchema,
+    public static DataInHow<InputStream> asCopyWithSchema(DataSchema<String> partialSchema,
                                                                          boolean isArray) {
         return new StreamInJson(JsonDataCopy
                 .registerSchema(new GsonBuilder(), partialSchema)
                 .create(), isArray);
     }
 
-    public static DataInHow<String, InputStream> asWrapperWithSchema(DataSchema<String> schema,
+    public static DataInHow<InputStream> asWrapperWithSchema(DataSchema<String> schema,
                                                                   boolean isArray) {
         return new StreamInJson(JsonDataWrapper
                 .registerSchema(new GsonBuilder(), schema)
@@ -81,7 +81,7 @@ public class StreamInJson implements DataInHow<String, InputStream> {
             return this;
         }
 
-        public DataInHow<String, InputStream> make() {
+        public DataInHow<InputStream> make() {
 
             if (schema == null || partial) {
                 return asCopyWithPartialSchema(schema, isArray);
@@ -105,7 +105,7 @@ public class StreamInJson implements DataInHow<String, InputStream> {
     }
 
     @Override
-    public DataIn<String> inFrom(InputStream inputStream) throws IOException {
+    public DataIn inFrom(InputStream inputStream) throws IOException {
 
         final JsonReader reader = new JsonReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
@@ -113,13 +113,13 @@ public class StreamInJson implements DataInHow<String, InputStream> {
             reader.beginArray();
         }
 
-        return new DataIn<>() {
+        return new DataIn() {
 
             @Override
-            public GenericData<String> get() {
+            public DidoData get() {
                 try {
                     if (reader.hasNext()) {
-                        return gson.fromJson(reader, GenericData.class);
+                        return gson.fromJson(reader, DidoData.class);
                     } else {
                         return null;
                     }

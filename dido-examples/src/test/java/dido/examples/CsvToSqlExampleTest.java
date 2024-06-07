@@ -2,7 +2,7 @@ package dido.examples;
 
 import dido.csv.CsvDataInHow;
 import dido.csv.CsvDataOutHow;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.sql.SqlDataInHow;
@@ -15,6 +15,7 @@ import org.oddjob.io.BufferType;
 import java.io.BufferedInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.Objects;
 
 class CsvToSqlExampleTest {
 
@@ -40,19 +41,19 @@ class CsvToSqlExampleTest {
         connection.createStatement().execute(create);
 
         // #snippet1{
-        try (DataIn<String> in = CsvDataInHow.withOptions()
+        try (DataIn in = CsvDataInHow.withOptions()
                 .withHeader(true)
                 .make()
                 .inFrom(getClass().getResourceAsStream("/examples/people-100.csv"));
 
-             DataOut<String> out = SqlDataOutHow.fromSql(
+             DataOut out = SqlDataOutHow.fromSql(
                              "insert into PEOPLE " +
                                      "(\"Index\",\"User Id\",\"First Name\",\"Last Name\",\"Sex\",\"Email\",\"Phone\",\"Date of birth\",\"Job Title\")" +
                                      " values (?, ?, ?, ?, ?, ?, ?, ?, ?)")
                      .make()
                      .outTo(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""))) {
 
-            for (GenericData<String> data : in) {
+            for (DidoData data : in) {
                 out.accept(data);
             }
         }
@@ -61,15 +62,15 @@ class CsvToSqlExampleTest {
         BufferType bufferType = new BufferType();
         bufferType.configured();
 
-        try (DataIn<String> in = SqlDataInHow.fromSql("select * from people")
+        try (DataIn in = SqlDataInHow.fromSql("select * from people")
                 .make()
                 .inFrom(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""));
-             DataOut<String> out = CsvDataOutHow.withOptions()
+             DataOut out = CsvDataOutHow.withOptions()
                      .withHeader(true)
                      .make()
                      .outTo(bufferType.toOutputStream())) {
 
-            for (GenericData<String> data : in) {
+            for (DidoData data : in) {
                 out.accept(data);
             }
         }
@@ -78,7 +79,9 @@ class CsvToSqlExampleTest {
 
         System.out.println(bufferType.getText());
 
-        String expected = new String(new BufferedInputStream(getClass().getResourceAsStream("/examples/people-100.csv")).readAllBytes());
+        String expected = new String(new BufferedInputStream(
+                Objects.requireNonNull(getClass().getResourceAsStream("/examples/people-100.csv")))
+                .readAllBytes());
 
         MatcherAssert.assertThat(bufferType.getText(), Matchers.is(expected));
     }

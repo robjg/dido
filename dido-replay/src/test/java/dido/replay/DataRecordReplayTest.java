@@ -1,6 +1,6 @@
 package dido.replay;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.MapData;
 import dido.how.CloseableConsumer;
 import dido.how.CloseableSupplier;
@@ -22,13 +22,13 @@ class DataRecordReplayTest {
         ByteArrayOutputStream schemaOut = new ByteArrayOutputStream();
         ByteArrayOutputStream timeOut = new ByteArrayOutputStream();
 
-        CloseableConsumer<GenericData<String>> recorder = DataRecorder.withSettings()
+        CloseableConsumer<DidoData> recorder = DataRecorder.withSettings()
                 .dataOut(dataOut)
                 .schemaOut(schemaOut)
                 .timeOut(timeOut)
                 .make();
 
-        GenericData<String> data = MapData.of("Fruit", "Applie", "Qty", 5);
+        DidoData data = MapData.of("Fruit", "Apple", "Qty", 5);
 
         recorder.accept(data);
 

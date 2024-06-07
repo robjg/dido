@@ -1,6 +1,6 @@
 package dido.how;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 
 /**
  * Something that data can be written to. This is one of the fundamental
@@ -12,6 +12,6 @@ import dido.data.GenericData;
  * @author rob
  *
  */
-public interface DataOut<F> extends CloseableConsumer<GenericData<F>> {
+public interface DataOut extends CloseableConsumer<DidoData> {
 
 }

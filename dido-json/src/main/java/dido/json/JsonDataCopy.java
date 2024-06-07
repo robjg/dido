@@ -7,13 +7,13 @@ import java.lang.reflect.Type;
 import java.util.LinkedList;
 
 /**
- * Adds Deserialisers to a GsonBuilder for create GenericData. Done in this way to support nested JSON.
+ * Adds Deserialisers to a GsonBuilder for create DidoData. Done in this way to support nested JSON.
  */
 public class JsonDataCopy {
 
     private final LinkedList<DataSchema<String>> stack = new LinkedList<>();
 
-    private final GenericDataBuilder<String> builder;
+    private final DataBuilder builder;
     private JsonDataCopy(DataSchema<String> schema) {
         this.stack.addFirst(schema);
         this.builder = MapData.newBuilder(schema);
@@ -25,15 +25,15 @@ public class JsonDataCopy {
     }
 
     private GsonBuilder init(GsonBuilder gsonBuilder) {
-        return gsonBuilder.registerTypeAdapter(GenericData.class,
+        return gsonBuilder.registerTypeAdapter(DidoData.class,
                 new DataDeserializer())
                 .registerTypeAdapter(RepeatingData.class, new RepeatingDeserializer());
     }
 
-    class DataDeserializer implements JsonDeserializer<GenericData<String>> {
+    class DataDeserializer implements JsonDeserializer<DidoData> {
 
         @Override
-        public GenericData<String> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public DidoData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
             if (!json.isJsonObject()) {
                 throw new JsonParseException("JsonObject expected, received: " + json +

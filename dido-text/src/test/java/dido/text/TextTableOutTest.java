@@ -1,9 +1,9 @@
 package dido.text;
 
 import dido.data.ArrayData;
+import dido.data.DidoData;
 import dido.data.EnumData;
 import dido.data.EnumMapData;
-import dido.data.GenericData;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
 
@@ -25,13 +25,13 @@ class TextTableOutTest {
                 "Cantaloupe|27 |245.3 " + System.lineSeparator() +
                 "Pear      |232|11.328" + System.lineSeparator();
 
-        GenericData<String> data1 = ArrayData.of("Apple", 5, 22.3);
-        GenericData<String> data2 = ArrayData.of("Cantaloupe", 27, 245.3);
-        GenericData<String> data3 = ArrayData.of("Pear", 232, 11.328);
+        DidoData data1 = ArrayData.of("Apple", 5, 22.3);
+        DidoData data2 = ArrayData.of("Cantaloupe", 27, 245.3);
+        DidoData data3 = ArrayData.of("Pear", 232, 11.328);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        DataOut<String> out = TextTableOut.<String>ofOptions()
+        DataOut out = TextTableOut.<String>ofOptions()
                 .schema(data1.getSchema())
                 .create()
                 .outTo(output);
@@ -74,16 +74,16 @@ class TextTableOutTest {
 
         EnumData.Builder<Fruit> builder = EnumMapData.builderForEnum(Fruit.class);
 
-        GenericData<String> data1 = EnumData.fromEnumData(
+        DidoData data1 = DidoData.adapt(EnumData.fromEnumData(
                 builder.setString(Fruit.Fruit, "Apple")
                         .setInt(Fruit.Quantity, 5)
-                        .setDouble(Fruit.Price, 22.3).build());
-        GenericData<String> data2 = ArrayData.of("Cantaloupe", 27, 245.3);
-        GenericData<String> data3 = ArrayData.of("Pear", 232, 11.328);
+                        .setDouble(Fruit.Price, 22.3).build()));
+        DidoData data2 = ArrayData.of("Cantaloupe", 27, 245.3);
+        DidoData data3 = ArrayData.of("Pear", 232, 11.328);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        DataOut<String> out = TextTableOut.<String>ofOptions()
+        DataOut out = TextTableOut.<String>ofOptions()
                 .schema(data1.getSchema())
                 .create()
                 .outTo(output);

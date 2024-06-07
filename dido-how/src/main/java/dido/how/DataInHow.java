@@ -8,8 +8,9 @@ package dido.how;
  * 
  * @author rob
  *
+ * @param <I> The Input Type
  */
-public interface DataInHow<F, I> {
+public interface DataInHow<I> {
 
 	Class<I> getInType();
 
@@ -20,6 +21,6 @@ public interface DataInHow<F, I> {
 	 * @return A reader. Never null.
 	 * 
 	 */
-	DataIn<F> inFrom(I dataIn) throws Exception;
+	DataIn inFrom(I dataIn) throws Exception;
 	
 }

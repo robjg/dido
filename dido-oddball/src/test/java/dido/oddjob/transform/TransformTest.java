@@ -1,7 +1,7 @@
 package dido.oddjob.transform;
 
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.MapData;
 import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.ArooaSession;
@@ -24,14 +24,14 @@ class TransformTest {
         copy1.setField("fruit");
         copy1.setTo("food");
 
-        Transform<String, String> transform = new Transform<>();
+        Transform transform = new Transform();
         transform.setOf(0, copy1.toValue());
 
-        Function<GenericData<String>, GenericData<String>> func = transform.toValue();
+        Function<DidoData, DidoData> func = transform.toValue();
 
-        GenericData<String> data = MapData.of("fruit", "apple", "quantity", 12);
+        DidoData data = MapData.of("fruit", "apple", "quantity", 12);
 
-        GenericData<String> result = func.apply(data);
+        DidoData result = func.apply(data);
 
         DataSchema<String> schema = result.getSchema();
 
@@ -56,15 +56,15 @@ class TransformTest {
         copy1.setField("fruit");
         copy1.setTo("food");
 
-        Transform<String, String> transform = new Transform<>();
+        Transform transform = new Transform();
         transform.setOf(0, copy1.toValue());
         transform.setStrategy(SchemaStrategy.NEW);
 
-        Function<GenericData<String>, GenericData<String>> func = transform.toValue();
+        Function<DidoData, DidoData> func = transform.toValue();
 
-        GenericData<String> data = MapData.of("fruit", "apple", "quantity", 12);
+        DidoData data = MapData.of("fruit", "apple", "quantity", 12);
 
-        GenericData<String> result = func.apply(data);
+        DidoData result = func.apply(data);
 
         DataSchema<String> schema = result.getSchema();
 
@@ -79,13 +79,13 @@ class TransformTest {
     @Test
     void testCopyAll() {
 
-        Transform<String, String> transform = new Transform<>();
+        Transform transform = new Transform();
 
-        Function<GenericData<String>, GenericData<String>> func = transform.toValue();
+        Function<DidoData, DidoData> func = transform.toValue();
 
-        GenericData<String> data = MapData.of("fruit", "apple", "quantity", 12);
+        DidoData data = MapData.of("fruit", "apple", "quantity", 12);
 
-        GenericData<String> result = func.apply(data);
+        DidoData result = func.apply(data);
 
         DataSchema<String> schema = result.getSchema();
 

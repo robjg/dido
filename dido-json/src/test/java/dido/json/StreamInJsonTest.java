@@ -30,13 +30,13 @@ class StreamInJsonTest {
                 .addField("Price", Double.class)
                 .build();
 
-        ArrayData.Builder<String> expectedBuilder = ArrayData.builderForSchema(expectedSchema);
+        ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(expectedSchema);
 
-        DataInHow<String, InputStream> test = StreamInJson.settings()
+        DataInHow<InputStream> test = StreamInJson.settings()
                 .setIsArray(true)
                 .make();
 
-        try (DataIn<String> in = test.inFrom(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
+        try (DataIn in = test.inFrom(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
 
             GenericData<String> data1 = in.get();
 
@@ -72,7 +72,7 @@ class StreamInJsonTest {
                 .addRepeatingField("OrderLines", DataSchema.emptySchema())
                 .build();
 
-        DataInHow<String, InputStream> test = StreamInJson.settings()
+        DataInHow<InputStream> test = StreamInJson.settings()
                 .setIsArray(true)
                 .setSchema(schema)
                 .setPartial(true)
@@ -88,14 +88,14 @@ class StreamInJsonTest {
                 .addRepeatingField("OrderLines", expectedNestedSchema)
                 .build();
 
-        try (DataIn<String> in = test.inFrom(
+        try (DataIn in = test.inFrom(
                 new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
 
             GenericData<String> data1 = in.get();
 
             assertThat(data1.getSchema(), is(expectedSchema));
 
-            RepeatingData<String> repeatingData = (RepeatingData<String>) data1.get("OrderLines");
+            RepeatingData repeatingData = (RepeatingData) data1.get("OrderLines");
 
             assertThat(repeatingData.size(), is(2));
 

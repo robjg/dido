@@ -1,6 +1,7 @@
 package dido.sql;
 
 import dido.data.DataSchema;
+import dido.data.DidoData;
 import dido.data.GenericData;
 import dido.data.IndexedData;
 import dido.how.DataException;
@@ -8,7 +9,7 @@ import dido.how.DataException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ResultSetWrapper implements GenericData<String> {
+public class ResultSetWrapper implements DidoData {
 
     private final ResultSet resultSet;
 
@@ -19,7 +20,7 @@ public class ResultSetWrapper implements GenericData<String> {
         this.schema = schema;
     }
 
-    public static GenericData<String> from(ResultSet resultSet, DataSchema<String> schema) {
+    public static DidoData from(ResultSet resultSet, DataSchema<String> schema) {
         return new ResultSetWrapper(resultSet, schema);
     }
 

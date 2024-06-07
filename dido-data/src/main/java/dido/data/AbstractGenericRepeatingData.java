@@ -3,7 +3,7 @@ package dido.data;
 import java.util.Iterator;
 import java.util.Objects;
 
-abstract public class AbstractRepeatingData implements RepeatingData {
+abstract public class AbstractGenericRepeatingData<F> implements GenericRepeatingData<F> {
 
     private volatile int hashCode;
 
@@ -13,11 +13,11 @@ abstract public class AbstractRepeatingData implements RepeatingData {
         if (o == this) {
             return true;
         }
-        if (! (o instanceof RepeatingData)) {
+        if (! (o instanceof GenericRepeatingData)) {
             return false;
         }
 
-        RepeatingData other = (RepeatingData) o;
+        GenericRepeatingData<?> other = (GenericRepeatingData<?>) o;
 
         if (other.size() != this.size()) {
             return false;

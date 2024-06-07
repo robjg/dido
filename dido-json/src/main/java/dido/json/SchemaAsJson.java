@@ -2,7 +2,7 @@ package dido.json;
 
 import dido.data.DataSchema;
 import dido.data.DataSchemaSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.how.*;
 import dido.how.util.ClassUtils;
 
@@ -17,13 +17,13 @@ public class SchemaAsJson {
 
     public static DataSchema<String> fromJson(InputStream input) throws Exception {
 
-        DataInHow<String, InputStream> inHow = StreamInJson.settings()
+        DataInHow<InputStream> inHow = StreamInJson.settings()
                 .setSchema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
                 .make();
 
-        try (DataIn<String> in = inHow.inFrom(input)) {
+        try (DataIn in = inHow.inFrom(input)) {
 
-            GenericData<String> data = in.get();
+            DidoData data = in.get();
 
             return DataSchemaSchema.schemaFromData(data, className -> {
                 try {
@@ -42,9 +42,9 @@ public class SchemaAsJson {
 
     public static void toJson(DataSchema<String> schema, OutputStream output) throws Exception {
 
-        try (DataOut<String> out = StreamOutJson.streamOutSingle().outTo(output)) {
+        try (DataOut out = StreamOutJson.streamOutSingle().outTo(output)) {
 
-            GenericData<String> data = DataSchemaSchema.schemaToData(schema);
+            DidoData data = DataSchemaSchema.schemaToData(schema);
 
             out.accept(data);
         }
@@ -59,11 +59,11 @@ public class SchemaAsJson {
 
     public static CloseableSupplier<DataSchema<String>> fromJsonStream(InputStream input) throws Exception {
 
-        DataInHow<String, InputStream> inHow = StreamInJsonLines.settings()
+        DataInHow<InputStream> inHow = StreamInJsonLines.settings()
                 .setSchema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
                 .make();
 
-        DataIn<String> in = inHow.inFrom(input);
+        DataIn in = inHow.inFrom(input);
 
         return new CloseableSupplier<>() {
 
@@ -76,7 +76,7 @@ public class SchemaAsJson {
             @Override
             public DataSchema<String> get() {
 
-                GenericData<String> data = in.get();
+                DidoData data = in.get();
 
                 if (data == null) {
                     return null;
@@ -100,7 +100,7 @@ public class SchemaAsJson {
 
     public static CloseableConsumer<DataSchema<String>> toJsonStream(OutputStream output) {
 
-        DataOut<String> out = new StreamOutJsonLines().outTo(output);
+        DataOut out = new StreamOutJsonLines().outTo(output);
 
         return new CloseableConsumer<>() {
 
@@ -111,7 +111,7 @@ public class SchemaAsJson {
 
             @Override
             public void accept(DataSchema<String> schema) {
-                GenericData<String> data = DataSchemaSchema.schemaToData(schema);
+                DidoData data = DataSchemaSchema.schemaToData(schema);
 
                 out.accept(data);
             }

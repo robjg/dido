@@ -57,7 +57,7 @@ public class JsonDido {
      */
     private boolean copy;
 
-    public DataOutHow<String, OutputStream> toStreamOut() {
+    public DataOutHow<OutputStream> toStreamOut() {
 
         Format format = Objects.requireNonNullElse(this.format, Format.LINES);
         switch (format) {
@@ -72,7 +72,7 @@ public class JsonDido {
         }
     }
 
-    public DataInHow<String, InputStream> toStreamIn() {
+    public DataInHow<InputStream> toStreamIn() {
 
         Format format = Objects.requireNonNullElse(this.format, Format.LINES);
         switch (format) {

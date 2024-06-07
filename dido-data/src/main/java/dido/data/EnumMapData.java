@@ -58,7 +58,7 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
     }
 
     static class BuilderWithSchema<E extends Enum<E>>
-            extends DataBuilders.Fields<E, BuilderWithSchema<E>> implements EnumData.Builder<E> {
+            extends GenericDataBuilders.Fields<E, BuilderWithSchema<E>> implements EnumData.Builder<E> {
 
         private final EnumSchema<E> schema;
 

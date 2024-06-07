@@ -1,10 +1,10 @@
 package dido.poi.utils;
 
 import dido.data.GenericData;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import dido.poi.RowIn;
 import dido.poi.data.DataCell;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,7 +25,7 @@ class DataRowFactoryTest {
 
         SchemaAndCells schemaAndCells = SchemaAndCells.fromSchemaOrCells(null, Collections.singletonList(cell));
 
-        DataRowFactory<String> test = DataRowFactory.newInstance(
+        DataRowFactory test = DataRowFactory.newInstance(
                 schemaAndCells.getSchema(), schemaAndCells.getDataCells());
 
         RowIn rowIn = mock(RowIn.class);
@@ -48,7 +48,7 @@ class DataRowFactoryTest {
 
         SchemaAndCells schemaAndCells = SchemaAndCells.fromSchemaOrCells(null, Arrays.asList(cell1, cell2));
 
-        DataRowFactory<String> test = DataRowFactory.newInstance(
+        DataRowFactory test = DataRowFactory.newInstance(
                 schemaAndCells.getSchema(), schemaAndCells.getDataCells());
 
         RowIn rowIn = mock(RowIn.class);
@@ -74,7 +74,7 @@ class DataRowFactoryTest {
 
         SchemaAndCells schemaAndCells = SchemaAndCells.fromSchemaOrCells(null, Arrays.asList(cell3, cell7));
 
-        DataRowFactory<String> test = DataRowFactory.newInstance(
+        DataRowFactory test = DataRowFactory.newInstance(
                 schemaAndCells.getSchema(), schemaAndCells.getDataCells());
 
         RowIn rowIn = mock(RowIn.class);

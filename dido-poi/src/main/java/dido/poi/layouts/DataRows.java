@@ -1,15 +1,13 @@
 package dido.poi.layouts;
 
 import dido.data.DataSchema;
+import dido.data.DidoData;
 import dido.data.GenericData;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
 import dido.poi.*;
-import dido.poi.utils.DataRowFactory;
-import dido.poi.utils.SchemaAndCells;
-import org.apache.poi.ss.usermodel.Sheet;
 import dido.poi.data.DataCell;
 import dido.poi.data.PoiRowsIn;
 import dido.poi.data.PoiRowsOut;
@@ -17,6 +15,9 @@ import dido.poi.style.CompositeStyleFactory;
 import dido.poi.style.DefaultStyleProivderFactory;
 import dido.poi.style.StyleBean;
 import dido.poi.style.StyleFactoryRegistry;
+import dido.poi.utils.DataRowFactory;
+import dido.poi.utils.SchemaAndCells;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,7 @@ import java.util.*;
  *
  * @author rob
  */
-public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<String, BookOutProvider> {
+public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutProvider> {
 
     private static final Logger logger = LoggerFactory.getLogger(DataRows.class);
 
@@ -144,19 +145,19 @@ public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<S
     }
 
 
-    class MainReader implements DataIn<String> {
+    class MainReader implements DataIn {
 
         private final RowsIn rowsIn;
 
-        private final DataRowFactory<String> dataRowFactory;
+        private final DataRowFactory dataRowFactory;
 
-        public MainReader(RowsIn rowsIn, DataRowFactory<String> dataRowFactory) {
+        public MainReader(RowsIn rowsIn, DataRowFactory dataRowFactory) {
             this.rowsIn = rowsIn;
             this.dataRowFactory = dataRowFactory;
         }
 
         @Override
-        public GenericData<String> get() {
+        public DidoData get() {
 
             RowIn rowIn = rowsIn.nextRow();
             if (rowIn == null) {
@@ -181,7 +182,7 @@ public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<S
     }
 
     @Override
-    public DataIn<String> inFrom(BookInProvider bookInProvider) throws Exception {
+    public DataIn inFrom(BookInProvider bookInProvider) throws Exception {
 
         BookIn bookIn = bookInProvider.provideBookIn();
 
@@ -217,7 +218,7 @@ public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<S
         }
     }
 
-    class MainWriter implements DataOut<String> {
+    class MainWriter implements DataOut {
 
         private final RowsOut rowsOut;
 
@@ -234,7 +235,7 @@ public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<S
         }
 
         @Override
-        public void accept(GenericData<String> data) {
+        public void accept(DidoData data) {
 
             rowsOut.nextRow();
 
@@ -275,7 +276,7 @@ public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<S
     }
 
     @Override
-    public DataOut<String> outTo(BookOutProvider bookOutProvider) throws Exception {
+    public DataOut outTo(BookOutProvider bookOutProvider) throws Exception {
 
         BookOut bookOut = bookOutProvider.provideBookOut();
 
@@ -300,18 +301,18 @@ public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<S
         }
     }
 
-    class UnknownWriter implements DataOut<String> {
+    class UnknownWriter implements DataOut {
 
         private final WriterFactory writerFactory;
 
-        private DataOut<String> delegate;
+        private DataOut delegate;
 
         UnknownWriter(WriterFactory writerFactory) {
             this.writerFactory = writerFactory;
         }
 
         @Override
-        public void accept(GenericData<String> data) {
+        public void accept(DidoData data) {
 
             if (delegate == null) {
                 SchemaAndCells schemaAndCells = SchemaAndCells.fromSchemaOrCells(data.getSchema(), null);
@@ -338,7 +339,7 @@ public class DataRows implements DataInHow<String, BookInProvider>, DataOutHow<S
             this.closeable = closeable;
         }
 
-        DataOut<String> create(SchemaAndCells schemaAndCells) {
+        DataOut create(SchemaAndCells schemaAndCells) {
 
             List<CellOut<?>> cellOuts = new ArrayList<>(schemaAndCells.getDataCells().size());
             int lastIndex = 0;

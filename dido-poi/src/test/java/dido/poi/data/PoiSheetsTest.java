@@ -1,13 +1,13 @@
 package dido.poi.data;
 
+import dido.data.DidoData;
 import dido.data.GenericData;
 import dido.data.MapData;
 import dido.how.DataIn;
 import dido.how.DataOut;
-import dido.poi.data.PoiWorkbook;
-import org.junit.jupiter.api.Test;
 import dido.poi.layouts.DataRows;
 import dido.poi.layouts.TextCell;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -28,9 +28,9 @@ public class PoiSheetsTest  {
 		
 		rows.setOf(0, cell);
 
-		DataOut<String> writer = rows.outTo(workbook);
+		DataOut writer = rows.outTo(workbook);
 
-		GenericData<String> data = MapData.newBuilderNoSchema()
+		DidoData data = MapData.newBuilderNoSchema()
 				.setString("Fruit", "Apples")
 				.build();
 
@@ -41,7 +41,7 @@ public class PoiSheetsTest  {
 		////////////
 		// Read Part
 
-		DataIn<String> reader = rows.inFrom(workbook);
+		DataIn reader = rows.inFrom(workbook);
 		
 		GenericData<String> result = reader.get();
 		
@@ -63,9 +63,9 @@ public class PoiSheetsTest  {
 		rows.setOf(0, cell);
 
 
-		DataOut<String> writer = rows.outTo(workbook);
+		DataOut writer = rows.outTo(workbook);
 
-		GenericData<String> data = MapData.newBuilderNoSchema()
+		DidoData data = MapData.newBuilderNoSchema()
 				.setString("Fruit", "Apples")
 				.build();
 
@@ -76,7 +76,7 @@ public class PoiSheetsTest  {
 		////////////
 		// Read Part
 
-		DataIn<String> reader = rows.inFrom(workbook);
+		DataIn reader = rows.inFrom(workbook);
 
 		GenericData<String> result = reader.get();
 

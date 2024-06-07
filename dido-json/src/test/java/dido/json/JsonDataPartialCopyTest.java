@@ -26,7 +26,7 @@ class JsonDataPartialCopyTest {
                         .build())
                 .create();
 
-        GenericData<String> result = gson.fromJson(json, GenericData.class);
+        DidoData result = gson.fromJson(json, DidoData.class);
 
         DataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
                 .addField("Fruit", String.class)

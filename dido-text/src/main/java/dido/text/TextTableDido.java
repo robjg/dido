@@ -12,26 +12,26 @@ import java.io.OutputStream;
  * {@oddjob.xml.resource config/ToTableExample.xml}
  *
  */
-public class TextTableDido<F> {
+public class TextTableDido {
 
     /**
      * @oddjob.description The schema to use when writing out the schema will be used to limit the number
      * of fields written.
      * @oddjob.required No.
      */
-    private volatile DataSchema<F> schema;
+    private volatile DataSchema<String> schema;
 
-    public DataOutHow<F, OutputStream> toOut() {
-        return TextTableOut.<F>ofOptions()
+    public DataOutHow<OutputStream> toOut() {
+        return TextTableOut.ofOptions()
                 .schema(this.schema)
                 .create();
     }
 
-    public DataSchema<F> getSchema() {
+    public DataSchema<String> getSchema() {
         return schema;
     }
 
-    public void setSchema(DataSchema<F> schema) {
+    public void setSchema(DataSchema<String> schema) {
         this.schema = schema;
     }
 

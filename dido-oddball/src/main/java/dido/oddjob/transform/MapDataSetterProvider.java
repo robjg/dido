@@ -1,65 +1,65 @@
 package dido.oddjob.transform;
 
-import dido.data.GenericDataBuilder;
+import dido.data.DataBuilder;
 import dido.data.DataSchema;
 import dido.data.GenericData;
 import dido.data.MapData;
 
-public class MapDataSetterProvider<F> implements SetterProvider<F> {
+public class MapDataSetterProvider implements SetterProvider<String> {
 
     @Override
-    public DataFactory<F> provideSetter(DataSchema<F> schema) {
-        GenericDataBuilder<F> builder = MapData.newBuilder(schema);
+    public DataFactory<String> provideSetter(DataSchema<String> schema) {
+        DataBuilder builder = MapData.newBuilder(schema);
 
-        DataSetter<F> setter = new DataSetter<>() {
+        DataSetter<String> setter = new DataSetter<>() {
 
             @Override
-            public void set(F field, Object value) {
+            public void set(String field, Object value) {
                 builder.set(field, value);
             }
 
             @Override
-            public void setBoolean(F field, boolean value) {
+            public void setBoolean(String field, boolean value) {
                 builder.set(field, value);
             }
 
             @Override
-            public void setByte(F field, byte value) {
+            public void setByte(String field, byte value) {
                 builder.set(field, value);
             }
 
             @Override
-            public void setChar(F field, char value) {
+            public void setChar(String field, char value) {
                 builder.set(field, value);
             }
 
             @Override
-            public void setShort(F field, short value) {
+            public void setShort(String field, short value) {
                 builder.set(field, value);
             }
 
             @Override
-            public void setInt(F field, int value) {
+            public void setInt(String field, int value) {
                 builder.set(field, value);
             }
 
             @Override
-            public void setLong(F field, long value) {
+            public void setLong(String field, long value) {
                 builder.set(field, value);
             }
 
             @Override
-            public void setFloat(F field, float value) {
+            public void setFloat(String field, float value) {
                 builder.set(field, value);
             }
 
             @Override
-            public void setDouble(F field, double value) {
+            public void setDouble(String field, double value) {
                 builder.set(field, value);
             }
 
             @Override
-            public void setString(F field, String value) {
+            public void setString(String field, String value) {
                 builder.set(field, value);
             }
 
@@ -111,12 +111,12 @@ public class MapDataSetterProvider<F> implements SetterProvider<F> {
 
         return new DataFactory<>() {
             @Override
-            public DataSetter<F> getSetter() {
+            public DataSetter<String> getSetter() {
                 return setter;
             }
 
             @Override
-            public GenericData<F> toData() {
+            public GenericData<String> toData() {
                 return builder.build();
             }
         };

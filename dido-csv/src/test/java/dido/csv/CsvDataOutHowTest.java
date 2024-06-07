@@ -49,11 +49,11 @@ class CsvDataOutHowTest {
                 .addField("Price", double.class)
                 .build();
 
-        DataBuilders.Values<String> values = MapData.valuesFor(schema);
+        DataBuilders.Values values = MapData.valuesFor(schema);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        DataOut<String> dataOut =
+        DataOut dataOut =
                 CsvDataOutHow.withOptions()
                         .schema(schema)
                         .withHeader(true)

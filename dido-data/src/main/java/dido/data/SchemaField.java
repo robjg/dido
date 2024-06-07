@@ -9,7 +9,7 @@ import java.util.Objects;
  */
 public interface SchemaField<F> {
 
-    Class<?> NESTED_TYPE = GenericData.class;
+    Class<?> NESTED_TYPE = DidoData.class;
 
     Class<?> NESTED_REPEATING_TYPE = RepeatingData.class;
 

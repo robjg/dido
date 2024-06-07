@@ -1,6 +1,6 @@
 package dido.json;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.MapData;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
@@ -14,17 +14,17 @@ class StreamOutJsonLinesTest {
     @Test
     void testSimpleOut() throws Exception {
 
-        GenericData<String> data1 = MapData.of(
+        DidoData data1 = MapData.of(
                 "Fruit", "Apple", "Qty", 5, "Price", 27.2);
-        GenericData<String> data2 = MapData.of(
+        DidoData data2 = MapData.of(
                 "Fruit", "Orange", "Qty", 10, "Price", Double.NaN);
-        GenericData<String> data3 = MapData.of(
+        DidoData data3 = MapData.of(
                 "Fruit", "Pear", "Qty", 7, "Price", 22.1);
 
         BufferType bufferType = new BufferType();
         bufferType.configured();
 
-        DataOut<String> dataOut = new StreamOutJsonLines().outTo(bufferType.toOutputStream());
+        DataOut dataOut = new StreamOutJsonLines().outTo(bufferType.toOutputStream());
 
         dataOut.accept(data1);
         dataOut.accept(data2);

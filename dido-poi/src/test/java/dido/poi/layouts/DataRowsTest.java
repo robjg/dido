@@ -1,18 +1,17 @@
 package dido.poi.layouts;
 
+import dido.data.DidoData;
 import dido.data.GenericData;
 import dido.data.MapData;
 import dido.how.DataIn;
 import dido.how.DataOut;
-import dido.poi.layouts.DataRows;
-import dido.poi.layouts.TextCell;
+import dido.poi.data.PoiWorkbook;
 import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.standard.StandardArooaSession;
-import dido.poi.data.PoiWorkbook;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,12 +37,12 @@ public class DataRowsTest extends TestCase {
 	
 		test.setOf(0, cell);
 
-		DataOut<String> writer = test.outTo(workbook);
+		DataOut writer = test.outTo(workbook);
 
-		GenericData<String> data1 = MapData.newBuilderNoSchema()
+		DidoData data1 = MapData.newBuilderNoSchema()
 						.setString("Fruit", "Apples")
 								.build();
-		GenericData<String> data2 = MapData.newBuilderNoSchema()
+		DidoData data2 = MapData.newBuilderNoSchema()
 				.setString("Fruit", "Oranges")
 				.build();
 
@@ -74,7 +73,7 @@ public class DataRowsTest extends TestCase {
 //		assertEquals(0, test.getLastRow());
 //		assertEquals(0, test.getLastColumn());
 
-		DataIn<String> reader = test.inFrom(workbook);
+		DataIn reader = test.inFrom(workbook);
 
 		GenericData<String> result = reader.get();
 		

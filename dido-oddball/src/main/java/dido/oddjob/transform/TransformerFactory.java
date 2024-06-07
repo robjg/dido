@@ -6,10 +6,8 @@ import dido.data.DataSchema;
 /**
  * Creates a {@link Transformer}
  *
- * @param <F> The field type of the incoming data.
- * @param <T> The field type of the outgoing data.
  */
-public interface TransformerFactory<F, T> {
+public interface TransformerFactory {
 
     /**
      * Creates the {@link Transformer}.
@@ -20,9 +18,9 @@ public interface TransformerFactory<F, T> {
      *
      * @return The complete Transformer. Not expected to ever be null.
      */
-    Transformer<F, T> create(int position,
-                             DataSchema<F> fromSchema,
-                             SchemaSetter<T> schemaSetter);
+    Transformer create(int position,
+                             DataSchema<String> fromSchema,
+                             SchemaSetter<String> schemaSetter);
 
 
 }

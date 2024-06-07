@@ -8,8 +8,9 @@ package dido.how;
  * 
  * @author rob
  *
+ * @param <O> The Output Type
  */
-public interface DataOutHow<F, O> {
+public interface DataOutHow<O> {
 
 	Class<O> getOutType();
 
@@ -20,5 +21,5 @@ public interface DataOutHow<F, O> {
 	 * @return A writer. Never null.
 	 * 
 	 */
-	DataOut<F> outTo(O dataOut) throws Exception;
+	DataOut outTo(O dataOut) throws Exception;
 }

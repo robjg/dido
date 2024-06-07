@@ -9,101 +9,101 @@ import java.util.stream.StreamSupport;
 
 public class Flatten {
 
-    public static <F> List<GenericData<F>> flatten(F field, IndexedData<F> data) {
-        return new DynamicFlatten<>(extractorForFieldOrIndex(field, 0)).apply(data);
+    public static  List<DidoData> flatten(String field, IndexedData<String> data) {
+        return new DynamicFlatten(extractorForFieldOrIndex(field, 0)).apply(data);
     }
 
-    public static <F> List<GenericData<F>> flattenAt(int index, IndexedData<F> data) {
-        return new DynamicFlatten<>(extractorForFieldOrIndex((F) null, 0)).apply(data);
+    public static List<DidoData> flattenAt(int index, IndexedData<String> data) {
+        return new DynamicFlatten(extractorForFieldOrIndex((String) null, 0)).apply(data);
     }
 
-    public static <F> Function<IndexedData<F>, List<GenericData<F>>> field(F field) {
+    public static Function<IndexedData<String>, List<DidoData>> field(String field) {
 
-        return new DynamicFlatten<>(extractorForFieldOrIndex(field, 0));
+        return new DynamicFlatten(extractorForFieldOrIndex(field, 0));
     }
 
-    public static <F> Function<IndexedData<F>, List<GenericData<F>>> fields(F... fields) {
+    public static Function<IndexedData<String>, List<DidoData>> fields(String... fields) {
 
-        Collection<Extractor<F>> extractors = Arrays.stream(fields)
+        Collection<Extractor<String>> extractors = Arrays.stream(fields)
                 .map(f -> extractorForFieldOrIndex(f, 0))
                 .collect(Collectors.toList());
 
-        return new DynamicIterableFlatten<>(extractors);
+        return new DynamicIterableFlatten(extractors);
     }
 
-    public static <F> Function<IndexedData<F>, List<GenericData<F>>> indices(int... indices) {
+    public static Function<IndexedData<String>, List<DidoData>> indices(int... indices) {
 
-        Collection<Extractor<F>> extractors = Arrays.stream(indices)
-                .mapToObj(i -> (Extractor<F>) extractorForFieldOrIndex(null, i))
+        Collection<Extractor<String>> extractors = Arrays.stream(indices)
+                .mapToObj(i -> extractorForFieldOrIndex((String) null, i))
                 .collect(Collectors.toList());
 
-        return new DynamicIterableFlatten<>(extractors);
+        return new DynamicIterableFlatten(extractors);
     }
 
-    public static <F> Function<IndexedData<F>, List<GenericData<F>>> fieldOfSchema(F field,
-                                                                                   DataSchema<F> schema) {
+    public static Function<IndexedData<String>, List<DidoData>> fieldOfSchema(String field,
+                                                                                   DataSchema<String> schema) {
         return fieldOrIndexOfSchema(field, 0, schema);
     }
 
-    public static <F> Function<IndexedData<F>, List<GenericData<F>>> fieldOrIndexOfSchema(F field,
+    public static Function<IndexedData<String>, List<DidoData>> fieldOrIndexOfSchema(String field,
                                                                                           int index,
-                                                                                          DataSchema<F> schema) {
+                                                                                          DataSchema<String> schema) {
 
-        Extractor<F> extractor = extractorForFieldOrIndex(field, index);
+        Extractor<String> extractor = extractorForFieldOrIndex(field, index);
 
         return extractorOfSchema(extractor, schema);
     }
 
-    static <F> Function<IndexedData<F>, List<GenericData<F>>> extractorOfSchema(Extractor<F> extractor,
-                                                                                          DataSchema<F> schema) {
+    static Function<IndexedData<String>, List<DidoData>> extractorOfSchema(Extractor<String> extractor,
+                                                                                          DataSchema<String> schema) {
 
-        DataSchema<F> nestedSchema = Objects.requireNonNull(extractor.getSchema(schema),
+        DataSchema<String> nestedSchema = Objects.requireNonNull(extractor.getSchema(schema),
                 "No Nested Schema for " + extractor );
 
-        Concatenator<F> concatenator = extractor.bodgeFields(Concatenator.withSettings())
+        Concatenator<String> concatenator = extractor.bodgeFields(Concatenator.withSettings())
                 .makeFromSchemas(schema, nestedSchema);
 
-        return new KnownRepeatingFlatten<>(concatenator, extractor);
+        return new KnownRepeatingFlatten(concatenator, extractor);
     }
 
 
-    static class KnownRepeatingFlatten<F> implements Function<IndexedData<F>, List<GenericData<F>>> {
+    static class KnownRepeatingFlatten implements Function<IndexedData<String>, List<DidoData>> {
 
-        private final Concatenator<F> concatenator;
+        private final Concatenator<String> concatenator;
 
-        private final Extractor<F> extractor;
+        private final Extractor<String> extractor;
 
-        KnownRepeatingFlatten(Concatenator<F> concatenator, Extractor<F> extractor) {
+        KnownRepeatingFlatten(Concatenator<String> concatenator, Extractor<String> extractor) {
             this.concatenator = concatenator;
             this.extractor = extractor;
         }
 
         @Override
-        public List<GenericData<F>> apply(IndexedData<F> data) {
+        public List<DidoData> apply(IndexedData<String> data) {
 
             @SuppressWarnings("unchecked")
-            RepeatingData<F> nested = (RepeatingData<F>) extractor.extract(data);
+            RepeatingData nested = (RepeatingData) extractor.extract(data);
 
-            List<GenericData<F>> flattened = new ArrayList<>(nested.size());
-            for (IndexedData<F> element : nested) {
-                flattened.add(concatenator.concat(data, element));
+            List<DidoData> flattened = new ArrayList<>(nested.size());
+            for (IndexedData<String> element : nested) {
+                flattened.add(DidoData.adapt(concatenator.concat(data, element)));
             }
 
             return flattened;
         }
     }
 
-    static <F> Function<IndexedData<F>, List<GenericData<F>>> strategyFlatten(DataSchema<F> schema,
-                                                                              Collection<Extractor<F>> extractors) {
+    static Function<IndexedData<String>, List<DidoData>> strategyFlatten(DataSchema<String> schema,
+                                                                              Collection<Extractor<String>> extractors) {
 
-        Map<Integer, Extractor<F>> extractorMap = new HashMap<>();
-        SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
+        Map<Integer, Extractor<String>> extractorMap = new HashMap<>();
+        SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
 
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
 
-            Extractor<F> extractor = null;
+            Extractor<String> extractor = null;
 
-            for (Extractor<F> e : extractors) {
+            for (Extractor<String> e : extractors) {
 
                 if (e.isForIndexInSchema(index, schema)) {
                     extractor = e;
@@ -111,7 +111,7 @@ public class Flatten {
                 }
             }
 
-            SchemaField<F> existingSchemaField = schema.getSchemaFieldAt(index);
+            SchemaField<String> existingSchemaField = schema.getSchemaFieldAt(index);
             if (extractor == null) {
 
                 schemaBuilder.addSchemaField(existingSchemaField);
@@ -134,35 +134,35 @@ public class Flatten {
             }
         }
 
-        return new KnownIterableFlatten<>(extractorMap, schema, schemaBuilder.build());
+        return new KnownIterableFlatten(extractorMap, schema, schemaBuilder.build());
     }
 
 
-    static class KnownIterableFlatten<F> implements Function<IndexedData<F>, List<GenericData<F>>> {
+    static class KnownIterableFlatten implements Function<IndexedData<String>, List<DidoData>> {
 
-        private final Map<Integer, Extractor<F>> extractors;
+        private final Map<Integer, Extractor<String>> extractors;
 
-        private final DataSchema<F> schema;
+        private final DataSchema<String> schema;
 
-        private final DataSchema<F> newSchema;
+        private final DataSchema<String> newSchema;
 
-        KnownIterableFlatten(Map<Integer, Extractor<F>> extractors, DataSchema<F> schema, DataSchema<F> newSchema) {
+        KnownIterableFlatten(Map<Integer, Extractor<String>> extractors, DataSchema<String> schema, DataSchema<String> newSchema) {
             this.extractors = extractors;
             this.schema = schema;
             this.newSchema = newSchema;
         }
 
         @Override
-        public List<GenericData<F>> apply(IndexedData<F> data) {
+        public List<DidoData> apply(IndexedData<String> data) {
 
             int maxSize = 1;
 
             Map<Integer, List<Object>> lists = new HashMap<>(extractors.size());
 
-            for (Map.Entry<Integer, Extractor<F>> entry : extractors.entrySet()) {
+            for (Map.Entry<Integer, Extractor<String>> entry : extractors.entrySet()) {
 
                 int index = entry.getKey();
-                Extractor<F> extractor = entry.getValue();
+                Extractor<String> extractor = entry.getValue();
 
                 Object value = extractor.extract(data);
                 if (value == null) {
@@ -205,11 +205,11 @@ public class Flatten {
                 lists.put(index, list);
             }
 
-            List<GenericData<F>> flattened = new ArrayList<>(maxSize);
+            List<DidoData> flattened = new ArrayList<>(maxSize);
 
             for (int l = 0; l < maxSize; ++l) {
 
-                ArrayData.Builder<F> arrayData = ArrayData.builderForSchema(newSchema);
+                ArrayData.Builder arrayData = ArrayData.builderForSchema(newSchema);
 
                 for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
 
@@ -233,23 +233,22 @@ public class Flatten {
     /**
      * Compares previous schemas so we can maybe shortcut.
      *
-     * @param <F> Field Type.
      */
-    public static class DynamicIterableFlatten<F> implements Function<IndexedData<F>, List<GenericData<F>>> {
+    public static class DynamicIterableFlatten implements Function<IndexedData<String>, List<DidoData>> {
 
-        private final Collection<Extractor<F>> extractors;
+        private final Collection<Extractor<String>> extractors;
 
-        private Function<IndexedData<F>, List<GenericData<F>>> last;
+        private Function<? super IndexedData<String>, ? extends List<DidoData>> last;
 
-        private DataSchema<F> previous;
+        private DataSchema<String> previous;
 
-        public DynamicIterableFlatten(Collection<Extractor<F>> extractors) {
+        public DynamicIterableFlatten(Collection<Extractor<String>> extractors) {
             this.extractors = extractors;
         }
 
 
         @Override
-        public List<GenericData<F>> apply(IndexedData<F> indexedData) {
+        public List<DidoData> apply(IndexedData<String> indexedData) {
 
             if (last == null || !indexedData.getSchema().equals(previous)) {
                 previous = indexedData.getSchema();
@@ -263,22 +262,21 @@ public class Flatten {
     /**
      * Compares previous schemas so we can maybe shortcut.
      *
-     * @param <F> Field Type.
      */
-    public static class DynamicFlatten<F> implements Function<IndexedData<F>, List<GenericData<F>>> {
+    public static class DynamicFlatten implements Function<IndexedData<String>, List<DidoData>> {
 
-        private final Extractor<F> extractor;
+        private final Extractor<String> extractor;
 
-        private Function<IndexedData<F>, List<GenericData<F>>> last;
+        private Function<? super IndexedData<String>, ? extends List<DidoData>> last;
 
-        private DataSchema<F> previous;
+        private DataSchema<String> previous;
 
-        public DynamicFlatten(Extractor<F> extractor) {
+        public DynamicFlatten(Extractor<String> extractor) {
             this.extractor = extractor;
         }
 
         @Override
-        public List<GenericData<F>> apply(IndexedData<F> indexedData) {
+        public List<DidoData> apply(IndexedData<String> indexedData) {
 
             if (last == null || !indexedData.getSchema().equals(previous)) {
                 previous = indexedData.getSchema();

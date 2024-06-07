@@ -2,7 +2,7 @@ package dido.data;
 
 /**
  * Something that is capable of building creating {@link GenericData}. Instances should be reusable,
- * once {@link #build()} has been called, any internal state should be reset so that new data can be built.
+ * once {@code #build()} has been called, any internal state should be reset so that new data can be built.
  *
  * @param <F> The type of the fields.
  */
@@ -28,5 +28,4 @@ public interface IndexedDataBuilder<F> {
 
     IndexedDataBuilder<F> setStringAt(int index, String value);
 
-    GenericData<F> build();
 }

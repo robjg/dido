@@ -3,20 +3,19 @@ package dido.data;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface RepeatingData<F> extends Iterable<GenericData<F>> {
+public interface RepeatingData extends Iterable<DidoData> {
 
     int size();
 
-    GenericData<F> get(int row);
+    DidoData get(int row);
 
-    Stream<GenericData<F>> stream();
+    Stream<DidoData> stream();
 
-    static <F> RepeatingData<F> of(List<? extends IndexedData<F>> list) {
+    static RepeatingData of(List<DidoData> list) {
         return RepeatingDataWrappers.of(list);
     }
 
-    @SafeVarargs
-    static <F> RepeatingData<F> of(IndexedData<F>... data) {
+    static RepeatingData of(DidoData... data) {
         return RepeatingDataWrappers.of(data);
     }
 

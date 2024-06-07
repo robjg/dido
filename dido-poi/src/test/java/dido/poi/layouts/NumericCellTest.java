@@ -6,6 +6,7 @@ import dido.data.GenericData;
 import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataOut;
+import dido.poi.data.PoiWorkbook;
 import junit.framework.TestCase;
 import org.hamcrest.MatcherAssert;
 import org.oddjob.arooa.ArooaBeanDescriptor;
@@ -15,7 +16,6 @@ import org.oddjob.arooa.reflect.ArooaClass;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.arooa.standard.StandardArooaSession;
-import dido.poi.data.PoiWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,7 @@ public class NumericCellTest extends TestCase {
 		DataRows rows = new DataRows();
 		rows.setOf(0, test);
 
-		DataOut<String> writer = rows.outTo(workbook);
+		DataOut writer = rows.outTo(workbook);
 		
 		writer.accept(ArrayData.of(12.3));
 		
@@ -57,7 +57,7 @@ public class NumericCellTest extends TestCase {
 		
 		// Read side.
 		
-		DataIn<String> reader = rows.inFrom(workbook);
+		DataIn reader = rows.inFrom(workbook);
 
 		GenericData<String> result = reader.get();
 		
@@ -78,7 +78,7 @@ public class NumericCellTest extends TestCase {
 		DataRows rows = new DataRows();
 		rows.setOf(0, test);
 
-		DataOut<String> writer = rows.outTo(workbook);
+		DataOut writer = rows.outTo(workbook);
 
 		writer.accept(ArrayData.of(12));
 
@@ -86,7 +86,7 @@ public class NumericCellTest extends TestCase {
 
 		// Read side.
 
-		DataIn<String> reader = rows.inFrom(workbook);
+		DataIn reader = rows.inFrom(workbook);
 
 		GenericData<String> result = reader.get();
 
@@ -108,7 +108,7 @@ public class NumericCellTest extends TestCase {
 		DataRows rows = new DataRows();
 		rows.setSchema(schema);
 
-		DataOut<String> writer = rows.outTo(workbook);
+		DataOut writer = rows.outTo(workbook);
 
 		writer.accept(ArrayData.of((Double) null));
 
@@ -116,7 +116,7 @@ public class NumericCellTest extends TestCase {
 
 		// Read side.
 
-		DataIn<String> reader = rows.inFrom(workbook);
+		DataIn reader = rows.inFrom(workbook);
 
 		GenericData<String> result = reader.get();
 

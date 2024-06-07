@@ -23,13 +23,13 @@ class CsvDataInHowTest {
     @Test
     void testWithDefaults() throws Exception {
 
-        DataInHow<String, InputStream> test = CsvDataInHow.withDefaultOptions();
+        DataInHow<InputStream> test = CsvDataInHow.withDefaultOptions();
 
         String records =
                 "Apple,5,19.50" + System.lineSeparator() +
                 "Orange,2,35.24" + System.lineSeparator();
 
-        DataIn<String> supplier = test.inFrom(
+        DataIn supplier = test.inFrom(
                 new ByteArrayInputStream(records.getBytes()));
 
         {
@@ -67,11 +67,11 @@ class CsvDataInHowTest {
                 .addField("Price", double.class)
                 .build();
 
-        DataInHow<String, InputStream> test = CsvDataInHow.withOptions()
+        DataInHow<InputStream> test = CsvDataInHow.withOptions()
                 .schema(schema)
                 .make();
 
-        DataIn<String> supplier = test.inFrom(
+        DataIn supplier = test.inFrom(
                 new ByteArrayInputStream("Apple,5,27.2".getBytes()));
 
         {
@@ -100,12 +100,12 @@ class CsvDataInHowTest {
                 .addField("Price", double.class)
                 .build();
 
-        DataInHow<String, InputStream> test = CsvDataInHow.withOptions()
+        DataInHow<InputStream> test = CsvDataInHow.withOptions()
                 .schema(someSchema)
                 .partialSchema(true)
                 .make();
 
-        DataIn<String> supplier = test.inFrom(
+        DataIn supplier = test.inFrom(
                 new ByteArrayInputStream(records.getBytes()));
 
         {
@@ -138,7 +138,7 @@ class CsvDataInHowTest {
     @Test
     void testEmptyValues() throws Exception {
 
-        DataIn<String> dataIn = CsvDataInHow.withDefaultOptions()
+        DataIn dataIn = CsvDataInHow.withDefaultOptions()
                 .inFrom(new ByteArrayInputStream(",,".getBytes(StandardCharsets.UTF_8)));
 
         GenericData<String> data = dataIn.get();

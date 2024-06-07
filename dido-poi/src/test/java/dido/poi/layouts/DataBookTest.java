@@ -1,5 +1,6 @@
 package dido.poi.layouts;
 
+import dido.data.DidoData;
 import dido.data.GenericData;
 import dido.oddjob.bean.FromBeanArooa;
 import dido.oddjob.bean.ToBeanArooa;
@@ -7,6 +8,10 @@ import dido.oddjob.beanbus.DataInDriver;
 import dido.oddjob.beanbus.DataOutDestination;
 import dido.poi.BookInProvider;
 import dido.poi.BookOutProvider;
+import dido.poi.data.PoiWorkbook;
+import dido.poi.test.Fruit;
+import dido.poi.test.Person;
+import dido.poi.test.PersonBonus;
 import dido.test.OurDirs;
 import junit.framework.TestCase;
 import org.oddjob.Oddjob;
@@ -20,10 +25,6 @@ import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.types.ImportType;
 import org.oddjob.arooa.utils.DateHelper;
-import dido.poi.data.PoiWorkbook;
-import dido.poi.test.Fruit;
-import dido.poi.test.Person;
-import dido.poi.test.PersonBonus;
 import org.oddjob.state.ParentState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,14 +85,14 @@ public class DataBookTest extends TestCase {
 
 		workbook.setOutput(new FileOutputStream(new File(workDir, "BookTest.xlsx")));
 				
-		DataOutDestination<String, BookOutProvider> write = new DataOutDestination<>();
+		DataOutDestination<BookOutProvider> write = new DataOutDestination<>();
 		write.setArooaSession(session);
 		write.setTo(new ArooaObject(workbook));
 		write.setHow(layout);
 
 		write.run();
 
-		Function<Person, GenericData<String>> transformerFromBean =
+		Function<Person, DidoData> transformerFromBean =
 				FromBeanArooa.fromSession(session)
 				.ofClass(Person.class);
 
@@ -108,7 +109,7 @@ public class DataBookTest extends TestCase {
 
 		List<PersonBonus> results = new ArrayList<>(3);
 
-		DataInDriver<String, BookInProvider> read =  new DataInDriver<>();
+		DataInDriver<BookInProvider> read =  new DataInDriver<>();
 		read.setArooaSession(session);
 		read.setFrom(new ArooaObject(workbook));
 		read.setHow(layout);
@@ -158,7 +159,7 @@ public class DataBookTest extends TestCase {
 		workbook.setOutput(new FileOutputStream(
 				new File(workDir, "NoDataBookTest.xlsx")));
 		
-		DataOutDestination<String, BookOutProvider> write = new DataOutDestination<>();
+		DataOutDestination<BookOutProvider> write = new DataOutDestination<>();
 		write.setArooaSession(session);
 		write.setHow(layout);
 		write.setTo(new ArooaObject(workbook));
@@ -171,7 +172,7 @@ public class DataBookTest extends TestCase {
 
 		List<GenericData<String>> results = new ArrayList<>(3);
 
-		DataInDriver<String, BookInProvider> read =  new DataInDriver<>();
+		DataInDriver<BookInProvider> read =  new DataInDriver<>();
 		read.setArooaSession(session);
 		read.setFrom(new ArooaObject(workbook));
 		read.setHow(layout);

@@ -13,11 +13,10 @@ import org.oddjob.arooa.types.ValueFactory;
 /**
  * @oddjob.description Set the value for a field or index. Participates in an {@link Transform}. If
  * no field or index is specified the index is taken by the position in the transform.
- *
  * @oddjob.example Set a value.
  * {@oddjob.xml.resource dido/oddjob/transform/DataSetExample.xml}
  */
-public class ValueSetFactory implements ValueFactory<TransformerFactory<String, String>>, ArooaSessionAware {
+public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaSessionAware {
 
     /**
      * @oddjob.description The field name.
@@ -53,7 +52,7 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory<String, 
     }
 
     @Override
-    public TransformerFactory<String, String> toValue() {
+    public TransformerFactory toValue() {
         return new CopyTransformerFactory(this);
     }
 
@@ -89,7 +88,7 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory<String, 
         this.type = type;
     }
 
-    static class CopyTransformerFactory implements TransformerFactory<String, String> {
+    static class CopyTransformerFactory implements TransformerFactory {
 
         private final String from;
 
@@ -110,21 +109,19 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory<String, 
         }
 
         @Override
-        public Transformer<String, String> create(int position,
-                                                  DataSchema<String> fromSchema,
-                                                  SchemaSetter<String> schemaSetter) {
+        public Transformer create(int position,
+                                  DataSchema<String> fromSchema,
+                                  SchemaSetter<String> schemaSetter) {
 
             int at;
 
             if (this.index == 0) {
                 if (this.from == null) {
                     at = position;
-                }
-                else {
+                } else {
                     at = fromSchema.getIndex(this.from);
                 }
-            }
-            else {
+            } else {
                 at = this.index;
             }
 

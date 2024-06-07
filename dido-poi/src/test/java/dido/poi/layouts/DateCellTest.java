@@ -4,8 +4,7 @@ import dido.data.ArrayData;
 import dido.data.GenericData;
 import dido.how.DataIn;
 import dido.how.DataOut;
-import dido.poi.layouts.DataRows;
-import dido.poi.layouts.DateCell;
+import dido.poi.data.PoiWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -13,7 +12,6 @@ import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.utils.DateHelper;
-import dido.poi.data.PoiWorkbook;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -35,7 +33,7 @@ class DateCellTest {
         DataRows rows = new DataRows();
         rows.setOf(0, test);
 
-        DataOut<String> writer = rows.outTo(workbook);
+        DataOut writer = rows.outTo(workbook);
 
         writer.accept(ArrayData.of(DateHelper.parseDate("2021-09-22")));
 
@@ -53,7 +51,7 @@ class DateCellTest {
 
         // Read side.
 
-        DataIn<String> reader = rows.inFrom(workbook);
+        DataIn reader = rows.inFrom(workbook);
 
         GenericData<String> result = reader.get();
 

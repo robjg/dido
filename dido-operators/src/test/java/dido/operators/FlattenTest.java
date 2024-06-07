@@ -30,7 +30,7 @@ class FlattenTest {
                                 ArrayData.valuesFor(nestedSchema)
                                         .of("Pear", 5)));
 
-        List<GenericData<String>> results = Flatten.fieldOfSchema("OrderLines", schema)
+        List<DidoData> results = Flatten.fieldOfSchema("OrderLines", schema)
                 .apply(data);
 
         DataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
@@ -50,9 +50,9 @@ class FlattenTest {
     @Test
     void testFlattenListField() {
 
-        GenericData<Object> data = ArrayData.of("Foo", List.of(1, 2, 3), List.of("X", "Y"));
+        DidoData data = ArrayData.of("Foo", List.of(1, 2, 3), List.of("X", "Y"));
 
-        List<GenericData<Object>> results = Flatten.indices(2, 3)
+        List<DidoData> results = Flatten.indices(2, 3)
                 .apply(data);
 
         assertThat(results, contains(

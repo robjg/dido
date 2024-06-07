@@ -1,7 +1,7 @@
 package dido.replay;
 
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.how.CloseableConsumer;
 import dido.json.SchemaAsJson;
 import dido.json.StreamOutJsonLines;
@@ -17,16 +17,16 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.Objects;
 
-public class DataRecorder implements CloseableConsumer<GenericData<String>> {
+public class DataRecorder implements CloseableConsumer<DidoData> {
 
     private static final Logger logger = LoggerFactory.getLogger(DataRecorder.class);
     private final Clock clock;
 
-    private final CloseableConsumer<GenericData<String>> dataConsumer;
+    private final CloseableConsumer<? super DidoData> dataConsumer;
 
-    private final CloseableConsumer<DataSchema<String>> schemaConsumer;
+    private final CloseableConsumer<? super DataSchema<String>> schemaConsumer;
 
-    private final CloseableConsumer<Instant> timeConsumer;
+    private final CloseableConsumer<? super Instant> timeConsumer;
 
     private DataRecorder(Outputs outputs, Clock clock) {
 
@@ -98,7 +98,7 @@ public class DataRecorder implements CloseableConsumer<GenericData<String>> {
             return this;
         }
 
-        public CloseableConsumer<GenericData<String>> make() throws IOException {
+        public CloseableConsumer<DidoData> make() throws IOException {
 
             ReplayFileHelper fileHelper = ReplayFileHelper.withSettings()
                     .dir(this.dir)
@@ -154,7 +154,7 @@ public class DataRecorder implements CloseableConsumer<GenericData<String>> {
     }
 
     @Override
-    public void accept(GenericData<String> data) {
+    public void accept(DidoData data) {
 
         dataConsumer.accept(data);
         schemaConsumer.accept(data.getSchema());

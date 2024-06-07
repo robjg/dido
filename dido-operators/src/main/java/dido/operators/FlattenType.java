@@ -1,7 +1,7 @@
 package dido.operators;
 
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.IndexedData;
 
 import java.util.Arrays;
@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class FlattenType implements Supplier<Function<IndexedData<String>, List<GenericData<String>>>> {
+public class FlattenType implements Supplier<Function<IndexedData<String>, List<DidoData>>> {
 
     private String[] fields;
 
@@ -20,7 +20,7 @@ public class FlattenType implements Supplier<Function<IndexedData<String>, List<
     private DataSchema<String> schema;
 
     @Override
-    public Function<IndexedData<String>, List<GenericData<String>>> get() {
+    public Function<IndexedData<String>, List<DidoData>> get() {
 
         String[] fields = Objects.requireNonNull(this.fields, "Field must be provided");
 

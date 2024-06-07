@@ -1,7 +1,7 @@
 package dido.sql;
 
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
@@ -15,7 +15,7 @@ import java.util.Objects;
 /**
  * @author rob
  */
-public class SqlDataOutHow implements DataOutHow<String, Connection> {
+public class SqlDataOutHow implements DataOutHow<Connection> {
 
     private final String sql;
 
@@ -45,7 +45,7 @@ public class SqlDataOutHow implements DataOutHow<String, Connection> {
             return this;
         }
 
-        public DataOutHow<String, Connection> make() {
+        public DataOutHow<Connection> make() {
             return new SqlDataOutHow(this);
         }
     }
@@ -66,7 +66,7 @@ public class SqlDataOutHow implements DataOutHow<String, Connection> {
     }
 
     @Override
-    public DataOut<String> outTo(Connection connection) throws Exception {
+    public DataOut outTo(Connection connection) throws Exception {
 
 
         PreparedStatement stmt = connection.prepareStatement(sql);
@@ -89,12 +89,12 @@ public class SqlDataOutHow implements DataOutHow<String, Connection> {
             sqlTypes[i - 1] = metaData.getParameterType(i);
         }
 
-        return new DataOut<>() {
+        return new DataOut() {
 
             int count = 0;
 
             @Override
-            public void accept(GenericData<String> data) {
+            public void accept(DidoData data) {
 
                 DataSchema<String> schema = data.getSchema();
 

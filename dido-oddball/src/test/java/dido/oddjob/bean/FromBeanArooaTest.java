@@ -43,7 +43,7 @@ class FromBeanArooaTest {
         fruit1.setType("Apple");
         fruit1.setQuantity(5);
 
-        Function<Object, GenericData<String>> transform = new FromBeanArooa(new BeanUtilsPropertyAccessor())
+        Function<Object, DidoData> transform = new FromBeanArooa(new BeanUtilsPropertyAccessor())
                 .ofUnknownClass();
 
         GenericData<String> data1 = transform.apply(fruit1);
@@ -77,7 +77,7 @@ class FromBeanArooaTest {
                 .addRepeatingField("orderLines", nestedSchema)
                 .build();
 
-        Function<Order, GenericData<String>> fromBean =
+        Function<Order, DidoData> fromBean =
                 fromBeanArooa.with()
                         .schema(partialIn).partial(true)
                         .ofClass(Order.class);
@@ -94,9 +94,9 @@ class FromBeanArooaTest {
         order.setOrderId("A123");
         order.setOrderLines(List.of(orderLine1, orderLine2));
 
-        GenericData<String> result = fromBean.apply(order);
+        DidoData result = fromBean.apply(order);
 
-        RepeatingData<String> repeatingData =
+        RepeatingData repeatingData =
                 RepeatingData.of(ArrayData.valuesFor(nestedSchema)
                                         .of("Apple", 5),
                                 ArrayData.valuesFor(nestedSchema)
@@ -122,7 +122,7 @@ class FromBeanArooaTest {
                 .addRepeatingField("orderLines", nestedSchema)
                 .build();
 
-        Function<Order, GenericData<String>> fromBean =
+        Function<Order, DidoData> fromBean =
                 fromBeanArooa.with()
                         .schema(schema)
                         .ofUnknownClass();

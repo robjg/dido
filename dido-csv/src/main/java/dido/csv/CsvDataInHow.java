@@ -1,8 +1,8 @@
 package dido.csv;
 
-import dido.data.AbstractGenericData;
+import dido.data.AbstractData;
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * How to read CSV Data In.
  */
-public class CsvDataInHow implements DataInHow<String, InputStream> {
+public class CsvDataInHow implements DataInHow<InputStream> {
 
     private final CSVFormat csvFormat;
 
@@ -70,7 +70,7 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
             return this;
         }
 
-        public DataInHow<String, InputStream> make() {
+        public DataInHow<InputStream> make() {
             return new CsvDataInHow(this);
         }
     }
@@ -88,7 +88,7 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
         return new Options();
     }
 
-    public static DataInHow<String, InputStream> withDefaultOptions() {
+    public static DataInHow<InputStream> withDefaultOptions() {
         return new Options().make();
     }
 
@@ -98,7 +98,7 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
     }
 
     @Override
-    public DataIn<String> inFrom(InputStream inputStream) throws IOException {
+    public DataIn inFrom(InputStream inputStream) throws IOException {
 
         CSVFormat csvFormat = this.csvFormat;
 
@@ -137,10 +137,10 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
 
         final Iterator<CSVRecord> finalIterator = iterator;
 
-        return new DataIn<>() {
+        return new DataIn() {
 
             @Override
-            public GenericData<String> get() {
+            public DidoData get() {
                 if (finalIterator.hasNext()) {
                     return dataFrom(finalIterator.next(), schema, converter);
                 } else {
@@ -176,8 +176,8 @@ public class CsvDataInHow implements DataInHow<String, InputStream> {
         return schemaBuilder.build();
     }
 
-    static GenericData<String> dataFrom(CSVRecord record, DataSchema<String> schema, DidoConverter converter) {
-        return new AbstractGenericData<>() {
+    static DidoData dataFrom(CSVRecord record, DataSchema<String> schema, DidoConverter converter) {
+        return new AbstractData() {
             @Override
             public DataSchema<String> getSchema() {
                 return schema;

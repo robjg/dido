@@ -1,5 +1,6 @@
 package dido.oddjob.beanbus;
 
+import dido.data.DidoData;
 import dido.data.GenericData;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -18,18 +19,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
- * @oddjob.description A Bean Bus Driver that reads data from {@link #from} according to the
- * given {@link #how} and forward the {@link GenericData} to the next component.
+ * @oddjob.description A Bean Bus Driver that reads data from the 'from' according to the
+ * given 'how'. The produced {@link GenericData} is forwarded to the next component.
  * See any of the formatters for examples of how to use.
  *
  * @oddjob.example Read lines in.
  * {@oddjob.xml.resource dido/oddjob/stream/StreamInOut.xml}
  *
  *
- * @param <F> The field type.
  * @param <I> The Input type.
  */
-public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAware {
+public class DataInDriver<I> implements Runnable, Closeable, ArooaSessionAware {
 
     private ArooaSession session;
 
@@ -43,7 +43,7 @@ public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAwar
      * @oddjob.description How to read the data in.
      * @oddjob.required Yes.
      */
-    private DataInHow<F, I> how;
+    private DataInHow<I> how;
 
     /**
      * @oddjob.description Where to read data from.
@@ -55,7 +55,7 @@ public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAwar
      * @oddjob.description If set, data will be forwarded here. Set automatically by BeanBus.
      * @oddjob.required No, but fairly pointless if missing.
      */
-    private Consumer<? super GenericData<F>> to;
+    private Consumer<? super DidoData> to;
 
     /**
      * @oddjob.description Count of data items read in.
@@ -82,7 +82,7 @@ public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAwar
 
         count.set(0);
 
-        DataInHow<F, I> how = Objects.requireNonNull(this.how, "No How");
+        DataInHow<I> how = Objects.requireNonNull(this.how, "No How");
 
         I from;
         try {
@@ -94,10 +94,10 @@ public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAwar
             throw new IllegalArgumentException(e);
         }
 
-        try (DataIn<F> supplier = how.inFrom(from)) {
+        try (DataIn supplier = how.inFrom(from)) {
 
             while (!stop) {
-                GenericData<F> data = supplier.get();
+                DidoData data = supplier.get();
                 if (data == null) {
                     break;
                 }
@@ -129,11 +129,11 @@ public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAwar
         this.name = name;
     }
 
-    public DataInHow<F, I> getHow() {
+    public DataInHow<I> getHow() {
         return how;
     }
 
-    public void setHow(DataInHow<F, I> how) {
+    public void setHow(DataInHow<I> how) {
         this.how = how;
     }
 
@@ -149,12 +149,12 @@ public class DataInDriver<F, I> implements Runnable, Closeable, ArooaSessionAwar
         return stop;
     }
 
-    public Consumer<? super GenericData<F>> getTo() {
+    public Consumer<? super DidoData> getTo() {
         return to;
     }
 
     @Destination
-    public void setTo(Consumer<? super GenericData<F>> to) {
+    public void setTo(Consumer<? super DidoData> to) {
         this.to = to;
     }
 

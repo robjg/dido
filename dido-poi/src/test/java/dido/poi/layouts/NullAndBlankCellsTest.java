@@ -2,6 +2,7 @@ package dido.poi.layouts;
 
 import dido.data.GenericData;
 import dido.how.DataIn;
+import dido.poi.data.PoiWorkbook;
 import dido.test.OurDirs;
 import junit.framework.TestCase;
 import org.hamcrest.MatcherAssert;
@@ -12,7 +13,6 @@ import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.reflect.ArooaPropertyException;
-import dido.poi.data.PoiWorkbook;
 import org.oddjob.state.ParentState;
 
 import java.io.File;
@@ -69,7 +69,7 @@ public class NullAndBlankCellsTest extends TestCase {
 		PoiWorkbook workbook = new PoiWorkbook();
 		workbook.provideBookOut().getOrCreateSheet(null);
 
-		DataIn<String> reader = rows.inFrom(workbook);
+		DataIn reader = rows.inFrom(workbook);
 		
 		GenericData<String> result = reader.get();
 

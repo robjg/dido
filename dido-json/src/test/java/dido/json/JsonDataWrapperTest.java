@@ -52,7 +52,7 @@ class JsonDataWrapperTest {
 
         String json = gson.toJson(new AllFields());
 
-        IndexedData<?> result = gson.fromJson(json, GenericData.class);
+        IndexedData<?> result = gson.fromJson(json, DidoData.class);
 
         assertThat(result.getStringAt(1), is("Apple"));
         assertThat(result.getBooleanAt(2), is(true));
@@ -89,7 +89,7 @@ class JsonDataWrapperTest {
 
         String json = gson.toJson(new NumberNaNs());
 
-        GenericData<String> result = gson.fromJson(json, GenericData.class);
+        DidoData result = gson.fromJson(json, DidoData.class);
 
         assertThat(result.getStringAt(1), nullValue());
         assertThat(Float.isNaN(result.getFloat("aFloat")), is(true));
@@ -113,7 +113,7 @@ class JsonDataWrapperTest {
 
         String json = gson.toJson(new AllFields());
 
-        IndexedData<?> result = gson.fromJson(json, GenericData.class);
+        IndexedData<?> result = gson.fromJson(json, DidoData.class);
 
         assertThat(result.getByteAt(3), is(Byte.MAX_VALUE));
         assertThat(result.getShortAt(4), is(Short.MAX_VALUE));
@@ -143,7 +143,7 @@ class JsonDataWrapperTest {
 
         String json = gson.toJson(new AllFields());
 
-        IndexedData<?> result = gson.fromJson(json, GenericData.class);
+        IndexedData<?> result = gson.fromJson(json, DidoData.class);
 
         assertThat(result.getAt(1), is("Apple"));
         assertThat(result.getAt(2), is(true));
@@ -176,7 +176,7 @@ class JsonDataWrapperTest {
 
         String json = "{}";
 
-        IndexedData<?> result = gson.fromJson(json, GenericData.class);
+        IndexedData<?> result = gson.fromJson(json, DidoData.class);
 
         assertThat(result.getStringAt(1), nullValue());
         assertThat(result.hasIndex(2), is(false));
@@ -213,9 +213,9 @@ class JsonDataWrapperTest {
         Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                 .create();
 
-        GenericData<String> result = (GenericData<String>) gson.fromJson(json, GenericData.class);
+        DidoData result = gson.fromJson(json, DidoData.class);
 
-        RepeatingData<String> repeatingData = (RepeatingData<String>) result.getAt(2);
+        RepeatingData repeatingData = (RepeatingData) result.getAt(2);
 
 
         System.out.println(GenericData.toString(repeatingData.get(0)));

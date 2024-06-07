@@ -3,6 +3,7 @@ package dido.poi.layouts;
 import dido.data.ArrayData;
 import dido.how.DataIn;
 import dido.how.DataOut;
+import dido.poi.data.PoiWorkbook;
 import dido.test.OurDirs;
 import junit.framework.TestCase;
 import org.hamcrest.MatcherAssert;
@@ -13,7 +14,6 @@ import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.reflect.ArooaPropertyException;
-import dido.poi.data.PoiWorkbook;
 import org.oddjob.state.ParentState;
 
 import java.io.File;
@@ -34,14 +34,14 @@ public class TextCellTest extends TestCase {
 
 		PoiWorkbook workbook = new PoiWorkbook();
 
-		DataOut<String> out = rows.outTo(workbook);
+		DataOut out = rows.outTo(workbook);
 
 		out.accept(ArrayData.of(null, "Apple"));
 		out.accept(ArrayData.of(null, "Orange"));
 
 		out.close();
 
-		DataIn<String> in = rows.inFrom(workbook);
+		DataIn in = rows.inFrom(workbook);
 
 		MatcherAssert.assertThat(in.get().getStringAt(2), Matchers.is("Apple"));
 		MatcherAssert.assertThat(in.get().getStringAt(2), Matchers.is("Orange"));

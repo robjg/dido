@@ -1,9 +1,6 @@
 package dido.json;
 
-import dido.data.DataSchema;
-import dido.data.GenericData;
-import dido.data.MapData;
-import dido.data.SchemaBuilder;
+import dido.data.*;
 import dido.how.CloseableSupplier;
 import dido.how.DataIn;
 import dido.how.DataOut;
@@ -36,12 +33,12 @@ class JsonDidoTest {
     @Test
     void testToJsonAndBackFixedSchema() throws Exception {
 
-        GenericData<String> data1 = MapData.newBuilderNoSchema()
+        DidoData data1 = MapData.newBuilderNoSchema()
                 .setString("type", "apple")
                 .setInt("qty", 2)
                 .setDouble("price", 26.3)
                 .build();
-        GenericData<String> data2 = MapData.newBuilderNoSchema()
+        DidoData data2 = MapData.newBuilderNoSchema()
                 .setString("type", "orange")
                 .setInt("qty", 3)
                 .setDouble("price", 31.4)
@@ -59,7 +56,7 @@ class JsonDidoTest {
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
-        try (DataOut<String> consumer = test.toStreamOut().outTo(results)) {
+        try (DataOut consumer = test.toStreamOut().outTo(results)) {
 
             consumer.accept(data1);
             consumer.accept(data2);
@@ -73,7 +70,7 @@ class JsonDidoTest {
 
         List<GenericData<String>> copy = new ArrayList<>();
 
-        try (CloseableSupplier<GenericData<String>> supplier = test.toStreamIn().inFrom(
+        try (CloseableSupplier<DidoData> supplier = test.toStreamIn().inFrom(
                 new ByteArrayInputStream(results.toByteArray()))) {
 
             while (true) {
@@ -91,12 +88,12 @@ class JsonDidoTest {
     @Test
     void testToJsonOverrideSchema() throws Exception {
 
-        GenericData<String> data1 = MapData.newBuilderNoSchema()
+        DidoData data1 = MapData.newBuilderNoSchema()
                 .setString("type", "apple")
                 .setInt("qty", 2)
                 .setDouble("price", 26.3)
                 .build();
-        GenericData<String> data2 = MapData.newBuilderNoSchema()
+        DidoData data2 = MapData.newBuilderNoSchema()
                 .setString("type", "orange")
                 .setInt("qty", 3)
                 .setDouble("price", 31.4)
@@ -112,7 +109,7 @@ class JsonDidoTest {
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
-        try (DataOut<String> consumer = test.toStreamOut().outTo(results)) {
+        try (DataOut consumer = test.toStreamOut().outTo(results)) {
 
             consumer.accept(data1);
             consumer.accept(data2);
@@ -120,7 +117,7 @@ class JsonDidoTest {
 
         List<GenericData<String>> copy = new ArrayList<>();
 
-        try (DataIn<String> supplier = test.toStreamIn().inFrom(
+        try (DataIn supplier = test.toStreamIn().inFrom(
                 new ByteArrayInputStream(results.toByteArray()))) {
 
             while (true) {

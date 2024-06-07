@@ -1,7 +1,7 @@
 package dido.csv;
 
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.IndexedData;
 import dido.how.CloseableConsumer;
 import dido.how.DataOut;
@@ -19,7 +19,7 @@ import java.util.Optional;
 /**
  * How to write CSV Data Out.
  */
-public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
+public class CsvDataOutHow implements DataOutHow<OutputStream> {
 
     private final CSVFormat csvFormat;
 
@@ -50,7 +50,7 @@ public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
             return this;
         }
 
-        public DataOutHow<String, OutputStream> make() {
+        public DataOutHow<OutputStream> make() {
             return new CsvDataOutHow(this);
         }
     }
@@ -65,7 +65,7 @@ public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
         return new Options();
     }
 
-    public static DataOutHow<String, OutputStream> withDefaultOptions() {
+    public static DataOutHow<OutputStream> withDefaultOptions() {
         return new Options().make();
     }
 
@@ -75,7 +75,7 @@ public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
     }
 
     @Override
-    public DataOut<String> outTo(OutputStream outputStream) throws IOException {
+    public DataOut outTo(OutputStream outputStream) throws IOException {
 
         if (schema == null) {
             return new UnknownSchemaConsumer(outputStream);
@@ -84,7 +84,7 @@ public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
         }
     }
 
-    protected DataOut<String> consumerWhenSchemaKnown(OutputStream outputStream,
+    protected DataOut consumerWhenSchemaKnown(OutputStream outputStream,
                                                       DataSchema<String> schema) throws IOException {
         CSVFormat csvFormat = this.csvFormat;
         if (this.withHeader) {
@@ -94,10 +94,10 @@ public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
         Writer writer = new OutputStreamWriter(outputStream);
         final CSVPrinter printer = csvFormat.print(writer);
 
-        return new KnownSchemaConsumer<>(printer);
+        return new KnownSchemaConsumer(printer);
     }
 
-    static class KnownSchemaConsumer<F> implements DataOut<F> {
+    static class KnownSchemaConsumer implements DataOut {
 
         private final CSVPrinter printer;
 
@@ -106,7 +106,7 @@ public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
         }
 
         @Override
-        public void accept(GenericData<F> data) {
+        public void accept(DidoData data) {
             try {
                 printer.printRecord(toValues(data));
             } catch (IOException e) {
@@ -120,18 +120,18 @@ public class CsvDataOutHow implements DataOutHow<String, OutputStream> {
         }
     }
 
-    class UnknownSchemaConsumer implements DataOut<String> {
+    class UnknownSchemaConsumer implements DataOut {
 
         private final OutputStream outputStream;
 
-        private CloseableConsumer<GenericData<String>> schemaKnownConsumer;
+        private CloseableConsumer<DidoData> schemaKnownConsumer;
 
         UnknownSchemaConsumer(OutputStream outputStream) {
             this.outputStream = outputStream;
         }
 
         @Override
-        public void accept(GenericData<String> data) {
+        public void accept(DidoData data) {
             if (schemaKnownConsumer == null) {
                 try {
                     schemaKnownConsumer = consumerWhenSchemaKnown(outputStream, data.getSchema());

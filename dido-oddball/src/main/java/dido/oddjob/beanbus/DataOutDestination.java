@@ -1,5 +1,6 @@
 package dido.oddjob.beanbus;
 
+import dido.data.DidoData;
 import dido.data.GenericData;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
@@ -18,17 +19,16 @@ import java.util.function.Consumer;
 
 /**
  * @oddjob.description A Bean Bus Destination that accepts {@link GenericData} and writes it out to the given
- * {@link #to} according to the given {@link #how}.
+ * 'to' according to the given 'how'.
  * See any of the formatters for examples of how to use.
  *
  * @oddjob.example Writes lines out.
  * {@oddjob.xml.resource dido/oddjob/stream/StreamInOut.xml}
  *
- * @param <F> The field type of the Generic Data
  * @param <O> The type of the output.
  */
-public class DataOutDestination<F, O>
-        implements Runnable, AutoCloseable, Consumer<GenericData<F>>, ArooaSessionAware {
+public class DataOutDestination<O>
+        implements Runnable, AutoCloseable, Consumer<DidoData>, ArooaSessionAware {
 
     private ArooaSession session;
 
@@ -42,7 +42,7 @@ public class DataOutDestination<F, O>
      * @oddjob.description How to write the data out.
      * @oddjob.required Yes.
      */
-    private DataOutHow<F, O> how;
+    private DataOutHow<O> how;
 
     /**
      * @oddjob.description Where to write data to.
@@ -54,10 +54,10 @@ public class DataOutDestination<F, O>
      * @oddjob.description If set, data will be forwarded here. Set automatically by BeanBus.
      * @oddjob.required No.
      */
-    private Consumer<? super GenericData<F>> next;
+    private Consumer<? super DidoData> next;
 
     /** Consumer created by applying the how. */
-    private DataOut<F> consumer;
+    private DataOut consumer;
 
     /**
      * @oddjob.description Count of data sent out.
@@ -77,7 +77,7 @@ public class DataOutDestination<F, O>
 
         count = 0;
 
-        DataOutHow<F, O> how = Objects.requireNonNull(this.how, "No How");
+        DataOutHow<O> how = Objects.requireNonNull(this.how, "No How");
 
         O to;
         try {
@@ -97,7 +97,7 @@ public class DataOutDestination<F, O>
     }
 
     @Override
-    public void accept(GenericData<F> data) {
+    public void accept(DidoData data) {
 
         consumer.accept(data);
         ++count;
@@ -123,11 +123,11 @@ public class DataOutDestination<F, O>
         this.name = name;
     }
 
-    public DataOutHow<F, O> getHow() {
+    public DataOutHow<O> getHow() {
         return how;
     }
 
-    public void setHow(DataOutHow<F, O> how) {
+    public void setHow(DataOutHow<O> how) {
         this.how = how;
     }
 
@@ -139,12 +139,12 @@ public class DataOutDestination<F, O>
         this.to = to;
     }
 
-    public Consumer<? super GenericData<F>> getNext() {
+    public Consumer<? super DidoData> getNext() {
         return next;
     }
 
     @Destination
-    public void setNext(Consumer<? super GenericData<F>> next) {
+    public void setNext(Consumer<? super DidoData> next) {
         this.next = next;
     }
 

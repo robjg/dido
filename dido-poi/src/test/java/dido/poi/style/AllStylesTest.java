@@ -5,18 +5,18 @@ import dido.data.GenericData;
 import dido.how.DataOut;
 import dido.poi.CellIn;
 import dido.poi.CellOut;
-import dido.test.OurDirs;
-import junit.framework.TestCase;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import dido.poi.HeaderRowOut;
 import dido.poi.RowOut;
 import dido.poi.data.DataCell;
 import dido.poi.data.PoiWorkbook;
 import dido.poi.layouts.DataRows;
 import dido.poi.layouts.TextCell;
+import dido.test.OurDirs;
+import junit.framework.TestCase;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,7 +47,7 @@ public class AllStylesTest extends TestCase {
 
 		@Override
 		public CellOut<String> provideCellOut(int columnIndex) {
-			return new CellOut<String>() {
+			return new CellOut<>() {
 				@Override
 				public void writeHeader(HeaderRowOut headerRowOut) {
 
@@ -125,7 +125,7 @@ public class AllStylesTest extends TestCase {
 		sb6.setFillPattern(FillPatternType.THIN_FORWARD_DIAG);
 		rows.setStyles("blue-green-diags", sb6);
 
-		DataOut<String> writer = rows.outTo(workbook);
+		DataOut writer = rows.outTo(workbook);
 		
 		writer.accept(ArrayData.of("red-on-blue-no-fill"));
 		writer.accept(ArrayData.of("green-diamonds"));
@@ -157,7 +157,7 @@ public class AllStylesTest extends TestCase {
 			rows.setStyles(colour.toString(),sb);
 		}
 		
-		DataOut<String> writer = rows.outTo(workbook);
+		DataOut writer = rows.outTo(workbook);
 		
 		for (IndexedColors colour : IndexedColors.values()) {
 

@@ -4,9 +4,7 @@ import dido.data.ArrayData;
 import dido.data.GenericData;
 import dido.how.DataIn;
 import dido.how.DataOut;
-import dido.poi.layouts.DataRows;
-import dido.poi.layouts.FormulaCell;
-import dido.poi.layouts.NumericFormulaCell;
+import dido.poi.data.PoiWorkbook;
 import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.ArooaBeanDescriptor;
 import org.oddjob.arooa.ArooaDescriptor;
@@ -16,7 +14,6 @@ import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 import org.oddjob.arooa.standard.StandardArooaSession;
-import dido.poi.data.PoiWorkbook;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -39,7 +36,7 @@ public class NumericFormulaCellTest {
 		DataRows rows = new DataRows();
 		rows.setOf(0, test);
 
-		DataOut<String> writer = rows.outTo(workbook);
+		DataOut writer = rows.outTo(workbook);
 
 		writer.accept(ArrayData.of());
 
@@ -47,7 +44,7 @@ public class NumericFormulaCellTest {
 		
 		// read side.
 		
-		DataIn<String> reader = rows.inFrom(workbook);
+		DataIn reader = rows.inFrom(workbook);
 		
 		GenericData<String> result = reader.get();
 		
@@ -61,7 +58,7 @@ public class NumericFormulaCellTest {
 	/**
 	 * This was tracking down a weird feature where the 
 	 * {@link FormulaCell} wasn't public and so the formula property
-	 * couldn't be seen. However this had worked on my laptop. 
+	 * couldn't be seen. However, this had worked on my laptop.
 	 * Different version of java maybe? 
 	 */
 	@Test

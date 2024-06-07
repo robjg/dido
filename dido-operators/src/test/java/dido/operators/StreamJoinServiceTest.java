@@ -39,7 +39,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<GenericData<String>> results = lookup.lookup("results.beans", List.class);
 
-        ArrayData.Builder<String> expectedBuilder = ArrayData.builderForSchema(
+        ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.forStringFields()
                         .addField("Type", String.class)
                         .addField("Quantity", int.class)
@@ -75,7 +75,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<GenericData<String>> results = lookup.lookup("results.beans", List.class);
 
-        ArrayData.Builder<String> expectedBuilder = ArrayData.builderForSchema(
+        ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.forStringFields()
                         .addField("Type", String.class)
                         .addField("Quantity", int.class)
@@ -111,7 +111,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<GenericData<String>> results = lookup.lookup("results.beans", List.class);
 
-        ArrayData.Builder<String> expectedBuilder = ArrayData.builderForSchema(
+        ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.forStringFields()
                         .addField("Type", String.class)
                         .addField("Variety", String.class)

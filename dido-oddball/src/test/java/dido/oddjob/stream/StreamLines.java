@@ -20,9 +20,9 @@ public class StreamLines {
             .addField(LINE, String.class)
             .build();
 
-    public static class In implements DataInHow<String, InputStream> {
+    public static class In implements DataInHow<InputStream> {
 
-        GenericDataBuilder<String> dataBuilder = MapData.newBuilder(schema);
+        DataBuilder dataBuilder = MapData.newBuilder(schema);
 
         @Override
         public Class<InputStream> getInType() {
@@ -30,12 +30,12 @@ public class StreamLines {
         }
 
         @Override
-        public DataIn<String> inFrom(InputStream inputStream) {
+        public DataIn inFrom(InputStream inputStream) {
 
             LineNumberReader reader = new LineNumberReader(
                     new InputStreamReader(inputStream));
 
-            return new DataIn<>() {
+            return new DataIn() {
                 @Override
                 public void close() {
                     try {
@@ -46,7 +46,7 @@ public class StreamLines {
                 }
 
                 @Override
-                public GenericData<String> get() {
+                public DidoData get() {
                     try {
                         String line = reader.readLine();
                         if (line == null) {
@@ -62,7 +62,7 @@ public class StreamLines {
         }
     }
 
-    public static class Out implements DataOutHow<String, OutputStream> {
+    public static class Out implements DataOutHow<OutputStream> {
 
         @Override
         public Class<OutputStream> getOutType() {
@@ -70,9 +70,9 @@ public class StreamLines {
         }
 
         @Override
-        public DataOut<String> outTo(OutputStream outputStream) {
+        public DataOut outTo(OutputStream outputStream) {
 
-            return new DataOut<>() {
+            return new DataOut() {
 
                 final PrintStream out = new PrintStream(outputStream);
 
@@ -82,7 +82,7 @@ public class StreamLines {
                 }
 
                 @Override
-                public void accept(GenericData<String> data) {
+                public void accept(DidoData data) {
                     out.println(data.getString(LINE));
                 }
             };

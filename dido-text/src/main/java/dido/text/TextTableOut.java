@@ -1,7 +1,7 @@
 package dido.text;
 
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
 import dido.how.util.Primitives;
@@ -15,11 +15,11 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Optional;
 
-public class TextTableOut<F> implements DataOutHow<F, OutputStream> {
+public class TextTableOut implements DataOutHow<OutputStream> {
 
-    private final DataSchema<F> schema;
+    private final DataSchema<String> schema;
 
-    private TextTableOut(Options<F> options) {
+    private TextTableOut(Options options) {
         this.schema = options.schema;
     }
 
@@ -28,41 +28,41 @@ public class TextTableOut<F> implements DataOutHow<F, OutputStream> {
         return OutputStream.class;
     }
 
-    public static <F> Options<F> ofOptions() {
-        return new Options<>();
+    public static Options ofOptions() {
+        return new Options();
     }
 
-    public static class Options<F> {
+    public static class Options {
 
-        private DataSchema<F> schema;
+        private DataSchema<String> schema;
 
-        public Options<F> schema(DataSchema<F> schema) {
+        public Options schema(DataSchema<String> schema) {
             this.schema = schema;
             return this;
         }
 
-        public DataOutHow<F, OutputStream> create() {
-            return new TextTableOut<>(this);
+        public DataOutHow<OutputStream> create() {
+            return new TextTableOut(this);
         }
     }
 
     @Override
-    public DataOut<F> outTo(OutputStream dataOut) {
+    public DataOut outTo(OutputStream dataOut) {
 
         return Optional.ofNullable(this.schema)
-                .<DataOut<F>>map(s -> new WithSchema<>(s, dataOut))
-                .orElseGet(() -> new UnknownSchema<>(dataOut));
+                .<DataOut>map(s -> new WithSchema(s, dataOut))
+                .orElseGet(() -> new UnknownSchema(dataOut));
     }
 
-    static class WithSchema<F> implements DataOut<F> {
+    static class WithSchema implements DataOut {
 
-        private final DataSchema<F> schema;
+        private final DataSchema<String> schema;
 
         private final Table table;
 
         private final OutputStream output;
 
-        WithSchema(DataSchema<F> schema, OutputStream output) {
+        WithSchema(DataSchema<String> schema, OutputStream output) {
             this.schema = schema;
             this.output = output;
 
@@ -71,10 +71,10 @@ public class TextTableOut<F> implements DataOutHow<F, OutputStream> {
                     ShownBorders.HEADER_AND_COLUMNS);
 
             for (int i = 1; i > 0; i = schema.nextIndex(i)) {
-                F value = schema.getFieldAt(i);
+                String value = schema.getFieldAt(i);
 
                 if (value != null) {
-                    table.addCell(value.toString(),
+                    table.addCell(value,
                             styleFor(schema.getTypeAt(i)));
                 }
                 else {
@@ -93,7 +93,7 @@ public class TextTableOut<F> implements DataOutHow<F, OutputStream> {
         }
 
         @Override
-        public void accept(GenericData<F> data) {
+        public void accept(DidoData data) {
             for (int i = 1; i > 0; i = schema.nextIndex(i)) {
                 Object value = data.getAt(i);
                 if (value != null) {
@@ -105,11 +105,11 @@ public class TextTableOut<F> implements DataOutHow<F, OutputStream> {
         }
     }
 
-    static class UnknownSchema<F> implements DataOut<F> {
+    static class UnknownSchema implements DataOut {
 
         private final OutputStream outputStream;
 
-        private DataOut<F> delegate;
+        private DataOut delegate;
 
         UnknownSchema(OutputStream outputStream) {
             this.outputStream = outputStream;
@@ -123,9 +123,9 @@ public class TextTableOut<F> implements DataOutHow<F, OutputStream> {
         }
 
         @Override
-        public void accept(GenericData<F> data) {
+        public void accept(DidoData data) {
             if (delegate == null) {
-                delegate = new WithSchema<>(data.getSchema(), outputStream);
+                delegate = new WithSchema(data.getSchema(), outputStream);
             }
             delegate.accept(data);
         }

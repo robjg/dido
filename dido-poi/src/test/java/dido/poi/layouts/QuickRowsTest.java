@@ -1,5 +1,6 @@
 package dido.poi.layouts;
 
+import dido.data.DidoData;
 import dido.data.GenericData;
 import dido.data.MapData;
 import dido.how.DataIn;
@@ -8,6 +9,7 @@ import dido.oddjob.beanbus.DataInDriver;
 import dido.oddjob.beanbus.DataOutDestination;
 import dido.poi.BookInProvider;
 import dido.poi.BookOutProvider;
+import dido.poi.data.PoiWorkbook;
 import dido.test.OurDirs;
 import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -17,7 +19,6 @@ import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.types.ImportType;
 import org.oddjob.arooa.utils.DateHelper;
-import dido.poi.data.PoiWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,13 +100,13 @@ public class QuickRowsTest extends TestCase {
 
         PoiWorkbook workbook = new PoiWorkbook();
 
-        GenericData<String> person = MapData.newBuilderNoSchema()
+        DidoData person = MapData.newBuilderNoSchema()
                 .setString("name", "John")
                 .set("dateOfBirth", DateHelper.parseDate("1970-03-25"))
                 .setDouble("salary", 45000.0)
                 .build();
 
-        DataOut<String> writer = test.outTo(workbook);
+        DataOut writer = test.outTo(workbook);
 
         writer.accept(person);
 
@@ -123,7 +124,7 @@ public class QuickRowsTest extends TestCase {
         assertEquals("25-Mar-1970", sheet.getRow(1).getCell(1).toString());
         assertEquals("45000.0", sheet.getRow(1).getCell(2).toString());
 
-        DataIn<String> reader = test.inFrom(workbook);
+        DataIn reader = test.inFrom(workbook);
 
         GenericData<String> result = reader.get();
 
@@ -143,7 +144,7 @@ public class QuickRowsTest extends TestCase {
                 new ClassPathDescriptorFactory(
                 ).createDescriptor(getClass().getClassLoader()));
 
-        List<GenericData<String>> beans = new ArrayList<>();
+        List<DidoData> beans = new ArrayList<>();
         beans.add(MapData.newBuilderNoSchema()
                 .setString("name", "John")
                 .set("dateOfBirth", DateHelper.parseDate("1970-03-25"))
@@ -172,7 +173,7 @@ public class QuickRowsTest extends TestCase {
 
         DataRows layout = (DataRows) importType.toObject();
 
-        DataOutDestination<String, BookOutProvider> write = new DataOutDestination<>();
+        DataOutDestination<BookOutProvider> write = new DataOutDestination<>();
         write.setHow(layout);
         write.setArooaSession(session);
         write.setTo(new ArooaObject(workbook));
@@ -186,9 +187,9 @@ public class QuickRowsTest extends TestCase {
         // Read Side
         ////
 
-        List<GenericData<String>> results = new ArrayList<>(3);
+        List<DidoData> results = new ArrayList<>(3);
 
-        DataInDriver<String, BookInProvider> read = new DataInDriver<>();
+        DataInDriver<BookInProvider> read = new DataInDriver<>();
         read.setArooaSession(session);
         read.setFrom(new ArooaObject(workbook));
         read.setHow(layout);

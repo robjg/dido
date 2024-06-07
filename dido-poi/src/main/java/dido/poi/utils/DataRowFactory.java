@@ -1,8 +1,8 @@
 package dido.poi.utils;
 
-import dido.data.AbstractGenericData;
+import dido.data.AbstractData;
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.poi.CellIn;
 import dido.poi.CellInProvider;
 import dido.poi.RowIn;
@@ -11,18 +11,18 @@ import java.util.Collection;
 import java.util.Objects;
 
 
-public class DataRowFactory<F> {
+public class DataRowFactory {
 
-    private final DataSchema<F> schema;
+    private final DataSchema<String> schema;
 
     private final CellIn<?>[] cells;
 
-    private DataRowFactory(DataSchema<F> schema, CellIn<?>[] cells) {
+    private DataRowFactory(DataSchema<String> schema, CellIn<?>[] cells) {
         this.schema = Objects.requireNonNull(schema);
         this.cells = cells;
     }
 
-    public static <F> DataRowFactory<F> newInstance(DataSchema<F> schema,
+    public static DataRowFactory newInstance(DataSchema<String> schema,
                                                     Collection<? extends CellInProvider<?>> cellList) {
 
         CellIn<?>[] cells = new CellIn<?>[schema.lastIndex()];
@@ -39,13 +39,13 @@ public class DataRowFactory<F> {
             cells[lastIndex - 1] = cellProvider.provideCellIn(lastIndex);
         }
 
-        return new DataRowFactory<>(schema, cells);
+        return new DataRowFactory(schema, cells);
     }
 
-    public GenericData<F> wrap(RowIn row) {
-        return new AbstractGenericData<>() {
+    public DidoData wrap(RowIn row) {
+        return new AbstractData() {
             @Override
-            public DataSchema<F> getSchema() {
+            public DataSchema<String> getSchema() {
                 return schema;
             }
 

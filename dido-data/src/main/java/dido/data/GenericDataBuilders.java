@@ -6,21 +6,21 @@ import java.util.function.Consumer;
 /**
  * Base class for {@link GenericDataBuilder}s that convert primitives into Objects.
  *
+ * @param <F> The field type.
  * @param <B> The builder type.
  */
-abstract public class DataBuilders<B extends DataBuilders<B>> {
+abstract public class GenericDataBuilders<F, B extends GenericDataBuilders<F, B>> {
 
-    private DataBuilders() {}
+    private GenericDataBuilders() {}
 
     @SuppressWarnings("unchecked")
     protected B self() {
         return (B) this;
     }
 
-    public abstract DidoData build();
-
-    abstract public static class Indexed<B extends Indexed<B>> extends DataBuilders<B>
-            implements IndexedDataBuilder<String> {
+    public abstract GenericData<F> build();
+    abstract public static class Indexed<F, B extends Indexed<F, B>> extends GenericDataBuilders<F, B>
+            implements IndexedDataBuilder<F> {
 
         @Override
         abstract public B setAt(int index, Object value);
@@ -70,170 +70,172 @@ abstract public class DataBuilders<B extends DataBuilders<B>> {
             return setAt(index, value);
         }
 
-        public B copy(IndexedData<?> from) {
+        public B copy(IndexedData<F> from) {
 
-            DataSchema<?> schema = from.getSchema();
+            DataSchema<F> schema = from.getSchema();
             for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
                 setAt(index, from.getAt(index));
             }
             return self();
         }
 
-        public abstract DidoData build();
+        abstract public GenericData<F> build();
     }
 
-    abstract public static class Fields<B extends Fields<B>> extends DataBuilders<B>
-            implements DataBuilder {
+    abstract public static class Fields<F, B extends Fields<F, B>> extends GenericDataBuilders<F, B>
+            implements GenericDataBuilder<F> {
 
         @Override
-        abstract public B set(String field, Object value);
+        abstract public B set(F field, Object value);
 
         @Override
-        public B setBoolean(String field, boolean value) {
+        public B setBoolean(F field, boolean value) {
             return set(field, value);
         }
 
         @Override
-        public B setByte(String field, byte value) {
+        public B setByte(F field, byte value) {
             return set(field, value);
         }
 
         @Override
-        public B setChar(String field, char value) {
+        public B setChar(F field, char value) {
             return set(field, value);
         }
 
         @Override
-        public B setShort(String field, short value) {
+        public B setShort(F field, short value) {
             return set(field, value);
         }
 
         @Override
-        public B setInt(String field, int value) {
+        public B setInt(F field, int value) {
             return set(field, value);
         }
 
         @Override
-        public B setLong(String field, long value) {
+        public B setLong(F field, long value) {
             return set(field, value);
         }
 
         @Override
-        public B setFloat(String field, float value) {
+        public B setFloat(F field, float value) {
             return set(field, value);
         }
 
         @Override
-        public B setDouble(String field, double value) {
+        public B setDouble(F field, double value) {
             return set(field, value);
         }
 
         @Override
-        public B setString(String field, String value) {
+        public B setString(F field, String value) {
             return set(field, value);
         }
 
-        public B copy(IndexedData<String> from) {
+        public B copy(IndexedData<F> from) {
 
-            DataSchema<String> schema = from.getSchema();
-            for (String field : schema.getFields()) {
+            DataSchema<F> schema = from.getSchema();
+            for (F field : schema.getFields()) {
                 set(field, from.getAt(schema.getIndex(field)));
             }
             return self();
         }
     }
 
-    public B to(Consumer<? super GenericData<String>> consumer) {
+    public B to(Consumer<? super GenericData<F>> consumer) {
         consumer.accept(this.build());
         return self();
     }
 
 
-    abstract public static class KnownSchema<B extends KnownSchema<B>>
-        extends Indexed<B> implements DataBuilder {
+    abstract public static class KnownSchema<F, B extends KnownSchema<F, B>>
+        extends Indexed<F, B> implements GenericDataBuilder<F> {
 
-        private final DataSchema<String> schema;
+        private final DataSchema<F> schema;
 
-        protected KnownSchema(DataSchema<String> schema) {
+        protected KnownSchema(DataSchema<F> schema) {
             this.schema = Objects.requireNonNull(schema);
         }
 
-        protected DataSchema<String> getSchema() {
+        protected DataSchema<F> getSchema() {
             return schema;
         }
 
-        public Values values() {
-            return new Values(self(), schema);
+        public Values<F> values() {
+            return new Values<>(self(), schema);
         }
 
-        public ValuesTo valuesTo(Consumer<? super GenericData<String>> consumer) {
-            return new ValuesTo(consumer, self());
+        public ValuesTo<F> valuesTo(Consumer<? super GenericData<F>> consumer) {
+            return new ValuesTo<>(consumer, self());
         }
 
         @Override
-        abstract public B set(String field, Object value);
+        abstract public B set(F field, Object value);
 
         @Override
-        public B setBoolean(String field, boolean value) {
+        public B setBoolean(F field, boolean value) {
             return set(field, value);
         }
 
         @Override
-        public B setByte(String field, byte value) {
+        public B setByte(F field, byte value) {
             return set(field, value);
         }
 
         @Override
-        public B setChar(String field, char value) {
+        public B setChar(F field, char value) {
             return set(field, value);
         }
 
         @Override
-        public B setShort(String field, short value) {
+        public B setShort(F field, short value) {
             return set(field, value);
         }
 
         @Override
-        public B setInt(String field, int value) {
+        public B setInt(F field, int value) {
             return set(field, value);
         }
 
         @Override
-        public B setLong(String field, long value) {
+        public B setLong(F field, long value) {
             return set(field, value);
         }
 
         @Override
-        public B setFloat(String field, float value) {
+        public B setFloat(F field, float value) {
             return set(field, value);
         }
 
         @Override
-        public B setDouble(String field, double value) {
+        public B setDouble(F field, double value) {
             return set(field, value);
         }
 
         @Override
-        public B setString(String field, String value) {
+        public B setString(F field, String value) {
             return set(field, value);
         }
     }
 
     /**
      * For A fluent way of providing Index Data for a known schema
+     *
+     * @param <F> The field type.
      */
-    public static class Values {
+    public static class Values<F> {
 
-        private final Indexed<?> owner;
+        private final Indexed<F, ?> owner;
 
-        private final DataSchema<String> schema;
+        private final DataSchema<F> schema;
 
-        Values(Indexed<?> owner, DataSchema<String> schema) {
+        Values(Indexed<F, ?> owner, DataSchema<F> schema) {
             this.owner = owner;
             this.schema = schema;
         }
 
-        public DidoData of(Object... values) {
+        public GenericData<F> of(Object... values) {
             int index = schema.firstIndex();
             for (int i = 0; i < values.length && index > 0; ++i) {
                 owner.setAt(index, values[i]);
@@ -243,18 +245,18 @@ abstract public class DataBuilders<B extends DataBuilders<B>> {
         }
     }
 
-    public static class ValuesTo {
+    public static class ValuesTo<F> {
 
-        private final Consumer<? super DidoData> consumer;
-        private final KnownSchema<?> owner;
+        private final Consumer<? super GenericData<F>> consumer;
+        private final KnownSchema<F, ?> owner;
 
-        ValuesTo(Consumer<? super DidoData> consumer, KnownSchema<?> owner) {
+        ValuesTo(Consumer<? super GenericData<F>> consumer, KnownSchema<F, ?> owner) {
             this.consumer = consumer;
             this.owner = owner;
         }
 
-        public ValuesTo of(Object... values) {
-            DidoData data = owner.values().of(values);
+        public ValuesTo<F> of(Object... values) {
+            GenericData<F> data = owner.values().of(values);
             consumer.accept(data);
             return this;
         }

@@ -1,6 +1,6 @@
 package dido.operators;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.IndexedData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,43 +11,43 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-public class StreamJoinService<F> implements Runnable, AutoCloseable {
+public class StreamJoinService implements Runnable, AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(StreamJoinService.class);
 
     private volatile String name;
 
-    private volatile StreamJoin<F> join;
+    private volatile StreamJoin<String> join;
 
-    private volatile Consumer<? super GenericData<F>> to;
+    private volatile Consumer<? super DidoData> to;
 
     private volatile ExecutorService executor;
 
-    private volatile Consumer<IndexedData<F>> primaryConsumer;
+    private volatile Consumer<IndexedData<String>> primaryConsumer;
 
-    private volatile Consumer<IndexedData<F>> secondaryConsumer;
+    private volatile Consumer<IndexedData<String>> secondaryConsumer;
 
     private volatile int count;
 
     @Override
     public void run() {
 
-        StreamJoin<F> join = Objects.requireNonNull(this.join, "No Join Specified");
-        Consumer<? super GenericData<F>> to = Objects.requireNonNull(this.to, "No destination");
+        StreamJoin<String> join = Objects.requireNonNull(this.join, "No Join Specified");
+        Consumer<? super DidoData> to = Objects.requireNonNull(this.to, "No destination");
 
         this.executor = Executors.newSingleThreadExecutor();
 
         join.setTo(data -> {
             //noinspection NonAtomicOperationOnVolatileField
             ++count;
-            to.accept(data);
+            to.accept(DidoData.adapt(data));
         });
 
         primaryConsumer = new Consumer<>() {
             volatile int count;
 
             @Override
-            public void accept(IndexedData<F> indexedData) {
+            public void accept(IndexedData<String> indexedData) {
                 //noinspection NonAtomicOperationOnVolatileField
                 ++count;
 
@@ -64,7 +64,7 @@ public class StreamJoinService<F> implements Runnable, AutoCloseable {
             volatile int count;
 
             @Override
-            public void accept(IndexedData<F> indexedData) {
+            public void accept(IndexedData<String> indexedData) {
                 //noinspection NonAtomicOperationOnVolatileField
                 ++count;
 
@@ -97,27 +97,27 @@ public class StreamJoinService<F> implements Runnable, AutoCloseable {
         this.name = name;
     }
 
-    public StreamJoin<F> getJoin() {
+    public StreamJoin<String> getJoin() {
         return join;
     }
 
-    public void setJoin(StreamJoin<F> join) {
+    public void setJoin(StreamJoin<String> join) {
         this.join = join;
     }
 
-    public Consumer<? super GenericData<F>> getTo() {
+    public Consumer<? super DidoData> getTo() {
         return to;
     }
 
-    public void setTo(Consumer<? super GenericData<F>> to) {
+    public void setTo(Consumer<? super DidoData> to) {
         this.to = to;
     }
 
-    public Consumer<IndexedData<F>> getPrimary() {
+    public Consumer<IndexedData<String>> getPrimary() {
         return this.primaryConsumer;
     }
 
-    public Consumer<IndexedData<F>> getSecondary() {
+    public Consumer<IndexedData<String>> getSecondary() {
         return this.secondaryConsumer;
     }
 

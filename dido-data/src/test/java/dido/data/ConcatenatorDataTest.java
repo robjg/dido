@@ -77,7 +77,7 @@ class ConcatenatorDataTest {
     void testConcatData() {
 
 
-        GenericDataBuilder<String> builder = MapData.newBuilderNoSchema();
+        DataBuilder builder = MapData.newBuilderNoSchema();
 
         GenericData<String> data1 = builder
                 .setString("type", "apple")
@@ -115,7 +115,7 @@ class ConcatenatorDataTest {
     @Test
     void testOtherTypes() {
 
-        GenericDataBuilder<String> builder = MapData.newBuilderNoSchema();
+        DataBuilder builder = MapData.newBuilderNoSchema();
 
         builder.setString("first", "Ignored" );
         GenericData<String> data1 = builder.build();
@@ -174,7 +174,7 @@ class ConcatenatorDataTest {
                         MapData.of("Fruit", "Apple"), MapData.of("Fruit", "Pear")));
 
         assertThat(
-                Concatenator.withSettings().skipDuplicates(true)
+                Concatenator.<String>withSettings().skipDuplicates(true)
                         .of(MapData.of("Fruit", "Apple"), MapData.of("Fruit", "Pear")),
                 is(MapData.of("Fruit", "Apple")));
 

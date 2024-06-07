@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
- * Provide a wrapper around a {@link JsonObject} so that it can be accessed as an {@link GenericData}.
+ * Provide a wrapper around a {@link JsonObject} so that it can be accessed as an {@link DidoData}.
  */
 public class JsonDataWrapper {
 
@@ -27,13 +27,13 @@ public class JsonDataWrapper {
 
     private GsonBuilder init(GsonBuilder gsonBuilder) {
         deserializer = new DataDeserializer(schema);
-        return gsonBuilder.registerTypeAdapter(GenericData.class, deserializer)
+        return gsonBuilder.registerTypeAdapter(DidoData.class, deserializer)
                 .registerTypeAdapter(RepeatingData.class, new RepeatingDeserializer());
     }
 
     DataDeserializer deserializer;
 
-    class DataDeserializer implements JsonDeserializer<GenericData<String>> {
+    class DataDeserializer implements JsonDeserializer<DidoData> {
 
         private DataSchema<String> schema;
 
@@ -42,20 +42,20 @@ public class JsonDataWrapper {
         }
 
         @Override
-        public GenericData<String> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public DidoData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
             return wrap((JsonObject) json, context);
         }
     }
 
-    public GenericData<String> wrap(JsonObject jsonObject, JsonDeserializationContext context) {
+    public DidoData wrap(JsonObject jsonObject, JsonDeserializationContext context) {
 
         final DataSchema<String> schema = Objects.requireNonNull(deserializer.schema);
 
         final Object[] values = new Object[schema.lastIndex()];
 
 
-        return new AbstractGenericData<>() {
+        return new AbstractData() {
 
             @Override
             public DataSchema<String> getSchema() {

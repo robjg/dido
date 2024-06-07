@@ -53,7 +53,7 @@ public class FromBeanArooa {
             return this;
         }
 
-        public <T> Function<T, GenericData<String>> ofUnknownClass() {
+        public <T> Function<T, DidoData> ofUnknownClass() {
 
             DataSchema<String> schema = this.schema;
             boolean partial = this.partial;
@@ -68,37 +68,37 @@ public class FromBeanArooa {
             }
         }
 
-        public <T> Function<T, GenericData<String>> ofClass(Class<T> aClass) {
+        public <T> Function<T, DidoData> ofClass(Class<T> aClass) {
 
             return ofArooaClass(new SimpleArooaClass(aClass));
         }
 
-        public <T> Function<T, GenericData<String>> ofArooaClass(ArooaClass arooaClass) {
+        public <T> Function<T, DidoData> ofArooaClass(ArooaClass arooaClass) {
 
             return FromBeanArooa.this.ofArooaClassWithSchema(arooaClass, schema, partial);
         }
     }
 
-    public <T> Function<T, GenericData<String>> ofUnknownClass() {
+    public <T> Function<T, DidoData> ofUnknownClass() {
 
         return new Unknown<>(DataSchema.emptySchema());
     }
 
-    public <T> Function<T, GenericData<String>> ofClass(Class<T> aClass) {
+    public <T> Function<T, DidoData> ofClass(Class<T> aClass) {
 
         DataSchema<String> schema = schemaFrom(new SimpleArooaClass(aClass));
 
         return bean -> new Impl(schema, bean);
     }
 
-    public <T> Function<T, GenericData<String>> ofArooaClass(ArooaClass arooaClass) {
+    public <T> Function<T, DidoData> ofArooaClass(ArooaClass arooaClass) {
 
         DataSchema<String> schema = schemaFrom(arooaClass);
 
         return bean -> new Impl(schema, bean);
     }
 
-    protected <T> Function<T, GenericData<String>> ofArooaClassWithSchema(ArooaClass arooaClass,
+    protected <T> Function<T, DidoData> ofArooaClassWithSchema(ArooaClass arooaClass,
                                                                           DataSchema<String> schema,
                                                                           boolean partial) {
 
@@ -108,7 +108,7 @@ public class FromBeanArooa {
         return new Known<>(outSchema);
     }
 
-    class Unknown<T> implements Function<T, GenericData<String>> {
+    class Unknown<T> implements Function<T, DidoData> {
 
         private final DataSchema<String> schema;
 
@@ -119,7 +119,7 @@ public class FromBeanArooa {
         }
 
         @Override
-        public GenericData<String> apply(T bean) {
+        public DidoData apply(T bean) {
 
             if (outSchema == null) {
                 outSchema = schemaFrom(accessor.getClassName(bean), schema, true);
@@ -134,7 +134,7 @@ public class FromBeanArooa {
         }
     }
 
-    class Known<T> implements Function<T, GenericData<String>> {
+    class Known<T> implements Function<T, DidoData> {
 
         private final DataSchema<String> schema;
 
@@ -143,7 +143,7 @@ public class FromBeanArooa {
         }
 
         @Override
-        public GenericData<String> apply(T t) {
+        public DidoData apply(T t) {
             if (t == null) {
                 return null;
             }
@@ -158,7 +158,7 @@ public class FromBeanArooa {
         }
     }
 
-    class Impl extends AbstractGenericData<String> {
+    class Impl extends AbstractData {
 
         private final DataSchema<String> schema;
 
@@ -185,7 +185,7 @@ public class FromBeanArooa {
                         return RepeatingData.of();
                     }
 
-                    List<GenericData<String>> data = new ArrayList<>();
+                    List<DidoData> data = new ArrayList<>();
                     if (value instanceof Iterable) {
                         for (Object element : ((Iterable<?>) value)) {
                             data.add(new Impl(nestedSchema, element));

@@ -17,7 +17,7 @@ class LeftStreamJoinTest {
     @Test
     void testSimpleExample() {
 
-        ArrayData.Builder<String> farmBuilder = ArrayData.builderForSchema(
+        ArrayData.Builder farmBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.forStringFields()
                         .addField("Id", int.class)
                         .addField("Farmer", String.class)
@@ -26,7 +26,7 @@ class LeftStreamJoinTest {
         GenericData<String> farm1 = farmBuilder.build(1, "Brown");
         GenericData<String> farm2 = farmBuilder.build(2, "Giles");
 
-        ArrayData.Builder<String> produceBuilder = ArrayData.builderForSchema(
+        ArrayData.Builder produceBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.forStringFields()
                         .addField("Type", String.class)
                         .addField("Quantity", int.class)
@@ -37,7 +37,7 @@ class LeftStreamJoinTest {
         GenericData<String> produce2 = produceBuilder.build("Pears", 7, 1);
         GenericData<String> produce3 = produceBuilder.build("Carrots", 15, 2);
 
-        ArrayData.Builder<String> expectedBuilder = ArrayData.builderForSchema(
+        ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.forStringFields()
                         .addField("Type", String.class)
                         .addField("Quantity", int.class)

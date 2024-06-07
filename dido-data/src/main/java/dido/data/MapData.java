@@ -8,114 +8,114 @@ import java.util.Objects;
 /**
  * Provide an {@link GenericData} structure backed by a Map.
  */
-public class MapData<F> extends AbstractGenericData<F> {
+public class MapData extends AbstractGenericData<String> implements DidoData {
 
-    private final DataSchema<F> schema;
+    private final DataSchema<String> schema;
 
-    private final Map<F, ?> map;
+    private final Map<String, ?> map;
 
-    private MapData(DataSchema<F> schema, Map<F, ?> map) {
+    private MapData(DataSchema<String> schema, Map<String, ?> map) {
         this.schema = schema;
         this.map = map;
     }
 
-    public static MapData<String> from(Map<String, ?> map) {
-        return new MapData<>(schemaFromMap(map), new HashMap<>(map));
+    public static MapData from(Map<String, ?> map) {
+        return new MapData(schemaFromMap(map), new HashMap<>(map));
     }
 
-    public static <F> GenericData<F> of() {
+    public static DidoData of() {
         return fromInputs();
     }
 
-    public static <F> GenericData<F> of(F f1, Object v1) {
+    public static DidoData of(String f1, Object v1) {
         return fromInputs(f1, v1);
     }
 
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2) {
+    public static DidoData of(String f1, Object v1, String f2, Object v2) {
         return fromInputs(f1, v1, f2, v2);
     }
 
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3) {
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3) {
         return fromInputs(f1, v1, f2, v2, f3, v3);
     }
 
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4) {
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+                                    String f4, Object v4) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4);
     }
 
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4, F f5, Object v5) {
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+                                    String f4, Object v4, String f5, Object v5) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5);
     }
 
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4, F f5, Object v5, F f6, Object v6) {
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+                                    String f4, Object v4, String f5, Object v5, String f6, Object v6) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6);
     }
 
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4, F f5, Object v5, F f6, Object v6,
-                                    F f7, Object v7) {
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+                                    String f4, Object v4, String f5, Object v5, String f6, Object v6,
+                                    String f7, Object v7) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7);
     }
 
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4, F f5, Object v5, F f6, Object v6,
-                                    F f7, Object v7, F f8, Object v8) {
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+                                    String f4, Object v4, String f5, Object v5, String f6, Object v6,
+                                    String f7, Object v7, String f8, Object v8) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8);
     }
 
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4, F f5, Object v5, F f6, Object v6,
-                                    F f7, Object v7, F f8, Object v8, F f9, Object v9) {
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+                                    String f4, Object v4, String f5, Object v5, String f6, Object v6,
+                                    String f7, Object v7, String f8, Object v8, String f9, Object v9) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8, f9, v9);
     }
 
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4, F f5, Object v5, F f6, Object v6,
-                                    F f7, Object v7, F f8, Object v8, F f9, Object v9,
-                                    F f10, Object v10) {
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+                                    String f4, Object v4, String f5, Object v5, String f6, Object v6,
+                                    String f7, Object v7, String f8, Object v8, String f9, Object v9,
+                                    String f10, Object v10) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8, f9, v9, f10, v10);
     }
 
-    private static <F> GenericData<F> fromInputs(Object... args) {
+    private static DidoData fromInputs(Object... args) {
 
-        GenericDataBuilder<F> builder = new BuilderNoSchema<>();
+        DataBuilder builder = new BuilderNoSchema();
         for (int i = 0; i < args.length; i = i + 2) {
             //noinspection unchecked
-            builder.set((F) args[i], args[i+1]);
+            builder.set((String) args[i], args[i+1]);
         }
         return builder.build();
     }
 
-    public static <F> DataSchema<F> schemaFromMap(Map<F, ?> map) {
+    public static DataSchema<String> schemaFromMap(Map<String, ?> map) {
 
-        SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
-        for (Map.Entry<F, ?> entry : map.entrySet()) {
+        SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
             schemaBuilder.addField(entry.getKey(), entry.getValue().getClass());
         }
         return schemaBuilder.build();
     }
 
-    public static <F> GenericDataBuilder<F> newBuilder(DataSchema<F> schema) {
+    public static DataBuilder newBuilder(DataSchema<String> schema) {
 
-        return new BuilderWithSchema<>(schema);
+        return new BuilderWithSchema(schema);
     }
 
-    public static GenericDataBuilder<String> newBuilderNoSchema() {
+    public static DataBuilder newBuilderNoSchema() {
 
-        return new BuilderNoSchema<>();
+        return new BuilderNoSchema();
     }
 
-    public static <F> DataBuilders.Values<F> valuesFor(DataSchema<F> schema) {
+    public static DataBuilders.Values valuesFor(DataSchema<String> schema) {
 
         return new BuilderWithSchema(schema).values();
     }
 
-    public static <F> BuilderWithSchema<F> copy(IndexedData<F> from) {
+    public static BuilderWithSchema copy(IndexedData<String> from) {
 
-        return new BuilderWithSchema<>(from.getSchema()).copy(from);
+        return new BuilderWithSchema(from.getSchema()).copy(from);
     }
 
     @Override
@@ -129,17 +129,17 @@ public class MapData<F> extends AbstractGenericData<F> {
     }
 
     @Override
-    public Object get(F field) {
+    public Object get(String field) {
         return map.get(field);
     }
 
     @Override
-    public boolean hasField(F field) {
+    public boolean hasField(String field) {
         return map.containsKey(field);
     }
 
     @Override
-    public DataSchema<F> getSchema() {
+    public DataSchema<String> getSchema() {
         return schema;
     }
 
@@ -151,115 +151,114 @@ public class MapData<F> extends AbstractGenericData<F> {
     /**
      * A Builder that knows the schema. Setter don't validate the type.
      *
-     * @param <F> The field type.
      */
-    public static class BuilderWithSchema<F> extends DataBuilders.KnownSchema<F, BuilderWithSchema<F>> {
+    public static class BuilderWithSchema extends DataBuilders.KnownSchema<BuilderWithSchema> {
 
-        private Map<F, Object> map = new HashMap<>();
+        private Map<String, Object> map = new HashMap<>();
 
-        BuilderWithSchema(DataSchema<F> schema) {
+        BuilderWithSchema(DataSchema<String> schema) {
             super(schema);
         }
 
         @Override
-        public GenericData<F> build() {
-            GenericData<F> data = new MapData<>(getSchema(), map);
+        public DidoData build() {
+            DidoData data = new MapData(getSchema(), map);
             this.map = new HashMap<>();
             return data;
         }
 
         @Override
-        public BuilderWithSchema<F> set(F field, Object value) {
+        public BuilderWithSchema set(String field, Object value) {
             map.put(field, value);
             return this;
         }
 
         @Override
-        public BuilderWithSchema<F> setAt(int index, Object value) {
+        public BuilderWithSchema setAt(int index, Object value) {
             set(getSchema().getFieldAt(index), value);
             return this;
         }
     }
 
-    static class BuilderNoSchema<F> extends  DataBuilders.Fields<F, BuilderNoSchema<F>> {
+    static class BuilderNoSchema extends  DataBuilders.Fields<BuilderNoSchema> {
 
-        private Map<F, Object> map = new LinkedHashMap<>();
+        private Map<String, Object> map = new LinkedHashMap<>();
 
-        private SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
+        private SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
 
         @Override
-        public GenericData<F> build() {
-            GenericData<F> data = new MapData<>(schemaBuilder.build(), map);
+        public DidoData build() {
+            DidoData data = new MapData(schemaBuilder.build(), map);
             this.map = new LinkedHashMap<>();
             this.schemaBuilder = SchemaBuilder.impliedType();
             return data;
         }
 
         @Override
-        public BuilderNoSchema<F> set(F field, Object value) {
+        public BuilderNoSchema set(String field, Object value) {
             map.put(field, value);
             schemaBuilder.addField(field, value == null ? void.class : value.getClass());
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setBoolean(F field, boolean value) {
+        public BuilderNoSchema setBoolean(String field, boolean value) {
             map.put(field, value);
             schemaBuilder.addField(field, boolean.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setByte(F field, byte value) {
+        public BuilderNoSchema setByte(String field, byte value) {
             map.put(field, value);
             schemaBuilder.addField(field, byte.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setChar(F field, char value) {
+        public BuilderNoSchema setChar(String field, char value) {
             map.put(field, value);
             schemaBuilder.addField(field, char.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setShort(F field, short value) {
+        public BuilderNoSchema setShort(String field, short value) {
             map.put(field, value);
             schemaBuilder.addField(field, short.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setInt(F field, int value) {
+        public BuilderNoSchema setInt(String field, int value) {
             map.put(field, value);
             schemaBuilder.addField(field, int.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setLong(F field, long value) {
+        public BuilderNoSchema setLong(String field, long value) {
             map.put(field, value);
             schemaBuilder.addField(field, long.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setFloat(F field, float value) {
+        public BuilderNoSchema setFloat(String field, float value) {
             map.put(field, value);
             schemaBuilder.addField(field, float.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setDouble(F field, double value) {
+        public BuilderNoSchema setDouble(String field, double value) {
             map.put(field, value);
             schemaBuilder.addField(field, double.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setString(F field, String value) {
+        public BuilderNoSchema setString(String field, String value) {
             map.put(field, value);
             schemaBuilder.addField(field, String.class);
             return this;
@@ -269,27 +268,25 @@ public class MapData<F> extends AbstractGenericData<F> {
 
     /**
      * For A fluent way of providing MapData
-     *
-     * @param <F> The field type.
      */
-    public static class Values<F> {
+    public static class Values {
 
-        private final DataSchema<F> schema;
+        private final DataSchema<String> schema;
 
-        Values(DataSchema<F> schema) {
+        Values(DataSchema<String> schema) {
             this.schema = Objects.requireNonNull(schema);
         }
 
-        public GenericData<F> of(Object... values) {
-            Map<F, Object> map = new HashMap<>();
+        public GenericData<String> of(Object... values) {
+            Map<String, Object> map = new HashMap<>();
             for (int i = 0; i < values.length; ++i) {
-                F field = schema.getFieldAt(i + 1);
+                String field = schema.getFieldAt(i + 1);
                 if (field == null) {
                     throw new IllegalArgumentException("No field for index " + i + 1);
                 }
                 map.put(field, values[i]);
             }
-            return new MapData<>(schema, map);
+            return new MapData(schema, map);
         }
     }
 }

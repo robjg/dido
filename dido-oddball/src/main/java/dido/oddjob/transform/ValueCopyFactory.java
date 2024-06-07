@@ -22,7 +22,7 @@ import java.util.function.Function;
  *
  * </p>
  */
-public class ValueCopyFactory implements ValueFactory<TransformerFactory<String, String>>, ArooaSessionAware {
+public class ValueCopyFactory implements ValueFactory<TransformerFactory>, ArooaSessionAware {
 
     private static final Logger logger = LoggerFactory.getLogger(ValueCopyFactory.class);
 
@@ -65,7 +65,7 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory<String,
     }
 
     @Override
-    public TransformerFactory<String, String> toValue() {
+    public TransformerFactory toValue() {
         return new CopyTransformerFactory(this);
     }
 
@@ -117,7 +117,7 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory<String,
         this.function = function;
     }
 
-    static class CopyTransformerFactory implements TransformerFactory<String, String> {
+    static class CopyTransformerFactory implements TransformerFactory {
 
         private final String from;
 
@@ -145,7 +145,7 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory<String,
         }
 
         @Override
-        public Transformer<String, String> create(int position,
+        public Transformer create(int position,
                                                   DataSchema<String> fromSchema,
                                                   SchemaSetter<String> schemaSetter) {
 
@@ -182,7 +182,7 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory<String,
                 to = this.to;
             }
 
-            Function<Function<Object, Object>, Transformer<String, String>> transformerFn;
+            Function<Function<Object, Object>, Transformer> transformerFn;
 
             if (to == null) {
                 // from must also be null

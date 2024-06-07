@@ -1,5 +1,6 @@
 package dido.replay;
 
+import dido.data.DidoData;
 import dido.data.GenericData;
 import dido.how.CloseableConsumer;
 
@@ -11,7 +12,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-public class DataRecorderService implements Consumer<GenericData<String>> {
+public class DataRecorderService implements Consumer<DidoData> {
 
     private volatile String name;
 
@@ -29,7 +30,7 @@ public class DataRecorderService implements Consumer<GenericData<String>> {
 
     private final AtomicInteger count = new AtomicInteger();
 
-    private CloseableConsumer<GenericData<String>> recorder;
+    private CloseableConsumer<? super DidoData> recorder;
 
     private Consumer<? super GenericData<String>> to;
 
@@ -48,7 +49,7 @@ public class DataRecorderService implements Consumer<GenericData<String>> {
     }
 
     @Override
-    public void accept(GenericData<String> data) {
+    public void accept(DidoData data) {
 
         recorder.accept(data);
 

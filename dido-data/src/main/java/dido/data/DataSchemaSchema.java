@@ -60,20 +60,20 @@ public class DataSchemaSchema  {
         DATA_SCHEMA_SCHEMA = schemaManager.getSchema(SCHEMA_SCHEMA_NAME);
     }
 
-    public static GenericData<String> schemaToData(DataSchema<String> schema) {
+    public static DidoData schemaToData(DataSchema<String> schema) {
 
-        GenericDataBuilder<String> builder = MapData.newBuilder(DATA_SCHEMA_SCHEMA);
+        DataBuilder builder = MapData.newBuilder(DATA_SCHEMA_SCHEMA);
 
         DataSchema<String> fieldSchema = DATA_SCHEMA_SCHEMA.getSchema(FIELDS_FIELD);
 
-        List<GenericData<String>> fields = new ArrayList<>();
+        List<DidoData> fields = new ArrayList<>();
 
 
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
 
             SchemaField<String> schemaField = schema.getSchemaFieldAt(index);
 
-            GenericDataBuilder<String> fieldBuilder = MapData.newBuilder(fieldSchema);
+            DataBuilder fieldBuilder = MapData.newBuilder(fieldSchema);
 
             fieldBuilder.setInt(INDEX_FIELD, index);
             if (schemaField.getField() != null) {
@@ -101,7 +101,7 @@ public class DataSchemaSchema  {
     public static DataSchema<String> schemaFromData(GenericData<String> data,
                                                     Function<? super String, ? extends Class<?>> classLoader) {
 
-        RepeatingData<String> fields = data.getAs(FIELDS_FIELD, RepeatingData.class);
+        RepeatingData fields = data.getAs(FIELDS_FIELD, RepeatingData.class);
 
         SchemaBuilder<String> builder = SchemaBuilder.forStringFields();
 
@@ -112,7 +112,7 @@ public class DataSchemaSchema  {
 
             if (fieldData.hasField(NESTED_FIELD)) {
 
-                GenericData<String> nestedData = fieldData.getAs(NESTED_FIELD, GenericData.class);
+                DidoData nestedData = fieldData.getAs(NESTED_FIELD, DidoData.class);
                 DataSchema<String> nestedSchema = schemaFromData(nestedData, classLoader);
 
                 if (fieldData.hasField(REPEATING_FIELD) && fieldData.getBoolean(REPEATING_FIELD)) {

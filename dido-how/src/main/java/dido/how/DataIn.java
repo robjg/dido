@@ -1,7 +1,7 @@
 package dido.how;
 
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 
 import java.util.Iterator;
 
@@ -15,12 +15,12 @@ import java.util.Iterator;
  * @author rob
  *
  */
-public interface DataIn<F> extends CloseableSupplier<GenericData<F>>, Iterable<GenericData<F>> {
+public interface DataIn extends CloseableSupplier<DidoData>, Iterable<DidoData> {
 
-    static <T> DataIn<T> empty() {
-        return new DataIn<>() {
+    static DataIn empty() {
+        return new DataIn() {
             @Override
-            public GenericData<T> get() {
+            public DidoData get() {
                 return null;
             }
 
@@ -32,11 +32,11 @@ public interface DataIn<F> extends CloseableSupplier<GenericData<F>>, Iterable<G
     }
 
     @Override
-    default Iterator<GenericData<F>> iterator() {
+    default Iterator<DidoData> iterator() {
 
         return new Iterator<>() {
 
-            GenericData<F> next;
+            DidoData next;
 
             @Override
             public boolean hasNext() {
@@ -47,7 +47,7 @@ public interface DataIn<F> extends CloseableSupplier<GenericData<F>>, Iterable<G
             }
 
             @Override
-            public GenericData<F> next() {
+            public DidoData next() {
                 try {
                     return next;
                 } finally {

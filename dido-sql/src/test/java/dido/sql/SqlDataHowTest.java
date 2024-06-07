@@ -50,11 +50,11 @@ public class SqlDataHowTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        DataOutHow<String, Connection> outHow
+        DataOutHow<Connection> outHow
                 = SqlDataOutHow.fromSql("insert into fruit (type, quantity) values (?, ?)")
                 .make();
 
-        DataInHow<String, Connection> inHow
+        DataInHow<Connection> inHow
                 = SqlDataInHow.fromSql("select type, quantity from fruit order by type")
                 .make();
 
@@ -62,7 +62,7 @@ public class SqlDataHowTest {
 
         Connection connectionOut = lookup.lookup("vars.connection", Connection.class);
 
-        DataOut<String> writer = outHow.outTo(connectionOut);
+        DataOut writer = outHow.outTo(connectionOut);
 
         writer.accept(ArrayData.of("apple", 20));
         writer.accept(ArrayData.of("banana", 10));
@@ -74,7 +74,7 @@ public class SqlDataHowTest {
 
         Connection connectionIn = lookup.lookup("vars.connection", Connection.class);
 
-        DataIn<String> reader = inHow.inFrom(connectionIn);
+        DataIn reader = inHow.inFrom(connectionIn);
 
         {
             GenericData<String> fruit = reader.get();
@@ -112,7 +112,7 @@ public class SqlDataHowTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        DataOutHow<String, Connection> outHow
+        DataOutHow<Connection> outHow
                 = SqlDataOutHow.fromSql("insert into Numbers " +
                         "(Description, A_TinyInt, A_SmallInt, A_Integer, A_BigInt, A_Numeric, A_Decimal, A_Real, A_Float, A_Double)" +
                         " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
@@ -122,7 +122,7 @@ public class SqlDataHowTest {
 
         Connection connectionOut = lookup.lookup("vars.connection", Connection.class);
 
-        DataOut<String> writer = outHow.outTo(connectionOut);
+        DataOut writer = outHow.outTo(connectionOut);
 
         writer.accept(ArrayData.of("1-Doubles", 42.24, 42.24, 42.24, 42.24, 42.24, 42.24, 42.24, 42.24, 42.24));
         writer.accept(ArrayData.of("2-Ints", 42, 42, 42, 42, 42, 42, 42, 42, 42));
@@ -133,14 +133,14 @@ public class SqlDataHowTest {
 
         logger.info("** Reading **");
 
-        DataInHow<String, Connection> inHow
+        DataInHow<Connection> inHow
                 = SqlDataInHow.fromSql("select A_TinyInt, A_SmallInt, A_Integer, A_BigInt, A_Numeric, A_Decimal, A_Real, A_Float, A_Double " +
                         "from Numbers order by Description")
                 .make();
 
         Connection connectionIn = lookup.lookup("vars.connection", Connection.class);
 
-        DataIn<String> reader = inHow.inFrom(connectionIn);
+        DataIn reader = inHow.inFrom(connectionIn);
 
         {
             GenericData<String> numbers = reader.get();
@@ -309,7 +309,7 @@ public class SqlDataHowTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        DataOutHow<String, Connection> outHow
+        DataOutHow<Connection> outHow
                 = SqlDataOutHow.fromSql("insert into Dates " +
                         "(Description, A_Date, A_Time, A_Zoned_Time, A_TimeStamp, A_Zoned_TimeStamp)" +
                         " values (?, ?, ?, ?, ?, ?)")
@@ -319,7 +319,7 @@ public class SqlDataHowTest {
 
         Connection connectionOut = lookup.lookup("vars.connection", Connection.class);
 
-        DataOut<String> writer = outHow.outTo(connectionOut);
+        DataOut writer = outHow.outTo(connectionOut);
 
         LocalDate localDate = LocalDate.parse("2008-08-22");
         LocalTime localTime = LocalTime.parse("20:08:08.034900");
@@ -339,14 +339,14 @@ public class SqlDataHowTest {
 
         logger.info("** Reading **");
 
-        DataInHow<String, Connection> inHow
+        DataInHow<Connection> inHow
                 = SqlDataInHow.fromSql("select A_Date, A_Time, A_Zoned_Time, A_TimeStamp, A_Zoned_TimeStamp " +
                         "from Dates order by Description")
                 .make();
 
         Connection connectionIn = lookup.lookup("vars.connection", Connection.class);
 
-        DataIn<String> reader = inHow.inFrom(connectionIn);
+        DataIn reader = inHow.inFrom(connectionIn);
 
         {
             GenericData<String> dates = reader.get();

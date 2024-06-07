@@ -1,7 +1,7 @@
 package dido.sql;
 
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -14,7 +14,7 @@ import java.util.Objects;
  * @author rob
  *
  */
-public class SqlDataInHow implements DataInHow<String, Connection> {
+public class SqlDataInHow implements DataInHow<Connection> {
 
 	private final String sql;
 
@@ -44,7 +44,7 @@ public class SqlDataInHow implements DataInHow<String, Connection> {
 			return this;
 		}
 
-		public DataInHow<String, Connection> make() {
+		public DataInHow<Connection> make() {
 			return new SqlDataInHow(this);
 		}
 	}
@@ -65,7 +65,7 @@ public class SqlDataInHow implements DataInHow<String, Connection> {
 	}
 
 	@Override
-	public DataIn<String> inFrom(Connection connection) throws Exception {
+	public DataIn inFrom(Connection connection) throws Exception {
 
 		Statement stmt = connection.createStatement();
 		stmt.setFetchSize(batchSize);
@@ -76,11 +76,11 @@ public class SqlDataInHow implements DataInHow<String, Connection> {
 
 		DataSchema<String> schema = SchemaUtils.schemaFrom(metaData, classLoader);
 
-		GenericData<String> wrapper = ResultSetWrapper.from(resultSet, schema);
+		DidoData wrapper = ResultSetWrapper.from(resultSet, schema);
 
-		return new DataIn<>() {
+		return new DataIn() {
 			@Override
-			public GenericData<String> get() {
+			public DidoData get() {
 				try {
 					if (resultSet.next()) {
 						return wrapper;

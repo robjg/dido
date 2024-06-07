@@ -8,20 +8,100 @@ import java.util.stream.Stream;
 
 public class RepeatingDataWrappers {
 
-    public static <F> RepeatingData<F> of(List<? extends IndexedData<F>> list) {
-        return new ListWrapper<>(list);
+    public static RepeatingData of(List<DidoData> list) {
+        return new ListWrapper(list);
     }
 
-    public static <F> RepeatingData<F> of(IndexedData<F>... data) {
+    public static RepeatingData of(DidoData... data) {
 
-        return new ArrayWrapper<>(data);
+        return new ArrayWrapper(data);
     }
 
-    private static class ArrayWrapper<F> extends AbstractRepeatingData<F> {
+    public static <F> GenericRepeatingData<F> ofGeneric(List<? extends IndexedData<F>> list) {
+        return new GenericListWrapper<>(list);
+    }
+
+    public static <F> GenericRepeatingData<F> ofGeneric(IndexedData<F>... data) {
+
+        return new GenericArrayWrapper<>(data);
+    }
+
+    private static class ArrayWrapper extends AbstractRepeatingData {
+
+        private final DidoData[] array;
+
+        private ArrayWrapper(DidoData[] array) {
+            this.array = array;
+        }
+
+        @Override
+        public int size() {
+            return array.length;
+        }
+
+        @Override
+        public DidoData get(int row) {
+            return array[row];
+        }
+
+        @Override
+        public Stream<DidoData> stream() {
+            return Arrays.stream(array);
+        }
+
+        @Override
+        public Iterator<DidoData> iterator() {
+            return new Iterator<>() {
+                int row;
+
+                @Override
+                public boolean hasNext() {
+                    return row < array.length;
+                }
+
+                @Override
+                public DidoData next() {
+                    return array[row++];
+                }
+            };
+        }
+    }
+
+    static class ListWrapper extends AbstractRepeatingData {
+
+        private final List<DidoData> list;
+
+        private ListWrapper(List<DidoData> list) {
+            this.list = Objects.requireNonNull(list);
+        }
+
+
+        @Override
+        public int size() {
+            return list.size();
+        }
+
+        @Override
+        public DidoData get(int row) {
+            return list.get(row);
+        }
+
+        @Override
+        public Stream<DidoData> stream() {
+            return list.stream();
+        }
+
+        @Override
+        public Iterator<DidoData> iterator() {
+            return list.iterator();
+        }
+    }
+
+    private static class GenericArrayWrapper<F> extends AbstractGenericRepeatingData<F> {
 
         private final IndexedData<F>[] array;
 
-        private ArrayWrapper(IndexedData<F>[] array) {
+        private GenericArrayWrapper(IndexedData<F>[] array) {
             this.array = array;
         }
 
@@ -58,11 +138,11 @@ public class RepeatingDataWrappers {
         }
     }
 
-    static class ListWrapper<F> extends AbstractRepeatingData<F> {
+    static class GenericListWrapper<F> extends AbstractGenericRepeatingData<F> {
 
         private final List<? extends IndexedData<F>> list;
 
-        private ListWrapper(List<? extends IndexedData<F>> list) {
+        private GenericListWrapper(List<? extends IndexedData<F>> list) {
             this.list = Objects.requireNonNull(list);
         }
 
@@ -98,6 +178,5 @@ public class RepeatingDataWrappers {
             };
         }
     }
-
 
 }

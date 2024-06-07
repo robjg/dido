@@ -5,33 +5,32 @@ import java.util.*;
 /**
  * {@link GenericData} stored in an Array.
  *
- * @param <F> The field type.
  */
-public class ArrayData<F> extends AbstractGenericData<F> implements GenericData<F> {
+public class ArrayData extends AbstractData implements DidoData {
 
-    private final DataSchema<F> schema;
+    private final DataSchema<String> schema;
 
     private final Object[] data;
 
     private volatile int hash = 0;
 
-    private ArrayData(DataSchema<F> schema, Object[] data) {
+    private ArrayData(DataSchema<String> schema, Object[] data) {
         this.schema = schema;
         this.data = data;
     }
 
-    public static <T> GenericData<T> of(Object... data) {
+    public static DidoData of(Object... data) {
         Objects.requireNonNull(data);
 
-        DataSchema<T> schema = new AbstractDataSchema<>() {
+        DataSchema<String> schema = new AbstractDataSchema<>() {
 
             @Override
-            public SchemaField<T> getSchemaFieldAt(int index) {
+            public SchemaField<String> getSchemaFieldAt(int index) {
                 return SchemaFields.of(index, Object.class);
             }
 
             @Override
-            public T getFieldAt(int index) {
+            public String getFieldAt(int index) {
                 return null;
             }
 
@@ -46,7 +45,7 @@ public class ArrayData<F> extends AbstractGenericData<F> implements GenericData<
             }
 
             @Override
-            public int getIndex(T field) {
+            public int getIndex(String field) {
                 return 0;
             }
 
@@ -66,7 +65,7 @@ public class ArrayData<F> extends AbstractGenericData<F> implements GenericData<
             }
 
             @Override
-            public Collection<T> getFields() {
+            public Collection<String> getFields() {
                 return Collections.emptyList();
             }
 
@@ -90,26 +89,26 @@ public class ArrayData<F> extends AbstractGenericData<F> implements GenericData<
             }
         };
 
-        return new ArrayData<>(schema, data);
+        return new ArrayData(schema, data);
     }
 
-    public static <T> Builder<T> builderForSchema(DataSchema<T> schema) {
+    public static Builder builderForSchema(DataSchema<String> schema) {
 
-        return new Builder<>(schema);
+        return new Builder(schema);
     }
 
-    public static <T> BuilderUnknown<T> newBuilder() {
+    public static BuilderUnknown newBuilder() {
 
-        return new BuilderUnknown<>();
+        return new BuilderUnknown();
     }
 
-    public static <F> DataBuilders.Values<F> valuesFor(DataSchema<F> schema) {
+    public static DataBuilders.Values valuesFor(DataSchema<String> schema) {
 
-        return new Builder<>(schema).values();
+        return new Builder(schema).values();
     }
 
     @Override
-    public DataSchema<F> getSchema() {
+    public DataSchema<String> getSchema() {
         return schema;
     }
 
@@ -146,145 +145,145 @@ public class ArrayData<F> extends AbstractGenericData<F> implements GenericData<
         return Arrays.toString(data);
     }
 
-    public static class Builder<F> extends DataBuilders.KnownSchema<F, Builder<F>> {
+    public static class Builder extends DataBuilders.KnownSchema<Builder> {
 
         private Object[] values;
 
-        Builder(DataSchema<F> schema) {
+        Builder(DataSchema<String> schema) {
             super(schema);
             values = new Object[schema.lastIndex()];
         }
 
-        public Builder<F> setAt(int index, Object value) {
+        public Builder setAt(int index, Object value) {
             values[index - 1] = value;
             return this;
         }
 
         @Override
-        public Builder<F> set(F field, Object value) {
+        public Builder set(String field, Object value) {
             return setAt(getSchema().getIndex(field), value);
         }
 
-        public GenericData<F> build() {
+        public DidoData build() {
             Object[] values = this.values;
             this.values = new Object[getSchema().lastIndex()];
-            return new ArrayData<>(getSchema(), values);
+            return new ArrayData(getSchema(), values);
         }
 
-        public GenericData<F> build(Object... values) {
-            return new ArrayData<>(getSchema(), values);
+        public DidoData build(Object... values) {
+            return new ArrayData(getSchema(), values);
         }
     }
 
-    public static class BuilderUnknown<F> extends DataBuilders.Indexed<F, BuilderUnknown<F>>
-            implements GenericDataBuilder<F> {
+    public static class BuilderUnknown extends DataBuilders.Indexed<BuilderUnknown>
+            implements DataBuilder {
 
-        private final List<SchemaField<F>> schemaFields = new LinkedList<>();
+        private final List<SchemaField<String>> schemaFields = new LinkedList<>();
 
         private final List<Object> values = new LinkedList<>();
 
         private int lastIndex = 0;
 
-        public BuilderUnknown<F> setAt(int index, Object value) {
+        public BuilderUnknown setAt(int index, Object value) {
             return setIndex(index, value, Object.class);
         }
 
         @Override
-        public BuilderUnknown<F> setBooleanAt(int index, boolean value) {
+        public BuilderUnknown setBooleanAt(int index, boolean value) {
             return setIndex(index, value, boolean.class);
         }
 
         @Override
-        public BuilderUnknown<F> setByteAt(int index, byte value) {
+        public BuilderUnknown setByteAt(int index, byte value) {
             return setIndex(index, value, byte.class);
         }
 
         @Override
-        public BuilderUnknown<F> setCharAt(int index, char value) {
+        public BuilderUnknown setCharAt(int index, char value) {
             return setIndex(index, value, char.class);
         }
 
         @Override
-        public BuilderUnknown<F> setShortAt(int index, short value) {
+        public BuilderUnknown setShortAt(int index, short value) {
             return setIndex(index, value, short.class);
         }
 
         @Override
-        public BuilderUnknown<F> setIntAt(int index, int value) {
+        public BuilderUnknown setIntAt(int index, int value) {
             return setIndex(index, value, int.class);
         }
 
         @Override
-        public BuilderUnknown<F> setLongAt(int index, long value) {
+        public BuilderUnknown setLongAt(int index, long value) {
             return setIndex(index, value, long.class);
         }
 
         @Override
-        public BuilderUnknown<F> setFloatAt(int index, float value) {
+        public BuilderUnknown setFloatAt(int index, float value) {
             return setIndex(index, value, float.class);
         }
 
         @Override
-        public BuilderUnknown<F> setDoubleAt(int index, double value) {
+        public BuilderUnknown setDoubleAt(int index, double value) {
             return setIndex(index, value, double.class);
         }
 
         @Override
-        public BuilderUnknown<F> setStringAt(int index, String value) {
+        public BuilderUnknown setStringAt(int index, String value) {
             return setIndex(index, value, String.class);
         }
 
         @Override
-        public BuilderUnknown<F> set(F field, Object value) {
+        public BuilderUnknown set(String field, Object value) {
             return setField(field, value, Object.class);
         }
 
         @Override
-        public BuilderUnknown<F> setBoolean(F field, boolean value) {
+        public BuilderUnknown setBoolean(String field, boolean value) {
             return setField(field, value, boolean.class);
         }
 
         @Override
-        public BuilderUnknown<F> setByte(F field, byte value) {
+        public BuilderUnknown setByte(String field, byte value) {
             return setField(field, value, byte.class);
         }
 
         @Override
-        public BuilderUnknown<F> setChar(F field, char value) {
+        public BuilderUnknown setChar(String field, char value) {
             return setField(field, value, char.class);
         }
 
         @Override
-        public BuilderUnknown<F> setShort(F field, short value) {
+        public BuilderUnknown setShort(String field, short value) {
             return setField(field, value, short.class);
         }
 
         @Override
-        public BuilderUnknown<F> setInt(F field, int value) {
+        public BuilderUnknown setInt(String field, int value) {
             return setField(field, value, int.class);
         }
 
         @Override
-        public BuilderUnknown<F> setLong(F field, long value) {
+        public BuilderUnknown setLong(String field, long value) {
             return setField(field, value, long.class);
         }
 
         @Override
-        public BuilderUnknown<F> setFloat(F field, float value) {
+        public BuilderUnknown setFloat(String field, float value) {
             return setField(field, value, float.class);
         }
 
         @Override
-        public BuilderUnknown<F> setDouble(F field, double value) {
+        public BuilderUnknown setDouble(String field, double value) {
             return setField(field, value, double.class);
         }
 
         @Override
-        public BuilderUnknown<F> setString(F field, String value) {
+        public BuilderUnknown setString(String field, String value) {
             return setField(field, value, String.class);
         }
 
-        public BuilderUnknown<F> setIndex(int index, Object value, Class<?> type) {
+        public BuilderUnknown setIndex(int index, Object value, Class<?> type) {
             values.add(value);
             schemaFields.add(SchemaField.of(index, type));
             if (index > lastIndex) {
@@ -293,21 +292,21 @@ public class ArrayData<F> extends AbstractGenericData<F> implements GenericData<
             return this;
         }
 
-        private BuilderUnknown<F> setField(F field, Object value, Class<?> type) {
+        private BuilderUnknown setField(String field, Object value, Class<?> type) {
             values.add(value);
             schemaFields.add(SchemaField.of(++lastIndex, field, type));
             return this;
         }
 
-        public GenericData<F> build() {
-            SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
+        public DidoData build() {
+            SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
             Object[] values = new Object[lastIndex];
             Iterator<Object> valIt = this.values.iterator();
-            for (SchemaField<F> schemaField : this.schemaFields) {
+            for (SchemaField<String> schemaField : this.schemaFields) {
                 schemaBuilder.addSchemaField(schemaField);
                 values[schemaField.getIndex() - 1] = valIt.next();
             }
-            return new ArrayData<>(schemaBuilder.build(), values);
+            return new ArrayData(schemaBuilder.build(), values);
         }
     }
 }

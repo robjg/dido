@@ -53,7 +53,7 @@ public class CsvDido {
      */
     private DidoConverter converter;
 
-    public DataOutHow<String, OutputStream> toStreamOut() {
+    public DataOutHow<OutputStream> toStreamOut() {
 
         return CsvDataOutHow.withOptions()
                 .csvFormat(csvFormat)
@@ -62,7 +62,7 @@ public class CsvDido {
                 .make();
     }
 
-    public DataInHow<String, InputStream> toStreamIn() {
+    public DataInHow<InputStream> toStreamIn() {
 
         return CsvDataInHow.withOptions()
                 .csvFormat(csvFormat)

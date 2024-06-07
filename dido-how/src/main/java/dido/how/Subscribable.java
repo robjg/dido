@@ -1,16 +1,15 @@
 package dido.how;
 
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 
 import java.util.function.Consumer;
 
 /**
  * Definition of a something that pushes Generic Data and can be subscribed to.
  *
- * @param <F> The Field Type of the Data.
  */
-public interface Subscribable<F> {
+public interface Subscribable {
 
-    AutoCloseable subscribe(Consumer<? super GenericData<F>> subscriber);
+    AutoCloseable subscribe(Consumer<? super DidoData> subscriber);
 }

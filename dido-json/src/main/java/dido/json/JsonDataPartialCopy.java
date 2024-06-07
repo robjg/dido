@@ -4,7 +4,10 @@ import com.google.gson.*;
 import dido.data.*;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 public class JsonDataPartialCopy {
 
@@ -25,15 +28,15 @@ public class JsonDataPartialCopy {
     }
 
     private GsonBuilder init(GsonBuilder gsonBuilder) {
-        return gsonBuilder.registerTypeAdapter(GenericData.class,
+        return gsonBuilder.registerTypeAdapter(DidoData.class,
                 new DataDeserializer())
                 .registerTypeAdapter(RepeatingData.class, new RepeatingDeserializer());
     }
 
-    class DataDeserializer implements JsonDeserializer<GenericData<String>> {
+    class DataDeserializer implements JsonDeserializer<DidoData> {
 
         @Override
-        public GenericData<String> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public DidoData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
             if (!json.isJsonObject()) {
                 throw new JsonParseException("JsonObject expected, received: " + json +
@@ -72,7 +75,7 @@ public class JsonDataPartialCopy {
 
                         stack.removeFirst();
                         if (schemaField.isRepeating()) {
-                            RepeatingData<String> repeatingData = (RepeatingData<String>) value;
+                            RepeatingData repeatingData = (RepeatingData) value;
                             if (repeatingData.size() > 0) {
                                 childField = SchemaField.ofRepeating(++index, field,
                                         repeatingData.get(0).getSchema());

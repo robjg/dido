@@ -2,7 +2,7 @@ package dido.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.IndexedData;
 import dido.data.RepeatingData;
 import dido.how.DataOut;
@@ -15,7 +15,7 @@ import java.io.OutputStreamWriter;
 /**
  * Provide an {@link DataOut} that writes an array of JSON records.
  */
-public class StreamOutJsonLines implements DataOutHow<String, OutputStream> {
+public class StreamOutJsonLines implements DataOutHow<OutputStream> {
 
     @Override
     public Class<OutputStream> getOutType() {
@@ -23,7 +23,7 @@ public class StreamOutJsonLines implements DataOutHow<String, OutputStream> {
     }
 
     @Override
-    public DataOut<String> outTo(OutputStream outputStream) {
+    public DataOut outTo(OutputStream outputStream) {
 
         Gson gson = new GsonBuilder()
                 .registerTypeHierarchyAdapter(IndexedData.class, new DataSerializer())
@@ -33,16 +33,16 @@ public class StreamOutJsonLines implements DataOutHow<String, OutputStream> {
 
         OutputStreamWriter appendable = new OutputStreamWriter(outputStream);
 
-        return new DataOut<>() {
+        return new DataOut() {
             @Override
             public void close() throws IOException {
                 appendable.close();
             }
 
             @Override
-            public void accept(GenericData<String> stringRecordData) {
+            public void accept(DidoData stringRecordData) {
 
-                gson.toJson(stringRecordData, GenericData.class, appendable);
+                gson.toJson(stringRecordData, DidoData.class, appendable);
                 try {
                     appendable.append('\n');
                 } catch (IOException e) {

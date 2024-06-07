@@ -38,14 +38,14 @@ public class SqlDido {
     private int batchSize;
 
 
-    public DataInHow<String, Connection> toIn()  {
+    public DataInHow<Connection> toIn()  {
         return SqlDataInHow.fromSql(sql)
                 .classLoader(classLoader)
                 .batchSize(batchSize)
                 .make();
     }
 
-    public DataOutHow<String, Connection> toOut() {
+    public DataOutHow<Connection> toOut() {
         return SqlDataOutHow.fromSql(sql)
                 .classLoader(classLoader)
                 .batchSize(batchSize)

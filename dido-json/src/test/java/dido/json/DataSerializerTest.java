@@ -83,13 +83,13 @@ class DataSerializerTest {
                 .addNestedField("positions", posSchema)
                 .build();
 
-        RepeatingData<String> positions = RepeatingData.of(
+        RepeatingData positions = RepeatingData.of(
                 MapData.valuesFor(posSchema).of(1.2, 3.4),
                 MapData.valuesFor(posSchema).of(2.0, 3.0),
                 MapData.valuesFor(posSchema).of(-7.7, -8.8));
 
 
-        GenericData<String> data = MapData.valuesFor(schema)
+        DidoData data = MapData.valuesFor(schema)
                 .of("Foo", positions);
 
         Gson gson = new GsonBuilder()

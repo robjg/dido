@@ -1,15 +1,15 @@
 package dido.json;
 
 import com.google.gson.*;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.RepeatingData;
 
 import java.lang.reflect.Type;
 
-class RepeatingDeserializer implements JsonDeserializer<RepeatingData<String>> {
+class RepeatingDeserializer implements JsonDeserializer<RepeatingData> {
 
     @Override
-    public RepeatingData<String> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public RepeatingData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
         if (!json.isJsonArray()) {
             throw new JsonParseException("JsonArray expected, received: " + json +
@@ -18,9 +18,9 @@ class RepeatingDeserializer implements JsonDeserializer<RepeatingData<String>> {
 
         JsonArray jsonArray = json.getAsJsonArray();
 
-        GenericData<String>[] result = new GenericData[jsonArray.size()];
+        DidoData[] result = new DidoData[jsonArray.size()];
         for (int i = 0; i < result.length; ++i) {
-            result[i] = context.deserialize(jsonArray.get(i), GenericData.class);
+            result[i] = context.deserialize(jsonArray.get(i), DidoData.class);
         }
 
         return RepeatingData.of(result);

@@ -35,7 +35,7 @@ public class GenericDataType implements ValueFactory<GenericData<String>>, Arooa
         }
         else {
             ArooaConverter converter = session.getTools().getArooaConverter();
-            ArrayData.Builder<String> builder = ArrayData.builderForSchema(schema);
+            ArrayData.Builder builder = ArrayData.builderForSchema(schema);
             for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
                 Object value;
                 if (i > values.size()) {

@@ -13,7 +13,7 @@ class AlternativeViewTest {
     @Test
     void testSimpleFiledRename() {
 
-        ArrayData.Builder<String> produceBuilder = ArrayData.builderForSchema(
+        ArrayData.Builder produceBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.forStringFields()
                         .addField("Type", String.class)
                         .addField("Quantity", int.class)

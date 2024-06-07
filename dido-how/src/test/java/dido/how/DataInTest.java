@@ -1,5 +1,6 @@
 package dido.how;
 
+import dido.data.DidoData;
 import dido.data.GenericData;
 import org.junit.jupiter.api.Test;
 
@@ -20,10 +21,10 @@ class DataInTest {
 
 
         @SuppressWarnings("unchecked")
-        GenericData<String>[] data = (GenericData<String>[]) new GenericData[] {
-                mock(GenericData.class), mock(GenericData.class), null };
+        DidoData[] data = (DidoData[]) new DidoData[] {
+                mock(DidoData.class), mock(DidoData.class), null };
 
-        try (DataIn<String> dataIn = new DataIn<>() {
+        try (DataIn dataIn = new DataIn() {
                     int index = 0;
 
                     @Override
@@ -32,7 +33,7 @@ class DataInTest {
                     }
 
                     @Override
-                    public GenericData<String> get() {
+                    public DidoData get() {
                         return data[index++];
                     }
                 }) {
@@ -48,17 +49,17 @@ class DataInTest {
     @Test
     void iterableDoestMoveOnUntilHasNext() {
 
-        GenericData<String> data1 = mock(GenericData.class);
-        GenericData<String> data2 = mock(GenericData.class);
+        DidoData data1 = mock(DidoData.class);
+        DidoData data2 = mock(DidoData.class);
 
-        DataIn<String> dataIn = mock(DataIn.class);
+        DataIn dataIn = mock(DataIn.class);
         when(dataIn.get()).thenReturn(data1)
                 .thenReturn(data2)
                 .thenReturn(null);
 
         when(dataIn.iterator()).thenCallRealMethod();
 
-        Iterator<GenericData<String>> it = dataIn.iterator();
+        Iterator<DidoData> it = dataIn.iterator();
 
         assertThat(it.hasNext(), is(true));
         assertThat(it.next(), is(data1));

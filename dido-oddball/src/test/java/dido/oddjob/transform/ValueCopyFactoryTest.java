@@ -32,7 +32,7 @@ class ValueCopyFactoryTest {
         test.setType(Integer.class);
         test.setTo("FooAmount");
 
-        TransformerFactory<String, String> transformerFactory = test.toValue();
+        TransformerFactory transformerFactory = test.toValue();
 
         DataSchema<String> inSchema = SchemaBuilder.forStringFields()
                 .addField("Foo", String.class)
@@ -40,13 +40,13 @@ class ValueCopyFactoryTest {
 
         SchemaSetter<String> schemaSetter = mock(SchemaSetter.class);
 
-        Transformer<String, String> transformer = transformerFactory.create(1, inSchema, schemaSetter);
+        Transformer transformer = transformerFactory.create(1, inSchema, schemaSetter);
 
         verify(schemaSetter).setFieldAt(1, "FooAmount", Integer.class);
 
         DataSetter<String> dataSetter = mock(DataSetter.class);
 
-        GenericData<String> data = MapData.of("Foo", "423");
+        DidoData data = MapData.of("Foo", "423");
 
         transformer.transform(data, dataSetter);
 
@@ -63,7 +63,7 @@ class ValueCopyFactoryTest {
         test.setType(int.class);
         test.setTo("FooAmount");
 
-        TransformerFactory<String, String> transformerFactory = test.toValue();
+        TransformerFactory transformerFactory = test.toValue();
 
         DataSchema<String> inSchema = SchemaBuilder.forStringFields()
                 .addField("Foo", String.class)
@@ -71,13 +71,13 @@ class ValueCopyFactoryTest {
 
         SchemaSetter<String> schemaSetter = mock(SchemaSetter.class);
 
-        Transformer<String, String> transformer = transformerFactory.create(1, inSchema, schemaSetter);
+        Transformer transformer = transformerFactory.create(1, inSchema, schemaSetter);
 
         verify(schemaSetter).setFieldAt(1, "FooAmount", int.class);
 
         DataSetter<String> dataSetter = mock(DataSetter.class);
 
-        GenericData<String> data = MapData.of("Foo", "423");
+        DidoData data = MapData.of("Foo", "423");
 
         transformer.transform(data, dataSetter);
 
