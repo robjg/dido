@@ -17,7 +17,7 @@ class MapDataTest {
 
         DataBuilder builder = MapData.newBuilderNoSchema();
 
-        GenericData<String> data1 = builder
+        DidoData data1 = builder
                 .setString("type", "apple")
                 .setInt("qty", 2)
                 .setDouble("price", 26.3)
@@ -28,14 +28,14 @@ class MapDataTest {
         assertThat(data1.getInt("qty"), is(2));
         assertThat(data1.getDouble("price"), is(26.3));
 
-        DataSchema<String> schema1 = data1.getSchema();
+        DataSchema schema1 = data1.getSchema();
 
-        assertThat(schema1.getType("type"), is(String.class));
-        assertThat(schema1.getType("qty"), is(int.class));
-        assertThat(schema1.getType("price"), is(double.class));
-        assertThat(schema1.getType("date"), is(Date.class));
+        assertThat(schema1.getTypeNamed("type"), is(String.class));
+        assertThat(schema1.getTypeNamed("qty"), is(int.class));
+        assertThat(schema1.getTypeNamed("price"), is(double.class));
+        assertThat(schema1.getTypeNamed("date"), is(Date.class));
 
-        GenericData<String> data2 = builder
+        DidoData data2 = builder
                 .setString("type", "apple")
                 .setLong("qty", 2)
                 .setFloat("price", 26.3F)
@@ -47,18 +47,18 @@ class MapDataTest {
         assertThat((double) data2.getFloat("price"), closeTo(26.3, 0.01));
         assertThat(data2.getBoolean("offer"), is(true));
 
-        DataSchema<String> schema2 = data2.getSchema();
+        DataSchema schema2 = data2.getSchema();
 
-        assertThat(schema2.getType("type"), is(String.class));
-        assertThat(schema2.getType("qty"), is(long.class));
-        assertThat(schema2.getType("price"), is(float.class));
-        assertThat(schema2.getType("offer"), is(boolean.class));
+        assertThat(schema2.getTypeNamed("type"), is(String.class));
+        assertThat(schema2.getTypeNamed("qty"), is(long.class));
+        assertThat(schema2.getTypeNamed("price"), is(float.class));
+        assertThat(schema2.getTypeNamed("offer"), is(boolean.class));
     }
 
     @Test
     void testCreateWithOf() {
 
-        GenericData<String> data = MapData.of(
+        DidoData data = MapData.of(
                 "type", "apple",
                 "qty", 2,
                 "price", 26.3F,
@@ -69,24 +69,24 @@ class MapDataTest {
         assertThat((double) data.getFloat("price"), closeTo(26.3, 0.01));
         assertThat(data.getBoolean("offer"), is(true));
 
-        DataSchema<String> schema = data.getSchema();
+        DataSchema schema = data.getSchema();
 
-        assertThat(schema.getType("type"), is(String.class));
-        assertThat(schema.getType("qty"), is(Integer.class));
-        assertThat(schema.getType("price"), is(Float.class));
-        assertThat(schema.getType("offer"), is(Boolean.class));
+        assertThat(schema.getTypeNamed("type"), is(String.class));
+        assertThat(schema.getTypeNamed("qty"), is(Integer.class));
+        assertThat(schema.getTypeNamed("price"), is(Float.class));
+        assertThat(schema.getTypeNamed("offer"), is(Boolean.class));
     }
 
     @Test
     void testToString() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("type", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
                 .build();
 
-        GenericData<String> data1 = MapData.newBuilder(schema)
+        DidoData data1 = MapData.newBuilder(schema)
                 .setString("type", "apple")
                 .setInt("qty", 2)
                 .setDouble("price", 26.3)
@@ -98,13 +98,13 @@ class MapDataTest {
     @Test
     void testEqualsAndHashCode() {
 
-        GenericData<String> data1 = MapData.newBuilderNoSchema()
+        DidoData data1 = MapData.newBuilderNoSchema()
                 .setString("type", "apple")
                 .setInt("qty", 2)
                 .setDouble("price", 26.3)
                 .build();
 
-        GenericData<String> data2 = MapData.newBuilderNoSchema()
+        DidoData data2 = MapData.newBuilderNoSchema()
                 .setString("type", "apple")
                 .setInt("qty", 2)
                 .setDouble("price", 26.3)
@@ -117,17 +117,17 @@ class MapDataTest {
     @Test
     void testBuilderOf() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("type", String.class)
                 .addField("foo", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
                 .build();
 
-        GenericData<String> data1 = ArrayData.valuesFor(schema)
+        DidoData data1 = ArrayData.valuesFor(schema)
                 .of("Apple", null, 15, 26.5);
 
-        GenericData<String> data2 = MapData.valuesFor(schema)
+        DidoData data2 = MapData.valuesFor(schema)
                 .of("Apple", null, 15, 26.5);
 
         assertThat(data1, is(data2));

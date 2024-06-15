@@ -1,7 +1,7 @@
 package dido.poi.layouts;
 
 import dido.data.ArrayData;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;
@@ -53,7 +53,7 @@ class DateCellTest {
 
         DataIn reader = rows.inFrom(workbook);
 
-        GenericData<String> result = reader.get();
+        DidoData result = reader.get();
 
         assertThat(result.getAt(1), is(DateHelper.parseDate("2021-09-22")));
 

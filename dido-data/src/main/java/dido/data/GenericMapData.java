@@ -10,11 +10,11 @@ import java.util.Objects;
  */
 public class GenericMapData<F> extends AbstractGenericData<F> {
 
-    private final DataSchema<F> schema;
+    private final GenericDataSchema<F> schema;
 
     private final Map<F, ?> map;
 
-    private GenericMapData(DataSchema<F> schema, Map<F, ?> map) {
+    private GenericMapData(GenericDataSchema<F> schema, Map<F, ?> map) {
         this.schema = schema;
         this.map = map;
     }
@@ -89,7 +89,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         return builder.build();
     }
 
-    public static <F> DataSchema<F> schemaFromMap(Map<F, ?> map) {
+    public static <F> GenericDataSchema<F> schemaFromMap(Map<F, ?> map) {
 
         SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
         for (Map.Entry<F, ?> entry : map.entrySet()) {
@@ -98,7 +98,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         return schemaBuilder.build();
     }
 
-    public static <F> GenericDataBuilder<F> newBuilder(DataSchema<F> schema) {
+    public static <F> GenericDataBuilder<F> newBuilder(GenericDataSchema<F> schema) {
 
         return new BuilderWithSchema<>(schema);
     }
@@ -108,38 +108,38 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         return new BuilderNoSchema<>();
     }
 
-    public static <F> GenericDataBuilders.Values<F> valuesFor(DataSchema<F> schema) {
+    public static <F> GenericDataBuilders.Values<F> valuesFor(GenericDataSchema<F> schema) {
 
         return new BuilderWithSchema(schema).values();
     }
 
-    public static <F> BuilderWithSchema<F> copy(IndexedData<F> from) {
+    public static <F> BuilderWithSchema<F> copy(GenericData<F> from) {
 
         return new BuilderWithSchema<>(from.getSchema()).copy(from);
     }
 
     @Override
     public Object getAt(int index) {
-        return get(schema.getFieldAt(index));
+        return getOf(schema.getFieldAt(index));
     }
 
     @Override
     public boolean hasIndex(int index) {
-        return hasField(schema.getFieldAt(index));
+        return hasFieldOf(schema.getFieldAt(index));
     }
 
     @Override
-    public Object get(F field) {
+    public Object getOf(F field) {
         return map.get(field);
     }
 
     @Override
-    public boolean hasField(F field) {
+    public boolean hasFieldOf(F field) {
         return map.containsKey(field);
     }
 
     @Override
-    public DataSchema<F> getSchema() {
+    public GenericDataSchema<F> getSchema() {
         return schema;
     }
 
@@ -157,7 +157,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
 
         private Map<F, Object> map = new HashMap<>();
 
-        BuilderWithSchema(DataSchema<F> schema) {
+        BuilderWithSchema(GenericDataSchema<F> schema) {
             super(schema);
         }
 
@@ -274,9 +274,9 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
      */
     public static class Values<F> {
 
-        private final DataSchema<F> schema;
+        private final GenericDataSchema<F> schema;
 
-        Values(DataSchema<F> schema) {
+        Values(GenericDataSchema<F> schema) {
             this.schema = Objects.requireNonNull(schema);
         }
 

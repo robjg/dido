@@ -1,6 +1,6 @@
 package dido.oddjob.bean;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 import org.oddjob.arooa.types.ValueFactory;
 
 import java.util.Arrays;
@@ -8,30 +8,30 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-public class SpecialCharsTransformer implements ValueFactory<Function<GenericData<String>, GenericData<String>>> {
+public class SpecialCharsTransformer implements ValueFactory<Function<DidoData, DidoData>> {
 
     /** The characters in a field name that need to be replace. */
     private final static Set<Character> special =
             new HashSet<>(Arrays.asList('[', ']', '(', ')', '.'));
 
     @Override
-    public Function<GenericData<String>, GenericData<String>> toValue() {
+    public Function<DidoData, DidoData> toValue() {
         return new Impl();
     }
 
-    static class Impl implements Function<GenericData<String>, GenericData<String>> {
+    static class Impl implements Function<DidoData, DidoData> {
 
-        private Function<GenericData<String>, GenericData<String>> renamedData;
+        private Function<DidoData, DidoData> renamedData;
 
         @Override
-        public GenericData<String> apply(GenericData<String> data) {
+        public DidoData apply(DidoData data) {
 
             if (renamedData == null) {
 
-                RenamedData.TransformBuilder<String, String> builder =
+                RenamedData.TransformBuilder builder =
                         RenamedData.transformerWithNameClash(to -> to + "_");
 
-                for (String field : data.getSchema().getFields()) {
+                for (String field : data.getSchema().getFieldNames()) {
                     builder.addMapping(field, replaceSpecialCharacters(field));
                 }
 

@@ -7,7 +7,7 @@ package dido.data;
  *
  * @param <F> The field type of the schema.
  */
-abstract public class AbstractIndexedData<F> implements IndexedData<F> {
+abstract public class AbstractIndexedData implements IndexedData {
 
     private volatile int hash = 0;
 
@@ -78,7 +78,7 @@ abstract public class AbstractIndexedData<F> implements IndexedData<F> {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof IndexedData) {
-            return IndexedData.equals(this, (IndexedData<?>) obj);
+            return IndexedData.equals(this, (IndexedData) obj);
         }
         else {
             return false;

@@ -33,12 +33,12 @@ class TransformTest {
 
         DidoData result = func.apply(data);
 
-        DataSchema<String> schema = result.getSchema();
+        DataSchema schema = result.getSchema();
 
-        assertThat(schema.getFieldAt(1), is("food"));
-        assertThat(schema.getType("food"), is(String.class));
-        assertThat(schema.getFieldAt(2), is("quantity"));
-        assertThat(schema.getType("quantity"), is(Integer.class));
+        assertThat(schema.getFieldNameAt(1), is("food"));
+        assertThat(schema.getTypeNamed("food"), is(String.class));
+        assertThat(schema.getFieldNameAt(2), is("quantity"));
+        assertThat(schema.getTypeNamed("quantity"), is(Integer.class));
 
         assertThat(result.get("food"), is("apple"));
         assertThat(result.getAt(1), is("apple"));
@@ -66,10 +66,10 @@ class TransformTest {
 
         DidoData result = func.apply(data);
 
-        DataSchema<String> schema = result.getSchema();
+        DataSchema schema = result.getSchema();
 
-        assertThat(schema.getFieldAt(1), is("food"));
-        assertThat(schema.getType("food"), is(String.class));
+        assertThat(schema.getFieldNameAt(1), is("food"));
+        assertThat(schema.getTypeNamed("food"), is(String.class));
         assertThat(schema.lastIndex(), is(1));
 
         assertThat(result.get("food"), is("apple"));
@@ -87,12 +87,12 @@ class TransformTest {
 
         DidoData result = func.apply(data);
 
-        DataSchema<String> schema = result.getSchema();
+        DataSchema schema = result.getSchema();
 
-        assertThat(schema.getFieldAt(1), is("fruit"));
-        assertThat(schema.getType("fruit"), is(String.class));
-        assertThat(schema.getFieldAt(2), is("quantity"));
-        assertThat(schema.getType("quantity"), is(Integer.class));
+        assertThat(schema.getFieldNameAt(1), is("fruit"));
+        assertThat(schema.getTypeNamed("fruit"), is(String.class));
+        assertThat(schema.getFieldNameAt(2), is("quantity"));
+        assertThat(schema.getTypeNamed("quantity"), is(Integer.class));
 
         assertThat(result.get("fruit"), is("apple"));
         assertThat(result.getAt(1), is("apple"));

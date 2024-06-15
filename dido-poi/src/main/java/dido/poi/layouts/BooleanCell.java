@@ -1,6 +1,6 @@
 package dido.poi.layouts;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
@@ -31,7 +31,7 @@ public class BooleanCell extends AbstractDataCell<Boolean> {
     }
 
     @Override
-    void insertValueInto(Cell cell, int index, GenericData<String> data) {
+    void insertValueInto(Cell cell, int index, DidoData data) {
 
         Boolean value = Optional.ofNullable(this.value)
                 .orElseGet(() -> data.getAtAs(index, Boolean.class));

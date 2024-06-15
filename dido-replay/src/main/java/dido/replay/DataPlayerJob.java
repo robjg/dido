@@ -1,5 +1,6 @@
 package dido.replay;
 
+import dido.data.DidoData;
 import dido.data.GenericData;
 import dido.how.CloseableSupplier;
 
@@ -32,7 +33,7 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
 
     private volatile int playBackSpeed;
 
-    private volatile Consumer<? super GenericData<String>> to;
+    private volatile Consumer<? super DidoData> to;
 
     private final AtomicInteger count = new AtomicInteger();
 
@@ -56,7 +57,7 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
 
         count.set(0);
 
-        Consumer<? super GenericData<String>> to = Objects.requireNonNull(this.to, "No to");
+        Consumer<? super DidoData> to = Objects.requireNonNull(this.to, "No to");
 
         try (CloseableSupplier<DataPlayer.TimedData> supplier =
                      DataPlayer.withSettings()
@@ -185,7 +186,7 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
         return to;
     }
 
-    public void setTo(Consumer<? super GenericData<String>> to) {
+    public void setTo(Consumer<? super DidoData> to) {
         this.to = to;
     }
 

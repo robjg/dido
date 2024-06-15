@@ -1,7 +1,7 @@
 package dido.poi.layouts;
 
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
@@ -37,12 +37,12 @@ public class DateCell extends AbstractDataCell<Date> {
 	}
 
 	@Override
-	void insertValueInto(Cell cell, int index, GenericData<String> data) {
+	void insertValueInto(Cell cell, int index, DidoData data) {
 
 		Date value = this.value;
 		if (value == null) {
 
-			DataSchema<String> schema = data.getSchema();
+			DataSchema schema = data.getSchema();
 			Class<?> dataType = schema.getTypeAt(index);
 
 			if (Date.class.isAssignableFrom(dataType)) {

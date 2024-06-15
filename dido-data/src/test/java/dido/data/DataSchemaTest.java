@@ -1,5 +1,6 @@
 package dido.data;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,22 +13,22 @@ public class DataSchemaTest {
     @Test
     public void testEmptySchema() {
 
-        DataSchema<String> schema = DataSchema.emptySchema();
+        DataSchema schema = DataSchema.emptySchema();
 
         assertThat(schema.firstIndex(), is(0));
         assertThat(schema.lastIndex(), is(0));
         assertThat(schema.nextIndex(0), is(0));
-        assertThat(schema.getFields().isEmpty(), is(true));
+        assertThat(schema.getFieldNames(), Matchers.empty());
     }
 
     @Test
     public void testEmptySchemaEquality() {
 
-        DataSchema<String> schema1 = DataSchema.emptySchema();
+        DataSchema schema1 = GenericDataSchema.emptySchema();
 
-        DataSchema<String> schema2 = DataSchema.emptySchema();
+        DataSchema schema2 = GenericDataSchema.emptySchema();
 
-        DataSchema<Integer> schema3 = DataSchema.emptySchema();
+        DataSchema schema3 = GenericDataSchema.emptySchema();
 
         assertThat(schema1.hashCode(), is(0));
 
@@ -40,8 +41,8 @@ public class DataSchemaTest {
     @Test
     public void testEqualsDifferentLengths() {
 
-        DataSchema<?> schema1 = mock(DataSchema.class);
-        DataSchema<?> schema2 = mock(DataSchema.class);
+        DataSchema schema1 = mock(GenericDataSchema.class);
+        DataSchema schema2 = mock(GenericDataSchema.class);
 
         when(schema1.firstIndex()).thenReturn(2);
         when(schema1.nextIndex(2)).thenReturn(4);

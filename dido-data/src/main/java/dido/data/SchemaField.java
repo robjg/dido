@@ -3,15 +3,11 @@ package dido.data;
 import java.util.Objects;
 
 /**
- * Definition of a field in a {@link DataSchema}.
- *
- * @param <F> The Field type.
+ * Definition of a field in an {@link DataSchema}.
+ * Schema fields should always be equal if their index, type and name match regardless of any other attributes
+ * they might have.
  */
-public interface SchemaField<F> {
-
-    Class<?> NESTED_TYPE = DidoData.class;
-
-    Class<?> NESTED_REPEATING_TYPE = RepeatingData.class;
+public interface SchemaField {
 
     int getIndex();
 
@@ -21,98 +17,97 @@ public interface SchemaField<F> {
 
     boolean isRepeating();
 
-    F getField();
+    String getName();
 
-    <N> DataSchema<N> getNestedSchema();
+    DataSchema getNestedSchema();
 
-    default SchemaField<F> mapToIndex(int toIndex) {
+    default SchemaField mapToIndex(int toIndex) {
         return mapTo(toIndex, null);
     }
 
-    default <T> SchemaField<T> mapToField(T toField) {
+    default SchemaField mapToField(String toField) {
         return mapTo(0, toField);
     }
 
-    default <T> SchemaField<T> mapTo(int toIndex, T toField) {
+    default SchemaField mapTo(int toIndex, String toField) {
 
         if (toIndex == 0) {
             toIndex = getIndex();
         }
 
         if (toField == null) {
-            //noinspection unchecked
-            toField = (T) getField();
+            toField = getName();
         }
 
         if (isNested()) {
             if (isRepeating()) {
                 return ofRepeating(toIndex, toField, getNestedSchema());
-            }
-            else {
+            } else {
                 return ofNested(toIndex, toField, getNestedSchema());
             }
-        }
-        else {
-            return of(toIndex, toField, getType() );
+        } else {
+            return of(toIndex, toField, getType());
         }
     }
 
-    static <F> SchemaField<F> of(int index, Class<?> type) {
+    static SchemaField of(int index, Class<?> type) {
         return SchemaFields.of(index, type);
     }
 
-    static <F> SchemaField<F> of(int index, F field, Class<?> type) {
+    static SchemaField of(int index, String field, Class<?> type) {
         return SchemaFields.of(index, field, type);
     }
 
-    static <F, N> SchemaField<F> ofNested(int index, DataSchema<N> nested) {
+    static SchemaField ofNested(int index, DataSchema nested) {
         return SchemaFields.ofNested(index, nested);
     }
 
-    static <F, N> SchemaField<F> ofNested(int index, F field, DataSchema<N> nested) {
+    static SchemaField ofNested(int index, String field, DataSchema nested) {
         return SchemaFields.ofNested(index, field, nested);
     }
 
-    static <F, N> SchemaField<F> ofNested(int index, SchemaReference<N> nestedRef) {
+    static SchemaField ofNested(int index, SchemaReference<?> nestedRef) {
         return SchemaFields.ofNested(index, nestedRef);
     }
 
-    static <F, N> SchemaField<F> ofNested(int index, F field, SchemaReference<N> nestedRef) {
+    static SchemaField ofNested(int index, String field, SchemaReference<?> nestedRef) {
         return SchemaFields.ofNested(index, field, nestedRef);
     }
 
-    static <F, N> SchemaField<F> ofRepeating(int index, DataSchema<N> nested) {
+    static SchemaField ofRepeating(int index, DataSchema nested) {
         return SchemaFields.ofRepeating(index, nested);
     }
 
-    static <F, N> SchemaField<F> ofRepeating(int index, F field, DataSchema<N> nested) {
+    static SchemaField ofRepeating(int index, String field, DataSchema nested) {
         return SchemaFields.ofRepeating(index, field, nested);
     }
 
-    static <F, N> SchemaField<F> ofRepeating(int index, SchemaReference<N> nestedRef) {
+    static SchemaField ofRepeating(int index, SchemaReference<?> nestedRef) {
         return SchemaFields.ofRepeating(index, nestedRef);
     }
 
-    static <F, N> SchemaField<F> ofRepeating(int index, F field, SchemaReference<N> nestedRef) {
+    static SchemaField ofRepeating(int index, String field, SchemaReference<?> nestedRef) {
         return SchemaFields.ofRepeating(index, field, nestedRef);
     }
 
-    static int hashCode(SchemaField<?> schemaField) {
-        return Objects.hash(
-                schemaField.getIndex(),
-                schemaField.getType(),
-                schemaField.getField(),
-                schemaField.isNested(),
-                schemaField.isRepeating(),
-                schemaField.getNestedSchema());
+    static int hash(SchemaField field) {
+        return field.getIndex();
     }
 
-    static boolean equals(SchemaField<?> schemaField1, SchemaField<?> schemaField2) {
-        return schemaField1.getIndex() == schemaField2.getIndex()
-                && schemaField1.getType() == schemaField2.getType()
-                && schemaField1.isNested() == schemaField2.isNested()
-                && schemaField1.isRepeating() == schemaField2.isRepeating()
-                && Objects.equals(schemaField1.getField(), schemaField2.getField())
-                && Objects.equals(schemaField1.getNestedSchema(), schemaField2.getNestedSchema());
+    static boolean equals(SchemaField field1, SchemaField field2) {
+        if (field1 == field2) {
+            return true;
+        }
+        if (field1 == null | field2 == null) {
+            return false;
+        }
+
+        return field1.getIndex() == field2.getIndex() &&
+                Objects.equals(field1.getName(), field2.getName()) &&
+                Objects.equals(field1.getType(), field2.getType()) &&
+                field1.isNested() == field2.isNested() &&
+                field1.isRepeating() == field2.isRepeating() &&
+                DataSchema.equals(field1.getNestedSchema(), field2.getNestedSchema());
     }
+
 }

@@ -1,15 +1,8 @@
 package dido.poi.utils;
 
 import dido.data.DataSchema;
+import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Test;
-import org.oddjob.arooa.utils.DateHelper;
 import dido.poi.RowIn;
 import dido.poi.RowsIn;
 import dido.poi.data.DataCell;
@@ -19,6 +12,14 @@ import dido.poi.layouts.DateCell;
 import dido.poi.layouts.NumericCell;
 import dido.poi.layouts.TextCell;
 import dido.poi.style.DefaultStyleProivderFactory;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
+import org.oddjob.arooa.utils.DateHelper;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -39,12 +40,12 @@ class SchemaAndCellsTest {
 
         SchemaAndCells test = SchemaAndCells.fromSchemaOrCells(null, Collections.singletonList(cell));
 
-        DataSchema<String> schema = test.getSchema();
+        DataSchema schema = test.getSchema();
 
         assertThat(schema.firstIndex(), is(1));
         assertThat(schema.lastIndex(), is(1));
         assertThat(schema.nextIndex(1), is(0));
-        assertThat(schema.getFieldAt(1), nullValue());
+        assertThat(schema.getFieldNameAt(1), nullValue());
         assertThat(schema.getTypeAt(1), is(String.class));
     }
 
@@ -62,13 +63,13 @@ class SchemaAndCellsTest {
 
         SchemaAndCells test = SchemaAndCells.fromSchemaOrCells(null, Arrays.asList(fruitCell, qtyCell));
 
-        DataSchema<String> schema = test.getSchema();
+        DataSchema schema = test.getSchema();
 
         assertThat(schema.firstIndex(), is(3));
         assertThat(schema.lastIndex(), is(7));
         assertThat(schema.nextIndex(3), is(7));
-        assertThat(schema.getFieldAt(3), is("Fruit"));
-        assertThat(schema.getFieldAt(7), is("Qty"));
+        assertThat(schema.getFieldNameAt(3), is("Fruit"));
+        assertThat(schema.getFieldNameAt(7), is("Qty"));
         assertThat(schema.getTypeAt(3), is(String.class));
         assertThat(schema.getTypeAt(7), is(Double.class));
     }
@@ -76,7 +77,7 @@ class SchemaAndCellsTest {
     @Test
     void testFromSchema() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("String", String.class)
                 .addField("Boolean", boolean.class)
                 .addField("Byte", byte.class)
@@ -157,22 +158,22 @@ class SchemaAndCellsTest {
 
         SchemaAndCells schemaAndCells = SchemaAndCells.fromRowAndHeadings(rowIn, headings);
 
-        DataSchema<String> schema = schemaAndCells.getSchema();
+        DataSchema schema = schemaAndCells.getSchema();
 
         assertThat(schema.firstIndex(), is(1));
         assertThat(schema.lastIndex(), is(4));
         assertThat(schema.getTypeAt(1), is(String.class));
-        assertThat(schema.getType("Fruit"), is(String.class));
+        assertThat(schema.getTypeNamed("Fruit"), is(String.class));
         assertThat(schema.getTypeAt(2), is(Double.class));
-        assertThat(schema.getType("Qty"), is(Double.class));
+        assertThat(schema.getTypeNamed("Qty"), is(Double.class));
         assertThat(schema.getTypeAt(3), is(Double.class));
-        assertThat(schema.getType("Price"), is(Double.class));
+        assertThat(schema.getTypeNamed("Price"), is(Double.class));
         assertThat(schema.getTypeAt(4), is(Date.class));
-        assertThat(schema.getType("BestBefore"), is(Date.class));
+        assertThat(schema.getTypeNamed("BestBefore"), is(Date.class));
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));
         assertThat(schema.nextIndex(3), is(4));
         assertThat(schema.nextIndex(4), is(0));
-        assertThat(schema.getFields(), Matchers.contains("Fruit", "Qty", "Price", "BestBefore"));
+        assertThat(schema.getFieldNames(), Matchers.contains("Fruit", "Qty", "Price", "BestBefore"));
     }
 }

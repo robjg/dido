@@ -15,13 +15,13 @@ import java.util.Objects;
  */
 public class JsonSchemaExtractor {
 
-    private DataSchema<String> prioritySchema;
+    private DataSchema prioritySchema;
 
-    private JsonSchemaExtractor(DataSchema<String> prioritySchema) {
+    private JsonSchemaExtractor(DataSchema prioritySchema) {
         this.prioritySchema = Objects.requireNonNull(prioritySchema);
     }
 
-    public static JsonSchemaExtractor withPartialSchema(DataSchema<String> schema) {
+    public static JsonSchemaExtractor withPartialSchema(DataSchema schema) {
         return new JsonSchemaExtractor(schema);
     }
 
@@ -35,7 +35,7 @@ public class JsonSchemaExtractor {
     }
 
     public static GsonBuilder registerPartialSchema(GsonBuilder gsonBuilder,
-                                                    DataSchema<String> partialSchema) {
+                                                    DataSchema partialSchema) {
         return new JsonSchemaExtractor(partialSchema).init(gsonBuilder);
     }
 
@@ -44,14 +44,14 @@ public class JsonSchemaExtractor {
                 .registerTypeAdapter(RepeatingSchema.class, new RepeatingSchemaDeserializer());
     }
 
-    public DataSchema<String> fromString(String json) throws JsonParseException {
+    public DataSchema fromString(String json) throws JsonParseException {
 
         Gson gson = init(new GsonBuilder()).create();
 
         return gson.fromJson(json, DataSchema.class);
     }
 
-    public DataSchema<String> fromElement(JsonObject jsonObject) throws JsonParseException {
+    public DataSchema fromElement(JsonObject jsonObject) throws JsonParseException {
 
         Gson gson = init(new GsonBuilder()).create();
 
@@ -75,7 +75,7 @@ public class JsonSchemaExtractor {
                                 String field,
                                 JsonArray jsonArray) {
 
-        if (jsonArray.size() > 0) {
+        if (!jsonArray.isEmpty()) {
 
             JsonElement element = jsonArray.get(0);
 
@@ -103,40 +103,40 @@ public class JsonSchemaExtractor {
         }
     }
 
-    class SchemaDeserializer implements JsonDeserializer<DataSchema<String>> {
+    class SchemaDeserializer implements JsonDeserializer<DataSchema> {
 
         @Override
-        public DataSchema<String> deserialize(JsonElement json,
-                                              Type typeOfT,
-                                              JsonDeserializationContext context) throws JsonParseException {
+        public DataSchema deserialize(JsonElement json,
+                                                     Type typeOfT,
+                                                     JsonDeserializationContext context) throws JsonParseException {
 
             JsonObject jsonObject = json.getAsJsonObject();
 
-            DataSchema<String> prioritySchema = JsonSchemaExtractor.this.prioritySchema;
+            DataSchema prioritySchema = JsonSchemaExtractor.this.prioritySchema;
             SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
 
-            LinkedList<String> schemaFields = new LinkedList<>(prioritySchema.getFields());
+            LinkedList<String> fieldNames = new LinkedList<>(prioritySchema.getFieldNames());
 
             for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
 
-                String field = entry.getKey();
+                String fieldName = entry.getKey();
                 JsonElement element = entry.getValue();
 
-                SchemaField<String> schemaField = prioritySchema.getSchemaField(field);
+                SchemaField schemaField = prioritySchema.getSchemaFieldNamed(fieldName);
 
                 if (schemaField == null) {
 
                     if (element.isJsonPrimitive()) {
 
-                        processPrimitive(schemaBuilder, field,
+                        processPrimitive(schemaBuilder, fieldName,
                                 element.getAsJsonPrimitive());
                     } else if (element.isJsonArray()) {
 
-                        processArray(schemaBuilder, field,
+                        processArray(schemaBuilder, fieldName,
                                 element.getAsJsonArray());
                     } else {
 
-                        schemaBuilder.addField(field, Map.class);
+                        schemaBuilder.addField(fieldName, Map.class);
                     }
 
                 } else {
@@ -149,23 +149,23 @@ public class JsonSchemaExtractor {
 
                             RepeatingSchema repeatingSchema = context.deserialize(element, RepeatingSchema.class);
 
-                            schemaBuilder.addRepeatingField(field, repeatingSchema.nestedSchema);
+                            schemaBuilder.addRepeatingField(fieldName, repeatingSchema.nestedSchema);
                         } else {
 
-                            DataSchema<String> nestedSchema = context.deserialize(element, DataSchema.class);
+                            DataSchema nestedSchema = context.deserialize(element, DataSchema.class);
 
-                            schemaBuilder.addNestedField(field, nestedSchema);
+                            schemaBuilder.addNestedField(fieldName, nestedSchema);
                         }
                     } else {
 
-                        schemaBuilder.addField(field, schemaField.getType());
+                        schemaBuilder.addField(fieldName, schemaField.getType());
                     }
                 }
 
-                schemaFields.remove(field);
+                fieldNames.remove(fieldName);
             }
 
-            schemaFields.forEach(f -> schemaBuilder.addField(f, prioritySchema.getType(f)));
+            fieldNames.forEach(f -> schemaBuilder.addField(f, prioritySchema.getTypeNamed(f)));
 
             return schemaBuilder.build();
         }
@@ -173,9 +173,9 @@ public class JsonSchemaExtractor {
 
     static class RepeatingSchema {
 
-        private final DataSchema<String> nestedSchema;
+        private final DataSchema nestedSchema;
 
-        RepeatingSchema(DataSchema<String> nestedSchema) {
+        RepeatingSchema(DataSchema nestedSchema) {
             this.nestedSchema = nestedSchema;
         }
     }
@@ -192,11 +192,11 @@ public class JsonSchemaExtractor {
 
             JsonArray jsonArray = json.getAsJsonArray();
 
-            if (jsonArray.size() == 0) {
+            if (jsonArray.isEmpty()) {
                 return new RepeatingSchema(JsonSchemaExtractor.this.prioritySchema);
 
             } else {
-                DataSchema<String> nested = context.deserialize(
+                DataSchema nested = context.deserialize(
                         jsonArray.get(0), DataSchema.class);
 
                 return new RepeatingSchema(nested);

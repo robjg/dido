@@ -110,8 +110,8 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaS
 
         @Override
         public Transformer create(int position,
-                                  DataSchema<String> fromSchema,
-                                  SchemaSetter<String> schemaSetter) {
+                                  DataSchema fromSchema,
+                                  SchemaSetter schemaSetter) {
 
             int at;
 
@@ -119,7 +119,7 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaS
                 if (this.from == null) {
                     at = position;
                 } else {
-                    at = fromSchema.getIndex(this.from);
+                    at = fromSchema.getIndexNamed(this.from);
                 }
             } else {
                 at = this.index;
@@ -127,7 +127,7 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaS
 
             String to = from;
             if (to == null) {
-                to = fromSchema.getFieldAt(at);
+                to = fromSchema.getFieldNameAt(at);
             }
 
             Class<?> toType = type;

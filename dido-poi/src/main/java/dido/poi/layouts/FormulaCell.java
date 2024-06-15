@@ -1,6 +1,6 @@
 package dido.poi.layouts;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -16,7 +16,7 @@ public abstract class FormulaCell<T> extends AbstractDataCell<T> {
 	}
 
 	@Override
-	void insertValueInto(Cell cell, int index, GenericData<String> data) {
+	void insertValueInto(Cell cell, int index, DidoData data) {
 
 		try {
 			cell.setCellFormula(formula);

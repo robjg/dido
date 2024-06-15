@@ -2,7 +2,7 @@ package dido.sql;
 
 import dido.data.ArrayData;
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import dido.how.DataOut;
@@ -77,17 +77,17 @@ public class SqlDataHowTest {
         DataIn reader = inHow.inFrom(connectionIn);
 
         {
-            GenericData<String> fruit = reader.get();
+            DidoData fruit = reader.get();
             assertThat(fruit.getString("type"), is("apple"));
             assertThat(fruit.getInt("quantity"), is(20));
         }
         {
-            GenericData<String> fruit = reader.get();
+            DidoData fruit = reader.get();
             assertThat(fruit.getString("type"), is("banana"));
             assertThat(fruit.getInt("quantity"), is(10));
         }
         {
-            GenericData<String> fruit = reader.get();
+            DidoData fruit = reader.get();
             assertThat(fruit.getString("type"), is("orange"));
             assertThat(fruit.getInt("quantity"), is(102));
         }
@@ -143,9 +143,9 @@ public class SqlDataHowTest {
         DataIn reader = inHow.inFrom(connectionIn);
 
         {
-            GenericData<String> numbers = reader.get();
+            DidoData numbers = reader.get();
 
-            DataSchema<String> schema = numbers.getSchema();
+            DataSchema schema = numbers.getSchema();
 
             assertThat(schema.firstIndex(), is(1));
             assertThat(schema.lastIndex(), is(9));
@@ -153,17 +153,17 @@ public class SqlDataHowTest {
             assertThat(schema.nextIndex(4), is(5));
             assertThat(schema.nextIndex(9), is(0));
 
-            assertThat(schema.getFields(), contains("A_TINYINT", "A_SMALLINT", "A_INTEGER", "A_BIGINT", "A_NUMERIC", "A_DECIMAL", "A_REAL", "A_FLOAT", "A_DOUBLE"));
+            assertThat(schema.getFieldNames(), contains("A_TINYINT", "A_SMALLINT", "A_INTEGER", "A_BIGINT", "A_NUMERIC", "A_DECIMAL", "A_REAL", "A_FLOAT", "A_DOUBLE"));
 
-            assertThat(schema.getType("A_TINYINT"), is(Integer.class));
-            assertThat(schema.getType("A_SMALLINT"), is(Integer.class));
-            assertThat(schema.getType("A_INTEGER"), is(Integer.class));
-            assertThat(schema.getType("A_BIGINT"), is(Long.class));
-            assertThat(schema.getType("A_NUMERIC"), is(BigDecimal.class));
-            assertThat(schema.getType("A_DECIMAL"), is(BigDecimal.class));
-            assertThat(schema.getType("A_REAL"), is(Double.class));
-            assertThat(schema.getType("A_FLOAT"), is(Double.class));
-            assertThat(schema.getType("A_DOUBLE"), is(Double.class));
+            assertThat(schema.getTypeNamed("A_TINYINT"), is(Integer.class));
+            assertThat(schema.getTypeNamed("A_SMALLINT"), is(Integer.class));
+            assertThat(schema.getTypeNamed("A_INTEGER"), is(Integer.class));
+            assertThat(schema.getTypeNamed("A_BIGINT"), is(Long.class));
+            assertThat(schema.getTypeNamed("A_NUMERIC"), is(BigDecimal.class));
+            assertThat(schema.getTypeNamed("A_DECIMAL"), is(BigDecimal.class));
+            assertThat(schema.getTypeNamed("A_REAL"), is(Double.class));
+            assertThat(schema.getTypeNamed("A_FLOAT"), is(Double.class));
+            assertThat(schema.getTypeNamed("A_DOUBLE"), is(Double.class));
 
             assertThat(numbers.getByte("A_TinyInt"), is((byte) 42));
             assertThat(numbers.getShort("A_TinyInt"), is((short) 42));
@@ -248,7 +248,7 @@ public class SqlDataHowTest {
         }
 
         {
-            GenericData<String> numbers = reader.get();
+            DidoData numbers = reader.get();
 
             assertThat(numbers.getByte("A_TinyInt"), is((byte) 42));
             assertThat(numbers.getShort("A_SmallInt"), is((short) 42));
@@ -262,7 +262,7 @@ public class SqlDataHowTest {
         }
 
         {
-            GenericData<String> numbers = reader.get();
+            DidoData numbers = reader.get();
 
             assertThat(numbers.hasField("A_TinyInt"), is(false));
             assertThat(numbers.hasField("A_SmallInt"), is(false));
@@ -276,7 +276,7 @@ public class SqlDataHowTest {
         }
 
         {
-            GenericData<String> numbers = reader.get();
+            DidoData numbers = reader.get();
 
             assertThat(numbers.getByte("A_TinyInt"), is((byte) 42));
             assertThat(numbers.getShort("A_SmallInt"), is((short) 42));
@@ -349,18 +349,18 @@ public class SqlDataHowTest {
         DataIn reader = inHow.inFrom(connectionIn);
 
         {
-            GenericData<String> dates = reader.get();
+            DidoData dates = reader.get();
 
-            DataSchema<String> schema = dates.getSchema();
+            DataSchema schema = dates.getSchema();
 
             assertThat(schema.firstIndex(), is(1));
             assertThat(schema.lastIndex(), is(5));
 
-            assertThat(schema.getType("A_DATE"), is(java.sql.Date.class));
-            assertThat(schema.getType("A_TIME"), is(java.sql.Time.class));
-            assertThat(schema.getType("A_ZONED_TIME"), is(java.time.OffsetTime.class));
-            assertThat(schema.getType("A_TIMESTAMP"), is(java.sql.Timestamp.class));
-            assertThat(schema.getType("A_ZONED_TIMESTAMP"), is(java.time.OffsetDateTime.class));
+            assertThat(schema.getTypeNamed("A_DATE"), is(java.sql.Date.class));
+            assertThat(schema.getTypeNamed("A_TIME"), is(java.sql.Time.class));
+            assertThat(schema.getTypeNamed("A_ZONED_TIME"), is(java.time.OffsetTime.class));
+            assertThat(schema.getTypeNamed("A_TIMESTAMP"), is(java.sql.Timestamp.class));
+            assertThat(schema.getTypeNamed("A_ZONED_TIMESTAMP"), is(java.time.OffsetDateTime.class));
 
             assertThat(dates.get("A_Date").getClass(), is(java.sql.Date.class));
             assertThat(Instant.ofEpochMilli(
@@ -397,7 +397,7 @@ public class SqlDataHowTest {
         }
 
         {
-            GenericData<String> dates = reader.get();
+            DidoData dates = reader.get();
 
             assertThat(dates.hasField("A_Date"), is(false));
             assertThat(dates.hasField("A_Time"), is(false));
@@ -407,7 +407,7 @@ public class SqlDataHowTest {
         }
 
         {
-            GenericData<String> dates = reader.get();
+            DidoData dates = reader.get();
 
             assertThat(Instant.ofEpochMilli(
                             dates.getAs("A_Date", java.sql.Date.class).getTime()),

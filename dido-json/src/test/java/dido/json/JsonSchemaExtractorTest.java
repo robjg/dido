@@ -3,6 +3,7 @@ package dido.json;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import dido.data.DataSchema;
+import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -47,16 +48,16 @@ class JsonSchemaExtractorTest {
         NestedThing aNested = new NestedThing();
     }
 
-    public static class TestDeserializer implements JsonDeserializer<DataSchema<String>> {
+    public static class TestDeserializer implements JsonDeserializer<DataSchema> {
 
         private final JsonSchemaExtractor test;
 
-        public TestDeserializer(DataSchema<String> schema) {
+        public TestDeserializer(DataSchema schema) {
             this.test = JsonSchemaExtractor.withPartialSchema(schema);
         }
 
         @Override
-        public DataSchema<String> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public DataSchema deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
             JsonObject jsonObject = (JsonObject) json;
 
@@ -72,23 +73,23 @@ class JsonSchemaExtractorTest {
 
         String json = gson.toJson(new AllFields());
 
-        DataSchema<String> result = gson.fromJson(json,
-                new TypeToken<DataSchema<String>>() {}.getType());
+        DataSchema result = gson.fromJson(json,
+                new TypeToken<DataSchema>() {}.getType());
 
-        assertThat(result.getType("aString"), is(String.class));
-        assertThat(result.getType("aBoolean"), is(boolean.class));
-        assertThat(result.getType("aByte"), is(double.class));
-        assertThat(result.getType("aShort"), is(double.class));
-        assertThat(result.getType("anInt"), is(double.class));
-        assertThat(result.getType("aLong"), is(double.class));
-        assertThat(result.getType("aFloat"), is(double.class));
-        assertThat(result.getType("aDouble"), is(double.class));
-        assertThat(result.getType("aNumber"), is(double.class));
-        assertThat(result.getType("anArray"), is(double[].class));
-        assertThat(result.getType("aDate"), is(String.class));
+        assertThat(result.getTypeNamed("aString"), is(String.class));
+        assertThat(result.getTypeNamed("aBoolean"), is(boolean.class));
+        assertThat(result.getTypeNamed("aByte"), is(double.class));
+        assertThat(result.getTypeNamed("aShort"), is(double.class));
+        assertThat(result.getTypeNamed("anInt"), is(double.class));
+        assertThat(result.getTypeNamed("aLong"), is(double.class));
+        assertThat(result.getTypeNamed("aFloat"), is(double.class));
+        assertThat(result.getTypeNamed("aDouble"), is(double.class));
+        assertThat(result.getTypeNamed("aNumber"), is(double.class));
+        assertThat(result.getTypeNamed("anArray"), is(double[].class));
+        assertThat(result.getTypeNamed("aDate"), is(String.class));
 
-        assertThat(result.getSchemaField("aNested").isNested(), is(false));
-        assertThat(result.getType("aNested"), is(Map.class));
+        assertThat(result.getSchemaFieldNamed("aNested").isNested(), is(false));
+        assertThat(result.getTypeNamed("aNested"), is(Map.class));
 
         assertThat(result.firstIndex(), is(1));
         assertThat(result.lastIndex(), is(12));
@@ -113,20 +114,20 @@ class JsonSchemaExtractorTest {
         rootObject.addProperty("OrderId", "A123");
         rootObject.add("OrderLines", orderLines);
 
-        DataSchema<String> partialSchema = SchemaBuilder.forStringFields()
-                .addRepeatingField("OrderLines", DataSchema.emptySchema())
+        DataSchema partialSchema = SchemaBuilder.forStringFields()
+                .addRepeatingField("OrderLines", GenericDataSchema.emptySchema())
                 .build();
 
         JsonSchemaExtractor test = JsonSchemaExtractor.withPartialSchema(partialSchema);
 
-        DataSchema<String> schema = test.fromElement(rootObject);
+        DataSchema schema = test.fromElement(rootObject);
 
-        DataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        DataSchema nestedSchema = SchemaBuilder.forStringFields()
                 .addField("Fruit", String.class)
                 .addField("Qty", double.class)
                 .build();
 
-        DataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
                 .addField("OrderId", String.class)
                 .addRepeatingField("OrderLines", nestedSchema)
                 .build();

@@ -1,10 +1,10 @@
 package dido.oddjob.transform;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 
-public interface DataFactory<F> {
+public interface DataFactory {
 
-    DataSetter<F> getSetter();
+    DataSetter getSetter();
 
-    GenericData<F> toData();
+    DidoData toData();
 }

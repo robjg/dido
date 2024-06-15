@@ -1,8 +1,7 @@
 package dido.sql;
 
-import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericData;
+import dido.data.GenericDataSchema;
 import dido.data.IndexedData;
 import dido.how.DataException;
 
@@ -13,14 +12,14 @@ public class ResultSetWrapper implements DidoData {
 
     private final ResultSet resultSet;
 
-    private final DataSchema<String> schema;
+    private final GenericDataSchema<String> schema;
 
-    private ResultSetWrapper(ResultSet resultSet, DataSchema<String> schema) {
+    private ResultSetWrapper(ResultSet resultSet, GenericDataSchema<String> schema) {
         this.resultSet = resultSet;
         this.schema = schema;
     }
 
-    public static DidoData from(ResultSet resultSet, DataSchema<String> schema) {
+    public static DidoData from(ResultSet resultSet, GenericDataSchema<String> schema) {
         return new ResultSetWrapper(resultSet, schema);
     }
 
@@ -134,7 +133,7 @@ public class ResultSetWrapper implements DidoData {
     }
 
     @Override
-    public DataSchema<String> getSchema() {
+    public GenericDataSchema<String> getSchema() {
         return schema;
     }
 
@@ -255,7 +254,7 @@ public class ResultSetWrapper implements DidoData {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof IndexedData) {
-            return IndexedData.equals(this, (IndexedData<?>) obj);
+            return IndexedData.equals(this, (IndexedData) obj);
         }
         else {
             return false;
@@ -264,6 +263,6 @@ public class ResultSetWrapper implements DidoData {
 
     @Override
     public String toString() {
-        return GenericData.toStringFieldsOnly(this);
+        return DidoData.toStringFieldsOnly(this);
     }
 }

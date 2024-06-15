@@ -16,7 +16,7 @@ public class StreamLines {
 
     private static final String LINE = "Line";
 
-    private static final DataSchema<String> schema = SchemaBuilder.forStringFields()
+    private static final GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
             .addField(LINE, String.class)
             .build();
 

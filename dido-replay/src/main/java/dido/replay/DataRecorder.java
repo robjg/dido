@@ -24,7 +24,7 @@ public class DataRecorder implements CloseableConsumer<DidoData> {
 
     private final CloseableConsumer<? super DidoData> dataConsumer;
 
-    private final CloseableConsumer<? super DataSchema<String>> schemaConsumer;
+    private final CloseableConsumer<? super DataSchema> schemaConsumer;
 
     private final CloseableConsumer<? super Instant> timeConsumer;
 

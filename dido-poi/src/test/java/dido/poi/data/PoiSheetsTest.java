@@ -1,7 +1,6 @@
 package dido.poi.data;
 
 import dido.data.DidoData;
-import dido.data.GenericData;
 import dido.data.MapData;
 import dido.how.DataIn;
 import dido.how.DataOut;
@@ -43,7 +42,7 @@ public class PoiSheetsTest  {
 
 		DataIn reader = rows.inFrom(workbook);
 		
-		GenericData<String> result = reader.get();
+		DidoData result = reader.get();
 		
 		assertThat(result.getStringAt(1), is("Apples"));
 
@@ -78,7 +77,7 @@ public class PoiSheetsTest  {
 
 		DataIn reader = rows.inFrom(workbook);
 
-		GenericData<String> result = reader.get();
+		DidoData result = reader.get();
 
 		assertThat(result.getStringAt(1), is("Apples"));
 		assertThat(reader.get(), nullValue());

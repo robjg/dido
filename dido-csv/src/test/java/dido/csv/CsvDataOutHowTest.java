@@ -14,7 +14,7 @@ class CsvDataOutHowTest {
     @Test
     void testHeaderFromSimpleSchema() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("Apple", String.class)
                 .addField("Qty", int.class)
                 .addField("Price", double.class)
@@ -28,7 +28,7 @@ class CsvDataOutHowTest {
     @Test
     void testDataOut() {
 
-        GenericData<String> data = MapData.newBuilderNoSchema()
+        DidoData data = MapData.newBuilderNoSchema()
                 .setString("Fruit", "Apple")
                 .setInt("Qty", 5)
                 .setDouble("Price", 23.5)
@@ -42,7 +42,7 @@ class CsvDataOutHowTest {
     @Test
     void testDataWithHeadings() throws Exception {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("Fruit", String.class)
                 .addField("Foo", String.class)
                 .addField("Quantity", int.class)

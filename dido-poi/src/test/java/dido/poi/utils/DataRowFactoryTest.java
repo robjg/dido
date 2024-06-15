@@ -1,6 +1,6 @@
 package dido.poi.utils;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.poi.RowIn;
 import dido.poi.data.DataCell;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class DataRowFactoryTest {
 
         RowIn rowIn = mock(RowIn.class);
 
-        GenericData<String> result = test.wrap(rowIn);
+        DidoData result = test.wrap(rowIn);
 
         assertThat(result.getStringAt(1), is("Foo"));
     }
@@ -53,7 +53,7 @@ class DataRowFactoryTest {
 
         RowIn rowIn = mock(RowIn.class);
 
-        GenericData<String> result = test.wrap(rowIn);
+        DidoData result = test.wrap(rowIn);
 
         assertThat(result.getStringAt(1), is("Foo"));
         assertThat(result.getDoubleAt(2), is(42.0));
@@ -79,7 +79,7 @@ class DataRowFactoryTest {
 
         RowIn rowIn = mock(RowIn.class);
 
-        GenericData<String> result = test.wrap(rowIn);
+        DidoData result = test.wrap(rowIn);
 
         assertThat(result.getStringAt(3), is("Foo"));
         assertThat(result.getDoubleAt(7), is(42.0));

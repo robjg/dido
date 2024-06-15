@@ -14,7 +14,7 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
 
     private final Class<E> type;
 
-    private final EnumMap<E, SchemaField<E>> fields;
+    private final EnumMap<E, GenericSchemaField<E>> fields;
 
     private EnumSchemaBuilder(Class<E> type) {
         this.type = type;
@@ -27,31 +27,31 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
     }
 
     public EnumSchemaBuilder<E> addField(E field, Class<?> fieldType) {
-        this.fields.put(field, SchemaFields.of(field.ordinal() + 1, field, fieldType));
+        this.fields.put(field, GenericSchemaFields.of(field.ordinal() + 1, field, fieldType));
         return this;
     }
 
-    public <N> EnumSchemaBuilder<E> addNestedField(E field, DataSchema<N> nestedSchema) {
-        this.fields.put(field, SchemaFields.ofNested(field.ordinal() + 1, field, nestedSchema));
+    public <N> EnumSchemaBuilder<E> addNestedField(E field, GenericDataSchema<N> nestedSchema) {
+        this.fields.put(field, GenericSchemaFields.ofNested(field.ordinal() + 1, field, nestedSchema));
         return this;
     }
 
-    public <N> EnumSchemaBuilder<E> addRepeatingField(E field, DataSchema<N> nestedSchema) {
-        this.fields.put(field, SchemaFields.ofRepeating(field.ordinal() + 1, field, nestedSchema));
+    public <N> EnumSchemaBuilder<E> addRepeatingField(E field, GenericDataSchema<N> nestedSchema) {
+        this.fields.put(field, GenericSchemaFields.ofRepeating(field.ordinal() + 1, field, nestedSchema));
         return this;
     }
 
     public <N> EnumSchemaBuilder<E> addRepeatingField(E field, SchemaReference<N> nestedSchemaRef) {
-        this.fields.put(field, SchemaFields.ofRepeating(field.ordinal() + 1, field, nestedSchemaRef));
+        this.fields.put(field, GenericSchemaFields.ofRepeating(field.ordinal() + 1, field, nestedSchemaRef));
         return this;
     }
 
     public EnumSchema<E> build() {
 
-        EnumMap<E, SchemaField<E>> types = new EnumMap<>(this.fields);
+        EnumMap<E, GenericSchemaField<E>> types = new EnumMap<>(this.fields);
 
         //noinspection unchecked
-        return new Schema<>(this.type, types.values().toArray(new SchemaField[0]));
+        return new Schema<>(this.type, types.values().toArray(new GenericSchemaField[0]));
     }
 
     public static <E extends Enum<E>> EnumSchema<E> forTypeMapping(Class<E> enumClass,
@@ -60,54 +60,29 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         E[] enumConstants = enumClass.getEnumConstants();
 
         @SuppressWarnings("unchecked")
-        SchemaField<E>[] fields = new SchemaField[enumConstants.length];
+        GenericSchemaField<E>[] fields = new GenericSchemaField[enumConstants.length];
 
         for (int i = 0; i < fields.length; i++) {
-            fields[i] = SchemaFields.of(i + 1, enumConstants[i], typeMapping.apply(enumConstants[i]));
+            fields[i] = GenericSchemaFields.of(i + 1, enumConstants[i], typeMapping.apply(enumConstants[i]));
         }
 
         return new Schema<>(enumClass, fields);
     }
 
-    static class Schema<E extends Enum<E>> extends AbstractDataSchema<E> implements EnumSchema<E> {
+    static class Schema<E extends Enum<E>> extends AbstractGenericDataSchema<E> implements EnumSchema<E> {
 
         private final Class<E> enumClass;
 
-        private final SchemaField<E>[] fields;
+        private final GenericSchemaField<E>[] fields;
 
-        Schema(Class<E> enumClass, SchemaField<E>[] fields) {
+        Schema(Class<E> enumClass, GenericSchemaField<E>[] fields) {
             this.enumClass = enumClass;
             this.fields = fields;
         }
 
         @Override
-        public SchemaField<E> getSchemaFieldAt(int index) {
-            return fields[index - 1];
-        }
-
-        @Override
         public Class<E> getFieldType() {
             return enumClass;
-        }
-
-        @Override
-        public E getFieldAt(int index) {
-            return fields[index - 1].getField();
-        }
-
-        @Override
-        public Class<?> getTypeAt(int index) {
-            return fields[index - 1].getType();
-        }
-
-        @Override
-        public <N> DataSchema<N> getSchemaAt(int index) {
-            return fields[index - 1].getNestedSchema();
-        }
-
-        @Override
-        public int getIndex(E field) {
-            return field.ordinal() + 1;
         }
 
         @Override
@@ -126,27 +101,29 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         }
 
         @Override
+        public GenericSchemaField<E> getSchemaFieldAt(int index) {
+            return fields[index - 1];
+        }
+
+        @Override
+        public E getField(String fieldName) {
+            return null;
+        }
+
+        @Override
+        public int getIndexNamed(String fieldName) {
+            return 0;
+        }
+
+        @Override
+        public int getIndex(E field) {
+            return field.ordinal() + 1;
+        }
+
+        @Override
         public Collection<E> getFields() {
             return Arrays.asList(enumClass.getEnumConstants());
         }
 
-        @Override
-        public int hashCode() {
-            return DataSchema.hashCode(this);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof DataSchema) {
-                return DataSchema.equals(this, (DataSchema<?>) obj);
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return DataSchema.toString(this);
-        }
     }
 }

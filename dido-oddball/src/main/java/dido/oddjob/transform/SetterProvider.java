@@ -2,8 +2,8 @@ package dido.oddjob.transform;
 
 import dido.data.DataSchema;
 
-public interface SetterProvider<F> {
+public interface SetterProvider {
 
-    DataFactory<F> provideSetter(DataSchema<F> schema);
+    DataFactory provideSetter(DataSchema schema);
 
 }

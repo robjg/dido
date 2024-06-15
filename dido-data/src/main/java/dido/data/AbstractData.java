@@ -6,11 +6,11 @@ package dido.data;
  * default the Object methods (toString, hashCode and equals)
  *
  */
-abstract public class AbstractData extends AbstractIndexedData<String> implements DidoData {
+abstract public class AbstractData extends AbstractIndexedData implements DidoData {
 
     @Override
     public Object get(String field) {
-        int index = getSchema().getIndex(field);
+        int index = getSchema().getIndexNamed(field);
         if (index > 0) {
             return getAt(index);
         }
@@ -75,7 +75,7 @@ abstract public class AbstractData extends AbstractIndexedData<String> implement
 
     @Override
     public String toString() {
-        return GenericData.toString(this);
+        return DidoData.toString(this);
     }
 
 }

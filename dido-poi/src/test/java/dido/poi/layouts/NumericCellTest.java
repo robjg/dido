@@ -1,8 +1,8 @@
 package dido.poi.layouts;
 
 import dido.data.ArrayData;
-import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
+import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataOut;
@@ -59,7 +59,7 @@ public class NumericCellTest extends TestCase {
 		
 		DataIn reader = rows.inFrom(workbook);
 
-		GenericData<String> result = reader.get();
+		DidoData result = reader.get();
 		
 		assertThat(result.getDoubleAt(1), is(12.3));
 		
@@ -88,7 +88,7 @@ public class NumericCellTest extends TestCase {
 
 		DataIn reader = rows.inFrom(workbook);
 
-		GenericData<String> result = reader.get();
+		DidoData result = reader.get();
 
 		assertThat(result.getAtAs(1, Integer.class), is(12));
 
@@ -101,7 +101,7 @@ public class NumericCellTest extends TestCase {
 
 		PoiWorkbook workbook = new PoiWorkbook();
 
-		DataSchema<String> schema = SchemaBuilder.forStringFields()
+		GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
 				.add(Double.class)
 				.build();
 
@@ -118,7 +118,7 @@ public class NumericCellTest extends TestCase {
 
 		DataIn reader = rows.inFrom(workbook);
 
-		GenericData<String> result = reader.get();
+		DidoData result = reader.get();
 
 		assertThat(result.getAtAs(1, Double.class), nullValue());
 		assertThat(result.hasIndex(1), is(false));

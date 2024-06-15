@@ -1,6 +1,6 @@
 package dido.sql;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.MapData;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
@@ -30,7 +30,7 @@ class SqlDidoTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         @SuppressWarnings("unchecked")
-        List<GenericData<String>> results = lookup.lookup("results.beans", List.class);
+        List<DidoData> results = lookup.lookup("results.beans", List.class);
 
         assertThat(results.get(0), is(MapData.of("TYPE", "Apple", "QUANTITY", 20)));
         assertThat(results.get(1), is(MapData.of("TYPE", "Orange", "QUANTITY", 30)));

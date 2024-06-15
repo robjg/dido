@@ -1,7 +1,6 @@
 package dido.how;
 
 import dido.data.DidoData;
-import dido.data.GenericData;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
@@ -38,7 +37,7 @@ class DataInTest {
                     }
                 }) {
 
-            List<GenericData<String>> copy = StreamSupport.stream(dataIn.spliterator(), false)
+            List<DidoData> copy = StreamSupport.stream(dataIn.spliterator(), false)
                     .collect(Collectors.toList());
 
             assertThat(copy, contains(data[0], data[1]));

@@ -5,17 +5,15 @@ import java.util.Objects;
 /**
  * Provide indexed access to data. Indexes are always 1 based.
  *
- * @param <F> The type of field the schema uses. When using data as {@code IndexedData} this type can normally be
- *           the "?" wildcard. It is here to provide a consistent return type for {@link GenericData}.
  */
-public interface IndexedData<F> {
+public interface IndexedData {
 
     /**
      * Get the Data Schema associated with this data.
      *
      * @return A Data Schema, never null.
      */
-    DataSchema<F> getSchema();
+    DataSchema getSchema();
 
     /**
      * Get the data at the given index. If the index is in the schema then this
@@ -51,14 +49,14 @@ public interface IndexedData<F> {
 
     String getStringAt(int index);
 
-    static boolean equals(IndexedData<?> data1, IndexedData<?> data2) {
+    static boolean equals(IndexedData data1, IndexedData data2) {
         if (data1 == data2) {
             return true;
         }
         if (data1 == null || data2 == null) {
             return false;
         }
-        DataSchema<?> schema = data1.getSchema();
+        DataSchema schema = data1.getSchema();
         if (!schema.equals(data2.getSchema())) {
             return false;
         }
@@ -70,14 +68,14 @@ public interface IndexedData<F> {
         return true;
     }
 
-    static boolean equalsIgnoringSchema(IndexedData<?> data1, IndexedData<?> data2) {
+    static boolean equalsIgnoringSchema(IndexedData data1, IndexedData data2) {
         if (data1 == data2) {
             return true;
         }
         if (data1 == null || data2 == null) {
             return false;
         }
-        DataSchema<?> schema = data1.getSchema();
+        DataSchema schema = data1.getSchema();
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
             if (! Objects.equals(data1.getAt(index), data2.getAt(index))) {
                 return false;
@@ -86,8 +84,8 @@ public interface IndexedData<F> {
         return true;
     }
 
-    static int hashCode(IndexedData<?> data) {
-        DataSchema<?> schema = data.getSchema();
+    static int hashCode(IndexedData data) {
+        DataSchema schema = data.getSchema();
         int hash = schema.hashCode();
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
             if (!data.hasIndex(index)) {
@@ -99,8 +97,8 @@ public interface IndexedData<F> {
         return hash;
     }
 
-    static String toString(IndexedData<?> data) {
-        DataSchema<?> schema = data.getSchema();
+    static String toString(IndexedData data) {
+        DataSchema schema = data.getSchema();
         StringBuilder sb = new StringBuilder(schema.lastIndex() * 16);
         sb.append('{');
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {

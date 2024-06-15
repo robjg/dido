@@ -19,8 +19,8 @@ public interface TransformerFactory {
      * @return The complete Transformer. Not expected to ever be null.
      */
     Transformer create(int position,
-                             DataSchema<String> fromSchema,
-                             SchemaSetter<String> schemaSetter);
+                             DataSchema fromSchema,
+                             SchemaSetter schemaSetter);
 
 
 }

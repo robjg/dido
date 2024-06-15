@@ -2,16 +2,16 @@ package dido.oddjob.transform;
 
 import dido.data.DataBuilder;
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.MapData;
 
-public class MapDataSetterProvider implements SetterProvider<String> {
+public class MapDataSetterProvider implements SetterProvider {
 
     @Override
-    public DataFactory<String> provideSetter(DataSchema<String> schema) {
+    public DataFactory provideSetter(DataSchema schema) {
         DataBuilder builder = MapData.newBuilder(schema);
 
-        DataSetter<String> setter = new DataSetter<>() {
+        DataSetter setter = new DataSetter() {
 
             @Override
             public void set(String field, Object value) {
@@ -65,58 +65,58 @@ public class MapDataSetterProvider implements SetterProvider<String> {
 
             @Override
             public void setAt(int index, Object value) {
-                builder.set(schema.getFieldAt(index), value);
+                builder.set(schema.getFieldNameAt(index), value);
             }
 
             @Override
             public void setBooleanAt(int index, boolean value) {
-                builder.set(schema.getFieldAt(index), value);
+                builder.set(schema.getFieldNameAt(index), value);
             }
 
             @Override
             public void setByteAt(int index, byte value) {
-                builder.set(schema.getFieldAt(index), value);
+                builder.set(schema.getFieldNameAt(index), value);
             }
 
             @Override
             public void setShortAt(int index, short value) {
-                builder.set(schema.getFieldAt(index), value);
+                builder.set(schema.getFieldNameAt(index), value);
             }
 
             @Override
             public void setIntAt(int index, int value) {
-                builder.set(schema.getFieldAt(index), value);
+                builder.set(schema.getFieldNameAt(index), value);
             }
 
             @Override
             public void setLongAt(int index, long value) {
-                builder.set(schema.getFieldAt(index), value);
+                builder.set(schema.getFieldNameAt(index), value);
             }
 
             @Override
             public void setFloatAt(int index, float value) {
-                builder.set(schema.getFieldAt(index), value);
+                builder.set(schema.getFieldNameAt(index), value);
             }
 
             @Override
             public void setDoubleAt(int index, double value) {
-                builder.set(schema.getFieldAt(index), value);
+                builder.set(schema.getFieldNameAt(index), value);
             }
 
             @Override
             public void setStringAt(int index, String value) {
-                builder.set(schema.getFieldAt(index), value);
+                builder.set(schema.getFieldNameAt(index), value);
             }
         };
 
-        return new DataFactory<>() {
+        return new DataFactory() {
             @Override
-            public DataSetter<String> getSetter() {
+            public DataSetter getSetter() {
                 return setter;
             }
 
             @Override
-            public GenericData<String> toData() {
+            public DidoData toData() {
                 return builder.build();
             }
         };

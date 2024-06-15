@@ -1,6 +1,6 @@
 package dido.oddjob.schema;
 
-import dido.data.DataSchema;
+import dido.data.GenericDataSchema;
 import dido.data.SchemaManager;
 import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;
@@ -57,7 +57,7 @@ public class SchemaBean implements ArooaValue {
 
         @Override
         public void registerWith(ConversionRegistry registry) {
-            registry.register(SchemaBean.class, DataSchema.class,
+            registry.register(SchemaBean.class, GenericDataSchema.class,
                     SchemaBean::toSchema);
 
             registry.register(SchemaBean.class, SchemaWrapper.class,
@@ -65,7 +65,7 @@ public class SchemaBean implements ArooaValue {
         }
     }
 
-    DataSchema<String> toSchema() throws ArooaConversionException {
+    GenericDataSchema<String> toSchema() throws ArooaConversionException {
 
         SchemaManager schemaManager = new SchemaManager();
 
@@ -113,7 +113,7 @@ public class SchemaBean implements ArooaValue {
                 addNested(builder, wrapper);
             }
 
-            DataSchema<?> schema = Optional.ofNullable(name)
+            GenericDataSchema<?> schema = Optional.ofNullable(name)
                     .map(schemaManager::getSchema)
                     .orElseGet(schemaManager::getDefaultSchema);
 
@@ -122,7 +122,7 @@ public class SchemaBean implements ArooaValue {
             }
             else {
                 //noinspection unchecked
-                return (DataSchema<String>) schema;
+                return (GenericDataSchema<String>) schema;
             }
         }
     }

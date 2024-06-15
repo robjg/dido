@@ -1,6 +1,6 @@
 package dido.sql;
 
-import dido.data.DataSchema;
+import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
 import dido.how.util.ClassUtils;
 
@@ -9,12 +9,12 @@ import java.sql.SQLException;
 
 public class SchemaUtils {
 
-    public static DataSchema<String> schemaFrom(ResultSetMetaData metaData)
+    public static GenericDataSchema<String> schemaFrom(ResultSetMetaData metaData)
             throws SQLException, ClassNotFoundException {
         return schemaFrom(metaData, null);
     }
 
-    public static DataSchema<String> schemaFrom(ResultSetMetaData metaData, ClassLoader classLoader)
+    public static GenericDataSchema<String> schemaFrom(ResultSetMetaData metaData, ClassLoader classLoader)
             throws SQLException, ClassNotFoundException {
 
         if (classLoader == null) {

@@ -11,16 +11,16 @@ import java.util.LinkedList;
  */
 public class JsonDataCopy {
 
-    private final LinkedList<DataSchema<String>> stack = new LinkedList<>();
+    private final LinkedList<DataSchema> stack = new LinkedList<>();
 
     private final DataBuilder builder;
-    private JsonDataCopy(DataSchema<String> schema) {
+    private JsonDataCopy(DataSchema schema) {
         this.stack.addFirst(schema);
         this.builder = MapData.newBuilder(schema);
     }
 
     public static GsonBuilder registerSchema(GsonBuilder gsonBuilder,
-                                             DataSchema<String> schema) {
+                                             DataSchema schema) {
         return new JsonDataCopy(schema).init(gsonBuilder);
     }
 
@@ -40,13 +40,13 @@ public class JsonDataCopy {
                         " (" + json.getClass().getSimpleName() + ")");
             }
 
-            DataSchema<String> schema = stack.getFirst();
+            DataSchema schema = stack.getFirst();
 
             JsonObject jsonObject = (JsonObject) json;
 
-            for (SchemaField<String> schemaField : schema.getSchemaFields()) {
+            for (SchemaField schemaField : schema.getSchemaFields()) {
 
-                String field = schemaField.getField();
+                String field = schemaField.getName();
 
                 JsonElement element = jsonObject.get(field);
 

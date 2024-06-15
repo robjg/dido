@@ -11,9 +11,9 @@ import java.util.Set;
 
 public class JsonDataPartialCopy {
 
-    private final LinkedList<DataSchema<String>> stack = new LinkedList<>();
+    private final LinkedList<DataSchema> stack = new LinkedList<>();
 
-    private JsonDataPartialCopy(DataSchema<String> partialSchema) {
+    private JsonDataPartialCopy(DataSchema partialSchema) {
         this.stack.addFirst(partialSchema);
     }
 
@@ -22,7 +22,7 @@ public class JsonDataPartialCopy {
     }
 
     public static GsonBuilder registerPartialSchema(GsonBuilder gsonBuilder,
-                                                    DataSchema<String> partialSchema) {
+                                                    DataSchema partialSchema) {
         return new JsonDataPartialCopy(partialSchema == null ? DataSchema.emptySchema() : partialSchema)
                 .init(gsonBuilder);
     }
@@ -43,9 +43,9 @@ public class JsonDataPartialCopy {
                         " (" + json.getClass().getSimpleName() + ")");
             }
 
-            DataSchema<String> prioritySchema = stack.getFirst();
+            DataSchema prioritySchema = stack.getFirst();
             SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
-            Set<String> knownFields = new HashSet<>(prioritySchema.getFields());
+            Set<String> knownFields = new HashSet<>(prioritySchema.getFieldNames());
 
             JsonObject jsonObject = (JsonObject) json;
 
@@ -54,13 +54,13 @@ public class JsonDataPartialCopy {
 
             for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
 
-                String field = entry.getKey();
+                String fieldName = entry.getKey();
 
                 JsonElement element = entry.getValue();
 
-                if (knownFields.contains(field)) {
+                if (knownFields.contains(fieldName)) {
 
-                    SchemaField<String> schemaField = prioritySchema.getSchemaField(field);
+                    SchemaField schemaField = prioritySchema.getSchemaFieldNamed(fieldName);
 
                     if (schemaField.isNested()) {
 
@@ -70,24 +70,24 @@ public class JsonDataPartialCopy {
                     Object value = context.deserialize(element, schemaField.getType());
                     values[index] = value;
 
-                    SchemaField<String> childField;
+                    SchemaField childField;
                     if (schemaField.isNested()) {
 
                         stack.removeFirst();
                         if (schemaField.isRepeating()) {
                             RepeatingData repeatingData = (RepeatingData) value;
                             if (repeatingData.size() > 0) {
-                                childField = SchemaField.ofRepeating(++index, field,
+                                childField = SchemaField.ofRepeating(++index, fieldName,
                                         repeatingData.get(0).getSchema());
                             } else {
                                 childField = schemaField.mapToIndex(++index);
                             }
                         } else {
-                            childField = SchemaField.ofNested(++index, field, ((IndexedData<String>) value).getSchema());
+                            childField = SchemaField.ofNested(++index, fieldName, ((DidoData) value).getSchema());
                         }
                     }
                     else {
-                        childField = SchemaField.of(++index, field, schemaField.getType());
+                        childField = SchemaField.of(++index, fieldName, schemaField.getType());
                     }
                     schemaBuilder.addSchemaField(childField);
 
@@ -98,7 +98,7 @@ public class JsonDataPartialCopy {
                     Class<?> type = value.getClass();
 
                     values[index] = value;
-                    schemaBuilder.addFieldAt(++index, field, type);
+                    schemaBuilder.addFieldAt(++index, fieldName, type);
                 }
             }
 

@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.is;
 class JsonDataPartialCopyTest {
 
     @Test
-    void testWithNestField() {
+    void withNestedRepeatingField() {
 
         String json = "{ \"OrderId\": \"A123\",\n" +
                 "  \"OrderLines\": [\n" +
@@ -28,22 +28,26 @@ class JsonDataPartialCopyTest {
 
         DidoData result = gson.fromJson(json, DidoData.class);
 
-        DataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        DataSchema nestedSchema = SchemaBuilder.forStringFields()
                 .addField("Fruit", String.class)
                 .addField("Qty", Double.class)
                 .build();
 
-        DataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.forStringFields()
                 .addField("OrderId", String.class)
                 .addRepeatingField("OrderLines", nestedSchema)
                 .build();
 
-        IndexedData<String> expectedData = ArrayData.valuesFor(expectedSchema)
+        DidoData expectedData = ArrayData.valuesFor(expectedSchema)
                 .of("A123",
                         RepeatingData.of(ArrayData.valuesFor(nestedSchema)
                                         .of("Apple", 5.0),
                                 ArrayData.valuesFor(nestedSchema)
                                         .of("Pear", 4.0)));
+
+        DataSchema resultSchema = result.getSchema();
+
+        assertThat(resultSchema, is(expectedSchema));
 
         assertThat(result, is(expectedData));
     }

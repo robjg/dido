@@ -20,10 +20,10 @@ class TextTableOutTest {
 
         String expected =
                 "[1]       |[2]|[3]   " + System.lineSeparator() +
-                "----------+---+------" + System.lineSeparator() +
-                "Apple     |5  |22.3  " + System.lineSeparator() +
-                "Cantaloupe|27 |245.3 " + System.lineSeparator() +
-                "Pear      |232|11.328" + System.lineSeparator();
+                        "----------+---+------" + System.lineSeparator() +
+                        "Apple     |5  |22.3  " + System.lineSeparator() +
+                        "Cantaloupe|27 |245.3 " + System.lineSeparator() +
+                        "Pear      |232|11.328" + System.lineSeparator();
 
         DidoData data1 = ArrayData.of("Apple", 5, 22.3);
         DidoData data2 = ArrayData.of("Cantaloupe", 27, 245.3);
@@ -67,17 +67,19 @@ class TextTableOutTest {
 
         String expected =
                 "Fruit     |Quantity| Price" + System.lineSeparator() +
-                "----------+--------+------" + System.lineSeparator() +
-                "Apple     |       5|  22.3" + System.lineSeparator() +
-                "Cantaloupe|      27| 245.3" + System.lineSeparator() +
-                "Pear      |     232|11.328" + System.lineSeparator();
+                        "----------+--------+------" + System.lineSeparator() +
+                        "Apple     |       5|  22.3" + System.lineSeparator() +
+                        "Cantaloupe|      27| 245.3" + System.lineSeparator() +
+                        "Pear      |     232|11.328" + System.lineSeparator();
 
         EnumData.Builder<Fruit> builder = EnumMapData.builderForEnum(Fruit.class);
 
-        DidoData data1 = DidoData.adapt(EnumData.fromEnumData(
+        DidoData data1 =
                 builder.setString(Fruit.Fruit, "Apple")
                         .setInt(Fruit.Quantity, 5)
-                        .setDouble(Fruit.Price, 22.3).build()));
+                        .setDouble(Fruit.Price, 22.3)
+                        .build();
+
         DidoData data2 = ArrayData.of("Cantaloupe", 27, 245.3);
         DidoData data3 = ArrayData.of("Pear", 232, 11.328);
 

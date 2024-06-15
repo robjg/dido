@@ -1,6 +1,7 @@
 package dido.operators;
 
 import dido.data.ArrayData;
+import dido.data.DidoData;
 import dido.data.GenericData;
 import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
@@ -48,9 +49,9 @@ class StreamJoinServiceTest {
                         .addField("Farmer", String.class)
                         .build());
 
-        GenericData<String> expected1 = expectedBuilder.build("Apples", 12, 2, 2, "Giles");
-        GenericData<String> expected2 = expectedBuilder.build("Pears", 7, 1, 1, "Brown");
-        GenericData<String> expected3 = expectedBuilder.build("Carrots", 15, 2, 2, "Giles");
+        DidoData expected1 = expectedBuilder.build("Apples", 12, 2, 2, "Giles");
+        DidoData expected2 = expectedBuilder.build("Pears", 7, 1, 1, "Brown");
+        DidoData expected3 = expectedBuilder.build("Carrots", 15, 2, 2, "Giles");
 
         assertThat(results, containsInAnyOrder(expected1, expected2, expected3));
     }
@@ -84,9 +85,9 @@ class StreamJoinServiceTest {
                         .addField("Farmer", String.class)
                         .build());
 
-        GenericData<String> expected1 = expectedBuilder.build("Apples", 12, 2, 2, "Giles");
-        GenericData<String> expected2 = expectedBuilder.build("Pears", 7, 1, 1, "Brown");
-        GenericData<String> expected3 = expectedBuilder.build("Carrots", 15, 2, 2, "Giles");
+        DidoData expected1 = expectedBuilder.build("Apples", 12, 2, 2, "Giles");
+        DidoData expected2 = expectedBuilder.build("Pears", 7, 1, 1, "Brown");
+        DidoData expected3 = expectedBuilder.build("Carrots", 15, 2, 2, "Giles");
 
         assertThat(results, containsInAnyOrder(expected1, expected2, expected3));
     }
@@ -122,9 +123,9 @@ class StreamJoinServiceTest {
                         .addField("Farmer", String.class)
                         .build());
 
-        GenericData<String> expected1 = expectedBuilder.build("Apples", "Cox", 12, 2, "UK", 2, "Giles");
-        GenericData<String> expected2 = expectedBuilder.build("Pears", "Conference", 7, 1, "FR", 1, "Brun");
-        GenericData<String> expected3 = expectedBuilder.build("Carrots", "", 15, 2, "UK", 2, "Giles");
+        DidoData expected1 = expectedBuilder.build("Apples", "Cox", 12, 2, "UK", 2, "Giles");
+        DidoData expected2 = expectedBuilder.build("Pears", "Conference", 7, 1, "FR", 1, "Brun");
+        DidoData expected3 = expectedBuilder.build("Carrots", "", 15, 2, "UK", 2, "Giles");
 
         assertThat(results, containsInAnyOrder(expected1, expected2, expected3));
     }

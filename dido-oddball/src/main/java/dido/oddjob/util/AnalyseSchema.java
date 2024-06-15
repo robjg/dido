@@ -1,8 +1,8 @@
 package dido.oddjob.util;
 
 import dido.data.DataSchema;
+import dido.data.DidoData;
 import dido.data.GenericData;
-import dido.data.IndexedData;
 import org.oddjob.beanbus.Destination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,24 +10,24 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class AnalyseSchema implements Consumer<IndexedData<?>> {
+public class AnalyseSchema implements Consumer<DidoData> {
 
     private static final Logger logger = LoggerFactory.getLogger(AnalyseSchema.class);
 
     private String name;
 
-    private volatile Consumer<? super GenericData<?>> to;
+    private volatile Consumer<? super DidoData> to;
 
-    private DataSchema<?> lastSchema;
+    private DataSchema lastSchema;
 
     private int count;
 
     @Override
-    public void accept(IndexedData<?> indexedData) {
+    public void accept(DidoData didoData) {
 
         ++count;
 
-        DataSchema<?> schema = indexedData.getSchema();
+        DataSchema schema = didoData.getSchema();
         if (lastSchema == null || !lastSchema.equals(schema)) {
 
             logger.info("New Schema at {}: {}", count, schema);
@@ -35,7 +35,7 @@ public class AnalyseSchema implements Consumer<IndexedData<?>> {
         }
 
         if (to != null) {
-            to.accept(GenericData.from(indexedData));
+            to.accept(didoData);
         }
     }
 
@@ -52,7 +52,7 @@ public class AnalyseSchema implements Consumer<IndexedData<?>> {
     }
 
     @Destination
-    public void setTo(Consumer<? super GenericData<?>> to) {
+    public void setTo(Consumer<? super DidoData> to) {
         this.to = to;
     }
 

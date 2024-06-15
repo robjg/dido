@@ -12,13 +12,13 @@ import java.util.function.Supplier;
 /**
  *
  */
-public class ToProtoBytesType implements Supplier<Function<IndexedData<?>, byte[]>> {
+public class ToProtoBytesType implements Supplier<Function<IndexedData, byte[]>> {
 
     private Class<?> protoClass;
 
 
     @Override
-    public Function<IndexedData<?>, byte[]> get() {
+    public Function<IndexedData, byte[]> get() {
 
         Method method;
         try {

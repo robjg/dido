@@ -2,20 +2,20 @@ package dido.oddjob.transform;
 
 import dido.data.ArrayData;
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 
-public class ArrayDataSetterProvider implements SetterProvider<String> {
+public class ArrayDataSetterProvider implements SetterProvider {
 
     @Override
-    public DataFactory<String> provideSetter(DataSchema<String> schema) {
+    public DataFactory provideSetter(DataSchema schema) {
 
         ArrayData.Builder builder = ArrayData.builderForSchema(schema);
 
-        DataSetter<String> setter = new DataSetter<String>() {
+        DataSetter setter = new DataSetter() {
 
             @Override
             public void set(String field, Object value) {
-                builder.setAt(schema.getIndex(field), value);
+                builder.setAt(schema.getIndexNamed(field), value);
             }
 
             @Override
@@ -110,14 +110,14 @@ public class ArrayDataSetterProvider implements SetterProvider<String> {
 
         };
 
-        return new DataFactory<String>() {
+        return new DataFactory() {
             @Override
-            public DataSetter<String> getSetter() {
+            public DataSetter getSetter() {
                 return setter;
             }
 
             @Override
-            public GenericData<String> toData() {
+            public DidoData toData() {
                 return builder.build();
             }
         };

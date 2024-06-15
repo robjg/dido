@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class TextTableOut implements DataOutHow<OutputStream> {
 
-    private final DataSchema<String> schema;
+    private final DataSchema schema;
 
     private TextTableOut(Options options) {
         this.schema = options.schema;
@@ -34,9 +34,9 @@ public class TextTableOut implements DataOutHow<OutputStream> {
 
     public static class Options {
 
-        private DataSchema<String> schema;
+        private DataSchema schema;
 
-        public Options schema(DataSchema<String> schema) {
+        public Options schema(DataSchema schema) {
             this.schema = schema;
             return this;
         }
@@ -56,13 +56,13 @@ public class TextTableOut implements DataOutHow<OutputStream> {
 
     static class WithSchema implements DataOut {
 
-        private final DataSchema<String> schema;
+        private final DataSchema schema;
 
         private final Table table;
 
         private final OutputStream output;
 
-        WithSchema(DataSchema<String> schema, OutputStream output) {
+        WithSchema(DataSchema schema, OutputStream output) {
             this.schema = schema;
             this.output = output;
 
@@ -71,7 +71,7 @@ public class TextTableOut implements DataOutHow<OutputStream> {
                     ShownBorders.HEADER_AND_COLUMNS);
 
             for (int i = 1; i > 0; i = schema.nextIndex(i)) {
-                String value = schema.getFieldAt(i);
+                String value = schema.getFieldNameAt(i);
 
                 if (value != null) {
                     table.addCell(value,

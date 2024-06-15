@@ -44,7 +44,7 @@ class JsonDidoTest {
                 .setDouble("price", 31.4)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.forStringFields()
                 .addField("type", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
@@ -68,13 +68,13 @@ class JsonDidoTest {
                 JSONCompareMode.LENIENT);
 
 
-        List<GenericData<String>> copy = new ArrayList<>();
+        List<DidoData> copy = new ArrayList<>();
 
         try (CloseableSupplier<DidoData> supplier = test.toStreamIn().inFrom(
                 new ByteArrayInputStream(results.toByteArray()))) {
 
             while (true) {
-                GenericData<String> data = supplier.get();
+                DidoData data = supplier.get();
                 if (data == null) {
                     break;
                 }
@@ -99,7 +99,7 @@ class JsonDidoTest {
                 .setDouble("price", 31.4)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("qty", int.class)
                 .build();
 
@@ -115,13 +115,13 @@ class JsonDidoTest {
             consumer.accept(data2);
         }
 
-        List<GenericData<String>> copy = new ArrayList<>();
+        List<DidoData> copy = new ArrayList<>();
 
         try (DataIn supplier = test.toStreamIn().inFrom(
                 new ByteArrayInputStream(results.toByteArray()))) {
 
             while (true) {
-                GenericData<String> data = supplier.get();
+                DidoData data = supplier.get();
                 if (data == null) {
                     break;
                 }
@@ -131,8 +131,8 @@ class JsonDidoTest {
 
         assertThat(copy.size(), is(2));
 
-        GenericData<String> copy1 = copy.get(0);
-        GenericData<String> copy2 = copy.get(1);
+        DidoData copy1 = copy.get(0);
+        DidoData copy2 = copy.get(1);
 
         assertThat(copy1.getString("type"), is("apple"));
         assertThat(copy1.getInt("qty"), is(2));
@@ -142,11 +142,11 @@ class JsonDidoTest {
         assertThat(copy2.getInt("qty"), is(3));
         assertThat(copy2.getDouble("price"), is(31.4));
 
-        DataSchema<String> schema1 = copy1.getSchema();
+        DataSchema schema1 = copy1.getSchema();
 
-        assertThat(schema1.getType("type"), is(String.class));
-        assertThat(schema1.getType("qty"), is(int.class));
-        assertThat(schema1.getType("price"), is(double.class));
+        assertThat(schema1.getTypeNamed("type"), is(String.class));
+        assertThat(schema1.getTypeNamed("qty"), is(int.class));
+        assertThat(schema1.getTypeNamed("price"), is(double.class));
 
         assertThat(copy2.getSchema(), is(schema1));
     }

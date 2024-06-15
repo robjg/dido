@@ -1,6 +1,6 @@
 package dido.poi.layouts;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
@@ -38,7 +38,7 @@ public class TextCell extends AbstractDataCell<String> {
     }
 
     @Override
-    void insertValueInto(Cell cell, int index, GenericData<String> data) {
+    void insertValueInto(Cell cell, int index, DidoData data) {
         String value = Optional.ofNullable(this.value)
                 .orElseGet(() -> data.getStringAt(index));
 

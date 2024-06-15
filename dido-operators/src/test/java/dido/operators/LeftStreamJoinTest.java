@@ -1,6 +1,9 @@
 package dido.operators;
 
-import dido.data.*;
+import dido.data.ArrayData;
+import dido.data.DidoData;
+import dido.data.MapData;
+import dido.data.SchemaBuilder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
@@ -23,8 +26,8 @@ class LeftStreamJoinTest {
                         .addField("Farmer", String.class)
                         .build());
 
-        GenericData<String> farm1 = farmBuilder.build(1, "Brown");
-        GenericData<String> farm2 = farmBuilder.build(2, "Giles");
+        DidoData farm1 = farmBuilder.build(1, "Brown");
+        DidoData farm2 = farmBuilder.build(2, "Giles");
 
         ArrayData.Builder produceBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.forStringFields()
@@ -33,9 +36,9 @@ class LeftStreamJoinTest {
                         .addField("FarmId", int.class)
                         .build());
 
-        GenericData<String> produce1 = produceBuilder.build("Apples", 12, 2);
-        GenericData<String> produce2 = produceBuilder.build("Pears", 7, 1);
-        GenericData<String> produce3 = produceBuilder.build("Carrots", 15, 2);
+        DidoData produce1 = produceBuilder.build("Apples", 12, 2);
+        DidoData produce2 = produceBuilder.build("Pears", 7, 1);
+        DidoData produce3 = produceBuilder.build("Carrots", 15, 2);
 
         ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.forStringFields()
@@ -46,20 +49,20 @@ class LeftStreamJoinTest {
                         .addField("Farmer", String.class)
                         .build());
 
-        GenericData<String> expected1 = expectedBuilder.build("Apples", 12, 2, 2, "Giles");
-        GenericData<String> expected2 = expectedBuilder.build("Pears", 7, 1, 1, "Brown");
-        GenericData<String> expected3 = expectedBuilder.build("Carrots", 15, 2, 2, "Giles");
+        DidoData expected1 = expectedBuilder.build("Apples", 12, 2, 2, "Giles");
+        DidoData expected2 = expectedBuilder.build("Pears", 7, 1, 1, "Brown");
+        DidoData expected3 = expectedBuilder.build("Carrots", 15, 2, 2, "Giles");
 
-        List<GenericData<String>> results = new ArrayList<>(3);
+        List<DidoData> results = new ArrayList<>(3);
 
-        StreamJoin<String> join = LeftStreamJoin.<String>with()
+        StreamJoin join = LeftStreamJoin.<String>with()
                 .primaryIndices(1)
                 .secondaryIndices(1)
                 .foreignIndices(3)
                 .make();
 
-        Consumer<IndexedData<String>> primary = join.getPrimary();
-        Consumer<IndexedData<String>> secondary = join.getSecondary();
+        Consumer<DidoData> primary = join.getPrimary();
+        Consumer<DidoData> secondary = join.getSecondary();
         join.setTo(results::add);
 
         primary.accept(produce1);

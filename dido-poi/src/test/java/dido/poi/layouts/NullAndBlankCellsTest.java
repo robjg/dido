@@ -1,6 +1,6 @@
 package dido.poi.layouts;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.poi.data.PoiWorkbook;
 import dido.test.OurDirs;
@@ -71,7 +71,7 @@ public class NullAndBlankCellsTest extends TestCase {
 
 		DataIn reader = rows.inFrom(workbook);
 		
-		GenericData<String> result = reader.get();
+		DidoData result = reader.get();
 
 		assertNull(result);
 

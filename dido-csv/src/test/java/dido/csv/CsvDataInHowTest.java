@@ -1,7 +1,8 @@
 package dido.csv;
 
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
+import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -33,11 +34,11 @@ class CsvDataInHowTest {
                 new ByteArrayInputStream(records.getBytes()));
 
         {
-            GenericData<String> data = supplier.get();
+            DidoData data = supplier.get();
 
-            DataSchema<String> schema = data.getSchema();
+            DataSchema schema = data.getSchema();
 
-            assertThat(schema.getFields().isEmpty(), is(true));
+            assertThat(schema.getFieldNames().isEmpty(), is(true));
             assertThat(schema.lastIndex(), is(3));
             assertThat(schema.getTypeAt(1), is(String.class));
             assertThat(schema.getTypeAt(3), is(String.class));
@@ -48,7 +49,7 @@ class CsvDataInHowTest {
         }
 
         {
-            GenericData<String> data = supplier.get();
+            DidoData data = supplier.get();
 
             assertThat(data.getStringAt(1), is("Orange"));
             assertThat(data.getStringAt(2), is("2"));
@@ -61,7 +62,7 @@ class CsvDataInHowTest {
     @Test
     void testWithSchema() throws Exception {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("Type", String.class)
                 .addField("Quantity", int.class)
                 .addField("Price", double.class)
@@ -75,7 +76,7 @@ class CsvDataInHowTest {
                 new ByteArrayInputStream("Apple,5,27.2".getBytes()));
 
         {
-            GenericData<String> data = supplier.get();
+            DidoData data = supplier.get();
 
             assertThat(data.getString("Type"), is("Apple"));
             assertThat(data.getInt("Quantity"), is(5));
@@ -95,7 +96,7 @@ class CsvDataInHowTest {
                 "Apple,5,19.50" + System.lineSeparator() +
                 "Orange,2,35.24" + System.lineSeparator();
 
-        DataSchema<String> someSchema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> someSchema = SchemaBuilder.forStringFields()
                 .addField("Quantity", int.class)
                 .addField("Price", double.class)
                 .build();
@@ -109,11 +110,11 @@ class CsvDataInHowTest {
                 new ByteArrayInputStream(records.getBytes()));
 
         {
-            GenericData<String> data = supplier.get();
+            DidoData data = supplier.get();
 
-            DataSchema<String> schema = data.getSchema();
+            DataSchema schema = data.getSchema();
 
-            assertThat(schema.getFields(), Matchers.contains("Fruit","Quantity","Price"));
+            assertThat(schema.getFieldNames(), Matchers.contains("Fruit","Quantity","Price"));
             assertThat(schema.lastIndex(), is(3));
             assertThat(schema.getTypeAt(1), is(String.class));
             assertThat(schema.getTypeAt(2), is(int.class));
@@ -125,7 +126,7 @@ class CsvDataInHowTest {
         }
 
         {
-            GenericData<String> data = supplier.get();
+            DidoData data = supplier.get();
 
             assertThat(data.getStringAt(1), is("Orange"));
             assertThat(data.getIntAt(2), is(2));
@@ -141,9 +142,9 @@ class CsvDataInHowTest {
         DataIn dataIn = CsvDataInHow.withDefaultOptions()
                 .inFrom(new ByteArrayInputStream(",,".getBytes(StandardCharsets.UTF_8)));
 
-        GenericData<String> data = dataIn.get();
+        DidoData data = dataIn.get();
 
-        DataSchema<String> schema = data.getSchema();
+        DataSchema schema = data.getSchema();
 
         assertThat(schema.lastIndex(), is(3));
 

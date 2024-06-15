@@ -14,14 +14,14 @@ class DataSerializerTest {
     @Test
     void whenGenericDataOfPrimitivesThenCorrectJsonProduced() throws JSONException {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.forStringFields()
                 .addField("type", String.class)
                 .addField("foo", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
                 .build();
 
-        GenericData<String> data = ArrayData.valuesFor(schema)
+        DidoData data = ArrayData.valuesFor(schema)
                 .of("Apple", null, 15, 26.5);
 
         Gson gson = new GsonBuilder()
@@ -38,22 +38,22 @@ class DataSerializerTest {
     @Test
     void whenGenericDataOfNestedGenericDataThenCorrectJsonProduced() throws JSONException {
 
-        DataSchema<String> fooSchema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> fooSchema = SchemaBuilder.forStringFields()
                 .addField("foo", String.class)
                 .addField("qty", int.class)
                 .build();
 
-        DataSchema<String> posSchema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> posSchema = SchemaBuilder.forStringFields()
                 .addField("x", double.class)
                 .addField("y", double.class)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addNestedField("foo", fooSchema)
                 .addNestedField("pos", posSchema)
                 .build();
 
-        GenericData<String> data = MapData.valuesFor(schema)
+        DidoData data = MapData.valuesFor(schema)
                 .of(MapData.valuesFor(fooSchema)
                                 .of("Stuff", 15),
                         MapData.valuesFor(posSchema)
@@ -73,12 +73,12 @@ class DataSerializerTest {
     @Test
     void whenGenericDataOfRepeatingThenCorrectJsonProduced() throws JSONException {
 
-        DataSchema<String> posSchema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> posSchema = SchemaBuilder.forStringFields()
                 .addField("x", double.class)
                 .addField("y", double.class)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("foo", String.class)
                 .addNestedField("positions", posSchema)
                 .build();

@@ -1,21 +1,18 @@
 package dido.operators;
 
-import dido.data.GenericData;
-import dido.data.IndexedData;
+import dido.data.DidoData;
 
 import java.util.function.Consumer;
 
 /**
  * Something that can join two streams of {@link dido.data.IndexedData} (not Java {@link java.util.stream.Stream}s).
  *
- *
- * @param <F> The field type.
  */
-public interface StreamJoin<F> {
+public interface StreamJoin {
 
-    Consumer<IndexedData<F>> getPrimary();
+    Consumer<DidoData> getPrimary();
 
-    Consumer<IndexedData<F>> getSecondary();
+    Consumer<DidoData> getSecondary();
 
-    void setTo(Consumer<? super GenericData<F>> to);
+    void setTo(Consumer<? super DidoData> to);
 }

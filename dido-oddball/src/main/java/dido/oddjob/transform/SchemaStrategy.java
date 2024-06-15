@@ -1,14 +1,14 @@
 package dido.oddjob.transform;
 
-import dido.data.DataSchema;
+import dido.data.GenericDataSchema;
+import dido.data.GenericSchemaField;
 import dido.data.SchemaBuilder;
-import dido.data.SchemaField;
 
 import java.util.*;
 import java.util.function.IntConsumer;
 
 /**
- * Provided to {@link Transform} to decide how to handle the {@link DataSchema} of the outgoing
+ * Provided to {@link Transform} to decide how to handle the {@link GenericDataSchema} of the outgoing
  * type.
  */
 public enum SchemaStrategy {
@@ -17,9 +17,9 @@ public enum SchemaStrategy {
      * The schema is just created from the {@link Transformer}s used.
      */
     NEW {
-        public <F> DataSchema<F> newSchemaFrom(DataSchema<F> existingSchema,
-                                               List<SchemaFieldOptions<F>> fields,
-                                               IntConsumer copyThis) {
+        public <F> GenericDataSchema<F> newSchemaFrom(GenericDataSchema<F> existingSchema,
+                                                      List<SchemaFieldOptions<F>> fields,
+                                                      IntConsumer copyThis) {
 
             int index = 0;
 
@@ -32,8 +32,8 @@ public enum SchemaStrategy {
                 } else {
                     ++index;
                 }
-                schemaBuilder.addSchemaField(
-                        SchemaField.of(index, fieldOptions.getField(), fieldOptions.getType()));
+                schemaBuilder.addGenericSchemaField(
+                        GenericSchemaField.of(index, fieldOptions.getField(), fieldOptions.getType()));
             }
 
             return schemaBuilder.build();
@@ -45,11 +45,11 @@ public enum SchemaStrategy {
      * the transform.
      */
     MERGE {
-        public <F> DataSchema<F> newSchemaFrom(DataSchema<F> existingSchema,
-                                               List<SchemaFieldOptions<F>> fields,
-                                               IntConsumer copyThis) {
+        public <F> GenericDataSchema<F> newSchemaFrom(GenericDataSchema<F> existingSchema,
+                                                      List<SchemaFieldOptions<F>> fields,
+                                                      IntConsumer copyThis) {
 
-            SortedMap<Integer, SchemaField<F>> fieldsByIndex = new TreeMap<>();
+            SortedMap<Integer, GenericSchemaField<F>> fieldsByIndex = new TreeMap<>();
 
             Set<Integer> existingIndices = new HashSet<>(existingSchema.lastIndex());
 
@@ -70,7 +70,7 @@ public enum SchemaStrategy {
                     newFields.add(fieldOptions);
                 }
                 else {
-                    fieldsByIndex.put(index, SchemaField.of(
+                    fieldsByIndex.put(index, GenericSchemaField.of(
                             index, fieldOptions.getField(), fieldOptions.getType()));
                     existingIndices.remove(index);
                     lastIndex = Math.max(lastIndex, index);
@@ -81,15 +81,15 @@ public enum SchemaStrategy {
 
                 ++lastIndex;
                 fieldsByIndex.put(lastIndex,
-                            SchemaField.of(lastIndex, fieldOptions.getField(), fieldOptions.getType()));
+                            GenericSchemaField.of(lastIndex, fieldOptions.getField(), fieldOptions.getType()));
 
             }
 
             SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
 
-            for (SchemaField<F> schemaField : fieldsByIndex.values()) {
+            for (GenericSchemaField<F> schemaField : fieldsByIndex.values()) {
 
-                schemaBuilder.addSchemaField(schemaField);
+                schemaBuilder.addGenericSchemaField(schemaField);
             }
 
             existingIndices.forEach(i ->  copyThis.accept(i));
@@ -101,8 +101,8 @@ public enum SchemaStrategy {
 
     ;
 
-    abstract public <F> DataSchema<F> newSchemaFrom(DataSchema<F> existingSchema,
-                                                    List<SchemaFieldOptions<F>> fields,
-                                                    IntConsumer copyThis);
+    abstract public <F> GenericDataSchema<F> newSchemaFrom(GenericDataSchema<F> existingSchema,
+                                                           List<SchemaFieldOptions<F>> fields,
+                                                           IntConsumer copyThis);
 
 }

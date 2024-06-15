@@ -10,27 +10,27 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
-class ConcatenatorDataTest {
+class GenericConcatenatorDataTest {
 
     @Test
     void testConcatSchema() {
 
-        DataSchema<String> schema1 = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema1 = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
                 .build();
 
-        DataSchema<String> schema2 = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema2 = SchemaBuilder.forStringFields()
                 .addField("supplier", String.class)
                 .build();
 
-        DataSchema<String> schema3 = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema3 = SchemaBuilder.forStringFields()
                 .addField("checked", String.class)
                 .addField("good", boolean.class)
                 .build();
 
-        DataSchema<String> schema = Concatenator.fromSchemas(schema1, schema2, schema3)
+        GenericDataSchema<String> schema = GenericConcatenator.fromSchemas(schema1, schema2, schema3)
                 .getSchema();
 
         assertThat(schema.firstIndex(), is(1));
@@ -38,27 +38,27 @@ class ConcatenatorDataTest {
 
         assertThat(schema.getFieldAt(1), is("fruit"));
         assertThat(schema.getTypeAt(1), is(String.class));
-        assertThat(schema.getType("fruit"), is(String.class));
+        assertThat(schema.getTypeOf("fruit"), is(String.class));
         assertThat(schema.getIndex("fruit"), is(1));
 
         assertThat(schema.getFieldAt(2), is("qty"));
         assertThat(schema.getTypeAt(2), is(int.class));
-        assertThat(schema.getType("qty"), is(int.class));
+        assertThat(schema.getTypeOf("qty"), is(int.class));
         assertThat(schema.getIndex("qty"), is(2));
 
         assertThat(schema.getFieldAt(4), is("supplier"));
         assertThat(schema.getTypeAt(4), is(String.class));
-        assertThat(schema.getType("supplier"), is(String.class));
+        assertThat(schema.getTypeOf("supplier"), is(String.class));
         assertThat(schema.getIndex("supplier"), is(4));
 
         assertThat(schema.getFieldAt(5), is("checked"));
         assertThat(schema.getTypeAt(5), is(String.class));
-        assertThat(schema.getType("checked"), is(String.class));
+        assertThat(schema.getTypeOf("checked"), is(String.class));
         assertThat(schema.getIndex("checked"), is(5));
 
         assertThat(schema.getFieldAt(6), is("good"));
         assertThat(schema.getTypeAt(6), is(boolean.class));
-        assertThat(schema.getType("good"), is(boolean.class));
+        assertThat(schema.getTypeOf("good"), is(boolean.class));
         assertThat(schema.getIndex("good"), is(6));
 
         assertThat(schema.nextIndex(1), is(2));
@@ -77,7 +77,7 @@ class ConcatenatorDataTest {
     void testConcatData() {
 
 
-        DataBuilder builder = MapData.newBuilderNoSchema();
+        GenericDataBuilder<String> builder = GenericMapData.newBuilderNoSchema();
 
         GenericData<String> data1 = builder
                 .setString("type", "apple")
@@ -94,7 +94,7 @@ class ConcatenatorDataTest {
                 .setBoolean("good", true)
                 .build();
 
-        GenericData<String> result = Concatenator.of(data1, data2, data3);
+        GenericData<String> result = GenericConcatenator.of(data1, data2, data3);
 
         assertThat(result.getString("type"), is("apple"));
         assertThat(result.getStringAt(1), is("apple"));
@@ -115,7 +115,7 @@ class ConcatenatorDataTest {
     @Test
     void testOtherTypes() {
 
-        DataBuilder builder = MapData.newBuilderNoSchema();
+        GenericDataBuilder<String> builder = GenericMapData.newBuilderNoSchema();
 
         builder.setString("first", "Ignored" );
         GenericData<String> data1 = builder.build();
@@ -141,7 +141,7 @@ class ConcatenatorDataTest {
         builder.setFloat("float", 42.42F );
         GenericData<String> data8 = builder.build();
 
-        GenericData<String> result1 = Concatenator.of(data1, data2, data3, data4, data5, data6, data7, data8);
+        GenericData<String> result1 = GenericConcatenator.of(data1, data2, data3, data4, data5, data6, data7, data8);
 
         assertThat(result1.get("object"), is(Arrays.asList("Foo")));
         assertThat(result1.getAt(2), is(Arrays.asList("Foo")));
@@ -160,7 +160,7 @@ class ConcatenatorDataTest {
         assertThat(result1.getFloat("float"), is(42.42F));
         assertThat(result1.getFloatAt(8), is(42.42F));
 
-        GenericData<String> result2 = Concatenator.of(data1, data2, data3, data4, data5, data6, data7, data8);
+        GenericData<String> result2 = GenericConcatenator.of(data1, data2, data3, data4, data5, data6, data7, data8);
 
         assertThat(result1, is(result2));
         assertThat(result1.hashCode(), is(result2.hashCode()));
@@ -170,31 +170,32 @@ class ConcatenatorDataTest {
     void testConcatWithSameFieldNames() {
 
         Assertions.assertThrows(IllegalArgumentException.class, () ->
-                Concatenator.of(
-                        MapData.of("Fruit", "Apple"), MapData.of("Fruit", "Pear")));
+                GenericConcatenator.of(
+                        GenericMapData.of("Fruit", "Apple"),
+                        GenericMapData.of("Fruit", "Pear")));
 
         assertThat(
-                Concatenator.<String>withSettings().skipDuplicates(true)
-                        .of(MapData.of("Fruit", "Apple"), MapData.of("Fruit", "Pear")),
-                is(MapData.of("Fruit", "Apple")));
+                GenericConcatenator.<String>withSettings().skipDuplicates(true)
+                        .of(GenericMapData.of("Fruit", "Apple"), GenericMapData.of("Fruit", "Pear")),
+                is(GenericMapData.of("Fruit", "Apple")));
 
     }
 
     @Test
     void fieldsCanBeExcluded() {
 
-        GenericData<String> data1 = MapData.of(
+        GenericData<String> data1 = GenericMapData.of(
                 "Type","Apples",
                 "Variety", "Cox",
                 "Quantity", 12,
                 "FarmId", 2);
 
-        GenericData<String> data2 = MapData.of(
+        GenericData<String> data2 = GenericMapData.of(
                 "Id", "2",
                 "Country", "UK",
                 "Farmer", "Giles");
 
-        GenericData<String> expected = MapData.of(
+        GenericData<String> expected = GenericMapData.of(
                 "Type","Apples",
                 "Quantity", 12,
                 "FarmId", 2,
@@ -202,7 +203,7 @@ class ConcatenatorDataTest {
                 "Farmer", "Giles");
 
         assertThat(
-                Concatenator.<String>withSettings()
+                GenericConcatenator.<String>withSettings()
                         .excludeFields("Variety", "Id")
                         .of(data1, data2),
                 is(expected));

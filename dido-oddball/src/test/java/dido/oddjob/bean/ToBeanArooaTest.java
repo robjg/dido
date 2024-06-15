@@ -1,8 +1,8 @@
 package dido.oddjob.bean;
 
 
-import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
+import dido.data.GenericDataSchema;
 import dido.data.MapData;
 import dido.data.SchemaBuilder;
 import org.apache.commons.beanutils.DynaBean;
@@ -19,13 +19,13 @@ class ToBeanArooaTest {
     @Test
     void testToBean() {
 
-        GenericData<String> data = MapData.newBuilderNoSchema()
+        DidoData data = MapData.newBuilderNoSchema()
                 .setString("type", "Apple")
                 .setInt("quantity", 5)
                 .setDouble("price", 27.3)
                 .build();
 
-        Function<GenericData<String>, Fruit> test = new ToBeanArooa(new BeanUtilsPropertyAccessor())
+        Function<DidoData, Fruit> test = new ToBeanArooa(new BeanUtilsPropertyAccessor())
                 .ofClass(Fruit.class);
 
         Fruit fruit = test.apply(data);
@@ -38,7 +38,7 @@ class ToBeanArooaTest {
     @Test
     public void testOfSchema() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("boolean", boolean.class)
                 .addField("byte", byte.class)
                 .addField("char", char.class)
@@ -49,10 +49,10 @@ class ToBeanArooaTest {
                 .addField("double", double.class)
                 .build();
 
-        Function<GenericData<String>, Object> test = new ToBeanArooa(new BeanUtilsPropertyAccessor())
+        Function<DidoData, Object> test = new ToBeanArooa(new BeanUtilsPropertyAccessor())
                 .ofSchema(schema);
 
-        GenericData<String> data = MapData.newBuilder(schema)
+        DidoData data = MapData.newBuilder(schema)
                 .setBoolean("boolean", true)
                 .setByte("byte", (byte) 1)
                 .setChar("char", 'A')

@@ -8,13 +8,11 @@ import java.util.*;
  */
 public class ArrayData extends AbstractData implements DidoData {
 
-    private final DataSchema<String> schema;
+    private final DataSchema schema;
 
     private final Object[] data;
 
-    private volatile int hash = 0;
-
-    private ArrayData(DataSchema<String> schema, Object[] data) {
+    private ArrayData(DataSchema schema, Object[] data) {
         this.schema = schema;
         this.data = data;
     }
@@ -22,30 +20,16 @@ public class ArrayData extends AbstractData implements DidoData {
     public static DidoData of(Object... data) {
         Objects.requireNonNull(data);
 
-        DataSchema<String> schema = new AbstractDataSchema<>() {
+        DataSchema schema = new AbstractDataSchema() {
 
             @Override
-            public SchemaField<String> getSchemaFieldAt(int index) {
-                return SchemaFields.of(index, Object.class);
+            public SchemaField getSchemaFieldAt(int index) {
+                return index > 0 && index <= data.length ?
+                        SchemaFields.of(index, Object.class) : null;
             }
 
             @Override
-            public String getFieldAt(int index) {
-                return null;
-            }
-
-            @Override
-            public Class<?> getTypeAt(int index) {
-                return index > 0 && index <= data.length ? Object.class : null;
-            }
-
-            @Override
-            public <N> DataSchema<N> getSchemaAt(int index) {
-                return null;
-            }
-
-            @Override
-            public int getIndex(String field) {
+            public int getIndexNamed(String fieldName) {
                 return 0;
             }
 
@@ -65,34 +49,16 @@ public class ArrayData extends AbstractData implements DidoData {
             }
 
             @Override
-            public Collection<String> getFields() {
+            public Collection<String> getFieldNames() {
                 return Collections.emptyList();
             }
 
-            @Override
-            public int hashCode() {
-                return DataSchema.hashCode(this);
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (obj instanceof DataSchema) {
-                    return DataSchema.equals(this, (DataSchema<?>) obj);
-                } else {
-                    return false;
-                }
-            }
-
-            @Override
-            public String toString() {
-                return DataSchema.toString(this);
-            }
         };
 
         return new ArrayData(schema, data);
     }
 
-    public static Builder builderForSchema(DataSchema<String> schema) {
+    public static Builder builderForSchema(DataSchema schema) {
 
         return new Builder(schema);
     }
@@ -102,13 +68,13 @@ public class ArrayData extends AbstractData implements DidoData {
         return new BuilderUnknown();
     }
 
-    public static DataBuilders.Values valuesFor(DataSchema<String> schema) {
+    public static DataBuilders.Values valuesFor(DataSchema schema) {
 
         return new Builder(schema).values();
     }
 
     @Override
-    public DataSchema<String> getSchema() {
+    public DataSchema getSchema() {
         return schema;
     }
 
@@ -122,23 +88,6 @@ public class ArrayData extends AbstractData implements DidoData {
         return data[index -1] != null;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof IndexedData) {
-            return IndexedData.equals(this, (IndexedData<?>) obj);
-        }
-        else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        if (hash == 0) {
-            hash = IndexedData.hashCode(this);
-        }
-        return hash;
-    }
 
     @Override
     public String toString() {
@@ -149,7 +98,7 @@ public class ArrayData extends AbstractData implements DidoData {
 
         private Object[] values;
 
-        Builder(DataSchema<String> schema) {
+        Builder(DataSchema schema) {
             super(schema);
             values = new Object[schema.lastIndex()];
         }
@@ -161,7 +110,7 @@ public class ArrayData extends AbstractData implements DidoData {
 
         @Override
         public Builder set(String field, Object value) {
-            return setAt(getSchema().getIndex(field), value);
+            return setAt(getSchema().getIndexNamed(field), value);
         }
 
         public DidoData build() {
@@ -178,7 +127,7 @@ public class ArrayData extends AbstractData implements DidoData {
     public static class BuilderUnknown extends DataBuilders.Indexed<BuilderUnknown>
             implements DataBuilder {
 
-        private final List<SchemaField<String>> schemaFields = new LinkedList<>();
+        private final List<GenericSchemaField<String>> schemaFields = new LinkedList<>();
 
         private final List<Object> values = new LinkedList<>();
 
@@ -285,7 +234,7 @@ public class ArrayData extends AbstractData implements DidoData {
 
         public BuilderUnknown setIndex(int index, Object value, Class<?> type) {
             values.add(value);
-            schemaFields.add(SchemaField.of(index, type));
+            schemaFields.add(GenericSchemaField.of(index, type));
             if (index > lastIndex) {
                 lastIndex = index;
             }
@@ -294,7 +243,7 @@ public class ArrayData extends AbstractData implements DidoData {
 
         private BuilderUnknown setField(String field, Object value, Class<?> type) {
             values.add(value);
-            schemaFields.add(SchemaField.of(++lastIndex, field, type));
+            schemaFields.add(GenericSchemaField.of(++lastIndex, field, type));
             return this;
         }
 
@@ -302,8 +251,8 @@ public class ArrayData extends AbstractData implements DidoData {
             SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
             Object[] values = new Object[lastIndex];
             Iterator<Object> valIt = this.values.iterator();
-            for (SchemaField<String> schemaField : this.schemaFields) {
-                schemaBuilder.addSchemaField(schemaField);
+            for (GenericSchemaField<String> schemaField : this.schemaFields) {
+                schemaBuilder.addGenericSchemaField(schemaField);
                 values[schemaField.getIndex() - 1] = valIt.next();
             }
             return new ArrayData(schemaBuilder.build(), values);

@@ -35,7 +35,7 @@ class JsonDataWrapperTest {
     @Test
     void testWithAllFields() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("aString", String.class)
                 .addField("aBoolean", boolean.class)
                 .addField("aByte", byte.class)
@@ -52,7 +52,7 @@ class JsonDataWrapperTest {
 
         String json = gson.toJson(new AllFields());
 
-        IndexedData<?> result = gson.fromJson(json, DidoData.class);
+        IndexedData result = gson.fromJson(json, DidoData.class);
 
         assertThat(result.getStringAt(1), is("Apple"));
         assertThat(result.getBooleanAt(2), is(true));
@@ -77,7 +77,7 @@ class JsonDataWrapperTest {
     @Test
     void testNaNs() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("aString", String.class)
                 .addField("aFloat", float.class)
                 .addField("aDouble", double.class)
@@ -99,7 +99,7 @@ class JsonDataWrapperTest {
     @Test
     void testWithAutoBoxedVersions() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addFieldAt(3, "aByte", Byte.class)
                 .addField("aShort", Short.class)
                 .addField("anInt", Integer.class)
@@ -113,7 +113,7 @@ class JsonDataWrapperTest {
 
         String json = gson.toJson(new AllFields());
 
-        IndexedData<?> result = gson.fromJson(json, DidoData.class);
+        IndexedData result = gson.fromJson(json, DidoData.class);
 
         assertThat(result.getByteAt(3), is(Byte.MAX_VALUE));
         assertThat(result.getShortAt(4), is(Short.MAX_VALUE));
@@ -126,7 +126,7 @@ class JsonDataWrapperTest {
     @Test
     void testAllAsObjects() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("aString", String.class)
                 .addField("aBoolean", boolean.class)
                 .addField("aByte", byte.class)
@@ -143,7 +143,7 @@ class JsonDataWrapperTest {
 
         String json = gson.toJson(new AllFields());
 
-        IndexedData<?> result = gson.fromJson(json, DidoData.class);
+        IndexedData result = gson.fromJson(json, DidoData.class);
 
         assertThat(result.getAt(1), is("Apple"));
         assertThat(result.getAt(2), is(true));
@@ -159,7 +159,7 @@ class JsonDataWrapperTest {
     @Test
     void testWithAllFieldsAsNull() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("aString", String.class)
                 .addField("aBoolean", boolean.class)
                 .addField("aByte", byte.class)
@@ -176,7 +176,7 @@ class JsonDataWrapperTest {
 
         String json = "{}";
 
-        IndexedData<?> result = gson.fromJson(json, DidoData.class);
+        IndexedData result = gson.fromJson(json, DidoData.class);
 
         assertThat(result.getStringAt(1), nullValue());
         assertThat(result.hasIndex(2), is(false));
@@ -200,12 +200,12 @@ class JsonDataWrapperTest {
                 "  }";
 
 
-        DataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
                 .addField("Fruit", String.class)
                 .addField("Qty", int.class)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("OrderId", String.class)
                 .addRepeatingField("OrderLines", nestedSchema)
                 .build();
@@ -217,11 +217,7 @@ class JsonDataWrapperTest {
 
         RepeatingData repeatingData = (RepeatingData) result.getAt(2);
 
-
-        System.out.println(GenericData.toString(repeatingData.get(0)));
-
-
-        IndexedData<String> expectedData = ArrayData.valuesFor(schema)
+        IndexedData expectedData = ArrayData.valuesFor(schema)
                 .of("A123",
                         RepeatingData.of(ArrayData.valuesFor(nestedSchema)
                                         .of("Apple", 4),

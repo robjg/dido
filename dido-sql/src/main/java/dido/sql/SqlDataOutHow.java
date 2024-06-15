@@ -96,7 +96,7 @@ public class SqlDataOutHow implements DataOutHow<Connection> {
             @Override
             public void accept(DidoData data) {
 
-                DataSchema<String> schema = data.getSchema();
+                DataSchema schema = data.getSchema();
 
                     for (int index = schema.firstIndex(); index != 0; index = schema.nextIndex(index)) {
 

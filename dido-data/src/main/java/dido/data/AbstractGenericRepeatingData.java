@@ -23,8 +23,8 @@ abstract public class AbstractGenericRepeatingData<F> implements GenericRepeatin
             return false;
         }
 
-        Iterator<? extends IndexedData<?>> it1 = iterator();
-        Iterator<? extends IndexedData<?>> it2 = other.iterator();
+        Iterator<? extends IndexedData> it1 = iterator();
+        Iterator<? extends IndexedData> it2 = other.iterator();
 
         boolean it1HasNext;
         boolean it2HasNext;

@@ -11,7 +11,7 @@ class SchemaBuilderTest {
     @Test
     void testAddSequentiallyNoFields() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addAt(0, String.class)
                 .addAt(0, int.class)
                 .addAt(0, double.class)
@@ -29,7 +29,7 @@ class SchemaBuilderTest {
     @Test
     void testAddSparseIndexes() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addAt(5, String.class)
                 .add(int.class)
                 .addAt(20, double.class)
@@ -55,7 +55,7 @@ class SchemaBuilderTest {
     @Test
     void testAddFields() {
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
@@ -64,28 +64,28 @@ class SchemaBuilderTest {
         assertThat(schema.firstIndex(), is(1));
         assertThat(schema.lastIndex(), is(3));
         assertThat(schema.getTypeAt(1), is(String.class));
-        assertThat(schema.getType("fruit"), is(String.class));
+        assertThat(schema.getTypeNamed("fruit"), is(String.class));
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));
-        assertThat(schema.getFields(), Matchers.contains("fruit", "qty", "price"));
+        assertThat(schema.getFieldNames(), Matchers.contains("fruit", "qty", "price"));
     }
 
     @Test
     void testOverwriteWithSchema() {
 
-        DataSchema<String> correction = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> correction = SchemaBuilder.forStringFields()
                 .addField("qty", int.class)
                 .addField("price", double.class)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", String.class)
                 .addField("price", String.class)
                 .merge(correction)
                 .build();
 
-        DataSchema<String> expected = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> expected = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
@@ -97,18 +97,18 @@ class SchemaBuilderTest {
     @Test
     void testOverwriteMiddleFieldSchema() {
 
-        DataSchema<String> correction = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> correction = SchemaBuilder.forStringFields()
                 .addField("qty", int.class)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", String.class)
                 .addField("price", double.class)
                 .merge(correction)
                 .build();
 
-        DataSchema<String> expected = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> expected = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
@@ -120,18 +120,18 @@ class SchemaBuilderTest {
     @Test
     void testOverwriteWithIndexOnlySchema() {
 
-        DataSchema<String> correction = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> correction = SchemaBuilder.forStringFields()
                 .addAt(2, int.class)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", String.class)
                 .addField("price", double.class)
                 .merge(correction)
                 .build();
 
-        DataSchema<String> expected = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> expected = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
@@ -143,18 +143,18 @@ class SchemaBuilderTest {
     @Test
     void testMergeExtraFieldSchema() {
 
-        DataSchema<String> extra = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> extra = SchemaBuilder.forStringFields()
                 .addField("colour", String.class)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
                 .merge(extra)
                 .build();
 
-        DataSchema<String> expected = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> expected = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
@@ -168,7 +168,7 @@ class SchemaBuilderTest {
     void testAddNestedSchema() {
 
         SchemaReference<String> self = SchemaReference.blank();
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addNestedField("node", self)
                 .build();
         self.set(schema);
@@ -179,11 +179,11 @@ class SchemaBuilderTest {
     @Test
     void testAddRepeatingSchema() {
 
-        DataSchema<String> nested = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> nested = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addRepeatingField("list", nested)
                 .build();
 
@@ -193,13 +193,13 @@ class SchemaBuilderTest {
     @Test
     void testEqualsAndHashCode() {
 
-        DataSchema<String> schema1 = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema1 = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
                 .build();
 
-        DataSchema<String> schema2 = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema2 = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
@@ -212,7 +212,7 @@ class SchemaBuilderTest {
     @Test
     void testToString() {
 
-        DataSchema<String> schema1 = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema1 = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
@@ -225,11 +225,34 @@ class SchemaBuilderTest {
     @Test
     void builtEmptySchemaEqualsEmptySchema() {
 
-        DataSchema<?> schema1 = SchemaBuilder.impliedType().build();
+        GenericDataSchema<?> schema1 = SchemaBuilder.impliedType().build();
 
-        DataSchema<?> schema2 = DataSchema.emptySchema();
+        GenericDataSchema<?> schema2 = GenericDataSchema.emptySchema();
 
         assertThat(schema1.hashCode(), is(schema2.hashCode()));
         assertThat(schema1, is(schema2));
     }
+
+    @Test
+    void whenAddSchemaFieldThenOk() {
+
+        DataSchema schemaSimple = SchemaBuilder.forStringFields()
+                .addSchemaField(SchemaField.of(5, "Foo", Integer.class))
+                .build();
+
+        assertThat(schemaSimple.getSchemaFieldAt(5), is(SchemaField.of(5, "Foo", Integer.class)));
+
+        DataSchema schemaNested = SchemaBuilder.forStringFields()
+                .addSchemaField(SchemaField.ofNested(3, "Nested", schemaSimple))
+                .build();
+
+        assertThat(schemaNested.getSchemaFieldAt(3), is(SchemaField.ofNested(3, "Nested", schemaSimple)));
+
+        DataSchema schemaRepeating = SchemaBuilder.forStringFields()
+                .addSchemaField(SchemaField.ofRepeating(3, "Nested", schemaSimple))
+                .build();
+
+        assertThat(schemaRepeating.getSchemaFieldAt(3), is(SchemaField.ofRepeating(3, "Nested", schemaSimple)));
+    }
+
 }

@@ -46,7 +46,7 @@ class FromBeanArooaTest {
         Function<Object, DidoData> transform = new FromBeanArooa(new BeanUtilsPropertyAccessor())
                 .ofUnknownClass();
 
-        GenericData<String> data1 = transform.apply(fruit1);
+        DidoData data1 = transform.apply(fruit1);
 
         assertThat(data1.getString("type"), is("Apple"));
         assertThat(data1.getInt("quantity"), is(5));
@@ -55,7 +55,7 @@ class FromBeanArooaTest {
         fruit2.setType("Orange");
         fruit2.setQuantity(2);
 
-        GenericData<String> data2 = transform.apply(fruit2);
+        DidoData data2 = transform.apply(fruit2);
 
         assertThat(data2.getString("type"), is("Orange"));
         assertThat(data2.getInt("quantity"), is(2));
@@ -68,12 +68,12 @@ class FromBeanArooaTest {
 
         FromBeanArooa fromBeanArooa = FromBeanArooa.usingAccessor(new BeanUtilsPropertyAccessor());
 
-        DataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", Integer.class)
                 .build();
 
-        DataSchema<String> partialIn = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> partialIn = SchemaBuilder.forStringFields()
                 .addRepeatingField("orderLines", nestedSchema)
                 .build();
 
@@ -112,12 +112,12 @@ class FromBeanArooaTest {
 
         FromBeanArooa fromBeanArooa = FromBeanArooa.usingAccessor(new BeanUtilsPropertyAccessor());
 
-        DataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", Integer.class)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("orderId", String.class)
                 .addRepeatingField("orderLines", nestedSchema)
                 .build();
@@ -139,11 +139,11 @@ class FromBeanArooaTest {
         order.setOrderId("A123");
         order.setOrderLines(List.of(orderLine1, orderLine2));
 
-        GenericData<String> result = fromBean.apply(order);
+        DidoData result = fromBean.apply(order);
 
         assertThat(result.getSchema(), is(schema));
 
-        IndexedData<String> expectedData = ArrayData.valuesFor(schema)
+        DidoData expectedData = ArrayData.valuesFor(schema)
                 .of("A123",
                         RepeatingData.of(ArrayData.valuesFor(nestedSchema)
                                         .of("Apple", 5),

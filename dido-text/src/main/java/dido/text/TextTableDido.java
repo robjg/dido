@@ -1,6 +1,6 @@
 package dido.text;
 
-import dido.data.DataSchema;
+import dido.data.GenericDataSchema;
 import dido.how.DataOutHow;
 
 import java.io.OutputStream;
@@ -19,7 +19,7 @@ public class TextTableDido {
      * of fields written.
      * @oddjob.required No.
      */
-    private volatile DataSchema<String> schema;
+    private volatile GenericDataSchema<String> schema;
 
     public DataOutHow<OutputStream> toOut() {
         return TextTableOut.ofOptions()
@@ -27,11 +27,11 @@ public class TextTableDido {
                 .create();
     }
 
-    public DataSchema<String> getSchema() {
+    public GenericDataSchema<String> getSchema() {
         return schema;
     }
 
-    public void setSchema(DataSchema<String> schema) {
+    public void setSchema(GenericDataSchema<String> schema) {
         this.schema = schema;
     }
 

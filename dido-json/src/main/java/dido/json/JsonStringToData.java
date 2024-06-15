@@ -9,26 +9,26 @@ import java.util.function.Function;
 
 public class JsonStringToData {
 
-    public static Function<String, DidoData> asWrapperWithSchema(DataSchema<String> schema) {
+    public static Function<String, DidoData> asWrapperWithSchema(DataSchema schema) {
 
         return new Known(JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                 .create(),
                 "ToWrapper, schema=" + schema);
     }
 
-    public static Function<String, DidoData> asWrapperWithPartialSchema(DataSchema<String> partialSchema) {
+    public static Function<String, DidoData> asWrapperWithPartialSchema(DataSchema partialSchema) {
 
         return new UnknownWrapper(partialSchema == null ? DataSchema.emptySchema() : partialSchema);
     }
 
-    public static Function<String, DidoData> asCopyWithSchema(DataSchema<String> schema) {
+    public static Function<String, DidoData> asCopyWithSchema(DataSchema schema) {
 
         return new Known(JsonDataCopy.registerSchema(new GsonBuilder(), schema)
                 .create(),
                 "ToCopy, schema=" + schema);
     }
 
-    public static Function<String, DidoData> asCopyWithPartialSchema(DataSchema<String> partialSchema) {
+    public static Function<String, DidoData> asCopyWithPartialSchema(DataSchema partialSchema) {
 
         partialSchema = partialSchema == null ? DataSchema.emptySchema() : partialSchema;
 
@@ -43,13 +43,13 @@ public class JsonStringToData {
 
     public static class Settings {
 
-        private DataSchema<String> schema;
+        private DataSchema schema;
 
         private boolean partial;
 
         private boolean copy;
 
-        public Settings setSchema(DataSchema<String> schema) {
+        public Settings setSchema(DataSchema schema) {
             this.schema = schema;
             return this;
         }
@@ -87,18 +87,18 @@ public class JsonStringToData {
 
     static class UnknownWrapper implements Function<String, DidoData> {
 
-        private final DataSchema<String> partialSchema;
+        private final DataSchema partialSchema;
 
         private volatile Known known;
 
-        UnknownWrapper(DataSchema<String> partialSchema) {
+        UnknownWrapper(DataSchema partialSchema) {
             this.partialSchema = partialSchema;
         }
 
         @Override
         public DidoData apply(String s) {
             if (known == null) {
-                DataSchema<String> schema = JsonSchemaExtractor
+                DataSchema schema = JsonSchemaExtractor
                         .registerPartialSchema(new GsonBuilder(), partialSchema)
                         .create()
                         .fromJson(s, DataSchema.class);

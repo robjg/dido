@@ -4,29 +4,28 @@ package dido.oddjob.transform;
  * Provides the ability to set data. Intended to sit in front of {@link dido.data.DataBuilders} and
  * not provide the ability to build.
  *
- * @param <F> The field type.
  */
-public interface DataSetter<F> {
+public interface DataSetter {
 
-    void set(F field, Object value);
+    void set(String field, Object value);
 
-    void setBoolean(F field, boolean value);
+    void setBoolean(String field, boolean value);
 
-    void setByte(F field, byte value);
+    void setByte(String field, byte value);
 
-    void setChar(F field, char value);
+    void setChar(String field, char value);
 
-    void setShort(F field, short value);
+    void setShort(String field, short value);
 
-    void setInt(F field, int value);
+    void setInt(String field, int value);
 
-    void setLong(F field, long value);
+    void setLong(String field, long value);
 
-    void setFloat(F field, float value);
+    void setFloat(String field, float value);
 
-    void setDouble(F field, double value);
+    void setDouble(String field, double value);
 
-    void setString(F field, String value);
+    void setString(String field, String value);
 
     void setAt(int index, Object value);
 
@@ -45,7 +44,4 @@ public interface DataSetter<F> {
     void setDoubleAt(int index, double value);
 
     void setStringAt(int index, String value);
-
-
-
 }

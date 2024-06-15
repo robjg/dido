@@ -1,12 +1,12 @@
 package dido.poi.data;
 
 import dido.data.ArrayData;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.poi.*;
-import dido.poi.data.PoiRowsIn;
-import dido.poi.data.PoiRowsOut;
-import dido.poi.data.PoiWorkbook;
 import dido.poi.layouts.*;
+import dido.poi.style.StyleBean;
+import dido.poi.style.StyleFactoryRegistry;
+import dido.poi.style.StyleProvider;
 import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -15,9 +15,6 @@ import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.mockito.Mockito;
 import org.oddjob.arooa.utils.DateHelper;
-import dido.poi.style.StyleBean;
-import dido.poi.style.StyleFactoryRegistry;
-import dido.poi.style.StyleProvider;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -171,7 +168,7 @@ public class PoiRowsTest extends TestCase {
 
 		testOut.nextRow();
 
-		GenericData<String> data = ArrayData.of("John", 25.0);
+		DidoData data = ArrayData.of("John", 25.0);
 
 		cellOut1.setValue(rowOut, data);
 		cellOut2.setValue(rowOut, data);

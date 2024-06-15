@@ -37,23 +37,23 @@ class ToBeanTransformerTest {
         assertThat(results.get(2).getType(), is("Pear"));
     }
 
-    public static class SomeNestedGenericData implements ValueFactory<List<GenericData<String>>> {
+    public static class SomeNestedGenericData implements ValueFactory<List<DidoData>> {
 
 
         @Override
-        public List<GenericData<String>> toValue() {
+        public List<DidoData> toValue() {
 
-            DataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+            GenericDataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
                     .addField("fruit", String.class)
                     .addField("qty", int.class)
                     .build();
 
-            DataSchema<String> schema = SchemaBuilder.forStringFields()
+            GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                     .addField("orderId", String.class)
                     .addRepeatingField("orderLines", nestedSchema)
                     .build();
 
-            GenericData<String> data = ArrayData.valuesFor(schema)
+            DidoData data = ArrayData.valuesFor(schema)
                     .of("A123",
                             RepeatingData.of(ArrayData.valuesFor(nestedSchema)
                                             .of("Apple", 5),

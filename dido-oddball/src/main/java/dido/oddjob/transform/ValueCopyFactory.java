@@ -146,8 +146,8 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
 
         @Override
         public Transformer create(int position,
-                                                  DataSchema<String> fromSchema,
-                                                  SchemaSetter<String> schemaSetter) {
+                                                  DataSchema fromSchema,
+                                                  SchemaSetter schemaSetter) {
 
             String from;
             int index;
@@ -158,11 +158,11 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
                 } else {
                     index = this.index;
                 }
-                from = fromSchema.getFieldAt(index);
+                from = fromSchema.getFieldNameAt(index);
             } else {
                 from = this.from;
                 // ignore index - should we warn?
-                index = fromSchema.getIndex(from);
+                index = fromSchema.getIndexNamed(from);
                 if (index < 1) {
                     throw new IllegalArgumentException("No field [" + from + "]");
                 }

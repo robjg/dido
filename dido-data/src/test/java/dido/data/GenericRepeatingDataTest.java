@@ -13,10 +13,13 @@ class GenericRepeatingDataTest {
     void testEqualsAndHashCode() {
 
         GenericRepeatingData<String> data1 = GenericRepeatingData.of(
-                ArrayData.of("Apple", 5), ArrayData.of("Pear", 3));
+                GenericMapData.of("Fruit", "Apple", "Qty", 5),
+                GenericMapData.of("Fruit", "Pear", "Qty", 3));
 
         GenericRepeatingData<String> data2 = GenericRepeatingData.of(
-                List.of(ArrayData.of("Apple", 5), ArrayData.of("Pear", 3)));
+                List.of(
+                        GenericMapData.of("Fruit", "Apple", "Qty", 5),
+                        GenericMapData.of("Fruit", "Pear", "Qty", 3)));
 
         assertThat(data1, is(data2));
         assertThat(data1.hashCode(), is(data2.hashCode()));
@@ -26,13 +29,16 @@ class GenericRepeatingDataTest {
     void testToString() {
 
         GenericRepeatingData<String> data1 = GenericRepeatingData.of(
-                ArrayData.of("Apple", 5), ArrayData.of("Pear", 3));
+                GenericMapData.of("Fruit", "Apple", "Qty", 5),
+                GenericMapData.of("Fruit", "Pear", "Qty", 3));
 
-        assertThat(data1.toString(), is("[[Apple, 5], [Pear, 3]]"));
+        assertThat(data1.toString(), is("[{[Fruit]=Apple, [Qty]=5}, {[Fruit]=Pear, [Qty]=3}]"));
 
         GenericRepeatingData<String> data2 = GenericRepeatingData.of(
-                List.of(ArrayData.of("Apple", 5), ArrayData.of("Pear", 3)));
+                List.of(
+                        GenericMapData.of("Fruit", "Apple", "Qty", 5),
+                        GenericMapData.of("Fruit", "Pear", "Qty", 3)));
 
-        assertThat(data2.toString(), is("[[Apple, 5], [Pear, 3]]"));
+        assertThat(data2.toString(), is("[{[Fruit]=Apple, [Qty]=5}, {[Fruit]=Pear, [Qty]=3}]"));
     }
 }

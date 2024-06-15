@@ -41,11 +41,11 @@ class EnumMapDataTest {
         assertThat(schema.lastIndex(), is(3));
 
         assertThat(schema.getTypeAt(1), is(String.class));
-        assertThat(schema.getType(Fields.Fruit), is(String.class));
+        assertThat(schema.getTypeOf(Fields.Fruit), is(String.class));
         assertThat(schema.getTypeAt(2), is(int.class));
-        assertThat(schema.getType(Fields.Qty), is(int.class));
+        assertThat(schema.getTypeOf(Fields.Qty), is(int.class));
         assertThat(schema.getTypeAt(3), is(double.class));
-        assertThat(schema.getType(Fields.Price), is(double.class));
+        assertThat(schema.getTypeOf(Fields.Price), is(double.class));
 
         assertThat(schema.getFieldAt(1), is(Fields.Fruit));
         assertThat(schema.getIndex(Fields.Fruit), is(1));
@@ -70,10 +70,10 @@ class EnumMapDataTest {
                 .setDouble(Fields.Price, 75.3)
                 .build();
 
-        assertThat(data3.getSchema().getType(Fields.Qty), is(int.class));
+        assertThat(data3.getSchema().getTypeOf(Fields.Qty), is(int.class));
         assertThat(data3.getSchema().getTypeAt(2), is(int.class));
 
-        assertThat(data3.getSchema().getType(Fields.Price), is(double.class));
+        assertThat(data3.getSchema().getTypeOf(Fields.Price), is(double.class));
         assertThat(data3.getSchema().getTypeAt(3), is(double.class));
     }
 
@@ -97,16 +97,16 @@ class EnumMapDataTest {
                 .build();
 
         assertThat(data1.hasIndex(1), is(true));
-        assertThat(data1.hasField(Fields.Fruit), is(true));
+        assertThat(data1.hasFieldOf(Fields.Fruit), is(true));
 
-        assertThat(data1.getString(Fields.Fruit), is("Apple"));
+        assertThat(data1.getStringOf(Fields.Fruit), is("Apple"));
         assertThat(data1.getStringAt(1), is("Apple"));
-        assertThat(data1.getInt(Fields.Qty), is(2));
+        assertThat(data1.getIntOf(Fields.Qty), is(2));
         assertThat(data1.getIntAt(2), is(2));
-        assertThat(data1.getDouble(Fields.Price), is(75.3));
+        assertThat(data1.getDoubleOf(Fields.Price), is(75.3));
         assertThat(data1.getDoubleAt(3), is(75.3));
 
-        assertThat(data2.getString(Fields.Fruit), is("Orange"));
+        assertThat(data2.getStringOf(Fields.Fruit), is("Orange"));
         assertThat(data2.getStringAt(1), is("Orange"));
 
         GenericDataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);

@@ -1,8 +1,8 @@
 package dido.oddjob.types;
 
 import dido.data.ArrayData;
-import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
+import dido.data.GenericDataSchema;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.convert.ArooaConverter;
@@ -14,9 +14,9 @@ import java.util.List;
 /**
  * Create an item of Generic Data from values and possibly a schema. Used for testing.
  */
-public class GenericDataType implements ValueFactory<GenericData<String>>, ArooaSessionAware {
+public class GenericDataType implements ValueFactory<DidoData>, ArooaSessionAware {
 
-    private DataSchema<String> schema;
+    private GenericDataSchema<String> schema;
 
     private List<Object> values;
 
@@ -28,7 +28,7 @@ public class GenericDataType implements ValueFactory<GenericData<String>>, Arooa
     }
 
     @Override
-    public GenericData<String> toValue() throws ArooaConversionException {
+    public DidoData toValue() throws ArooaConversionException {
 
         if (schema == null) {
             return ArrayData.of(values.toArray());
@@ -52,11 +52,11 @@ public class GenericDataType implements ValueFactory<GenericData<String>>, Arooa
         }
     }
 
-    public DataSchema<String> getSchema() {
+    public GenericDataSchema<String> getSchema() {
         return schema;
     }
 
-    public void setSchema(DataSchema<String> schema) {
+    public void setSchema(GenericDataSchema<String> schema) {
         this.schema = schema;
     }
 

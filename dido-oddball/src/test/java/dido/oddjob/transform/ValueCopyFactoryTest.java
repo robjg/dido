@@ -34,17 +34,17 @@ class ValueCopyFactoryTest {
 
         TransformerFactory transformerFactory = test.toValue();
 
-        DataSchema<String> inSchema = SchemaBuilder.forStringFields()
+        DataSchema inSchema = SchemaBuilder.forStringFields()
                 .addField("Foo", String.class)
                 .build();
 
-        SchemaSetter<String> schemaSetter = mock(SchemaSetter.class);
+        SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
         Transformer transformer = transformerFactory.create(1, inSchema, schemaSetter);
 
         verify(schemaSetter).setFieldAt(1, "FooAmount", Integer.class);
 
-        DataSetter<String> dataSetter = mock(DataSetter.class);
+        DataSetter dataSetter = mock(DataSetter.class);
 
         DidoData data = MapData.of("Foo", "423");
 
@@ -65,17 +65,17 @@ class ValueCopyFactoryTest {
 
         TransformerFactory transformerFactory = test.toValue();
 
-        DataSchema<String> inSchema = SchemaBuilder.forStringFields()
+        DataSchema inSchema = SchemaBuilder.forStringFields()
                 .addField("Foo", String.class)
                 .build();
 
-        SchemaSetter<String> schemaSetter = mock(SchemaSetter.class);
+        SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
         Transformer transformer = transformerFactory.create(1, inSchema, schemaSetter);
 
         verify(schemaSetter).setFieldAt(1, "FooAmount", int.class);
 
-        DataSetter<String> dataSetter = mock(DataSetter.class);
+        DataSetter dataSetter = mock(DataSetter.class);
 
         DidoData data = MapData.of("Foo", "423");
 
@@ -97,11 +97,10 @@ class ValueCopyFactoryTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        @SuppressWarnings("unchecked")
-        GenericData<String> result1 = lookup.lookup("results.list.value[0]", GenericData.class);
+        DidoData result1 = lookup.lookup("results.list.value[0]", DidoData.class);
 
 
-        DataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.forStringFields()
                 .addField("AByte", byte.class)
                 .addField("AShort", short.class)
                 .addField("AChar", char.class)
@@ -113,11 +112,11 @@ class ValueCopyFactoryTest {
                 .build();
 
 
-        DataSchema<String> schema = result1.getSchema();
+        DataSchema schema = result1.getSchema();
 
         assertThat(schema, is(expectedSchema));
 
-        GenericData<String> expectedData = ArrayData.valuesFor(schema)
+        DidoData expectedData = ArrayData.valuesFor(schema)
                 .of((byte) 65, (short) 65, '6', 65, 65L, 456.57, 456.57f, true);
 
         assertThat(result1, is(expectedData));
@@ -139,11 +138,10 @@ class ValueCopyFactoryTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        @SuppressWarnings("unchecked")
-        GenericData<String> result1 = lookup.lookup("results.list.value[0]", GenericData.class);
+        DidoData result1 = lookup.lookup("results.list.value[0]", DidoData.class);
 
 
-        DataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.forStringFields()
                 .addField("SomeOne", int.class)
                 .addField("Two", int.class)
                 .addField("SomeThree", int.class)
@@ -154,11 +152,11 @@ class ValueCopyFactoryTest {
                 .build();
 
 
-        DataSchema<String> schema = result1.getSchema();
+        DataSchema schema = result1.getSchema();
 
         assertThat(schema, is(expectedSchema));
 
-        GenericData<String> expectedData = ArrayData.valuesFor(schema)
+        DidoData expectedData = ArrayData.valuesFor(schema)
                 .of(1, 2, 3, 4, 5, 6,  7);
 
         assertThat(result1, is(expectedData));
@@ -180,18 +178,17 @@ class ValueCopyFactoryTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        @SuppressWarnings("unchecked")
-        GenericData<String> result1 = lookup.lookup("results.list.value[0]", GenericData.class);
+        DidoData result1 = lookup.lookup("results.list.value[0]", DidoData.class);
 
 
-        DataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.forStringFields()
                 .addField("AnInt", int.class)
                 .addField("BlankString", String.class)
                 .addField("CsvString", int[].class)
                 .addField("NullString", String.class)
                 .build();
 
-        DataSchema<String> schema = result1.getSchema();
+        DataSchema schema = result1.getSchema();
 
         assertThat(schema, is(expectedSchema));
 

@@ -21,7 +21,7 @@ public class FromJsonStringType {
      * created based on the JSON primitive type.
      * @oddjob.required No.
      */
-    private DataSchema<String> schema;
+    private DataSchema schema;
 
     /**
      * @oddjob.description Indicates that the provided Schema is partial. The
@@ -58,11 +58,11 @@ public class FromJsonStringType {
     }
 
 
-    public DataSchema<String> getSchema() {
+    public DataSchema getSchema() {
         return schema;
     }
 
-    public void setSchema(DataSchema<String> schema) {
+    public void setSchema(DataSchema schema) {
         this.schema = schema;
     }
 

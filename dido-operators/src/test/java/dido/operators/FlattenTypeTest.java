@@ -1,6 +1,9 @@
 package dido.operators;
 
-import dido.data.*;
+import dido.data.ArrayData;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
@@ -36,17 +39,17 @@ class FlattenTypeTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         @SuppressWarnings("unchecked")
-        List<GenericData<String>> results = lookup.lookup("results.beans", List.class);
+        List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        DataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.forStringFields()
                 .addField("OrderId", String.class)
                 .addField("Fruit", String.class)
                 .addField("Qty", int.class)
                 .build();
 
-        IndexedData<String> expected1 = ArrayData.valuesFor(expectedSchema)
+        DidoData expected1 = ArrayData.valuesFor(expectedSchema)
                 .of("A123", "Apple", 4);
-        IndexedData<String> expected2 = ArrayData.valuesFor(expectedSchema)
+        DidoData expected2 = ArrayData.valuesFor(expectedSchema)
                 .of("A123", "Pear", 5);
 
         assertThat(results, contains(expected1, expected2));
@@ -70,9 +73,9 @@ class FlattenTypeTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         @SuppressWarnings("unchecked")
-        List<GenericData<String>> results = lookup.lookup("results.beans", List.class);
+        List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        DataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.forStringFields()
                 .addField("Name", String.class)
                 .addField("Numbers", Integer.class)
                 .addField("Letters", Object.class)
@@ -82,11 +85,11 @@ class FlattenTypeTest {
 
         assertThat(results.get(0).getSchema(), is(expectedSchema));
 
-        IndexedData<String> expected1 = ArrayData.valuesFor(expectedSchema)
+        DidoData expected1 = ArrayData.valuesFor(expectedSchema)
                 .of("Foo", 1, "X");
-        IndexedData<String> expected2 = ArrayData.valuesFor(expectedSchema)
+        DidoData expected2 = ArrayData.valuesFor(expectedSchema)
                 .of("Foo", 2, "Y");
-        IndexedData<String> expected3 = ArrayData.valuesFor(expectedSchema)
+        DidoData expected3 = ArrayData.valuesFor(expectedSchema)
                 .of("Foo", 3, null);
 
         assertThat(results, contains(expected1, expected2, expected3));

@@ -29,19 +29,19 @@ class FromBeanTransformerTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         @SuppressWarnings("unchecked")
-        List<GenericData<String>> results = lookup.lookup("capture.beans", List.class);
+        List<DidoData> results = lookup.lookup("capture.beans", List.class);
 
-        DataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("orderId", String.class)
                 .addRepeatingField("orderLines", nestedSchema)
                 .build();
 
-        IndexedData<String> expectedData = ArrayData.valuesFor(schema)
+        IndexedData expectedData = ArrayData.valuesFor(schema)
                 .of("A123",
                         RepeatingData.of(ArrayData.valuesFor(nestedSchema)
                                         .of("Apple", 5),

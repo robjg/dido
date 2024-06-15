@@ -1,15 +1,15 @@
 package dido.poi.layouts;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.poi.CellIn;
 import dido.poi.CellOut;
+import dido.poi.HeaderRowOut;
+import dido.poi.RowOut;
+import dido.poi.data.DataCell;
 import dido.poi.data.PoiWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
-import dido.poi.HeaderRowOut;
-import dido.poi.RowOut;
-import dido.poi.data.DataCell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +82,7 @@ abstract public class AbstractDataCell<T> implements DataCell<T> {
 			}
 
 			@Override
-			public void setValue(RowOut rowOut, GenericData<String> data) {
+			public void setValue(RowOut rowOut, DidoData data) {
 
 				Cell cell = rowOut.getCell(index, getCellType());
 
@@ -120,7 +120,7 @@ abstract public class AbstractDataCell<T> implements DataCell<T> {
 	 * @param data   The data. May be null.
 	 *
 	 */
-	abstract void insertValueInto(Cell cell, int index,  GenericData<String> data);
+	abstract void insertValueInto(Cell cell, int index,  DidoData data);
 
 	/**
 	 * @oddjob.property cellType

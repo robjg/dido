@@ -1,8 +1,7 @@
 package dido.operators;
 
 import dido.data.Concatenator;
-import dido.data.GenericData;
-import dido.data.IndexedData;
+import dido.data.DidoData;
 import dido.data.SubData;
 
 import java.util.Map;
@@ -11,77 +10,77 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class LeftStreamJoin<F> implements StreamJoin<F> {
+public class LeftStreamJoin implements StreamJoin {
 
 
-    private final Consumer<IndexedData<F>> primary = new PrimaryConsumer();
+    private final Consumer<DidoData> primary = new PrimaryConsumer();
 
-    private final Consumer<IndexedData<F>> secondary = new SecondaryConsumer();
+    private final Consumer<DidoData> secondary = new SecondaryConsumer();
 
-    private final Map<IndexedData<F>, SingleJoin<F>> data = new ConcurrentHashMap<>();
+    private final Map<DidoData, SingleJoin> data = new ConcurrentHashMap<>();
 
-    private final Function<IndexedData<F>, GenericData<F>> primaryIndices;
+    private final Function<DidoData, DidoData> primaryIndices;
 
-    private final Function<IndexedData<F>, GenericData<F>> foreignIndices;
+    private final Function<DidoData, DidoData> foreignIndices;
 
-    private final Function<IndexedData<F>, GenericData<F>> secondaryIndices;
+    private final Function<DidoData, DidoData> secondaryIndices;
 
-    private volatile Consumer<? super GenericData<F>> to;
+    private volatile Consumer<? super DidoData> to;
 
-    private final Concatenator.Factory<F> concatenator = Concatenator.<F>withSettings()
+    private final Concatenator.Factory concatenator = Concatenator.withSettings()
             .skipDuplicates(true).factory();
 
-    private LeftStreamJoin(With<F> with) {
+    private LeftStreamJoin(With with) {
         this.primaryIndices = with.primaryIndices();
         this.foreignIndices = with.foreignIndices();
         this.secondaryIndices = with.secondaryIndices();
     }
 
-    public static class With<F> {
+    public static class With {
 
         private int[] primaryIndices;
 
-        private F[] primaryFields;
+        private String[] primaryFields;
 
         private int[] foreignIndices;
 
-        private F[] foreignFields;
+        private String[] foreignFields;
 
         private int[] secondaryIndices;
 
-        private F[] secondaryFields;
+        private String[] secondaryFields;
 
-        public With<F> primaryIndices(int... primaryIndices) {
+        public With primaryIndices(int... primaryIndices) {
             this.primaryIndices = primaryIndices;
             return this;
         }
 
-        public With<F> foreignIndices(int... foreignIndices) {
+        public With foreignIndices(int... foreignIndices) {
             this.foreignIndices = foreignIndices;
             return this;
         }
 
-        public With<F> secondaryIndices(int... secondaryIndices) {
+        public With secondaryIndices(int... secondaryIndices) {
             this.secondaryIndices = secondaryIndices;
             return this;
         }
 
-        public With<F> primaryFields(F... primaryFields) {
+        public With primaryFields(String... primaryFields) {
             this.primaryFields = primaryFields;
             return this;
         }
 
-        public With<F> foreignFields(F... foreignFields) {
+        public With foreignFields(String... foreignFields) {
             this.foreignFields = foreignFields;
             return this;
         }
 
-        public With<F> secondaryFields(F... secondaryFields) {
+        public With secondaryFields(String... secondaryFields) {
             this.secondaryFields = secondaryFields;
             return this;
         }
 
-        private Function<IndexedData<F>, GenericData<F>> primaryIndices() {
+        private Function<DidoData, DidoData> primaryIndices() {
             if (primaryIndices == null) {
                 return SubData.ofFields(Objects.requireNonNull(primaryFields));
             }
@@ -90,7 +89,7 @@ public class LeftStreamJoin<F> implements StreamJoin<F> {
             }
         }
 
-        private Function<IndexedData<F>, GenericData<F>> foreignIndices() {
+        private Function<DidoData, DidoData> foreignIndices() {
             if (foreignIndices == null) {
                 return SubData.ofFields(Objects.requireNonNull(foreignFields));
             }
@@ -99,7 +98,7 @@ public class LeftStreamJoin<F> implements StreamJoin<F> {
             }
         }
 
-        private Function<IndexedData<F>, GenericData<F>> secondaryIndices() {
+        private Function<DidoData, DidoData> secondaryIndices() {
             if (secondaryIndices == null) {
                 return SubData.ofFields(Objects.requireNonNull(secondaryFields));
             }
@@ -108,40 +107,40 @@ public class LeftStreamJoin<F> implements StreamJoin<F> {
             }
         }
 
-        public StreamJoin<F> make() {
-            return new LeftStreamJoin<>(this);
+        public StreamJoin make() {
+            return new LeftStreamJoin(this);
         }
     }
 
-    public static <F> With<F> with() {
-        return new With<>();
+    public static <F> With with() {
+        return new With();
     }
 
     @Override
-    public Consumer<IndexedData<F>> getPrimary() {
+    public Consumer<DidoData> getPrimary() {
         return primary;
     }
 
     @Override
-    public Consumer<IndexedData<F>> getSecondary() {
+    public Consumer<DidoData> getSecondary() {
         return secondary;
     }
 
     @Override
-    public void setTo(Consumer<? super GenericData<F>> to) {
+    public void setTo(Consumer<? super DidoData> to) {
         this.to = to;
     }
 
-    class PrimaryConsumer implements Consumer<IndexedData<F>> {
+    class PrimaryConsumer implements Consumer<DidoData> {
 
         @Override
-        public void accept(IndexedData<F> primaryData) {
+        public void accept(DidoData primaryData) {
 
-            IndexedData<F> keyOfPrimary = primaryIndices.apply(primaryData);
+            DidoData keyOfPrimary = primaryIndices.apply(primaryData);
 
-            IndexedData<F> foreignKey = foreignIndices.apply(primaryData);
+            DidoData foreignKey = foreignIndices.apply(primaryData);
 
-            SingleJoin<F> singleJoin = data.computeIfAbsent(foreignKey, k -> new SingleJoin<>());
+            SingleJoin singleJoin = data.computeIfAbsent(foreignKey, k -> new SingleJoin());
 
             singleJoin.primaries.mappedByKey.put(keyOfPrimary, primaryData);
             // ok so long as this is always called on the same thread.
@@ -151,14 +150,14 @@ public class LeftStreamJoin<F> implements StreamJoin<F> {
         }
     }
 
-    class SecondaryConsumer implements Consumer<IndexedData<F>> {
+    class SecondaryConsumer implements Consumer<DidoData> {
 
         @Override
-        public void accept(IndexedData<F> secondaryData) {
+        public void accept(DidoData secondaryData) {
 
-            IndexedData<F> keyOfSecondary = secondaryIndices.apply(secondaryData);
+            DidoData keyOfSecondary = secondaryIndices.apply(secondaryData);
 
-            SingleJoin<F> singleJoin = data.computeIfAbsent(keyOfSecondary, k -> new SingleJoin<>());
+            SingleJoin singleJoin = data.computeIfAbsent(keyOfSecondary, k -> new SingleJoin());
 
             singleJoin.secondary = secondaryData;
 
@@ -167,15 +166,15 @@ public class LeftStreamJoin<F> implements StreamJoin<F> {
         }
     }
 
-    static class Primaries<F> {
+    static class Primaries {
 
-        private final Map<IndexedData<F>, IndexedData<F>> mappedByKey = new ConcurrentHashMap<>();
+        private final Map<DidoData, DidoData> mappedByKey = new ConcurrentHashMap<>();
     }
 
-    static class SingleJoin<F> {
+    static class SingleJoin {
 
-        private final Primaries<F> primaries = new Primaries<>();
+        private final Primaries primaries = new Primaries();
 
-        private volatile IndexedData<F> secondary;
+        private volatile DidoData secondary;
     }
 }

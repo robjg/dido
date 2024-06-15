@@ -1,17 +1,16 @@
 package dido.poi;
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 
 /**
  * Represents a spreadsheet cell for writing data too.
  * 
  * @author rob
  *
- * @param <T>
  */
 public interface CellOut<T> {
 
 	void writeHeader(HeaderRowOut headerRowOut);
 
-	void setValue(RowOut rowOut, GenericData<String> data);
+	void setValue(RowOut rowOut, DidoData data);
 }

@@ -7,31 +7,34 @@ import java.util.Iterator;
  *
  * @param <F> The field type. Generally a String or an enum.
  */
-public interface GenericData<F> extends IndexedData<F> {
+public interface GenericData<F> extends DidoData {
 
-    Object get(F field);
+    GenericDataSchema<F> getSchema();
 
-    <T> T getAs(F field, Class<T> type);
 
-    boolean hasField(F field);
+    Object getOf(F field);
 
-    boolean getBoolean(F field);
+    <T> T getOfAs(F field, Class<T> type);
 
-    byte getByte(F field);
+    boolean hasFieldOf(F field);
 
-    char getChar(F field);
+    boolean getBooleanOf(F field);
 
-    short getShort(F field);
+    byte getByteOf(F field);
 
-    int getInt(F field);
+    char getCharOf(F field);
 
-    long getLong(F field);
+    short getShortOf(F field);
 
-    float getFloat(F field);
+    int getIntOf(F field);
 
-    double getDouble(F field);
+    long getLongOf(F field);
 
-    String getString(F field);
+    float getFloatOf(F field);
+
+    double getDoubleOf(F field);
+
+    String getStringOf(F field);
 
     static <F> String toStringFieldsOnly(GenericData<F> data) {
         StringBuilder sb = new StringBuilder();
@@ -45,7 +48,7 @@ public interface GenericData<F> extends IndexedData<F> {
             sb.append('[');
             sb.append(field);
             sb.append("]=");
-            sb.append(data.get(field));
+            sb.append(data.getOf(field));
             if (it.hasNext()) {
                 sb.append(", ");
             }
@@ -56,7 +59,7 @@ public interface GenericData<F> extends IndexedData<F> {
     }
 
     static <F> String toString(GenericData<F> data) {
-        DataSchema<F> schema = data.getSchema();
+        GenericDataSchema<F> schema = data.getSchema();
         StringBuilder sb = new StringBuilder(schema.lastIndex() * 16);
         sb.append('{');
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
@@ -77,85 +80,11 @@ public interface GenericData<F> extends IndexedData<F> {
         return sb.toString();
     }
 
-    static <F> GenericData<F> from(IndexedData<F> indexedData) {
-
-        if (indexedData instanceof GenericData) {
-            return (GenericData<F>) indexedData;
-        }
-
-        return new AbstractGenericData<>() {
-            @Override
-            public DataSchema<F> getSchema() {
-                return indexedData.getSchema();
-            }
-
-            @Override
-            public Object getAt(int index) {
-                return indexedData.getAt(index);
-            }
-
-            @Override
-            public boolean hasIndex(int index) {
-                return indexedData.hasIndex(index);
-            }
-
-            @Override
-            public <T> T getAtAs(int index, Class<T> type) {
-                return indexedData.getAtAs(index, type);
-            }
-
-            @Override
-            public boolean getBooleanAt(int index) {
-                return indexedData.getBooleanAt(index);
-            }
-
-            @Override
-            public byte getByteAt(int index) {
-                return indexedData.getByteAt(index);
-            }
-
-            @Override
-            public char getCharAt(int index) {
-                return indexedData.getCharAt(index);
-            }
-
-            @Override
-            public short getShortAt(int index) {
-                return indexedData.getShortAt(index);
-            }
-
-            @Override
-            public int getIntAt(int index) {
-                return indexedData.getIntAt(index);
-            }
-
-            @Override
-            public long getLongAt(int index) {
-                return indexedData.getLongAt(index);
-            }
-
-            @Override
-            public float getFloatAt(int index) {
-                return indexedData.getFloatAt(index);
-            }
-
-            @Override
-            public double getDoubleAt(int index) {
-                return indexedData.getDoubleAt(index);
-            }
-
-            @Override
-            public String getStringAt(int index) {
-                return indexedData.getStringAt(index);
-            }
-        };
-    }
-
     class EmptyData<F> extends AbstractGenericData<F> {
 
         @Override
-        public DataSchema<F> getSchema() {
-            return DataSchema.emptySchema();
+        public GenericDataSchema<F> getSchema() {
+            return GenericDataSchema.emptySchema();
         }
 
         @Override

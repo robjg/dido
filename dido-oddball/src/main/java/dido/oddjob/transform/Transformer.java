@@ -10,5 +10,5 @@ import dido.data.GenericData;
 @FunctionalInterface
 public interface Transformer {
 
-    void transform(DidoData from, DataSetter<String> into);
+    void transform(DidoData from, DataSetter into);
 }

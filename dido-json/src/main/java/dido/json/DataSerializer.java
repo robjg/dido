@@ -19,8 +19,8 @@ public class DataSerializer implements JsonSerializer<DidoData> {
 
         JsonObject jsonObject = new JsonObject();
 
-        DataSchema<String> schema = src.getSchema();
-        for (String field: schema.getFields()) {
+        DataSchema schema = src.getSchema();
+        for (String field: schema.getFieldNames()) {
             if (src.hasField(field)) {
                 jsonObject.add(field, context.serialize(src.get(field)));
             }

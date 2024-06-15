@@ -1,8 +1,8 @@
 package dido.oddjob.transform;
 
-public interface SchemaSetter<F> {
+public interface SchemaSetter {
 
-    void setFieldAt(int index, F field, Class<?> fieldType);
+    void setFieldAt(int index, String field, Class<?> fieldType);
 
 
 }

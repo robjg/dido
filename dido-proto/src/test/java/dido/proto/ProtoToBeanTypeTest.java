@@ -1,7 +1,7 @@
 package dido.proto;
 
 
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.MapData;
 import dido.foo.Person;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class ProtoToBeanTypeTest {
     @Test
     void createBeanFromProto() {
 
-        GenericData<String> data = MapData.of(
+        DidoData data = MapData.of(
                 "name", "Alice",
                 "id", 234,
                 "email", "alice@foo.com");

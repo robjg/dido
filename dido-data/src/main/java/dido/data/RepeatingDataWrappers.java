@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class RepeatingDataWrappers {
@@ -17,11 +18,11 @@ public class RepeatingDataWrappers {
         return new ArrayWrapper(data);
     }
 
-    public static <F> GenericRepeatingData<F> ofGeneric(List<? extends IndexedData<F>> list) {
+    public static <F> GenericRepeatingData<F> ofGeneric(List<? extends GenericData<F>> list) {
         return new GenericListWrapper<>(list);
     }
 
-    public static <F> GenericRepeatingData<F> ofGeneric(IndexedData<F>... data) {
+    public static <F> GenericRepeatingData<F> ofGeneric(GenericData<F>... data) {
 
         return new GenericArrayWrapper<>(data);
     }
@@ -99,9 +100,9 @@ public class RepeatingDataWrappers {
 
     private static class GenericArrayWrapper<F> extends AbstractGenericRepeatingData<F> {
 
-        private final IndexedData<F>[] array;
+        private final GenericData<F>[] array;
 
-        private GenericArrayWrapper(IndexedData<F>[] array) {
+        private GenericArrayWrapper(GenericData<F>[] array) {
             this.array = array;
         }
 
@@ -112,12 +113,12 @@ public class RepeatingDataWrappers {
 
         @Override
         public GenericData<F> get(int row) {
-            return GenericData.from(array[row]);
+            return array[row];
         }
 
         @Override
         public Stream<GenericData<F>> stream() {
-            return Arrays.stream(array).map(GenericData::from);
+            return Arrays.stream(array);
         }
 
         @Override
@@ -132,7 +133,7 @@ public class RepeatingDataWrappers {
 
                 @Override
                 public GenericData<F> next() {
-                    return GenericData.from(array[row++]);
+                    return array[row++];
                 }
             };
         }
@@ -140,9 +141,9 @@ public class RepeatingDataWrappers {
 
     static class GenericListWrapper<F> extends AbstractGenericRepeatingData<F> {
 
-        private final List<? extends IndexedData<F>> list;
+        private final List<? extends GenericData<F>> list;
 
-        private GenericListWrapper(List<? extends IndexedData<F>> list) {
+        private GenericListWrapper(List<? extends GenericData<F>> list) {
             this.list = Objects.requireNonNull(list);
         }
 
@@ -154,17 +155,17 @@ public class RepeatingDataWrappers {
 
         @Override
         public GenericData<F> get(int row) {
-            return GenericData.from(list.get(row));
+            return list.get(row);
         }
 
         @Override
         public Stream<GenericData<F>> stream() {
-            return list.stream().map(GenericData::from);
+            return list.stream().map(Function.identity());
         }
 
         @Override
         public Iterator<GenericData<F>> iterator() {
-            Iterator<? extends IndexedData<F>> iterator = list.iterator();
+            Iterator<? extends GenericData<F>> iterator = list.iterator();
             return new Iterator<>() {
                 @Override
                 public boolean hasNext() {
@@ -173,7 +174,7 @@ public class RepeatingDataWrappers {
 
                 @Override
                 public GenericData<F> next() {
-                    return GenericData.from(iterator.next());
+                    return iterator.next();
                 }
             };
         }

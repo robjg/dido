@@ -4,75 +4,75 @@ import java.util.Objects;
 
 class SchemaFields {
 
-    public static <F> SchemaField<F> of(int index, Class<?> type) {
-        return new Indexed<>(index, type);
+    public static SchemaField of(int index, Class<?> type) {
+        return new Indexed(index, type);
     }
 
-    public static <F> SchemaField<F> of(int index, F field, Class<?> type) {
+    public static SchemaField of(int index, String field, Class<?> type) {
         if (field == null) {
             return of(index, type);
         } else {
-            return new Simple<>(index, field, type);
+            return new Simple(index, field, type);
         }
     }
 
-    public static <F, N> SchemaField<F> ofNested(int index, DataSchema<N> nested) {
-        return new Nested<>(new Indexed<>(index, SchemaField.NESTED_TYPE),
+    public static SchemaField ofNested(int index, DataSchema nested) {
+        return new Nested(new Indexed(index, GenericSchemaField.NESTED_TYPE),
                 nested, false);
     }
 
-    public static <F, N> SchemaField<F> ofNested(int index, SchemaReference<N> nestedRef) {
-        return new NestedRef<>(new Indexed<>(index, SchemaField.NESTED_TYPE),
+    public static SchemaField ofNested(int index, SchemaReference<?> nestedRef) {
+        return new NestedRef(new Indexed(index, GenericSchemaField.NESTED_TYPE),
                 nestedRef, false);
     }
 
-    public static <F, N> SchemaField<F> ofNested(int index, F field, SchemaReference<N> nestedRef) {
+    public static SchemaField ofNested(int index, String field, SchemaReference<?> nestedRef) {
         if (field == null) {
             return ofNested(index, nestedRef);
         } else {
-            return new NestedRef<>(new Simple<>(index, field, SchemaField.NESTED_TYPE),
+            return new NestedRef(new Simple(index, field, GenericSchemaField.NESTED_TYPE),
                     nestedRef, false);
         }
     }
 
-    public static <F, N> SchemaField<F> ofNested(int index, F field, DataSchema<N> nested) {
+    public static SchemaField ofNested(int index, String field, DataSchema nested) {
         if (field == null) {
             return ofNested(index, nested);
         } else {
-            return new Nested<>(new Simple<>(index, field, SchemaField.NESTED_TYPE),
+            return new Nested(new Simple(index, field, GenericSchemaField.NESTED_TYPE),
                     nested, false);
         }
     }
 
-    public static <F, N> SchemaField<F> ofRepeating(int index, DataSchema<N> nested) {
-        return new Nested<>(new Indexed<>(index, SchemaField.NESTED_REPEATING_TYPE),
+    public static SchemaField ofRepeating(int index, DataSchema nested) {
+        return new Nested(new Indexed(index, GenericSchemaField.NESTED_REPEATING_TYPE),
                 nested, true);
     }
 
-    public static <F, N> SchemaField<F> ofRepeating(int index, SchemaReference<N> nestedRef) {
-        return new NestedRef<>(new Indexed<>(index, SchemaField.NESTED_REPEATING_TYPE),
+    public static SchemaField ofRepeating(int index, SchemaReference<?> nestedRef) {
+        return new NestedRef(new Indexed(index, GenericSchemaField.NESTED_REPEATING_TYPE),
                 nestedRef, true);
     }
 
-    public static <F, N> SchemaField<F> ofRepeating(int index, F field, DataSchema<N> nested) {
+    public static SchemaField ofRepeating(int index, String field, DataSchema nested) {
         if (field == null) {
             return ofRepeating(index, nested);
         } else {
-            return new Nested<>(new Simple<>(index, field, SchemaField.NESTED_REPEATING_TYPE),
+            return new Nested(new Simple(index, field, GenericSchemaField.NESTED_REPEATING_TYPE),
                     nested, true);
         }
     }
 
-    public static <F, N> SchemaField<F> ofRepeating(int index, F field, SchemaReference<N> nestedRef) {
+    public static SchemaField ofRepeating(int index, String field, SchemaReference<?> nestedRef) {
         if (field == null) {
             return ofRepeating(index, nestedRef);
         } else {
-            return new NestedRef<>(new Simple<>(index, field, SchemaField.NESTED_REPEATING_TYPE),
+            return new NestedRef(new Simple(index, field, GenericSchemaField.NESTED_REPEATING_TYPE),
                     nestedRef, true);
         }
     }
 
-    private static final class Indexed<F> implements SchemaField<F> {
+    private static final class Indexed implements SchemaField {
 
         private final int index;
 
@@ -107,18 +107,18 @@ class SchemaFields {
         }
 
         @Override
-        public F getField() {
+        public String getName() {
             return null;
         }
 
         @Override
-        public <N> DataSchema<N> getNestedSchema() {
+        public DataSchema getNestedSchema() {
             return null;
         }
 
         @Override
         public int hashCode() {
-            return index + 31 * type.hashCode();
+            return SchemaField.hash(this);
         }
 
         @Override
@@ -126,19 +126,12 @@ class SchemaFields {
             if (obj == this) {
                 return true;
             }
-            if (obj instanceof Indexed) {
-                Indexed<?> other = (Indexed<?>) obj;
-                return other.index == this.index
-                        && other.type == this.type;
-            }
             if (obj instanceof SchemaField) {
-                SchemaField<?> other = (SchemaField<?>) obj;
-                return !other.isNested()
-                        && !other.isRepeating()
-                        && other.getIndex() == this.index
-                        && other.getType() == this.type;
+                return SchemaField.equals(this, (SchemaField) obj);
             }
-            return false;
+            else {
+                return false;
+            }
         }
 
         @Override
@@ -147,14 +140,14 @@ class SchemaFields {
         }
     }
 
-    private static final class Simple<F> implements SchemaField<F> {
+    private static final class Simple implements SchemaField {
 
-        private final Indexed<F> indexed;
+        private final Indexed indexed;
 
-        private final F field;
+        private final String field;
 
-        private Simple(int index, F field, Class<?> type) {
-            this.indexed = new Indexed<>(index, type);
+        private Simple(int index, String field, Class<?> type) {
+            this.indexed = new Indexed(index, type);
             this.field = Objects.requireNonNull(field);
         }
 
@@ -179,18 +172,18 @@ class SchemaFields {
         }
 
         @Override
-        public F getField() {
+        public String getName() {
             return field;
         }
 
         @Override
-        public <N> DataSchema<N> getNestedSchema() {
+        public DataSchema getNestedSchema() {
             return null;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(indexed, field);
+            return SchemaField.hash(this);
         }
 
         @Override
@@ -198,20 +191,12 @@ class SchemaFields {
             if (obj == this) {
                 return true;
             }
-            if (obj instanceof Simple) {
-                Simple<?> other = (Simple<?>) obj;
-                return other.indexed.equals(this.indexed)
-                        && other.field.equals(this.field);
-            }
             if (obj instanceof SchemaField) {
-                SchemaField<?> other = (SchemaField<?>) obj;
-                return !other.isNested()
-                        && !other.isRepeating()
-                        && other.getIndex() == this.indexed.index
-                        && other.getType() == this.indexed.type
-                        && this.field.equals(other.getField());
+                return SchemaField.equals(this, (SchemaField) obj);
             }
-            return false;
+            else {
+                return false;
+            }
         }
 
         @Override
@@ -220,15 +205,15 @@ class SchemaFields {
         }
     }
 
-    private static final class Nested<F> implements SchemaField<F> {
+    private static final class Nested implements SchemaField {
 
-        private final SchemaField<F> simple;
+        private final SchemaField simple;
 
-        private final DataSchema<?> nested;
+        private final DataSchema nested;
 
         private final boolean repeating;
 
-        private Nested(SchemaField<F> simple, DataSchema<?> nested, boolean repeating) {
+        private Nested(SchemaField simple, DataSchema nested, boolean repeating) {
             this.simple = simple;
             this.nested = Objects.requireNonNull(nested);
             this.repeating = repeating;
@@ -256,19 +241,18 @@ class SchemaFields {
         }
 
         @Override
-        public F getField() {
-            return simple.getField();
+        public String getName() {
+            return simple.getName();
         }
 
         @Override
-        public <N> DataSchema<N> getNestedSchema() {
-            //noinspection unchecked
-            return (DataSchema<N>) nested;
+        public DataSchema getNestedSchema() {
+            return nested;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(simple, repeating, nested);
+            return SchemaField.hash(this);
         }
 
         @Override
@@ -277,20 +261,17 @@ class SchemaFields {
                 return true;
             }
             if (obj instanceof SchemaField) {
-                SchemaField<?> other = (SchemaField<?>) obj;
-                return other.isNested()
-                        && other.isRepeating() == repeating
-                        && other.getIndex() == this.simple.getIndex()
-                        && Objects.equals(other.getField(), this.simple.getField())
-                        && this.nested.equals(other.getNestedSchema());
+                return SchemaField.equals(this, (SchemaField) obj);
             }
-            return false;
+            else {
+                return false;
+            }
         }
 
         @Override
         public String toString() {
             String field;
-            F f = simple.getField();
+            String f = simple.getName();
             if (f == null) {
                 field = "";
             } else {
@@ -308,15 +289,15 @@ class SchemaFields {
         }
     }
 
-    private static final class NestedRef<F> implements SchemaField<F> {
+    private static final class NestedRef implements SchemaField {
 
-        private final SchemaField<F> simple;
+        private final SchemaField simple;
 
         private final SchemaReference<?> nestedRef;
 
         private final boolean repeating;
 
-        private NestedRef(SchemaField<F> simple,
+        private NestedRef(SchemaField simple,
                           SchemaReference<?> nestedRef,
                           boolean repeating) {
             this.simple = simple;
@@ -345,19 +326,18 @@ class SchemaFields {
         }
 
         @Override
-        public F getField() {
-            return simple.getField();
+        public String getName() {
+            return simple.getName();
         }
 
         @Override
-        public <N> DataSchema<N> getNestedSchema() {
-            //noinspection unchecked
-            return (DataSchema<N>) nestedRef.get();
+        public DataSchema getNestedSchema() {
+            return nestedRef.get();
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(simple, repeating, nestedRef);
+            return SchemaField.hash(this);
         }
 
         @Override
@@ -365,24 +345,18 @@ class SchemaFields {
             if (obj == this) {
                 return true;
             }
-            if (nestedRef.get() == null) {
+            if (obj instanceof SchemaField) {
+                return SchemaField.equals(this, (SchemaField) obj);
+            }
+            else {
                 return false;
             }
-            if (obj instanceof SchemaField) {
-                SchemaField<?> other = (SchemaField<?>) obj;
-                return other.isNested()
-                        && other.isRepeating() == repeating
-                        && other.getIndex() == this.simple.getIndex()
-                        && Objects.equals(other.getField(), this.simple.getField())
-                        && this.nestedRef.get().equals(other.getNestedSchema());
-            }
-            return false;
         }
 
         @Override
         public String toString() {
             String field;
-            F f = simple.getField();
+            String f = simple.getName();
             if (f == null) {
                 field = "";
             } else {

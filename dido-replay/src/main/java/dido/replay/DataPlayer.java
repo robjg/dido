@@ -1,7 +1,7 @@
 package dido.replay;
 
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.how.CloseableSupplier;
 import dido.json.JsonStringToData;
 import dido.json.SchemaAsJson;
@@ -23,7 +23,7 @@ public class DataPlayer implements CloseableSupplier<DataPlayer.TimedData> {
 
     private final CloseableSupplier<String> dataSupplier;
 
-    private final CloseableSupplier<DataSchema<String>> schemaSupplier;
+    private final CloseableSupplier<DataSchema> schemaSupplier;
 
     private final CloseableSupplier<Instant> timestampSupplier;
 
@@ -163,14 +163,14 @@ public class DataPlayer implements CloseableSupplier<DataPlayer.TimedData> {
     @Override
     public TimedData get() {
 
-        DataSchema<String> schema = schemaSupplier.get();
+        DataSchema schema = schemaSupplier.get();
         if (schema == null) {
             return null;
         }
 
         String jsonString = dataSupplier.get();
 
-        GenericData<String> data = JsonStringToData.asWrapperWithSchema(schema).apply(jsonString);
+        DidoData data = JsonStringToData.asWrapperWithSchema(schema).apply(jsonString);
 
         Instant timestamp = timestampSupplier.get();
 
@@ -179,16 +179,16 @@ public class DataPlayer implements CloseableSupplier<DataPlayer.TimedData> {
 
     public static class TimedData {
 
-        private final GenericData<String> data;
+        private final DidoData data;
 
         private final Instant timestamp;
 
-        public TimedData(GenericData<String> data, Instant timestamp) {
+        public TimedData(DidoData data, Instant timestamp) {
             this.data = data;
             this.timestamp = timestamp;
         }
 
-        public GenericData<String> getData() {
+        public DidoData getData() {
             return data;
         }
 

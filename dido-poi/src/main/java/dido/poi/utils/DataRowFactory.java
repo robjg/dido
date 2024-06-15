@@ -13,17 +13,17 @@ import java.util.Objects;
 
 public class DataRowFactory {
 
-    private final DataSchema<String> schema;
+    private final DataSchema schema;
 
     private final CellIn<?>[] cells;
 
-    private DataRowFactory(DataSchema<String> schema, CellIn<?>[] cells) {
+    private DataRowFactory(DataSchema schema, CellIn<?>[] cells) {
         this.schema = Objects.requireNonNull(schema);
         this.cells = cells;
     }
 
-    public static DataRowFactory newInstance(DataSchema<String> schema,
-                                                    Collection<? extends CellInProvider<?>> cellList) {
+    public static DataRowFactory newInstance(DataSchema schema,
+                                             Collection<? extends CellInProvider<?>> cellList) {
 
         CellIn<?>[] cells = new CellIn<?>[schema.lastIndex()];
 
@@ -45,7 +45,7 @@ public class DataRowFactory {
     public DidoData wrap(RowIn row) {
         return new AbstractData() {
             @Override
-            public DataSchema<String> getSchema() {
+            public DataSchema getSchema() {
                 return schema;
             }
 

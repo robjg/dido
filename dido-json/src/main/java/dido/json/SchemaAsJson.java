@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 public class SchemaAsJson {
 
 
-    public static DataSchema<String> fromJson(InputStream input) throws Exception {
+    public static DataSchema fromJson(InputStream input) throws Exception {
 
         DataInHow<InputStream> inHow = StreamInJson.settings()
                 .setSchema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
@@ -35,12 +35,12 @@ public class SchemaAsJson {
         }
     }
 
-    public static DataSchema<String> fromJson(String string) throws Exception {
+    public static DataSchema fromJson(String string) throws Exception {
 
         return fromJson(new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8)));
     }
 
-    public static void toJson(DataSchema<String> schema, OutputStream output) throws Exception {
+    public static void toJson(DataSchema schema, OutputStream output) throws Exception {
 
         try (DataOut out = StreamOutJson.streamOutSingle().outTo(output)) {
 
@@ -50,14 +50,14 @@ public class SchemaAsJson {
         }
     }
 
-    public static String toJson(DataSchema<String> schema) throws Exception {
+    public static String toJson(DataSchema schema) throws Exception {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         toJson(schema, output);
         return output.toString(StandardCharsets.UTF_8);
     }
 
-    public static CloseableSupplier<DataSchema<String>> fromJsonStream(InputStream input) throws Exception {
+    public static CloseableSupplier<DataSchema> fromJsonStream(InputStream input) throws Exception {
 
         DataInHow<InputStream> inHow = StreamInJsonLines.settings()
                 .setSchema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
@@ -74,7 +74,7 @@ public class SchemaAsJson {
             }
 
             @Override
-            public DataSchema<String> get() {
+            public DataSchema get() {
 
                 DidoData data = in.get();
 
@@ -98,7 +98,7 @@ public class SchemaAsJson {
         };
     }
 
-    public static CloseableConsumer<DataSchema<String>> toJsonStream(OutputStream output) {
+    public static CloseableConsumer<DataSchema> toJsonStream(OutputStream output) {
 
         DataOut out = new StreamOutJsonLines().outTo(output);
 
@@ -110,7 +110,7 @@ public class SchemaAsJson {
             }
 
             @Override
-            public void accept(DataSchema<String> schema) {
+            public void accept(DataSchema schema) {
                 DidoData data = DataSchemaSchema.schemaToData(schema);
 
                 out.accept(data);

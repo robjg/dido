@@ -1,7 +1,6 @@
 package dido.operators;
 
 import dido.data.DidoData;
-import dido.data.IndexedData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,22 +16,22 @@ public class StreamJoinService implements Runnable, AutoCloseable {
 
     private volatile String name;
 
-    private volatile StreamJoin<String> join;
+    private volatile StreamJoin join;
 
     private volatile Consumer<? super DidoData> to;
 
     private volatile ExecutorService executor;
 
-    private volatile Consumer<IndexedData<String>> primaryConsumer;
+    private volatile Consumer<DidoData> primaryConsumer;
 
-    private volatile Consumer<IndexedData<String>> secondaryConsumer;
+    private volatile Consumer<DidoData> secondaryConsumer;
 
     private volatile int count;
 
     @Override
     public void run() {
 
-        StreamJoin<String> join = Objects.requireNonNull(this.join, "No Join Specified");
+        StreamJoin join = Objects.requireNonNull(this.join, "No Join Specified");
         Consumer<? super DidoData> to = Objects.requireNonNull(this.to, "No destination");
 
         this.executor = Executors.newSingleThreadExecutor();
@@ -40,14 +39,14 @@ public class StreamJoinService implements Runnable, AutoCloseable {
         join.setTo(data -> {
             //noinspection NonAtomicOperationOnVolatileField
             ++count;
-            to.accept(DidoData.adapt(data));
+            to.accept(data);
         });
 
         primaryConsumer = new Consumer<>() {
             volatile int count;
 
             @Override
-            public void accept(IndexedData<String> indexedData) {
+            public void accept(DidoData indexedData) {
                 //noinspection NonAtomicOperationOnVolatileField
                 ++count;
 
@@ -64,7 +63,7 @@ public class StreamJoinService implements Runnable, AutoCloseable {
             volatile int count;
 
             @Override
-            public void accept(IndexedData<String> indexedData) {
+            public void accept(DidoData indexedData) {
                 //noinspection NonAtomicOperationOnVolatileField
                 ++count;
 
@@ -97,11 +96,11 @@ public class StreamJoinService implements Runnable, AutoCloseable {
         this.name = name;
     }
 
-    public StreamJoin<String> getJoin() {
+    public StreamJoin getJoin() {
         return join;
     }
 
-    public void setJoin(StreamJoin<String> join) {
+    public void setJoin(StreamJoin join) {
         this.join = join;
     }
 
@@ -113,11 +112,11 @@ public class StreamJoinService implements Runnable, AutoCloseable {
         this.to = to;
     }
 
-    public Consumer<IndexedData<String>> getPrimary() {
+    public Consumer<DidoData> getPrimary() {
         return this.primaryConsumer;
     }
 
-    public Consumer<IndexedData<String>> getSecondary() {
+    public Consumer<DidoData> getSecondary() {
         return this.secondaryConsumer;
     }
 

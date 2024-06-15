@@ -19,21 +19,26 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
 
     @Override
     public Object getAt(int index) {
-        return get(schema.getFieldAt(index));
+        return getOf(schema.getFieldAt(index));
     }
 
     @Override
     public boolean hasIndex(int index) {
-        return hasField(schema.getFieldAt(index));
+        return hasFieldOf(schema.getFieldAt(index));
     }
 
     @Override
-    public Object get(E field) {
+    public Object get(String name) {
+        return getOf(schema.getField(name));
+    }
+
+    @Override
+    public Object getOf(E field) {
         return map.get(field);
     }
 
     @Override
-    public boolean hasField(E field) {
+    public boolean hasFieldOf(E field) {
         return map.containsKey(field);
     }
 

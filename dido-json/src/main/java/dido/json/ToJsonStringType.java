@@ -2,6 +2,7 @@ package dido.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dido.data.DidoData;
 import dido.data.IndexedData;
 import dido.data.RepeatingData;
 
@@ -16,7 +17,7 @@ import java.util.function.Function;
  * {@oddjob.xml.resource dido/json/FromJsonMapExample.xml}
  *
  */
-public class ToJsonStringType implements Function<IndexedData<String>, String> {
+public class ToJsonStringType implements Function<DidoData, String> {
 
     private final Gson gson = new GsonBuilder()
             .registerTypeHierarchyAdapter(IndexedData.class, new DataSerializer())
@@ -24,7 +25,7 @@ public class ToJsonStringType implements Function<IndexedData<String>, String> {
             .create();
 
     @Override
-    public String apply(IndexedData<String> stringIndexedData) {
+    public String apply(DidoData stringIndexedData) {
 
         return gson.toJson(stringIndexedData);
     }

@@ -1,7 +1,7 @@
 package dido.replay;
 
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.data.MapData;
 import dido.json.SchemaAsJson;
 import org.hamcrest.MatcherAssert;
@@ -23,7 +23,7 @@ class DataPlayerJobTest {
         Path dir = new File(Objects.requireNonNull(getClass().getResource("/data/stuff-data.json")).getFile())
                 .getParentFile().toPath();
 
-        List<GenericData<String>> results = new ArrayList<>();
+        List<DidoData> results = new ArrayList<>();
 
         try (DataPlayerJob dataPlayerJob = new DataPlayerJob()) {
 
@@ -36,7 +36,7 @@ class DataPlayerJobTest {
             dataPlayerJob.run();
         }
 
-        DataSchema<String> schema = SchemaAsJson.fromJson(
+        DataSchema schema = SchemaAsJson.fromJson(
                 "{\"Fields\":[{\"Index\":1,\"Field\":\"type\",\"Type\":\"java.lang.String\"},{\"Index\":2,\"Field\":\"quantity\",\"Type\":\"int\"},{\"Index\":3,\"Field\":\"price\",\"Type\":\"double\"}]}\n");
 
         MatcherAssert.assertThat(results, Matchers.contains(

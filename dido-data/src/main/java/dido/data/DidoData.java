@@ -1,128 +1,78 @@
 package dido.data;
 
-public interface DidoData extends GenericData<String> {
+import java.util.Iterator;
 
-    static DidoData adapt(GenericData<String> data) {
-        return new AbstractData() {
-            @Override
-            public Object get(String field) {
-                return data.get(field);
-            }
+/**
+ * The basic definition of a Data item within Dido.
+ */
+public interface DidoData extends IndexedData {
 
-            @Override
-            public <T> T getAs(String field, Class<T> type) {
-                return data.getAs(field, type);
-            }
+    Object get(String field);
 
-            @Override
-            public boolean hasField(String field) {
-                return data.hasField(field);
-            }
+    <T> T getAs(String field, Class<T> type);
 
-            @Override
-            public boolean getBoolean(String field) {
-                return data.getBoolean(field);
-            }
+    boolean hasField(String field);
 
-            @Override
-            public byte getByte(String field) {
-                return data.getByte(field);
-            }
+    boolean getBoolean(String field);
 
-            @Override
-            public char getChar(String field) {
-                return data.getChar(field);
-            }
+    byte getByte(String field);
 
-            @Override
-            public short getShort(String field) {
-                return data.getShort(field);
-            }
+    char getChar(String field);
 
-            @Override
-            public int getInt(String field) {
-                return data.getInt(field);
-            }
+    short getShort(String field);
 
-            @Override
-            public long getLong(String field) {
-                return data.getLong(field);
-            }
+    int getInt(String field);
 
-            @Override
-            public float getFloat(String field) {
-                return data.getFloat(field);
-            }
+    long getLong(String field);
 
-            @Override
-            public double getDouble(String field) {
-                return data.getDouble(field);
-            }
+    float getFloat(String field);
 
-            @Override
-            public String getString(String field) {
-                return data.getString(field);
-            }
+    double getDouble(String field);
 
-            @Override
-            public DataSchema<String> getSchema() {
-                return data.getSchema();
-            }
+    String getString(String field);
 
-            @Override
-            public Object getAt(int index) {
-                return data.getAt(index);
+    static String toString(DidoData data) {
+        DataSchema schema = data.getSchema();
+        StringBuilder sb = new StringBuilder(schema.lastIndex() * 16);
+        sb.append('{');
+        for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
+            sb.append('[');
+            String field = schema.getFieldNameAt(index);
+            sb.append(index);
+            if (field != null) {
+                sb.append(':');
+                sb.append(field);
             }
-
-            @Override
-            public <T> T getAtAs(int index, Class<T> type) {
-                return data.getAtAs(index, type);
+            sb.append("]=");
+            sb.append(data.getAt(index));
+            if (index != schema.lastIndex()) {
+                sb.append(", ");
             }
-
-            @Override
-            public boolean hasIndex(int index) {
-                return data.hasIndex(index);
-            }
-
-            @Override
-            public boolean getBooleanAt(int index) {
-                return data.getBooleanAt(index);
-            }
-
-            @Override
-            public byte getByteAt(int index) {
-                return data.getByteAt(index);
-            }
-
-            @Override
-            public short getShortAt(int index) {
-                return data.getShortAt(index);
-            }
-
-            @Override
-            public int getIntAt(int index) {
-                return data.getIntAt(index);
-            }
-
-            @Override
-            public long getLongAt(int index) {
-                return data.getLongAt(index);
-            }
-
-            @Override
-            public float getFloatAt(int index) {
-                return data.getFloatAt(index);
-            }
-
-            @Override
-            public double getDoubleAt(int index) {
-                return data.getDoubleAt(index);
-            }
-
-            @Override
-            public String getStringAt(int index) {
-                return data.getStringAt(index);
-            }
-        };
+        }
+        sb.append('}');
+        return sb.toString();
     }
+
+    static String toStringFieldsOnly(DidoData data) {
+        StringBuilder sb = new StringBuilder();
+        sb.append('{');
+        Iterator<String> it = data.getSchema().getFieldNames().iterator();
+        if (!it.hasNext()) {
+            return sb.append("}").toString();
+        }
+        for (;;) {
+            String field = it.next();
+            sb.append('[');
+            sb.append(field);
+            sb.append("]=");
+            sb.append(data.get(field));
+            if (it.hasNext()) {
+                sb.append(", ");
+            }
+            else {
+                return sb.append("}").toString();
+            }
+        }
+    }
+
 }

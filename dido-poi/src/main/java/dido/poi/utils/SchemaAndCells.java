@@ -1,6 +1,7 @@
 package dido.poi.utils;
 
 import dido.data.DataSchema;
+import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
 import dido.how.util.Primitives;
 import dido.poi.RowIn;
@@ -13,16 +14,16 @@ import java.util.*;
 
 public class SchemaAndCells {
 
-    private final DataSchema<String> schema;
+    private final DataSchema schema;
 
     private final Collection<? extends DataCell<?>> dataCells;
 
-    private SchemaAndCells(DataSchema<String> schema, Collection<? extends DataCell<?>> dataCells) {
+    private SchemaAndCells(DataSchema schema, Collection<? extends DataCell<?>> dataCells) {
         this.schema = schema;
         this.dataCells = dataCells;
     }
 
-    public static SchemaAndCells fromSchemaOrCells(DataSchema<String> schema, Collection<? extends DataCell<?>> dataCells) {
+    public static SchemaAndCells fromSchemaOrCells(DataSchema schema, Collection<? extends DataCell<?>> dataCells) {
 
         if (schema == null) {
             if (dataCells == null || dataCells.isEmpty()) {
@@ -93,14 +94,14 @@ public class SchemaAndCells {
         return SchemaAndCells.fromSchemaOrCells(null, cells);
     }
 
-    static protected List<DataCell<?>> morphInto(DataSchema<String> schema) {
+    static protected List<DataCell<?>> morphInto(DataSchema schema) {
 
         List<DataCell<?>> cells = new ArrayList<>(schema.lastIndex());
 
         int i = 0;
-        for (String property : schema.getFields()) {
+        for (String property : schema.getFieldNames()) {
 
-            Class<?> propertyType = Primitives.wrap(schema.getType(property));
+            Class<?> propertyType = Primitives.wrap(schema.getTypeNamed(property));
 
             AbstractDataCell<?> cell = createCell(propertyType);
 
@@ -137,7 +138,7 @@ public class SchemaAndCells {
     }
 
 
-    static protected DataSchema<String> morphOf(Collection<? extends DataCell<?>> cells) {
+    static protected GenericDataSchema<String> morphOf(Collection<? extends DataCell<?>> cells) {
 
         SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
 
@@ -153,7 +154,7 @@ public class SchemaAndCells {
         return schemaBuilder.build();
     }
 
-    public DataSchema<String> getSchema() {
+    public DataSchema getSchema() {
         return schema;
     }
 

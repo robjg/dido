@@ -11,12 +11,12 @@ public interface GenericRepeatingData<F> extends Iterable<GenericData<F>> {
 
     Stream<GenericData<F>> stream();
 
-    static <F> GenericRepeatingData<F> of(List<? extends IndexedData<F>> list) {
+    static <F> GenericRepeatingData<F> of(List<? extends GenericData<F>> list) {
         return RepeatingDataWrappers.ofGeneric(list);
     }
 
     @SafeVarargs
-    static <F> GenericRepeatingData<F> of(IndexedData<F>... data) {
+    static <F> GenericRepeatingData<F> of(GenericData<F>... data) {
         return RepeatingDataWrappers.ofGeneric(data);
     }
 

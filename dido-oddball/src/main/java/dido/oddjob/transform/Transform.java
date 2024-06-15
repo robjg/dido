@@ -2,6 +2,7 @@ package dido.oddjob.transform;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.GenericDataSchema;
 import org.oddjob.arooa.types.ValueFactory;
 import org.oddjob.arooa.utils.ListSetterHelper;
 
@@ -13,13 +14,14 @@ import java.util.function.Function;
 /**
  * Copies fields from one data item to another allowing for change of field names, indexes
  * and type.
- *
  */
 public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
 
     private final ListSetterHelper<TransformerFactory> of = new ListSetterHelper<>();
 
-    /** Strategy for creating the new schema for outgoing data. Defaults to merge. */
+    /**
+     * Strategy for creating the new schema for outgoing data. Defaults to merge.
+     */
     private SchemaStrategy strategy;
 
     @Override
@@ -48,7 +50,7 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
 
         private Function<? super DidoData, ? extends DidoData> delegate;
 
-        private DataSchema<String> lastSchema;
+        private DataSchema lastSchema;
 
         TransformerFunctionInitial(List<TransformerFactory> transformerFactories, SchemaStrategy strategy) {
             this.transformerFactories = new ArrayList<>(transformerFactories);
@@ -67,14 +69,14 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
     }
 
     static TransformerFunctionKnown functionFor(List<TransformerFactory> factories,
-                                                             DataSchema<String> schemaFrom,
-                                                             SchemaStrategy partial) {
+                                                DataSchema schemaFrom,
+                                                SchemaStrategy partial) {
 
         int position = 0;
 
         List<SchemaFieldOptions<String>> newFields = new ArrayList<>();
 
-        SchemaSetter<String> schemaSetter = (index, field, fieldType) -> {
+        SchemaSetter schemaSetter = (index, field, fieldType) -> {
             newFields.add(SchemaFieldOptions.of(index, field, fieldType));
         };
 
@@ -89,22 +91,22 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
 
         //noinspection rawtypes
         @SuppressWarnings("unchecked")
-        DataSchema<String> schema = schemaStrategy.newSchemaFrom((DataSchema) schemaFrom,
+        GenericDataSchema<String> schema = schemaStrategy.newSchemaFrom((GenericDataSchema) schemaFrom,
                 newFields,
                 i -> transformers.add((in, setter) -> setter.setAt(i, in.getAt(i))));
 
-        DataFactory<String> dataFactory = new ArrayDataSetterProvider().provideSetter(schema);
+        DataFactory dataFactory = new ArrayDataSetterProvider().provideSetter(schema);
 
         return new TransformerFunctionKnown(dataFactory, transformers);
     }
 
     static class TransformerFunctionKnown implements Function<DidoData, DidoData> {
 
-        private final DataFactory<String> dataFactory;
+        private final DataFactory dataFactory;
 
         private final List<Transformer> transformers;
 
-        TransformerFunctionKnown(DataFactory<String> dataFactory, List<Transformer> transformers) {
+        TransformerFunctionKnown(DataFactory dataFactory, List<Transformer> transformers) {
             this.dataFactory = dataFactory;
             this.transformers = transformers;
         }
@@ -115,7 +117,7 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
                 transformer.transform(dataIn, dataFactory.getSetter());
             }
 
-            return DidoData.adapt(dataFactory.toData());
+            return dataFactory.toData();
         }
     }
 }

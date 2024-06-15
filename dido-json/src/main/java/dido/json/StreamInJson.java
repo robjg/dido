@@ -24,22 +24,22 @@ public class StreamInJson implements DataInHow<InputStream> {
         this.isArray = isArray;
     }
 
-    public static DataInHow<InputStream> asCopyWithPartialSchema(DataSchema<String> partialSchema,
-                                                                         boolean isArray) {
+    public static DataInHow<InputStream> asCopyWithPartialSchema(DataSchema partialSchema,
+                                                                 boolean isArray) {
         return new StreamInJson(JsonDataPartialCopy
                 .registerPartialSchema(new GsonBuilder(), partialSchema)
                 .create(), isArray);
     }
 
-    public static DataInHow<InputStream> asCopyWithSchema(DataSchema<String> partialSchema,
-                                                                         boolean isArray) {
+    public static DataInHow<InputStream> asCopyWithSchema(DataSchema partialSchema,
+                                                          boolean isArray) {
         return new StreamInJson(JsonDataCopy
                 .registerSchema(new GsonBuilder(), partialSchema)
                 .create(), isArray);
     }
 
-    public static DataInHow<InputStream> asWrapperWithSchema(DataSchema<String> schema,
-                                                                  boolean isArray) {
+    public static DataInHow<InputStream> asWrapperWithSchema(DataSchema schema,
+                                                             boolean isArray) {
         return new StreamInJson(JsonDataWrapper
                 .registerSchema(new GsonBuilder(), schema)
                 .create(), isArray);
@@ -52,7 +52,7 @@ public class StreamInJson implements DataInHow<InputStream> {
 
     public static class Settings {
 
-        private DataSchema<String> schema;
+        private DataSchema schema;
 
         private boolean partial;
 
@@ -61,7 +61,7 @@ public class StreamInJson implements DataInHow<InputStream> {
         private boolean isArray;
 
 
-        public Settings setSchema(DataSchema<String> schema) {
+        public Settings setSchema(DataSchema schema) {
             this.schema = schema;
             return this;
         }

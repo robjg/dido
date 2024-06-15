@@ -1,7 +1,6 @@
 package dido.poi.layouts;
 
 import dido.data.DidoData;
-import dido.data.GenericData;
 import dido.oddjob.bean.FromBeanArooa;
 import dido.oddjob.bean.ToBeanArooa;
 import dido.oddjob.beanbus.DataInDriver;
@@ -103,7 +102,7 @@ public class DataBookTest extends TestCase {
 		// Read Side
 		/////
 
-		Function<GenericData<String>, PersonBonus> transformerToBean =
+		Function<DidoData, PersonBonus> transformerToBean =
 				ToBeanArooa.fromSession(session)
 						.ofClass(PersonBonus.class);
 
@@ -170,7 +169,7 @@ public class DataBookTest extends TestCase {
 		// Read Side
 		/////
 
-		List<GenericData<String>> results = new ArrayList<>(3);
+		List<DidoData> results = new ArrayList<>(3);
 
 		DataInDriver<BookInProvider> read =  new DataInDriver<>();
 		read.setArooaSession(session);

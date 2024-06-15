@@ -1,6 +1,9 @@
 package dido.json;
 
-import dido.data.*;
+import dido.data.DidoData;
+import dido.data.GenericDataSchema;
+import dido.data.MapData;
+import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import org.junit.jupiter.api.Test;
 import org.oddjob.io.BufferType;
@@ -58,7 +61,7 @@ class StreamInJsonLinesTest {
         });
         bufferType.configured();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("Qty", Integer.class)
                 .addField("Price", Double.class)
                 .build();
@@ -74,7 +77,7 @@ class StreamInJsonLinesTest {
         assertThat(data1.getSchema(), is(expected1.getSchema()));
         assertThat(data1, is(expected1));
 
-        GenericData<String> data2 = in.get();
+        DidoData data2 = in.get();
 
         assertThat(data2, is(MapData.of(
                 "Fruit", "Orange", "Qty", 10, "Price", 31.6)));
@@ -100,7 +103,7 @@ class StreamInJsonLinesTest {
         });
         bufferType.configured();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("Fruit", String.class)
                 .addField("Qty", Integer.class)
                 .addField("Price", Double.class)
@@ -111,20 +114,20 @@ class StreamInJsonLinesTest {
                 .make()
                 .inFrom(bufferType.toInputStream());
 
-        GenericData<String> data1 = in.get();
+        DidoData data1 = in.get();
 
-        GenericData<String> expected1 = MapData.of(
+        DidoData expected1 = MapData.of(
                 "Fruit", "Apple", "Qty", 5, "Price", 27.2);
 
         assertThat(data1.getSchema(), is(expected1.getSchema()));
         assertThat(data1, is(expected1));
 
-        GenericData<String> data2 = in.get();
+        DidoData data2 = in.get();
 
         assertThat(data2, is(MapData.of(
                 "Fruit", "Orange", "Qty", 10, "Price", Double.NaN)));
 
-        GenericData<String> data3 = in.get();
+        DidoData data3 = in.get();
 
         assertThat(data3, is(MapData.of(
                 "Fruit", "Pear", "Qty", 7, "Price", 22.1)));

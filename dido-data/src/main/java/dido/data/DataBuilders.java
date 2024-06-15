@@ -70,9 +70,9 @@ abstract public class DataBuilders<B extends DataBuilders<B>> {
             return setAt(index, value);
         }
 
-        public B copy(IndexedData<?> from) {
+        public B copy(IndexedData from) {
 
-            DataSchema<?> schema = from.getSchema();
+            DataSchema schema = from.getSchema();
             for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
                 setAt(index, from.getAt(index));
             }
@@ -133,17 +133,17 @@ abstract public class DataBuilders<B extends DataBuilders<B>> {
             return set(field, value);
         }
 
-        public B copy(IndexedData<String> from) {
+        public B copy(IndexedData from) {
 
-            DataSchema<String> schema = from.getSchema();
-            for (String field : schema.getFields()) {
-                set(field, from.getAt(schema.getIndex(field)));
+            DataSchema schema = from.getSchema();
+            for (String field : schema.getFieldNames()) {
+                set(field, from.getAt(schema.getIndexNamed(field)));
             }
             return self();
         }
     }
 
-    public B to(Consumer<? super GenericData<String>> consumer) {
+    public B to(Consumer<? super DidoData> consumer) {
         consumer.accept(this.build());
         return self();
     }
@@ -152,13 +152,13 @@ abstract public class DataBuilders<B extends DataBuilders<B>> {
     abstract public static class KnownSchema<B extends KnownSchema<B>>
         extends Indexed<B> implements DataBuilder {
 
-        private final DataSchema<String> schema;
+        private final DataSchema schema;
 
-        protected KnownSchema(DataSchema<String> schema) {
+        protected KnownSchema(DataSchema schema) {
             this.schema = Objects.requireNonNull(schema);
         }
 
-        protected DataSchema<String> getSchema() {
+        protected DataSchema getSchema() {
             return schema;
         }
 
@@ -166,7 +166,7 @@ abstract public class DataBuilders<B extends DataBuilders<B>> {
             return new Values(self(), schema);
         }
 
-        public ValuesTo valuesTo(Consumer<? super GenericData<String>> consumer) {
+        public ValuesTo valuesTo(Consumer<? super DidoData> consumer) {
             return new ValuesTo(consumer, self());
         }
 
@@ -226,9 +226,9 @@ abstract public class DataBuilders<B extends DataBuilders<B>> {
 
         private final Indexed<?> owner;
 
-        private final DataSchema<String> schema;
+        private final DataSchema schema;
 
-        Values(Indexed<?> owner, DataSchema<String> schema) {
+        Values(Indexed<?> owner, DataSchema schema) {
             this.owner = owner;
             this.schema = schema;
         }

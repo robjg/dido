@@ -1,7 +1,7 @@
 package dido.poi.style;
 
 import dido.data.ArrayData;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import dido.how.DataOut;
 import dido.poi.CellIn;
 import dido.poi.CellOut;
@@ -54,7 +54,7 @@ public class AllStylesTest extends TestCase {
 				}
 
 				@Override
-				public void setValue(RowOut rowOut, GenericData<String> data) {
+				public void setValue(RowOut rowOut, DidoData data) {
 					Cell cell = rowOut.getCell(columnIndex, CellType.STRING);
 					String value = data.getStringAt(1);
 					cell.setCellStyle(rowOut.styleFor(value));

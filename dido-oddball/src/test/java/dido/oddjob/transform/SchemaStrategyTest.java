@@ -1,6 +1,6 @@
 package dido.oddjob.transform;
 
-import dido.data.DataSchema;
+import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -20,11 +20,11 @@ class SchemaStrategyTest {
                 List.of(SchemaFieldOptions.of(0, "One", int.class),
                         SchemaFieldOptions.of(0, "Two", long.class));
 
-        DataSchema<String> result =
-                SchemaStrategy.NEW.newSchemaFrom(DataSchema.emptySchema(), fields,
+        GenericDataSchema<String> result =
+                SchemaStrategy.NEW.newSchemaFrom(GenericDataSchema.emptySchema(), fields,
                         i -> { throw new RuntimeException("Unexpected"); });
 
-        DataSchema<String> expected = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> expected = SchemaBuilder.forStringFields()
                 .addField("One", int.class)
                 .addField("Two", long.class)
                 .build();
@@ -39,11 +39,11 @@ class SchemaStrategyTest {
                 List.of(SchemaFieldOptions.of(0, "One", int.class),
                         SchemaFieldOptions.of(0, "Two", long.class));
 
-        DataSchema<String> result =
-                SchemaStrategy.MERGE.newSchemaFrom(DataSchema.emptySchema(), fields,
+        GenericDataSchema<String> result =
+                SchemaStrategy.MERGE.newSchemaFrom(GenericDataSchema.emptySchema(), fields,
                         i -> { throw new RuntimeException("Unexpected"); });
 
-        DataSchema<String> expected = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> expected = SchemaBuilder.forStringFields()
                 .addField("One", int.class)
                 .addField("Two", long.class)
                 .build();
@@ -58,16 +58,16 @@ class SchemaStrategyTest {
                 List.of(SchemaFieldOptions.of(0, "One", int.class),
                         SchemaFieldOptions.of(0, "Two", long.class));
 
-        DataSchema<String> existing = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> existing = SchemaBuilder.forStringFields()
                 .addFieldAt(10, "Here", int.class)
                 .build();
 
         List<Integer> existingIndices = new ArrayList<>();
-        DataSchema<String> result =
+        GenericDataSchema<String> result =
                 SchemaStrategy.MERGE.newSchemaFrom(existing, fields,
                         existingIndices::add);
 
-        DataSchema<String> expected = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> expected = SchemaBuilder.forStringFields()
                 .addFieldAt(10, "Here", int.class)
                 .addFieldAt(11, "One", int.class)
                 .addFieldAt(12, "Two", long.class)
@@ -85,17 +85,17 @@ class SchemaStrategyTest {
                         SchemaFieldOptions.of(20, "Two", Long.class),
                         SchemaFieldOptions.of(10, "Three", Double.class));
 
-        DataSchema<String> existing = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> existing = SchemaBuilder.forStringFields()
                 .addFieldAt(10, "One", int.class)
                 .addFieldAt(20, "Two", long.class)
                 .addFieldAt(30, "Three", double.class)
                 .build();
 
-        DataSchema<String> result =
+        GenericDataSchema<String> result =
                 SchemaStrategy.MERGE.newSchemaFrom(existing, fields,
                         i -> { throw new RuntimeException("Unexpected"); });
 
-        DataSchema<String> expected = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> expected = SchemaBuilder.forStringFields()
                 .addFieldAt(10, "Three", Double.class)
                 .addFieldAt(20, "Two", Long.class)
                 .addFieldAt(30, "One", Integer.class)

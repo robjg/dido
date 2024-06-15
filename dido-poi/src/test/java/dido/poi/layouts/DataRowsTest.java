@@ -1,7 +1,6 @@
 package dido.poi.layouts;
 
 import dido.data.DidoData;
-import dido.data.GenericData;
 import dido.data.MapData;
 import dido.how.DataIn;
 import dido.how.DataOut;
@@ -75,7 +74,7 @@ public class DataRowsTest extends TestCase {
 
 		DataIn reader = test.inFrom(workbook);
 
-		GenericData<String> result = reader.get();
+		DidoData result = reader.get();
 		
 		assertEquals(3, test.getLastRow());
 

@@ -3,14 +3,13 @@ package dido.data;
 import java.util.*;
 
 /**
- * Provides the ability to Concatenate {@link GenericData}. The data isn't copied but linked in a new master
- * {@code GenericData} object.
+ * Provides the ability to Concatenate {@link DidoData}. The data isn't copied but linked in a new master
+ * {@code DidoData} object.
  *
  * Concatenation won't cope with repeated or nest fields yet.
  *
- * @param <F> The type of field.
  */
-public class Concatenator<F> {
+public class Concatenator {
 
 
     static class Location {
@@ -23,49 +22,49 @@ public class Concatenator<F> {
         }
     }
 
-    private final DataSchema<F> schema;
+    private final DataSchema schema;
 
     private final Location[] locations;
 
-    private final Map<F, Location> fieldLocations;
+    private final Map<String, Location> fieldLocations;
 
-    private Concatenator(DataSchema<F> schema,
+    private Concatenator(DataSchema schema,
                          Location[] locations,
-                         Map<F, Location> fieldLocations) {
+                         Map<String, Location> fieldLocations) {
         this.schema = schema;
         this.locations = locations;
         this.fieldLocations = fieldLocations;
     }
 
-    public static class Settings<F> {
+    public static class Settings {
 
-        private final Set<F> excludeFields = new HashSet<>();
+        private final Set<String> excludeFields = new HashSet<>();
 
         private boolean skipDuplicates;
 
-        public Settings<F> excludeFields(F... exclusions) {
+        public Settings excludeFields(String... exclusions) {
             excludeFields.addAll(List.of(exclusions));
             return this;
         }
 
-        public Settings<F> skipDuplicates(boolean skipDuplicates) {
+        public Settings skipDuplicates(boolean skipDuplicates) {
             this.skipDuplicates = skipDuplicates;
             return this;
         }
 
-        public Concatenator<F> makeFromSchemas(DataSchema<F>... schemas) {
+        public Concatenator makeFromSchemas(DataSchema... schemas) {
 
             List<Location> locations = new LinkedList<>();
-            Map<F, Location> fieldLocations = new HashMap<>();
+            Map<String, Location> fieldLocations = new HashMap<>();
 
-            SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
+            SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
 
             int locationIndex = 0;
             int dataIndex = 0;
-            for (DataSchema<F> schema : schemas) {
+            for (DataSchema schema : schemas) {
                 for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
                     Location location = new Location(dataIndex, i);
-                    F field = schema.getFieldAt(i);
+                    String field = schema.getFieldNameAt(i);
                     if (field != null) {
                         if (excludeFields.contains(field)) {
                             continue;
@@ -81,22 +80,22 @@ public class Concatenator<F> {
                         fieldLocations.put(field, location);
                     }
                     locations.add(location);
-                    schemaBuilder.addSchemaField(SchemaField.of(
+                    schemaBuilder.addGenericSchemaField(GenericSchemaField.of(
                             ++locationIndex, field, schema.getTypeAt(i)));
                 }
                 ++dataIndex;
             }
 
-            return new Concatenator<>(schemaBuilder.build(),
+            return new Concatenator(schemaBuilder.build(),
                     locations.toArray(new Location[0]),
                     fieldLocations);
         }
 
-        public Factory<F> factory() {
-            return new Factory<>(this);
+        public Factory factory() {
+            return new Factory(this);
         }
 
-        public GenericData<F> of(IndexedData<F>... data) {
+        public DidoData of(IndexedData... data) {
             return factory().concat(data);
         }
     }
@@ -105,60 +104,58 @@ public class Concatenator<F> {
      * Create a new {@code Concatenator}.
      *
      * @param schemas The schemas of the records that will be concatenated.
-     * @param <F>     The type of the field.
      * @return A {@code Concatenator}.
      */
-    public static <F> Concatenator<F> fromSchemas(DataSchema<F>... schemas) {
+    public static Concatenator fromSchemas(DataSchema... schemas) {
 
-        return new Settings<F>().makeFromSchemas(schemas);
+        return new Settings().makeFromSchemas(schemas);
     }
 
-    public static <F> Settings<F> withSettings() {
-        return new Settings<>();
+    public static Settings withSettings() {
+        return new Settings();
     }
 
-    public static <F> GenericData<F> of(IndexedData<F>... data) {
-        return new Factory<F>(new Settings<>()).concat(data);
+    public static DidoData of(IndexedData... data) {
+        return new Factory(new Settings()).concat(data);
     }
 
-    public static <F> Factory<F> factory() {
+    public static Factory factory() {
 
-        return new Factory<>(new Settings<>());
+        return new Factory(new Settings());
     }
 
-    public GenericData<F> concat(IndexedData<F>... data) {
+    public DidoData concat(IndexedData... data) {
 
         return new ConcatenatedData(data);
     }
 
-    public DataSchema<F> getSchema() {
+    public DataSchema getSchema() {
         return schema;
     }
 
     /**
      * Compares previous schemas so we can maybe shortcut.
      *
-     * @param <F> Field Type.
      */
-    public static class Factory<F> {
+    public static class Factory {
 
-        private final Settings<F> settings;
+        private final Settings settings;
 
-        private Concatenator<F> last;
+        private Concatenator last;
 
-        private DataSchema<F>[] previous;
+        private DataSchema[] previous;
 
-        public Factory(Settings<F> settings) {
+        public Factory(Settings settings) {
             this.settings = settings;
         }
 
-        public GenericData<F> concat(IndexedData<F>... data) {
+        public DidoData concat(IndexedData... data) {
 
             boolean recreate = false;
             if (last == null) {
                 recreate = true;
                 //noinspection unchecked
-                previous = new DataSchema[data.length];
+                previous = new GenericDataSchema[data.length];
                 for (int i = 0; i < data.length; ++i) {
                     previous[i] = data[i].getSchema();
                 }
@@ -182,16 +179,16 @@ public class Concatenator<F> {
     /**
      * The Data
      */
-    class ConcatenatedData extends AbstractGenericData<F> implements GenericData<F> {
+    class ConcatenatedData extends AbstractData implements DidoData {
 
-        private final IndexedData<F>[] data;
+        private final IndexedData[] data;
 
-        ConcatenatedData(IndexedData<F>[] data) {
+        ConcatenatedData(IndexedData[] data) {
             this.data = data;
         }
 
         @Override
-        public DataSchema<F> getSchema() {
+        public DataSchema getSchema() {
             return schema;
         }
 
@@ -268,73 +265,73 @@ public class Concatenator<F> {
         }
 
         @Override
-        public Object get(F field) {
+        public Object get(String field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getAt(loc.index);
         }
 
         @Override
-        public <T> T getAs(F field, Class<T> type) {
+        public <T> T getAs(String field, Class<T> type) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getAtAs(loc.index, type);
         }
 
         @Override
-        public boolean hasField(F field) {
+        public boolean hasField(String field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].hasIndex(loc.index);
         }
 
         @Override
-        public boolean getBoolean(F field) {
+        public boolean getBoolean(String field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getBooleanAt(loc.index);
         }
 
         @Override
-        public byte getByte(F field) {
+        public byte getByte(String field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getByteAt(loc.index);
         }
 
         @Override
-        public char getChar(F field) {
+        public char getChar(String field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getCharAt(loc.index);
         }
 
         @Override
-        public short getShort(F field) {
+        public short getShort(String field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getShortAt(loc.index);
         }
 
         @Override
-        public int getInt(F field) {
+        public int getInt(String field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getIntAt(loc.index);
         }
 
         @Override
-        public long getLong(F field) {
+        public long getLong(String field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getLongAt(loc.index);
         }
 
         @Override
-        public float getFloat(F field) {
+        public float getFloat(String field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getFloatAt(loc.index);
         }
 
         @Override
-        public double getDouble(F field) {
+        public double getDouble(String field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getDoubleAt(loc.index);
         }
 
         @Override
-        public String getString(F field) {
+        public String getString(String field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getStringAt(loc.index);
         }
@@ -344,58 +341,55 @@ public class Concatenator<F> {
 
     /**
      * Almost a Schema with offset.
-     *
-     * @param <F> Field Type.
      */
-    static class OffsetSchema<F> {
+    static class OffsetSchema {
 
-        private final DataSchema<F> originalSchema;
+        private final DataSchema originalSchema;
 
-        private final SchemaField<F>[] schemaFields;
+        private final SchemaField[] schemaFields;
 
         private final int offset;
 
-        OffsetSchema(DataSchema<F> originalSchema, int offset) {
+        OffsetSchema(DataSchema originalSchema, int offset) {
             this.originalSchema = originalSchema;
             //noinspection unchecked
-            this.schemaFields = new SchemaField[originalSchema.lastIndex()];
+            this.schemaFields = new GenericSchemaField[originalSchema.lastIndex()];
             for (int i = originalSchema.firstIndex(); i > 0; i = originalSchema.nextIndex(i)) {
                 this.schemaFields[i - 1] = originalSchema.getSchemaFieldAt(i).mapToIndex(i + offset);
             }
             this.offset = offset;
         }
 
-        SchemaField<F> getSchemaFieldAt(int index) {
+        SchemaField getSchemaFieldAt(int index) {
             return schemaFields[index - offset - 1];
         }
 
-        public F getFieldAt(int index) {
-            return originalSchema.getFieldAt(index - offset);
+        public String getFieldNameAt(int index) {
+            return originalSchema.getFieldNameAt(index - offset);
         }
 
         Class<?> getTypeAt(int index) {
             return originalSchema.getTypeAt(index - offset);
         }
 
-        <N> DataSchema<N> getSchemaAt(int index) {
+        DataSchema getSchemaAt(int index) {
             return originalSchema.getSchemaAt(index - offset);
         }
 
-        int getIndex(F field) {
-            return originalSchema.getIndex(field) + offset;
+        int getIndexNamed(String field) {
+            return originalSchema.getIndexNamed(field) + offset;
         }
     }
 
     /**
      * The Schema.
      *
-     * @param <F> Field Type.
      */
-    static class CompositeSchema<F> extends AbstractDataSchema<F> {
+    static class CompositeSchema extends AbstractDataSchema implements DataSchema {
 
-        private final OffsetSchema<F>[] schemaByIndex;
+        private final OffsetSchema[] schemaByIndex;
 
-        private final Map<F, OffsetSchema<F>> schemaByField;
+        private final Map<String, OffsetSchema> schemaByField;
 
         private final int firstIndex;
 
@@ -403,8 +397,8 @@ public class Concatenator<F> {
 
         private final int[] nextIndex;
 
-        CompositeSchema(OffsetSchema<F>[] schemaByIndex,
-                        Map<F, OffsetSchema<F>> schemaByField,
+        CompositeSchema(OffsetSchema[] schemaByIndex,
+                        Map<String, OffsetSchema> schemaByField,
                         int firstIndex,
                         int lastIndex,
                         int[] nextIndex) {
@@ -416,13 +410,13 @@ public class Concatenator<F> {
         }
 
         @Override
-        public SchemaField<F> getSchemaFieldAt(int index) {
+        public SchemaField getSchemaFieldAt(int index) {
             return schemaByIndex[index - 1].getSchemaFieldAt(index);
         }
 
         @Override
-        public F getFieldAt(int index) {
-            return schemaByIndex[index - 1].getFieldAt(index);
+        public String getFieldNameAt(int index) {
+            return schemaByIndex[index - 1].getFieldNameAt(index);
         }
 
         @Override
@@ -431,13 +425,13 @@ public class Concatenator<F> {
         }
 
         @Override
-        public <N> DataSchema<N> getSchemaAt(int index) {
+        public DataSchema getSchemaAt(int index) {
             return schemaByIndex[index - 1].getSchemaAt(index);
         }
 
         @Override
-        public int getIndex(F field) {
-            return schemaByField.get(field).getIndex(field);
+        public int getIndexNamed(String fieldName) {
+            return schemaByField.get(fieldName).getIndexNamed(fieldName);
         }
 
         @Override
@@ -457,27 +451,8 @@ public class Concatenator<F> {
         }
 
         @Override
-        public Collection<F> getFields() {
+        public Collection<String> getFieldNames() {
             return schemaByField.keySet();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof DataSchema) {
-                return DataSchema.equals(this, (DataSchema<?>) obj);
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return DataSchema.hashCode(this);
-        }
-
-        @Override
-        public String toString() {
-            return DataSchema.toString(this);
         }
     }
 }

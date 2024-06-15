@@ -1,7 +1,6 @@
 package dido.poi.layouts;
 
 import dido.data.DidoData;
-import dido.data.GenericData;
 import dido.data.MapData;
 import dido.how.DataIn;
 import dido.how.DataOut;
@@ -126,7 +125,7 @@ public class QuickRowsTest extends TestCase {
 
         DataIn reader = test.inFrom(workbook);
 
-        GenericData<String> result = reader.get();
+        DidoData result = reader.get();
 
         assertEquals("John", result.getString("name"));
         assertThat(result.getAs("dateOfBirth", Date.class), is(DateHelper.parseDate("1970-03-25")));
@@ -198,19 +197,19 @@ public class QuickRowsTest extends TestCase {
 
         read.close();
 
-        GenericData<String> person1 = results.get(0);
+        DidoData person1 = results.get(0);
         assertEquals("John", person1.getString("name"));
         assertEquals(DateHelper.parseDate("1970-03-25"),
                 person1.get("dateOfBirth"));
         assertEquals(45000.0, person1.getDouble("salary"));
 
-        GenericData<String> person2 = results.get(1);
+        DidoData person2 = results.get(1);
         assertEquals("Jane", person2.getString("name"));
         assertEquals(DateHelper.parseDate("1982-11-14"),
                 person2.get("dateOfBirth"));
         assertEquals(28000.0, person2.getDouble("salary"));
 
-        GenericData<String> person3 = results.get(2);
+        DidoData person3 = results.get(2);
         assertEquals("Fred", person3.getString("name"));
         assertEquals(DateHelper.parseDate("1986-08-07"),
                 person3.get("dateOfBirth"));

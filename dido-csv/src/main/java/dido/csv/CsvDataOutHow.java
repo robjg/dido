@@ -2,6 +2,7 @@ package dido.csv;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.GenericDataSchema;
 import dido.data.IndexedData;
 import dido.how.CloseableConsumer;
 import dido.how.DataOut;
@@ -23,7 +24,7 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
 
     private final CSVFormat csvFormat;
 
-    private final DataSchema<String> schema;
+    private final GenericDataSchema<String> schema;
 
     private final boolean withHeader;
 
@@ -31,7 +32,7 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
 
         private CSVFormat csvFormat;
 
-        private DataSchema<String> schema;
+        private GenericDataSchema<String> schema;
 
         private boolean withHeader;
 
@@ -40,7 +41,7 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
             return this;
         }
 
-        public Options schema(DataSchema<String> schema) {
+        public Options schema(GenericDataSchema<String> schema) {
             this.schema = schema;
             return this;
         }
@@ -85,7 +86,7 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
     }
 
     protected DataOut consumerWhenSchemaKnown(OutputStream outputStream,
-                                                      DataSchema<String> schema) throws IOException {
+                                                      DataSchema schema) throws IOException {
         CSVFormat csvFormat = this.csvFormat;
         if (this.withHeader) {
             csvFormat = csvFormat.withHeader(headerFrom(schema));
@@ -150,7 +151,7 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
         }
     }
 
-    public static String[] headerFrom(DataSchema<?> schema) {
+    public static String[] headerFrom(DataSchema schema) {
         if (schema.lastIndex() < 1) {
             return new String[0];
         }
@@ -160,15 +161,15 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
             while (column++ < i) {
                 headers[i - 1] = "";
             }
-            headers[i - 1] = Optional.ofNullable(schema.getFieldAt(i))
+            headers[i - 1] = Optional.ofNullable(schema.getFieldNameAt(i))
                     .map(Object::toString)
                     .orElse("");
         }
         return headers;
     }
 
-    public static Object[] toValues(IndexedData<?> data) {
-        DataSchema<?> schema = data.getSchema();
+    public static Object[] toValues(IndexedData data) {
+        DataSchema schema = data.getSchema();
         if (schema.lastIndex() < 1) {
             return new Object[0];
         }

@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
 
-public interface EnumSchema<E extends Enum<E>> extends DataSchema<E> {
+public interface EnumSchema<E extends Enum<E>> extends GenericDataSchema<E> {
 
     Class<E> getFieldType();
 
@@ -13,23 +13,59 @@ public interface EnumSchema<E extends Enum<E>> extends DataSchema<E> {
         return EnumSchemaBuilder.forTypeMapping(enumClass, typeMapping);
     }
 
-    static <E extends Enum<E>> EnumSchema<E> enumSchemaFrom(DataSchema<String> original,
+    static <E extends Enum<E>> EnumSchema<E> enumSchemaFrom(GenericDataSchema<String> original,
                                                             Class<E> enumClass) {
 
         E[] enumConstants = enumClass.getEnumConstants();
 
-        DataSchema<E> delegate = original.getSchemaFields()
+        GenericDataSchema<E> delegate = original.getSchemaFields()
                 .stream()
                 .reduce(SchemaBuilder.forFieldType(enumClass),
-                        (b, sf) -> b.addSchemaField(
-                                sf.mapToField(enumConstants[sf.getIndex() - 1])),
+                        (b, sf) -> b.addGenericSchemaField(
+                                GenericSchemaField.of(sf.getIndex(), enumConstants[sf.getIndex() - 1], sf.getType())),
                         (b1, b2) -> b1)
                 .build();
 
         return new EnumSchema<>() {
+
             @Override
             public Class<E> getFieldType() {
                 return enumClass;
+            }
+
+            @Override
+            public E getField(String fieldName) {
+                return delegate.getField(fieldName);
+            }
+
+            @Override
+            public String getFieldNameAt(int index) {
+                return delegate.getFieldNameAt(index);
+            }
+
+            @Override
+            public int getIndexNamed(String fieldName) {
+                return delegate.getIndexNamed(fieldName);
+            }
+
+            @Override
+            public Collection<String> getFieldNames() {
+                return delegate.getFieldNames();
+            }
+
+            @Override
+            public GenericSchemaField<E> getSchemaFieldNamed(String fieldName) {
+                return delegate.getSchemaFieldNamed(fieldName);
+            }
+
+            @Override
+            public Class<?> getTypeNamed(String fieldName) {
+                return delegate.getTypeNamed(fieldName);
+            }
+
+            @Override
+            public DataSchema getSchemaNamed(String fieldName) {
+                return delegate.getSchemaNamed(fieldName);
             }
 
             @Override
@@ -53,7 +89,7 @@ public interface EnumSchema<E extends Enum<E>> extends DataSchema<E> {
             }
 
             @Override
-            public SchemaField<E> getSchemaFieldAt(int index) {
+            public GenericSchemaField<E> getSchemaFieldAt(int index) {
                 return delegate.getSchemaFieldAt(index);
             }
 
@@ -68,27 +104,32 @@ public interface EnumSchema<E extends Enum<E>> extends DataSchema<E> {
             }
 
             @Override
-            public <N> DataSchema<N> getSchemaAt(int index) {
+            public DataSchema getSchemaAt(int index) {
                 return delegate.getSchemaAt(index);
             }
 
             @Override
-            public Collection<SchemaField<E>> getSchemaFields() {
+            public Collection<SchemaField> getSchemaFields() {
                 return delegate.getSchemaFields();
             }
 
             @Override
-            public SchemaField<E> getSchemaField(E field) {
+            public GenericSchemaField<E> getSchemaField(E field) {
                 return delegate.getSchemaField(field);
             }
 
             @Override
-            public Class<?> getType(E field) {
-                return delegate.getType(field);
+            public String getFieldName(E field) {
+                return delegate.getFieldName(field);
             }
 
             @Override
-            public <N> DataSchema<N> getSchema(E field) {
+            public Class<?> getTypeOf(E field) {
+                return delegate.getTypeOf(field);
+            }
+
+            @Override
+            public DataSchema getSchema(E field) {
                 return delegate.getSchema(field);
             }
 
@@ -120,15 +161,4 @@ public interface EnumSchema<E extends Enum<E>> extends DataSchema<E> {
         };
     }
 
-    static <E extends Enum<E>> DataSchema<String> stringSchemaFrom(EnumSchema<E> original) {
-
-        return original.getSchemaFields()
-                .stream()
-                .reduce(SchemaBuilder.forStringFields(),
-                        (b, sf) -> b.addSchemaField(
-                                sf.mapToField(sf.getField().toString())),
-                        (b1, b2) -> b1)
-                .build();
-
-    }
 }

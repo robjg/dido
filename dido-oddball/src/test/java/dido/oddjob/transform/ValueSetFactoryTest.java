@@ -1,7 +1,7 @@
 package dido.oddjob.transform;
 
 import dido.data.DataSchema;
-import dido.data.GenericData;
+import dido.data.DidoData;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
@@ -31,26 +31,26 @@ class ValueSetFactoryTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         @SuppressWarnings("unchecked")
-        List<GenericData<String>> results = lookup.lookup("capture.beans", List.class);
+        List<DidoData> results = lookup.lookup("capture.beans", List.class);
 
         assertThat(results.size(), is(3));
 
-        GenericData<String> result1 = results.get(0);
+        DidoData result1 = results.get(0);
 
-        DataSchema<String> schema = result1.getSchema();
+        DataSchema schema = result1.getSchema();
 
-        assertThat(schema.getFieldAt(1), is("type"));
-        assertThat(schema.getType("type"), is(String.class));
-        assertThat(schema.getFieldAt(2), is("qty"));
-        assertThat(schema.getType("qty"), is(int.class));
-        assertThat(schema.getFieldAt(3), is("price"));
-        assertThat(schema.getType("price"), is(double.class));
+        assertThat(schema.getFieldNameAt(1), is("type"));
+        assertThat(schema.getTypeNamed("type"), is(String.class));
+        assertThat(schema.getFieldNameAt(2), is("qty"));
+        assertThat(schema.getTypeNamed("qty"), is(int.class));
+        assertThat(schema.getFieldNameAt(3), is("price"));
+        assertThat(schema.getTypeNamed("price"), is(double.class));
 
         assertThat(result1.get("type"), is("Apple"));
         assertThat(result1.getInt("qty"), is(20));
         assertThat(result1.getDouble("price"), is(27.2));
 
-        GenericData<String> result2 = results.get(1);
+        DidoData result2 = results.get(1);
 
         assertThat(result2.getAt(1), is("Orange"));
         assertThat(result2.getIntAt(2), is(20));

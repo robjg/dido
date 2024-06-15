@@ -1,6 +1,7 @@
 package dido.json;
 
 import dido.data.DataSchema;
+import dido.data.GenericDataSchema;
 import dido.data.SchemaManager;
 import dido.how.CloseableConsumer;
 import dido.how.CloseableSupplier;
@@ -32,7 +33,7 @@ class SchemaAsJsonTest {
                 .addBack()
                 .addToManager();
 
-        DataSchema<String> schema = schemaManager.getDefaultSchema();
+        GenericDataSchema<String> schema = schemaManager.getDefaultSchema();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -44,7 +45,7 @@ class SchemaAsJsonTest {
 
         ByteArrayInputStream input = new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
 
-        DataSchema<String> back = SchemaAsJson.fromJson(input);
+        DataSchema back = SchemaAsJson.fromJson(input);
 
         assertThat(back, is(schema));
 
@@ -62,11 +63,11 @@ class SchemaAsJsonTest {
                 .addBack()
                 .addToManager();
 
-        DataSchema<String> schema = schemaManager.getDefaultSchema();
+        GenericDataSchema<String> schema = schemaManager.getDefaultSchema();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        CloseableConsumer<DataSchema<String>> consumer = SchemaAsJson.toJsonStream(out);
+        CloseableConsumer<DataSchema> consumer = SchemaAsJson.toJsonStream(out);
 
         consumer.accept(schema);
         consumer.accept(schema);
@@ -80,12 +81,12 @@ class SchemaAsJsonTest {
 
         ByteArrayInputStream input = new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
 
-        CloseableSupplier<DataSchema<String>> supplier = SchemaAsJson.fromJsonStream(input);
+        CloseableSupplier<DataSchema> supplier = SchemaAsJson.fromJsonStream(input);
 
-        DataSchema<String> back1 = supplier.get();
-        DataSchema<String> back2 = supplier.get();
-        DataSchema<String> back3 = supplier.get();
-        DataSchema<String> back4 = supplier.get();
+        DataSchema back1 = supplier.get();
+        DataSchema back2 = supplier.get();
+        DataSchema back3 = supplier.get();
+        DataSchema back4 = supplier.get();
 
         supplier.close();
 

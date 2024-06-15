@@ -1,8 +1,7 @@
 package dido.poi.layouts;
 
-import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericData;
+import dido.data.GenericDataSchema;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import dido.how.DataOut;
@@ -113,7 +112,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
 
     private final List<DataCell<?>> of = new LinkedList<>();
 
-    private DataSchema<String> schema;
+    private GenericDataSchema<String> schema;
 
     @Override
     public Class<BookInProvider> getInType() {
@@ -249,7 +248,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
             lastRow = rowsOut.getLastRow();
         }
 
-        <T> void writeCell(CellOut<T> dataSetter, GenericData<String> data) {
+        <T> void writeCell(CellOut<T> dataSetter, DidoData data) {
 
             RowOut cell = rowsOut.getRowOut();
 
@@ -458,11 +457,11 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
         }
     }
 
-    public DataSchema<String> getSchema() {
+    public GenericDataSchema<String> getSchema() {
         return schema;
     }
 
-    public void setSchema(DataSchema<String> schema) {
+    public void setSchema(GenericDataSchema<String> schema) {
         this.schema = schema;
     }
 

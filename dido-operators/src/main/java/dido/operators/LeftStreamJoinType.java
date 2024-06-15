@@ -3,7 +3,7 @@ package dido.operators;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-public class LeftStreamJoinType implements Supplier<StreamJoin<String>> {
+public class LeftStreamJoinType implements Supplier<StreamJoin> {
 
     private int[] primaryIndices;
 
@@ -18,7 +18,7 @@ public class LeftStreamJoinType implements Supplier<StreamJoin<String>> {
     private String[] secondaryFields;
 
     @Override
-    public StreamJoin<String> get() {
+    public StreamJoin get() {
 
         return LeftStreamJoin.<String>with()
                 .primaryIndices(primaryIndices)

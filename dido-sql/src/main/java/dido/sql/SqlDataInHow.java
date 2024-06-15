@@ -1,7 +1,7 @@
 package dido.sql;
 
-import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.GenericDataSchema;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -74,7 +74,7 @@ public class SqlDataInHow implements DataInHow<Connection> {
 
 		ResultSetMetaData metaData = resultSet.getMetaData();
 
-		DataSchema<String> schema = SchemaUtils.schemaFrom(metaData, classLoader);
+		GenericDataSchema<String> schema = SchemaUtils.schemaFrom(metaData, classLoader);
 
 		DidoData wrapper = ResultSetWrapper.from(resultSet, schema);
 

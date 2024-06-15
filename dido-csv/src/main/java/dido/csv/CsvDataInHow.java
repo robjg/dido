@@ -1,8 +1,8 @@
 package dido.csv;
 
 import dido.data.AbstractData;
-import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -25,7 +25,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
 
     private final CSVFormat csvFormat;
 
-    private final DataSchema<String> schema;
+    private final GenericDataSchema<String> schema;
 
     private final boolean withHeader;
 
@@ -37,7 +37,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
 
         private CSVFormat csvFormat;
 
-        private DataSchema<String> schema;
+        private GenericDataSchema<String> schema;
 
         private boolean withHeader;
 
@@ -50,7 +50,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
             return this;
         }
 
-        public Options schema(DataSchema<String> schema) {
+        public Options schema(GenericDataSchema<String> schema) {
             this.schema = schema;
             return this;
         }
@@ -102,7 +102,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
 
         CSVFormat csvFormat = this.csvFormat;
 
-        DataSchema<String> schema;
+        GenericDataSchema<String> schema;
         CSVParser csvParser;
         Iterator<CSVRecord> iterator;
 
@@ -123,7 +123,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
                     schema = schemaNoHeader(record);
                     iterator = new OneAheadIterator<>(iterator, record);
                 } else {
-                    schema = DataSchema.emptySchema();
+                    schema = GenericDataSchema.emptySchema();
                 }
             }
         } else {
@@ -155,7 +155,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
         };
     }
 
-    static DataSchema<String> schemaNoHeader(CSVRecord record) {
+    static GenericDataSchema<String> schemaNoHeader(CSVRecord record) {
         SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
 
         for (String ignored : record) {
@@ -164,7 +164,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
         return schemaBuilder.build();
     }
 
-    static DataSchema<String> schemaFromHeader(CSVRecord record, DataSchema<String> partialSchema) {
+    static GenericDataSchema<String> schemaFromHeader(CSVRecord record, GenericDataSchema<String> partialSchema) {
         SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
 
         for (String field : record) {
@@ -176,10 +176,10 @@ public class CsvDataInHow implements DataInHow<InputStream> {
         return schemaBuilder.build();
     }
 
-    static DidoData dataFrom(CSVRecord record, DataSchema<String> schema, DidoConverter converter) {
+    static DidoData dataFrom(CSVRecord record, GenericDataSchema<String> schema, DidoConverter converter) {
         return new AbstractData() {
             @Override
-            public DataSchema<String> getSchema() {
+            public GenericDataSchema<String> getSchema() {
                 return schema;
             }
 

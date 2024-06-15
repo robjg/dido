@@ -9,7 +9,7 @@ public class SchemaManager {
 
     public static final String DEFAULT_SCHEMA_NAME = "default";
 
-    private final Map<String, DataSchema<?>> schemaMap = new HashMap<>();
+    private final Map<String, GenericDataSchema<?>> schemaMap = new HashMap<>();
 
     private final Map<String, List<SchemaReference<?>>> schemaRefs = new HashMap<>();
 
@@ -61,7 +61,7 @@ public class SchemaManager {
         public <N> B addNestedFieldAt(int index, F field, String schemaName) {
 
             @SuppressWarnings("unchecked")
-            DataSchema<N> schema = (DataSchema<N>) schemaMap.get(schemaName);
+            GenericDataSchema<N> schema = (GenericDataSchema<N>) schemaMap.get(schemaName);
             if (schema == null) {
                 SchemaReference<N> schemaRef = SchemaReference.named(schemaName);
                 schemaRefs.computeIfAbsent(schemaName, k -> new ArrayList<>())
@@ -76,15 +76,15 @@ public class SchemaManager {
 
         // Nested Schemas from previously defined schemas.
 
-        public <N> B addNestedAt(int index, DataSchema<N> nestedSchema) {
+        public <N> B addNestedAt(int index, GenericDataSchema<N> nestedSchema) {
             return this.addNestedFieldAt(index,null , nestedSchema);
         }
 
-        public <N> B addNestedField(F field, DataSchema<N> nestedSchema) {
+        public <N> B addNestedField(F field, GenericDataSchema<N> nestedSchema) {
             return this.addNestedFieldAt(0, field, nestedSchema);
         }
 
-        public <N> B addNestedFieldAt(int index, F field, DataSchema<N> nestedSchema) {
+        public <N> B addNestedFieldAt(int index, F field, GenericDataSchema<N> nestedSchema) {
             this.schemaBuilder.addNestedFieldAt(index, field, nestedSchema);
             return self();
         }
@@ -119,7 +119,7 @@ public class SchemaManager {
         public <N> B addRepeatingFieldAt(int index, F field, String schemaName) {
 
             @SuppressWarnings("unchecked")
-            DataSchema<N> schema = (DataSchema<N>) schemaMap.get(schemaName);
+            GenericDataSchema<N> schema = (GenericDataSchema<N>) schemaMap.get(schemaName);
             if (schema == null) {
                 SchemaReference<N> schemaRef = SchemaReference.named(schemaName);
                 schemaRefs.computeIfAbsent(schemaName, k -> new ArrayList<>())
@@ -134,15 +134,15 @@ public class SchemaManager {
 
         // Repeating Nested schemas from previously defined schemas.
 
-        public <N> B addRepeatingAt(int index, DataSchema<N> nestedSchema) {
+        public <N> B addRepeatingAt(int index, GenericDataSchema<N> nestedSchema) {
             return this.addRepeatingFieldAt(index,null , nestedSchema);
         }
 
-        public <N> B addRepeatingField(F field, DataSchema<N> nestedSchema) {
+        public <N> B addRepeatingField(F field, GenericDataSchema<N> nestedSchema) {
             return this.addRepeatingFieldAt(0, field, nestedSchema);
         }
 
-        public <N> B addRepeatingFieldAt(int index, F field, DataSchema<N> nestedSchema) {
+        public <N> B addRepeatingFieldAt(int index, F field, GenericDataSchema<N> nestedSchema) {
             schemaBuilder.addRepeatingFieldAt(index, field, nestedSchema);
             return self();
         }
@@ -192,7 +192,7 @@ public class SchemaManager {
 
         @Override
         public void add() {
-            DataSchema<F> schema = this.schemaBuilder.build();
+            GenericDataSchema<F> schema = this.schemaBuilder.build();
             List<SchemaReference<?>> schemaReferences =
                     SchemaManager.this.schemaRefs.remove(name);
             if (schemaReferences != null) {
@@ -263,13 +263,13 @@ public class SchemaManager {
         }
     }
 
-    public <F> DataSchema<F> getDefaultSchema() {
+    public <F> GenericDataSchema<F> getDefaultSchema() {
         //noinspection unchecked
-        return (DataSchema<F>) schemaMap.get(DEFAULT_SCHEMA_NAME);
+        return (GenericDataSchema<F>) schemaMap.get(DEFAULT_SCHEMA_NAME);
     }
 
-    public <F> DataSchema<F> getSchema(String schemaName) {
+    public <F> GenericDataSchema<F> getSchema(String schemaName) {
         //noinspection unchecked
-        return (DataSchema<F>) schemaMap.get(schemaName);
+        return (GenericDataSchema<F>) schemaMap.get(schemaName);
     }
 }

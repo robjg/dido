@@ -5,31 +5,31 @@ import java.util.function.Function;
 /**
  * Provide data that is a subset of some other data.
  *
- * @param <F> The field type.
  */
-public class SubData<F> extends AbstractGenericData<F> implements GenericData<F> {
+public class SubData extends AbstractData implements DidoData {
 
-    private final DataSchema<F> dataSchema;
+    private final DataSchema dataSchema;
 
     private final int[] indices;
-    private final IndexedData<F> original;
+    private final IndexedData original;
 
 
-    private SubData(DataSchema<F> dataSchema, int[] indices, IndexedData<F> original) {
+    private SubData(DataSchema dataSchema, int[] indices, IndexedData original) {
         this.dataSchema = dataSchema;
         this.indices = indices;
         this.original = original;
     }
 
-    private static class MappingFunc<F> implements Function<IndexedData<F>, GenericData<F>> {
+    private static class MappingFunc implements Function<DidoData, DidoData> {
 
         private final int[] indices;
 
         private final boolean withFields;
 
-        private DataSchema<F> lastSchema;
+        private DataSchema lastSchema;
 
-        private DataSchema<F> subSchema;
+        private DataSchema subSchema;
+
         private MappingFunc(int[] indices) {
             this(indices, false);
         }
@@ -40,66 +40,65 @@ public class SubData<F> extends AbstractGenericData<F> implements GenericData<F>
         }
 
         @Override
-        public GenericData<F> apply(IndexedData<F> original) {
+        public DidoData apply(DidoData original) {
 
             if (lastSchema == null || !lastSchema.equals(original.getSchema())) {
                 lastSchema = original.getSchema();
-                SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
-                for (int i = 0; i < indices.length; ++i) {
+                SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
+                for (int index : indices) {
                     if (withFields) {
-                        schemaBuilder.addField(lastSchema.getFieldAt(indices[i]),
-                                lastSchema.getTypeAt(indices[i]));
-                    }
-                    else {
-                        schemaBuilder.add(lastSchema.getTypeAt(indices[i]));
+                        schemaBuilder.addField(lastSchema.getFieldNameAt(index),
+                                lastSchema.getTypeAt(index));
+                    } else {
+                        schemaBuilder.add(lastSchema.getTypeAt(index));
                     }
                 }
                 subSchema = schemaBuilder.build();
             }
-            return new SubData<>(subSchema, indices, original);
+            return new SubData(subSchema, indices, original);
         }
     }
 
-    public static class FieldMappingFunc<F> implements Function<IndexedData<F>, GenericData<F>> {
+    public static class FieldMappingFunc implements Function<DidoData, DidoData> {
 
-        private final F[] fields;
+        private final String[] fields;
 
         private final boolean withFields;
-        private DataSchema<F> lastSchema;
+        private DataSchema lastSchema;
 
-        private DataSchema<F> subSchema;
+        private DataSchema subSchema;
 
         private int[] indices;
 
-        private FieldMappingFunc(F[] fields) {
+        private FieldMappingFunc(String[] fields) {
             this(fields, false);
         }
 
-        private FieldMappingFunc(F[] fields, boolean withFields) {
+        private FieldMappingFunc(String[] fields, boolean withFields) {
             this.fields = fields;
             this.withFields = withFields;
         }
         @Override
-        public GenericData<F> apply(IndexedData<F> original) {
+        public DidoData apply(DidoData original) {
 
             if (lastSchema == null || !lastSchema.equals(original.getSchema())) {
                 lastSchema = original.getSchema();
                 indices = new int[fields.length];
-                SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
+                SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
                 for (int i = 0; i < indices.length; ++i) {
-                    F field = fields[i];
-                    int index = lastSchema.getIndex(field);
+                    String field = fields[i];
+                    int index = lastSchema.getIndexNamed(field);
                     indices[i] = index;
                     if (withFields) {
-                        schemaBuilder.addField(field, lastSchema.getType(field));
+                        schemaBuilder.addField(field, lastSchema.getTypeNamed(field));
                     }
                     else {
-                        schemaBuilder.add(lastSchema.getType(field));
+                        schemaBuilder.add(lastSchema.getTypeNamed(field));
                     }
                 }
                 subSchema = schemaBuilder.build();
             }
-            return new SubData<>(subSchema, indices, original);
+            return new SubData(subSchema, indices, original);
         }
     }
 
@@ -116,14 +115,14 @@ public class SubData<F> extends AbstractGenericData<F> implements GenericData<F>
             return fields(true);
         }
 
-        public <F> Function<IndexedData<F>, GenericData<F>> andIndices(int... indices) {
+        public Function<DidoData, DidoData> andIndices(int... indices) {
 
-            return new MappingFunc<>(indices, fields);
+            return new MappingFunc(indices, fields);
         }
 
-        public <F> Function<IndexedData<F>, GenericData<F>> andFields(F... fields) {
+        public Function<DidoData, DidoData> andFields(String... fields) {
 
-            return new FieldMappingFunc<>(fields);
+            return new FieldMappingFunc(fields);
         }
     }
 
@@ -135,17 +134,17 @@ public class SubData<F> extends AbstractGenericData<F> implements GenericData<F>
         return new Configuration<F>().fields();
     }
 
-    public static <F> Function<IndexedData<F>, GenericData<F>> ofIndices(int... indices) {
+    public static <F> Function<DidoData, DidoData> ofIndices(int... indices) {
 
-        return new MappingFunc<>(indices);
+        return new MappingFunc(indices);
     }
 
-    public static <F> Function<IndexedData<F>, GenericData<F>> ofFields(F... fields) {
+    public static Function<DidoData, DidoData> ofFields(String... fields) {
 
-        return new FieldMappingFunc<>(fields);
+        return new FieldMappingFunc(fields);
     }
     @Override
-    public DataSchema<F> getSchema() {
+    public DataSchema getSchema() {
         return dataSchema;
     }
 
@@ -157,25 +156,6 @@ public class SubData<F> extends AbstractGenericData<F> implements GenericData<F>
     @Override
     public boolean hasIndex(int index) {
         return original.hasIndex(indices[index - 1]);
-    }
-
-    @Override
-    public int hashCode() {
-        return IndexedData.hashCode(this);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof IndexedData) {
-            return IndexedData.equals(this, (IndexedData<?>) obj);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public String toString() {
-        return IndexedData.toString(this);
     }
 
 }

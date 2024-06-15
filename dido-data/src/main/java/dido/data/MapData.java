@@ -8,13 +8,13 @@ import java.util.Objects;
 /**
  * Provide an {@link GenericData} structure backed by a Map.
  */
-public class MapData extends AbstractGenericData<String> implements DidoData {
+public class MapData extends AbstractData implements DidoData {
 
-    private final DataSchema<String> schema;
+    private final DataSchema schema;
 
     private final Map<String, ?> map;
 
-    private MapData(DataSchema<String> schema, Map<String, ?> map) {
+    private MapData(DataSchema schema, Map<String, ?> map) {
         this.schema = schema;
         this.map = map;
     }
@@ -83,13 +83,12 @@ public class MapData extends AbstractGenericData<String> implements DidoData {
 
         DataBuilder builder = new BuilderNoSchema();
         for (int i = 0; i < args.length; i = i + 2) {
-            //noinspection unchecked
             builder.set((String) args[i], args[i+1]);
         }
         return builder.build();
     }
 
-    public static DataSchema<String> schemaFromMap(Map<String, ?> map) {
+    public static GenericDataSchema<String> schemaFromMap(Map<String, ?> map) {
 
         SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
         for (Map.Entry<String, ?> entry : map.entrySet()) {
@@ -98,7 +97,7 @@ public class MapData extends AbstractGenericData<String> implements DidoData {
         return schemaBuilder.build();
     }
 
-    public static DataBuilder newBuilder(DataSchema<String> schema) {
+    public static DataBuilder newBuilder(DataSchema schema) {
 
         return new BuilderWithSchema(schema);
     }
@@ -108,24 +107,24 @@ public class MapData extends AbstractGenericData<String> implements DidoData {
         return new BuilderNoSchema();
     }
 
-    public static DataBuilders.Values valuesFor(DataSchema<String> schema) {
+    public static DataBuilders.Values valuesFor(DataSchema schema) {
 
         return new BuilderWithSchema(schema).values();
     }
 
-    public static BuilderWithSchema copy(IndexedData<String> from) {
+    public static BuilderWithSchema copy(IndexedData from) {
 
         return new BuilderWithSchema(from.getSchema()).copy(from);
     }
 
     @Override
     public Object getAt(int index) {
-        return get(schema.getFieldAt(index));
+        return get(schema.getFieldNameAt(index));
     }
 
     @Override
     public boolean hasIndex(int index) {
-        return hasField(schema.getFieldAt(index));
+        return hasField(schema.getFieldNameAt(index));
     }
 
     @Override
@@ -139,13 +138,13 @@ public class MapData extends AbstractGenericData<String> implements DidoData {
     }
 
     @Override
-    public DataSchema<String> getSchema() {
+    public DataSchema getSchema() {
         return schema;
     }
 
     @Override
     public String toString() {
-        return GenericData.toStringFieldsOnly(this);
+        return DidoData.toStringFieldsOnly(this);
     }
 
     /**
@@ -156,7 +155,7 @@ public class MapData extends AbstractGenericData<String> implements DidoData {
 
         private Map<String, Object> map = new HashMap<>();
 
-        BuilderWithSchema(DataSchema<String> schema) {
+        BuilderWithSchema(DataSchema schema) {
             super(schema);
         }
 
@@ -175,7 +174,7 @@ public class MapData extends AbstractGenericData<String> implements DidoData {
 
         @Override
         public BuilderWithSchema setAt(int index, Object value) {
-            set(getSchema().getFieldAt(index), value);
+            set(getSchema().getFieldNameAt(index), value);
             return this;
         }
     }
@@ -271,16 +270,16 @@ public class MapData extends AbstractGenericData<String> implements DidoData {
      */
     public static class Values {
 
-        private final DataSchema<String> schema;
+        private final DataSchema schema;
 
-        Values(DataSchema<String> schema) {
+        Values(DataSchema schema) {
             this.schema = Objects.requireNonNull(schema);
         }
 
-        public GenericData<String> of(Object... values) {
+        public DidoData of(Object... values) {
             Map<String, Object> map = new HashMap<>();
             for (int i = 0; i < values.length; ++i) {
-                String field = schema.getFieldAt(i + 1);
+                String field = schema.getFieldNameAt(i + 1);
                 if (field == null) {
                     throw new IllegalArgumentException("No field for index " + i + 1);
                 }

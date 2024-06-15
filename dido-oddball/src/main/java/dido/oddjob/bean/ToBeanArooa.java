@@ -1,6 +1,7 @@
 package dido.oddjob.bean;
 
 import dido.data.DataSchema;
+import dido.data.DidoData;
 import dido.data.GenericData;
 import dido.data.SchemaField;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -38,40 +39,40 @@ public class ToBeanArooa {
         return usingAccessor(session.getTools().getPropertyAccessor());
     }
 
-    public <T> Function<GenericData<String>, T> ofArooaClass(ArooaClass arooaClass) {
+    public <T> Function<DidoData, T> ofArooaClass(ArooaClass arooaClass) {
         return new Impl<>(arooaClass, accessor);
     }
 
-    public <T> Function<GenericData<String>, T> ofClass(Class<T> theClass) {
+    public <T> Function<DidoData, T> ofClass(Class<T> theClass) {
         return ofArooaClass(new SimpleArooaClass(theClass));
     }
 
-    public <T> Function<GenericData<String>, T> ofSchema(DataSchema<String> schema) {
+    public <T> Function<DidoData, T> ofSchema(DataSchema schema) {
 
         final MagicBeanClassCreator classCreator =
                 new MagicBeanClassCreator("BeanOfSchema" +
                         instance.incrementAndGet());
 
-        for (String field : schema.getFields()) {
+        for (String field : schema.getFieldNames()) {
 
-            classCreator.addProperty(field, schema.getType(field));
+            classCreator.addProperty(field, schema.getTypeNamed(field));
         }
 
         return ofArooaClass(classCreator.create());
     }
 
-    public <T> Function<GenericData<String>, T> ofUnknown() {
+    public <T> Function<DidoData, T> ofUnknown() {
         return new Unknown<>();
     }
 
-    class Unknown<T> implements Function<GenericData<String>, T> {
+    class Unknown<T> implements Function<DidoData, T> {
 
-        private Function<GenericData<String>, T> delegate;
+        private Function<DidoData, T> delegate;
 
-        private DataSchema<String> lastSchema;
+        private DataSchema lastSchema;
 
         @Override
-        public T apply(GenericData<String> data) {
+        public T apply(DidoData data) {
 
             if (delegate == null || lastSchema != data.getSchema()) {
                 lastSchema = data.getSchema();
@@ -82,7 +83,7 @@ public class ToBeanArooa {
         }
     }
 
-    class Impl<T> implements Function<GenericData<String>, T> {
+    class Impl<T> implements Function<DidoData, T> {
 
         private final ArooaClass arooaClass;
 
@@ -98,16 +99,16 @@ public class ToBeanArooa {
 
         @SuppressWarnings("unchecked")
         @Override
-        public T apply(GenericData<String> data) {
+        public T apply(DidoData data) {
 
             @SuppressWarnings("unchecked")
             T t = (T) arooaClass.newInstance();
 
-            DataSchema<String> schema = data.getSchema();
+            DataSchema schema = data.getSchema();
 
             String[] propertyNames = beanOverview.getProperties();
 
-            Collection<String> fields = data.getSchema().getFields();
+            Collection<String> fields = data.getSchema().getFieldNames();
 
             for (String propertyName : propertyNames) {
 
@@ -119,14 +120,14 @@ public class ToBeanArooa {
                     continue;
                 }
 
-                int index = schema.getIndex(propertyName);
+                int index = schema.getIndexNamed(propertyName);
                 if (!data.hasIndex(index)) {
                     continue;
                 }
 
                 Class<?> type = beanOverview.getPropertyType(propertyName);
 
-                SchemaField<String> schemaField = schema.getSchemaFieldAt(index);
+                SchemaField schemaField = schema.getSchemaFieldAt(index);
 
                 Object value;
                 if (schemaField.isNested()) {
@@ -134,7 +135,7 @@ public class ToBeanArooa {
                         Class<?> componentType;
                         if (type.isArray()) {
                             componentType = type.getComponentType();
-                            Function<GenericData<String>, ?> func = ofClass(componentType);
+                            Function<DidoData, ?> func = ofClass(componentType);
 
                             value = Arrays.stream((GenericData<String>[]) data.get(propertyName))
                                     .map(func)
@@ -151,7 +152,7 @@ public class ToBeanArooa {
                                 throw new IllegalArgumentException(
                                         "Failed to find iterable type for " + propertyName, e);
                             }
-                            Function<GenericData<String>, ?> func = ofClass(componentType);
+                            Function<DidoData, ?> func = ofClass(componentType);
 
                             value = StreamSupport.stream(
                                     ((Iterable<GenericData<String>>) data.get(propertyName)).spliterator(), false)

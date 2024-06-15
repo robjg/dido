@@ -3,13 +3,13 @@ package dido.data;
 import java.util.*;
 
 /**
- * Builder for an {@link DataSchema}.
+ * Builder for an {@link GenericDataSchema}.
  *
  * @param <F> The field type.
  */
 public class SchemaBuilder<F> {
 
-    private final Map<Integer, SchemaField<F>> indexToFields = new TreeMap<>();
+    private final Map<Integer, GenericSchemaField<F>> indexToFields = new TreeMap<>();
 
     private final Map<F, Integer> fieldToIndex = new HashMap<>();
 
@@ -43,34 +43,34 @@ public class SchemaBuilder<F> {
     }
 
     public SchemaBuilder<F> addField(F field, Class<?> fieldType) {
-            return addFieldAt(0, field, fieldType);
+        return addFieldAt(0, field, fieldType);
     }
 
     public SchemaBuilder<F> addFieldAt(int index, F field, Class<?> fieldType) {
-        return addSchemaField(SchemaFields.of(processIndex(index), field, fieldType));
+        return addGenericSchemaField(GenericSchemaFields.of(processIndex(index), field, fieldType));
     }
 
     // Add Nested Field
 
-    public <N> SchemaBuilder<F> addNested(DataSchema<N> nestedSchema) {
+    public <N> SchemaBuilder<F> addNested(GenericDataSchema<N> nestedSchema) {
         return addNestedAt(0, nestedSchema);
     }
 
-    public <N> SchemaBuilder<F> addNestedAt(int index,
-                                            DataSchema<N> nestedSchema) {
+    public SchemaBuilder<F> addNestedAt(int index,
+                                        DataSchema nestedSchema) {
         return addNestedFieldAt(processIndex(index), null, nestedSchema);
     }
 
-    public <N> SchemaBuilder<F> addNestedField(F field,
-                                               DataSchema<N> nestedSchema) {
+    public SchemaBuilder<F> addNestedField(F field,
+                                           DataSchema nestedSchema) {
         return addNestedFieldAt(0, field, nestedSchema);
     }
 
-    public <N> SchemaBuilder<F> addNestedFieldAt(int index,
-                                                 F field,
-                                                 DataSchema<N> nestedSchema) {
+    public SchemaBuilder<F> addNestedFieldAt(int index,
+                                             F field,
+                                             DataSchema nestedSchema) {
 
-        return addSchemaField(SchemaFields.ofNested(
+        return addGenericSchemaField(GenericSchemaFields.ofNested(
                 processIndex(index), field, nestedSchema));
     }
 
@@ -93,30 +93,30 @@ public class SchemaBuilder<F> {
     public <N> SchemaBuilder<F> addNestedFieldAt(int index,
                                                  F field,
                                                  SchemaReference<N> nestedSchemaRef) {
-        return addSchemaField(SchemaFields.ofNested(
+        return addGenericSchemaField(GenericSchemaFields.ofNested(
                 processIndex(index), field, nestedSchemaRef));
     }
 
     // Add Repeating Nested Schema
 
-    public <N> SchemaBuilder<F> addRepeating(DataSchema<N> nestedSchema) {
+    public <N> SchemaBuilder<F> addRepeating(GenericDataSchema<N> nestedSchema) {
         return addRepeatingAt(0, nestedSchema);
     }
 
-    public <N> SchemaBuilder<F> addRepeatingAt(int index,
-                                                     DataSchema<N> nestedSchema) {
+    public SchemaBuilder<F> addRepeatingAt(int index,
+                                           DataSchema nestedSchema) {
         return addRepeatingFieldAt(processIndex(index), null, nestedSchema);
     }
 
-    public <N> SchemaBuilder<F> addRepeatingField(F field,
-                                                  DataSchema<N> nestedSchema) {
+    public SchemaBuilder<F> addRepeatingField(F field,
+                                              DataSchema nestedSchema) {
         return addRepeatingFieldAt(0, field, nestedSchema);
     }
 
-    public <N> SchemaBuilder<F> addRepeatingFieldAt(int index,
-                                                    F field,
-                                                    DataSchema<N> nestedSchema) {
-        return addSchemaField(SchemaFields.ofRepeating(
+    public SchemaBuilder<F> addRepeatingFieldAt(int index,
+                                                F field,
+                                                DataSchema nestedSchema) {
+        return addGenericSchemaField(GenericSchemaFields.ofRepeating(
                 processIndex(index), field, nestedSchema));
     }
 
@@ -127,49 +127,73 @@ public class SchemaBuilder<F> {
     }
 
     public <N> SchemaBuilder<F> addRepeatingAt(int index,
-                                                     SchemaReference<N> nestedSchemaRef) {
+                                               SchemaReference<N> nestedSchemaRef) {
         return addRepeatingFieldAt(processIndex(index), null, nestedSchemaRef);
     }
 
     public <N> SchemaBuilder<F> addRepeatingField(F field,
-                                                    SchemaReference<N> nestedSchemaRef) {
+                                                  SchemaReference<N> nestedSchemaRef) {
         return addRepeatingFieldAt(0, field, nestedSchemaRef);
     }
 
     public <N> SchemaBuilder<F> addRepeatingFieldAt(int index,
                                                     F field,
                                                     SchemaReference<N> nestedSchemaRef) {
-        return addSchemaField(SchemaFields.ofRepeating(
+        return addGenericSchemaField(GenericSchemaFields.ofRepeating(
                 processIndex(index), field, nestedSchemaRef));
     }
 
-    public SchemaBuilder<F> merge(DataSchema<F> prioritySchema) {
+    public SchemaBuilder<F> merge(GenericDataSchema<F> prioritySchema) {
 
         for (int i = prioritySchema.firstIndex(); i > 0; i = prioritySchema.nextIndex(i)) {
 
-            SchemaField<F> schemaField = prioritySchema.getSchemaFieldAt(i);
+            GenericSchemaField<F> schemaField = prioritySchema.getSchemaFieldAt(i);
 
             F priorityField = schemaField.getField();
             if (priorityField == null) {
-                addSchemaField(schemaField.mapTo(schemaField.getIndex(),
+                addGenericSchemaField(schemaField.mapTo(schemaField.getIndex(),
                         Optional.ofNullable(indexToFields.get(schemaField.getIndex()))
-                                .map(SchemaField::getField)
+                                .map(GenericSchemaField::getField)
                                 .orElse(null)));
-            }
-            else {
+            } else {
                 Integer index = fieldToIndex.get(priorityField);
-                if (index == null) {
-                    addSchemaField(schemaField.mapToIndex(lastIndex + 1));
-                } else {
-                    addSchemaField(schemaField.mapToIndex(index));
-                }
+                addGenericSchemaField(schemaField.mapToIndex(
+                        Objects.requireNonNullElseGet(index, () -> lastIndex + 1)));
             }
         }
 
         return this;
     }
 
-    public SchemaBuilder<F> addSchemaField(SchemaField<F> schemaField) {
+    public SchemaBuilder<String> addSchemaField(SchemaField schemaField) {
+
+        // TODO: Do better.
+
+        if (schemaField.isRepeating()) {
+            return ((SchemaBuilder<String>) this)
+                    .addGenericSchemaField(GenericSchemaField.ofRepeating(
+                            schemaField.getIndex(),
+                            schemaField.getName(),
+                            schemaField.getNestedSchema()));
+
+        }
+        else if (schemaField.isNested()) {
+            return ((SchemaBuilder<String>) this)
+                    .addGenericSchemaField(GenericSchemaField.ofNested(
+                            schemaField.getIndex(),
+                            schemaField.getName(),
+                            schemaField.getNestedSchema()));
+        }
+        else {
+            return ((SchemaBuilder<String>) this)
+                    .addGenericSchemaField(GenericSchemaField.of(
+                            schemaField.getIndex(),
+                            schemaField.getName(),
+                            schemaField.getType()));
+        }
+    }
+
+    public SchemaBuilder<F> addGenericSchemaField(GenericSchemaField<F> schemaField) {
 
         int index = schemaField.getIndex();
 
@@ -195,8 +219,8 @@ public class SchemaBuilder<F> {
         return lastIndex;
     }
 
-    public DataSchema<F> build() {
-        return SchemaImpl.fromFields(indexToFields.values(),
+    public GenericDataSchema<F> build() {
+        return GenericSchemaImpl.fromFields(indexToFields.values(),
                 firstIndex, lastIndex);
     }
 
@@ -206,12 +230,10 @@ public class SchemaBuilder<F> {
     private int processIndex(int index) {
         if (index == 0) {
             return ++lastIndex;
-        }
-        else if (index <= lastIndex) {
+        } else if (index <= lastIndex) {
             throw new IllegalArgumentException(
                     "Index [" + index + "] must be greater than Last index [" + lastIndex + "]");
-        }
-        else {
+        } else {
             lastIndex = index;
             return index;
         }

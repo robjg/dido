@@ -13,15 +13,15 @@ public class JsonDataWrapper {
 
     private static final Object NONE = new Object();
 
-    private final DataSchema<String> schema;
+    private final DataSchema schema;
 
-    private JsonDataWrapper(DataSchema<String> schema) {
+    private JsonDataWrapper(DataSchema schema) {
         this.schema = schema;
     }
 
 
     public static GsonBuilder registerSchema(GsonBuilder gsonBuilder,
-                                             DataSchema<String> schema) {
+                                             DataSchema schema) {
         return new JsonDataWrapper(schema).init(gsonBuilder);
     }
 
@@ -35,9 +35,9 @@ public class JsonDataWrapper {
 
     class DataDeserializer implements JsonDeserializer<DidoData> {
 
-        private DataSchema<String> schema;
+        private DataSchema schema;
 
-        DataDeserializer(DataSchema<String> schema) {
+        DataDeserializer(DataSchema schema) {
             this.schema = schema;
         }
 
@@ -50,7 +50,7 @@ public class JsonDataWrapper {
 
     public DidoData wrap(JsonObject jsonObject, JsonDeserializationContext context) {
 
-        final DataSchema<String> schema = Objects.requireNonNull(deserializer.schema);
+        final DataSchema schema = Objects.requireNonNull(deserializer.schema);
 
         final Object[] values = new Object[schema.lastIndex()];
 
@@ -58,7 +58,7 @@ public class JsonDataWrapper {
         return new AbstractData() {
 
             @Override
-            public DataSchema<String> getSchema() {
+            public DataSchema getSchema() {
                 return schema;
             }
 
@@ -73,15 +73,15 @@ public class JsonDataWrapper {
                     return value;
                 }
 
-                JsonElement element = jsonObject.get(schema.getFieldAt(index));
+                JsonElement element = jsonObject.get(schema.getFieldNameAt(index));
                 if (element == null) {
                     values[index - 1] = NONE;
                     return null;
                 }
 
-                SchemaField<String> schemaField = schema.getSchemaFieldAt(index);
+                SchemaField schemaField = schema.getSchemaFieldAt(index);
 
-                DataSchema<String> restore = null;
+                DataSchema restore = null;
                 if (schemaField.isNested()) {
                     restore = deserializer.schema;
                     deserializer.schema = schemaField.getNestedSchema();
@@ -98,8 +98,8 @@ public class JsonDataWrapper {
             }
 
             @Override
-            public <T> T getAs(String field, Class<T> type) {
-                int index = getSchema().getIndex(field);
+            public <T> T getAs(String fieldName, Class<T> type) {
+                int index = getSchema().getIndexNamed(fieldName);
                 if (index > 0) {
                     return getAtAs(index, type);
                 } else {
@@ -120,7 +120,7 @@ public class JsonDataWrapper {
 
             @Override
             public String toString() {
-                return GenericData.toStringFieldsOnly(this);
+                return DidoData.toStringFieldsOnly(this);
             }
         };
     }

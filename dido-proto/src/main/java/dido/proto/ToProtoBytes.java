@@ -12,7 +12,7 @@ import java.util.function.Function;
 /**
  * Converts {@link IndexedData} into a Protobuf message as a byte array using the provided protobuf descriptor.
  */
-public class ToProtoBytes implements Function<IndexedData<?>, byte[]> {
+public class ToProtoBytes implements Function<IndexedData, byte[]> {
 
     private final Descriptors.Descriptor descriptor;
 
@@ -20,23 +20,23 @@ public class ToProtoBytes implements Function<IndexedData<?>, byte[]> {
         this.descriptor = descriptor;
     }
 
-    public static Function<IndexedData<?>, byte[]> from(Descriptors.Descriptor descriptor) {
+    public static Function<IndexedData, byte[]> from(Descriptors.Descriptor descriptor) {
         return new ToProtoBytes(descriptor);
     }
 
     @Override
-    public byte[] apply(IndexedData<?> data) {
+    public byte[] apply(IndexedData data) {
 
         Message.Builder builder = DynamicMessage.newBuilder(descriptor);
 
-        DataSchema<?> schema = data.getSchema();
+        DataSchema schema = data.getSchema();
 
-        for (SchemaField<?> schemaField : schema.getSchemaFields()) {
-            if (schemaField.getField() == null) {
+        for (SchemaField schemaField : schema.getSchemaFields()) {
+            if (schemaField.getName() == null) {
                 continue;
             }
             Descriptors.FieldDescriptor fieldDescriptor =
-                    descriptor.findFieldByName(schemaField.getField().toString());
+                    descriptor.findFieldByName(schemaField.getName().toString());
             if (fieldDescriptor == null) {
                  continue;
             }

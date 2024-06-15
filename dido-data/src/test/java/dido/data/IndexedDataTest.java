@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.is;
 
 class IndexedDataTest {
 
-    static class MyData extends AbstractIndexedData<Void> {
+    static class MyData extends AbstractIndexedData {
 
         private final Object data;
 
@@ -18,7 +18,7 @@ class IndexedDataTest {
         }
 
         @Override
-        public DataSchema<Void> getSchema() {
+        public GenericDataSchema<Void> getSchema() {
             throw new UnsupportedOperationException();
         }
 
@@ -62,7 +62,7 @@ class IndexedDataTest {
     @Test
     void testToString() {
 
-        GenericData<String> data1 = ArrayData.of("Apple", null, 15, 26.5);
+        DidoData data1 = ArrayData.of("Apple", null, 15, 26.5);
 
         assertThat(IndexedData.toString(data1),
                 is("{[1]=Apple, [2]=null, [3]=15, [4]=26.5}"));
@@ -71,24 +71,24 @@ class IndexedDataTest {
     @Test
     void testEquals() {
 
-        DataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
                 .addField("Fruit", String.class)
                 .addField("Qty", Double.class)
                 .build();
 
-        DataSchema<String> schema = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
                 .addField("OrderId", String.class)
                 .addRepeatingField("OrderLines", nestedSchema)
                 .build();
 
-        IndexedData<String> data1 = ArrayData.valuesFor(schema)
+        IndexedData data1 = ArrayData.valuesFor(schema)
                 .of("A123",
                         List.of(ArrayData.valuesFor(nestedSchema)
                                         .of("Apple", 4),
                                 ArrayData.valuesFor(nestedSchema)
                                         .of("Pear", 5)));
 
-        IndexedData<String> data2 = ArrayData.valuesFor(schema)
+        IndexedData data2 = ArrayData.valuesFor(schema)
                 .of("A123",
                         List.of(ArrayData.valuesFor(nestedSchema)
                                         .of("Apple", 4),
@@ -102,8 +102,8 @@ class IndexedDataTest {
     @Test
     void testEqualsIgnoringSchema() {
 
-        IndexedData<String> data1 = ArrayData.of("Apple", 5, 23.7);
-        IndexedData<String> data2 = MapData.of(
+        IndexedData data1 = ArrayData.of("Apple", 5, 23.7);
+        IndexedData data2 = MapData.of(
                 "Fruit", "Apple", "Qty", 5, "Price", 23.7);
 
         assertThat(IndexedData.equalsIgnoringSchema(data1, data2), is(true));

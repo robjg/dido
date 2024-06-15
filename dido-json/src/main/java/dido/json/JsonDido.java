@@ -35,7 +35,7 @@ public class JsonDido {
      * of fields written.
      * @oddjob.required No.
      */
-    private DataSchema<String> schema;
+    private DataSchema schema;
 
     /**
      * @oddjob.description When reading data in, indicates that the provided Schema is partial. The
@@ -95,11 +95,11 @@ public class JsonDido {
         }
     }
 
-    public DataSchema<String> getSchema() {
+    public DataSchema getSchema() {
         return schema;
     }
 
-    public void setSchema(DataSchema<String> schema) {
+    public void setSchema(DataSchema schema) {
         this.schema = schema;
     }
 

@@ -4,9 +4,9 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-public class SchemaReference<F> implements Supplier<DataSchema<F>> {
+public class SchemaReference<F> implements Supplier<GenericDataSchema<F>> {
 
-    private final AtomicReference<DataSchema<F>> schemaRef = new AtomicReference<>();
+    private final AtomicReference<GenericDataSchema<F>> schemaRef = new AtomicReference<>();
 
     private final String name;
 
@@ -27,12 +27,12 @@ public class SchemaReference<F> implements Supplier<DataSchema<F>> {
         return new SchemaReference<>(name);
     }
 
-    public void set(DataSchema<F> schema) {
+    public void set(GenericDataSchema<F> schema) {
         schemaRef.set(schema);
     }
 
     @Override
-    public DataSchema<F> get() {
+    public GenericDataSchema<F> get() {
         return schemaRef.get();
     }
 

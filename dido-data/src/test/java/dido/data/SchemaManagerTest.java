@@ -40,26 +40,29 @@ class SchemaManagerTest {
                 .addBack()
                 .addToManager();
 
-        DataSchema<FamilyFields> schema = schemaManager.getDefaultSchema();
+        GenericDataSchema<FamilyFields> schema = schemaManager.getDefaultSchema();
 
         assertThat(schema.firstIndex(), is(1));
         assertThat(schema.lastIndex(), is(4));
-        assertThat(schema.getTypeAt(1), is(SchemaField.NESTED_TYPE));
-        assertThat(schema.getType(FamilyFields.WIFE), is(SchemaField.NESTED_TYPE));
-        assertThat(schema.getType(FamilyFields.CHILDREN), is(SchemaField.NESTED_REPEATING_TYPE));
+        assertThat(schema.getTypeAt(1), is(GenericSchemaField.NESTED_TYPE));
+        assertThat(schema.getTypeOf(FamilyFields.WIFE), is(GenericSchemaField.NESTED_TYPE));
+        assertThat(schema.getTypeOf(FamilyFields.CHILDREN), is(GenericSchemaField.NESTED_REPEATING_TYPE));
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));
         assertThat(schema.nextIndex(3), is(4));
         assertThat(schema.getFields(), contains(FamilyFields.HUSBAND, FamilyFields.WIFE,
                 FamilyFields.CHILDREN, FamilyFields.HOUSE));
 
-        DataSchema<PersonFields> husband = schema.getSchema(FamilyFields.HUSBAND);
+        GenericDataSchema<PersonFields> husband = (GenericDataSchema<PersonFields>)
+                schema.getSchema(FamilyFields.HUSBAND);
         assertThat(husband.getFields(), contains(PersonFields.NAME, PersonFields.AGE));
 
-        DataSchema<PersonFields> children = schema.getSchema(FamilyFields.CHILDREN);
+        GenericDataSchema<PersonFields> children = (GenericDataSchema<PersonFields>)
+                schema.getSchema(FamilyFields.CHILDREN);
         assertThat(children.getFields(), contains(PersonFields.NAME, PersonFields.AGE));
 
-        DataSchema<HouseFields> house = schema.getSchema(FamilyFields.HOUSE);
+        GenericDataSchema<HouseFields> house = (GenericDataSchema<HouseFields>)
+                schema.getSchema(FamilyFields.HOUSE);
         assertThat(house.getFields(), contains(HouseFields.BEDROOMS));
 
         assertThat(schemaManager.getSchema("person"), sameInstance(husband));
@@ -74,10 +77,10 @@ class SchemaManagerTest {
                 .addNestedField("father", "person")
                 .addToManager();
 
-        DataSchema<String> schema = schemaManager.getSchema("person");
+        GenericDataSchema<String> schema = schemaManager.getSchema("person");
 
         assertThat(schema.getTypeAt(1), is(String.class));
-        assertThat(schema.getTypeAt(2), is(SchemaField.NESTED_TYPE));
+        assertThat(schema.getTypeAt(2), is(GenericSchemaField.NESTED_TYPE));
     }
 
     @Test
@@ -88,9 +91,9 @@ class SchemaManagerTest {
                 .addRepeatingField("children", "node")
                 .addToManager();
 
-        DataSchema<String> schema = schemaManager.getSchema("node");
+        GenericDataSchema<String> schema = schemaManager.getSchema("node");
 
-        assertThat(schema.getTypeAt(1), is(SchemaField.NESTED_REPEATING_TYPE));
+        assertThat(schema.getTypeAt(1), is(GenericSchemaField.NESTED_REPEATING_TYPE));
 
     }
 
@@ -106,16 +109,16 @@ class SchemaManagerTest {
                 .addBack()
                 .addToManager();
 
-        DataSchema<String> schema = schemaManager.getDefaultSchema();
+        GenericDataSchema<String> schema = schemaManager.getDefaultSchema();
 
-        DataSchema<String> expectedNested = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> expectedNested = SchemaBuilder.forStringFields()
                 .addField("Title", String.class)
                 .addField("Cost", double.class)
                 .build();
 
-        assertThat(schema.getTypeAt(2), is(SchemaField.NESTED_REPEATING_TYPE));
+        assertThat(schema.getTypeAt(2), is(GenericSchemaField.NESTED_REPEATING_TYPE));
 
-        DataSchema<String> nested = schema.getSchema("Hobbies");
+        DataSchema nested = schema.getSchema("Hobbies");
 
         assertThat(nested, is(expectedNested));
     }
@@ -127,9 +130,9 @@ class SchemaManagerTest {
                 .newDefaultSchema(String.class)
                 .addToManager();
 
-        DataSchema<String> dataSchema = schemaManager.getDefaultSchema();
+        GenericDataSchema<String> dataSchema = schemaManager.getDefaultSchema();
 
-        assertThat(dataSchema, is(DataSchema.emptySchema()));
+        assertThat(dataSchema, is(GenericDataSchema.emptySchema()));
     }
 
     @Test
@@ -141,11 +144,11 @@ class SchemaManagerTest {
                 .addBack()
                 .addToManager();
 
-        DataSchema<String> dataSchema = schemaManager.getDefaultSchema();
+        GenericDataSchema<String> dataSchema = schemaManager.getDefaultSchema();
 
-        SchemaField<String> nestedField = dataSchema.getSchemaField("Foo");
+        GenericSchemaField<String> nestedField = dataSchema.getSchemaField("Foo");
 
-        assertThat(nestedField.getNestedSchema(), is(DataSchema.emptySchema()));
+        assertThat(nestedField.getNestedSchema(), is(GenericDataSchema.emptySchema()));
         assertThat(nestedField.isRepeating(), is(false));
     }
 
@@ -158,11 +161,11 @@ class SchemaManagerTest {
                 .addBack()
                 .addToManager();
 
-        DataSchema<String> dataSchema = schemaManager.getDefaultSchema();
+        GenericDataSchema<String> dataSchema = schemaManager.getDefaultSchema();
 
-        SchemaField<String> nestedField = dataSchema.getSchemaField("Foo");
+        GenericSchemaField<String> nestedField = dataSchema.getSchemaField("Foo");
 
-        assertThat(nestedField.getNestedSchema(), is(DataSchema.emptySchema()));
+        assertThat(nestedField.getNestedSchema(), is(GenericDataSchema.emptySchema()));
         assertThat(nestedField.isRepeating(), is(true));
     }
 }

@@ -20,14 +20,14 @@ public class StreamInJsonLines implements DataInHow<InputStream> {
         this.function = function;
     }
 
-    public static DataInHow<InputStream> asWrapperWithSchema(DataSchema<String> schema) {
+    public static DataInHow<InputStream> asWrapperWithSchema(DataSchema schema) {
 
         return new Settings()
                 .setSchema(schema)
                 .make();
     }
 
-    public static DataInHow<InputStream> asWrapperWithPartialSchema(DataSchema<String> partialSchema) {
+    public static DataInHow<InputStream> asWrapperWithPartialSchema(DataSchema partialSchema) {
 
         return new Settings()
                 .setSchema(partialSchema)
@@ -35,7 +35,7 @@ public class StreamInJsonLines implements DataInHow<InputStream> {
                 .make();
     }
 
-    public static DataInHow<InputStream> asCopyWithSchema(DataSchema<String> schema) {
+    public static DataInHow<InputStream> asCopyWithSchema(DataSchema schema) {
 
         return new Settings()
                 .setCopy(true)
@@ -43,7 +43,7 @@ public class StreamInJsonLines implements DataInHow<InputStream> {
                 .make();
     }
 
-    public static DataInHow<InputStream> asCopyWithPartialSchema(DataSchema<String> partialSchema) {
+    public static DataInHow<InputStream> asCopyWithPartialSchema(DataSchema partialSchema) {
 
         return new Settings()
                 .setCopy(true)
@@ -61,7 +61,7 @@ public class StreamInJsonLines implements DataInHow<InputStream> {
 
         private final JsonStringToData.Settings settings = JsonStringToData.withSettings();
 
-        public Settings setSchema(DataSchema<String> schema) {
+        public Settings setSchema(DataSchema schema) {
             this.settings.setSchema(schema);
             return this;
         }

@@ -1,18 +1,21 @@
 package dido.data;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class SchemaImpl<F> extends AbstractDataSchema<F> {
+public class GenericSchemaImpl<F> extends AbstractGenericDataSchema<F> {
 
-    private final Map<F, Integer> fieldToIndex;
+    private final Map<F, GenericSchemaField<F>> fieldToSchemaField;
 
-    private final Map<F, SchemaField<F>> fieldToSchemaField;
+    private final Map<String, GenericSchemaField<F>> nameToSchemaField;
 
     private final F[] indexToField;
 
     private final int[] nextIndex;
 
-    private final SchemaField<F>[] indexToSchemaField;
+    private final GenericSchemaField<F>[] indexToSchemaField;
 
     private final int firstIndex;
 
@@ -21,10 +24,10 @@ public class SchemaImpl<F> extends AbstractDataSchema<F> {
     private volatile int hashCode = -1;
 
     @SuppressWarnings("unchecked")
-    private SchemaImpl(Iterable<SchemaField<F>> schemaFields, int firstIndex, int lastIndex) {
+    private GenericSchemaImpl(Iterable<GenericSchemaField<F>> schemaFields, int firstIndex, int lastIndex) {
 
         this.fieldToSchemaField = new LinkedHashMap<>();
-        this.fieldToIndex = new HashMap<>();
+        this.nameToSchemaField = new LinkedHashMap<>();
 
         this.firstIndex = firstIndex;
         this.lastIndex = lastIndex;
@@ -32,10 +35,10 @@ public class SchemaImpl<F> extends AbstractDataSchema<F> {
         int offset = firstIndex - 1;
         Object[] indexToField =  new Object[lastIndex - offset];
         int[] nextIndex = new int[lastIndex - offset];
-        SchemaField<F>[] indexToSchemaField = new SchemaField[lastIndex - offset];
+        GenericSchemaField<F>[] indexToSchemaField = new GenericSchemaField[lastIndex - offset];
 
         int last = 0;
-        for (SchemaField<F> meta : schemaFields) {
+        for (GenericSchemaField<F> meta : schemaFields) {
             int index = meta.getIndex();
 
             indexToSchemaField[index - firstIndex] = meta;
@@ -43,8 +46,12 @@ public class SchemaImpl<F> extends AbstractDataSchema<F> {
 
             F field = meta.getField();
             if (field != null) {
-                fieldToIndex.put(field, index);
                 fieldToSchemaField.put(field, meta);
+                String name = meta.getName();
+                if (name == null) {
+                    throw new IllegalStateException("Name for field " + field + " must not be null.");
+                }
+                nameToSchemaField.put(name, meta);
             }
 
             if (last != 0) {
@@ -59,16 +66,16 @@ public class SchemaImpl<F> extends AbstractDataSchema<F> {
         this.indexToSchemaField = indexToSchemaField;
     }
 
-    public static <F> DataSchema<F> fromFields(SchemaField<F>... schemaFields) {
+    public static <F> GenericDataSchema<F> fromFields(GenericSchemaField<F>... schemaFields) {
 
-        return new SchemaImpl<>(() -> Arrays.stream(schemaFields).iterator(),
+        return new GenericSchemaImpl<>(() -> Arrays.stream(schemaFields).iterator(),
                 schemaFields[0].getIndex(), schemaFields[schemaFields.length - 1].getIndex());
     }
 
 
-    public static <F> DataSchema<F> fromFields(Iterable<SchemaField<F>> schemaFields, int firstIndex, int lastIndex) {
+    public static <F> GenericDataSchema<F> fromFields(Iterable<GenericSchemaField<F>> schemaFields, int firstIndex, int lastIndex) {
 
-        return new SchemaImpl<>(schemaFields, firstIndex, lastIndex);
+        return new GenericSchemaImpl<>(schemaFields, firstIndex, lastIndex);
     }
 
     @Override
@@ -87,7 +94,7 @@ public class SchemaImpl<F> extends AbstractDataSchema<F> {
     }
 
     @Override
-    public SchemaField<F> getSchemaFieldAt(int index) {
+    public GenericSchemaField<F> getSchemaFieldAt(int index) {
         return indexToSchemaField[index - firstIndex];
     }
 
@@ -102,13 +109,9 @@ public class SchemaImpl<F> extends AbstractDataSchema<F> {
     }
 
     @Override
-    public <N> DataSchema<N> getSchemaAt(int index) {
-        SchemaField<F> schemaField = indexToSchemaField[index - firstIndex];
-        if (schemaField == null) {
-            return null;
-        } else {
-            return schemaField.getNestedSchema();
-        }
+    public DataSchema getSchemaAt(int index) {
+        GenericSchemaField<F> schemaField = indexToSchemaField[index - firstIndex];
+        return schemaField == null ? null : schemaField.getNestedSchema();
     }
 
     @Override
@@ -117,33 +120,25 @@ public class SchemaImpl<F> extends AbstractDataSchema<F> {
     }
 
     @Override
-    public int getIndex(F field) {
-        Integer index = fieldToIndex.get(field);
-        return index == null ? 0 : index;
-    }
-
-    @Override
-    public SchemaField<F> getSchemaField(F field) {
+    public GenericSchemaField<F> getSchemaField(F field) {
         return fieldToSchemaField.get(field);
     }
 
     @Override
-    public <N> DataSchema<N> getSchema(F field) {
-        SchemaField<F> schemaField = fieldToSchemaField.get(field);
-        if (schemaField == null) {
-            return null;
-        } else {
-            return schemaField.getNestedSchema();
-        }
+    public GenericSchemaField<F> getSchemaFieldNamed(String fieldName) {
+        return nameToSchemaField.get(fieldName);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o instanceof DataSchema) {
-            return DataSchema.equals(this, (DataSchema<?>) o);
-        } else {
-            return false;
-        }
+    public F getField(String fieldName) {
+        GenericSchemaField<F> schemaField = nameToSchemaField.get(fieldName);
+        return schemaField == null ? null : schemaField.getField();
+    }
+
+    @Override
+    public int getIndexNamed(String fieldName) {
+        GenericSchemaField<F> schemaField = nameToSchemaField.get(fieldName);
+        return schemaField == null ? 0 : schemaField.getIndex();
     }
 
     @Override
@@ -152,11 +147,6 @@ public class SchemaImpl<F> extends AbstractDataSchema<F> {
             hashCode = DataSchema.hashCode(this);
         }
         return hashCode;
-    }
-
-    @Override
-    public String toString() {
-        return DataSchema.toString(this);
     }
 
 }

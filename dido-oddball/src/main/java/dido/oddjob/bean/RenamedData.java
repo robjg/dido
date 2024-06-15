@@ -1,75 +1,82 @@
 package dido.oddjob.bean;
 
-import dido.data.*;
+import dido.data.AbstractData;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.SchemaBuilder;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class RenamedData<F, T> extends AbstractGenericData<T> {
+/**
+ * Todo: What does this do.
+ *
+ */
+public class RenamedData extends AbstractData {
 
-    private final DataSchema<T> toSchema;
+    private final DataSchema toSchema;
 
-    private final GenericData<F> original;
+    private final DidoData original;
 
-    public RenamedData(DataSchema<T> toSchema, GenericData<F> original) {
+    public RenamedData(DataSchema toSchema, DidoData original) {
         this.toSchema = toSchema;
         this.original = original;
     }
 
-    static class Transform<F, T> implements Function<GenericData<F>, GenericData<T>> {
+    static class Transform implements Function<DidoData, DidoData> {
 
-        private final Map<F, T> fieldMap;
+        private final Map<String, String> fieldMap;
 
-        private DataSchema<T> schemaOut;
+        private DataSchema schemaOut;
 
-        private DataSchema<F> lastIn;
+        private DataSchema lastIn;
 
-        Transform(Map<F, T> fieldMap) {
+        Transform(Map<String, String> fieldMap) {
             this.fieldMap = fieldMap;
         }
 
         @Override
-        public GenericData<T> apply(GenericData<F> dataIn) {
+        public DidoData apply(DidoData dataIn) {
             if (schemaOut == null || lastIn != dataIn.getSchema()) {
                 lastIn = dataIn.getSchema();
                 schemaOut = renamedSchema(fieldMap, lastIn);
             }
 
-            return new RenamedData<>(schemaOut, dataIn);
+            return new RenamedData(schemaOut, dataIn);
         }
     }
 
-    public static <F, T> TransformBuilder<F, T> transformer() {
+    public static TransformBuilder transformer() {
 
-        return new TransformBuilder<>(t -> {
+        return new TransformBuilder(t -> {
             throw new IllegalArgumentException("Name Clash " + t);
         });
     }
 
-    public static <F, T> TransformBuilder<F, T> transformerWithNameClash(Function<T, T> policy) {
+    public static TransformBuilder transformerWithNameClash(Function<? super String, ? extends String> policy) {
 
-        return new TransformBuilder<>(policy);
+        return new TransformBuilder(policy);
     }
 
-    public static class TransformBuilder<F, T> {
+    public static class TransformBuilder {
 
-        private Map<F, T> map = new LinkedHashMap<>();
+        private Map<String, String> map = new LinkedHashMap<>();
 
-        private final Function<T, T> nameClash;
+        private final Function<? super String, ? extends String> nameClash;
 
-        public TransformBuilder(Function<T, T> nameClash) {
+        public TransformBuilder(Function<? super String, ? extends String> nameClash) {
             this.nameClash = nameClash;
         }
 
 
-        public Function<GenericData<F>, GenericData<T>> build() {
-            Map<F, T> copy = this.map;
+        public Function<DidoData, DidoData> build() {
+            Map<String, String> copy = this.map;
             this.map = new LinkedHashMap<>();
-            return new Transform<>(copy);
+            return new Transform(copy);
         }
 
-        public TransformBuilder<F, T> addMapping(F from, T to) {
+        public TransformBuilder addMapping(String from, String to) {
             if (map.containsValue(to)) {
                 return addMapping(from, nameClash.apply(to));
             }
@@ -81,7 +88,7 @@ public class RenamedData<F, T> extends AbstractGenericData<T> {
     }
 
     @Override
-    public DataSchema<T> getSchema() {
+    public DataSchema getSchema() {
         return toSchema;
     }
 
@@ -95,11 +102,11 @@ public class RenamedData<F, T> extends AbstractGenericData<T> {
         return original.hasIndex(index);
     }
 
-    static <F, T> DataSchema<T> renamedSchema(Map<F, T> mapping, DataSchema<F> fromSchema) {
+    static DataSchema renamedSchema(Map<String, String> mapping, DataSchema fromSchema) {
 
         return fromSchema.getSchemaFields().stream()
-                .reduce(SchemaBuilder.<T>impliedType(),
-                        (b, sf) -> b.addSchemaField(sf.mapToField(mapping.get(sf.getField()))),
+                .reduce(SchemaBuilder.forStringFields(),
+                        (b, sf) -> b.addSchemaField(sf.mapToField(mapping.get(sf.getName()))),
                         (b1, b2) -> b1)
                 .build();
     }

@@ -70,9 +70,9 @@ abstract public class GenericDataBuilders<F, B extends GenericDataBuilders<F, B>
             return setAt(index, value);
         }
 
-        public B copy(IndexedData<F> from) {
+        public B copy(IndexedData from) {
 
-            DataSchema<F> schema = from.getSchema();
+            DataSchema schema = from.getSchema();
             for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
                 setAt(index, from.getAt(index));
             }
@@ -133,9 +133,9 @@ abstract public class GenericDataBuilders<F, B extends GenericDataBuilders<F, B>
             return set(field, value);
         }
 
-        public B copy(IndexedData<F> from) {
+        public B copy(GenericData<F> from) {
 
-            DataSchema<F> schema = from.getSchema();
+            GenericDataSchema<F> schema = from.getSchema();
             for (F field : schema.getFields()) {
                 set(field, from.getAt(schema.getIndex(field)));
             }
@@ -152,13 +152,13 @@ abstract public class GenericDataBuilders<F, B extends GenericDataBuilders<F, B>
     abstract public static class KnownSchema<F, B extends KnownSchema<F, B>>
         extends Indexed<F, B> implements GenericDataBuilder<F> {
 
-        private final DataSchema<F> schema;
+        private final GenericDataSchema<F> schema;
 
-        protected KnownSchema(DataSchema<F> schema) {
+        protected KnownSchema(GenericDataSchema<F> schema) {
             this.schema = Objects.requireNonNull(schema);
         }
 
-        protected DataSchema<F> getSchema() {
+        protected GenericDataSchema<F> getSchema() {
             return schema;
         }
 
@@ -228,9 +228,9 @@ abstract public class GenericDataBuilders<F, B extends GenericDataBuilders<F, B>
 
         private final Indexed<F, ?> owner;
 
-        private final DataSchema<F> schema;
+        private final GenericDataSchema<F> schema;
 
-        Values(Indexed<F, ?> owner, DataSchema<F> schema) {
+        Values(Indexed<F, ?> owner, GenericDataSchema<F> schema) {
             this.owner = owner;
             this.schema = schema;
         }

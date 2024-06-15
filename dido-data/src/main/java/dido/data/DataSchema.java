@@ -1,6 +1,8 @@
 package dido.data;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Define a Schema for Data. A schema is always defined by index but
@@ -13,64 +15,8 @@ import java.util.*;
  * with the same argument will always return the same value.
  * </p>
  *
- * @param <F> The type of the fields used in the schema.
  */
-public interface DataSchema<F> {
-
-    /**
-     * Get the {@link SchemaField} for the given index. A Schema Field will exist for
-     * all valid indexes. Behaviour is undefined when the index is out of bounds.
-     *
-     * @param index The index, from 1.
-     *
-     * @return The Schema Field.
-     */
-    SchemaField<F> getSchemaFieldAt(int index);
-
-    /**
-     * Get the field for the given index. If a field has not been allocated to the
-     * given index null will be returned. Behaviour is undefined when
-     * the index is out of bounds.
-     *
-     * @param index The index, from 1.
-     *
-     * @return F the field or null.
-     */
-    F getFieldAt(int index);
-
-    /**
-     * Get the type that a value is at a given index. If the
-     * index does not exist behaviour is undefined.
-     *
-     * @param index The index.
-     * @return The type.
-     */
-    Class<?> getTypeAt(int index);
-
-    /**
-     * Get the nested schema a given index. If the
-     * index does not exist behaviour is undefined.
-     * If the data at the index is not nested this
-     * method will return null. If the type of
-     * this index is {@link IndexedData} or an
-     * array of {@link IndexedData} then this method
-     * will not return null.
-     *
-     * @param index The field.
-     * @param <N> The field type of the nested schema.
-     *
-     * @return The nested schema.
-     */
-    <N> DataSchema<N> getSchemaAt(int index);
-
-    /**
-     * Get the index for a given field. If the field does not
-     * exist behaviour is undefined.
-     *
-     * @param field The field.
-     * @return The index of the field.
-     */
-    int getIndex(F field);
+public interface DataSchema {
 
     /**
      * Get the first index in an {@link IndexedData} structure
@@ -104,59 +50,101 @@ public interface DataSchema<F> {
     int lastIndex();
 
     /**
-     * Get all the fields in this schema.
+     * Get the {@link GenericSchemaField} for the given index. A Schema Field will exist for
+     * all valid indexes. Behaviour is undefined when the index is out of bounds.
      *
-     * @return A collection of fields. May be empty. Never null.
+     * @param index The index, from 1.
+     *
+     * @return The Schema Field.
      */
-    Collection<F> getFields();
+    SchemaField getSchemaFieldAt(int index);
 
     /**
-     * Get all the {@link SchemaField}s in this schema.
+     * Get the field for the given index. If a field has not been allocated to the
+     * given index null will be returned. Behaviour is undefined when
+     * the index is out of bounds.
      *
-     * @return A collection of Schema Fields. May be empty. Never null.
+     * @param index The index, from 1.
+     *
+     * @return F the field or null.
      */
-    Collection<SchemaField<F>> getSchemaFields();
+    String getFieldNameAt(int index);
 
     /**
-     * Get the {@link SchemaField} for the given field. If the
-     * field does not exist behaviour is undefined.
+     * Get the type that a value is at a given index. If the
+     * index does not exist behaviour is undefined.
      *
-     * @param field The field.
+     * @param index The index.
      * @return The type.
      */
-    SchemaField<F> getSchemaField(F field);
+    Class<?> getTypeAt(int index);
+
+    /**
+     * Get the nested schema a given index. If the
+     * index does not exist behaviour is undefined.
+     * If the data at the index is not nested this
+     * method will return null. If the type of
+     * this index is {@link IndexedData} or an
+     * array of {@link IndexedData} then this method
+     * will not return null.
+     *
+     * @param index The field.
+     *
+     * @return The nested schema.
+     */
+    DataSchema getSchemaAt(int index);
+
+    /**
+     * Get the {@link GenericSchemaField} for the given field. If the
+     * field does not exist behaviour is undefined.
+     *
+     * @param fieldName The field.
+     * @return The type.
+     */
+    SchemaField getSchemaFieldNamed(String fieldName);
+
+    /**
+     * Get the index for a given field. If the field does not
+     * exist behaviour is undefined.
+     *
+     * @param fieldName The field.
+     * @return The index of the field.
+     */
+    int getIndexNamed(String fieldName);
 
     /**
      * Get the type that a value is at a given field. If the
      * field does not exist behaviour is undefined.
      *
-     * @param field The field.
+     * @param fieldName The field.
      * @return The type.
      */
-    Class<?> getType(F field);
+    Class<?> getTypeNamed(String fieldName);
 
     /**
      * Get the nested schema for the given field. If the
      * field does not exist this method should return null, or if
      * there is not nested schema it will return null.
      *
-     * @param field The field.
-     * @param <N> The field type of the nested schema.
+     * @param fieldName The field.
      *
      * @return The nested schema or null.
      */
-    <N> DataSchema<N> getSchema(F field);
+    DataSchema getSchemaNamed(String fieldName);
 
     /**
-     * Provide an empty schema.
+     * Get all the fields in this schema.
      *
-     * @param <F> The type of the field.
-     *
-     * @return An empty schema.
+     * @return A collection of fields. May be empty. Never null.
      */
-    static <F> DataSchema<F> emptySchema() {
-        return new EmptySchema<>();
-    }
+    Collection<String> getFieldNames();
+
+    /**
+     * Get all the {@link GenericSchemaField}s in this schema.
+     *
+     * @return A collection of Schema Fields. May be empty. Never null.
+     */
+    Collection<SchemaField> getSchemaFields();
 
     /**
      * Compare two schemas for equality. Because it's forbidden to provide default Object methods in
@@ -168,7 +156,7 @@ public interface DataSchema<F> {
      * @return True if the fields types, the indexes, the types at each index and the
      * fields at each index are the same.
      */
-    static boolean equals(DataSchema<?> schema1, DataSchema<?> schema2) {
+    static boolean equals(DataSchema schema1, DataSchema schema2) {
         if (schema1 == schema2) {
             return true;
         }
@@ -186,13 +174,7 @@ public interface DataSchema<F> {
             if (index1 != index2) {
                 return false;
             }
-            if (!Objects.equals(schema1.getTypeAt(index1), schema2.getTypeAt(index2))) {
-                return false;
-            }
-            if (!Objects.equals(schema1.getFieldAt(index1), schema2.getFieldAt(index2))) {
-                return false;
-            }
-            if (!Objects.equals(schema1.getSchemaAt(index1), schema2.getSchemaAt(index2))) {
+            if (!Objects.equals(schema1.getSchemaFieldAt(index1), schema2.getSchemaFieldAt(index2))) {
                 return false;
             }
         }
@@ -205,15 +187,15 @@ public interface DataSchema<F> {
      * @param schema The schema.
      * @return A hash code value.
      */
-    static int hashCode(DataSchema<?> schema) {
+    static int hashCode(DataSchema schema) {
         int hash = 0;
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
-            hash = hash * 31 + Objects.hash(schema.getTypeAt(index), schema.getFieldAt(index), schema.getTypeAt(index));
+            hash = hash * 31 + schema.getSchemaFieldAt(index).hashCode();
         }
         return hash;
     }
 
-    static String toString(DataSchema<?> schema) {
+    static String toString(DataSchema schema) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
@@ -226,47 +208,11 @@ public interface DataSchema<F> {
         return sb.toString();
     }
 
-    class EmptySchema<F> implements DataSchema<F> {
+    static DataSchema emptySchema() {
+        return new EmptySchema();
+    }
 
-        @Override
-        public Collection<SchemaField<F>> getSchemaFields() {
-            return null;
-        }
-
-        @Override
-        public SchemaField<F> getSchemaField(F field) {
-            return null;
-        }
-
-        @Override
-        public Class<?> getType(F field) {
-            return null;
-        }
-
-        @Override
-        public SchemaField<F> getSchemaFieldAt(int index) {
-            return null;
-        }
-
-        @Override
-        public F getFieldAt(int index) {
-            return null;
-        }
-
-        @Override
-        public Class<?> getTypeAt(int index) {
-            return null;
-        }
-
-        @Override
-        public <N> DataSchema<N> getSchemaAt(int index) {
-            return null;
-        }
-
-        @Override
-        public int getIndex(F field) {
-            return 0;
-        }
+    class EmptySchema implements DataSchema {
 
         @Override
         public int firstIndex() {
@@ -284,33 +230,72 @@ public interface DataSchema<F> {
         }
 
         @Override
-        public Collection<F> getFields() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public <N> DataSchema<N> getSchema(F field) {
+        public SchemaField getSchemaFieldAt(int index) {
             return null;
         }
 
         @Override
+        public String getFieldNameAt(int index) {
+            return null;
+        }
+
+        @Override
+        public Class<?> getTypeAt(int index) {
+            return null;
+        }
+
+        @Override
+        public DataSchema getSchemaAt(int index) {
+            return null;
+        }
+
+        @Override
+        public SchemaField getSchemaFieldNamed(String fieldName) {
+            return null;
+        }
+
+        @Override
+        public int getIndexNamed(String fieldName) {
+            return 0;
+        }
+
+        @Override
+        public Class<?> getTypeNamed(String fieldName) {
+            return null;
+        }
+
+        @Override
+        public DataSchema getSchemaNamed(String fieldName) {
+            return null;
+        }
+
+        @Override
+        public Collection<String> getFieldNames() {
+            return List.of();
+        }
+
+        @Override
+        public Collection<SchemaField> getSchemaFields() {
+            return List.of();
+        }
+
+        @Override
         public int hashCode() {
-            return DataSchema.hashCode(this);
+            return 0;
         }
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof DataSchema) {
-                return DataSchema.equals(this, (DataSchema<?>) obj);
-            }
-            else {
+            if (!(obj instanceof DataSchema)) {
                 return false;
             }
+            DataSchema other = (DataSchema) obj;
+            return other.firstIndex() == 0 && other.lastIndex() == 0;
         }
 
         @Override
         public String toString() {
-            return DataSchema.toString(this);
+            return "{}";
         }
     }
 }
