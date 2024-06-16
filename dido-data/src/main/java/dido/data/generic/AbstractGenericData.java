@@ -1,4 +1,6 @@
-package dido.data;
+package dido.data.generic;
+
+import dido.data.AbstractData;
 
 /**
  * Base class for {@link GenericData}. Note that this is preferable to the default methods on

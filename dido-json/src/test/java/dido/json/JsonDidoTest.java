@@ -1,6 +1,9 @@
 package dido.json;
 
-import dido.data.*;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.MapData;
+import dido.data.SchemaBuilder;
 import dido.how.CloseableSupplier;
 import dido.how.DataIn;
 import dido.how.DataOut;
@@ -44,7 +47,7 @@ class JsonDidoTest {
                 .setDouble("price", 31.4)
                 .build();
 
-        DataSchema schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("type", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
@@ -99,7 +102,7 @@ class JsonDidoTest {
                 .setDouble("price", 31.4)
                 .build();
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("qty", int.class)
                 .build();
 

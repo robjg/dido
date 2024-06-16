@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.generic.GenericData;
+import dido.data.generic.GenericMapData;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

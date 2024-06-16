@@ -68,12 +68,12 @@ class FromBeanArooaTest {
 
         FromBeanArooa fromBeanArooa = FromBeanArooa.usingAccessor(new BeanUtilsPropertyAccessor());
 
-        GenericDataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        DataSchema nestedSchema = SchemaBuilder.newInstance()
                 .addField("fruit", String.class)
                 .addField("qty", Integer.class)
                 .build();
 
-        GenericDataSchema<String> partialIn = SchemaBuilder.forStringFields()
+        DataSchema partialIn = SchemaBuilder.newInstance()
                 .addRepeatingField("orderLines", nestedSchema)
                 .build();
 
@@ -112,12 +112,12 @@ class FromBeanArooaTest {
 
         FromBeanArooa fromBeanArooa = FromBeanArooa.usingAccessor(new BeanUtilsPropertyAccessor());
 
-        GenericDataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        DataSchema nestedSchema = SchemaBuilder.newInstance()
                 .addField("fruit", String.class)
                 .addField("qty", Integer.class)
                 .build();
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("orderId", String.class)
                 .addRepeatingField("orderLines", nestedSchema)
                 .build();

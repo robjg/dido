@@ -4,9 +4,9 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-public class SchemaReference<F> implements Supplier<GenericDataSchema<F>> {
+public class SchemaReference implements Supplier<DataSchema> {
 
-    private final AtomicReference<GenericDataSchema<F>> schemaRef = new AtomicReference<>();
+    private final AtomicReference<DataSchema> schemaRef = new AtomicReference<>();
 
     private final String name;
 
@@ -19,20 +19,20 @@ public class SchemaReference<F> implements Supplier<GenericDataSchema<F>> {
     }
 
 
-    public static <F> SchemaReference<F> blank() {
-        return new SchemaReference<>();
+    public static SchemaReference blank() {
+        return new SchemaReference();
     }
 
-    public static <F> SchemaReference<F> named(String name) {
-        return new SchemaReference<>(name);
+    public static <F> SchemaReference named(String name) {
+        return new SchemaReference(name);
     }
 
-    public void set(GenericDataSchema<F> schema) {
+    public void set(DataSchema schema) {
         schemaRef.set(schema);
     }
 
     @Override
-    public GenericDataSchema<F> get() {
+    public DataSchema get() {
         return schemaRef.get();
     }
 
@@ -43,7 +43,7 @@ public class SchemaReference<F> implements Supplier<GenericDataSchema<F>> {
         }
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SchemaReference<?> that = (SchemaReference<?>) o;
+        SchemaReference that = (SchemaReference) o;
         return Objects.equals(name, that.name) && schemaRef.get().equals(that.schemaRef.get());
     }
 

@@ -1,4 +1,4 @@
-package dido.data;
+package dido.data.generic;
 
 import org.junit.jupiter.api.Test;
 

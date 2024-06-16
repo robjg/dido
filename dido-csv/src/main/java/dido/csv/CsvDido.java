@@ -1,6 +1,6 @@
 package dido.csv;
 
-import dido.data.GenericDataSchema;
+import dido.data.DataSchema;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
 import dido.how.conversion.DidoConverter;
@@ -31,7 +31,7 @@ public class CsvDido {
      * is expected to match the schema of the data. No check is made to ensure it does.
      * @oddjob.required No.
      */
-    private GenericDataSchema<String> schema;
+    private DataSchema schema;
 
     /**
      * @oddjob.description Does the data contain a header or is a header to be written.
@@ -81,11 +81,11 @@ public class CsvDido {
         this.csvFormat = csvFormat;
     }
 
-    public GenericDataSchema<String> getSchema() {
+    public DataSchema getSchema() {
         return schema;
     }
 
-    public void setSchema(GenericDataSchema<String> schema) {
+    public void setSchema(DataSchema schema) {
         this.schema = schema;
     }
 

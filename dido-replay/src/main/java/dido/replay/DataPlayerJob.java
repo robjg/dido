@@ -1,7 +1,6 @@
 package dido.replay;
 
 import dido.data.DidoData;
-import dido.data.GenericData;
 import dido.how.CloseableSupplier;
 
 import java.io.InputStream;
@@ -182,7 +181,7 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
         this.playBackSpeed = playBackSpeed;
     }
 
-    public Consumer<? super GenericData<String>> getTo() {
+    public Consumer<? super DidoData> getTo() {
         return to;
     }
 

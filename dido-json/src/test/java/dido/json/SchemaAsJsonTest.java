@@ -1,7 +1,6 @@
 package dido.json;
 
 import dido.data.DataSchema;
-import dido.data.GenericDataSchema;
 import dido.data.SchemaManager;
 import dido.how.CloseableConsumer;
 import dido.how.CloseableSupplier;
@@ -25,15 +24,15 @@ class SchemaAsJsonTest {
     void givenBasicSchemaCanSerialiseToAndFromJson() throws Exception {
 
         SchemaManager schemaManager = SchemaManager.newInstance()
-                .newDefaultSchema(String.class)
+                .newDefaultSchema()
                 .addField("Name", String.class)
-                .addRepeatingField("Hobbies", String.class)
+                .addRepeatingField("Hobbies")
                 .addField("Title", String.class)
                 .addField("Cost", double.class)
                 .addBack()
                 .addToManager();
 
-        GenericDataSchema<String> schema = schemaManager.getDefaultSchema();
+        DataSchema schema = schemaManager.getDefaultSchema();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -55,15 +54,15 @@ class SchemaAsJsonTest {
     void givenBasicSchemaCanSerialiseToAndFromStream() throws Exception {
 
         SchemaManager schemaManager = SchemaManager.newInstance()
-                .newDefaultSchema(String.class)
+                .newDefaultSchema()
                 .addField("Name", String.class)
-                .addRepeatingField("Hobbies", String.class)
+                .addRepeatingField("Hobbies")
                 .addField("Title", String.class)
                 .addField("Cost", double.class)
                 .addBack()
                 .addToManager();
 
-        GenericDataSchema<String> schema = schemaManager.getDefaultSchema();
+        DataSchema schema = schemaManager.getDefaultSchema();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 

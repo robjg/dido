@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.generic.GenericSchemaField;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;

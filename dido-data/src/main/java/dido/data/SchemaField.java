@@ -9,6 +9,10 @@ import java.util.Objects;
  */
 public interface SchemaField {
 
+    Class<?> NESTED_TYPE = DidoData.class;
+
+    Class<?> NESTED_REPEATING_TYPE = RepeatingData.class;
+
     int getIndex();
 
     Class<?> getType();
@@ -66,11 +70,11 @@ public interface SchemaField {
         return SchemaFields.ofNested(index, field, nested);
     }
 
-    static SchemaField ofNested(int index, SchemaReference<?> nestedRef) {
+    static SchemaField ofNested(int index, SchemaReference nestedRef) {
         return SchemaFields.ofNested(index, nestedRef);
     }
 
-    static SchemaField ofNested(int index, String field, SchemaReference<?> nestedRef) {
+    static SchemaField ofNested(int index, String field, SchemaReference nestedRef) {
         return SchemaFields.ofNested(index, field, nestedRef);
     }
 
@@ -82,11 +86,11 @@ public interface SchemaField {
         return SchemaFields.ofRepeating(index, field, nested);
     }
 
-    static SchemaField ofRepeating(int index, SchemaReference<?> nestedRef) {
+    static SchemaField ofRepeating(int index, SchemaReference nestedRef) {
         return SchemaFields.ofRepeating(index, nestedRef);
     }
 
-    static SchemaField ofRepeating(int index, String field, SchemaReference<?> nestedRef) {
+    static SchemaField ofRepeating(int index, String field, SchemaReference nestedRef) {
         return SchemaFields.ofRepeating(index, field, nestedRef);
     }
 

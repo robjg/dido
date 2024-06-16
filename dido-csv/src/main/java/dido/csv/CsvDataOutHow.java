@@ -2,7 +2,6 @@ package dido.csv;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericDataSchema;
 import dido.data.IndexedData;
 import dido.how.CloseableConsumer;
 import dido.how.DataOut;
@@ -24,7 +23,7 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
 
     private final CSVFormat csvFormat;
 
-    private final GenericDataSchema<String> schema;
+    private final DataSchema schema;
 
     private final boolean withHeader;
 
@@ -32,7 +31,7 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
 
         private CSVFormat csvFormat;
 
-        private GenericDataSchema<String> schema;
+        private DataSchema schema;
 
         private boolean withHeader;
 
@@ -41,7 +40,7 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
             return this;
         }
 
-        public Options schema(GenericDataSchema<String> schema) {
+        public Options schema(DataSchema schema) {
             this.schema = schema;
             return this;
         }

@@ -1,7 +1,7 @@
 package dido.sql;
 
+import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericDataSchema;
 import dido.data.IndexedData;
 import dido.how.DataException;
 
@@ -12,14 +12,14 @@ public class ResultSetWrapper implements DidoData {
 
     private final ResultSet resultSet;
 
-    private final GenericDataSchema<String> schema;
+    private final DataSchema schema;
 
-    private ResultSetWrapper(ResultSet resultSet, GenericDataSchema<String> schema) {
+    private ResultSetWrapper(ResultSet resultSet, DataSchema schema) {
         this.resultSet = resultSet;
         this.schema = schema;
     }
 
-    public static DidoData from(ResultSet resultSet, GenericDataSchema<String> schema) {
+    public static DidoData from(ResultSet resultSet, DataSchema schema) {
         return new ResultSetWrapper(resultSet, schema);
     }
 
@@ -133,7 +133,7 @@ public class ResultSetWrapper implements DidoData {
     }
 
     @Override
-    public GenericDataSchema<String> getSchema() {
+    public DataSchema getSchema() {
         return schema;
     }
 

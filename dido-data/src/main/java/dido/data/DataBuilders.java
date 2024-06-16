@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.generic.GenericDataBuilder;
+
 import java.util.Objects;
 import java.util.function.Consumer;
 

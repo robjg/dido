@@ -2,7 +2,6 @@ package dido.oddjob.util;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericData;
 import org.oddjob.beanbus.Destination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class AnalyseSchema implements Consumer<DidoData> {
         this.name = name;
     }
 
-    public Consumer<? super GenericData<?>> getTo() {
+    public Consumer<? super DidoData> getTo() {
         return to;
     }
 

@@ -57,7 +57,7 @@ public class Concatenator {
             List<Location> locations = new LinkedList<>();
             Map<String, Location> fieldLocations = new HashMap<>();
 
-            SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
+            SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
             int locationIndex = 0;
             int dataIndex = 0;
@@ -80,7 +80,7 @@ public class Concatenator {
                         fieldLocations.put(field, location);
                     }
                     locations.add(location);
-                    schemaBuilder.addGenericSchemaField(GenericSchemaField.of(
+                    schemaBuilder.addSchemaField(SchemaField.of(
                             ++locationIndex, field, schema.getTypeAt(i)));
                 }
                 ++dataIndex;
@@ -154,8 +154,7 @@ public class Concatenator {
             boolean recreate = false;
             if (last == null) {
                 recreate = true;
-                //noinspection unchecked
-                previous = new GenericDataSchema[data.length];
+                previous = new DataSchema[data.length];
                 for (int i = 0; i < data.length; ++i) {
                     previous[i] = data[i].getSchema();
                 }
@@ -352,8 +351,7 @@ public class Concatenator {
 
         OffsetSchema(DataSchema originalSchema, int offset) {
             this.originalSchema = originalSchema;
-            //noinspection unchecked
-            this.schemaFields = new GenericSchemaField[originalSchema.lastIndex()];
+            this.schemaFields = new SchemaField[originalSchema.lastIndex()];
             for (int i = originalSchema.firstIndex(); i > 0; i = originalSchema.nextIndex(i)) {
                 this.schemaFields[i - 1] = originalSchema.getSchemaFieldAt(i).mapToIndex(i + offset);
             }

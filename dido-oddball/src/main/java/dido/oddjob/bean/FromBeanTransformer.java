@@ -1,7 +1,7 @@
 package dido.oddjob.bean;
 
+import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericDataSchema;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;
@@ -14,13 +14,13 @@ import org.oddjob.arooa.reflect.PropertyAccessor;
 import java.util.function.Function;
 
 /**
- * @oddjob.description Transform a Bean to Generic Data.
+ * @oddjob.description Transform a Bean to Dido Data.
  */
 public class FromBeanTransformer implements ArooaSessionAware, ArooaValue {
 
     private ArooaClass arooaClass;
 
-    private GenericDataSchema<String> schema;
+    private DataSchema schema;
 
     private boolean partial;
 
@@ -63,11 +63,11 @@ public class FromBeanTransformer implements ArooaSessionAware, ArooaValue {
         return fromBean.ofUnknownClass();
     }
 
-    public GenericDataSchema<String> getSchema() {
+    public DataSchema getSchema() {
         return schema;
     }
 
-    public void setSchema(GenericDataSchema<String> schema) {
+    public void setSchema(DataSchema schema) {
         this.schema = schema;
     }
 

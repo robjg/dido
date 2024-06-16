@@ -1,4 +1,4 @@
-package dido.data;
+package dido.data.generic;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,17 +15,17 @@ class GenericConcatenatorDataTest {
     @Test
     void testConcatSchema() {
 
-        GenericDataSchema<String> schema1 = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema1 = GenericSchemaBuilder.forStringFields()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
                 .build();
 
-        GenericDataSchema<String> schema2 = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema2 = GenericSchemaBuilder.forStringFields()
                 .addField("supplier", String.class)
                 .build();
 
-        GenericDataSchema<String> schema3 = SchemaBuilder.forStringFields()
+        GenericDataSchema<String> schema3 = GenericSchemaBuilder.forStringFields()
                 .addField("checked", String.class)
                 .addField("good", boolean.class)
                 .build();

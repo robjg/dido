@@ -3,8 +3,8 @@ package dido.json;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import dido.data.DataSchema;
-import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
+import dido.data.generic.GenericDataSchema;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
@@ -114,7 +114,7 @@ class JsonSchemaExtractorTest {
         rootObject.addProperty("OrderId", "A123");
         rootObject.add("OrderLines", orderLines);
 
-        DataSchema partialSchema = SchemaBuilder.forStringFields()
+        DataSchema partialSchema = SchemaBuilder.newInstance()
                 .addRepeatingField("OrderLines", GenericDataSchema.emptySchema())
                 .build();
 
@@ -122,12 +122,12 @@ class JsonSchemaExtractorTest {
 
         DataSchema schema = test.fromElement(rootObject);
 
-        DataSchema nestedSchema = SchemaBuilder.forStringFields()
+        DataSchema nestedSchema = SchemaBuilder.newInstance()
                 .addField("Fruit", String.class)
                 .addField("Qty", double.class)
                 .build();
 
-        GenericDataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addField("OrderId", String.class)
                 .addRepeatingField("OrderLines", nestedSchema)
                 .build();

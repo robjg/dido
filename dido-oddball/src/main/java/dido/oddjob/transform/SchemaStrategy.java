@@ -1,14 +1,14 @@
 package dido.oddjob.transform;
 
-import dido.data.GenericDataSchema;
-import dido.data.GenericSchemaField;
+import dido.data.DataSchema;
 import dido.data.SchemaBuilder;
+import dido.data.SchemaField;
 
 import java.util.*;
 import java.util.function.IntConsumer;
 
 /**
- * Provided to {@link Transform} to decide how to handle the {@link GenericDataSchema} of the outgoing
+ * Provided to {@link Transform} to decide how to handle the {@link DataSchema} of the outgoing
  * type.
  */
 public enum SchemaStrategy {
@@ -17,23 +17,23 @@ public enum SchemaStrategy {
      * The schema is just created from the {@link Transformer}s used.
      */
     NEW {
-        public <F> GenericDataSchema<F> newSchemaFrom(GenericDataSchema<F> existingSchema,
-                                                      List<SchemaFieldOptions<F>> fields,
-                                                      IntConsumer copyThis) {
+        public DataSchema newSchemaFrom(DataSchema existingSchema,
+                                        List<SchemaFieldOptions> fields,
+                                        IntConsumer copyThis) {
 
             int index = 0;
 
-            SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
+            SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
-            for (SchemaFieldOptions<F> fieldOptions : fields) {
+            for (SchemaFieldOptions fieldOptions : fields) {
 
                 if (index < fieldOptions.getIndex()) {
                     index = fieldOptions.getIndex();
                 } else {
                     ++index;
                 }
-                schemaBuilder.addGenericSchemaField(
-                        GenericSchemaField.of(index, fieldOptions.getField(), fieldOptions.getType()));
+                schemaBuilder.addSchemaField(
+                        SchemaField.of(index, fieldOptions.getField(), fieldOptions.getType()));
             }
 
             return schemaBuilder.build();
@@ -45,11 +45,11 @@ public enum SchemaStrategy {
      * the transform.
      */
     MERGE {
-        public <F> GenericDataSchema<F> newSchemaFrom(GenericDataSchema<F> existingSchema,
-                                                      List<SchemaFieldOptions<F>> fields,
-                                                      IntConsumer copyThis) {
+        public DataSchema newSchemaFrom(DataSchema existingSchema,
+                                        List<SchemaFieldOptions> fields,
+                                        IntConsumer copyThis) {
 
-            SortedMap<Integer, GenericSchemaField<F>> fieldsByIndex = new TreeMap<>();
+            SortedMap<Integer, SchemaField> fieldsByIndex = new TreeMap<>();
 
             Set<Integer> existingIndices = new HashSet<>(existingSchema.lastIndex());
 
@@ -62,47 +62,44 @@ public enum SchemaStrategy {
             int lastIndex = existingSchema.lastIndex();
             List<SchemaFieldOptions> newFields = new ArrayList<>();
 
-            for (SchemaFieldOptions<F> fieldOptions : fields) {
+            for (SchemaFieldOptions fieldOptions : fields) {
 
                 int index = fieldOptions.getIndex();
                 if (index == 0) {
 
                     newFields.add(fieldOptions);
-                }
-                else {
-                    fieldsByIndex.put(index, GenericSchemaField.of(
+                } else {
+                    fieldsByIndex.put(index, SchemaField.of(
                             index, fieldOptions.getField(), fieldOptions.getType()));
                     existingIndices.remove(index);
                     lastIndex = Math.max(lastIndex, index);
                 }
             }
 
-            for (SchemaFieldOptions<F> fieldOptions : newFields) {
+            for (SchemaFieldOptions fieldOptions : newFields) {
 
                 ++lastIndex;
                 fieldsByIndex.put(lastIndex,
-                            GenericSchemaField.of(lastIndex, fieldOptions.getField(), fieldOptions.getType()));
+                        SchemaField.of(lastIndex, fieldOptions.getField(), fieldOptions.getType()));
 
             }
 
-            SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
+            SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
-            for (GenericSchemaField<F> schemaField : fieldsByIndex.values()) {
+            for (SchemaField schemaField : fieldsByIndex.values()) {
 
-                schemaBuilder.addGenericSchemaField(schemaField);
+                schemaBuilder.addSchemaField(schemaField);
             }
 
-            existingIndices.forEach(i ->  copyThis.accept(i));
+            existingIndices.forEach(copyThis::accept);
 
             return schemaBuilder.build();
 
         }
-    }
+    };
 
-    ;
-
-    abstract public <F> GenericDataSchema<F> newSchemaFrom(GenericDataSchema<F> existingSchema,
-                                                           List<SchemaFieldOptions<F>> fields,
-                                                           IntConsumer copyThis);
+    abstract public DataSchema newSchemaFrom(DataSchema existingSchema,
+                                             List<SchemaFieldOptions> fields,
+                                             IntConsumer copyThis);
 
 }

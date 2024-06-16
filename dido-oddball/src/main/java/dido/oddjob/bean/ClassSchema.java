@@ -1,6 +1,6 @@
 package dido.oddjob.bean;
 
-import dido.data.GenericDataSchema;
+import dido.data.DataSchema;
 import dido.data.SchemaBuilder;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.ArooaClass;
@@ -15,17 +15,17 @@ public class ClassSchema {
         this.propertyAccessor = propertyAccessor;
     }
 
-    public GenericDataSchema<String> schemaForClass(Class<?> theClass) {
+    public DataSchema schemaForClass(Class<?> theClass) {
 
         return schemaForArooaClass(new SimpleArooaClass(theClass));
     }
 
-    public GenericDataSchema<String> schemaForArooaClass(ArooaClass arooaClass) {
+    public DataSchema schemaForArooaClass(ArooaClass arooaClass) {
 
         final BeanOverview overview =
                 arooaClass.getBeanOverview(propertyAccessor);
 
-        SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
+        SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
         for (String property : overview.getProperties()) {
 

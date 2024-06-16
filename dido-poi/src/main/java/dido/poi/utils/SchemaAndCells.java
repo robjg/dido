@@ -1,7 +1,6 @@
 package dido.poi.utils;
 
 import dido.data.DataSchema;
-import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
 import dido.how.util.Primitives;
 import dido.poi.RowIn;
@@ -138,9 +137,9 @@ public class SchemaAndCells {
     }
 
 
-    static protected GenericDataSchema<String> morphOf(Collection<? extends DataCell<?>> cells) {
+    static protected DataSchema morphOf(Collection<? extends DataCell<?>> cells) {
 
-        SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
+        SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
         for (DataCell<?> child : cells) {
 

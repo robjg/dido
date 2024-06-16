@@ -1,7 +1,7 @@
 package dido.oddjob.bean;
 
+import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericDataSchema;
 import dido.data.MapData;
 import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ class SpecialCharsTransformerTest {
     @Test
     public void testBuildWithReplacements() {
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("Fruit", String.class)
                 .addField("Flavour (taste)", String.class)
                 .addField("Weight (lbs.)", double.class)

@@ -96,7 +96,7 @@ public class Flatten {
                                                               Collection<Extractor> extractors) {
 
         Map<Integer, Extractor> extractorMap = new HashMap<>();
-        SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
+        SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
 

@@ -1,5 +1,8 @@
 package dido.data;
 
+import dido.data.generic.AbstractGenericData;
+import dido.data.generic.GenericData;
+
 public abstract class AbstractMutableData<F> extends AbstractGenericData<F> implements MutableData<F> {
 
     @Override

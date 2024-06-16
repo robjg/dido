@@ -1,5 +1,9 @@
 package dido.data;
 
+import dido.data.generic.AbstractGenericRepeatingData;
+import dido.data.generic.GenericData;
+import dido.data.generic.GenericRepeatingData;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;

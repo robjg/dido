@@ -2,7 +2,6 @@ package dido.oddjob.transform;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericDataSchema;
 import org.oddjob.arooa.types.ValueFactory;
 import org.oddjob.arooa.utils.ListSetterHelper;
 
@@ -74,11 +73,10 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
 
         int position = 0;
 
-        List<SchemaFieldOptions<String>> newFields = new ArrayList<>();
+        List<SchemaFieldOptions> newFields = new ArrayList<>();
 
-        SchemaSetter schemaSetter = (index, field, fieldType) -> {
-            newFields.add(SchemaFieldOptions.of(index, field, fieldType));
-        };
+        SchemaSetter schemaSetter = (index, field, fieldType)
+                -> newFields.add(SchemaFieldOptions.of(index, field, fieldType));
 
         List<Transformer> transformers = new ArrayList<>(factories.size());
 
@@ -89,9 +87,7 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
 
         SchemaStrategy schemaStrategy = Objects.requireNonNullElse(partial, SchemaStrategy.MERGE);
 
-        //noinspection rawtypes
-        @SuppressWarnings("unchecked")
-        GenericDataSchema<String> schema = schemaStrategy.newSchemaFrom((GenericDataSchema) schemaFrom,
+        DataSchema schema = schemaStrategy.newSchemaFrom(schemaFrom,
                 newFields,
                 i -> transformers.add((in, setter) -> setter.setAt(i, in.getAt(i))));
 

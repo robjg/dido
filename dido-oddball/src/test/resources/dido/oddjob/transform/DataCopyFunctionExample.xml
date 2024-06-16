@@ -7,7 +7,7 @@
                     <values>
                         <list>
                             <values>
-                                <bean class="dido.oddjob.types.GenericDataType">
+                                <bean class="dido.oddjob.types.DidoDataType">
                                     <schema>
                                         <dido:schema xmlns:dido="oddjob:dido">
                                             <of>

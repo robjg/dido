@@ -1,5 +1,9 @@
 package dido.data;
 
+import dido.data.generic.AbstractGenericData;
+import dido.data.generic.GenericData;
+import dido.data.generic.GenericDataBuilders;
+
 import java.util.*;
 
 public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> implements EnumData<E> {

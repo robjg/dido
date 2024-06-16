@@ -80,7 +80,7 @@ class MapDataTest {
     @Test
     void testToString() {
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("type", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
@@ -117,7 +117,7 @@ class MapDataTest {
     @Test
     void testBuilderOf() {
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("type", String.class)
                 .addField("foo", String.class)
                 .addField("qty", int.class)

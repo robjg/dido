@@ -31,12 +31,12 @@ class FromBeanTransformerTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("capture.beans", List.class);
 
-        GenericDataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        DataSchema nestedSchema = SchemaBuilder.newInstance()
                 .addField("fruit", String.class)
                 .addField("qty", int.class)
                 .build();
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("orderId", String.class)
                 .addRepeatingField("orderLines", nestedSchema)
                 .build();

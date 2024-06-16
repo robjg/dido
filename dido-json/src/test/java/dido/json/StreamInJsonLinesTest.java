@@ -1,7 +1,7 @@
 package dido.json;
 
+import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericDataSchema;
 import dido.data.MapData;
 import dido.data.SchemaBuilder;
 import dido.how.DataIn;
@@ -61,7 +61,7 @@ class StreamInJsonLinesTest {
         });
         bufferType.configured();
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("Qty", Integer.class)
                 .addField("Price", Double.class)
                 .build();
@@ -103,7 +103,7 @@ class StreamInJsonLinesTest {
         });
         bufferType.configured();
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("Fruit", String.class)
                 .addField("Qty", Integer.class)
                 .addField("Price", Double.class)

@@ -1,4 +1,4 @@
-package dido.data;
+package dido.data.generic;
 
 /**
  * Something that is capable of building creating {@link GenericData}. Instances should be reusable,

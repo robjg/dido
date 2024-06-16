@@ -1,8 +1,8 @@
 package dido.csv;
 
 import dido.data.AbstractData;
+import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -25,7 +25,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
 
     private final CSVFormat csvFormat;
 
-    private final GenericDataSchema<String> schema;
+    private final DataSchema schema;
 
     private final boolean withHeader;
 
@@ -37,7 +37,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
 
         private CSVFormat csvFormat;
 
-        private GenericDataSchema<String> schema;
+        private DataSchema schema;
 
         private boolean withHeader;
 
@@ -50,7 +50,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
             return this;
         }
 
-        public Options schema(GenericDataSchema<String> schema) {
+        public Options schema(DataSchema schema) {
             this.schema = schema;
             return this;
         }
@@ -102,7 +102,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
 
         CSVFormat csvFormat = this.csvFormat;
 
-        GenericDataSchema<String> schema;
+        DataSchema schema;
         CSVParser csvParser;
         Iterator<CSVRecord> iterator;
 
@@ -123,7 +123,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
                     schema = schemaNoHeader(record);
                     iterator = new OneAheadIterator<>(iterator, record);
                 } else {
-                    schema = GenericDataSchema.emptySchema();
+                    schema = DataSchema.emptySchema();
                 }
             }
         } else {
@@ -155,8 +155,8 @@ public class CsvDataInHow implements DataInHow<InputStream> {
         };
     }
 
-    static GenericDataSchema<String> schemaNoHeader(CSVRecord record) {
-        SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
+    static DataSchema schemaNoHeader(CSVRecord record) {
+        SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
         for (String ignored : record) {
             schemaBuilder.add(String.class);
@@ -164,8 +164,8 @@ public class CsvDataInHow implements DataInHow<InputStream> {
         return schemaBuilder.build();
     }
 
-    static GenericDataSchema<String> schemaFromHeader(CSVRecord record, GenericDataSchema<String> partialSchema) {
-        SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
+    static DataSchema schemaFromHeader(CSVRecord record, DataSchema partialSchema) {
+        SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
         for (String field : record) {
             schemaBuilder.addField(field, String.class);
@@ -176,10 +176,10 @@ public class CsvDataInHow implements DataInHow<InputStream> {
         return schemaBuilder.build();
     }
 
-    static DidoData dataFrom(CSVRecord record, GenericDataSchema<String> schema, DidoConverter converter) {
+    static DidoData dataFrom(CSVRecord record, DataSchema schema, DidoConverter converter) {
         return new AbstractData() {
             @Override
-            public GenericDataSchema<String> getSchema() {
+            public DataSchema getSchema() {
                 return schema;
             }
 
@@ -196,7 +196,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
 
             @Override
             public <T> T getAs(String field, Class<T> type) {
-                int index = getSchema().getIndex(field);
+                int index = getSchema().getIndexNamed(field);
                 if (index > 0) {
                     return getAtAs(index, type);
                 } else {
@@ -257,47 +257,47 @@ public class CsvDataInHow implements DataInHow<InputStream> {
 
             @Override
             public boolean getBoolean(String field) {
-                return getBooleanAt(schema.getIndex(field));
+                return getBooleanAt(schema.getIndexNamed(field));
             }
 
             @Override
             public byte getByte(String field) {
-                return getByteAt(schema.getIndex(field));
+                return getByteAt(schema.getIndexNamed(field));
             }
 
             @Override
             public char getChar(String field) {
-                return getCharAt(schema.getIndex(field));
+                return getCharAt(schema.getIndexNamed(field));
             }
 
             @Override
             public short getShort(String field) {
-                return getShortAt(schema.getIndex(field));
+                return getShortAt(schema.getIndexNamed(field));
             }
 
             @Override
             public int getInt(String field) {
-                return getIntAt(schema.getIndex(field));
+                return getIntAt(schema.getIndexNamed(field));
             }
 
             @Override
             public long getLong(String field) {
-                return getLongAt(schema.getIndex(field));
+                return getLongAt(schema.getIndexNamed(field));
             }
 
             @Override
             public float getFloat(String field) {
-                return getFloatAt(schema.getIndex(field));
+                return getFloatAt(schema.getIndexNamed(field));
             }
 
             @Override
             public double getDouble(String field) {
-                return getDoubleAt(schema.getIndex(field));
+                return getDoubleAt(schema.getIndexNamed(field));
             }
 
             @Override
             public String getString(String field) {
-                return getStringAt(schema.getIndex(field));
+                return getStringAt(schema.getIndexNamed(field));
             }
 
         };

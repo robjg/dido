@@ -24,7 +24,7 @@ class StreamInJsonTest {
                 "    { \"Fruit\"=\"Pear\", \"Qty\"=7, \"Price\"=22.1 }\n" +
                 "]\n";
 
-        GenericDataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addField("Fruit", String.class)
                 .addField("Qty", Double.class)
                 .addField("Price", Double.class)
@@ -68,7 +68,7 @@ class StreamInJsonTest {
                 "  }\n" +
                 "]";
 
-        DataSchema schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addRepeatingField("OrderLines", DataSchema.emptySchema())
                 .build();
 
@@ -78,12 +78,12 @@ class StreamInJsonTest {
                 .setPartial(true)
                 .make();
 
-        DataSchema expectedNestedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedNestedSchema = SchemaBuilder.newInstance()
                 .addField("Fruit", String.class)
                 .addField("Qty", Double.class)
                 .build();
 
-        DataSchema expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addField("OrderId", String.class)
                 .addRepeatingField("OrderLines", expectedNestedSchema)
                 .build();

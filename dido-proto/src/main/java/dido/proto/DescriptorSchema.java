@@ -2,8 +2,8 @@ package dido.proto;
 
 import com.google.protobuf.Descriptors;
 import dido.data.AbstractDataSchema;
-import dido.data.GenericDataSchema;
-import dido.data.GenericSchemaField;
+import dido.data.DataSchema;
+import dido.data.SchemaField;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class DescriptorSchema extends AbstractDataSchema {
 
 
 
-    public static GenericDataSchema<String> from(Descriptors.Descriptor descriptor) {
+    public static DataSchema from(Descriptors.Descriptor descriptor) {
 
         List<Descriptors.FieldDescriptor> fieldDescriptors = descriptor.getFields();
 
@@ -26,7 +26,7 @@ public class DescriptorSchema extends AbstractDataSchema {
 
 
     @Override
-    public GenericSchemaField<String> getSchemaFieldAt(int index) {
+    public SchemaField getSchemaFieldAt(int index) {
         return null;
     }
 

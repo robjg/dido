@@ -1,5 +1,9 @@
 package dido.data;
 
+import dido.data.generic.GenericDataSchema;
+import dido.data.generic.GenericSchemaBuilder;
+import dido.data.generic.GenericSchemaField;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -20,7 +24,7 @@ public interface EnumSchema<E extends Enum<E>> extends GenericDataSchema<E> {
 
         GenericDataSchema<E> delegate = original.getSchemaFields()
                 .stream()
-                .reduce(SchemaBuilder.forFieldType(enumClass),
+                .reduce(GenericSchemaBuilder.forFieldType(enumClass),
                         (b, sf) -> b.addGenericSchemaField(
                                 GenericSchemaField.of(sf.getIndex(), enumConstants[sf.getIndex() - 1], sf.getType())),
                         (b1, b2) -> b1)

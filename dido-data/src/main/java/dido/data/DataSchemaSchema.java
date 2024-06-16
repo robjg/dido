@@ -7,7 +7,7 @@ import java.util.function.Function;
 /**
  * {@link DataSchema} to and from {@link DidoData}. Doesn't cope with recursive schemas yet.
  */
-public class DataSchemaSchema  {
+public class DataSchemaSchema {
 
     public static final String SCHEMA_SCHEMA_NAME = "DataSchema";
 
@@ -27,31 +27,31 @@ public class DataSchemaSchema  {
 
     public static DataSchema DATA_SCHEMA_SCHEMA;
 
-    static  {
+    static {
 
         SchemaManager schemaManager = SchemaManager.newInstance()
-                .newSchema(FIELD_SCHEMA_NAME, String.class)
+                .newSchema(FIELD_SCHEMA_NAME)
                 .addField(INDEX_FIELD, int.class)
                 .addField(FIELD_FIELD, String.class)
                 .addField(TYPE_FIELD, String.class)
                 .addNestedField(NESTED_FIELD, SCHEMA_SCHEMA_NAME)
                 .addField(REPEATING_FIELD, boolean.class)
                 .addToManager()
-                .newSchema(SCHEMA_SCHEMA_NAME, String.class)
+                .newSchema(SCHEMA_SCHEMA_NAME)
                 .addRepeatingField(FIELDS_FIELD, FIELD_SCHEMA_NAME)
                 .addToManager();
 
-        SchemaReference<String> schemaRef = SchemaReference.blank();
+        SchemaReference schemaRef = SchemaReference.blank();
 
-        GenericDataSchema<String> fieldSchema = SchemaBuilder.forStringFields()
-                .addGenericSchemaField(GenericSchemaFields.of(1, INDEX_FIELD, int.class))
-                .addGenericSchemaField(GenericSchemaFields.of(2, FIELD_FIELD, String.class))
-                .addGenericSchemaField(GenericSchemaFields.of(3, TYPE_FIELD, String.class))
-                .addGenericSchemaField(GenericSchemaFields.ofNested(4, NESTED_FIELD, schemaRef))
-                .addGenericSchemaField(GenericSchemaFields.of(5, REPEATING_FIELD, boolean.class))
+        DataSchema fieldSchema = SchemaBuilder.newInstance()
+                .addSchemaField(SchemaFields.of(1, INDEX_FIELD, int.class))
+                .addSchemaField(SchemaFields.of(2, FIELD_FIELD, String.class))
+                .addSchemaField(SchemaFields.of(3, TYPE_FIELD, String.class))
+                .addSchemaField(SchemaFields.ofNested(4, NESTED_FIELD, schemaRef))
+                .addSchemaField(SchemaFields.of(5, REPEATING_FIELD, boolean.class))
                 .build();
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addRepeatingField(FIELDS_FIELD, fieldSchema)
                 .build();
 
@@ -81,8 +81,7 @@ public class DataSchemaSchema  {
             }
             if (schemaField.isNested()) {
                 fieldBuilder.set(NESTED_FIELD, schemaToData(schemaField.getNestedSchema()));
-            }
-            else {
+            } else {
                 fieldBuilder.set(TYPE_FIELD, schemaField.getType().getName());
             }
 
@@ -98,12 +97,12 @@ public class DataSchemaSchema  {
         return builder.build();
     }
 
-    public static GenericDataSchema<String> schemaFromData(DidoData data,
-                                                           Function<? super String, ? extends Class<?>> classLoader) {
+    public static DataSchema schemaFromData(DidoData data,
+                                            Function<? super String, ? extends Class<?>> classLoader) {
 
         RepeatingData fields = data.getAs(FIELDS_FIELD, RepeatingData.class);
 
-        SchemaBuilder<String> builder = SchemaBuilder.forStringFields();
+        SchemaBuilder builder = SchemaBuilder.newInstance();
 
         for (DidoData fieldData : fields) {
 
@@ -113,16 +112,14 @@ public class DataSchemaSchema  {
             if (fieldData.hasField(NESTED_FIELD)) {
 
                 DidoData nestedData = fieldData.getAs(NESTED_FIELD, DidoData.class);
-                GenericDataSchema<String> nestedSchema = schemaFromData(nestedData, classLoader);
+                DataSchema nestedSchema = schemaFromData(nestedData, classLoader);
 
                 if (fieldData.hasField(REPEATING_FIELD) && fieldData.getBoolean(REPEATING_FIELD)) {
                     builder.addRepeatingFieldAt(index, field, nestedSchema);
-                }
-                else {
+                } else {
                     builder.addNestedFieldAt(index, field, nestedSchema);
                 }
-            }
-            else {
+            } else {
                 Class<?> type = classLoader.apply(fieldData.getString(TYPE_FIELD));
 
                 builder.addFieldAt(index, field, type);

@@ -1,4 +1,8 @@
-package dido.data;
+package dido.data.generic;
+
+import dido.data.DataSchema;
+import dido.data.SchemaField;
+import dido.data.SchemaReference;
 
 class GenericSchemaFields {
 
@@ -8,7 +12,7 @@ class GenericSchemaFields {
                 field);
     }
 
-    public static <F, N> GenericSchemaField<F> ofNested(int index, F field, SchemaReference<N> nestedRef) {
+    public static <F> GenericSchemaField<F> ofNested(int index, F field, SchemaReference nestedRef) {
         return new Extension<>(
                 SchemaField.ofNested(index, field == null ? null : field.toString(), nestedRef),
                 field);
@@ -25,7 +29,7 @@ class GenericSchemaFields {
                 index, field == null ? null : field.toString(), nested), field);
     }
 
-    public static <F, N> GenericSchemaField<F> ofRepeating(int index, F field, SchemaReference<N> nestedRef) {
+    public static <F> GenericSchemaField<F> ofRepeating(int index, F field, SchemaReference nestedRef) {
         return new Extension<>(SchemaField.ofRepeating(
                 index, field == null ? null : field.toString(), nestedRef),
                 field);

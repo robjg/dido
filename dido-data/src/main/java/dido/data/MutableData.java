@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.generic.GenericData;
+
 /**
  * Data that may be changed.
  *

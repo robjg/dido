@@ -1,4 +1,6 @@
-package dido.data;
+package dido.data.generic;
+
+import dido.data.DataSchema;
 
 import java.util.*;
 
@@ -58,7 +60,7 @@ public class GenericConcatenator<F> {
             List<Location> locations = new LinkedList<>();
             Map<F, Location> fieldLocations = new HashMap<>();
 
-            SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
+            GenericSchemaBuilder<F> schemaBuilder = GenericSchemaBuilder.impliedType();
 
             int locationIndex = 0;
             int dataIndex = 0;

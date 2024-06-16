@@ -15,7 +15,7 @@ class DataSchemaSchemaTest {
     @Test
     void givenSimpleSchemaThenCanGoToDataAndBack() {
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("type", String.class)
                 .addField("qty", int.class)
                 .addField("price", double.class)
@@ -25,7 +25,7 @@ class DataSchemaSchemaTest {
 
         logger.info(data.toString());
 
-        GenericDataSchema<String> back = DataSchemaSchema.schemaFromData(data,
+        DataSchema back = DataSchemaSchema.schemaFromData(data,
                 className -> {
                     try {
                         return ClassUtils.classFor(className, getClass().getClassLoader());

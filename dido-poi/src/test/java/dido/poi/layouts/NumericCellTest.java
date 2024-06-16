@@ -1,8 +1,8 @@
 package dido.poi.layouts;
 
 import dido.data.ArrayData;
+import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataOut;
@@ -101,7 +101,7 @@ public class NumericCellTest extends TestCase {
 
 		PoiWorkbook workbook = new PoiWorkbook();
 
-		GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+		DataSchema schema = SchemaBuilder.newInstance()
 				.add(Double.class)
 				.build();
 

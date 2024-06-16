@@ -1,5 +1,7 @@
-package dido.data;
+package dido.data.generic;
 
+import dido.data.SchemaReference;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -10,13 +12,13 @@ public class GenericSchemaFieldTest {
     @Test
     void testToString() {
 
-        assertThat(GenericSchemaField.of(5, Object.class).toString(),
+        MatcherAssert.assertThat(GenericSchemaField.of(5, Object.class).toString(),
                 is("[5]=java.lang.Object"));
 
         assertThat(GenericSchemaField.of(5, "Foo", Object.class).toString(),
                 is("[5:Foo]=java.lang.Object"));
 
-        GenericDataSchema<String> nested = SchemaBuilder.forStringFields().
+        GenericDataSchema<String> nested = GenericSchemaBuilder.forStringFields().
                 addField("Nested", int.class)
                 .build();
 
@@ -32,7 +34,7 @@ public class GenericSchemaFieldTest {
         assertThat(GenericSchemaField.ofRepeating(5, "Foo", nested).toString(),
                 is("[5:Foo]=[{[1:Nested]=int}]"));
 
-        SchemaReference<String> nestedRef = SchemaReference.named("SomeSchema");
+        SchemaReference nestedRef = SchemaReference.named("SomeSchema");
 
         assertThat(GenericSchemaField.ofNested(5, "Foo", nestedRef).toString(),
                 is("[5:Foo]=SchemaReference{'SomeSchema'} (unset)"));
@@ -59,7 +61,7 @@ public class GenericSchemaFieldTest {
         assertThat(GenericSchemaField.of(5, "Foo", Object.class).hashCode(),
                 is(GenericSchemaField.of(5, "Foo", Object.class).hashCode()));
 
-        GenericDataSchema<String> nested = SchemaBuilder.forStringFields().
+        GenericDataSchema<String> nested = GenericSchemaBuilder.forStringFields().
                 addField("Nested", int.class)
                 .build();
 
@@ -75,7 +77,7 @@ public class GenericSchemaFieldTest {
         assertThat(GenericSchemaField.ofRepeating(5, "Foo", nested).hashCode(),
                 is(GenericSchemaField.ofRepeating(5, "Foo", nested).hashCode()));
 
-        SchemaReference<String> nestedRef = SchemaReference.named("SomeSchema");
+        SchemaReference nestedRef = SchemaReference.named("SomeSchema");
 
         assertThat(GenericSchemaField.ofNested(5, "Foo", nestedRef).hashCode(),
                 is(GenericSchemaField.ofNested(5, "Foo", nestedRef).hashCode()));
@@ -101,7 +103,7 @@ public class GenericSchemaFieldTest {
         assertThat(GenericSchemaField.of(5, "Foo", Object.class),
                 is(GenericSchemaField.of(5, "Foo", Object.class)));
 
-        GenericDataSchema<String> nested = SchemaBuilder.forStringFields().
+        GenericDataSchema<String> nested = GenericSchemaBuilder.forStringFields().
                 addField("Nested", int.class)
                 .build();
 
@@ -117,7 +119,7 @@ public class GenericSchemaFieldTest {
         assertThat(GenericSchemaField.ofRepeating(5, "Foo", nested),
                 is(GenericSchemaField.ofRepeating(5, "Foo", nested)));
 
-        SchemaReference<String> nestedRef = SchemaReference.named("SomeSchema");
+        SchemaReference nestedRef = SchemaReference.named("SomeSchema");
 
         // Need to think if this important - are schemas equal when ref not set.
 
@@ -145,7 +147,7 @@ public class GenericSchemaFieldTest {
         assertThat(GenericSchemaField.of(5, "Foo", Object.class).getType(),
                 is(Object.class));
 
-        GenericDataSchema<String> nested = SchemaBuilder.forStringFields().
+        GenericDataSchema<String> nested = GenericSchemaBuilder.forStringFields().
                 addField("Nested", int.class)
                 .build();
 
@@ -161,7 +163,7 @@ public class GenericSchemaFieldTest {
         assertThat(GenericSchemaField.ofRepeating(5, "Foo", nested).getType(),
                 is(GenericSchemaField.NESTED_REPEATING_TYPE));
 
-        SchemaReference<String> nestedRef = SchemaReference.named("SomeSchema");
+        SchemaReference nestedRef = SchemaReference.named("SomeSchema");
 
         assertThat(GenericSchemaField.ofNested(5, "Foo", nestedRef).getType(),
                 is(GenericSchemaField.NESTED_TYPE));

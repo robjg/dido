@@ -1,7 +1,7 @@
 package dido.oddjob.bean;
 
+import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericDataSchema;
 import dido.data.MapData;
 import dido.data.SchemaBuilder;
 import org.oddjob.arooa.convert.ArooaConversionException;
@@ -15,7 +15,7 @@ public class FruitData implements ValueFactory<DidoData> {
 
 
 
-    private static final GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+    private static final DataSchema schema = SchemaBuilder.newInstance()
             .addField(TYPE, String.class)
             .addField(QUANTITY, int.class)
             .addField(PRICE, double.class)

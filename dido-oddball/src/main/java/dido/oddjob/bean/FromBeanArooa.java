@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * Converts a Java Bean to {@link GenericData} using an Arooa {@link PropertyAccessor}.
- *
+ * Converts a Java Bean to {@link DidoData} using an Arooa {@link PropertyAccessor}.
+ * <p>
  * Handles nested schemas but they must be complete. Partial only applies to the root bean.
  * TODO: Fix this.
  */
@@ -39,11 +39,11 @@ public class FromBeanArooa {
 
     public class With {
 
-        private GenericDataSchema<String> schema;
+        private DataSchema schema;
 
         private boolean partial;
 
-        public With schema(GenericDataSchema<String> schema) {
+        public With schema(DataSchema schema) {
             this.schema = schema;
             return this;
         }
@@ -55,15 +55,13 @@ public class FromBeanArooa {
 
         public <T> Function<T, DidoData> ofUnknownClass() {
 
-            GenericDataSchema<String> schema = this.schema;
+            DataSchema schema = this.schema;
             boolean partial = this.partial;
             if (schema == null) {
-                return new Unknown<>(GenericDataSchema.emptySchema());
-            }
-            else if (partial) {
+                return new Unknown<>(DataSchema.emptySchema());
+            } else if (partial) {
                 return new Unknown<>(schema);
-            }
-            else {
+            } else {
                 return new Known<>(schema);
             }
         }
@@ -81,28 +79,28 @@ public class FromBeanArooa {
 
     public <T> Function<T, DidoData> ofUnknownClass() {
 
-        return new Unknown<>(GenericDataSchema.emptySchema());
+        return new Unknown<>(DataSchema.emptySchema());
     }
 
     public <T> Function<T, DidoData> ofClass(Class<T> aClass) {
 
-        GenericDataSchema<String> schema = schemaFrom(new SimpleArooaClass(aClass));
+        DataSchema schema = schemaFrom(new SimpleArooaClass(aClass));
 
         return bean -> new Impl(schema, bean);
     }
 
     public <T> Function<T, DidoData> ofArooaClass(ArooaClass arooaClass) {
 
-        GenericDataSchema<String> schema = schemaFrom(arooaClass);
+        DataSchema schema = schemaFrom(arooaClass);
 
         return bean -> new Impl(schema, bean);
     }
 
     protected <T> Function<T, DidoData> ofArooaClassWithSchema(ArooaClass arooaClass,
-                                                                          GenericDataSchema<String> schema,
-                                                                          boolean partial) {
+                                                               DataSchema schema,
+                                                               boolean partial) {
 
-        GenericDataSchema<String> outSchema = schemaFrom(arooaClass,
+        DataSchema outSchema = schemaFrom(arooaClass,
                 schema, partial);
 
         return new Known<>(outSchema);
@@ -110,11 +108,11 @@ public class FromBeanArooa {
 
     class Unknown<T> implements Function<T, DidoData> {
 
-        private final GenericDataSchema<String> schema;
+        private final DataSchema schema;
 
-        private GenericDataSchema<String> outSchema;
+        private DataSchema outSchema;
 
-        Unknown(GenericDataSchema<String> schema) {
+        Unknown(DataSchema schema) {
             this.schema = schema;
         }
 
@@ -136,9 +134,9 @@ public class FromBeanArooa {
 
     class Known<T> implements Function<T, DidoData> {
 
-        private final GenericDataSchema<String> schema;
+        private final DataSchema schema;
 
-        Known(GenericDataSchema<String> schema) {
+        Known(DataSchema schema) {
             this.schema = schema;
         }
 
@@ -146,8 +144,7 @@ public class FromBeanArooa {
         public DidoData apply(T t) {
             if (t == null) {
                 return null;
-            }
-            else {
+            } else {
                 return new Impl(schema, t);
             }
         }
@@ -292,18 +289,18 @@ public class FromBeanArooa {
     }
 
 
-    protected GenericDataSchema<String> schemaFrom(ArooaClass arooaClass) {
+    protected DataSchema schemaFrom(ArooaClass arooaClass) {
 
-        return schemaFrom(arooaClass, GenericDataSchema.emptySchema(), true);
+        return schemaFrom(arooaClass, DataSchema.emptySchema(), true);
     }
 
-    protected GenericDataSchema<String> schemaFrom(ArooaClass arooaClass,
-                                                   GenericDataSchema<String> schema,
-                                                   boolean partial) {
+    protected DataSchema schemaFrom(ArooaClass arooaClass,
+                                    DataSchema schema,
+                                    boolean partial) {
 
         BeanOverview beanOverview = arooaClass.getBeanOverview(this.accessor);
 
-        SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
+        SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
         for (String property : beanOverview.getProperties()) {
 
@@ -322,20 +319,19 @@ public class FromBeanArooa {
                 continue;
             }
 
-            GenericSchemaField<String> schemaField = schema.getSchemaField(property);
+            SchemaField schemaField = schema.getSchemaFieldNamed(property);
 
             if (schemaField == null) {
                 if (!partial) {
                     continue;
                 }
-                schemaField = GenericSchemaField.of(schemaBuilder.getLastIndex() + 1, property,
+                schemaField = SchemaField.of(schemaBuilder.getLastIndex() + 1, property,
                         beanOverview.getPropertyType(property));
-            }
-            else {
+            } else {
                 schemaField.mapToIndex(schemaBuilder.getLastIndex() + 1);
             }
 
-            schemaBuilder.addGenericSchemaField(schemaField);
+            schemaBuilder.addSchemaField(schemaField);
         }
 
         return schemaBuilder.build();

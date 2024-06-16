@@ -3,11 +3,11 @@ package dido.proto;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
-import dido.data.GenericData;
+import dido.data.DidoData;
 
 import java.util.function.Function;
 
-public class FromProtoBytes implements Function<byte[], GenericData<String>> {
+public class FromProtoBytes implements Function<byte[], DidoData> {
 
     private final Descriptors.Descriptor descriptor;
 
@@ -15,7 +15,7 @@ public class FromProtoBytes implements Function<byte[], GenericData<String>> {
         this.descriptor = descriptor;
     }
 
-    public GenericData<String> apply(byte[] bytes) {
+    public DidoData apply(byte[] bytes) {
 
         try {
             DynamicMessage dynamicMessage = DynamicMessage.parseFrom(descriptor, bytes);

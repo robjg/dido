@@ -1,5 +1,8 @@
 package dido.data;
 
+import dido.data.generic.GenericData;
+import dido.data.generic.GenericSchemaField;
+
 import java.util.*;
 
 /**
@@ -248,11 +251,11 @@ public class ArrayData extends AbstractData implements DidoData {
         }
 
         public DidoData build() {
-            SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
+            SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
             Object[] values = new Object[lastIndex];
             Iterator<Object> valIt = this.values.iterator();
-            for (GenericSchemaField<String> schemaField : this.schemaFields) {
-                schemaBuilder.addGenericSchemaField(schemaField);
+            for (SchemaField schemaField : this.schemaFields) {
+                schemaBuilder.addSchemaField(schemaField);
                 values[schemaField.getIndex() - 1] = valIt.next();
             }
             return new ArrayData(schemaBuilder.build(), values);

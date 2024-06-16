@@ -58,7 +58,7 @@ public class JsonSchemaExtractor {
         return gson.fromJson(jsonObject, DataSchema.class);
     }
 
-    protected void processPrimitive(SchemaBuilder<String> schemaBuilder,
+    protected void processPrimitive(SchemaBuilder schemaBuilder,
                                     String field,
                                     JsonPrimitive jsonPrimitive) {
 
@@ -71,7 +71,7 @@ public class JsonSchemaExtractor {
         }
     }
 
-    protected void processArray(SchemaBuilder<String> schemaBuilder,
+    protected void processArray(SchemaBuilder schemaBuilder,
                                 String field,
                                 JsonArray jsonArray) {
 
@@ -113,7 +113,7 @@ public class JsonSchemaExtractor {
             JsonObject jsonObject = json.getAsJsonObject();
 
             DataSchema prioritySchema = JsonSchemaExtractor.this.prioritySchema;
-            SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
+            SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
             LinkedList<String> fieldNames = new LinkedList<>(prioritySchema.getFieldNames());
 

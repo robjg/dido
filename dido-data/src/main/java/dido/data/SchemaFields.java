@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.generic.GenericSchemaField;
+
 import java.util.Objects;
 
 class SchemaFields {
@@ -21,12 +23,12 @@ class SchemaFields {
                 nested, false);
     }
 
-    public static SchemaField ofNested(int index, SchemaReference<?> nestedRef) {
+    public static SchemaField ofNested(int index, SchemaReference nestedRef) {
         return new NestedRef(new Indexed(index, GenericSchemaField.NESTED_TYPE),
                 nestedRef, false);
     }
 
-    public static SchemaField ofNested(int index, String field, SchemaReference<?> nestedRef) {
+    public static SchemaField ofNested(int index, String field, SchemaReference nestedRef) {
         if (field == null) {
             return ofNested(index, nestedRef);
         } else {
@@ -49,7 +51,7 @@ class SchemaFields {
                 nested, true);
     }
 
-    public static SchemaField ofRepeating(int index, SchemaReference<?> nestedRef) {
+    public static SchemaField ofRepeating(int index, SchemaReference nestedRef) {
         return new NestedRef(new Indexed(index, GenericSchemaField.NESTED_REPEATING_TYPE),
                 nestedRef, true);
     }
@@ -63,7 +65,7 @@ class SchemaFields {
         }
     }
 
-    public static SchemaField ofRepeating(int index, String field, SchemaReference<?> nestedRef) {
+    public static SchemaField ofRepeating(int index, String field, SchemaReference nestedRef) {
         if (field == null) {
             return ofRepeating(index, nestedRef);
         } else {
@@ -215,7 +217,7 @@ class SchemaFields {
 
         private Nested(SchemaField simple, DataSchema nested, boolean repeating) {
             this.simple = simple;
-            this.nested = Objects.requireNonNull(nested);
+            this.nested = Objects.requireNonNull(nested, "Null nested schema for " + simple);
             this.repeating = repeating;
         }
 
@@ -293,12 +295,12 @@ class SchemaFields {
 
         private final SchemaField simple;
 
-        private final SchemaReference<?> nestedRef;
+        private final SchemaReference nestedRef;
 
         private final boolean repeating;
 
         private NestedRef(SchemaField simple,
-                          SchemaReference<?> nestedRef,
+                          SchemaReference nestedRef,
                           boolean repeating) {
             this.simple = simple;
             this.nestedRef = Objects.requireNonNull(nestedRef);

@@ -1,8 +1,8 @@
 package dido.oddjob.types;
 
 import dido.data.ArrayData;
+import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericDataSchema;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.convert.ArooaConverter;
@@ -12,11 +12,11 @@ import org.oddjob.arooa.types.ValueFactory;
 import java.util.List;
 
 /**
- * Create an item of Generic Data from values and possibly a schema. Used for testing.
+ * Create an item of Dido Data from values and possibly a schema. Used for testing.
  */
-public class GenericDataType implements ValueFactory<DidoData>, ArooaSessionAware {
+public class DidoDataType implements ValueFactory<DidoData>, ArooaSessionAware {
 
-    private GenericDataSchema<String> schema;
+    private DataSchema schema;
 
     private List<Object> values;
 
@@ -52,11 +52,11 @@ public class GenericDataType implements ValueFactory<DidoData>, ArooaSessionAwar
         }
     }
 
-    public GenericDataSchema<String> getSchema() {
+    public DataSchema getSchema() {
         return schema;
     }
 
-    public void setSchema(GenericDataSchema<String> schema) {
+    public void setSchema(DataSchema schema) {
         this.schema = schema;
     }
 
@@ -70,6 +70,6 @@ public class GenericDataType implements ValueFactory<DidoData>, ArooaSessionAwar
 
     @Override
     public String toString() {
-        return "GenericData from " + values;
+        return "DidoData from " + values;
     }
 }

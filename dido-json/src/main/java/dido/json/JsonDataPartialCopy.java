@@ -44,7 +44,7 @@ public class JsonDataPartialCopy {
             }
 
             DataSchema prioritySchema = stack.getFirst();
-            SchemaBuilder<String> schemaBuilder = SchemaBuilder.forStringFields();
+            SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
             Set<String> knownFields = new HashSet<>(prioritySchema.getFieldNames());
 
             JsonObject jsonObject = (JsonObject) json;

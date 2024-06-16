@@ -1,7 +1,6 @@
 package dido.oddjob.beanbus;
 
 import dido.data.DidoData;
-import dido.data.GenericData;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import org.oddjob.arooa.ArooaSession;
@@ -20,7 +19,7 @@ import java.util.function.Consumer;
 
 /**
  * @oddjob.description A Bean Bus Driver that reads data from the 'from' according to the
- * given 'how'. The produced {@link GenericData} is forwarded to the next component.
+ * given 'how'. The produced {@link DidoData} is forwarded to the next component.
  * See any of the formatters for examples of how to use.
  *
  * @oddjob.example Read lines in.

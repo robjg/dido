@@ -1,6 +1,6 @@
 package dido.oddjob.transform;
 
-import dido.data.GenericDataSchema;
+import dido.data.DataSchema;
 import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -16,15 +16,15 @@ class SchemaStrategyTest {
     @Test
     void testNewFields() {
 
-        List<SchemaFieldOptions<String>> fields =
+        List<SchemaFieldOptions> fields =
                 List.of(SchemaFieldOptions.of(0, "One", int.class),
                         SchemaFieldOptions.of(0, "Two", long.class));
 
-        GenericDataSchema<String> result =
-                SchemaStrategy.NEW.newSchemaFrom(GenericDataSchema.emptySchema(), fields,
+        DataSchema result =
+                SchemaStrategy.NEW.newSchemaFrom(DataSchema.emptySchema(), fields,
                         i -> { throw new RuntimeException("Unexpected"); });
 
-        GenericDataSchema<String> expected = SchemaBuilder.forStringFields()
+        DataSchema expected = SchemaBuilder.newInstance()
                 .addField("One", int.class)
                 .addField("Two", long.class)
                 .build();
@@ -35,15 +35,15 @@ class SchemaStrategyTest {
     @Test
     void testMergeNewFieldsIntoEmptySchema() {
 
-        List<SchemaFieldOptions<String>> fields =
+        List<SchemaFieldOptions> fields =
                 List.of(SchemaFieldOptions.of(0, "One", int.class),
                         SchemaFieldOptions.of(0, "Two", long.class));
 
-        GenericDataSchema<String> result =
-                SchemaStrategy.MERGE.newSchemaFrom(GenericDataSchema.emptySchema(), fields,
+        DataSchema result =
+                SchemaStrategy.MERGE.newSchemaFrom(DataSchema.emptySchema(), fields,
                         i -> { throw new RuntimeException("Unexpected"); });
 
-        GenericDataSchema<String> expected = SchemaBuilder.forStringFields()
+        DataSchema expected = SchemaBuilder.newInstance()
                 .addField("One", int.class)
                 .addField("Two", long.class)
                 .build();
@@ -54,20 +54,20 @@ class SchemaStrategyTest {
     @Test
     void testNewFieldsAddedToExisting() {
 
-        List<SchemaFieldOptions<String>> fields =
+        List<SchemaFieldOptions> fields =
                 List.of(SchemaFieldOptions.of(0, "One", int.class),
                         SchemaFieldOptions.of(0, "Two", long.class));
 
-        GenericDataSchema<String> existing = SchemaBuilder.forStringFields()
+        DataSchema existing = SchemaBuilder.newInstance()
                 .addFieldAt(10, "Here", int.class)
                 .build();
 
         List<Integer> existingIndices = new ArrayList<>();
-        GenericDataSchema<String> result =
+        DataSchema result =
                 SchemaStrategy.MERGE.newSchemaFrom(existing, fields,
                         existingIndices::add);
 
-        GenericDataSchema<String> expected = SchemaBuilder.forStringFields()
+        DataSchema expected = SchemaBuilder.newInstance()
                 .addFieldAt(10, "Here", int.class)
                 .addFieldAt(11, "One", int.class)
                 .addFieldAt(12, "Two", long.class)
@@ -80,22 +80,22 @@ class SchemaStrategyTest {
     @Test
     void testCopyFieldsOutOfOrderExisting() {
 
-        List<SchemaFieldOptions<String>> fields =
+        List<SchemaFieldOptions> fields =
                 List.of(SchemaFieldOptions.of(30, "One", Integer.class),
                         SchemaFieldOptions.of(20, "Two", Long.class),
                         SchemaFieldOptions.of(10, "Three", Double.class));
 
-        GenericDataSchema<String> existing = SchemaBuilder.forStringFields()
+        DataSchema existing = SchemaBuilder.newInstance()
                 .addFieldAt(10, "One", int.class)
                 .addFieldAt(20, "Two", long.class)
                 .addFieldAt(30, "Three", double.class)
                 .build();
 
-        GenericDataSchema<String> result =
+        DataSchema result =
                 SchemaStrategy.MERGE.newSchemaFrom(existing, fields,
                         i -> { throw new RuntimeException("Unexpected"); });
 
-        GenericDataSchema<String> expected = SchemaBuilder.forStringFields()
+        DataSchema expected = SchemaBuilder.newInstance()
                 .addFieldAt(10, "Three", Double.class)
                 .addFieldAt(20, "Two", Long.class)
                 .addFieldAt(30, "One", Integer.class)

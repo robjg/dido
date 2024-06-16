@@ -2,7 +2,6 @@ package dido.operators;
 
 import dido.data.ArrayData;
 import dido.data.DidoData;
-import dido.data.GenericData;
 import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
@@ -38,10 +37,10 @@ class StreamJoinServiceTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         @SuppressWarnings("unchecked")
-        List<GenericData<String>> results = lookup.lookup("results.beans", List.class);
+        List<DidoData> results = lookup.lookup("results.beans", List.class);
 
         ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
-                SchemaBuilder.forStringFields()
+                SchemaBuilder.newInstance()
                         .addField("Type", String.class)
                         .addField("Quantity", int.class)
                         .addField("FarmId", int.class)
@@ -74,10 +73,10 @@ class StreamJoinServiceTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         @SuppressWarnings("unchecked")
-        List<GenericData<String>> results = lookup.lookup("results.beans", List.class);
+        List<DidoData> results = lookup.lookup("results.beans", List.class);
 
         ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
-                SchemaBuilder.forStringFields()
+                SchemaBuilder.newInstance()
                         .addField("Type", String.class)
                         .addField("Quantity", int.class)
                         .addField("FarmId", int.class)
@@ -110,10 +109,10 @@ class StreamJoinServiceTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         @SuppressWarnings("unchecked")
-        List<GenericData<String>> results = lookup.lookup("results.beans", List.class);
+        List<DidoData> results = lookup.lookup("results.beans", List.class);
 
         ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
-                SchemaBuilder.forStringFields()
+                SchemaBuilder.newInstance()
                         .addField("Type", String.class)
                         .addField("Variety", String.class)
                         .addField("Quantity", int.class)

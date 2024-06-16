@@ -2,7 +2,6 @@ package dido.csv;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -62,7 +61,7 @@ class CsvDataInHowTest {
     @Test
     void testWithSchema() throws Exception {
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("Type", String.class)
                 .addField("Quantity", int.class)
                 .addField("Price", double.class)
@@ -96,7 +95,7 @@ class CsvDataInHowTest {
                 "Apple,5,19.50" + System.lineSeparator() +
                 "Orange,2,35.24" + System.lineSeparator();
 
-        GenericDataSchema<String> someSchema = SchemaBuilder.forStringFields()
+        DataSchema someSchema = SchemaBuilder.newInstance()
                 .addField("Quantity", int.class)
                 .addField("Price", double.class)
                 .build();

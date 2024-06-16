@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.generic.GenericData;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -88,9 +90,9 @@ public class MapData extends AbstractData implements DidoData {
         return builder.build();
     }
 
-    public static GenericDataSchema<String> schemaFromMap(Map<String, ?> map) {
+    public static DataSchema schemaFromMap(Map<String, ?> map) {
 
-        SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
+        SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             schemaBuilder.addField(entry.getKey(), entry.getValue().getClass());
         }
@@ -183,13 +185,13 @@ public class MapData extends AbstractData implements DidoData {
 
         private Map<String, Object> map = new LinkedHashMap<>();
 
-        private SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
+        private SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
         @Override
         public DidoData build() {
             DidoData data = new MapData(schemaBuilder.build(), map);
             this.map = new LinkedHashMap<>();
-            this.schemaBuilder = SchemaBuilder.impliedType();
+            this.schemaBuilder = SchemaBuilder.newInstance();
             return data;
         }
 

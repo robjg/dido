@@ -1,5 +1,7 @@
-package dido.data;
+package dido.data.generic;
 
+import dido.data.IndexedData;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,7 +14,7 @@ class GenericDataTest {
 
         assertThat(GenericData.toStringFieldsOnly(GenericData.emptyData()), is("{}"));
         assertThat(GenericData.toString(GenericData.emptyData()), is("{}"));
-        assertThat(IndexedData.toString(GenericData.emptyData()), is("{}"));
+        MatcherAssert.assertThat(IndexedData.toString(GenericData.emptyData()), is("{}"));
         assertThat(GenericData.emptyData().toString(), is("{}"));
     }
 

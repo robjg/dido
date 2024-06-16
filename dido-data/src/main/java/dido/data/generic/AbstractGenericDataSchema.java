@@ -1,4 +1,7 @@
-package dido.data;
+package dido.data.generic;
+
+import dido.data.AbstractDataSchema;
+import dido.data.DataSchema;
 
 import java.util.ArrayList;
 import java.util.Collection;

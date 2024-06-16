@@ -14,12 +14,12 @@ class FlattenTest {
     @Test
     void testFlattenRepeatingField() {
 
-        GenericDataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        DataSchema nestedSchema = SchemaBuilder.newInstance()
                 .addField("Fruit", String.class)
                 .addField("Qty", int.class)
                 .build();
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("OrderId", String.class)
                 .addRepeatingField("OrderLines", nestedSchema)
                 .build();
@@ -34,7 +34,7 @@ class FlattenTest {
         List<DidoData> results = Flatten.fieldOfSchema("OrderLines", schema)
                 .apply(data);
 
-        GenericDataSchema<String> expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addField("OrderId", String.class)
                 .addField("Fruit", String.class)
                 .addField("Qty", int.class)

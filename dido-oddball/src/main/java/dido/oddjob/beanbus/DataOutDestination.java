@@ -1,7 +1,6 @@
 package dido.oddjob.beanbus;
 
 import dido.data.DidoData;
-import dido.data.GenericData;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
 import org.oddjob.arooa.ArooaSession;
@@ -18,7 +17,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * @oddjob.description A Bean Bus Destination that accepts {@link GenericData} and writes it out to the given
+ * @oddjob.description A Bean Bus Destination that accepts {@link DidoData} and writes it out to the given
  * 'to' according to the given 'how'.
  * See any of the formatters for examples of how to use.
  *

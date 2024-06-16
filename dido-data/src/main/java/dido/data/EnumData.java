@@ -1,5 +1,8 @@
 package dido.data;
 
+import dido.data.generic.GenericData;
+import dido.data.generic.GenericDataBuilder;
+
 /**
  * Data with an Enum Field.
  *

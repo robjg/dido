@@ -34,7 +34,7 @@ class ValueCopyFactoryTest {
 
         TransformerFactory transformerFactory = test.toValue();
 
-        DataSchema inSchema = SchemaBuilder.forStringFields()
+        DataSchema inSchema = SchemaBuilder.newInstance()
                 .addField("Foo", String.class)
                 .build();
 
@@ -65,7 +65,7 @@ class ValueCopyFactoryTest {
 
         TransformerFactory transformerFactory = test.toValue();
 
-        DataSchema inSchema = SchemaBuilder.forStringFields()
+        DataSchema inSchema = SchemaBuilder.newInstance()
                 .addField("Foo", String.class)
                 .build();
 
@@ -100,7 +100,7 @@ class ValueCopyFactoryTest {
         DidoData result1 = lookup.lookup("results.list.value[0]", DidoData.class);
 
 
-        DataSchema expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addField("AByte", byte.class)
                 .addField("AShort", short.class)
                 .addField("AChar", char.class)
@@ -141,7 +141,7 @@ class ValueCopyFactoryTest {
         DidoData result1 = lookup.lookup("results.list.value[0]", DidoData.class);
 
 
-        DataSchema expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addField("SomeOne", int.class)
                 .addField("Two", int.class)
                 .addField("SomeThree", int.class)
@@ -181,7 +181,7 @@ class ValueCopyFactoryTest {
         DidoData result1 = lookup.lookup("results.list.value[0]", DidoData.class);
 
 
-        DataSchema expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addField("AnInt", int.class)
                 .addField("BlankString", String.class)
                 .addField("CsvString", int[].class)

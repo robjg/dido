@@ -44,7 +44,7 @@ public class SubData extends AbstractData implements DidoData {
 
             if (lastSchema == null || !lastSchema.equals(original.getSchema())) {
                 lastSchema = original.getSchema();
-                SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
+                SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
                 for (int index : indices) {
                     if (withFields) {
                         schemaBuilder.addField(lastSchema.getFieldNameAt(index),
@@ -84,7 +84,7 @@ public class SubData extends AbstractData implements DidoData {
             if (lastSchema == null || !lastSchema.equals(original.getSchema())) {
                 lastSchema = original.getSchema();
                 indices = new int[fields.length];
-                SchemaBuilder<String> schemaBuilder = SchemaBuilder.impliedType();
+                SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
                 for (int i = 0; i < indices.length; ++i) {
                     String field = fields[i];
                     int index = lastSchema.getIndexNamed(field);

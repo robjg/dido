@@ -1,7 +1,6 @@
 package dido.replay;
 
 import dido.data.DidoData;
-import dido.data.GenericData;
 import dido.how.CloseableConsumer;
 
 import java.io.IOException;
@@ -32,7 +31,7 @@ public class DataRecorderService implements Consumer<DidoData> {
 
     private CloseableConsumer<? super DidoData> recorder;
 
-    private Consumer<? super GenericData<String>> to;
+    private Consumer<? super DidoData> to;
 
     public void start() throws IOException {
 
@@ -117,11 +116,11 @@ public class DataRecorderService implements Consumer<DidoData> {
         this.clock = clock;
     }
 
-    public Consumer<? super GenericData<String>> getTo() {
+    public Consumer<? super DidoData> getTo() {
         return to;
     }
 
-    public void setTo(Consumer<? super GenericData<String>> to) {
+    public void setTo(Consumer<? super DidoData> to) {
         this.to = to;
     }
 

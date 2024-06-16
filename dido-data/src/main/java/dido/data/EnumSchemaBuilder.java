@@ -1,5 +1,9 @@
 package dido.data;
 
+import dido.data.generic.AbstractGenericDataSchema;
+import dido.data.generic.GenericDataSchema;
+import dido.data.generic.GenericSchemaField;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -27,22 +31,22 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
     }
 
     public EnumSchemaBuilder<E> addField(E field, Class<?> fieldType) {
-        this.fields.put(field, GenericSchemaFields.of(field.ordinal() + 1, field, fieldType));
+        this.fields.put(field, GenericSchemaField.of(field.ordinal() + 1, field, fieldType));
         return this;
     }
 
     public <N> EnumSchemaBuilder<E> addNestedField(E field, GenericDataSchema<N> nestedSchema) {
-        this.fields.put(field, GenericSchemaFields.ofNested(field.ordinal() + 1, field, nestedSchema));
+        this.fields.put(field, GenericSchemaField.ofNested(field.ordinal() + 1, field, nestedSchema));
         return this;
     }
 
     public <N> EnumSchemaBuilder<E> addRepeatingField(E field, GenericDataSchema<N> nestedSchema) {
-        this.fields.put(field, GenericSchemaFields.ofRepeating(field.ordinal() + 1, field, nestedSchema));
+        this.fields.put(field, GenericSchemaField.ofRepeating(field.ordinal() + 1, field, nestedSchema));
         return this;
     }
 
-    public <N> EnumSchemaBuilder<E> addRepeatingField(E field, SchemaReference<N> nestedSchemaRef) {
-        this.fields.put(field, GenericSchemaFields.ofRepeating(field.ordinal() + 1, field, nestedSchemaRef));
+    public EnumSchemaBuilder<E> addRepeatingField(E field, SchemaReference nestedSchemaRef) {
+        this.fields.put(field, GenericSchemaField.ofRepeating(field.ordinal() + 1, field, nestedSchemaRef));
         return this;
     }
 
@@ -63,7 +67,7 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         GenericSchemaField<E>[] fields = new GenericSchemaField[enumConstants.length];
 
         for (int i = 0; i < fields.length; i++) {
-            fields[i] = GenericSchemaFields.of(i + 1, enumConstants[i], typeMapping.apply(enumConstants[i]));
+            fields[i] = GenericSchemaField.of(i + 1, enumConstants[i], typeMapping.apply(enumConstants[i]));
         }
 
         return new Schema<>(enumClass, fields);

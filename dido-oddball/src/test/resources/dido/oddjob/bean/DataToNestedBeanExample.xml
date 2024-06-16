@@ -4,7 +4,7 @@
             <of>
                 <bus:driver xmlns:bus="oddjob:beanbus">
                     <values>
-                        <bean class="dido.oddjob.bean.ToBeanTransformerTest$SomeNestedGenericData"/>
+                        <bean class="dido.oddjob.bean.ToBeanTransformerTest$SomeNestedData"/>
                     </values>
                 </bus:driver>
                 <bus:map xmlns:bus="oddjob:beanbus">

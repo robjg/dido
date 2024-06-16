@@ -1,7 +1,6 @@
 package dido.poi.utils;
 
 import dido.data.DataSchema;
-import dido.data.GenericDataSchema;
 import dido.data.SchemaBuilder;
 import dido.poi.RowIn;
 import dido.poi.RowsIn;
@@ -77,7 +76,7 @@ class SchemaAndCellsTest {
     @Test
     void testFromSchema() {
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("String", String.class)
                 .addField("Boolean", boolean.class)
                 .addField("Byte", byte.class)

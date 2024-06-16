@@ -1,8 +1,7 @@
 package dido.oddjob.schema;
 
 import dido.data.DataSchema;
-import dido.data.GenericDataSchema;
-import dido.data.GenericSchemaField;
+import dido.data.SchemaField;
 import dido.test.OurDirs;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
@@ -35,12 +34,12 @@ class SchemaBeanTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         @SuppressWarnings("unchecked")
-        GenericDataSchema<String> schema = lookup.lookup("vars.schema", GenericDataSchema.class);
+        DataSchema schema = lookup.lookup("vars.schema", DataSchema.class);
 
         assertThat(schema, notNullValue());
-        assertThat(schema.getTypeOf("Fruit"), is(String.class));
-        assertThat(schema.getTypeOf("Qty"), is(int.class));
-        assertThat(schema.getTypeOf("Price"), is(double.class));
+        assertThat(schema.getTypeNamed("Fruit"), is(String.class));
+        assertThat(schema.getTypeNamed("Qty"), is(int.class));
+        assertThat(schema.getTypeNamed("Price"), is(double.class));
     }
 
     @Test
@@ -57,18 +56,18 @@ class SchemaBeanTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         @SuppressWarnings("unchecked")
-        GenericDataSchema<String> schema = lookup.lookup("vars.schema", GenericDataSchema.class);
+        DataSchema schema = lookup.lookup("vars.schema", DataSchema.class);
 
         assertThat(schema, notNullValue());
-        assertThat(schema.getTypeOf("Name"), is(String.class));
+        assertThat(schema.getTypeNamed("Name"), is(String.class));
 
-        DataSchema fruitSchema = schema.getSchema("Fruit1");
+        DataSchema fruitSchema = schema.getSchemaNamed("Fruit1");
         assertThat(fruitSchema.getTypeNamed("Fruit"), is(String.class));
         assertThat(fruitSchema.getTypeNamed("Qty"), is(int.class));
 
-        assertThat(schema.getSchema("Fruit2"), sameInstance(fruitSchema));
+        assertThat(schema.getSchemaNamed("Fruit2"), sameInstance(fruitSchema));
 
-        DataSchema drinkSchema = schema.getSchema("Drink");
+        DataSchema drinkSchema = schema.getSchemaNamed("Drink");
         assertThat(drinkSchema.getTypeNamed("Volume"), is(double.class));
 
         oddjob.destroy();
@@ -88,18 +87,18 @@ class SchemaBeanTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         @SuppressWarnings("unchecked")
-        GenericDataSchema<String> schema = lookup.lookup("vars.schema", GenericDataSchema.class);
+        DataSchema schema = lookup.lookup("vars.schema", DataSchema.class);
 
         assertThat(schema, notNullValue());
-        assertThat(schema.getTypeOf("Name"), is(String.class));
+        assertThat(schema.getTypeNamed("Name"), is(String.class));
 
-        assertThat(schema.getTypeOf("Fruit"), is(GenericSchemaField.NESTED_REPEATING_TYPE));
-        DataSchema fruitSchema = schema.getSchema("Fruit");
+        assertThat(schema.getTypeNamed("Fruit"), is(SchemaField.NESTED_REPEATING_TYPE));
+        DataSchema fruitSchema = schema.getSchemaNamed("Fruit");
         assertThat(fruitSchema.getTypeNamed("Fruit"), is(String.class));
         assertThat(fruitSchema.getTypeNamed("Qty"), is(int.class));
 
-        assertThat(schema.getTypeOf("Drink"), is(GenericSchemaField.NESTED_REPEATING_TYPE));
-        DataSchema drinkSchema = schema.getSchema("Drink");
+        assertThat(schema.getTypeNamed("Drink"), is(SchemaField.NESTED_REPEATING_TYPE));
+        DataSchema drinkSchema = schema.getSchemaNamed("Drink");
         assertThat(drinkSchema.getTypeNamed("Volume"), is(double.class));
 
         oddjob.destroy();
@@ -118,14 +117,13 @@ class SchemaBeanTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        @SuppressWarnings("unchecked")
-        GenericDataSchema<String> schema = lookup.lookup("vars.schema", GenericDataSchema.class);
+        DataSchema schema = lookup.lookup("vars.schema", DataSchema.class);
 
         assertThat(schema, notNullValue());
 
-        assertThat(schema.getTypeOf("OrderLines"), is(GenericSchemaField.NESTED_REPEATING_TYPE));
-        DataSchema nestedSchema = schema.getSchema("OrderLines");
-        assertThat(nestedSchema, is(GenericDataSchema.emptySchema()));
+        assertThat(schema.getTypeNamed("OrderLines"), is(SchemaField.NESTED_REPEATING_TYPE));
+        DataSchema nestedSchema = schema.getSchemaNamed("OrderLines");
+        assertThat(nestedSchema, is(DataSchema.emptySchema()));
 
         oddjob.destroy();
     }
@@ -159,11 +157,10 @@ class SchemaBeanTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        @SuppressWarnings("unchecked")
-        GenericDataSchema<String> schema = lookup.lookup("main/vars.schema", GenericDataSchema.class);
+        DataSchema schema = lookup.lookup("main/vars.schema", DataSchema.class);
 
         assertThat(schema, notNullValue());
-        assertThat(schema.getTypeOf("CustomType").getName(), is("foo.stuff.SomeType"));
+        assertThat(schema.getTypeNamed("CustomType").getName(), is("foo.stuff.SomeType"));
 
         oddjob.destroy();
     }

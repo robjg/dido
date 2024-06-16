@@ -41,7 +41,7 @@ class FlattenTypeTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        DataSchema expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addField("OrderId", String.class)
                 .addField("Fruit", String.class)
                 .addField("Qty", int.class)
@@ -75,7 +75,7 @@ class FlattenTypeTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        DataSchema expectedSchema = SchemaBuilder.forStringFields()
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addField("Name", String.class)
                 .addField("Numbers", Integer.class)
                 .addField("Letters", Object.class)

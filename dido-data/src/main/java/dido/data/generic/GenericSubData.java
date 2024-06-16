@@ -1,4 +1,4 @@
-package dido.data;
+package dido.data.generic;
 
 import java.util.function.Function;
 
@@ -44,7 +44,7 @@ public class GenericSubData<F> extends AbstractGenericData<F> implements Generic
 
             if (lastSchema == null || !lastSchema.equals(original.getSchema())) {
                 lastSchema = original.getSchema();
-                SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
+                GenericSchemaBuilder<F> schemaBuilder = GenericSchemaBuilder.impliedType();
                 for (int index : indices) {
                     if (withFields) {
                         schemaBuilder.addField(lastSchema.getFieldAt(index),
@@ -84,7 +84,7 @@ public class GenericSubData<F> extends AbstractGenericData<F> implements Generic
             if (lastSchema == null || !lastSchema.equals(original.getSchema())) {
                 lastSchema = original.getSchema();
                 indices = new int[fields.length];
-                SchemaBuilder<F> schemaBuilder = SchemaBuilder.impliedType();
+                GenericSchemaBuilder<F> schemaBuilder = GenericSchemaBuilder.impliedType();
                 for (int i = 0; i < indices.length; ++i) {
                     F field = fields[i];
                     int index = lastSchema.getIndex(field);

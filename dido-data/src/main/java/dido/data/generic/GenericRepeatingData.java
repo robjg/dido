@@ -1,4 +1,6 @@
-package dido.data;
+package dido.data.generic;
+
+import dido.data.RepeatingDataWrappers;
 
 import java.util.List;
 import java.util.stream.Stream;

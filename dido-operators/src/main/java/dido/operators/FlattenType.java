@@ -1,7 +1,7 @@
 package dido.operators;
 
+import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericDataSchema;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +16,7 @@ public class FlattenType implements Supplier<Function<DidoData, List<DidoData>>>
 
     private boolean columns;
 
-    private GenericDataSchema<String> schema;
+    private DataSchema schema;
 
     @Override
     public Function<DidoData, List<DidoData>> get() {
@@ -45,11 +45,11 @@ public class FlattenType implements Supplier<Function<DidoData, List<DidoData>>>
         this.fields = field;
     }
 
-    public GenericDataSchema<String> getSchema() {
+    public DataSchema getSchema() {
         return schema;
     }
 
-    public void setSchema(GenericDataSchema<String> schema) {
+    public void setSchema(DataSchema schema) {
         this.schema = schema;
     }
 

@@ -1,4 +1,8 @@
-package dido.data;
+package dido.data.generic;
+
+import dido.data.DataSchema;
+import dido.data.IndexedData;
+import dido.data.IndexedDataBuilder;
 
 import java.util.Objects;
 import java.util.function.Consumer;

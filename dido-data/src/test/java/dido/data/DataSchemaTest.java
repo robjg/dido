@@ -1,5 +1,6 @@
 package dido.data;
 
+import dido.data.generic.GenericDataSchema;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 

@@ -3,13 +3,13 @@ package dido.proto;
 import com.google.protobuf.DescriptorProtos;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.DynamicMessage;
-import dido.data.GenericDataSchema;
+import dido.data.DataSchema;
 
 public class ProtoSchema {
 
     private String packageName;
 
-    public Descriptors.Descriptor descriptorFromSchema(GenericDataSchema<?> schema) throws Descriptors.DescriptorValidationException {
+    public Descriptors.Descriptor descriptorFromSchema(DataSchema schema) throws Descriptors.DescriptorValidationException {
 
         DescriptorProtos.FieldDescriptorProto idDEescriptor =
                 DescriptorProtos.FieldDescriptorProto.newBuilder()

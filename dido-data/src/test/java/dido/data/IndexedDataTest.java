@@ -1,5 +1,6 @@
 package dido.data;
 
+import dido.data.generic.GenericDataSchema;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -71,12 +72,12 @@ class IndexedDataTest {
     @Test
     void testEquals() {
 
-        GenericDataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        DataSchema nestedSchema = SchemaBuilder.newInstance()
                 .addField("Fruit", String.class)
                 .addField("Qty", Double.class)
                 .build();
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("OrderId", String.class)
                 .addRepeatingField("OrderLines", nestedSchema)
                 .build();

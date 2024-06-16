@@ -1,7 +1,7 @@
 package dido.oddjob.bean;
 
-import dido.data.GenericData;
-import dido.data.GenericDataSchema;
+import dido.data.DataSchema;
+import dido.data.DidoData;
 import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.beanutils.BeanUtilsPropertyAccessor;
 import org.oddjob.arooa.reflect.PropertyAccessor;
@@ -21,9 +21,9 @@ class FromBeanArooaWithSchemaTest {
 
         PropertyAccessor propertyAccessor = new BeanUtilsPropertyAccessor();
 
-        GenericDataSchema<String> schema = new ClassSchema(propertyAccessor).schemaForClass(Fruit.class);
+        DataSchema schema = new ClassSchema(propertyAccessor).schemaForClass(Fruit.class);
 
-        GenericData<String> data = new FromBeanArooaWithSchema<>(schema, propertyAccessor).apply(fruit);
+        DidoData data = new FromBeanArooaWithSchema<>(schema, propertyAccessor).apply(fruit);
 
         assertThat(data.getString("type"), is("Apple"));
         assertThat(data.getInt("quantity"), is(5));

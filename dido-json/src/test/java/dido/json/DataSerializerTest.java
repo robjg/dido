@@ -12,9 +12,9 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 class DataSerializerTest {
 
     @Test
-    void whenGenericDataOfPrimitivesThenCorrectJsonProduced() throws JSONException {
+    void whenDataOfPrimitivesThenCorrectJsonProduced() throws JSONException {
 
-        DataSchema schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("type", String.class)
                 .addField("foo", String.class)
                 .addField("qty", int.class)
@@ -36,19 +36,19 @@ class DataSerializerTest {
     }
 
     @Test
-    void whenGenericDataOfNestedGenericDataThenCorrectJsonProduced() throws JSONException {
+    void whenDataOfNestedGenericDataThenCorrectJsonProduced() throws JSONException {
 
-        GenericDataSchema<String> fooSchema = SchemaBuilder.forStringFields()
+        DataSchema fooSchema = SchemaBuilder.newInstance()
                 .addField("foo", String.class)
                 .addField("qty", int.class)
                 .build();
 
-        GenericDataSchema<String> posSchema = SchemaBuilder.forStringFields()
+        DataSchema posSchema = SchemaBuilder.newInstance()
                 .addField("x", double.class)
                 .addField("y", double.class)
                 .build();
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addNestedField("foo", fooSchema)
                 .addNestedField("pos", posSchema)
                 .build();
@@ -71,14 +71,14 @@ class DataSerializerTest {
     }
 
     @Test
-    void whenGenericDataOfRepeatingThenCorrectJsonProduced() throws JSONException {
+    void whenDataOfRepeatingThenCorrectJsonProduced() throws JSONException {
 
-        GenericDataSchema<String> posSchema = SchemaBuilder.forStringFields()
+        DataSchema posSchema = SchemaBuilder.newInstance()
                 .addField("x", double.class)
                 .addField("y", double.class)
                 .build();
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("foo", String.class)
                 .addNestedField("positions", posSchema)
                 .build();

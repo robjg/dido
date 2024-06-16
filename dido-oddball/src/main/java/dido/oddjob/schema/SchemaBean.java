@@ -1,6 +1,6 @@
 package dido.oddjob.schema;
 
-import dido.data.GenericDataSchema;
+import dido.data.DataSchema;
 import dido.data.SchemaManager;
 import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;
@@ -57,7 +57,7 @@ public class SchemaBean implements ArooaValue {
 
         @Override
         public void registerWith(ConversionRegistry registry) {
-            registry.register(SchemaBean.class, GenericDataSchema.class,
+            registry.register(SchemaBean.class, DataSchema.class,
                     SchemaBean::toSchema);
 
             registry.register(SchemaBean.class, SchemaWrapper.class,
@@ -65,14 +65,14 @@ public class SchemaBean implements ArooaValue {
         }
     }
 
-    GenericDataSchema<String> toSchema() throws ArooaConversionException {
+    DataSchema toSchema() throws ArooaConversionException {
 
         SchemaManager schemaManager = new SchemaManager();
 
         if (list.isEmpty()) {
 
-            SchemaManager.NewTopLevelSchema<String> builder =
-                    schemaManager.newDefaultSchema(String.class);
+            SchemaManager.NewTopLevelSchema builder =
+                    schemaManager.newDefaultSchema();
 
             for (SchemaFieldDef field : of) {
                 SchemaWrapper wrapper = field.getNested();
@@ -82,12 +82,12 @@ public class SchemaBean implements ArooaValue {
                 else {
                     if (field.isRepeating()) {
                         addNested(builder.addRepeatingIndexedField(field.getIndex(),
-                                field.getFieldName(), String.class),
+                                field.getFieldName()),
                                 wrapper);
                     }
                     else {
                         addNested(builder.addNestedIndexedField(field.getIndex(),
-                                        field.getFieldName(), String.class),
+                                        field.getFieldName()),
                                 wrapper);
                     }
                 }
@@ -107,13 +107,13 @@ public class SchemaBean implements ArooaValue {
                     throw new ArooaConversionException("Schema Reference is only for nested schemas.");
                 }
 
-                SchemaManager.NewTopLevelSchema<String> builder =
-                        schemaManager.newSchema(wrapper.getSchemaName(), String.class);
+                SchemaManager.NewTopLevelSchema builder =
+                        schemaManager.newSchema(wrapper.getSchemaName());
 
                 addNested(builder, wrapper);
             }
 
-            GenericDataSchema<?> schema = Optional.ofNullable(name)
+            DataSchema schema = Optional.ofNullable(name)
                     .map(schemaManager::getSchema)
                     .orElseGet(schemaManager::getDefaultSchema);
 
@@ -121,13 +121,12 @@ public class SchemaBean implements ArooaValue {
                 throw new ArooaConversionException("No such schema.");
             }
             else {
-                //noinspection unchecked
-                return (GenericDataSchema<String>) schema;
+                return schema;
             }
         }
     }
 
-    <B extends SchemaManager.NewSchema<String, B>> void addNested(SchemaManager.NewSchema<String, B> builder,
+    <B extends SchemaManager.NewSchema<B>> void addNested(SchemaManager.NewSchema<B> builder,
                                                                   SchemaWrapper wrapper) {
         for (SchemaFieldDef field : wrapper.getSchemaFields()) {
             int index = field.getIndex();
@@ -142,12 +141,12 @@ public class SchemaBean implements ArooaValue {
                 boolean repeatingField = field.isRepeating();
                 String ref = nested.getSchemaRefName();
                 if (ref == null) {
-                    SchemaManager.NewSchema<String, ? extends SchemaManager.NewSchema<String, ?>> next;
+                    SchemaManager.NewSchema<? extends SchemaManager.NewSchema<?>> next;
                     if (repeatingField) {
-                        next = builder.addRepeatingIndexedField(index, fieldName, String.class);
+                        next = builder.addRepeatingIndexedField(index, fieldName);
                     }
                     else {
-                        next = builder.addNestedIndexedField(index, fieldName, String.class);
+                        next = builder.addNestedIndexedField(index, fieldName);
                     }
                     addNested(next, nested);
                 }

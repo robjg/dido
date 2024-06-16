@@ -35,7 +35,7 @@ class JsonDataWrapperTest {
     @Test
     void testWithAllFields() {
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("aString", String.class)
                 .addField("aBoolean", boolean.class)
                 .addField("aByte", byte.class)
@@ -77,7 +77,7 @@ class JsonDataWrapperTest {
     @Test
     void testNaNs() {
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("aString", String.class)
                 .addField("aFloat", float.class)
                 .addField("aDouble", double.class)
@@ -99,7 +99,7 @@ class JsonDataWrapperTest {
     @Test
     void testWithAutoBoxedVersions() {
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addFieldAt(3, "aByte", Byte.class)
                 .addField("aShort", Short.class)
                 .addField("anInt", Integer.class)
@@ -126,7 +126,7 @@ class JsonDataWrapperTest {
     @Test
     void testAllAsObjects() {
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("aString", String.class)
                 .addField("aBoolean", boolean.class)
                 .addField("aByte", byte.class)
@@ -159,7 +159,7 @@ class JsonDataWrapperTest {
     @Test
     void testWithAllFieldsAsNull() {
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("aString", String.class)
                 .addField("aBoolean", boolean.class)
                 .addField("aByte", byte.class)
@@ -200,12 +200,12 @@ class JsonDataWrapperTest {
                 "  }";
 
 
-        GenericDataSchema<String> nestedSchema = SchemaBuilder.forStringFields()
+        DataSchema nestedSchema = SchemaBuilder.newInstance()
                 .addField("Fruit", String.class)
                 .addField("Qty", int.class)
                 .build();
 
-        GenericDataSchema<String> schema = SchemaBuilder.forStringFields()
+        DataSchema schema = SchemaBuilder.newInstance()
                 .addField("OrderId", String.class)
                 .addRepeatingField("OrderLines", nestedSchema)
                 .build();

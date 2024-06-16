@@ -1,4 +1,6 @@
-package dido.data;
+package dido.data.generic;
+
+import dido.data.IndexedData;
 
 import java.util.Iterator;
 import java.util.Objects;

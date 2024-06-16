@@ -1,6 +1,6 @@
 package dido.text;
 
-import dido.data.GenericDataSchema;
+import dido.data.generic.GenericDataSchema;
 import dido.how.DataOutHow;
 
 import java.io.OutputStream;

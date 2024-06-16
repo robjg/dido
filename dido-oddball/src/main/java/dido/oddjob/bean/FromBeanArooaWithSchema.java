@@ -1,34 +1,34 @@
 package dido.oddjob.bean;
 
-import dido.data.AbstractGenericData;
-import dido.data.GenericData;
-import dido.data.GenericDataSchema;
+import dido.data.AbstractData;
+import dido.data.DataSchema;
+import dido.data.DidoData;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 
 import java.util.function.Function;
 
-public class FromBeanArooaWithSchema<T> implements Function<T, GenericData<String>> {
+public class FromBeanArooaWithSchema<T> implements Function<T, DidoData> {
 
-    private final GenericDataSchema<String> schema;
+    private final DataSchema schema;
 
     private final PropertyAccessor propertyAccessor;
 
-    public FromBeanArooaWithSchema(GenericDataSchema<String> schema, PropertyAccessor propertyAccessor) {
+    public FromBeanArooaWithSchema(DataSchema schema, PropertyAccessor propertyAccessor) {
         this.schema = schema;
         this.propertyAccessor = propertyAccessor;
     }
 
     @Override
-    public GenericData<String> apply(T t) {
-        return new AbstractGenericData<>() {
+    public DidoData apply(T t) {
+        return new AbstractData() {
             @Override
-            public GenericDataSchema<String> getSchema() {
+            public DataSchema getSchema() {
                 return schema;
             }
 
             @Override
             public Object getAt(int index) {
-                return get(schema.getFieldAt(index));
+                return get(schema.getFieldNameAt(index));
             }
 
             @Override
@@ -43,7 +43,7 @@ public class FromBeanArooaWithSchema<T> implements Function<T, GenericData<Strin
 
             @Override
             public String toString() {
-                return GenericData.toStringFieldsOnly(this);
+                return DidoData.toStringFieldsOnly(this);
             }
         };
     }

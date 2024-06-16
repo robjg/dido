@@ -1,6 +1,6 @@
 package dido.oddjob.bean;
 
-import dido.data.GenericDataSchema;
+import dido.data.DataSchema;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.beanutils.BeanUtilsPropertyAccessor;
@@ -16,12 +16,12 @@ class ClassSchemaTest {
 
         PropertyAccessor propertyAccessor = new BeanUtilsPropertyAccessor();
 
-        GenericDataSchema<String> schema = new ClassSchema(propertyAccessor).schemaForClass(Fruit.class);
+        DataSchema schema = new ClassSchema(propertyAccessor).schemaForClass(Fruit.class);
 
-        assertThat(schema.getFields(), Matchers.containsInAnyOrder("type", "quantity", "price"));
-        assertThat(schema.getTypeOf("type"), is(String.class));
-        assertThat(schema.getTypeOf("quantity"), is(int.class));
-        assertThat(schema.getTypeOf("price"), is(double.class));
+        assertThat(schema.getFieldNames(), Matchers.containsInAnyOrder("type", "quantity", "price"));
+        assertThat(schema.getTypeNamed("type"), is(String.class));
+        assertThat(schema.getTypeNamed("quantity"), is(int.class));
+        assertThat(schema.getTypeNamed("price"), is(double.class));
     }
 
 }

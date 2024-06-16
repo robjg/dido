@@ -2,7 +2,6 @@ package dido.oddjob.bean;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.GenericData;
 import dido.data.SchemaField;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.oddjob.arooa.ArooaSession;
@@ -137,11 +136,10 @@ public class ToBeanArooa {
                             componentType = type.getComponentType();
                             Function<DidoData, ?> func = ofClass(componentType);
 
-                            value = Arrays.stream((GenericData<String>[]) data.get(propertyName))
+                            value = Arrays.stream((DidoData[]) data.get(propertyName))
                                     .map(func)
                                     .toArray();
-                        }
-                        else if (Iterable.class.isAssignableFrom(type)) {
+                        } else if (Iterable.class.isAssignableFrom(type)) {
                             // Bodge until Oddjob 1.7 provides this.
                             try {
                                 PropertyDescriptor propertyDescriptor =
@@ -155,11 +153,10 @@ public class ToBeanArooa {
                             Function<DidoData, ?> func = ofClass(componentType);
 
                             value = StreamSupport.stream(
-                                    ((Iterable<GenericData<String>>) data.get(propertyName)).spliterator(), false)
+                                            ((Iterable<DidoData>) data.get(propertyName)).spliterator(), false)
                                     .map(func)
                                     .collect(Collectors.toList());
-                        }
-                        else {
+                        } else {
                             componentType = null;
                             value = null;
                         }
@@ -167,12 +164,10 @@ public class ToBeanArooa {
                         if (componentType == null) {
                             throw new IllegalArgumentException("Unable to work out component type for " + propertyName);
                         }
+                    } else {
+                        value = ofClass(type).apply((DidoData) data.get(propertyName));
                     }
-                    else {
-                        value = ofClass(type).apply((GenericData<String>) data.get(propertyName));
-                    }
-                }
-                else {
+                } else {
                     value = data.getAs(propertyName, type);
                 }
 

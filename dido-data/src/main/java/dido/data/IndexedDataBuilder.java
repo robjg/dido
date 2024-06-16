@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.generic.GenericData;
+
 /**
  * Something that is capable of building creating {@link GenericData}. Instances should be reusable,
  * once {@code #build()} has been called, any internal state should be reset so that new data can be built.
