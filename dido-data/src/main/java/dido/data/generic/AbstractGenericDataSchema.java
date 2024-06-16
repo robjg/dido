@@ -28,32 +28,32 @@ public abstract class AbstractGenericDataSchema<F> extends AbstractDataSchema im
     }
 
     @Override
-    public GenericSchemaField<F> getSchemaField(F field) {
-        int index = getIndex(field);
+    public GenericSchemaField<F> getSchemaFieldOf(F field) {
+        int index = getIndexOf(field);
         return index > 0 ? getSchemaFieldAt(index) : null;
     }
 
     @Override
-    public String getFieldName(F field) {
-        GenericSchemaField<F> genericSchemaField = getSchemaField(field);
+    public String getFieldNameOf(F field) {
+        GenericSchemaField<F> genericSchemaField = getSchemaFieldOf(field);
         return genericSchemaField == null ? null : genericSchemaField.getName();
     }
 
     @Override
-    public int getIndex(F field) {
-        GenericSchemaField<F> genericSchemaField = getSchemaField(field);
+    public int getIndexOf(F field) {
+        GenericSchemaField<F> genericSchemaField = getSchemaFieldOf(field);
         return genericSchemaField == null ? 0 : genericSchemaField.getIndex();
     }
 
     @Override
     public Class<?> getTypeOf(F field) {
-        GenericSchemaField<F> schemaField = getSchemaField(field);
+        GenericSchemaField<F> schemaField = getSchemaFieldOf(field);
         return schemaField == null ? null : schemaField.getType();
     }
 
     @Override
-    public DataSchema getSchema(F field) {
-        GenericSchemaField<F> schemaField = getSchemaField(field);
+    public DataSchema getSchemaOf(F field) {
+        GenericSchemaField<F> schemaField = getSchemaFieldOf(field);
         return schemaField == null ? null : schemaField.getNestedSchema();
     }
 

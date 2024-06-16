@@ -59,7 +59,7 @@ public interface GenericDataSchema<F> extends DataSchema {
      * @param fieldName The name.
      * @return The field.
      */
-    F getField(String fieldName);
+    F getFieldNamed(String fieldName);
 
     /**
      * Get the {@link GenericSchemaField} for the given field. If the
@@ -68,7 +68,7 @@ public interface GenericDataSchema<F> extends DataSchema {
      * @param field The field.
      * @return The type.
      */
-    GenericSchemaField<F> getSchemaField(F field);
+    GenericSchemaField<F> getSchemaFieldOf(F field);
 
     /**
      * Get the index for a given field. If the field does not
@@ -77,7 +77,7 @@ public interface GenericDataSchema<F> extends DataSchema {
      * @param field The field.
      * @return The index of the field.
      */
-    int getIndex(F field);
+    int getIndexOf(F field);
 
     /**
      * Get the field name of the given field. If the field does not exist
@@ -87,7 +87,7 @@ public interface GenericDataSchema<F> extends DataSchema {
      *
      * @return THe field name.
      */
-    String getFieldName(F field);
+    String getFieldNameOf(F field);
 
     /**
      * Get the type that a value is at a given field. If the
@@ -107,7 +107,7 @@ public interface GenericDataSchema<F> extends DataSchema {
      *
      * @return The nested schema or null.
      */
-    DataSchema getSchema(F field);
+    DataSchema getSchemaOf(F field);
 
     /**
      * Get all the fields in this schema.
@@ -146,22 +146,22 @@ public interface GenericDataSchema<F> extends DataSchema {
         }
 
         @Override
-        public GenericSchemaField<F> getSchemaField(F field) {
+        public GenericSchemaField<F> getSchemaFieldOf(F field) {
             return null;
         }
 
         @Override
-        public F getField(String fieldName) {
+        public F getFieldNamed(String fieldName) {
             return null;
         }
 
         @Override
-        public String getFieldName(F field) {
+        public String getFieldNameOf(F field) {
             return "";
         }
 
         @Override
-        public DataSchema getSchema(F field) {
+        public DataSchema getSchemaOf(F field) {
             return null;
         }
 
@@ -171,7 +171,7 @@ public interface GenericDataSchema<F> extends DataSchema {
         }
 
         @Override
-        public int getIndex(F field) {
+        public int getIndexOf(F field) {
             return 0;
         }
 

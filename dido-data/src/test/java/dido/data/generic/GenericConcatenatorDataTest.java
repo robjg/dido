@@ -39,27 +39,27 @@ class GenericConcatenatorDataTest {
         assertThat(schema.getFieldAt(1), is("fruit"));
         assertThat(schema.getTypeAt(1), is(String.class));
         assertThat(schema.getTypeOf("fruit"), is(String.class));
-        assertThat(schema.getIndex("fruit"), is(1));
+        assertThat(schema.getIndexOf("fruit"), is(1));
 
         assertThat(schema.getFieldAt(2), is("qty"));
         assertThat(schema.getTypeAt(2), is(int.class));
         assertThat(schema.getTypeOf("qty"), is(int.class));
-        assertThat(schema.getIndex("qty"), is(2));
+        assertThat(schema.getIndexOf("qty"), is(2));
 
         assertThat(schema.getFieldAt(4), is("supplier"));
         assertThat(schema.getTypeAt(4), is(String.class));
         assertThat(schema.getTypeOf("supplier"), is(String.class));
-        assertThat(schema.getIndex("supplier"), is(4));
+        assertThat(schema.getIndexOf("supplier"), is(4));
 
         assertThat(schema.getFieldAt(5), is("checked"));
         assertThat(schema.getTypeAt(5), is(String.class));
         assertThat(schema.getTypeOf("checked"), is(String.class));
-        assertThat(schema.getIndex("checked"), is(5));
+        assertThat(schema.getIndexOf("checked"), is(5));
 
         assertThat(schema.getFieldAt(6), is("good"));
         assertThat(schema.getTypeAt(6), is(boolean.class));
         assertThat(schema.getTypeOf("good"), is(boolean.class));
-        assertThat(schema.getIndex("good"), is(6));
+        assertThat(schema.getIndexOf("good"), is(6));
 
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));

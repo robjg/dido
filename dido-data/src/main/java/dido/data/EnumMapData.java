@@ -33,7 +33,7 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
 
     @Override
     public Object get(String name) {
-        return getOf(schema.getField(name));
+        return getOf(schema.getFieldNamed(name));
     }
 
     @Override

@@ -50,11 +50,11 @@ class EnumMapDataTest {
         assertThat(schema.getTypeOf(Fields.Price), is(double.class));
 
         assertThat(schema.getFieldAt(1), is(Fields.Fruit));
-        assertThat(schema.getIndex(Fields.Fruit), is(1));
+        assertThat(schema.getIndexOf(Fields.Fruit), is(1));
         assertThat(schema.getFieldAt(2), is(Fields.Qty));
-        assertThat(schema.getIndex(Fields.Qty), is(2));
+        assertThat(schema.getIndexOf(Fields.Qty), is(2));
         assertThat(schema.getFieldAt(3), is(Fields.Price));
-        assertThat(schema.getIndex(Fields.Price), is(3));
+        assertThat(schema.getIndexOf(Fields.Price), is(3));
 
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));

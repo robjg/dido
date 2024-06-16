@@ -177,7 +177,7 @@ class GenericSchemaBuilderTest {
                 .build();
         self.set(schema);
 
-        assertThat(schema.getSchema("node"), sameInstance(schema));
+        assertThat(schema.getSchemaOf("node"), sameInstance(schema));
     }
 
     @Test
@@ -191,7 +191,7 @@ class GenericSchemaBuilderTest {
                 .addRepeatingField("list", nested)
                 .build();
 
-        assertThat(schema.getSchema("list"), sameInstance(nested));
+        assertThat(schema.getSchemaOf("list"), sameInstance(nested));
     }
 
     @Test

@@ -1,9 +1,8 @@
-package dido.data;
+package dido.data.mutable;
 
-import dido.data.generic.AbstractGenericData;
-import dido.data.generic.GenericData;
+import dido.data.AbstractData;
 
-public abstract class AbstractMutableData<F> extends AbstractGenericData<F> implements MutableData<F> {
+public abstract class AbstractMutableData extends AbstractData implements MutableData {
 
     @Override
     public void setBooleanAt(int index, boolean value) {
@@ -51,8 +50,8 @@ public abstract class AbstractMutableData<F> extends AbstractGenericData<F> impl
     }
 
     @Override
-    public void set(F field, Object value) {
-        int index = getSchema().getIndex(field);
+    public void set(String field, Object value) {
+        int index = getSchema().getIndexNamed(field);
         if (index > 0) {
             setAt(index, value);
         }
@@ -62,53 +61,48 @@ public abstract class AbstractMutableData<F> extends AbstractGenericData<F> impl
     }
 
     @Override
-    public void setBoolean(F field, boolean value) {
+    public void setBoolean(String field, boolean value) {
         set(field, value);
     }
 
     @Override
-    public void setByte(F field, byte value) {
+    public void setByte(String field, byte value) {
         set(field, value);
     }
 
     @Override
-    public void setChar(F field, char value) {
+    public void setChar(String field, char value) {
         set(field, value);
     }
 
     @Override
-    public void setShort(F field, short value) {
+    public void setShort(String field, short value) {
         set(field, value);
     }
 
     @Override
-    public void setInt(F field, int value) {
+    public void setInt(String field, int value) {
         set(field, value);
     }
 
     @Override
-    public void setLong(F field, long value) {
+    public void setLong(String field, long value) {
         set(field, value);
     }
 
     @Override
-    public void setFloat(F field, float value) {
+    public void setFloat(String field, float value) {
         set(field, value);
     }
 
     @Override
-    public void setDouble(F field, double value) {
+    public void setDouble(String field, double value) {
         set(field, value);
     }
 
     @Override
-    public void setString(F field, String value) {
+    public void setString(String field, String value) {
         set(field, value);
-    }
-
-    @Override
-    public String toString() {
-        return GenericData.toString(this);
     }
 
 }

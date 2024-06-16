@@ -456,7 +456,7 @@ public class GenericConcatenator<F> {
         }
 
         int getIndex(F field) {
-            return originalSchema.getIndex(field) + offset;
+            return originalSchema.getIndexOf(field) + offset;
         }
     }
 

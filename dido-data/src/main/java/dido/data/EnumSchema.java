@@ -38,8 +38,8 @@ public interface EnumSchema<E extends Enum<E>> extends GenericDataSchema<E> {
             }
 
             @Override
-            public E getField(String fieldName) {
-                return delegate.getField(fieldName);
+            public E getFieldNamed(String fieldName) {
+                return delegate.getFieldNamed(fieldName);
             }
 
             @Override
@@ -73,8 +73,8 @@ public interface EnumSchema<E extends Enum<E>> extends GenericDataSchema<E> {
             }
 
             @Override
-            public int getIndex(E field) {
-                return delegate.getIndex(field);
+            public int getIndexOf(E field) {
+                return delegate.getIndexOf(field);
             }
 
             @Override
@@ -118,13 +118,13 @@ public interface EnumSchema<E extends Enum<E>> extends GenericDataSchema<E> {
             }
 
             @Override
-            public GenericSchemaField<E> getSchemaField(E field) {
-                return delegate.getSchemaField(field);
+            public GenericSchemaField<E> getSchemaFieldOf(E field) {
+                return delegate.getSchemaFieldOf(field);
             }
 
             @Override
-            public String getFieldName(E field) {
-                return delegate.getFieldName(field);
+            public String getFieldNameOf(E field) {
+                return delegate.getFieldNameOf(field);
             }
 
             @Override
@@ -133,8 +133,8 @@ public interface EnumSchema<E extends Enum<E>> extends GenericDataSchema<E> {
             }
 
             @Override
-            public DataSchema getSchema(E field) {
-                return delegate.getSchema(field);
+            public DataSchema getSchemaOf(E field) {
+                return delegate.getSchemaOf(field);
             }
 
             @Override

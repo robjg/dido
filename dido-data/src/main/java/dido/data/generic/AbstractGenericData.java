@@ -12,7 +12,7 @@ import dido.data.AbstractData;
 abstract public class AbstractGenericData<F> extends AbstractData implements GenericData<F> {
 
     public Object getOf(F field) {
-        int index = getSchema().getIndex(field);
+        int index = getSchema().getIndexOf(field);
         if (index > 0) {
             return getAt(index);
         }

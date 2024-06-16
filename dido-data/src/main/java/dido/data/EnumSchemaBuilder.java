@@ -110,7 +110,7 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         }
 
         @Override
-        public E getField(String fieldName) {
+        public E getFieldNamed(String fieldName) {
             return null;
         }
 
@@ -120,7 +120,7 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         }
 
         @Override
-        public int getIndex(E field) {
+        public int getIndexOf(E field) {
             return field.ordinal() + 1;
         }
 

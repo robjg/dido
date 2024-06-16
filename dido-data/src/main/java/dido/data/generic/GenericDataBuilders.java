@@ -141,7 +141,7 @@ abstract public class GenericDataBuilders<F, B extends GenericDataBuilders<F, B>
 
             GenericDataSchema<F> schema = from.getSchema();
             for (F field : schema.getFields()) {
-                set(field, from.getAt(schema.getIndex(field)));
+                set(field, from.getAt(schema.getIndexOf(field)));
             }
             return self();
         }

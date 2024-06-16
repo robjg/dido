@@ -87,7 +87,7 @@ public class GenericSubData<F> extends AbstractGenericData<F> implements Generic
                 GenericSchemaBuilder<F> schemaBuilder = GenericSchemaBuilder.impliedType();
                 for (int i = 0; i < indices.length; ++i) {
                     F field = fields[i];
-                    int index = lastSchema.getIndex(field);
+                    int index = lastSchema.getIndexOf(field);
                     indices[i] = index;
                     if (withFields) {
                         schemaBuilder.addField(field, lastSchema.getTypeOf(field));

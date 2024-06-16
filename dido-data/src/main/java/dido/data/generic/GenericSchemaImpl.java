@@ -122,7 +122,7 @@ public class GenericSchemaImpl<F> extends AbstractGenericDataSchema<F> {
     }
 
     @Override
-    public GenericSchemaField<F> getSchemaField(F field) {
+    public GenericSchemaField<F> getSchemaFieldOf(F field) {
         return fieldToSchemaField.get(field);
     }
 
@@ -132,7 +132,7 @@ public class GenericSchemaImpl<F> extends AbstractGenericDataSchema<F> {
     }
 
     @Override
-    public F getField(String fieldName) {
+    public F getFieldNamed(String fieldName) {
         GenericSchemaField<F> schemaField = nameToSchemaField.get(fieldName);
         return schemaField == null ? null : schemaField.getField();
     }
