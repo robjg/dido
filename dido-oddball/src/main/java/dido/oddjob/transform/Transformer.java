@@ -1,5 +1,6 @@
 package dido.oddjob.transform;
 
+import dido.data.DataSetter;
 import dido.data.DidoData;
 
 /**

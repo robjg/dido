@@ -1,6 +1,7 @@
 package dido.json;
 
 import dido.data.DataSchema;
+import dido.data.NamedData;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
 
@@ -72,7 +73,7 @@ public class JsonDido {
         }
     }
 
-    public DataInHow<InputStream> toStreamIn() {
+    public DataInHow<InputStream, NamedData> toStreamIn() {
 
         Format format = Objects.requireNonNullElse(this.format, Format.LINES);
         switch (format) {

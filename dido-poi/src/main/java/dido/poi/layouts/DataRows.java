@@ -2,6 +2,7 @@ package dido.poi.layouts;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import dido.how.DataOut;
@@ -28,7 +29,7 @@ import java.util.*;
  *
  * @author rob
  */
-public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutProvider> {
+public class DataRows implements DataInHow<BookInProvider, NamedData>, DataOutHow<BookOutProvider> {
 
     private static final Logger logger = LoggerFactory.getLogger(DataRows.class);
 
@@ -144,7 +145,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
     }
 
 
-    class MainReader implements DataIn {
+    class MainReader implements DataIn<NamedData> {
 
         private final RowsIn rowsIn;
 
@@ -156,7 +157,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
         }
 
         @Override
-        public DidoData get() {
+        public NamedData get() {
 
             RowIn rowIn = rowsIn.nextRow();
             if (rowIn == null) {
@@ -181,7 +182,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
     }
 
     @Override
-    public DataIn inFrom(BookInProvider bookInProvider) throws Exception {
+    public DataIn<NamedData> inFrom(BookInProvider bookInProvider) throws Exception {
 
         BookIn bookIn = bookInProvider.provideBookIn();
 

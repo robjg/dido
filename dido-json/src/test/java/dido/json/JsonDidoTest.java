@@ -1,10 +1,6 @@
 package dido.json;
 
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.MapData;
-import dido.data.SchemaBuilder;
-import dido.how.CloseableSupplier;
+import dido.data.*;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
@@ -37,14 +33,14 @@ class JsonDidoTest {
     void testToJsonAndBackFixedSchema() throws Exception {
 
         DidoData data1 = MapData.newBuilderNoSchema()
-                .setString("type", "apple")
-                .setInt("qty", 2)
-                .setDouble("price", 26.3)
+                .withString("type", "apple")
+                .withInt("qty", 2)
+                .withDouble("price", 26.3)
                 .build();
         DidoData data2 = MapData.newBuilderNoSchema()
-                .setString("type", "orange")
-                .setInt("qty", 3)
-                .setDouble("price", 31.4)
+                .withString("type", "orange")
+                .withInt("qty", 3)
+                .withDouble("price", 31.4)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
@@ -73,7 +69,7 @@ class JsonDidoTest {
 
         List<DidoData> copy = new ArrayList<>();
 
-        try (CloseableSupplier<DidoData> supplier = test.toStreamIn().inFrom(
+        try (DataIn<NamedData> supplier = test.toStreamIn().inFrom(
                 new ByteArrayInputStream(results.toByteArray()))) {
 
             while (true) {
@@ -92,14 +88,14 @@ class JsonDidoTest {
     void testToJsonOverrideSchema() throws Exception {
 
         DidoData data1 = MapData.newBuilderNoSchema()
-                .setString("type", "apple")
-                .setInt("qty", 2)
-                .setDouble("price", 26.3)
+                .withString("type", "apple")
+                .withInt("qty", 2)
+                .withDouble("price", 26.3)
                 .build();
         DidoData data2 = MapData.newBuilderNoSchema()
-                .setString("type", "orange")
-                .setInt("qty", 3)
-                .setDouble("price", 31.4)
+                .withString("type", "orange")
+                .withInt("qty", 3)
+                .withDouble("price", 31.4)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
@@ -118,13 +114,13 @@ class JsonDidoTest {
             consumer.accept(data2);
         }
 
-        List<DidoData> copy = new ArrayList<>();
+        List<NamedData> copy = new ArrayList<>();
 
-        try (DataIn supplier = test.toStreamIn().inFrom(
+        try (DataIn<NamedData> supplier = test.toStreamIn().inFrom(
                 new ByteArrayInputStream(results.toByteArray()))) {
 
             while (true) {
-                DidoData data = supplier.get();
+                NamedData data = supplier.get();
                 if (data == null) {
                     break;
                 }
@@ -134,8 +130,8 @@ class JsonDidoTest {
 
         assertThat(copy.size(), is(2));
 
-        DidoData copy1 = copy.get(0);
-        DidoData copy2 = copy.get(1);
+        NamedData copy1 = copy.get(0);
+        NamedData copy2 = copy.get(1);
 
         assertThat(copy1.getString("type"), is("apple"));
         assertThat(copy1.getInt("qty"), is(2));

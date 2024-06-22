@@ -14,29 +14,29 @@ public interface GenericData<F> extends DidoData {
     GenericDataSchema<F> getSchema();
 
 
-    Object getOf(F field);
+    Object get(F field);
 
-    <T> T getOfAs(F field, Class<T> type);
+    <T> T getAs(F field, Class<T> type);
 
-    boolean hasFieldOf(F field);
+    boolean has(F field);
 
-    boolean getBooleanOf(F field);
+    boolean getBoolean(F field);
 
-    byte getByteOf(F field);
+    byte getByte(F field);
 
-    char getCharOf(F field);
+    char getChar(F field);
 
-    short getShortOf(F field);
+    short getShort(F field);
 
-    int getIntOf(F field);
+    int getInt(F field);
 
-    long getLongOf(F field);
+    long getLong(F field);
 
-    float getFloatOf(F field);
+    float getFloat(F field);
 
-    double getDoubleOf(F field);
+    double getDouble(F field);
 
-    String getStringOf(F field);
+    String getString(F field);
 
     static <F> String toStringFieldsOnly(GenericData<F> data) {
         StringBuilder sb = new StringBuilder();
@@ -50,7 +50,7 @@ public interface GenericData<F> extends DidoData {
             sb.append('[');
             sb.append(field);
             sb.append("]=");
-            sb.append(data.getOf(field));
+            sb.append(data.get(field));
             if (it.hasNext()) {
                 sb.append(", ");
             }

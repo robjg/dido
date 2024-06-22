@@ -3,6 +3,7 @@ package dido.oddjob.transform;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.MapData;
+import dido.data.NamedData;
 import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.standard.StandardArooaSession;
@@ -29,7 +30,7 @@ class TransformTest {
 
         Function<DidoData, DidoData> func = transform.toValue();
 
-        DidoData data = MapData.of("fruit", "apple", "quantity", 12);
+        NamedData data = MapData.of("fruit", "apple", "quantity", 12);
 
         DidoData result = func.apply(data);
 
@@ -40,9 +41,9 @@ class TransformTest {
         assertThat(schema.getFieldNameAt(2), is("quantity"));
         assertThat(schema.getTypeNamed("quantity"), is(Integer.class));
 
-        assertThat(result.get("food"), is("apple"));
+        assertThat(result.getNamed("food"), is("apple"));
         assertThat(result.getAt(1), is("apple"));
-        assertThat(result.getInt("quantity"), is(12));
+        assertThat(result.getIntNamed("quantity"), is(12));
         assertThat(result.getAt(2), is(12));
     }
 
@@ -72,7 +73,7 @@ class TransformTest {
         assertThat(schema.getTypeNamed("food"), is(String.class));
         assertThat(schema.lastIndex(), is(1));
 
-        assertThat(result.get("food"), is("apple"));
+        assertThat(result.getNamed("food"), is("apple"));
         assertThat(result.getAt(1), is("apple"));
     }
 
@@ -94,9 +95,9 @@ class TransformTest {
         assertThat(schema.getFieldNameAt(2), is("quantity"));
         assertThat(schema.getTypeNamed("quantity"), is(Integer.class));
 
-        assertThat(result.get("fruit"), is("apple"));
+        assertThat(result.getNamed("fruit"), is("apple"));
         assertThat(result.getAt(1), is("apple"));
-        assertThat(result.getInt("quantity"), is(12));
+        assertThat(result.getIntNamed("quantity"), is(12));
         assertThat(result.getAt(2), is(12));
     }
 }

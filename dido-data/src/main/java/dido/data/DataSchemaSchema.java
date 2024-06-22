@@ -62,7 +62,7 @@ public class DataSchemaSchema {
 
     public static DidoData schemaToData(DataSchema schema) {
 
-        DataBuilder builder = MapData.newBuilder(DATA_SCHEMA_SCHEMA);
+        NamedDataBuilder builder = MapData.newBuilder(DATA_SCHEMA_SCHEMA);
 
         DataSchema fieldSchema = DATA_SCHEMA_SCHEMA.getSchemaNamed(FIELDS_FIELD);
 
@@ -73,26 +73,26 @@ public class DataSchemaSchema {
 
             SchemaField schemaField = schema.getSchemaFieldAt(index);
 
-            DataBuilder fieldBuilder = MapData.newBuilder(fieldSchema);
+            NamedDataBuilder fieldBuilder = MapData.newBuilder(fieldSchema);
 
-            fieldBuilder.setInt(INDEX_FIELD, index);
+            fieldBuilder.withInt(INDEX_FIELD, index);
             if (schemaField.getName() != null) {
-                fieldBuilder.setString(FIELD_FIELD, schemaField.getName());
+                fieldBuilder.withString(FIELD_FIELD, schemaField.getName());
             }
             if (schemaField.isNested()) {
-                fieldBuilder.set(NESTED_FIELD, schemaToData(schemaField.getNestedSchema()));
+                fieldBuilder.with(NESTED_FIELD, schemaToData(schemaField.getNestedSchema()));
             } else {
-                fieldBuilder.set(TYPE_FIELD, schemaField.getType().getName());
+                fieldBuilder.with(TYPE_FIELD, schemaField.getType().getName());
             }
 
             if (schemaField.isRepeating()) {
-                fieldBuilder.setBoolean(REPEATING_FIELD, true);
+                fieldBuilder.withBoolean(REPEATING_FIELD, true);
             }
 
             fields.add(fieldBuilder.build());
         }
 
-        builder.set(FIELDS_FIELD, RepeatingData.of(fields));
+        builder.with(FIELDS_FIELD, RepeatingData.of(fields));
 
         return builder.build();
     }
@@ -100,27 +100,27 @@ public class DataSchemaSchema {
     public static DataSchema schemaFromData(DidoData data,
                                             Function<? super String, ? extends Class<?>> classLoader) {
 
-        RepeatingData fields = data.getAs(FIELDS_FIELD, RepeatingData.class);
+        RepeatingData fields = data.getNamedAs(FIELDS_FIELD, RepeatingData.class);
 
         SchemaBuilder builder = SchemaBuilder.newInstance();
 
         for (DidoData fieldData : fields) {
 
-            int index = fieldData.getInt(INDEX_FIELD);
-            String field = fieldData.getString(FIELD_FIELD);
+            int index = fieldData.getIntNamed(INDEX_FIELD);
+            String field = fieldData.getStringNamed(FIELD_FIELD);
 
-            if (fieldData.hasField(NESTED_FIELD)) {
+            if (fieldData.hasNamed(NESTED_FIELD)) {
 
-                DidoData nestedData = fieldData.getAs(NESTED_FIELD, DidoData.class);
+                DidoData nestedData = fieldData.getNamedAs(NESTED_FIELD, DidoData.class);
                 DataSchema nestedSchema = schemaFromData(nestedData, classLoader);
 
-                if (fieldData.hasField(REPEATING_FIELD) && fieldData.getBoolean(REPEATING_FIELD)) {
+                if (fieldData.hasNamed(REPEATING_FIELD) && fieldData.getBooleanNamed(REPEATING_FIELD)) {
                     builder.addRepeatingFieldAt(index, field, nestedSchema);
                 } else {
                     builder.addNestedFieldAt(index, field, nestedSchema);
                 }
             } else {
-                Class<?> type = classLoader.apply(fieldData.getString(TYPE_FIELD));
+                Class<?> type = classLoader.apply(fieldData.getStringNamed(TYPE_FIELD));
 
                 builder.addFieldAt(index, field, type);
             }

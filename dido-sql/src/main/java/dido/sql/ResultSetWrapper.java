@@ -1,14 +1,14 @@
 package dido.sql;
 
+import dido.data.AbstractData;
 import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.IndexedData;
+import dido.data.NamedData;
 import dido.how.DataException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ResultSetWrapper implements DidoData {
+public class ResultSetWrapper extends AbstractData implements NamedData {
 
     private final ResultSet resultSet;
 
@@ -19,7 +19,7 @@ public class ResultSetWrapper implements DidoData {
         this.schema = schema;
     }
 
-    public static DidoData from(ResultSet resultSet, DataSchema schema) {
+    public static NamedData from(ResultSet resultSet, DataSchema schema) {
         return new ResultSetWrapper(resultSet, schema);
     }
 
@@ -42,7 +42,7 @@ public class ResultSetWrapper implements DidoData {
     }
 
     @Override
-    public boolean hasField(String field) {
+    public boolean has(String field) {
         try {
             resultSet.getObject(field);
             return !resultSet.wasNull();
@@ -246,23 +246,4 @@ public class ResultSetWrapper implements DidoData {
         }
     }
 
-    @Override
-    public int hashCode() {
-        return IndexedData.hashCode(this);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof IndexedData) {
-            return IndexedData.equals(this, (IndexedData) obj);
-        }
-        else {
-            return false;
-        }
-    }
-
-    @Override
-    public String toString() {
-        return DidoData.toStringFieldsOnly(this);
-    }
 }

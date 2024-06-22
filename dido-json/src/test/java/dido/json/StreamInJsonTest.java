@@ -32,11 +32,11 @@ class StreamInJsonTest {
 
         ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(expectedSchema);
 
-        DataInHow<InputStream> test = StreamInJson.settings()
+        DataInHow<InputStream, NamedData> test = StreamInJson.settings()
                 .setIsArray(true)
                 .make();
 
-        try (DataIn in = test.inFrom(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
+        try (DataIn<NamedData> in = test.inFrom(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
 
             DidoData data1 = in.get();
 
@@ -72,7 +72,7 @@ class StreamInJsonTest {
                 .addRepeatingField("OrderLines", DataSchema.emptySchema())
                 .build();
 
-        DataInHow<InputStream> test = StreamInJson.settings()
+        DataInHow<InputStream, NamedData> test = StreamInJson.settings()
                 .setIsArray(true)
                 .setSchema(schema)
                 .setPartial(true)
@@ -88,10 +88,10 @@ class StreamInJsonTest {
                 .addRepeatingField("OrderLines", expectedNestedSchema)
                 .build();
 
-        try (DataIn in = test.inFrom(
+        try (DataIn<NamedData> in = test.inFrom(
                 new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
 
-            DidoData data1 = in.get();
+            NamedData data1 = in.get();
 
             assertThat(data1.getSchema(), is(expectedSchema));
 

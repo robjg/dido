@@ -136,7 +136,7 @@ public class ToBeanArooa {
                             componentType = type.getComponentType();
                             Function<DidoData, ?> func = ofClass(componentType);
 
-                            value = Arrays.stream((DidoData[]) data.get(propertyName))
+                            value = Arrays.stream((DidoData[]) data.getNamed(propertyName))
                                     .map(func)
                                     .toArray();
                         } else if (Iterable.class.isAssignableFrom(type)) {
@@ -153,7 +153,7 @@ public class ToBeanArooa {
                             Function<DidoData, ?> func = ofClass(componentType);
 
                             value = StreamSupport.stream(
-                                            ((Iterable<DidoData>) data.get(propertyName)).spliterator(), false)
+                                            ((Iterable<DidoData>) data.getNamed(propertyName)).spliterator(), false)
                                     .map(func)
                                     .collect(Collectors.toList());
                         } else {
@@ -165,10 +165,10 @@ public class ToBeanArooa {
                             throw new IllegalArgumentException("Unable to work out component type for " + propertyName);
                         }
                     } else {
-                        value = ofClass(type).apply((DidoData) data.get(propertyName));
+                        value = ofClass(type).apply((DidoData) data.getNamed(propertyName));
                     }
                 } else {
-                    value = data.getAs(propertyName, type);
+                    value = data.getNamedAs(propertyName, type);
                 }
 
                 accessor.setSimpleProperty(t, propertyName, value);

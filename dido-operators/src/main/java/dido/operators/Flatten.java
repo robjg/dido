@@ -207,10 +207,10 @@ public class Flatten {
 
                     List<Object> list = lists.get(i);
                     if (list == null) {
-                        arrayData.setAt(i, data.getAt(i));
+                        arrayData.withAt(i, data.getAt(i));
                     } else {
                         if (l < list.size()) {
-                            arrayData.setAt(i, list.get(l));
+                            arrayData.withAt(i, list.get(l));
                         }
                     }
                 }
@@ -313,7 +313,7 @@ public class Flatten {
 
         @Override
         public Object extract(DidoData data) {
-            return data.get(field);
+            return data.getNamed(field);
         }
 
         @Override

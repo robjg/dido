@@ -1,7 +1,6 @@
 package dido.data;
 
 import dido.data.generic.GenericData;
-import dido.data.generic.GenericDataBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -64,12 +63,12 @@ class EnumMapDataTest {
     @Test
     void builderWithNoSchema() {
 
-        GenericDataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
+        EnumData.Builder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
 
         GenericData<Fields> data3 = builderNoSchema
-                .setString(Fields.Fruit, "Apple")
-                .setInt(Fields.Qty, 2)
-                .setDouble(Fields.Price, 75.3)
+                .withString(Fields.Fruit, "Apple")
+                .withInt(Fields.Qty, 2)
+                .withDouble(Fields.Price, 75.3)
                 .build();
 
         assertThat(data3.getSchema().getTypeOf(Fields.Qty), is(int.class));
@@ -84,39 +83,39 @@ class EnumMapDataTest {
 
         EnumSchema<Fields> schema = EnumSchema.schemaFor(Fields.class, Fields::getType);
 
-        GenericDataBuilder<Fields> builder = EnumMapData.newBuilder(schema);
+        EnumData.Builder<Fields> builder = EnumMapData.newBuilder(schema);
 
         GenericData<Fields> data1 = builder
-                .set(Fields.Fruit, "Apple")
-                .set(Fields.Qty, 2)
-                .set(Fields.Price, 75.3)
+                .with(Fields.Fruit, "Apple")
+                .with(Fields.Qty, 2)
+                .with(Fields.Price, 75.3)
                 .build();
 
         GenericData<Fields> data2 = builder
-                .set(Fields.Fruit, "Orange")
-                .set(Fields.Qty, 3)
-                .set(Fields.Price, 47.3)
+                .with(Fields.Fruit, "Orange")
+                .with(Fields.Qty, 3)
+                .with(Fields.Price, 47.3)
                 .build();
 
         assertThat(data1.hasIndex(1), is(true));
-        assertThat(data1.hasFieldOf(Fields.Fruit), is(true));
+        assertThat(data1.has(Fields.Fruit), is(true));
 
-        assertThat(data1.getStringOf(Fields.Fruit), is("Apple"));
+        assertThat(data1.getString(Fields.Fruit), is("Apple"));
         assertThat(data1.getStringAt(1), is("Apple"));
-        assertThat(data1.getIntOf(Fields.Qty), is(2));
+        assertThat(data1.getInt(Fields.Qty), is(2));
         assertThat(data1.getIntAt(2), is(2));
-        assertThat(data1.getDoubleOf(Fields.Price), is(75.3));
+        assertThat(data1.getDouble(Fields.Price), is(75.3));
         assertThat(data1.getDoubleAt(3), is(75.3));
 
-        assertThat(data2.getStringOf(Fields.Fruit), is("Orange"));
+        assertThat(data2.getString(Fields.Fruit), is("Orange"));
         assertThat(data2.getStringAt(1), is("Orange"));
 
-        GenericDataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
+        EnumData.Builder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
 
         GenericData<Fields> data3 = builderNoSchema
-                .setString(Fields.Fruit, "Apple")
-                .setInt(Fields.Qty, 2)
-                .setDouble(Fields.Price, 75.3)
+                .withString(Fields.Fruit, "Apple")
+                .withInt(Fields.Qty, 2)
+                .withDouble(Fields.Price, 75.3)
                 .build();
 
         assertThat(data3.getSchema(), is(data1.getSchema()));
@@ -161,31 +160,31 @@ class EnumMapDataTest {
                 .build();
 
         EnumData<Family> family = EnumMapData.newBuilder(familySchema)
-                .set(Family.MUM, EnumMapData.newBuilder(personSchema)
-                        .set(Person.NAME, "Kate")
-                        .set(Person.SEX, Sex.FEMALE)
-                        .setInt(Person.AGE, 40)
+                .with(Family.MUM, EnumMapData.newBuilder(personSchema)
+                        .with(Person.NAME, "Kate")
+                        .with(Person.SEX, Sex.FEMALE)
+                        .withInt(Person.AGE, 40)
                         .build())
-                .set(Family.DAD, EnumMapData.newBuilder(personSchema)
-                        .set(Person.NAME, "William")
-                        .set(Person.SEX, Sex.MALE)
-                        .setInt(Person.AGE, 39)
+                .with(Family.DAD, EnumMapData.newBuilder(personSchema)
+                        .with(Person.NAME, "William")
+                        .with(Person.SEX, Sex.MALE)
+                        .withInt(Person.AGE, 39)
                         .build())
-                .set(Family.CHILDREN, Arrays.asList(
+                .with(Family.CHILDREN, Arrays.asList(
                         EnumMapData.newBuilder(personSchema)
-                                .set(Person.NAME, "George")
-                                .set(Person.SEX, Sex.MALE)
-                                .setInt(Person.AGE, 8)
+                                .with(Person.NAME, "George")
+                                .with(Person.SEX, Sex.MALE)
+                                .withInt(Person.AGE, 8)
                                 .build(),
                         EnumMapData.newBuilder(personSchema)
-                                .set(Person.NAME, "Charlotte")
-                                .set(Person.SEX, Sex.FEMALE)
-                                .setInt(Person.AGE, 7)
+                                .with(Person.NAME, "Charlotte")
+                                .with(Person.SEX, Sex.FEMALE)
+                                .withInt(Person.AGE, 7)
                                 .build(),
                         EnumMapData.newBuilder(personSchema)
-                                .set(Person.NAME, "Louis")
-                                .set(Person.SEX, Sex.MALE)
-                                .setInt(Person.AGE, 4)
+                                .with(Person.NAME, "Louis")
+                                .with(Person.SEX, Sex.MALE)
+                                .withInt(Person.AGE, 4)
                                 .build()))
                 .build();
 
@@ -218,18 +217,18 @@ class EnumMapDataTest {
         assertThat(nodeSchema.toString(), is("{[1:NAME]=java.lang.String, [2:CHILDREN]=[SchemaReference]}"));
 
         EnumData<Node> george = EnumMapData.newBuilder(nodeSchema)
-                .set(Node.NAME, "George")
+                .with(Node.NAME, "George")
                 .build();
         EnumData<Node> charlotte = EnumMapData.newBuilder(nodeSchema)
-                .set(Node.NAME, "Charlot")
+                .with(Node.NAME, "Charlot")
                 .build();
         EnumData<Node> louis = EnumMapData.newBuilder(nodeSchema)
-                .set(Node.NAME, "Louis")
+                .with(Node.NAME, "Louis")
                 .build();
 
         EnumData<Node> william = EnumMapData.newBuilder(nodeSchema)
-                .set(Node.NAME, "William")
-                .set(Node.CHILDREN, Arrays.asList(george, charlotte, louis))
+                .with(Node.NAME, "William")
+                .with(Node.CHILDREN, Arrays.asList(george, charlotte, louis))
                 .build();
 
         assertThat(william.toString(), is("{[NAME]=William, [CHILDREN]=[" +

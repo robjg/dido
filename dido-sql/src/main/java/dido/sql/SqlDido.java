@@ -1,5 +1,6 @@
 package dido.sql;
 
+import dido.data.NamedData;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
 
@@ -38,7 +39,7 @@ public class SqlDido {
     private int batchSize;
 
 
-    public DataInHow<Connection> toIn()  {
+    public DataInHow<Connection, NamedData> toIn()  {
         return SqlDataInHow.fromSql(sql)
                 .classLoader(classLoader)
                 .batchSize(batchSize)

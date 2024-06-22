@@ -15,13 +15,13 @@ class MapDataTest {
     @Test
     void testBuilderNoSchema() throws ParseException {
 
-        DataBuilder builder = MapData.newBuilderNoSchema();
+        NamedDataBuilder builder = MapData.newBuilderNoSchema();
 
-        DidoData data1 = builder
-                .setString("type", "apple")
-                .setInt("qty", 2)
-                .setDouble("price", 26.3)
-                .set("date", new SimpleDateFormat("yyyy-MM-dd").parse("2021-09-22"))
+        NamedData data1 = builder
+                .withString("type", "apple")
+                .withInt("qty", 2)
+                .withDouble("price", 26.3)
+                .with("date", new SimpleDateFormat("yyyy-MM-dd").parse("2021-09-22"))
                 .build();
 
         assertThat(data1.getString("type"), is("apple"));
@@ -35,11 +35,11 @@ class MapDataTest {
         assertThat(schema1.getTypeNamed("price"), is(double.class));
         assertThat(schema1.getTypeNamed("date"), is(Date.class));
 
-        DidoData data2 = builder
-                .setString("type", "apple")
-                .setLong("qty", 2)
-                .setFloat("price", 26.3F)
-                .setBoolean("offer", true)
+        NamedData data2 = builder
+                .withString("type", "apple")
+                .withLong("qty", 2)
+                .withFloat("price", 26.3F)
+                .withBoolean("offer", true)
                 .build();
 
         assertThat(data2.getString("type"), is("apple"));
@@ -58,7 +58,7 @@ class MapDataTest {
     @Test
     void testCreateWithOf() {
 
-        DidoData data = MapData.of(
+        NamedData data = MapData.of(
                 "type", "apple",
                 "qty", 2,
                 "price", 26.3F,
@@ -87,9 +87,9 @@ class MapDataTest {
                 .build();
 
         DidoData data1 = MapData.newBuilder(schema)
-                .setString("type", "apple")
-                .setInt("qty", 2)
-                .setDouble("price", 26.3)
+                .withString("type", "apple")
+                .withInt("qty", 2)
+                .withDouble("price", 26.3)
                 .build();
 
         assertThat(data1.toString(), is("{[type]=apple, [qty]=2, [price]=26.3}"));
@@ -99,15 +99,15 @@ class MapDataTest {
     void testEqualsAndHashCode() {
 
         DidoData data1 = MapData.newBuilderNoSchema()
-                .setString("type", "apple")
-                .setInt("qty", 2)
-                .setDouble("price", 26.3)
+                .withString("type", "apple")
+                .withInt("qty", 2)
+                .withDouble("price", 26.3)
                 .build();
 
         DidoData data2 = MapData.newBuilderNoSchema()
-                .setString("type", "apple")
-                .setInt("qty", 2)
-                .setDouble("price", 26.3)
+                .withString("type", "apple")
+                .withInt("qty", 2)
+                .withDouble("price", 26.3)
                 .build();
 
         assertThat(data1, is(data2));

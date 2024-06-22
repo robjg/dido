@@ -2,7 +2,7 @@ package dido.examples;
 
 import dido.csv.CsvDataInHow;
 import dido.csv.CsvDataOutHow;
-import dido.data.DidoData;
+import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.sql.SqlDataInHow;
@@ -41,7 +41,7 @@ class CsvToSqlExampleTest {
         connection.createStatement().execute(create);
 
         // #snippet1{
-        try (DataIn in = CsvDataInHow.withOptions()
+        try (DataIn<NamedData> in = CsvDataInHow.withOptions()
                 .withHeader(true)
                 .make()
                 .inFrom(getClass().getResourceAsStream("/examples/people-100.csv"));
@@ -53,7 +53,7 @@ class CsvToSqlExampleTest {
                      .make()
                      .outTo(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""))) {
 
-            for (DidoData data : in) {
+            for (NamedData data : in) {
                 out.accept(data);
             }
         }
@@ -62,7 +62,7 @@ class CsvToSqlExampleTest {
         BufferType bufferType = new BufferType();
         bufferType.configured();
 
-        try (DataIn in = SqlDataInHow.fromSql("select * from people")
+        try (DataIn<NamedData> in = SqlDataInHow.fromSql("select * from people")
                 .make()
                 .inFrom(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""));
              DataOut out = CsvDataOutHow.withOptions()
@@ -70,7 +70,7 @@ class CsvToSqlExampleTest {
                      .make()
                      .outTo(bufferType.toOutputStream())) {
 
-            for (DidoData data : in) {
+            for (NamedData data : in) {
                 out.accept(data);
             }
         }

@@ -2,6 +2,7 @@ package dido.poi.data;
 
 import dido.data.DidoData;
 import dido.data.MapData;
+import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.layouts.DataRows;
@@ -30,7 +31,7 @@ public class PoiSheetsTest  {
 		DataOut writer = rows.outTo(workbook);
 
 		DidoData data = MapData.newBuilderNoSchema()
-				.setString("Fruit", "Apples")
+				.withString("Fruit", "Apples")
 				.build();
 
 		writer.accept(data);
@@ -40,7 +41,7 @@ public class PoiSheetsTest  {
 		////////////
 		// Read Part
 
-		DataIn reader = rows.inFrom(workbook);
+		DataIn<NamedData> reader = rows.inFrom(workbook);
 		
 		DidoData result = reader.get();
 		
@@ -65,7 +66,7 @@ public class PoiSheetsTest  {
 		DataOut writer = rows.outTo(workbook);
 
 		DidoData data = MapData.newBuilderNoSchema()
-				.setString("Fruit", "Apples")
+				.withString("Fruit", "Apples")
 				.build();
 
 		writer.accept(data);
@@ -75,7 +76,7 @@ public class PoiSheetsTest  {
 		////////////
 		// Read Part
 
-		DataIn reader = rows.inFrom(workbook);
+		DataIn<NamedData> reader = rows.inFrom(workbook);
 
 		DidoData result = reader.get();
 

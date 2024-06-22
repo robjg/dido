@@ -2,6 +2,7 @@ package dido.csv;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.NamedData;
 import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -23,13 +24,13 @@ class CsvDataInHowTest {
     @Test
     void testWithDefaults() throws Exception {
 
-        DataInHow<InputStream> test = CsvDataInHow.withDefaultOptions();
+        DataInHow<InputStream, NamedData> test = CsvDataInHow.withDefaultOptions();
 
         String records =
                 "Apple,5,19.50" + System.lineSeparator() +
                 "Orange,2,35.24" + System.lineSeparator();
 
-        DataIn supplier = test.inFrom(
+        DataIn<NamedData> supplier = test.inFrom(
                 new ByteArrayInputStream(records.getBytes()));
 
         {
@@ -67,15 +68,15 @@ class CsvDataInHowTest {
                 .addField("Price", double.class)
                 .build();
 
-        DataInHow<InputStream> test = CsvDataInHow.withOptions()
+        DataInHow<InputStream, NamedData> test = CsvDataInHow.withOptions()
                 .schema(schema)
                 .make();
 
-        DataIn supplier = test.inFrom(
+        DataIn<NamedData> supplier = test.inFrom(
                 new ByteArrayInputStream("Apple,5,27.2".getBytes()));
 
         {
-            DidoData data = supplier.get();
+            NamedData data = supplier.get();
 
             assertThat(data.getString("Type"), is("Apple"));
             assertThat(data.getInt("Quantity"), is(5));
@@ -100,16 +101,16 @@ class CsvDataInHowTest {
                 .addField("Price", double.class)
                 .build();
 
-        DataInHow<InputStream> test = CsvDataInHow.withOptions()
+        DataInHow<InputStream, NamedData> test = CsvDataInHow.withOptions()
                 .schema(someSchema)
                 .partialSchema(true)
                 .make();
 
-        DataIn supplier = test.inFrom(
+        DataIn<NamedData> supplier = test.inFrom(
                 new ByteArrayInputStream(records.getBytes()));
 
         {
-            DidoData data = supplier.get();
+            NamedData data = supplier.get();
 
             DataSchema schema = data.getSchema();
 
@@ -138,7 +139,7 @@ class CsvDataInHowTest {
     @Test
     void testEmptyValues() throws Exception {
 
-        DataIn dataIn = CsvDataInHow.withDefaultOptions()
+        DataIn<NamedData> dataIn = CsvDataInHow.withDefaultOptions()
                 .inFrom(new ByteArrayInputStream(",,".getBytes(StandardCharsets.UTF_8)));
 
         DidoData data = dataIn.get();

@@ -270,145 +270,73 @@ public class GenericConcatenator<F> {
         }
 
         @Override
-        public Object get(String field) {
+        public Object get(F field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getAt(loc.index);
         }
 
         @Override
-        public <T> T getAs(String field, Class<T> type) {
+        public <T> T getAs(F field, Class<T> type) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getAtAs(loc.index, type);
         }
 
         @Override
-        public boolean hasField(String field) {
+        public boolean has(F field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].hasIndex(loc.index);
         }
 
         @Override
-        public boolean getBoolean(String field) {
+        public boolean getBoolean(F field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getBooleanAt(loc.index);
         }
 
         @Override
-        public byte getByte(String field) {
+        public byte getByte(F field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getByteAt(loc.index);
         }
 
         @Override
-        public char getChar(String field) {
+        public char getChar(F field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getCharAt(loc.index);
         }
 
         @Override
-        public short getShort(String field) {
+        public short getShort(F field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getShortAt(loc.index);
         }
 
         @Override
-        public int getInt(String field) {
+        public int getInt(F field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getIntAt(loc.index);
         }
 
         @Override
-        public long getLong(String field) {
+        public long getLong(F field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getLongAt(loc.index);
         }
 
         @Override
-        public float getFloat(String field) {
+        public float getFloat(F field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getFloatAt(loc.index);
         }
 
         @Override
-        public double getDouble(String field) {
+        public double getDouble(F field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getDoubleAt(loc.index);
         }
 
         @Override
-        public String getString(String field) {
-            Location loc = fieldLocations.get(field);
-            return data[loc.dataIndex].getStringAt(loc.index);
-        }
-
-        @Override
-        public Object getOf(F field) {
-            Location loc = fieldLocations.get(field);
-            return data[loc.dataIndex].getAt(loc.index);
-        }
-
-        @Override
-        public <T> T getOfAs(F field, Class<T> type) {
-            Location loc = fieldLocations.get(field);
-            return data[loc.dataIndex].getAtAs(loc.index, type);
-        }
-
-        @Override
-        public boolean hasFieldOf(F field) {
-            Location loc = fieldLocations.get(field);
-            return data[loc.dataIndex].hasIndex(loc.index);
-        }
-
-        @Override
-        public boolean getBooleanOf(F field) {
-            Location loc = fieldLocations.get(field);
-            return data[loc.dataIndex].getBooleanAt(loc.index);
-        }
-
-        @Override
-        public byte getByteOf(F field) {
-            Location loc = fieldLocations.get(field);
-            return data[loc.dataIndex].getByteAt(loc.index);
-        }
-
-        @Override
-        public char getCharOf(F field) {
-            Location loc = fieldLocations.get(field);
-            return data[loc.dataIndex].getCharAt(loc.index);
-        }
-
-        @Override
-        public short getShortOf(F field) {
-            Location loc = fieldLocations.get(field);
-            return data[loc.dataIndex].getShortAt(loc.index);
-        }
-
-        @Override
-        public int getIntOf(F field) {
-            Location loc = fieldLocations.get(field);
-            return data[loc.dataIndex].getIntAt(loc.index);
-        }
-
-        @Override
-        public long getLongOf(F field) {
-            Location loc = fieldLocations.get(field);
-            return data[loc.dataIndex].getLongAt(loc.index);
-        }
-
-        @Override
-        public float getFloatOf(F field) {
-            Location loc = fieldLocations.get(field);
-            return data[loc.dataIndex].getFloatAt(loc.index);
-        }
-
-        @Override
-        public double getDoubleOf(F field) {
-            Location loc = fieldLocations.get(field);
-            return data[loc.dataIndex].getDoubleAt(loc.index);
-        }
-
-        @Override
-        public String getStringOf(F field) {
+        public String getString(F field) {
             Location loc = fieldLocations.get(field);
             return data[loc.dataIndex].getStringAt(loc.index);
         }

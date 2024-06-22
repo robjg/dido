@@ -29,9 +29,9 @@ class CsvDataOutHowTest {
     void testDataOut() {
 
         DidoData data = MapData.newBuilderNoSchema()
-                .setString("Fruit", "Apple")
-                .setInt("Qty", 5)
-                .setDouble("Price", 23.5)
+                .withString("Fruit", "Apple")
+                .withInt("Qty", 5)
+                .withDouble("Price", 23.5)
                 .build();
 
         Object[] values = CsvDataOutHow.toValues(data);
@@ -49,7 +49,7 @@ class CsvDataOutHowTest {
                 .addField("Price", double.class)
                 .build();
 
-        DataBuilders.Values values = MapData.valuesFor(schema);
+        DataBuilders.NamedValues values = MapData.valuesFor(schema);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 

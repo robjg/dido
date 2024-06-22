@@ -21,12 +21,14 @@ class JsonDataPartialCopyTest {
                 "\t}\n";
 
         Gson gson = JsonDataPartialCopy.registerPartialSchema(
-                new GsonBuilder(),
-                SchemaBuilder.newInstance().addRepeatingField("OrderLines", DataSchema.emptySchema())
-                        .build())
+                        new GsonBuilder(),
+                        SchemaBuilder.newInstance()
+                                .addRepeatingField("OrderLines", DataSchema.emptySchema())
+                                .build(),
+                        new ArrayDataDataFactoryProvider())
                 .create();
 
-        DidoData result = gson.fromJson(json, DidoData.class);
+        NamedData result = gson.fromJson(json, NamedData.class);
 
         DataSchema nestedSchema = SchemaBuilder.newInstance()
                 .addField("Fruit", String.class)

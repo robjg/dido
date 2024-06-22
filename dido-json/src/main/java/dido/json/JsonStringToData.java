@@ -2,37 +2,40 @@ package dido.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dido.data.ArrayDataDataFactoryProvider;
 import dido.data.DataSchema;
-import dido.data.DidoData;
+import dido.data.NamedData;
 
 import java.util.function.Function;
 
 public class JsonStringToData {
 
-    public static Function<String, DidoData> asWrapperWithSchema(DataSchema schema) {
+    public static Function<String, NamedData> asWrapperWithSchema(DataSchema schema) {
 
         return new Known(JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                 .create(),
                 "ToWrapper, schema=" + schema);
     }
 
-    public static Function<String, DidoData> asWrapperWithPartialSchema(DataSchema partialSchema) {
+    public static Function<String, NamedData> asWrapperWithPartialSchema(DataSchema partialSchema) {
 
         return new UnknownWrapper(partialSchema == null ? DataSchema.emptySchema() : partialSchema);
     }
 
-    public static Function<String, DidoData> asCopyWithSchema(DataSchema schema) {
+    public static Function<String, NamedData> asCopyWithSchema(DataSchema schema) {
 
         return new Known(JsonDataCopy.registerSchema(new GsonBuilder(), schema)
                 .create(),
                 "ToCopy, schema=" + schema);
     }
 
-    public static Function<String, DidoData> asCopyWithPartialSchema(DataSchema partialSchema) {
+    public static Function<String, NamedData> asCopyWithPartialSchema(DataSchema partialSchema) {
 
         partialSchema = partialSchema == null ? DataSchema.emptySchema() : partialSchema;
 
-        return new Known(JsonDataPartialCopy.registerPartialSchema(new GsonBuilder(), partialSchema)
+        return new Known(
+                JsonDataPartialCopy.registerPartialSchema(
+                        new GsonBuilder(), partialSchema, new ArrayDataDataFactoryProvider())
                 .create(),
                 "toCopy, partialSchema=" + partialSchema);
     }
@@ -64,7 +67,7 @@ public class JsonStringToData {
             return this;
         }
 
-        public Function<String, DidoData> make() {
+        public Function<String, NamedData> make() {
 
             if (copy) {
                 if (schema == null || partial) {
@@ -85,7 +88,7 @@ public class JsonStringToData {
         }
     }
 
-    static class UnknownWrapper implements Function<String, DidoData> {
+    static class UnknownWrapper implements Function<String, NamedData> {
 
         private final DataSchema partialSchema;
 
@@ -96,7 +99,7 @@ public class JsonStringToData {
         }
 
         @Override
-        public DidoData apply(String s) {
+        public NamedData apply(String s) {
             if (known == null) {
                 DataSchema schema = JsonSchemaExtractor
                         .registerPartialSchema(new GsonBuilder(), partialSchema)
@@ -114,7 +117,7 @@ public class JsonStringToData {
         }
     }
 
-    static class Known implements Function<String, DidoData> {
+    static class Known implements Function<String, NamedData> {
 
         private final Gson gson;
 
@@ -125,8 +128,8 @@ public class JsonStringToData {
         }
 
         @Override
-        public DidoData apply(String s) {
-            return gson.fromJson(s, DidoData.class);
+        public NamedData apply(String s) {
+            return gson.fromJson(s, NamedData.class);
         }
 
         @Override

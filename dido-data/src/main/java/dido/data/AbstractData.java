@@ -1,16 +1,23 @@
 package dido.data;
 
 /**
- * Base class for {@link DidoData}. Note that this is preferable to the default methods on
- * the interface because reflection won't recognise the getters as properties, and it's not possible to
- * default the Object methods (toString, hashCode and equals)
+ * Base class providing default implementations for {@link DidoData}. Implementations
+ * need only implement {@link IndexedData#getAt(int)} and {@link IndexedData#getSchema()}.
  *
  */
 abstract public class AbstractData extends AbstractIndexedData implements DidoData {
 
+    protected int indexOfFieldNamed(String name) {
+        int index = getSchema().getIndexNamed(name);
+        if (index == 0) {
+            throw new IllegalArgumentException("No field named " + name);
+        }
+        return index;
+    }
+
     @Override
-    public Object get(String field) {
-        int index = getSchema().getIndexNamed(field);
+    public Object getNamed(String name) {
+        int index = getSchema().getIndexNamed(name);
         if (index > 0) {
             return getAt(index);
         }
@@ -20,58 +27,58 @@ abstract public class AbstractData extends AbstractIndexedData implements DidoDa
     }
 
     @Override
-    public <T> T getAs(String field, Class<T> type) {
+    public <T> T getNamedAs(String name, Class<T> type) {
         //noinspection unchecked
-        return (T) get(field);
+        return (T) getNamed(name);
     }
 
     @Override
-    public boolean hasField(String field) {
-        return get(field) != null;
+    public boolean hasNamed(String name) {
+        return getNamed(name) != null;
     }
 
     @Override
-    public boolean getBoolean(String field) {
-        return (boolean) get(field);
+    public boolean getBooleanNamed(String name) {
+        return getBooleanAt(indexOfFieldNamed(name));
     }
 
     @Override
-    public byte getByte(String field) {
-        return (byte) get(field);
+    public byte getByteNamed(String name) {
+        return getByteAt(indexOfFieldNamed(name));
     }
 
     @Override
-    public char getChar(String field) {
-        return (char) get(field);
+    public char getCharNamed(String name) {
+        return getCharAt(indexOfFieldNamed(name));
     }
 
     @Override
-    public short getShort(String field) {
-        return (short) get(field);
+    public short getShortNamed(String name) {
+        return getShortAt(indexOfFieldNamed(name));
     }
 
     @Override
-    public int getInt(String field) {
-        return (int) get(field);
+    public int getIntNamed(String name) {
+        return getIntAt(indexOfFieldNamed(name));
     }
 
     @Override
-    public long getLong(String field) {
-        return (long) get(field);
+    public long getLongNamed(String name) {
+        return getLongAt(indexOfFieldNamed(name));
     }
 
     @Override
-    public float getFloat(String field) {
-        return (float) get(field);
+    public float getFloatNamed(String name) {
+        return getFloatAt(indexOfFieldNamed(name));
     }
 
     @Override
-    public double getDouble(String field) {
-        return (double) get(field);
+    public double getDoubleNamed(String name) {
+        return getDoubleAt(indexOfFieldNamed(name));
     }
 
     @Override
-    public String getString(String field) { return (String) get(field); }
+    public String getStringNamed(String name) { return getStringAt(indexOfFieldNamed(name)); }
 
     @Override
     public String toString() {

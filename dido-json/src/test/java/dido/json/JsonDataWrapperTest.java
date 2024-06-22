@@ -52,7 +52,7 @@ class JsonDataWrapperTest {
 
         String json = gson.toJson(new AllFields());
 
-        IndexedData result = gson.fromJson(json, DidoData.class);
+        IndexedData result = gson.fromJson(json, NamedData.class);
 
         assertThat(result.getStringAt(1), is("Apple"));
         assertThat(result.getBooleanAt(2), is(true));
@@ -89,7 +89,7 @@ class JsonDataWrapperTest {
 
         String json = gson.toJson(new NumberNaNs());
 
-        DidoData result = gson.fromJson(json, DidoData.class);
+        NamedData result = gson.fromJson(json, NamedData.class);
 
         assertThat(result.getStringAt(1), nullValue());
         assertThat(Float.isNaN(result.getFloat("aFloat")), is(true));
@@ -113,7 +113,7 @@ class JsonDataWrapperTest {
 
         String json = gson.toJson(new AllFields());
 
-        IndexedData result = gson.fromJson(json, DidoData.class);
+        IndexedData result = gson.fromJson(json, NamedData.class);
 
         assertThat(result.getByteAt(3), is(Byte.MAX_VALUE));
         assertThat(result.getShortAt(4), is(Short.MAX_VALUE));
@@ -143,7 +143,7 @@ class JsonDataWrapperTest {
 
         String json = gson.toJson(new AllFields());
 
-        IndexedData result = gson.fromJson(json, DidoData.class);
+        IndexedData result = gson.fromJson(json, NamedData.class);
 
         assertThat(result.getAt(1), is("Apple"));
         assertThat(result.getAt(2), is(true));
@@ -176,7 +176,7 @@ class JsonDataWrapperTest {
 
         String json = "{}";
 
-        IndexedData result = gson.fromJson(json, DidoData.class);
+        IndexedData result = gson.fromJson(json, NamedData.class);
 
         assertThat(result.getStringAt(1), nullValue());
         assertThat(result.hasIndex(2), is(false));
@@ -213,9 +213,7 @@ class JsonDataWrapperTest {
         Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                 .create();
 
-        DidoData result = gson.fromJson(json, DidoData.class);
-
-        RepeatingData repeatingData = (RepeatingData) result.getAt(2);
+        NamedData result = gson.fromJson(json, NamedData.class);
 
         IndexedData expectedData = ArrayData.valuesFor(schema)
                 .of("A123",

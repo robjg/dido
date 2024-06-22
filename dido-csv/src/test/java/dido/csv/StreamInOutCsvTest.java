@@ -1,6 +1,6 @@
 package dido.csv;
 
-import dido.data.DidoData;
+import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class StreamInOutCsvTest {
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
-        try (DataIn supplier = CsvDataInHow.withOptions()
+        try (DataIn<NamedData> supplier = CsvDataInHow.withOptions()
                     .withHeader(true)
                     .make()
                     .inFrom(new ByteArrayInputStream(records.getBytes(StandardCharsets.UTF_8)));
@@ -34,7 +34,7 @@ class StreamInOutCsvTest {
                      .outTo(results)) {
 
             while (true) {
-                DidoData data = supplier.get();
+                NamedData data = supplier.get();
                 if (data == null) {
                     break;
                 }

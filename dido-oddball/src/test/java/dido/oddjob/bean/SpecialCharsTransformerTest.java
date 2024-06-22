@@ -1,9 +1,6 @@
 package dido.oddjob.bean;
 
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.MapData;
-import dido.data.SchemaBuilder;
+import dido.data.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;
@@ -24,17 +21,17 @@ class SpecialCharsTransformerTest {
                 .addField("_Qty_", int.class)
                 .build();
 
-        Function<DidoData, DidoData> test = new SpecialCharsTransformer().toValue();
+        Function<DidoData, NamedData> test = new SpecialCharsTransformer().toValue();
 
         DidoData data = MapData.newBuilder(schema)
-                .setString("Fruit", "Apple")
-                .setString("Flavour (taste)", "Yummy")
-                .setDouble("Weight (lbs.)", 22.2)
-                .setInt("[Qty]", 2)
-                .setInt("_Qty_", 3)
+                .withString("Fruit", "Apple")
+                .withString("Flavour (taste)", "Yummy")
+                .withDouble("Weight (lbs.)", 22.2)
+                .withInt("[Qty]", 2)
+                .withInt("_Qty_", 3)
                 .build();
 
-        DidoData bean = test.apply(data);
+        NamedData bean = test.apply(data);
 
         assertThat(bean.getString("Fruit"), is("Apple"));
         assertThat(bean.getString("Flavour _taste_"), is("Yummy"));

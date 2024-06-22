@@ -1,33 +1,32 @@
 package dido.data;
 
-import dido.data.generic.GenericData;
-
 /**
- * Something that is capable of building creating {@link GenericData}. Instances should be reusable,
+ * Something that is capable of building creating {@link DidoData}. Instances should be reusable,
  * once {@code #build()} has been called, any internal state should be reset so that new data can be built.
  *
- * @param <F> The type of the fields.
+ * @param <D> The Type of Data built
+ * @param <B> The builder for fluency.
  */
-public interface IndexedDataBuilder<F> {
+public interface IndexedDataBuilder<D extends DidoData, B extends IndexedDataBuilder<D, B>> {
 
-    IndexedDataBuilder<F> setAt(int index, Object value);
+    B withAt(int index, Object value);
 
-    IndexedDataBuilder<F> setBooleanAt(int index, boolean value);
+    B withBooleanAt(int index, boolean value);
 
-    IndexedDataBuilder<F> setByteAt(int index, byte value);
+    B withByteAt(int index, byte value);
 
-    IndexedDataBuilder<F> setCharAt(int index, char value);
+    B withCharAt(int index, char value);
 
-    IndexedDataBuilder<F> setShortAt(int index, short value);
+    B withShortAt(int index, short value);
 
-    IndexedDataBuilder<F> setIntAt(int index, int value);
+    B withIntAt(int index, int value);
 
-    IndexedDataBuilder<F> setLongAt(int index, long value);
+    B withLongAt(int index, long value);
 
-    IndexedDataBuilder<F> setFloatAt(int index, float value);
+    B withFloatAt(int index, float value);
 
-    IndexedDataBuilder<F> setDoubleAt(int index, double value);
+    B withDoubleAt(int index, double value);
 
-    IndexedDataBuilder<F> setStringAt(int index, String value);
+    B withStringAt(int index, String value);
 
 }

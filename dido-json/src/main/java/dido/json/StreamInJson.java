@@ -3,8 +3,7 @@ package dido.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
-import dido.data.DataSchema;
-import dido.data.DidoData;
+import dido.data.*;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 
@@ -13,7 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-public class StreamInJson implements DataInHow<InputStream> {
+public class StreamInJson<D extends DidoData> implements DataInHow<InputStream, D> {
 
     private final Gson gson;
 
@@ -24,25 +23,50 @@ public class StreamInJson implements DataInHow<InputStream> {
         this.isArray = isArray;
     }
 
-    public static DataInHow<InputStream> asCopyWithPartialSchema(DataSchema partialSchema,
-                                                                 boolean isArray) {
-        return new StreamInJson(JsonDataPartialCopy
-                .registerPartialSchema(new GsonBuilder(), partialSchema)
+    public static DataInHow<InputStream, NamedData> asCopyWithPartialSchema(DataSchema partialSchema,
+                                                                            boolean isArray) {
+
+        return asCopyWithPartialSchema(partialSchema, isArray, new ArrayDataDataFactoryProvider());
+    }
+
+    public static <D extends DidoData>
+    DataInHow<InputStream, D> asCopyWithPartialSchema(DataSchema partialSchema,
+                                                      boolean isArray,
+                                                      DataFactoryProvider<D> dataFactoryProvider) {
+
+        return new StreamInJson<>(JsonDataPartialCopy
+                .registerPartialSchema(new GsonBuilder(), partialSchema, dataFactoryProvider)
                 .create(), isArray);
     }
 
-    public static DataInHow<InputStream> asCopyWithSchema(DataSchema partialSchema,
-                                                          boolean isArray) {
-        return new StreamInJson(JsonDataCopy
-                .registerSchema(new GsonBuilder(), partialSchema)
-                .create(), isArray);
+    public static DataInHow<InputStream, NamedData> asCopyWithSchema(DataSchema schema,
+                                                                     boolean isArray) {
+
+        return asCopyWithSchema(schema, isArray, new ArrayDataDataFactoryProvider());
     }
 
-    public static DataInHow<InputStream> asWrapperWithSchema(DataSchema schema,
-                                                             boolean isArray) {
-        return new StreamInJson(JsonDataWrapper
-                .registerSchema(new GsonBuilder(), schema)
-                .create(), isArray);
+    public static <D extends DidoData>
+    DataInHow<InputStream, D> asCopyWithSchema(DataSchema schema,
+                                               boolean isArray,
+                                               DataFactoryProvider<D> dataFactoryProvider) {
+
+        return new StreamInJson<>(
+                JsonDataCopy.registerSchema(new GsonBuilder(), schema, dataFactoryProvider.provideFactory(schema))
+                        .create(), isArray);
+    }
+
+    /**
+     * Stream JSON by wrapping the underlying data. Only {@link NamedData} is supported.
+     *
+     * @param schema  the full schema of the resultant data.
+     * @param isArray is the stream an array or individual messages.
+     * @return A How.
+     */
+    public static DataInHow<InputStream, NamedData> asWrapperWithSchema(DataSchema schema,
+                                                                        boolean isArray) {
+        return new StreamInJson<>(
+                JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+                        .create(), isArray);
     }
 
     public static Settings settings() {
@@ -81,19 +105,26 @@ public class StreamInJson implements DataInHow<InputStream> {
             return this;
         }
 
-        public DataInHow<InputStream> make() {
+        public DataInHow<InputStream, NamedData> make() {
 
             if (schema == null || partial) {
                 return asCopyWithPartialSchema(schema, isArray);
-            }
-            else {
+            } else {
                 if (copy) {
                     return asCopyWithSchema(schema, isArray);
 
-                }
-                else {
+                } else {
                     return asWrapperWithSchema(schema, isArray);
                 }
+            }
+        }
+
+        public <D extends DidoData> DataInHow<InputStream, D> make(DataFactoryProvider<D> dataFactoryProvider) {
+
+            if (schema == null || partial) {
+                return asCopyWithPartialSchema(schema, isArray, dataFactoryProvider);
+            } else {
+                return asCopyWithSchema(schema, isArray, dataFactoryProvider);
             }
         }
     }
@@ -105,7 +136,7 @@ public class StreamInJson implements DataInHow<InputStream> {
     }
 
     @Override
-    public DataIn inFrom(InputStream inputStream) throws IOException {
+    public DataIn<D> inFrom(InputStream inputStream) throws IOException {
 
         final JsonReader reader = new JsonReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
@@ -113,13 +144,13 @@ public class StreamInJson implements DataInHow<InputStream> {
             reader.beginArray();
         }
 
-        return new DataIn() {
+        return new DataIn<>() {
 
             @Override
-            public DidoData get() {
+            public D get() {
                 try {
                     if (reader.hasNext()) {
-                        return gson.fromJson(reader, DidoData.class);
+                        return gson.fromJson(reader, NamedData.class);
                     } else {
                         return null;
                     }

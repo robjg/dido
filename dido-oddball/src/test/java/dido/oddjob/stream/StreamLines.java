@@ -20,9 +20,9 @@ public class StreamLines {
             .addField(LINE, String.class)
             .build();
 
-    public static class In implements DataInHow<InputStream> {
+    public static class In implements DataInHow<InputStream, NamedData> {
 
-        DataBuilder dataBuilder = MapData.newBuilder(schema);
+        NamedDataBuilder dataBuilder = MapData.newBuilder(schema);
 
         @Override
         public Class<InputStream> getInType() {
@@ -30,12 +30,12 @@ public class StreamLines {
         }
 
         @Override
-        public DataIn inFrom(InputStream inputStream) {
+        public DataIn<NamedData> inFrom(InputStream inputStream) {
 
             LineNumberReader reader = new LineNumberReader(
                     new InputStreamReader(inputStream));
 
-            return new DataIn() {
+            return new DataIn<>() {
                 @Override
                 public void close() {
                     try {
@@ -46,13 +46,13 @@ public class StreamLines {
                 }
 
                 @Override
-                public DidoData get() {
+                public NamedData get() {
                     try {
                         String line = reader.readLine();
                         if (line == null) {
                             return null;
                         } else {
-                            return dataBuilder.set(LINE, line).build();
+                            return dataBuilder.with(LINE, line).build();
                         }
                     } catch (IOException e) {
                         throw new IllegalStateException(e);
@@ -83,7 +83,7 @@ public class StreamLines {
 
                 @Override
                 public void accept(DidoData data) {
-                    out.println(data.getString(LINE));
+                    out.println(data.getStringNamed(LINE));
                 }
             };
         }

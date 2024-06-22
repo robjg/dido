@@ -1,9 +1,6 @@
 package dido.json;
 
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.MapData;
-import dido.data.SchemaBuilder;
+import dido.data.*;
 import dido.how.DataIn;
 import org.junit.jupiter.api.Test;
 import org.oddjob.io.BufferType;
@@ -25,16 +22,16 @@ class StreamInJsonLinesTest {
         });
         bufferType.configured();
 
-        DataIn in = StreamInJsonLines.asWrapperWithPartialSchema(null)
+        DataIn<NamedData> in = StreamInJsonLines.asWrapperWithPartialSchema(null)
                 .inFrom(bufferType.toInputStream());
 
-        DidoData data1 = in.get();
+        NamedData data1 = in.get();
 
         assertThat(data1.getString("Fruit"), is("Apple"));
         assertThat(data1.getDouble("Qty"), is(5.0));
         assertThat(data1.getDouble("Price"), is(27.2));
 
-        DidoData data2 = in.get();
+        NamedData data2 = in.get();
 
         assertThat(data2.getStringAt(1), is("Orange"));
         assertThat(data2.getDoubleAt(2), is(10.0));
@@ -66,12 +63,12 @@ class StreamInJsonLinesTest {
                 .addField("Price", Double.class)
                 .build();
 
-        DataIn in = StreamInJsonLines.asWrapperWithPartialSchema(schema)
+        DataIn<NamedData> in = StreamInJsonLines.asWrapperWithPartialSchema(schema)
                 .inFrom(bufferType.toInputStream());
 
-        DidoData data1 = in.get();
+        NamedData data1 = in.get();
 
-        DidoData expected1 = MapData.of(
+        NamedData expected1 = MapData.of(
                 "Fruit", "Apple", "Qty", 5, "Price", 27.2);
 
         assertThat(data1.getSchema(), is(expected1.getSchema()));
@@ -109,25 +106,25 @@ class StreamInJsonLinesTest {
                 .addField("Price", Double.class)
                 .build();
 
-        DataIn in = StreamInJsonLines.settings()
+        DataIn<NamedData> in = StreamInJsonLines.settings()
                 .setSchema(schema)
                 .make()
                 .inFrom(bufferType.toInputStream());
 
-        DidoData data1 = in.get();
+        NamedData data1 = in.get();
 
-        DidoData expected1 = MapData.of(
+        NamedData expected1 = MapData.of(
                 "Fruit", "Apple", "Qty", 5, "Price", 27.2);
 
         assertThat(data1.getSchema(), is(expected1.getSchema()));
         assertThat(data1, is(expected1));
 
-        DidoData data2 = in.get();
+        NamedData data2 = in.get();
 
         assertThat(data2, is(MapData.of(
                 "Fruit", "Orange", "Qty", 10, "Price", Double.NaN)));
 
-        DidoData data3 = in.get();
+        NamedData data3 = in.get();
 
         assertThat(data3, is(MapData.of(
                 "Fruit", "Pear", "Qty", 7, "Price", 22.1)));

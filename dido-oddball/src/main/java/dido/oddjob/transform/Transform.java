@@ -1,7 +1,6 @@
 package dido.oddjob.transform;
 
-import dido.data.DataSchema;
-import dido.data.DidoData;
+import dido.data.*;
 import org.oddjob.arooa.types.ValueFactory;
 import org.oddjob.arooa.utils.ListSetterHelper;
 
@@ -89,20 +88,20 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
 
         DataSchema schema = schemaStrategy.newSchemaFrom(schemaFrom,
                 newFields,
-                i -> transformers.add((in, setter) -> setter.setAt(i, in.getAt(i))));
+                i -> transformers.add((in, setter) -> ((IndexedSetter) setter).setAt(i, in.getAt(i))));
 
-        DataFactory dataFactory = new ArrayDataSetterProvider().provideSetter(schema);
+        DataFactory<NamedData> dataFactory = new ArrayDataDataFactoryProvider().provideFactory(schema);
 
         return new TransformerFunctionKnown(dataFactory, transformers);
     }
 
     static class TransformerFunctionKnown implements Function<DidoData, DidoData> {
 
-        private final DataFactory dataFactory;
+        private final DataFactory<? extends DidoData> dataFactory;
 
         private final List<Transformer> transformers;
 
-        TransformerFunctionKnown(DataFactory dataFactory, List<Transformer> transformers) {
+        TransformerFunctionKnown(DataFactory<? extends DidoData> dataFactory, List<Transformer> transformers) {
             this.dataFactory = dataFactory;
             this.transformers = transformers;
         }

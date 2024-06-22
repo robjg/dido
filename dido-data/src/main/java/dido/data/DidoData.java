@@ -7,29 +7,29 @@ import java.util.Iterator;
  */
 public interface DidoData extends IndexedData {
 
-    Object get(String field);
+    Object getNamed(String fieldName);
 
-    <T> T getAs(String field, Class<T> type);
+    <T> T getNamedAs(String fieldName, Class<T> type);
 
-    boolean hasField(String field);
+    boolean hasNamed(String fieldName);
 
-    boolean getBoolean(String field);
+    boolean getBooleanNamed(String fieldName);
 
-    byte getByte(String field);
+    char getCharNamed(String fieldName);
 
-    char getChar(String field);
+    byte getByteNamed(String fieldName);
 
-    short getShort(String field);
+    short getShortNamed(String fieldName);
 
-    int getInt(String field);
+    int getIntNamed(String fieldName);
 
-    long getLong(String field);
+    long getLongNamed(String fieldName);
 
-    float getFloat(String field);
+    float getFloatNamed(String fieldName);
 
-    double getDouble(String field);
+    double getDoubleNamed(String fieldName);
 
-    String getString(String field);
+    String getStringNamed(String fieldName);
 
     static String toString(DidoData data) {
         DataSchema schema = data.getSchema();
@@ -65,7 +65,7 @@ public interface DidoData extends IndexedData {
             sb.append('[');
             sb.append(field);
             sb.append("]=");
-            sb.append(data.get(field));
+            sb.append(data.getNamed(field));
             if (it.hasNext()) {
                 sb.append(", ");
             }

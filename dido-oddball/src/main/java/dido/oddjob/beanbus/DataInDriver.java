@@ -42,7 +42,7 @@ public class DataInDriver<I> implements Runnable, Closeable, ArooaSessionAware {
      * @oddjob.description How to read the data in.
      * @oddjob.required Yes.
      */
-    private DataInHow<I> how;
+    private DataInHow<I, ?> how;
 
     /**
      * @oddjob.description Where to read data from.
@@ -81,7 +81,7 @@ public class DataInDriver<I> implements Runnable, Closeable, ArooaSessionAware {
 
         count.set(0);
 
-        DataInHow<I> how = Objects.requireNonNull(this.how, "No How");
+        DataInHow<I, ?> how = Objects.requireNonNull(this.how, "No How");
 
         I from;
         try {
@@ -93,7 +93,7 @@ public class DataInDriver<I> implements Runnable, Closeable, ArooaSessionAware {
             throw new IllegalArgumentException(e);
         }
 
-        try (DataIn supplier = how.inFrom(from)) {
+        try (DataIn<?> supplier = how.inFrom(from)) {
 
             while (!stop) {
                 DidoData data = supplier.get();
@@ -128,11 +128,11 @@ public class DataInDriver<I> implements Runnable, Closeable, ArooaSessionAware {
         this.name = name;
     }
 
-    public DataInHow<I> getHow() {
+    public DataInHow<I, ?> getHow() {
         return how;
     }
 
-    public void setHow(DataInHow<I> how) {
+    public void setHow(DataInHow<I, ?> how) {
         this.how = how;
     }
 

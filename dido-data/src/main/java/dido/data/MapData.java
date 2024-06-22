@@ -5,12 +5,11 @@ import dido.data.generic.GenericData;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Provide an {@link GenericData} structure backed by a Map.
  */
-public class MapData extends AbstractData implements DidoData {
+public class MapData extends AbstractNamedData implements NamedData {
 
     private final DataSchema schema;
 
@@ -25,67 +24,67 @@ public class MapData extends AbstractData implements DidoData {
         return new MapData(schemaFromMap(map), new HashMap<>(map));
     }
 
-    public static DidoData of() {
+    public static NamedData of() {
         return fromInputs();
     }
 
-    public static DidoData of(String f1, Object v1) {
+    public static NamedData of(String f1, Object v1) {
         return fromInputs(f1, v1);
     }
 
-    public static DidoData of(String f1, Object v1, String f2, Object v2) {
+    public static NamedData of(String f1, Object v1, String f2, Object v2) {
         return fromInputs(f1, v1, f2, v2);
     }
 
-    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3) {
+    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3) {
         return fromInputs(f1, v1, f2, v2, f3, v3);
     }
 
-    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                     String f4, Object v4) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4);
     }
 
-    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                     String f4, Object v4, String f5, Object v5) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5);
     }
 
-    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                     String f4, Object v4, String f5, Object v5, String f6, Object v6) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6);
     }
 
-    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                     String f4, Object v4, String f5, Object v5, String f6, Object v6,
                                     String f7, Object v7) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7);
     }
 
-    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                     String f4, Object v4, String f5, Object v5, String f6, Object v6,
                                     String f7, Object v7, String f8, Object v8) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8);
     }
 
-    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                     String f4, Object v4, String f5, Object v5, String f6, Object v6,
                                     String f7, Object v7, String f8, Object v8, String f9, Object v9) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8, f9, v9);
     }
 
-    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                     String f4, Object v4, String f5, Object v5, String f6, Object v6,
                                     String f7, Object v7, String f8, Object v8, String f9, Object v9,
                                     String f10, Object v10) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8, f9, v9, f10, v10);
     }
 
-    private static DidoData fromInputs(Object... args) {
+    private static NamedData fromInputs(Object... args) {
 
-        DataBuilder builder = new BuilderNoSchema();
+        NamedDataBuilder builder = new BuilderNoSchema();
         for (int i = 0; i < args.length; i = i + 2) {
-            builder.set((String) args[i], args[i+1]);
+            builder.with((String) args[i], args[i+1]);
         }
         return builder.build();
     }
@@ -99,17 +98,17 @@ public class MapData extends AbstractData implements DidoData {
         return schemaBuilder.build();
     }
 
-    public static DataBuilder newBuilder(DataSchema schema) {
+    public static NamedDataBuilder newBuilder(DataSchema schema) {
 
         return new BuilderWithSchema(schema);
     }
 
-    public static DataBuilder newBuilderNoSchema() {
+    public static NamedDataBuilder newBuilderNoSchema() {
 
         return new BuilderNoSchema();
     }
 
-    public static DataBuilders.Values valuesFor(DataSchema schema) {
+    public static DataBuilders.NamedValues valuesFor(DataSchema schema) {
 
         return new BuilderWithSchema(schema).values();
     }
@@ -119,6 +118,10 @@ public class MapData extends AbstractData implements DidoData {
         return new BuilderWithSchema(from.getSchema()).copy(from);
     }
 
+    public static DataFactory<NamedData> factoryFor(DataSchema schema) {
+        return new MapDataFactory(schema);
+    }
+
     @Override
     public Object getAt(int index) {
         return get(schema.getFieldNameAt(index));
@@ -126,17 +129,17 @@ public class MapData extends AbstractData implements DidoData {
 
     @Override
     public boolean hasIndex(int index) {
-        return hasField(schema.getFieldNameAt(index));
+        return has(schema.getFieldNameAt(index));
     }
 
     @Override
-    public Object get(String field) {
-        return map.get(field);
+    public Object get(String name) {
+        return map.get(name);
     }
 
     @Override
-    public boolean hasField(String field) {
-        return map.containsKey(field);
+    public boolean has(String name) {
+        return map.containsKey(name);
     }
 
     @Override
@@ -153,7 +156,7 @@ public class MapData extends AbstractData implements DidoData {
      * A Builder that knows the schema. Setter don't validate the type.
      *
      */
-    public static class BuilderWithSchema extends DataBuilders.KnownSchema<BuilderWithSchema> {
+    public static class BuilderWithSchema extends DataBuilders.NamedKnownSchema<BuilderWithSchema> {
 
         private Map<String, Object> map = new HashMap<>();
 
@@ -162,104 +165,98 @@ public class MapData extends AbstractData implements DidoData {
         }
 
         @Override
-        public DidoData build() {
-            DidoData data = new MapData(getSchema(), map);
+        public NamedData build() {
+            NamedData data = new MapData(getSchema(), map);
             this.map = new HashMap<>();
             return data;
         }
 
         @Override
-        public BuilderWithSchema set(String field, Object value) {
+        public BuilderWithSchema with(String field, Object value) {
             map.put(field, value);
-            return this;
-        }
-
-        @Override
-        public BuilderWithSchema setAt(int index, Object value) {
-            set(getSchema().getFieldNameAt(index), value);
             return this;
         }
     }
 
-    static class BuilderNoSchema extends  DataBuilders.Fields<BuilderNoSchema> {
+    static class BuilderNoSchema extends DataBuilders.NamedFields<BuilderNoSchema> {
 
         private Map<String, Object> map = new LinkedHashMap<>();
 
         private SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
         @Override
-        public DidoData build() {
-            DidoData data = new MapData(schemaBuilder.build(), map);
+        public NamedData build() {
+            NamedData data = new MapData(schemaBuilder.build(), map);
             this.map = new LinkedHashMap<>();
             this.schemaBuilder = SchemaBuilder.newInstance();
             return data;
         }
 
         @Override
-        public BuilderNoSchema set(String field, Object value) {
+        public BuilderNoSchema with(String field, Object value) {
             map.put(field, value);
             schemaBuilder.addField(field, value == null ? void.class : value.getClass());
             return this;
         }
 
         @Override
-        public BuilderNoSchema setBoolean(String field, boolean value) {
+        public BuilderNoSchema withBoolean(String field, boolean value) {
             map.put(field, value);
             schemaBuilder.addField(field, boolean.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema setByte(String field, byte value) {
+        public BuilderNoSchema withByte(String field, byte value) {
             map.put(field, value);
             schemaBuilder.addField(field, byte.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema setChar(String field, char value) {
+        public BuilderNoSchema withChar(String field, char value) {
             map.put(field, value);
             schemaBuilder.addField(field, char.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema setShort(String field, short value) {
+        public BuilderNoSchema withShort(String field, short value) {
             map.put(field, value);
             schemaBuilder.addField(field, short.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema setInt(String field, int value) {
+        public BuilderNoSchema withInt(String field, int value) {
             map.put(field, value);
             schemaBuilder.addField(field, int.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema setLong(String field, long value) {
+        public BuilderNoSchema withLong(String field, long value) {
             map.put(field, value);
             schemaBuilder.addField(field, long.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema setFloat(String field, float value) {
+        public BuilderNoSchema withFloat(String field, float value) {
             map.put(field, value);
             schemaBuilder.addField(field, float.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema setDouble(String field, double value) {
+        public BuilderNoSchema withDouble(String field, double value) {
             map.put(field, value);
             schemaBuilder.addField(field, double.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema setString(String field, String value) {
+        public BuilderNoSchema withString(String field, String value) {
             map.put(field, value);
             schemaBuilder.addField(field, String.class);
             return this;
@@ -267,27 +264,53 @@ public class MapData extends AbstractData implements DidoData {
 
     }
 
-    /**
-     * For A fluent way of providing MapData
-     */
-    public static class Values {
+    static class MapDataFactory extends AbstractDataSetter implements DataFactory<NamedData> {
 
         private final DataSchema schema;
 
-        Values(DataSchema schema) {
-            this.schema = Objects.requireNonNull(schema);
+        private Map<String, Object> map;
+
+        MapDataFactory(DataSchema schema) {
+            this.schema = schema;
+            this.map = new HashMap<>(schema.lastIndex());
         }
 
-        public DidoData of(Object... values) {
-            Map<String, Object> map = new HashMap<>();
-            for (int i = 0; i < values.length; ++i) {
-                String field = schema.getFieldNameAt(i + 1);
-                if (field == null) {
-                    throw new IllegalArgumentException("No field for index " + i + 1);
-                }
-                map.put(field, values[i]);
+        @Override
+        public void set(String field, Object value) {
+            map.put(field, value);
+        }
+
+        @Override
+        public Class<NamedData> getDataType() {
+            return NamedData.class;
+        }
+
+        @Override
+        public DataSetter getSetter() {
+            return this;
+        }
+
+        @Override
+        public NamedData mapToData(Map<? extends String, ?> map) {
+            return new MapData(schema, new HashMap<>(map));
+        }
+
+        @Override
+        public NamedData valuesToData(Object... values) {
+            Map<String, Object> map = new HashMap<>(values.length);
+            for (int i = 0; i < values.length; ++i ) {
+                map.put(schema.getFieldNameAt(i + 1), values[i]);
             }
             return new MapData(schema, map);
         }
+
+        @Override
+        public NamedData toData() {
+            NamedData data = new MapData(schema, map);
+            this.map = new HashMap<>(schema.lastIndex());
+            return data;
+        }
+
     }
+
 }

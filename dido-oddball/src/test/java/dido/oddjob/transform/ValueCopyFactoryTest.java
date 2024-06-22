@@ -192,10 +192,10 @@ class ValueCopyFactoryTest {
 
         assertThat(schema, is(expectedSchema));
 
-        assertThat(result1.get("AnInt"), is(2));
-        assertThat(result1.get("BlankString"), nullValue());
-        assertThat(result1.get("CsvString"), is(new int[] { 1, 2 }));
-        assertThat(result1.get("NullString"), is("Nada"));
+        assertThat(result1.getNamed("AnInt"), is(2));
+        assertThat(result1.getNamed("BlankString"), nullValue());
+        assertThat(result1.getNamed("CsvString"), is(new int[] { 1, 2 }));
+        assertThat(result1.getNamed("NullString"), is("Nada"));
 
         oddjob.destroy();
 

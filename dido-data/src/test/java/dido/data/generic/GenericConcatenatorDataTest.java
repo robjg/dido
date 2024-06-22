@@ -80,18 +80,18 @@ class GenericConcatenatorDataTest {
         GenericDataBuilder<String> builder = GenericMapData.newBuilderNoSchema();
 
         GenericData<String> data1 = builder
-                .setString("type", "apple")
-                .setInt("qty", 2)
-                .setDouble("price", 26.3)
+                .withString("type", "apple")
+                .withInt("qty", 2)
+                .withDouble("price", 26.3)
                 .build();
 
         GenericData<String> data2 = builder
-                .setString("supplier", "Alice")
+                .withString("supplier", "Alice")
                 .build();
 
         GenericData<String> data3 = builder
-                .setString("checked", "Bob")
-                .setBoolean("good", true)
+                .withString("checked", "Bob")
+                .withBoolean("good", true)
                 .build();
 
         GenericData<String> result = GenericConcatenator.of(data1, data2, data3);
@@ -117,28 +117,28 @@ class GenericConcatenatorDataTest {
 
         GenericDataBuilder<String> builder = GenericMapData.newBuilderNoSchema();
 
-        builder.setString("first", "Ignored" );
+        builder.withString("first", "Ignored" );
         GenericData<String> data1 = builder.build();
 
-        builder.set("object", Arrays.asList("Foo") );
+        builder.with("object", Arrays.asList("Foo") );
         GenericData<String> data2 = builder.build();
 
-        builder.setBoolean("boolean", true );
+        builder.withBoolean("boolean", true );
         GenericData<String> data3 = builder.build();
 
-        builder.setByte("byte", (byte) 32 );
+        builder.withByte("byte", (byte) 32 );
         GenericData<String> data4 = builder.build();
 
-        builder.setChar("char", 'A' );
+        builder.withChar("char", 'A' );
         GenericData<String> data5 = builder.build();
 
-        builder.setShort("short", (short) 42 );
+        builder.withShort("short", (short) 42 );
         GenericData<String> data6 = builder.build();
 
-        builder.setLong("long", 42L );
+        builder.withLong("long", 42L );
         GenericData<String> data7 = builder.build();
 
-        builder.setFloat("float", 42.42F );
+        builder.withFloat("float", 42.42F );
         GenericData<String> data8 = builder.build();
 
         GenericData<String> result1 = GenericConcatenator.of(data1, data2, data3, data4, data5, data6, data7, data8);

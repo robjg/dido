@@ -1,7 +1,7 @@
 package dido.json;
 
 import dido.data.DataSchema;
-import dido.data.DidoData;
+import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 
@@ -11,23 +11,23 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.function.Function;
 
-public class StreamInJsonLines implements DataInHow<InputStream> {
+public class StreamInJsonLines implements DataInHow<InputStream, NamedData> {
 
-    private final Function<? super String, ? extends DidoData> function;
+    private final Function<? super String, ? extends NamedData> function;
 
-    private StreamInJsonLines(Function<? super String, ? extends DidoData> function) {
+    private StreamInJsonLines(Function<? super String, ? extends NamedData> function) {
 
         this.function = function;
     }
 
-    public static DataInHow<InputStream> asWrapperWithSchema(DataSchema schema) {
+    public static DataInHow<InputStream, NamedData> asWrapperWithSchema(DataSchema schema) {
 
         return new Settings()
                 .setSchema(schema)
                 .make();
     }
 
-    public static DataInHow<InputStream> asWrapperWithPartialSchema(DataSchema partialSchema) {
+    public static DataInHow<InputStream, NamedData> asWrapperWithPartialSchema(DataSchema partialSchema) {
 
         return new Settings()
                 .setSchema(partialSchema)
@@ -35,7 +35,7 @@ public class StreamInJsonLines implements DataInHow<InputStream> {
                 .make();
     }
 
-    public static DataInHow<InputStream> asCopyWithSchema(DataSchema schema) {
+    public static DataInHow<InputStream, NamedData> asCopyWithSchema(DataSchema schema) {
 
         return new Settings()
                 .setCopy(true)
@@ -43,7 +43,7 @@ public class StreamInJsonLines implements DataInHow<InputStream> {
                 .make();
     }
 
-    public static DataInHow<InputStream> asCopyWithPartialSchema(DataSchema partialSchema) {
+    public static DataInHow<InputStream, NamedData> asCopyWithPartialSchema(DataSchema partialSchema) {
 
         return new Settings()
                 .setCopy(true)
@@ -76,7 +76,7 @@ public class StreamInJsonLines implements DataInHow<InputStream> {
             return this;
         }
 
-        public DataInHow<InputStream> make() {
+        public DataInHow<InputStream, NamedData> make() {
 
             return new StreamInJsonLines(this.settings.make());
         }
@@ -88,14 +88,14 @@ public class StreamInJsonLines implements DataInHow<InputStream> {
     }
 
     @Override
-    public DataIn inFrom(InputStream inputStream) {
+    public DataIn<NamedData> inFrom(InputStream inputStream) {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-        return new DataIn() {
+        return new DataIn<>() {
 
             @Override
-            public DidoData get() {
+            public NamedData get() {
                 try {
                     String line = reader.readLine();
                     if (line == null) {

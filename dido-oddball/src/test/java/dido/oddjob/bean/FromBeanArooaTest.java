@@ -43,10 +43,10 @@ class FromBeanArooaTest {
         fruit1.setType("Apple");
         fruit1.setQuantity(5);
 
-        Function<Object, DidoData> transform = new FromBeanArooa(new BeanUtilsPropertyAccessor())
+        Function<Object, NamedData> transform = new FromBeanArooa(new BeanUtilsPropertyAccessor())
                 .ofUnknownClass();
 
-        DidoData data1 = transform.apply(fruit1);
+        NamedData data1 = transform.apply(fruit1);
 
         assertThat(data1.getString("type"), is("Apple"));
         assertThat(data1.getInt("quantity"), is(5));
@@ -55,7 +55,7 @@ class FromBeanArooaTest {
         fruit2.setType("Orange");
         fruit2.setQuantity(2);
 
-        DidoData data2 = transform.apply(fruit2);
+        NamedData data2 = transform.apply(fruit2);
 
         assertThat(data2.getString("type"), is("Orange"));
         assertThat(data2.getInt("quantity"), is(2));
@@ -77,7 +77,7 @@ class FromBeanArooaTest {
                 .addRepeatingField("orderLines", nestedSchema)
                 .build();
 
-        Function<Order, DidoData> fromBean =
+        Function<Order, NamedData> fromBean =
                 fromBeanArooa.with()
                         .schema(partialIn).partial(true)
                         .ofClass(Order.class);
@@ -94,7 +94,7 @@ class FromBeanArooaTest {
         order.setOrderId("A123");
         order.setOrderLines(List.of(orderLine1, orderLine2));
 
-        DidoData result = fromBean.apply(order);
+        NamedData result = fromBean.apply(order);
 
         RepeatingData repeatingData =
                 RepeatingData.of(ArrayData.valuesFor(nestedSchema)
@@ -122,7 +122,7 @@ class FromBeanArooaTest {
                 .addRepeatingField("orderLines", nestedSchema)
                 .build();
 
-        Function<Order, DidoData> fromBean =
+        Function<Order, NamedData> fromBean =
                 fromBeanArooa.with()
                         .schema(schema)
                         .ofUnknownClass();

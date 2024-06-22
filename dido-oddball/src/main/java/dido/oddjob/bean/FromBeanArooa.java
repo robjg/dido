@@ -53,7 +53,7 @@ public class FromBeanArooa {
             return this;
         }
 
-        public <T> Function<T, DidoData> ofUnknownClass() {
+        public <T> Function<T, NamedData> ofUnknownClass() {
 
             DataSchema schema = this.schema;
             boolean partial = this.partial;
@@ -66,23 +66,23 @@ public class FromBeanArooa {
             }
         }
 
-        public <T> Function<T, DidoData> ofClass(Class<T> aClass) {
+        public <T> Function<T, NamedData> ofClass(Class<T> aClass) {
 
             return ofArooaClass(new SimpleArooaClass(aClass));
         }
 
-        public <T> Function<T, DidoData> ofArooaClass(ArooaClass arooaClass) {
+        public <T> Function<T, NamedData> ofArooaClass(ArooaClass arooaClass) {
 
             return FromBeanArooa.this.ofArooaClassWithSchema(arooaClass, schema, partial);
         }
     }
 
-    public <T> Function<T, DidoData> ofUnknownClass() {
+    public <T> Function<T, NamedData> ofUnknownClass() {
 
         return new Unknown<>(DataSchema.emptySchema());
     }
 
-    public <T> Function<T, DidoData> ofClass(Class<T> aClass) {
+    public <T> Function<T, NamedData> ofClass(Class<T> aClass) {
 
         DataSchema schema = schemaFrom(new SimpleArooaClass(aClass));
 
@@ -96,7 +96,7 @@ public class FromBeanArooa {
         return bean -> new Impl(schema, bean);
     }
 
-    protected <T> Function<T, DidoData> ofArooaClassWithSchema(ArooaClass arooaClass,
+    protected <T> Function<T, NamedData> ofArooaClassWithSchema(ArooaClass arooaClass,
                                                                DataSchema schema,
                                                                boolean partial) {
 
@@ -106,7 +106,7 @@ public class FromBeanArooa {
         return new Known<>(outSchema);
     }
 
-    class Unknown<T> implements Function<T, DidoData> {
+    class Unknown<T> implements Function<T, NamedData> {
 
         private final DataSchema schema;
 
@@ -117,7 +117,7 @@ public class FromBeanArooa {
         }
 
         @Override
-        public DidoData apply(T bean) {
+        public NamedData apply(T bean) {
 
             if (outSchema == null) {
                 outSchema = schemaFrom(accessor.getClassName(bean), schema, true);
@@ -132,7 +132,7 @@ public class FromBeanArooa {
         }
     }
 
-    class Known<T> implements Function<T, DidoData> {
+    class Known<T> implements Function<T, NamedData> {
 
         private final DataSchema schema;
 
@@ -141,7 +141,7 @@ public class FromBeanArooa {
         }
 
         @Override
-        public DidoData apply(T t) {
+        public NamedData apply(T t) {
             if (t == null) {
                 return null;
             } else {
@@ -155,7 +155,7 @@ public class FromBeanArooa {
         }
     }
 
-    class Impl extends AbstractData {
+    class Impl extends AbstractNamedData {
 
         private final DataSchema schema;
 
@@ -222,64 +222,64 @@ public class FromBeanArooa {
         }
 
         @Override
-        public Object get(String field) {
+        public Object getNamed(String name) {
 
-            SchemaField schemaField = schema.getSchemaFieldNamed(field);
+            SchemaField schemaField = schema.getSchemaFieldNamed(name);
             if (schemaField == null) {
-                throw new NullPointerException("No Property for for [" + field + "]");
+                throw new NullPointerException("No Property for for [" + name + "]");
             }
 
             return getFrom(schemaField);
         }
 
         @Override
-        public boolean hasField(String field) {
-            return accessor.getProperty(bean, field) != null;
+        public boolean hasNamed(String name) {
+            return accessor.getProperty(bean, name) != null;
         }
 
         @Override
-        public boolean getBoolean(String field) {
-            return (boolean) accessor.getProperty(bean, field);
+        public boolean getBooleanNamed(String name) {
+            return (boolean) accessor.getProperty(bean, name);
         }
 
         @Override
-        public byte getByte(String field) {
-            return (byte) accessor.getProperty(bean, field);
+        public byte getByteNamed(String name) {
+            return (byte) accessor.getProperty(bean, name);
         }
 
         @Override
-        public char getChar(String field) {
-            return (char) accessor.getProperty(bean, field);
+        public char getCharNamed(String name) {
+            return (char) accessor.getProperty(bean, name);
         }
 
         @Override
-        public short getShort(String field) {
-            return (short) accessor.getProperty(bean, field);
+        public short getShortNamed(String name) {
+            return (short) accessor.getProperty(bean, name);
         }
 
         @Override
-        public int getInt(String field) {
-            return (int) accessor.getProperty(bean, field);
+        public int getIntNamed(String name) {
+            return (int) accessor.getProperty(bean, name);
         }
 
         @Override
-        public long getLong(String field) {
-            return (long) accessor.getProperty(bean, field);
+        public long getLongNamed(String name) {
+            return (long) accessor.getProperty(bean, name);
         }
 
         @Override
-        public float getFloat(String field) {
-            return (float) accessor.getProperty(bean, field);
+        public float getFloatNamed(String name) {
+            return (float) accessor.getProperty(bean, name);
         }
 
         @Override
-        public double getDouble(String field) {
-            return (double) accessor.getProperty(bean, field);
+        public double getDoubleNamed(String name) {
+            return (double) accessor.getProperty(bean, name);
         }
 
         @Override
-        public String getString(String field) {
-            return (String) accessor.getProperty(bean, field);
+        public String getStringNamed(String name) {
+            return (String) accessor.getProperty(bean, name);
         }
 
         @Override

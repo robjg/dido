@@ -9,24 +9,32 @@ import java.util.LinkedList;
 /**
  * Adds Deserialisers to a GsonBuilder for create DidoData. Done in this way to support nested JSON.
  */
-public class JsonDataCopy {
+public class JsonDataCopy<D extends DidoData> {
 
     private final LinkedList<DataSchema> stack = new LinkedList<>();
 
-    private final DataBuilder builder;
-    private JsonDataCopy(DataSchema schema) {
+    private final DataFactory<D> builder;
+
+    private JsonDataCopy(DataSchema schema,
+                         DataFactory<D> dataBuilder) {
         this.stack.addFirst(schema);
-        this.builder = MapData.newBuilder(schema);
+        this.builder = dataBuilder;
     }
 
     public static GsonBuilder registerSchema(GsonBuilder gsonBuilder,
                                              DataSchema schema) {
-        return new JsonDataCopy(schema).init(gsonBuilder);
+        return registerSchema(gsonBuilder, schema, new MapDataDataFactoryProvider().provideFactory(schema));
     }
 
-    private GsonBuilder init(GsonBuilder gsonBuilder) {
-        return gsonBuilder.registerTypeAdapter(DidoData.class,
-                new DataDeserializer())
+    public static <D extends DidoData> GsonBuilder registerSchema(GsonBuilder gsonBuilder,
+                                                                  DataSchema schema,
+                                                                  DataFactory<D> dataBuilder) {
+        return new JsonDataCopy<>(schema, dataBuilder).init(gsonBuilder, dataBuilder);
+    }
+
+    private GsonBuilder init(GsonBuilder gsonBuilder, DataFactory<D> dataBuilder) {
+        return gsonBuilder.registerTypeAdapter(dataBuilder.getDataType(),
+                        new DataDeserializer())
                 .registerTypeAdapter(RepeatingData.class, new RepeatingDeserializer());
     }
 
@@ -39,6 +47,8 @@ public class JsonDataCopy {
                 throw new JsonParseException("JsonObject expected, received: " + json +
                         " (" + json.getClass().getSimpleName() + ")");
             }
+
+            DataSetter setter = builder.getSetter();
 
             DataSchema schema = stack.getFirst();
 
@@ -54,13 +64,15 @@ public class JsonDataCopy {
                     continue;
                 }
 
+                Class<?> fieldType = schemaField.getType();
                 if (schemaField.isNested()) {
 
                     stack.addFirst(schemaField.getNestedSchema());
+                    fieldType = builder.getDataType();
                 }
 
-                Object nested = context.deserialize(element, schemaField.getType());
-                builder.set(field, nested);
+                Object nested = context.deserialize(element, fieldType);
+                setter.set(field, nested);
 
                 if (schemaField.isNested()) {
 
@@ -68,7 +80,7 @@ public class JsonDataCopy {
                 }
             }
 
-            return builder.build();
+            return builder.toData();
         }
     }
 

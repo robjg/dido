@@ -2,6 +2,7 @@ package dido.poi.layouts;
 
 import dido.data.DidoData;
 import dido.data.MapData;
+import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;
@@ -39,10 +40,10 @@ public class DataRowsTest extends TestCase {
 		DataOut writer = test.outTo(workbook);
 
 		DidoData data1 = MapData.newBuilderNoSchema()
-						.setString("Fruit", "Apples")
+						.withString("Fruit", "Apples")
 								.build();
 		DidoData data2 = MapData.newBuilderNoSchema()
-				.setString("Fruit", "Oranges")
+				.withString("Fruit", "Oranges")
 				.build();
 
 		writer.accept(data1);
@@ -72,9 +73,9 @@ public class DataRowsTest extends TestCase {
 //		assertEquals(0, test.getLastRow());
 //		assertEquals(0, test.getLastColumn());
 
-		DataIn reader = test.inFrom(workbook);
+		DataIn<NamedData> reader = test.inFrom(workbook);
 
-		DidoData result = reader.get();
+		NamedData result = reader.get();
 		
 		assertEquals(3, test.getLastRow());
 

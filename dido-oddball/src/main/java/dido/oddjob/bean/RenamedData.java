@@ -1,9 +1,6 @@
 package dido.oddjob.bean;
 
-import dido.data.AbstractData;
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.SchemaBuilder;
+import dido.data.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,7 +10,7 @@ import java.util.function.Function;
  * Todo: What does this do.
  *
  */
-public class RenamedData extends AbstractData {
+public class RenamedData extends AbstractNamedData {
 
     private final DataSchema toSchema;
 
@@ -24,7 +21,7 @@ public class RenamedData extends AbstractData {
         this.original = original;
     }
 
-    static class Transform implements Function<DidoData, DidoData> {
+    static class Transform implements Function<DidoData, NamedData> {
 
         private final Map<String, String> fieldMap;
 
@@ -37,7 +34,7 @@ public class RenamedData extends AbstractData {
         }
 
         @Override
-        public DidoData apply(DidoData dataIn) {
+        public NamedData apply(DidoData dataIn) {
             if (schemaOut == null || lastIn != dataIn.getSchema()) {
                 lastIn = dataIn.getSchema();
                 schemaOut = renamedSchema(fieldMap, lastIn);
@@ -70,7 +67,7 @@ public class RenamedData extends AbstractData {
         }
 
 
-        public Function<DidoData, DidoData> build() {
+        public Function<DidoData, NamedData> build() {
             Map<String, String> copy = this.map;
             this.map = new LinkedHashMap<>();
             return new Transform(copy);

@@ -79,58 +79,58 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
             }
 
             @Override
-            public Object getOf(E field) {
-                return data.get(field.toString());
+            public Object get(E field) {
+                return data.getNamed(field.toString());
             }
 
             @Override
-            public <T> T getOfAs(E field, Class<T> type) {
-                return data.getAs(field.toString(), type);
+            public <T> T getAs(E field, Class<T> type) {
+                return data.getNamedAs(field.toString(), type);
             }
 
             @Override
-            public boolean getBooleanOf(E field) {
-                return data.getBoolean(field.toString());
+            public boolean getBoolean(E field) {
+                return data.getBooleanNamed(field.toString());
             }
 
             @Override
-            public byte getByteOf(E field) {
-                return data.getByte(field.toString());
+            public byte getByte(E field) {
+                return data.getByteNamed(field.toString());
             }
 
             @Override
-            public char getCharOf(E field) {
-                return data.getChar(field.toString());
+            public char getChar(E field) {
+                return data.getCharNamed(field.toString());
             }
 
             @Override
-            public short getShortOf(E field) {
-                return data.getShort(field.toString());
+            public short getShort(E field) {
+                return data.getShortNamed(field.toString());
             }
 
             @Override
-            public int getIntOf(E field) {
-                return data.getInt(field.toString());
+            public int getInt(E field) {
+                return data.getIntNamed(field.toString());
             }
 
             @Override
-            public long getLongOf(E field) {
-                return data.getLong(field.toString());
+            public long getLong(E field) {
+                return data.getLongNamed(field.toString());
             }
 
             @Override
-            public float getFloatOf(E field) {
-                return data.getFloat(field.toString());
+            public float getFloat(E field) {
+                return data.getFloatNamed(field.toString());
             }
 
             @Override
-            public double getDoubleOf(E field) {
-                return data.getDouble(field.toString());
+            public double getDouble(E field) {
+                return data.getDoubleNamed(field.toString());
             }
 
             @Override
-            public String getStringOf(E field) {
-                return data.getString(field.toString());
+            public String getString(E field) {
+                return data.getStringNamed(field.toString());
             }
 
             @Override
@@ -141,27 +141,38 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
     }
 
 
-    interface Builder<E extends Enum<E>> extends GenericDataBuilder<E> {
+    interface Builder<E extends Enum<E>>
+            extends GenericDataBuilder<E> {
 
-        Builder<E> set(E field, Object value);
+        @Override
+        Builder<E> with(E field, Object value);
 
-        Builder<E> setBoolean(E field, boolean value);
+        @Override
+        Builder<E> withBoolean(E field, boolean value);
 
-        Builder<E> setByte(E field, byte value);
+        @Override
+        Builder<E> withByte(E field, byte value);
 
-        Builder<E> setChar(E field, char value);
+        @Override
+        Builder<E> withChar(E field, char value);
 
-        Builder<E> setShort(E field, short value);
+        @Override
+        Builder<E> withShort(E field, short value);
 
-        Builder<E> setInt(E field, int value);
+        @Override
+        Builder<E> withInt(E field, int value);
 
-        Builder<E> setLong(E field, long value);
+        @Override
+        Builder<E> withLong(E field, long value);
 
-        Builder<E> setFloat(E field, float value);
+        @Override
+        Builder<E> withFloat(E field, float value);
 
-        Builder<E> setDouble(E field, double value);
+        @Override
+        Builder<E> withDouble(E field, double value);
 
-        Builder<E> setString(E field, String value);
+        @Override
+        Builder<E> withString(E field, String value);
 
         @Override
         EnumData<E> build();

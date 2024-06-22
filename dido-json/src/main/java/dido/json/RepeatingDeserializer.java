@@ -2,6 +2,7 @@ package dido.json;
 
 import com.google.gson.*;
 import dido.data.DidoData;
+import dido.data.NamedData;
 import dido.data.RepeatingData;
 
 import java.lang.reflect.Type;
@@ -20,7 +21,7 @@ class RepeatingDeserializer implements JsonDeserializer<RepeatingData> {
 
         DidoData[] result = new DidoData[jsonArray.size()];
         for (int i = 0; i < result.length; ++i) {
-            result[i] = context.deserialize(jsonArray.get(i), DidoData.class);
+            result[i] = context.deserialize(jsonArray.get(i), NamedData.class);
         }
 
         return RepeatingData.of(result);

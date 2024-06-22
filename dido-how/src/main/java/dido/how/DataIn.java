@@ -15,12 +15,12 @@ import java.util.Iterator;
  * @author rob
  *
  */
-public interface DataIn extends CloseableSupplier<DidoData>, Iterable<DidoData> {
+public interface DataIn<D extends DidoData> extends CloseableSupplier<D>, Iterable<D> {
 
-    static DataIn empty() {
-        return new DataIn() {
+    static <D extends DidoData> DataIn<D> empty() {
+        return new DataIn<>() {
             @Override
-            public DidoData get() {
+            public D get() {
                 return null;
             }
 
@@ -32,11 +32,11 @@ public interface DataIn extends CloseableSupplier<DidoData>, Iterable<DidoData> 
     }
 
     @Override
-    default Iterator<DidoData> iterator() {
+    default Iterator<D> iterator() {
 
         return new Iterator<>() {
 
-            DidoData next;
+            D next;
 
             @Override
             public boolean hasNext() {
@@ -47,7 +47,7 @@ public interface DataIn extends CloseableSupplier<DidoData>, Iterable<DidoData> 
             }
 
             @Override
-            public DidoData next() {
+            public D next() {
                 try {
                     return next;
                 } finally {

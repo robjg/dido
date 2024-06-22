@@ -73,10 +73,10 @@ class ArrayDataTest {
     void whenUsingBuilderThenSchemaDerived() {
 
         DidoData data1 = ArrayData.<String>newBuilder()
-                .setString("Fruit", "Apple")
-                .setString("Flavour", null)
-                .setInt("Qty", 15)
-                .setDouble("Price", 26.5)
+                .withString("Fruit", "Apple")
+                .withString("Flavour", null)
+                .withInt("Qty", 15)
+                .withDouble("Price", 26.5)
                 .build();
 
         DataSchema schema = data1.getSchema();

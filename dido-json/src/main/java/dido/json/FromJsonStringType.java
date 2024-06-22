@@ -1,7 +1,7 @@
 package dido.json;
 
 import dido.data.DataSchema;
-import dido.data.DidoData;
+import dido.data.NamedData;
 
 import java.util.function.Function;
 
@@ -37,7 +37,7 @@ public class FromJsonStringType {
      */
     private boolean copy;
 
-    public Function<String, DidoData> toFunction() {
+    public Function<String, NamedData> toFunction() {
 
         if (copy) {
             if (schema == null || partialSchema) {

@@ -9,7 +9,7 @@ import java.util.*;
  * {@link GenericData} stored in an Array.
  *
  */
-public class ArrayData extends AbstractData implements DidoData {
+public class ArrayData extends AbstractNamedData implements NamedData {
 
     private final DataSchema schema;
 
@@ -76,6 +76,10 @@ public class ArrayData extends AbstractData implements DidoData {
         return new Builder(schema).values();
     }
 
+    public static DataFactory<NamedData> factoryFor(DataSchema schema) {
+        return new ArrayDataFactory(schema);
+    }
+
     @Override
     public DataSchema getSchema() {
         return schema;
@@ -91,7 +95,6 @@ public class ArrayData extends AbstractData implements DidoData {
         return data[index -1] != null;
     }
 
-
     @Override
     public String toString() {
         return Arrays.toString(data);
@@ -106,17 +109,17 @@ public class ArrayData extends AbstractData implements DidoData {
             values = new Object[schema.lastIndex()];
         }
 
-        public Builder setAt(int index, Object value) {
+        public Builder withAt(int index, Object value) {
             values[index - 1] = value;
             return this;
         }
 
         @Override
-        public Builder set(String field, Object value) {
-            return setAt(getSchema().getIndexNamed(field), value);
+        public Builder with(String field, Object value) {
+            return withAt(getSchema().getIndexNamed(field), value);
         }
 
-        public DidoData build() {
+        public NamedData build() {
             Object[] values = this.values;
             this.values = new Object[getSchema().lastIndex()];
             return new ArrayData(getSchema(), values);
@@ -127,8 +130,9 @@ public class ArrayData extends AbstractData implements DidoData {
         }
     }
 
-    public static class BuilderUnknown extends DataBuilders.Indexed<BuilderUnknown>
-            implements DataBuilder {
+    public static class BuilderUnknown
+            extends DataBuilders.Indexed<NamedData, BuilderUnknown>
+            implements NamedDataBuilder {
 
         private final List<GenericSchemaField<String>> schemaFields = new LinkedList<>();
 
@@ -136,104 +140,106 @@ public class ArrayData extends AbstractData implements DidoData {
 
         private int lastIndex = 0;
 
-        public BuilderUnknown setAt(int index, Object value) {
+
+        public BuilderUnknown withAt(int index, Object value) {
             return setIndex(index, value, Object.class);
         }
 
         @Override
-        public BuilderUnknown setBooleanAt(int index, boolean value) {
+        public BuilderUnknown withBooleanAt(int index, boolean value) {
             return setIndex(index, value, boolean.class);
         }
 
         @Override
-        public BuilderUnknown setByteAt(int index, byte value) {
+        public BuilderUnknown withByteAt(int index, byte value) {
             return setIndex(index, value, byte.class);
         }
 
         @Override
-        public BuilderUnknown setCharAt(int index, char value) {
+        public BuilderUnknown withCharAt(int index, char value) {
             return setIndex(index, value, char.class);
         }
 
         @Override
-        public BuilderUnknown setShortAt(int index, short value) {
+        public BuilderUnknown withShortAt(int index, short value) {
             return setIndex(index, value, short.class);
         }
 
         @Override
-        public BuilderUnknown setIntAt(int index, int value) {
+        public BuilderUnknown withIntAt(int index, int value) {
             return setIndex(index, value, int.class);
         }
 
         @Override
-        public BuilderUnknown setLongAt(int index, long value) {
+        public BuilderUnknown withLongAt(int index, long value) {
             return setIndex(index, value, long.class);
         }
 
         @Override
-        public BuilderUnknown setFloatAt(int index, float value) {
+        public BuilderUnknown withFloatAt(int index, float value) {
             return setIndex(index, value, float.class);
         }
 
         @Override
-        public BuilderUnknown setDoubleAt(int index, double value) {
+        public BuilderUnknown withDoubleAt(int index, double value) {
             return setIndex(index, value, double.class);
         }
 
         @Override
-        public BuilderUnknown setStringAt(int index, String value) {
+        public BuilderUnknown withStringAt(int index, String value) {
             return setIndex(index, value, String.class);
         }
 
         @Override
-        public BuilderUnknown set(String field, Object value) {
+        public BuilderUnknown with(String field, Object value) {
             return setField(field, value, Object.class);
         }
 
         @Override
-        public BuilderUnknown setBoolean(String field, boolean value) {
+        public BuilderUnknown withBoolean(String field, boolean value) {
             return setField(field, value, boolean.class);
         }
 
         @Override
-        public BuilderUnknown setByte(String field, byte value) {
+        public BuilderUnknown withByte(String field, byte value) {
             return setField(field, value, byte.class);
         }
 
         @Override
-        public BuilderUnknown setChar(String field, char value) {
+        public BuilderUnknown withChar(String field, char value) {
             return setField(field, value, char.class);
         }
 
         @Override
-        public BuilderUnknown setShort(String field, short value) {
+        public BuilderUnknown withShort(String field, short value) {
             return setField(field, value, short.class);
         }
 
         @Override
-        public BuilderUnknown setInt(String field, int value) {
+        public BuilderUnknown withInt(String field, int value) {
             return setField(field, value, int.class);
         }
 
         @Override
-        public BuilderUnknown setLong(String field, long value) {
+        public BuilderUnknown withLong(String field, long value) {
             return setField(field, value, long.class);
         }
 
         @Override
-        public BuilderUnknown setFloat(String field, float value) {
+        public BuilderUnknown withFloat(String field, float value) {
             return setField(field, value, float.class);
         }
 
         @Override
-        public BuilderUnknown setDouble(String field, double value) {
+        public BuilderUnknown withDouble(String field, double value) {
             return setField(field, value, double.class);
         }
 
         @Override
-        public BuilderUnknown setString(String field, String value) {
+        public BuilderUnknown withString(String field, String value) {
             return setField(field, value, String.class);
         }
+
 
         public BuilderUnknown setIndex(int index, Object value, Class<?> type) {
             values.add(value);
@@ -250,7 +256,7 @@ public class ArrayData extends AbstractData implements DidoData {
             return this;
         }
 
-        public DidoData build() {
+        public NamedData build() {
             SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
             Object[] values = new Object[lastIndex];
             Iterator<Object> valIt = this.values.iterator();
@@ -259,6 +265,59 @@ public class ArrayData extends AbstractData implements DidoData {
                 values[schemaField.getIndex() - 1] = valIt.next();
             }
             return new ArrayData(schemaBuilder.build(), values);
+        }
+    }
+
+    static class ArrayDataFactory extends AbstractIndexedSetter implements DataFactory<NamedData> {
+
+        private final DataSchema schema;
+
+        private Object[] values;
+
+        ArrayDataFactory(DataSchema schema) {
+            this.schema = schema;
+            values = new Object[schema.lastIndex()];
+        }
+
+        @Override
+        public Class<NamedData> getDataType() {
+            return null;
+        }
+
+        public void setAt(int index, Object value) {
+            values[index - 1] = value;
+        }
+
+        @Override
+        public void set(String field, Object value) {
+            int index = schema.getIndexNamed(field);
+            setAt(index, value);
+        }
+
+        @Override
+        public DataSetter getSetter() {
+            return this;
+        }
+
+        @Override
+        public NamedData mapToData(Map<? extends String, ?> map) {
+            Object[] values = new Object[schema.lastIndex()];
+            for (Map.Entry<? extends String, ?> entry: map.entrySet() ) {
+                values[schema.getIndexNamed(entry.getKey()) - 1] = entry.getValue();
+            }
+            return new ArrayData(schema, values);
+        }
+
+        @Override
+        public NamedData valuesToData(Object... values) {
+            return new ArrayData(schema, Arrays.copyOf(values, schema.lastIndex()));
+        }
+
+        @Override
+        public NamedData toData() {
+            Object[] values = this.values;
+            this.values = new Object[schema.lastIndex()];
+            return new ArrayData(schema, values);
         }
     }
 }

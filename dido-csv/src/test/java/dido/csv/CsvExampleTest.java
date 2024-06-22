@@ -1,7 +1,7 @@
 package dido.csv;
 
 import dido.data.DataSchema;
-import dido.data.DidoData;
+import dido.data.NamedData;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
@@ -30,14 +30,14 @@ public class CsvExampleTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         @SuppressWarnings("unchecked")
-        List<DidoData> results = lookup.lookup("csv.to", List.class);
+        List<NamedData> results = lookup.lookup("csv.to", List.class);
 
         DataSchema schema = results.get(0).getSchema();
         assertThat(schema.getTypeNamed("type"), is(String.class));
         assertThat(schema.getTypeNamed("quantity"), is(int.class));
         assertThat(schema.getTypeNamed("price"), is(double.class));
 
-        DidoData data1 = results.get(0);
+        NamedData data1 = results.get(0);
 
         assertThat(data1.get("type"), is("Apple"));
         assertThat(data1.get("quantity"), is(5));

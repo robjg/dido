@@ -1,13 +1,14 @@
 package dido.oddjob.bean;
 
-import dido.data.AbstractData;
+import dido.data.AbstractNamedData;
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.NamedData;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 
 import java.util.function.Function;
 
-public class FromBeanArooaWithSchema<T> implements Function<T, DidoData> {
+public class FromBeanArooaWithSchema<T> implements Function<T, NamedData> {
 
     private final DataSchema schema;
 
@@ -19,8 +20,8 @@ public class FromBeanArooaWithSchema<T> implements Function<T, DidoData> {
     }
 
     @Override
-    public DidoData apply(T t) {
-        return new AbstractData() {
+    public NamedData apply(T t) {
+        return new AbstractNamedData() {
             @Override
             public DataSchema getSchema() {
                 return schema;
@@ -32,7 +33,7 @@ public class FromBeanArooaWithSchema<T> implements Function<T, DidoData> {
             }
 
             @Override
-            public Object get(String field) {
+            public Object getNamed(String field) {
                 return propertyAccessor.getProperty(t, field);
             }
 

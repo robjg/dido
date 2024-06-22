@@ -23,26 +23,26 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
 
     @Override
     public Object getAt(int index) {
-        return getOf(schema.getFieldAt(index));
+        return this.get(schema.getFieldAt(index));
     }
 
     @Override
     public boolean hasIndex(int index) {
-        return hasFieldOf(schema.getFieldAt(index));
+        return has(schema.getFieldAt(index));
     }
 
     @Override
-    public Object get(String name) {
-        return getOf(schema.getFieldNamed(name));
+    public Object getNamed(String name) {
+        return this.get(schema.getFieldNamed(name));
     }
 
     @Override
-    public Object getOf(E field) {
+    public Object get(E field) {
         return map.get(field);
     }
 
     @Override
-    public boolean hasFieldOf(E field) {
+    public boolean has(E field) {
         return map.containsKey(field);
     }
 
@@ -67,7 +67,8 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
     }
 
     static class BuilderWithSchema<E extends Enum<E>>
-            extends GenericDataBuilders.Fields<E, BuilderWithSchema<E>> implements EnumData.Builder<E> {
+            extends GenericDataBuilders.Fields<E, BuilderWithSchema<E>>
+            implements EnumData.Builder<E> {
 
         private final EnumSchema<E> schema;
 
@@ -86,7 +87,7 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
         }
 
         @Override
-        public BuilderWithSchema<E> set(E field, Object value) {
+        public BuilderWithSchema<E> with(E field, Object value) {
             map.put(field, value);
             return this;
         }
@@ -117,70 +118,70 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
         }
 
         @Override
-        public BuilderNoSchema<E> set(E field, Object value) {
+        public BuilderNoSchema<E> with(E field, Object value) {
             map.put(field, value);
             typeMap.put(field, value == null ? void.class : value.getClass());
             return this;
         }
 
         @Override
-        public EnumData.Builder<E> setBoolean(E field, boolean value) {
+        public EnumData.Builder<E> withBoolean(E field, boolean value) {
             map.put(field, value);
             typeMap.put(field, boolean.class);
             return this;
         }
 
         @Override
-        public EnumData.Builder<E> setByte(E field, byte value) {
+        public EnumData.Builder<E> withByte(E field, byte value) {
             map.put(field, value);
             typeMap.put(field, byte.class);
             return this;
         }
 
         @Override
-        public EnumData.Builder<E> setChar(E field, char value) {
+        public EnumData.Builder<E> withChar(E field, char value) {
             map.put(field, value);
             typeMap.put(field, char.class);
             return this;
         }
 
         @Override
-        public EnumData.Builder<E> setShort(E field, short value) {
+        public EnumData.Builder<E> withShort(E field, short value) {
             map.put(field, value);
             typeMap.put(field, short.class);
             return this;
         }
 
         @Override
-        public EnumData.Builder<E> setInt(E field, int value) {
+        public EnumData.Builder<E> withInt(E field, int value) {
             map.put(field, value);
             typeMap.put(field, int.class);
             return this;
         }
 
         @Override
-        public EnumData.Builder<E> setLong(E field, long value) {
+        public EnumData.Builder<E> withLong(E field, long value) {
             map.put(field, value);
             typeMap.put(field, long.class);
             return this;
         }
 
         @Override
-        public EnumData.Builder<E> setFloat(E field, float value) {
+        public EnumData.Builder<E> withFloat(E field, float value) {
             map.put(field, value);
             typeMap.put(field, float.class);
             return this;
         }
 
         @Override
-        public EnumData.Builder<E> setDouble(E field, double value) {
+        public EnumData.Builder<E> withDouble(E field, double value) {
             map.put(field, value);
             typeMap.put(field, double.class);
             return this;
         }
 
         @Override
-        public EnumData.Builder<E> setString(E field, String value) {
+        public EnumData.Builder<E> withString(E field, String value) {
             map.put(field, value);
             typeMap.put(field, String.class);
             return this;

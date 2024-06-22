@@ -75,9 +75,9 @@ class TextTableOutTest {
         EnumData.Builder<Fruit> builder = EnumMapData.builderForEnum(Fruit.class);
 
         DidoData data1 =
-                builder.setString(Fruit.Fruit, "Apple")
-                        .setInt(Fruit.Quantity, 5)
-                        .setDouble(Fruit.Price, 22.3)
+                builder.withString(Fruit.Fruit, "Apple")
+                        .withInt(Fruit.Quantity, 5)
+                        .withDouble(Fruit.Price, 22.3)
                         .build();
 
         DidoData data2 = ArrayData.of("Cantaloupe", 27, 245.3);

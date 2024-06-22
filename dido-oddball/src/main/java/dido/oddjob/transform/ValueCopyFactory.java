@@ -1,6 +1,7 @@
 package dido.oddjob.transform;
 
 import dido.data.DataSchema;
+import dido.data.IndexedSetter;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConverter;
 import org.oddjob.arooa.convert.ConversionFailedException;
@@ -187,8 +188,9 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
             if (to == null) {
                 // from must also be null
                 logger.info("Creating Copy from {} to {}", index, at);
+                // TODO: need to insure index setting
                 transformerFn = (conversion) ->
-                        (fromData, into) -> into.setAt(at, conversion.apply(fromData.getAt(index)));
+                        (fromData, into) -> ((IndexedSetter) into).setAt(at, conversion.apply(fromData.getAt(index)));
 
             } else {
                 if (from == null) {
@@ -198,7 +200,7 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
                 } else {
                     logger.info("Creating Copy from {} to {}", from, to);
                     transformerFn = (conversion) ->
-                            (fromData, into) -> into.set(to, conversion.apply(fromData.get(from)));
+                            (fromData, into) -> into.set(to, conversion.apply(fromData.getNamed(from)));
 
                 }
             }

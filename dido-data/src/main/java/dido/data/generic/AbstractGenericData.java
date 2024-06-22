@@ -11,7 +11,7 @@ import dido.data.AbstractData;
  */
 abstract public class AbstractGenericData<F> extends AbstractData implements GenericData<F> {
 
-    public Object getOf(F field) {
+    public Object get(F field) {
         int index = getSchema().getIndexOf(field);
         if (index > 0) {
             return getAt(index);
@@ -22,58 +22,58 @@ abstract public class AbstractGenericData<F> extends AbstractData implements Gen
     }
 
     @Override
-    public <T> T getOfAs(F field, Class<T> type) {
+    public <T> T getAs(F field, Class<T> type) {
         //noinspection unchecked
-        return (T) getOf(field);
+        return (T) get(field);
     }
 
     @Override
-    public boolean hasFieldOf(F field) {
-        return getOf(field) != null;
+    public boolean has(F field) {
+        return get(field) != null;
     }
 
     @Override
-    public boolean getBooleanOf(F field) {
-        return (boolean) getOf(field);
+    public boolean getBoolean(F field) {
+        return (boolean) get(field);
     }
 
     @Override
-    public byte getByteOf(F field) {
-        return (byte) getOf(field);
+    public byte getByte(F field) {
+        return (byte) get(field);
     }
 
     @Override
-    public char getCharOf(F field) {
-        return (char) getOf(field);
+    public char getChar(F field) {
+        return (char) get(field);
     }
 
     @Override
-    public short getShortOf(F field) {
-        return (short) getOf(field);
+    public short getShort(F field) {
+        return (short) get(field);
     }
 
     @Override
-    public int getIntOf(F field) {
-        return (int) getOf(field);
+    public int getInt(F field) {
+        return (int) get(field);
     }
 
     @Override
-    public long getLongOf(F field) {
-        return (long) getOf(field);
+    public long getLong(F field) {
+        return (long) get(field);
     }
 
     @Override
-    public float getFloatOf(F field) {
-        return (float) getOf(field);
+    public float getFloat(F field) {
+        return (float) get(field);
     }
 
     @Override
-    public double getDoubleOf(F field) {
-        return (double) getOf(field);
+    public double getDouble(F field) {
+        return (double) get(field);
     }
 
     @Override
-    public String getStringOf(F field) { return (String) getOf(field); }
+    public String getString(F field) { return (String) get(field); }
 
 
 

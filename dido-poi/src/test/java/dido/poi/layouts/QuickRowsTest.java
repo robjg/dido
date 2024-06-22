@@ -2,6 +2,7 @@ package dido.poi.layouts;
 
 import dido.data.DidoData;
 import dido.data.MapData;
+import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.oddjob.beanbus.DataInDriver;
@@ -100,9 +101,9 @@ public class QuickRowsTest extends TestCase {
         PoiWorkbook workbook = new PoiWorkbook();
 
         DidoData person = MapData.newBuilderNoSchema()
-                .setString("name", "John")
-                .set("dateOfBirth", DateHelper.parseDate("1970-03-25"))
-                .setDouble("salary", 45000.0)
+                .withString("name", "John")
+                .with("dateOfBirth", DateHelper.parseDate("1970-03-25"))
+                .withDouble("salary", 45000.0)
                 .build();
 
         DataOut writer = test.outTo(workbook);
@@ -123,9 +124,9 @@ public class QuickRowsTest extends TestCase {
         assertEquals("25-Mar-1970", sheet.getRow(1).getCell(1).toString());
         assertEquals("45000.0", sheet.getRow(1).getCell(2).toString());
 
-        DataIn reader = test.inFrom(workbook);
+        DataIn<NamedData> reader = test.inFrom(workbook);
 
-        DidoData result = reader.get();
+        NamedData result = reader.get();
 
         assertEquals("John", result.getString("name"));
         assertThat(result.getAs("dateOfBirth", Date.class), is(DateHelper.parseDate("1970-03-25")));
@@ -145,19 +146,19 @@ public class QuickRowsTest extends TestCase {
 
         List<DidoData> beans = new ArrayList<>();
         beans.add(MapData.newBuilderNoSchema()
-                .setString("name", "John")
-                .set("dateOfBirth", DateHelper.parseDate("1970-03-25"))
-                .setDouble("salary", 45000.0)
+                .withString("name", "John")
+                .with("dateOfBirth", DateHelper.parseDate("1970-03-25"))
+                .withDouble("salary", 45000.0)
                 .build());
         beans.add(MapData.newBuilderNoSchema()
-                .setString("name", "Jane")
-                .set("dateOfBirth", DateHelper.parseDate("1982-11-14"))
-                .setDouble("salary", 28000.0)
+                .withString("name", "Jane")
+                .with("dateOfBirth", DateHelper.parseDate("1982-11-14"))
+                .withDouble("salary", 28000.0)
                 .build());
         beans.add(MapData.newBuilderNoSchema()
-                .setString("name", "Fred")
-                .set("dateOfBirth", DateHelper.parseDate("1986-08-07"))
-                .setDouble("salary", 22500.0)
+                .withString("name", "Fred")
+                .with("dateOfBirth", DateHelper.parseDate("1986-08-07"))
+                .withDouble("salary", 22500.0)
                 .build());
 
         PoiWorkbook workbook = new PoiWorkbook();
@@ -186,30 +187,30 @@ public class QuickRowsTest extends TestCase {
         // Read Side
         ////
 
-        List<DidoData> results = new ArrayList<>(3);
+        List<NamedData> results = new ArrayList<>(3);
 
         DataInDriver<BookInProvider> read = new DataInDriver<>();
         read.setArooaSession(session);
         read.setFrom(new ArooaObject(workbook));
         read.setHow(layout);
-        read.setTo(results::add);
+        read.setTo(data ->  results.add((NamedData) data));
         read.run();
 
         read.close();
 
-        DidoData person1 = results.get(0);
+        NamedData person1 = results.get(0);
         assertEquals("John", person1.getString("name"));
         assertEquals(DateHelper.parseDate("1970-03-25"),
                 person1.get("dateOfBirth"));
         assertEquals(45000.0, person1.getDouble("salary"));
 
-        DidoData person2 = results.get(1);
+        NamedData person2 = results.get(1);
         assertEquals("Jane", person2.getString("name"));
         assertEquals(DateHelper.parseDate("1982-11-14"),
                 person2.get("dateOfBirth"));
         assertEquals(28000.0, person2.getDouble("salary"));
 
-        DidoData person3 = results.get(2);
+        NamedData person3 = results.get(2);
         assertEquals("Fred", person3.getString("name"));
         assertEquals(DateHelper.parseDate("1986-08-07"),
                 person3.get("dateOfBirth"));

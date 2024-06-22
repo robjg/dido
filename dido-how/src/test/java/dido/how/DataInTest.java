@@ -18,12 +18,10 @@ class DataInTest {
     @Test
     void iterable() throws Exception {
 
-
-        @SuppressWarnings("unchecked")
         DidoData[] data = (DidoData[]) new DidoData[] {
                 mock(DidoData.class), mock(DidoData.class), null };
 
-        try (DataIn dataIn = new DataIn() {
+        try (DataIn<DidoData> dataIn = new DataIn<>() {
                     int index = 0;
 
                     @Override
@@ -51,7 +49,7 @@ class DataInTest {
         DidoData data1 = mock(DidoData.class);
         DidoData data2 = mock(DidoData.class);
 
-        DataIn dataIn = mock(DataIn.class);
+        DataIn<DidoData> dataIn = mock(DataIn.class);
         when(dataIn.get()).thenReturn(data1)
                 .thenReturn(data2)
                 .thenReturn(null);

@@ -264,74 +264,74 @@ public class Concatenator {
         }
 
         @Override
-        public Object get(String field) {
-            Location loc = fieldLocations.get(field);
+        public Object getNamed(String name) {
+            Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].getAt(loc.index);
         }
 
         @Override
-        public <T> T getAs(String field, Class<T> type) {
-            Location loc = fieldLocations.get(field);
+        public <T> T getNamedAs(String name, Class<T> type) {
+            Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].getAtAs(loc.index, type);
         }
 
         @Override
-        public boolean hasField(String field) {
-            Location loc = fieldLocations.get(field);
+        public boolean hasNamed(String name) {
+            Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].hasIndex(loc.index);
         }
 
         @Override
-        public boolean getBoolean(String field) {
-            Location loc = fieldLocations.get(field);
+        public boolean getBooleanNamed(String name) {
+            Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].getBooleanAt(loc.index);
         }
 
         @Override
-        public byte getByte(String field) {
-            Location loc = fieldLocations.get(field);
+        public byte getByteNamed(String name) {
+            Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].getByteAt(loc.index);
         }
 
         @Override
-        public char getChar(String field) {
-            Location loc = fieldLocations.get(field);
+        public char getCharNamed(String name) {
+            Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].getCharAt(loc.index);
         }
 
         @Override
-        public short getShort(String field) {
-            Location loc = fieldLocations.get(field);
+        public short getShortNamed(String name) {
+            Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].getShortAt(loc.index);
         }
 
         @Override
-        public int getInt(String field) {
-            Location loc = fieldLocations.get(field);
+        public int getIntNamed(String name) {
+            Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].getIntAt(loc.index);
         }
 
         @Override
-        public long getLong(String field) {
-            Location loc = fieldLocations.get(field);
+        public long getLongNamed(String name) {
+            Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].getLongAt(loc.index);
         }
 
         @Override
-        public float getFloat(String field) {
-            Location loc = fieldLocations.get(field);
+        public float getFloatNamed(String name) {
+            Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].getFloatAt(loc.index);
         }
 
         @Override
-        public double getDouble(String field) {
-            Location loc = fieldLocations.get(field);
+        public double getDoubleNamed(String name) {
+            Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].getDoubleAt(loc.index);
         }
 
         @Override
-        public String getString(String field) {
-            Location loc = fieldLocations.get(field);
+        public String getStringNamed(String name) {
+            Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].getStringAt(loc.index);
         }
     }

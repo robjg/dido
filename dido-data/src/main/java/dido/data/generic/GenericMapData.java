@@ -81,10 +81,10 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
 
     private static <F> GenericData<F> fromInputs(Object... args) {
 
-        GenericDataBuilder<F> builder = new BuilderNoSchema<>();
+        BuilderNoSchema<F> builder = new BuilderNoSchema<>();
         for (int i = 0; i < args.length; i = i + 2) {
             //noinspection unchecked
-            builder.set((F) args[i], args[i+1]);
+            builder.with((F) args[i], args[i+1]);
         }
         return builder.build();
     }
@@ -98,19 +98,19 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         return schemaBuilder.build();
     }
 
-    public static <F> GenericDataBuilder<F> newBuilder(GenericDataSchema<F> schema) {
+    public static <F> BuilderWithSchema<F> newBuilder(GenericDataSchema<F> schema) {
 
         return new BuilderWithSchema<>(schema);
     }
 
-    public static <F> GenericDataBuilder<F> newBuilderNoSchema() {
+    public static <F> BuilderNoSchema<F> newBuilderNoSchema() {
 
         return new BuilderNoSchema<>();
     }
 
     public static <F> GenericDataBuilders.Values<F> valuesFor(GenericDataSchema<F> schema) {
 
-        return new BuilderWithSchema(schema).values();
+        return new BuilderWithSchema<>(schema).values();
     }
 
     public static <F> BuilderWithSchema<F> copy(GenericData<F> from) {
@@ -120,21 +120,21 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
 
     @Override
     public Object getAt(int index) {
-        return getOf(schema.getFieldAt(index));
+        return get(schema.getFieldAt(index));
     }
 
     @Override
     public boolean hasIndex(int index) {
-        return hasFieldOf(schema.getFieldAt(index));
+        return this.has(schema.getFieldAt(index));
     }
 
     @Override
-    public Object getOf(F field) {
+    public Object get(F field) {
         return map.get(field);
     }
 
     @Override
-    public boolean hasFieldOf(F field) {
+    public boolean has(F field) {
         return map.containsKey(field);
     }
 
@@ -153,7 +153,8 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
      *
      * @param <F> The field type.
      */
-    public static class BuilderWithSchema<F> extends GenericDataBuilders.KnownSchema<F, BuilderWithSchema<F>> {
+    public static class BuilderWithSchema<F>
+            extends GenericDataBuilders.KnownSchema<F, GenericData<F>, BuilderWithSchema<F>> {
 
         private Map<F, Object> map = new HashMap<>();
 
@@ -169,19 +170,19 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
 
         @Override
-        public BuilderWithSchema<F> set(F field, Object value) {
+        public BuilderWithSchema<F> with(F field, Object value) {
             map.put(field, value);
             return this;
         }
 
         @Override
-        public BuilderWithSchema<F> setAt(int index, Object value) {
-            set(getSchema().getFieldAt(index), value);
+        public BuilderWithSchema<F> withAt(int index, Object value) {
+            with(getSchema().getFieldAt(index), value);
             return this;
         }
     }
 
-    static class BuilderNoSchema<F> extends  GenericDataBuilders.Fields<F, BuilderNoSchema<F>> {
+    public static class BuilderNoSchema<F> extends GenericDataBuilders.Fields<F, BuilderNoSchema<F>> {
 
         private Map<F, Object> map = new LinkedHashMap<>();
 
@@ -196,70 +197,70 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
 
         @Override
-        public BuilderNoSchema<F> set(F field, Object value) {
+        public BuilderNoSchema<F> with(F field, Object value) {
             map.put(field, value);
             schemaBuilder.addField(field, value == null ? void.class : value.getClass());
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setBoolean(F field, boolean value) {
+        public BuilderNoSchema<F> withBoolean(F field, boolean value) {
             map.put(field, value);
             schemaBuilder.addField(field, boolean.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setByte(F field, byte value) {
+        public BuilderNoSchema<F> withByte(F field, byte value) {
             map.put(field, value);
             schemaBuilder.addField(field, byte.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setChar(F field, char value) {
+        public BuilderNoSchema<F> withChar(F field, char value) {
             map.put(field, value);
             schemaBuilder.addField(field, char.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setShort(F field, short value) {
+        public BuilderNoSchema<F> withShort(F field, short value) {
             map.put(field, value);
             schemaBuilder.addField(field, short.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setInt(F field, int value) {
+        public BuilderNoSchema<F> withInt(F field, int value) {
             map.put(field, value);
             schemaBuilder.addField(field, int.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setLong(F field, long value) {
+        public BuilderNoSchema<F> withLong(F field, long value) {
             map.put(field, value);
             schemaBuilder.addField(field, long.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setFloat(F field, float value) {
+        public BuilderNoSchema<F> withFloat(F field, float value) {
             map.put(field, value);
             schemaBuilder.addField(field, float.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setDouble(F field, double value) {
+        public BuilderNoSchema<F> withDouble(F field, double value) {
             map.put(field, value);
             schemaBuilder.addField(field, double.class);
             return this;
         }
 
         @Override
-        public BuilderNoSchema<F> setString(F field, String value) {
+        public BuilderNoSchema<F> withString(F field, String value) {
             map.put(field, value);
             schemaBuilder.addField(field, String.class);
             return this;

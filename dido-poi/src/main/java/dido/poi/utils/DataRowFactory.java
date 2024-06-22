@@ -1,8 +1,8 @@
 package dido.poi.utils;
 
-import dido.data.AbstractData;
+import dido.data.AbstractNamedData;
 import dido.data.DataSchema;
-import dido.data.DidoData;
+import dido.data.NamedData;
 import dido.poi.CellIn;
 import dido.poi.CellInProvider;
 import dido.poi.RowIn;
@@ -42,8 +42,8 @@ public class DataRowFactory {
         return new DataRowFactory(schema, cells);
     }
 
-    public DidoData wrap(RowIn row) {
-        return new AbstractData() {
+    public NamedData wrap(RowIn row) {
+        return new AbstractNamedData() {
             @Override
             public DataSchema getSchema() {
                 return schema;

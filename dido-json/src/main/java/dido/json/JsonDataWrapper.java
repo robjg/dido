@@ -7,9 +7,13 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
- * Provide a wrapper around a {@link JsonObject} so that it can be accessed as an {@link DidoData}.
+ * Provide a wrapper around a {@link JsonObject} so that it can be accessed as an {@link NamedData}.
  */
 public class JsonDataWrapper {
+
+    public static final Class<?> DATA_TYPE = NamedData.class;
+
+    public static final Class<?> REPEATING_DATA_TYPE = SchemaField.NESTED_REPEATING_TYPE;
 
     private static final Object NONE = new Object();
 
@@ -27,13 +31,14 @@ public class JsonDataWrapper {
 
     private GsonBuilder init(GsonBuilder gsonBuilder) {
         deserializer = new DataDeserializer(schema);
-        return gsonBuilder.registerTypeAdapter(DidoData.class, deserializer)
-                .registerTypeAdapter(RepeatingData.class, new RepeatingDeserializer());
+        return gsonBuilder
+                .registerTypeAdapter(DATA_TYPE, deserializer)
+                .registerTypeAdapter(REPEATING_DATA_TYPE, new RepeatingDeserializer());
     }
 
     DataDeserializer deserializer;
 
-    class DataDeserializer implements JsonDeserializer<DidoData> {
+    class DataDeserializer implements JsonDeserializer<NamedData> {
 
         private DataSchema schema;
 
@@ -42,20 +47,19 @@ public class JsonDataWrapper {
         }
 
         @Override
-        public DidoData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public NamedData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
             return wrap((JsonObject) json, context);
         }
     }
 
-    public DidoData wrap(JsonObject jsonObject, JsonDeserializationContext context) {
+    public NamedData wrap(JsonObject jsonObject, JsonDeserializationContext context) {
 
         final DataSchema schema = Objects.requireNonNull(deserializer.schema);
 
         final Object[] values = new Object[schema.lastIndex()];
 
-
-        return new AbstractData() {
+        return new AbstractNamedData() {
 
             @Override
             public DataSchema getSchema() {
@@ -81,13 +85,21 @@ public class JsonDataWrapper {
 
                 SchemaField schemaField = schema.getSchemaFieldAt(index);
 
+                Class<?> fieldType = schemaField.getType();
+
                 DataSchema restore = null;
                 if (schemaField.isNested()) {
                     restore = deserializer.schema;
                     deserializer.schema = schemaField.getNestedSchema();
+                    if (schemaField.isRepeating()) {
+                        fieldType = REPEATING_DATA_TYPE;
+                    }
+                    else {
+                        fieldType = DATA_TYPE;
+                    }
                 }
 
-                value = context.deserialize(element, schemaField.getType());
+                value = context.deserialize(element, fieldType);
                 values[index - 1] = value;
 
                 if (restore != null) {

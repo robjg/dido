@@ -20,9 +20,9 @@ class ToBeanArooaTest {
     void testToBean() {
 
         DidoData data = MapData.newBuilderNoSchema()
-                .setString("type", "Apple")
-                .setInt("quantity", 5)
-                .setDouble("price", 27.3)
+                .withString("type", "Apple")
+                .withInt("quantity", 5)
+                .withDouble("price", 27.3)
                 .build();
 
         Function<DidoData, Fruit> test = new ToBeanArooa(new BeanUtilsPropertyAccessor())
@@ -53,14 +53,14 @@ class ToBeanArooaTest {
                 .ofSchema(schema);
 
         DidoData data = MapData.newBuilder(schema)
-                .setBoolean("boolean", true)
-                .setByte("byte", (byte) 1)
-                .setChar("char", 'A')
-                .setShort("short", (short) 2)
-                .setInt("int", 3)
-                .setLong("long", 4L)
-                .setFloat("float", 1.1F)
-                .setDouble("double", 2.2)
+                .withBoolean("boolean", true)
+                .withByte("byte", (byte) 1)
+                .withChar("char", 'A')
+                .withShort("short", (short) 2)
+                .withInt("int", 3)
+                .withLong("long", 4L)
+                .withFloat("float", 1.1F)
+                .withDouble("double", 2.2)
                 .build();
 
         DynaBean bean = (DynaBean) test.apply(data);

@@ -1,6 +1,7 @@
 package dido.poi.layouts;
 
 import dido.data.DidoData;
+import dido.data.NamedData;
 import dido.oddjob.bean.FromBeanArooa;
 import dido.oddjob.bean.ToBeanArooa;
 import dido.oddjob.beanbus.DataInDriver;
@@ -91,7 +92,7 @@ public class DataBookTest extends TestCase {
 
 		write.run();
 
-		Function<Person, DidoData> transformerFromBean =
+		Function<Person, NamedData> transformerFromBean =
 				FromBeanArooa.fromSession(session)
 				.ofClass(Person.class);
 

@@ -9,34 +9,41 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-public class JsonDataPartialCopy {
+public class JsonDataPartialCopy<D extends DidoData> {
+
+    private final DataFactoryProvider<D> dataFactoryProvider;
 
     private final LinkedList<DataSchema> stack = new LinkedList<>();
 
-    private JsonDataPartialCopy(DataSchema partialSchema) {
+    private JsonDataPartialCopy(DataSchema partialSchema,
+                                DataFactoryProvider<D> dataFactoryProvider) {
         this.stack.addFirst(partialSchema);
+        this.dataFactoryProvider = dataFactoryProvider;
     }
 
-    public static GsonBuilder registerNoSchema(GsonBuilder gsonBuilder) {
-        return new JsonDataPartialCopy(DataSchema.emptySchema()).init(gsonBuilder);
+    public static <D extends DidoData> GsonBuilder registerNoSchema(GsonBuilder gsonBuilder,
+                                                                    DataFactoryProvider<D> dataFactory) {
+        return new JsonDataPartialCopy<>(DataSchema.emptySchema(), dataFactory).init(gsonBuilder);
     }
 
-    public static GsonBuilder registerPartialSchema(GsonBuilder gsonBuilder,
-                                                    DataSchema partialSchema) {
-        return new JsonDataPartialCopy(partialSchema == null ? DataSchema.emptySchema() : partialSchema)
-                .init(gsonBuilder);
+    public static <D extends DidoData> GsonBuilder registerPartialSchema(GsonBuilder gsonBuilder,
+                                                                         DataSchema partialSchema,
+                                                                         DataFactoryProvider<D> dataFactory) {
+        return new JsonDataPartialCopy<>(partialSchema == null ? DataSchema.emptySchema() : partialSchema,
+                dataFactory).init(gsonBuilder);
     }
 
     private GsonBuilder init(GsonBuilder gsonBuilder) {
-        return gsonBuilder.registerTypeAdapter(DidoData.class,
-                new DataDeserializer())
-                .registerTypeAdapter(RepeatingData.class, new RepeatingDeserializer());
+        return gsonBuilder.registerTypeAdapter(dataFactoryProvider.getDataType(),
+                        new DataDeserializer())
+                .registerTypeAdapter(SchemaField.NESTED_REPEATING_TYPE, new RepeatingDeserializer());
     }
 
-    class DataDeserializer implements JsonDeserializer<DidoData> {
+    class DataDeserializer implements JsonDeserializer<D> {
+
 
         @Override
-        public DidoData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public D deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
             if (!json.isJsonObject()) {
                 throw new JsonParseException("JsonObject expected, received: " + json +
@@ -61,13 +68,20 @@ public class JsonDataPartialCopy {
                 if (knownFields.contains(fieldName)) {
 
                     SchemaField schemaField = prioritySchema.getSchemaFieldNamed(fieldName);
+                    Class<?> fieldType = schemaField.getType();
 
                     if (schemaField.isNested()) {
 
                         stack.addFirst(schemaField.getNestedSchema());
+                        if (schemaField.isRepeating()) {
+                            fieldType = SchemaField.NESTED_REPEATING_TYPE;
+                        }
+                        else {
+                            fieldType = dataFactoryProvider.getDataType();
+                        }
                     }
 
-                    Object value = context.deserialize(element, schemaField.getType());
+                    Object value = context.deserialize(element, fieldType);
                     values[index] = value;
 
                     SchemaField childField;
@@ -85,8 +99,7 @@ public class JsonDataPartialCopy {
                         } else {
                             childField = SchemaField.ofNested(++index, fieldName, ((DidoData) value).getSchema());
                         }
-                    }
-                    else {
+                    } else {
                         childField = SchemaField.of(++index, fieldName, schemaField.getType());
                     }
                     schemaBuilder.addSchemaField(childField);
@@ -102,7 +115,8 @@ public class JsonDataPartialCopy {
                 }
             }
 
-            return ArrayData.valuesFor(schemaBuilder.build()).of(values);
+            return dataFactoryProvider.provideFactory(schemaBuilder.build())
+                    .valuesToData(values);
         }
     }
 

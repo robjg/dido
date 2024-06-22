@@ -1,6 +1,7 @@
 package dido.oddjob.transform;
 
 import dido.data.DataSchema;
+import dido.data.IndexedSetter;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConverter;
@@ -125,9 +126,11 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaS
                 at = this.index;
             }
 
-            String to = from;
-            if (to == null) {
+            String to;
+            if (this.from == null) {
                 to = fromSchema.getFieldNameAt(at);
+            } else {
+                to = from;
             }
 
             Class<?> toType = type;
@@ -145,7 +148,14 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaS
                         " to " + toType + " failed", e);
             }
 
-            return (from, into) -> into.setAt(at, value);
+            return (from, into) -> {
+                if (into instanceof IndexedSetter) {
+                    ((IndexedSetter) into).setAt(at, value);
+                }
+                else {
+                    into.set(to, value);
+                }
+            };
         }
     }
 

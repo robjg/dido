@@ -46,9 +46,9 @@ class ValueSetFactoryTest {
         assertThat(schema.getFieldNameAt(3), is("price"));
         assertThat(schema.getTypeNamed("price"), is(double.class));
 
-        assertThat(result1.get("type"), is("Apple"));
-        assertThat(result1.getInt("qty"), is(20));
-        assertThat(result1.getDouble("price"), is(27.2));
+        assertThat(result1.getNamed("type"), is("Apple"));
+        assertThat(result1.getIntNamed("qty"), is(20));
+        assertThat(result1.getDoubleNamed("price"), is(27.2));
 
         DidoData result2 = results.get(1);
 
