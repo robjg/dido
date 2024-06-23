@@ -1,55 +1,55 @@
 package dido.data;
 
 /**
- * Implementations need only provide {@link DataSetter#set(String, Object)}.
+ * Implementations need only provide {@link DataSetter#setNamed(String, Object)}.
  */
 abstract public class AbstractDataSetter implements DataSetter {
 
     @Override
-    abstract public void set(String field, Object value);
+    abstract public void setNamed(String field, Object value);
 
     @Override
-    public void setBoolean(String field, boolean value) {
-        set(field, value);
+    public void setBooleanNamed(String field, boolean value) {
+        setNamed(field, value);
     }
 
     @Override
-    public void setByte(String field, byte value) {
-        set(field, value);
+    public void setByteNamed(String field, byte value) {
+        setNamed(field, value);
     }
 
     @Override
-    public void setChar(String field, char value) {
-        set(field, value);
+    public void setCharNamed(String field, char value) {
+        setNamed(field, value);
     }
 
     @Override
-    public void setShort(String field, short value) {
-        set(field, value);
+    public void setShortNamed(String field, short value) {
+        setNamed(field, value);
     }
 
     @Override
-    public void setInt(String field, int value) {
-        set(field, value);
+    public void setIntNamed(String field, int value) {
+        setNamed(field, value);
     }
 
     @Override
-    public void setLong(String field, long value) {
-        set(field, value);
+    public void setLongNamed(String field, long value) {
+        setNamed(field, value);
     }
 
     @Override
-    public void setFloat(String field, float value) {
-        set(field, value);
+    public void setFloatNamed(String field, float value) {
+        setNamed(field, value);
     }
 
     @Override
-    public void setDouble(String field, double value) {
-        set(field, value);
+    public void setDoubleNamed(String field, double value) {
+        setNamed(field, value);
     }
 
     @Override
-    public void setString(String field, String value) {
-        set(field, value);
+    public void setStringNamed(String field, String value) {
+        setNamed(field, value);
     }
 }

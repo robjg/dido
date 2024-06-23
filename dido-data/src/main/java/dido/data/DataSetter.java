@@ -7,24 +7,24 @@ package dido.data;
  */
 public interface DataSetter {
 
-    void set(String field, Object value);
+    void setNamed(String field, Object value);
 
-    void setBoolean(String field, boolean value);
+    void setBooleanNamed(String field, boolean value);
 
-    void setByte(String field, byte value);
+    void setByteNamed(String field, byte value);
 
-    void setChar(String field, char value);
+    void setCharNamed(String field, char value);
 
-    void setShort(String field, short value);
+    void setShortNamed(String field, short value);
 
-    void setInt(String field, int value);
+    void setIntNamed(String field, int value);
 
-    void setLong(String field, long value);
+    void setLongNamed(String field, long value);
 
-    void setFloat(String field, float value);
+    void setFloatNamed(String field, float value);
 
-    void setDouble(String field, double value);
+    void setDoubleNamed(String field, double value);
 
-    void setString(String field, String value);
+    void setStringNamed(String field, String value);
 
 }

@@ -196,11 +196,11 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
                 if (from == null) {
                     logger.info("Creating Copy from {} to {}", index, to);
                     transformerFn = (conversion) ->
-                            (fromData, into) -> into.set(to, conversion.apply(fromData.getAt(index)));
+                            (fromData, into) -> into.setNamed(to, conversion.apply(fromData.getAt(index)));
                 } else {
                     logger.info("Creating Copy from {} to {}", from, to);
                     transformerFn = (conversion) ->
-                            (fromData, into) -> into.set(to, conversion.apply(fromData.getNamed(from)));
+                            (fromData, into) -> into.setNamed(to, conversion.apply(fromData.getNamed(from)));
 
                 }
             }

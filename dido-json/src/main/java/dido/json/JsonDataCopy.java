@@ -72,7 +72,7 @@ public class JsonDataCopy<D extends DidoData> {
                 }
 
                 Object nested = context.deserialize(element, fieldType);
-                setter.set(field, nested);
+                setter.setNamed(field, nested);
 
                 if (schemaField.isNested()) {
 

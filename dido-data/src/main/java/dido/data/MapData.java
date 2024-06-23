@@ -276,7 +276,7 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public void set(String field, Object value) {
+        public void setNamed(String field, Object value) {
             map.put(field, value);
         }
 

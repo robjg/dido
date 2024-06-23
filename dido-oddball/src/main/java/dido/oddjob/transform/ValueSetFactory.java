@@ -153,7 +153,7 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaS
                     ((IndexedSetter) into).setAt(at, value);
                 }
                 else {
-                    into.set(to, value);
+                    into.setNamed(to, value);
                 }
             };
         }

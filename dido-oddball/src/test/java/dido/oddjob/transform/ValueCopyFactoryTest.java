@@ -50,7 +50,7 @@ class ValueCopyFactoryTest {
 
         transformer.transform(data, dataSetter);
 
-        verify(dataSetter).set("FooAmount", 423);
+        verify(dataSetter).setNamed("FooAmount", 423);
     }
 
     @Test
@@ -81,7 +81,7 @@ class ValueCopyFactoryTest {
 
         transformer.transform(data, dataSetter);
 
-        verify(dataSetter).set("FooAmount", 423);
+        verify(dataSetter).setNamed("FooAmount", 423);
     }
 
     @Test
