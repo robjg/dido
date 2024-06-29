@@ -325,10 +325,10 @@ public class FromBeanArooa {
                 if (!partial) {
                     continue;
                 }
-                schemaField = SchemaField.of(schemaBuilder.getLastIndex() + 1, property,
+                schemaField = SchemaField.of(schemaBuilder.lastIndex() + 1, property,
                         beanOverview.getPropertyType(property));
             } else {
-                schemaField.mapToIndex(schemaBuilder.getLastIndex() + 1);
+                schemaField.mapToIndex(schemaBuilder.lastIndex() + 1);
             }
 
             schemaBuilder.addSchemaField(schemaField);

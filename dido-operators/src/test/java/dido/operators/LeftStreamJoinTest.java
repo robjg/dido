@@ -22,8 +22,8 @@ class LeftStreamJoinTest {
 
         ArrayData.Builder farmBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.newInstance()
-                        .addField("Id", int.class)
-                        .addField("Farmer", String.class)
+                        .addNamed("Id", int.class)
+                        .addNamed("Farmer", String.class)
                         .build());
 
         DidoData farm1 = farmBuilder.build(1, "Brown");
@@ -31,9 +31,9 @@ class LeftStreamJoinTest {
 
         ArrayData.Builder produceBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.newInstance()
-                        .addField("Type", String.class)
-                        .addField("Quantity", int.class)
-                        .addField("FarmId", int.class)
+                        .addNamed("Type", String.class)
+                        .addNamed("Quantity", int.class)
+                        .addNamed("FarmId", int.class)
                         .build());
 
         DidoData produce1 = produceBuilder.build("Apples", 12, 2);
@@ -42,11 +42,11 @@ class LeftStreamJoinTest {
 
         ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.newInstance()
-                        .addField("Type", String.class)
-                        .addField("Quantity", int.class)
-                        .addField("FarmId", int.class)
-                        .addField("Id", int.class)
-                        .addField("Farmer", String.class)
+                        .addNamed("Type", String.class)
+                        .addNamed("Quantity", int.class)
+                        .addNamed("FarmId", int.class)
+                        .addNamed("Id", int.class)
+                        .addNamed("Farmer", String.class)
                         .build());
 
         DidoData expected1 = expectedBuilder.build("Apples", 12, 2, 2, "Giles");

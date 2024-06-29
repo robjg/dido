@@ -39,14 +39,14 @@ class ToBeanArooaTest {
     public void testOfSchema() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("boolean", boolean.class)
-                .addField("byte", byte.class)
-                .addField("char", char.class)
-                .addField("short", short.class)
-                .addField("int", int.class)
-                .addField("long", long.class)
-                .addField("float", float.class)
-                .addField("double", double.class)
+                .addNamed("boolean", boolean.class)
+                .addNamed("byte", byte.class)
+                .addNamed("char", char.class)
+                .addNamed("short", short.class)
+                .addNamed("int", int.class)
+                .addNamed("long", long.class)
+                .addNamed("float", float.class)
+                .addNamed("double", double.class)
                 .build();
 
         Function<DidoData, Object> test = new ToBeanArooa(new BeanUtilsPropertyAccessor())

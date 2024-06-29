@@ -29,7 +29,7 @@ public interface SchemaField {
         return mapTo(toIndex, null);
     }
 
-    default SchemaField mapToField(String toField) {
+    default SchemaField mapToFieldName(String toField) {
         return mapTo(0, toField);
     }
 
@@ -54,40 +54,20 @@ public interface SchemaField {
         }
     }
 
-    static SchemaField of(int index, Class<?> type) {
-        return SchemaFields.of(index, type);
-    }
-
     static SchemaField of(int index, String field, Class<?> type) {
         return SchemaFields.of(index, field, type);
-    }
-
-    static SchemaField ofNested(int index, DataSchema nested) {
-        return SchemaFields.ofNested(index, nested);
     }
 
     static SchemaField ofNested(int index, String field, DataSchema nested) {
         return SchemaFields.ofNested(index, field, nested);
     }
 
-    static SchemaField ofNested(int index, SchemaReference nestedRef) {
-        return SchemaFields.ofNested(index, nestedRef);
-    }
-
     static SchemaField ofNested(int index, String field, SchemaReference nestedRef) {
         return SchemaFields.ofNested(index, field, nestedRef);
     }
 
-    static SchemaField ofRepeating(int index, DataSchema nested) {
-        return SchemaFields.ofRepeating(index, nested);
-    }
-
     static SchemaField ofRepeating(int index, String field, DataSchema nested) {
         return SchemaFields.ofRepeating(index, field, nested);
-    }
-
-    static SchemaField ofRepeating(int index, SchemaReference nestedRef) {
-        return SchemaFields.ofRepeating(index, nestedRef);
     }
 
     static SchemaField ofRepeating(int index, String field, SchemaReference nestedRef) {

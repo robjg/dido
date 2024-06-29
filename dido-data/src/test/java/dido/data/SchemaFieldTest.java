@@ -11,9 +11,6 @@ public class SchemaFieldTest {
     @Test
     void testToString() {
 
-        assertThat(SchemaField.of(5, Object.class).toString(),
-                is("[5]=java.lang.Object"));
-
         assertThat(SchemaField.of(5, "Foo", Object.class).toString(),
                 is("[5:Foo]=java.lang.Object"));
 
@@ -21,14 +18,8 @@ public class SchemaFieldTest {
                 addField("Nested", int.class)
                 .build();
 
-        assertThat(SchemaField.ofNested(5, nested).toString(),
-                is("[5]={[1:Nested]=int}"));
-
         assertThat(SchemaField.ofNested(5, "Foo", nested).toString(),
                 is("[5:Foo]={[1:Nested]=int}"));
-
-        assertThat(SchemaField.ofRepeating(5, nested).toString(),
-                is("[5]=[{[1:Nested]=int}]"));
 
         assertThat(SchemaField.ofRepeating(5, "Foo", nested).toString(),
                 is("[5:Foo]=[{[1:Nested]=int}]"));
@@ -54,24 +45,15 @@ public class SchemaFieldTest {
     @Test
     void testHashCode() {
 
-        assertThat(SchemaField.of(5, Object.class).hashCode(),
-                is(SchemaField.of(5, Object.class).hashCode()));
-
         assertThat(SchemaField.of(5, "Foo", Object.class).hashCode(),
                 is(SchemaField.of(5, "Foo", Object.class).hashCode()));
 
         DataSchema nested = SchemaBuilder.newInstance().
-                addField("Nested", int.class)
+                addNamed("Nested", int.class)
                 .build();
-
-        assertThat(SchemaField.ofNested(5, nested).hashCode(),
-                is(SchemaField.ofNested(5, nested).hashCode()));
 
         assertThat(SchemaField.ofNested(5, "Foo", nested).hashCode(),
                 is(SchemaField.ofNested(5, "Foo", nested).hashCode()));
-
-        assertThat(SchemaField.ofRepeating(5, nested),
-                is(SchemaField.ofRepeating(5, nested)));
 
         assertThat(SchemaField.ofRepeating(5, "Foo", nested).hashCode(),
                 is(SchemaField.ofRepeating(5, "Foo", nested).hashCode()));
@@ -96,24 +78,15 @@ public class SchemaFieldTest {
     @Test
     void testEquals() {
 
-        assertThat(SchemaField.of(5, Object.class),
-                is(SchemaField.of(5, Object.class)));
-
         assertThat(SchemaField.of(5, "Foo", Object.class),
                 is(SchemaField.of(5, "Foo", Object.class)));
 
         DataSchema nested = SchemaBuilder.newInstance().
-                addField("Nested", int.class)
+                addNamed("Nested", int.class)
                 .build();
-
-        assertThat(SchemaField.ofNested(5, nested),
-                is(SchemaField.ofNested(5, nested)));
 
         assertThat(SchemaField.ofNested(5, "Foo", nested),
                 is(SchemaField.ofNested(5, "Foo", nested)));
-
-        assertThat(SchemaField.ofRepeating(5, nested),
-                is(SchemaField.ofRepeating(5, nested)));
 
         assertThat(SchemaField.ofRepeating(5, "Foo", nested),
                 is(SchemaField.ofRepeating(5, "Foo", nested)));
@@ -140,24 +113,15 @@ public class SchemaFieldTest {
     @Test
     void testTypes() {
 
-        assertThat(SchemaField.of(5, Object.class).getType(),
-                is(Object.class));
-
         assertThat(SchemaField.of(5, "Foo", Object.class).getType(),
                 is(Object.class));
 
         DataSchema nested = SchemaBuilder.newInstance().
-                addField("Nested", int.class)
+                addNamed("Nested", int.class)
                 .build();
-
-        assertThat(SchemaField.ofNested(5, nested).getType(),
-                is(SchemaField.NESTED_TYPE));
 
         assertThat(SchemaField.ofNested(5, "Foo", nested).getType(),
                 is(SchemaField.NESTED_TYPE));
-
-        assertThat(SchemaField.ofRepeating(5, nested).getType(),
-                is(SchemaField.NESTED_REPEATING_TYPE));
 
         assertThat(SchemaField.ofRepeating(5, "Foo", nested).getType(),
                 is(SchemaField.NESTED_REPEATING_TYPE));
@@ -184,7 +148,7 @@ public class SchemaFieldTest {
 
         SchemaField schemaField = SchemaField.of(5, "Foo", Object.class);
 
-        assertThat(schemaField.mapToField("Bar").toString(),
+        assertThat(schemaField.mapToFieldName("Bar").toString(),
                 is("[5:Bar]=java.lang.Object"));
 
         assertThat(schemaField.mapToIndex(42).toString(),

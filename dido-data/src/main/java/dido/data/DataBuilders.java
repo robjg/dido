@@ -79,7 +79,7 @@ abstract public class DataBuilders<D extends DidoData, B extends DataBuilders<D,
             return withAt(index, value);
         }
 
-        public B copy(IndexedData from) {
+        public B copy(DidoData from) {
 
             DataSchema schema = from.getSchema();
             for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
@@ -143,7 +143,7 @@ abstract public class DataBuilders<D extends DidoData, B extends DataBuilders<D,
             return with(field, value);
         }
 
-        public B copy(IndexedData from) {
+        public B copy(DidoData from) {
 
             DataSchema schema = from.getSchema();
             for (String field : schema.getFieldNames()) {

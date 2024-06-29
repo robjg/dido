@@ -25,9 +25,9 @@ class StreamInJsonTest {
                 "]\n";
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
-                .addField("Fruit", String.class)
-                .addField("Qty", Double.class)
-                .addField("Price", Double.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", Double.class)
+                .addNamed("Price", Double.class)
                 .build();
 
         ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(expectedSchema);
@@ -69,7 +69,7 @@ class StreamInJsonTest {
                 "]";
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addRepeatingField("OrderLines", DataSchema.emptySchema())
+                .addRepeatingNamed("OrderLines", DataSchema.emptySchema())
                 .build();
 
         DataInHow<InputStream, NamedData> test = StreamInJson.settings()
@@ -79,13 +79,13 @@ class StreamInJsonTest {
                 .make();
 
         DataSchema expectedNestedSchema = SchemaBuilder.newInstance()
-                .addField("Fruit", String.class)
-                .addField("Qty", Double.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", Double.class)
                 .build();
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
-                .addField("OrderId", String.class)
-                .addRepeatingField("OrderLines", expectedNestedSchema)
+                .addNamed("OrderId", String.class)
+                .addRepeatingNamed("OrderLines", expectedNestedSchema)
                 .build();
 
         try (DataIn<NamedData> in = test.inFrom(

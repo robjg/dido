@@ -5,11 +5,8 @@ package dido.data;
  * the interface because reflection won't recognise the getters as properties, and it's not possible to
  * default the Object methods (toString, hashCode and equals)
  *
- * @param <F> The field type of the schema.
  */
 abstract public class AbstractIndexedData implements IndexedData {
-
-    private volatile int hash = 0;
 
     @Override
     public <T> T getAtAs(int index, Class<T> type) {
@@ -69,24 +66,16 @@ abstract public class AbstractIndexedData implements IndexedData {
 
     @Override
     public int hashCode() {
-        if (hash == 0) {
-            hash = IndexedData.hashCode(this);
-        }
-        return hash;
+        throw new UnsupportedOperationException("Subclasses must overwrite this.");
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof IndexedData) {
-            return IndexedData.equals(this, (IndexedData) obj);
-        }
-        else {
-            return false;
-        }
+        throw new UnsupportedOperationException("Subclasses must overwrite this.");
     }
 
     @Override
     public String toString() {
-        return IndexedData.toString(this);
+        throw new UnsupportedOperationException("Subclasses must overwrite this.");
     }
 }

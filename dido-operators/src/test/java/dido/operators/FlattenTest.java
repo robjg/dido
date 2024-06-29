@@ -15,13 +15,13 @@ class FlattenTest {
     void testFlattenRepeatingField() {
 
         DataSchema nestedSchema = SchemaBuilder.newInstance()
-                .addField("Fruit", String.class)
-                .addField("Qty", int.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", int.class)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("OrderId", String.class)
-                .addRepeatingField("OrderLines", nestedSchema)
+                .addNamed("OrderId", String.class)
+                .addRepeatingNamed("OrderLines", nestedSchema)
                 .build();
 
         DidoData data = ArrayData.valuesFor(schema)
@@ -35,9 +35,9 @@ class FlattenTest {
                 .apply(data);
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
-                .addField("OrderId", String.class)
-                .addField("Fruit", String.class)
-                .addField("Qty", int.class)
+                .addNamed("OrderId", String.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", int.class)
                 .build();
 
         DidoData expected1 = ArrayData.valuesFor(expectedSchema)

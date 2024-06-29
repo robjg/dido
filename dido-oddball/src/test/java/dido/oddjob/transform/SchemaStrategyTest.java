@@ -25,8 +25,8 @@ class SchemaStrategyTest {
                         i -> { throw new RuntimeException("Unexpected"); });
 
         DataSchema expected = SchemaBuilder.newInstance()
-                .addField("One", int.class)
-                .addField("Two", long.class)
+                .addNamed("One", int.class)
+                .addNamed("Two", long.class)
                 .build();
 
         assertThat(result, is(expected));
@@ -44,8 +44,8 @@ class SchemaStrategyTest {
                         i -> { throw new RuntimeException("Unexpected"); });
 
         DataSchema expected = SchemaBuilder.newInstance()
-                .addField("One", int.class)
-                .addField("Two", long.class)
+                .addNamed("One", int.class)
+                .addNamed("Two", long.class)
                 .build();
 
         assertThat(result, is(expected));
@@ -59,7 +59,7 @@ class SchemaStrategyTest {
                         SchemaFieldOptions.of(0, "Two", long.class));
 
         DataSchema existing = SchemaBuilder.newInstance()
-                .addFieldAt(10, "Here", int.class)
+                .addNamedAt(10, "Here", int.class)
                 .build();
 
         List<Integer> existingIndices = new ArrayList<>();
@@ -68,9 +68,9 @@ class SchemaStrategyTest {
                         existingIndices::add);
 
         DataSchema expected = SchemaBuilder.newInstance()
-                .addFieldAt(10, "Here", int.class)
-                .addFieldAt(11, "One", int.class)
-                .addFieldAt(12, "Two", long.class)
+                .addNamedAt(10, "Here", int.class)
+                .addNamedAt(11, "One", int.class)
+                .addNamedAt(12, "Two", long.class)
                 .build();
 
         assertThat(result, is(expected));
@@ -86,9 +86,9 @@ class SchemaStrategyTest {
                         SchemaFieldOptions.of(10, "Three", Double.class));
 
         DataSchema existing = SchemaBuilder.newInstance()
-                .addFieldAt(10, "One", int.class)
-                .addFieldAt(20, "Two", long.class)
-                .addFieldAt(30, "Three", double.class)
+                .addNamedAt(10, "One", int.class)
+                .addNamedAt(20, "Two", long.class)
+                .addNamedAt(30, "Three", double.class)
                 .build();
 
         DataSchema result =
@@ -96,9 +96,9 @@ class SchemaStrategyTest {
                         i -> { throw new RuntimeException("Unexpected"); });
 
         DataSchema expected = SchemaBuilder.newInstance()
-                .addFieldAt(10, "Three", Double.class)
-                .addFieldAt(20, "Two", Long.class)
-                .addFieldAt(30, "One", Integer.class)
+                .addNamedAt(10, "Three", Double.class)
+                .addNamedAt(20, "Two", Long.class)
+                .addNamedAt(30, "One", Integer.class)
                 .build();
 
         assertThat(result, is(expected));

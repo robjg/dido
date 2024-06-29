@@ -41,7 +41,7 @@ public class ClassSchema {
                 continue;
             }
 
-            schemaBuilder.addField(property, overview.getPropertyType(property));
+            schemaBuilder.addNamed(property, overview.getPropertyType(property));
         }
 
         return schemaBuilder.build();

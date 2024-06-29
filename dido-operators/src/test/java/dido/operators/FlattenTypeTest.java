@@ -42,9 +42,9 @@ class FlattenTypeTest {
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
-                .addField("OrderId", String.class)
-                .addField("Fruit", String.class)
-                .addField("Qty", int.class)
+                .addNamed("OrderId", String.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", int.class)
                 .build();
 
         DidoData expected1 = ArrayData.valuesFor(expectedSchema)
@@ -76,9 +76,9 @@ class FlattenTypeTest {
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
-                .addField("Name", String.class)
-                .addField("Numbers", Integer.class)
-                .addField("Letters", Object.class)
+                .addNamed("Name", String.class)
+                .addNamed("Numbers", Integer.class)
+                .addNamed("Letters", Object.class)
                 .build();
 
         // Todo Specify Schema

@@ -3,6 +3,7 @@ package dido.csv;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.IndexedData;
+import dido.data.IndexedSchema;
 import dido.how.CloseableConsumer;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
@@ -168,7 +169,7 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
     }
 
     public static Object[] toValues(IndexedData data) {
-        DataSchema schema = data.getSchema();
+        IndexedSchema schema = data.getSchema();
         if (schema.lastIndex() < 1) {
             return new Object[0];
         }

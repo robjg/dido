@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Base class providing default implementations of {@link DataSchema}.
+ */
 public abstract class AbstractDataSchema implements DataSchema {
 
     @Override

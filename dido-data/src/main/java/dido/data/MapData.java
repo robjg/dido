@@ -93,7 +93,7 @@ public class MapData extends AbstractNamedData implements NamedData {
 
         SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
         for (Map.Entry<String, ?> entry : map.entrySet()) {
-            schemaBuilder.addField(entry.getKey(), entry.getValue().getClass());
+            schemaBuilder.addNamed(entry.getKey(), entry.getValue().getClass());
         }
         return schemaBuilder.build();
     }
@@ -113,7 +113,7 @@ public class MapData extends AbstractNamedData implements NamedData {
         return new BuilderWithSchema(schema).values();
     }
 
-    public static BuilderWithSchema copy(IndexedData from) {
+    public static BuilderWithSchema copy(DidoData from) {
 
         return new BuilderWithSchema(from.getSchema()).copy(from);
     }
@@ -195,70 +195,70 @@ public class MapData extends AbstractNamedData implements NamedData {
         @Override
         public BuilderNoSchema with(String field, Object value) {
             map.put(field, value);
-            schemaBuilder.addField(field, value == null ? void.class : value.getClass());
+            schemaBuilder.addNamed(field, value == null ? void.class : value.getClass());
             return this;
         }
 
         @Override
         public BuilderNoSchema withBoolean(String field, boolean value) {
             map.put(field, value);
-            schemaBuilder.addField(field, boolean.class);
+            schemaBuilder.addNamed(field, boolean.class);
             return this;
         }
 
         @Override
         public BuilderNoSchema withByte(String field, byte value) {
             map.put(field, value);
-            schemaBuilder.addField(field, byte.class);
+            schemaBuilder.addNamed(field, byte.class);
             return this;
         }
 
         @Override
         public BuilderNoSchema withChar(String field, char value) {
             map.put(field, value);
-            schemaBuilder.addField(field, char.class);
+            schemaBuilder.addNamed(field, char.class);
             return this;
         }
 
         @Override
         public BuilderNoSchema withShort(String field, short value) {
             map.put(field, value);
-            schemaBuilder.addField(field, short.class);
+            schemaBuilder.addNamed(field, short.class);
             return this;
         }
 
         @Override
         public BuilderNoSchema withInt(String field, int value) {
             map.put(field, value);
-            schemaBuilder.addField(field, int.class);
+            schemaBuilder.addNamed(field, int.class);
             return this;
         }
 
         @Override
         public BuilderNoSchema withLong(String field, long value) {
             map.put(field, value);
-            schemaBuilder.addField(field, long.class);
+            schemaBuilder.addNamed(field, long.class);
             return this;
         }
 
         @Override
         public BuilderNoSchema withFloat(String field, float value) {
             map.put(field, value);
-            schemaBuilder.addField(field, float.class);
+            schemaBuilder.addNamed(field, float.class);
             return this;
         }
 
         @Override
         public BuilderNoSchema withDouble(String field, double value) {
             map.put(field, value);
-            schemaBuilder.addField(field, double.class);
+            schemaBuilder.addNamed(field, double.class);
             return this;
         }
 
         @Override
         public BuilderNoSchema withString(String field, String value) {
             map.put(field, value);
-            schemaBuilder.addField(field, String.class);
+            schemaBuilder.addNamed(field, String.class);
             return this;
         }
 

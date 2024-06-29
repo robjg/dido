@@ -38,14 +38,6 @@ public class GenericSchemaBuilder<F> {
 
     // Add Simple Fields
 
-    public GenericSchemaBuilder<F> add(Class<?> fieldType) {
-        return addAt(0, fieldType);
-    }
-
-    public GenericSchemaBuilder<F> addAt(int index, Class<?> fieldType) {
-        return addFieldAt(index, null, fieldType);
-    }
-
     public GenericSchemaBuilder<F> addField(F field, Class<?> fieldType) {
         return addFieldAt(0, field, fieldType);
     }
@@ -55,15 +47,6 @@ public class GenericSchemaBuilder<F> {
     }
 
     // Add Nested Field
-
-    public <N> GenericSchemaBuilder<F> addNested(GenericDataSchema<N> nestedSchema) {
-        return addNestedAt(0, nestedSchema);
-    }
-
-    public GenericSchemaBuilder<F> addNestedAt(int index,
-                                               DataSchema nestedSchema) {
-        return addNestedFieldAt(processIndex(index), null, nestedSchema);
-    }
 
     public GenericSchemaBuilder<F> addNestedField(F field,
                                                   DataSchema nestedSchema) {
@@ -80,15 +63,6 @@ public class GenericSchemaBuilder<F> {
 
     // Add Nested Reference
 
-    public GenericSchemaBuilder<F> addNested(SchemaReference nestedSchemaRef) {
-        return addNestedAt(0, nestedSchemaRef);
-    }
-
-    public GenericSchemaBuilder<F> addNestedAt(int index,
-                                               SchemaReference nestedSchemaRef) {
-        return addNestedFieldAt(processIndex(index), null, nestedSchemaRef);
-    }
-
     public GenericSchemaBuilder<F> addNestedField(F field,
                                                   SchemaReference nestedSchemaRef) {
         return addNestedFieldAt(0, field, nestedSchemaRef);
@@ -102,15 +76,6 @@ public class GenericSchemaBuilder<F> {
     }
 
     // Add Repeating Nested Schema
-
-    public <N> GenericSchemaBuilder<F> addRepeating(GenericDataSchema<N> nestedSchema) {
-        return addRepeatingAt(0, nestedSchema);
-    }
-
-    public GenericSchemaBuilder<F> addRepeatingAt(int index,
-                                                  DataSchema nestedSchema) {
-        return addRepeatingFieldAt(processIndex(index), null, nestedSchema);
-    }
 
     public GenericSchemaBuilder<F> addRepeatingField(F field,
                                                      DataSchema nestedSchema) {

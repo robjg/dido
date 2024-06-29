@@ -111,7 +111,7 @@ public class JsonDataPartialCopy<D extends DidoData> {
                     Class<?> type = value.getClass();
 
                     values[index] = value;
-                    schemaBuilder.addFieldAt(++index, fieldName, type);
+                    schemaBuilder.addNamedAt(++index, fieldName, type);
                 }
             }
 

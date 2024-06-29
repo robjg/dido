@@ -1,11 +1,15 @@
 package dido.data;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * The basic definition of a Data item within Dido.
  */
 public interface DidoData extends IndexedData {
+
+    @Override
+    DataSchema getSchema();
 
     Object getNamed(String fieldName);
 
@@ -30,6 +34,38 @@ public interface DidoData extends IndexedData {
     double getDoubleNamed(String fieldName);
 
     String getStringNamed(String fieldName);
+
+    static int hashCode(DidoData data) {
+        DataSchema schema = data.getSchema();
+        int hash = schema.hashCode();
+        for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
+            if (!data.hasIndex(index)) {
+                continue;
+            }
+            Object value = data.getAt(index);
+            hash = hash * 31 + (value == null ? 0 :value.hashCode());
+        }
+        return hash;
+    }
+
+    static boolean equals(DidoData data1, DidoData data2) {
+        if (data1 == data2) {
+            return true;
+        }
+        if (data1 == null || data2 == null) {
+            return false;
+        }
+        DataSchema schema = data1.getSchema();
+        if (!schema.equals(data2.getSchema())) {
+            return false;
+        }
+        for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
+            if (! Objects.equals(data1.getAt(index), data2.getAt(index))) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     static String toString(DidoData data) {
         DataSchema schema = data.getSchema();

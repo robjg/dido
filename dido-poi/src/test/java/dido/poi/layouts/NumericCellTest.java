@@ -8,7 +8,6 @@ import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;
 import junit.framework.TestCase;
-import org.hamcrest.MatcherAssert;
 import org.oddjob.arooa.ArooaBeanDescriptor;
 import org.oddjob.arooa.ConfiguredHow;
 import org.oddjob.arooa.life.SimpleArooaClass;
@@ -26,7 +25,6 @@ import java.beans.PropertyDescriptor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 
 public class NumericCellTest extends TestCase {
 
@@ -97,6 +95,7 @@ public class NumericCellTest extends TestCase {
 		reader.close();
 	}
 
+	// Used to be null, but now all fields have names, the cell is created.
 	public void testWriteAndReadNull() throws Exception {
 
 		PoiWorkbook workbook = new PoiWorkbook();
@@ -120,15 +119,8 @@ public class NumericCellTest extends TestCase {
 
 		NamedData result = reader.get();
 
-		assertThat(result.getAtAs(1, Double.class), nullValue());
-		assertThat(result.hasIndex(1), is(false));
-
-		try {
-			result.getDoubleAt(1);
-			MatcherAssert.assertThat("Should throw NPE", false);
-		} catch (NullPointerException e) {
-			// expected.
-		}
+		assertThat(result.getAtAs(1, Double.class), is(0.0));
+		assertThat(result.hasIndex(1), is(true));
 
 		assertNull(reader.get());
 

@@ -44,13 +44,13 @@ class ToBeanTransformerTest {
         public List<DidoData> toValue() {
 
             DataSchema nestedSchema = SchemaBuilder.newInstance()
-                    .addField("fruit", String.class)
-                    .addField("qty", int.class)
+                    .addNamed("fruit", String.class)
+                    .addNamed("qty", int.class)
                     .build();
 
             DataSchema schema = SchemaBuilder.newInstance()
-                    .addField("orderId", String.class)
-                    .addRepeatingField("orderLines", nestedSchema)
+                    .addNamed("orderId", String.class)
+                    .addRepeatingNamed("orderLines", nestedSchema)
                     .build();
 
             DidoData data = ArrayData.valuesFor(schema)

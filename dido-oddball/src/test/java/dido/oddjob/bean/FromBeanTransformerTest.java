@@ -32,13 +32,13 @@ class FromBeanTransformerTest {
         List<DidoData> results = lookup.lookup("capture.beans", List.class);
 
         DataSchema nestedSchema = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", int.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", int.class)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("orderId", String.class)
-                .addRepeatingField("orderLines", nestedSchema)
+                .addNamed("orderId", String.class)
+                .addRepeatingNamed("orderLines", nestedSchema)
                 .build();
 
         IndexedData expectedData = ArrayData.valuesFor(schema)

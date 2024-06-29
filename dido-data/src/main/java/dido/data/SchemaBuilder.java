@@ -1,25 +1,45 @@
 package dido.data;
 
 import java.util.*;
+import java.util.function.UnaryOperator;
 
 /**
  * Builder for an {@link DataSchema}.
  */
 public class SchemaBuilder {
 
-    private final Map<Integer, SchemaField> indexToFields = new TreeMap<>();
+    private final NavigableMap<Integer, SchemaField> indexToFields = new TreeMap<>();
 
-    private final Map<String, Integer> fieldToIndex = new HashMap<>();
+    private final Map<String, Integer> nameToIndex = new HashMap<>();
 
-    private int firstIndex;
+    // TODO: Make configurable.
+    private static final UnaryOperator<String> fieldRenameStrategy = s -> s + "_";
 
-    private int lastIndex;
+    protected SchemaBuilder(DataSchema from) {
+        for (SchemaField schemaField : from.getSchemaFields()) {
+            indexToFields.put(schemaField.getIndex(), schemaField);
+            nameToIndex.put(schemaField.getName(), schemaField.getIndex());
+        }
+    }
 
     private SchemaBuilder() {
     }
 
     public static SchemaBuilder newInstance() {
         return new SchemaBuilder();
+    }
+
+    public int firstIndex() {
+        return Optional.ofNullable(indexToFields.firstEntry())
+                .map(Map.Entry::getKey)
+                .orElse(0);
+
+    }
+
+    public int lastIndex() {
+        return Optional.ofNullable(indexToFields.lastEntry())
+                .map(Map.Entry::getKey)
+                .orElse(0);
     }
 
     // Add Simple Fields
@@ -29,15 +49,29 @@ public class SchemaBuilder {
     }
 
     public SchemaBuilder addAt(int index, Class<?> fieldType) {
-        return addFieldAt(index, null, fieldType);
+        return addNamedAt(index, null, fieldType);
     }
 
-    public SchemaBuilder addField(String field, Class<?> fieldType) {
-        return addFieldAt(0, field, fieldType);
+    public SchemaBuilder addNamed(String name, Class<?> fieldType) {
+        return addNamedAt(0, name, fieldType);
     }
 
-    public SchemaBuilder addFieldAt(int index, String field, Class<?> fieldType) {
-        return addSchemaField(SchemaField.of(processIndex(index), field, fieldType));
+    /**
+     * Add a field, replacing as necessary.
+     * If the index is 0, the next available is used. If the index exists the field is
+     * replaced.
+     * If the name is null, the name is derived from the index. If the name exists
+     * a new name is used.
+     *
+     * @param index     The index.
+     * @param name      The name.
+     * @param fieldType The field type. Must not be null.
+     * @return This builder
+     */
+    public SchemaBuilder addNamedAt(int index, String name, Class<?> fieldType) {
+
+        return addSchemaField(schemaFieldOf(index, name,
+                (i, n) -> SchemaField.of(i, n, fieldType)));
     }
 
     // Add Nested Field
@@ -48,20 +82,20 @@ public class SchemaBuilder {
 
     public SchemaBuilder addNestedAt(int index,
                                      DataSchema nestedSchema) {
-        return addNestedFieldAt(processIndex(index), null, nestedSchema);
+        return addNestedNamedAt(index, null, nestedSchema);
     }
 
-    public SchemaBuilder addNestedField(String field,
+    public SchemaBuilder addNestedNamed(String name,
                                         DataSchema nestedSchema) {
-        return addNestedFieldAt(0, field, nestedSchema);
+        return addNestedNamedAt(0, name, nestedSchema);
     }
 
-    public SchemaBuilder addNestedFieldAt(int index,
-                                          String field,
+    public SchemaBuilder addNestedNamedAt(int index,
+                                          String name,
                                           DataSchema nestedSchema) {
 
-        return addSchemaField(SchemaField.ofNested(
-                processIndex(index), field, nestedSchema));
+        return addSchemaField(schemaFieldOf(index, name,
+                (i, n) -> SchemaField.ofNested(i, n, nestedSchema)));
     }
 
     // Add Nested Reference
@@ -72,19 +106,20 @@ public class SchemaBuilder {
 
     public SchemaBuilder addNestedAt(int index,
                                      SchemaReference nestedSchemaRef) {
-        return addNestedFieldAt(processIndex(index), null, nestedSchemaRef);
+        return addNestedNamedAt(index, null, nestedSchemaRef);
     }
 
-    public SchemaBuilder addNestedField(String field,
+    public SchemaBuilder addNestedNamed(String field,
                                         SchemaReference nestedSchemaRef) {
-        return addNestedFieldAt(0, field, nestedSchemaRef);
+        return addNestedNamedAt(0, field, nestedSchemaRef);
     }
 
-    public SchemaBuilder addNestedFieldAt(int index,
-                                          String field,
+    public SchemaBuilder addNestedNamedAt(int index,
+                                          String name,
                                           SchemaReference nestedSchemaRef) {
-        return addSchemaField(SchemaField.ofNested(
-                processIndex(index), field, nestedSchemaRef));
+
+        return addSchemaField(schemaFieldOf(index, name,
+                (i, n) -> SchemaField.ofNested(i, n, nestedSchemaRef)));
     }
 
     // Add Repeating Nested Schema
@@ -95,19 +130,20 @@ public class SchemaBuilder {
 
     public SchemaBuilder addRepeatingAt(int index,
                                         DataSchema nestedSchema) {
-        return addRepeatingFieldAt(processIndex(index), null, nestedSchema);
+        return addRepeatingNamedAt(index, null, nestedSchema);
     }
 
-    public SchemaBuilder addRepeatingField(String field,
+    public SchemaBuilder addRepeatingNamed(String name,
                                            DataSchema nestedSchema) {
-        return addRepeatingFieldAt(0, field, nestedSchema);
+        return addRepeatingNamedAt(0, name, nestedSchema);
     }
 
-    public SchemaBuilder addRepeatingFieldAt(int index,
-                                             String field,
+    public SchemaBuilder addRepeatingNamedAt(int index,
+                                             String name,
                                              DataSchema nestedSchema) {
-        return addSchemaField(SchemaField.ofRepeating(
-                processIndex(index), field, nestedSchema));
+
+        return addSchemaField(schemaFieldOf(index, name,
+                (i, n) -> SchemaField.ofRepeating(i, n, nestedSchema)));
     }
 
     // Add Repeating Nested Schema Ref
@@ -118,87 +154,129 @@ public class SchemaBuilder {
 
     public SchemaBuilder addRepeatingAt(int index,
                                         SchemaReference nestedSchemaRef) {
-        return addRepeatingFieldAt(processIndex(index), null, nestedSchemaRef);
+        return addRepeatingNamedAt(index, null, nestedSchemaRef);
     }
 
-    public SchemaBuilder addRepeatingField(String field,
+    public SchemaBuilder addRepeatingNamed(String name,
                                            SchemaReference nestedSchemaRef) {
-        return addRepeatingFieldAt(0, field, nestedSchemaRef);
+        return addRepeatingNamedAt(0, name, nestedSchemaRef);
     }
 
-    public SchemaBuilder addRepeatingFieldAt(int index,
-                                             String field,
+    public SchemaBuilder addRepeatingNamedAt(int index,
+                                             String name,
                                              SchemaReference nestedSchemaRef) {
-        return addSchemaField(SchemaField.ofRepeating(
-                processIndex(index), field, nestedSchemaRef));
+
+        return addSchemaField(schemaFieldOf(index, name,
+                (i, n) -> SchemaField.ofRepeating(i, n, nestedSchemaRef)));
     }
 
+    public SchemaBuilder removeAt(int index) {
 
+        SchemaField schemaField = this.indexToFields.remove(index);
+        if (schemaField == null) {
+            throw new IllegalArgumentException("No field at index " + index);
+        }
+        this.nameToIndex.remove(schemaField.getName());
+        return this;
+
+    }
+
+    public SchemaBuilder removeNamed(String name) {
+
+        Integer index = nameToIndex.get(name);
+        if (index == null) {
+            throw new IllegalArgumentException("No field named " + name);
+        }
+
+        return removeAt(index);
+    }
+
+    /**
+     * Merge a schema giving priority to the type of the priority schema.
+     * If the name of the priority field exists in existing schema, the field is
+     * replaced at the existing index. If the name of the priority field is not
+     * in the existing schema it is added at the end. The indexes of the incoming
+     * schema is ignored.
+     *
+     * @param prioritySchema The schema to take priority in the merge.
+     * @return This builder.
+     */
     public SchemaBuilder merge(DataSchema prioritySchema) {
 
         for (int i = prioritySchema.firstIndex(); i > 0; i = prioritySchema.nextIndex(i)) {
 
             SchemaField schemaField = prioritySchema.getSchemaFieldAt(i);
 
-            String priorityField = schemaField.getName();
-            if (priorityField == null) {
-                addSchemaField(schemaField.mapTo(schemaField.getIndex(),
-                        Optional.ofNullable(indexToFields.get(schemaField.getIndex()))
-                                .map(SchemaField::getName)
-                                .orElse(null)));
+            String priorityName = schemaField.getName();
+            Integer existingIndex = nameToIndex.get(priorityName);
+            if (existingIndex == null) {
+                addSchemaField(schemaField.mapToIndex(lastIndex() + 1));
             } else {
-                Integer index = fieldToIndex.get(priorityField);
-                addSchemaField(schemaField.mapToIndex(
-                        Objects.requireNonNullElseGet(index, () -> lastIndex + 1)));
+                SchemaField newField = schemaField.mapToIndex(existingIndex);
+                indexToFields.put(existingIndex, newField);
             }
         }
 
         return this;
     }
 
+    /**
+     * Add a schema field. If the index exists, we replace its field with
+     * the new field.
+     *
+     * @param schemaField The field. Never null.
+     * @return This builder.
+     */
     public SchemaBuilder addSchemaField(SchemaField schemaField) {
 
         int index = schemaField.getIndex();
 
-        indexToFields.put(index, schemaField);
+        SchemaField existingField = indexToFields.remove(index);
+        if (existingField == null) {
 
-        String field = schemaField.getName();
-        if (field != null) {
-            fieldToIndex.put(field, index);
+            // Ensure name is unique.
+            String name = schemaField.getName();
+            if (nameToIndex.containsKey(name)) {
+                return addSchemaField(schemaField.mapToFieldName(
+                        fieldRenameStrategy.apply(name)));
+            }
+
+            indexToFields.put(index, schemaField);
+            nameToIndex.put(name, index);
+
+            return this;
+        } else {
+            nameToIndex.remove(existingField.getName());
+            return addSchemaField(schemaField);
         }
-
-        if (firstIndex == 0 || index < firstIndex) {
-            firstIndex = index;
-        }
-
-        if (index > lastIndex) {
-            lastIndex = index;
-        }
-
-        return this;
     }
 
-    public int getLastIndex() {
-        return lastIndex;
-    }
 
     public DataSchema build() {
         return DataSchemaImpl.fromFields(indexToFields.values(),
-                firstIndex, lastIndex);
+                firstIndex(), lastIndex());
     }
 
     // Implementation
 
+    /**
+     * If the index is 0 we're finding the next available index. We're also remembering
+     * what that is for next time.
+     *
+     * @param index The index;
+     * @return The same index, or the next available.
+     */
+    private <T> T schemaFieldOf(int index, String name, SchemaFieldFunc<T> func) {
+         index = index == 0 ? lastIndex() + 1 : index;
+         return func.apply(index, name == null ?  nameForIndex(index): name);
+    }
 
-    private int processIndex(int index) {
-        if (index == 0) {
-            return ++lastIndex;
-        } else if (index <= lastIndex) {
-            throw new IllegalArgumentException(
-                    "Index [" + index + "] must be greater than Last index [" + lastIndex + "]");
-        } else {
-            lastIndex = index;
-            return index;
-        }
+    interface SchemaFieldFunc<T> {
+
+        T apply(int index, String field);
+    }
+
+    public static String nameForIndex(int index) {
+        return "[" + index + "]";
     }
 }

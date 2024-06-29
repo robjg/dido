@@ -16,9 +16,9 @@ public class FruitData implements ValueFactory<DidoData> {
 
 
     private static final DataSchema schema = SchemaBuilder.newInstance()
-            .addField(TYPE, String.class)
-            .addField(QUANTITY, int.class)
-            .addField(PRICE, double.class)
+            .addNamed(TYPE, String.class)
+            .addNamed(QUANTITY, int.class)
+            .addNamed(PRICE, double.class)
             .build();
 
     private String type;

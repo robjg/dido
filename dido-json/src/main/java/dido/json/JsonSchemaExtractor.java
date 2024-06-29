@@ -63,11 +63,11 @@ public class JsonSchemaExtractor {
                                     JsonPrimitive jsonPrimitive) {
 
         if (jsonPrimitive.isString()) {
-            schemaBuilder.addField(field, String.class);
+            schemaBuilder.addNamed(field, String.class);
         } else if (jsonPrimitive.isBoolean()) {
-            schemaBuilder.addField(field, boolean.class);
+            schemaBuilder.addNamed(field, boolean.class);
         } else {
-            schemaBuilder.addField(field, double.class);
+            schemaBuilder.addNamed(field, double.class);
         }
     }
 
@@ -84,22 +84,22 @@ public class JsonSchemaExtractor {
                 JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
 
                 if (jsonPrimitive.isString()) {
-                    schemaBuilder.addField(field, String[].class);
+                    schemaBuilder.addNamed(field, String[].class);
                 } else if (jsonPrimitive.isBoolean()) {
-                    schemaBuilder.addField(field, boolean[].class);
+                    schemaBuilder.addNamed(field, boolean[].class);
                 } else {
-                    schemaBuilder.addField(field, double[].class);
+                    schemaBuilder.addNamed(field, double[].class);
                 }
             } else if (element.isJsonArray()) {
 
                 // Not sure what to do here.
-                schemaBuilder.addField(field, Object[].class);
+                schemaBuilder.addNamed(field, Object[].class);
             } else {
 
-                schemaBuilder.addField(field, Object[].class);
+                schemaBuilder.addNamed(field, Object[].class);
             }
         } else {
-            schemaBuilder.addField(field, Object[].class);
+            schemaBuilder.addNamed(field, Object[].class);
         }
     }
 
@@ -136,7 +136,7 @@ public class JsonSchemaExtractor {
                                 element.getAsJsonArray());
                     } else {
 
-                        schemaBuilder.addField(fieldName, Map.class);
+                        schemaBuilder.addNamed(fieldName, Map.class);
                     }
 
                 } else {
@@ -149,23 +149,23 @@ public class JsonSchemaExtractor {
 
                             RepeatingSchema repeatingSchema = context.deserialize(element, RepeatingSchema.class);
 
-                            schemaBuilder.addRepeatingField(fieldName, repeatingSchema.nestedSchema);
+                            schemaBuilder.addRepeatingNamed(fieldName, repeatingSchema.nestedSchema);
                         } else {
 
                             DataSchema nestedSchema = context.deserialize(element, DataSchema.class);
 
-                            schemaBuilder.addNestedField(fieldName, nestedSchema);
+                            schemaBuilder.addNestedNamed(fieldName, nestedSchema);
                         }
                     } else {
 
-                        schemaBuilder.addField(fieldName, schemaField.getType());
+                        schemaBuilder.addNamed(fieldName, schemaField.getType());
                     }
                 }
 
                 fieldNames.remove(fieldName);
             }
 
-            fieldNames.forEach(f -> schemaBuilder.addField(f, prioritySchema.getTypeNamed(f)));
+            fieldNames.forEach(f -> schemaBuilder.addNamed(f, prioritySchema.getTypeNamed(f)));
 
             return schemaBuilder.build();
         }

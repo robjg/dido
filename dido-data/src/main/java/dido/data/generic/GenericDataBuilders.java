@@ -1,7 +1,7 @@
 package dido.data.generic;
 
 import dido.data.DataSchema;
-import dido.data.IndexedData;
+import dido.data.DidoData;
 import dido.data.IndexedDataBuilder;
 
 import java.util.Objects;
@@ -74,7 +74,7 @@ abstract public class GenericDataBuilders<F, D extends GenericData<F>, B extends
             return withAt(index, value);
         }
 
-        public B copy(IndexedData from) {
+        public B copy(DidoData from) {
 
             DataSchema schema = from.getSchema();
             for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {

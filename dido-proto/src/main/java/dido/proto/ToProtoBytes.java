@@ -4,15 +4,15 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.Message;
 import dido.data.DataSchema;
-import dido.data.IndexedData;
+import dido.data.DidoData;
 import dido.data.SchemaField;
 
 import java.util.function.Function;
 
 /**
- * Converts {@link IndexedData} into a Protobuf message as a byte array using the provided protobuf descriptor.
+ * Converts {@link DidoData} into a Protobuf message as a byte array using the provided protobuf descriptor.
  */
-public class ToProtoBytes implements Function<IndexedData, byte[]> {
+public class ToProtoBytes implements Function<DidoData, byte[]> {
 
     private final Descriptors.Descriptor descriptor;
 
@@ -20,12 +20,12 @@ public class ToProtoBytes implements Function<IndexedData, byte[]> {
         this.descriptor = descriptor;
     }
 
-    public static Function<IndexedData, byte[]> from(Descriptors.Descriptor descriptor) {
+    public static Function<DidoData, byte[]> from(Descriptors.Descriptor descriptor) {
         return new ToProtoBytes(descriptor);
     }
 
     @Override
-    public byte[] apply(IndexedData data) {
+    public byte[] apply(DidoData data) {
 
         Message.Builder builder = DynamicMessage.newBuilder(descriptor);
 
@@ -45,7 +45,4 @@ public class ToProtoBytes implements Function<IndexedData, byte[]> {
 
         return builder.build().toByteArray();
     }
-
-
-
 }

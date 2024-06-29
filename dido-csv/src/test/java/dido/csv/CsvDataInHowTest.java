@@ -16,8 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 
 class CsvDataInHowTest {
 
@@ -38,7 +37,7 @@ class CsvDataInHowTest {
 
             DataSchema schema = data.getSchema();
 
-            assertThat(schema.getFieldNames().isEmpty(), is(true));
+            assertThat(schema.getFieldNames(), contains("[1]", "[2]", "[3]"));
             assertThat(schema.lastIndex(), is(3));
             assertThat(schema.getTypeAt(1), is(String.class));
             assertThat(schema.getTypeAt(3), is(String.class));
@@ -63,9 +62,9 @@ class CsvDataInHowTest {
     void testWithSchema() throws Exception {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("Type", String.class)
-                .addField("Quantity", int.class)
-                .addField("Price", double.class)
+                .addNamed("Type", String.class)
+                .addNamed("Quantity", int.class)
+                .addNamed("Price", double.class)
                 .build();
 
         DataInHow<InputStream, NamedData> test = CsvDataInHow.withOptions()
@@ -97,8 +96,8 @@ class CsvDataInHowTest {
                 "Orange,2,35.24" + System.lineSeparator();
 
         DataSchema someSchema = SchemaBuilder.newInstance()
-                .addField("Quantity", int.class)
-                .addField("Price", double.class)
+                .addNamed("Quantity", int.class)
+                .addNamed("Price", double.class)
                 .build();
 
         DataInHow<InputStream, NamedData> test = CsvDataInHow.withOptions()

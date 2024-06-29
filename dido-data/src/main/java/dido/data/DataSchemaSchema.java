@@ -52,7 +52,7 @@ public class DataSchemaSchema {
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addRepeatingField(FIELDS_FIELD, fieldSchema)
+                .addRepeatingNamed(FIELDS_FIELD, fieldSchema)
                 .build();
 
         schemaRef.set(schema);
@@ -115,14 +115,14 @@ public class DataSchemaSchema {
                 DataSchema nestedSchema = schemaFromData(nestedData, classLoader);
 
                 if (fieldData.hasNamed(REPEATING_FIELD) && fieldData.getBooleanNamed(REPEATING_FIELD)) {
-                    builder.addRepeatingFieldAt(index, field, nestedSchema);
+                    builder.addRepeatingNamedAt(index, field, nestedSchema);
                 } else {
-                    builder.addNestedFieldAt(index, field, nestedSchema);
+                    builder.addNestedNamedAt(index, field, nestedSchema);
                 }
             } else {
                 Class<?> type = classLoader.apply(fieldData.getStringNamed(TYPE_FIELD));
 
-                builder.addFieldAt(index, field, type);
+                builder.addNamedAt(index, field, type);
             }
         }
 

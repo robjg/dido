@@ -14,11 +14,11 @@ class SpecialCharsTransformerTest {
     public void testBuildWithReplacements() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("Fruit", String.class)
-                .addField("Flavour (taste)", String.class)
-                .addField("Weight (lbs.)", double.class)
-                .addField("[Qty]", int.class)
-                .addField("_Qty_", int.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("Flavour (taste)", String.class)
+                .addNamed("Weight (lbs.)", double.class)
+                .addNamed("[Qty]", int.class)
+                .addNamed("_Qty_", int.class)
                 .build();
 
         Function<DidoData, NamedData> test = new SpecialCharsTransformer().toValue();

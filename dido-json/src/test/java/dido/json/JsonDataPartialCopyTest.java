@@ -23,7 +23,7 @@ class JsonDataPartialCopyTest {
         Gson gson = JsonDataPartialCopy.registerPartialSchema(
                         new GsonBuilder(),
                         SchemaBuilder.newInstance()
-                                .addRepeatingField("OrderLines", DataSchema.emptySchema())
+                                .addRepeatingNamed("OrderLines", DataSchema.emptySchema())
                                 .build(),
                         new ArrayDataDataFactoryProvider())
                 .create();
@@ -31,13 +31,13 @@ class JsonDataPartialCopyTest {
         NamedData result = gson.fromJson(json, NamedData.class);
 
         DataSchema nestedSchema = SchemaBuilder.newInstance()
-                .addField("Fruit", String.class)
-                .addField("Qty", Double.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", Double.class)
                 .build();
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
-                .addField("OrderId", String.class)
-                .addRepeatingField("OrderLines", nestedSchema)
+                .addNamed("OrderId", String.class)
+                .addRepeatingNamed("OrderLines", nestedSchema)
                 .build();
 
         DidoData expectedData = ArrayData.valuesFor(expectedSchema)

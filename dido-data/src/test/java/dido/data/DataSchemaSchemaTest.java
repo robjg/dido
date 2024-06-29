@@ -16,9 +16,9 @@ class DataSchemaSchemaTest {
     void givenSimpleSchemaThenCanGoToDataAndBack() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("type", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("type", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         DidoData data = DataSchemaSchema.schemaToData(schema);

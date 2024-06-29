@@ -36,15 +36,15 @@ class JsonDataWrapperTest {
     void testWithAllFields() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("aString", String.class)
-                .addField("aBoolean", boolean.class)
-                .addField("aByte", byte.class)
-                .addField("aShort", short.class)
-                .addField("anInt", int.class)
-                .addField("aLong", long.class)
-                .addField("aFloat", float.class)
-                .addField("aDouble", double.class)
-                .addField("aNumber", Number.class)
+                .addNamed("aString", String.class)
+                .addNamed("aBoolean", boolean.class)
+                .addNamed("aByte", byte.class)
+                .addNamed("aShort", short.class)
+                .addNamed("anInt", int.class)
+                .addNamed("aLong", long.class)
+                .addNamed("aFloat", float.class)
+                .addNamed("aDouble", double.class)
+                .addNamed("aNumber", Number.class)
                 .build();
 
         Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
@@ -78,9 +78,9 @@ class JsonDataWrapperTest {
     void testNaNs() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("aString", String.class)
-                .addField("aFloat", float.class)
-                .addField("aDouble", double.class)
+                .addNamed("aString", String.class)
+                .addNamed("aFloat", float.class)
+                .addNamed("aDouble", double.class)
                 .build();
 
         Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
@@ -100,12 +100,12 @@ class JsonDataWrapperTest {
     void testWithAutoBoxedVersions() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addFieldAt(3, "aByte", Byte.class)
-                .addField("aShort", Short.class)
-                .addField("anInt", Integer.class)
-                .addField("aLong", Long.class)
-                .addField("aFloat", Float.class)
-                .addField("aDouble", Double.class)
+                .addNamedAt(3, "aByte", Byte.class)
+                .addNamed("aShort", Short.class)
+                .addNamed("anInt", Integer.class)
+                .addNamed("aLong", Long.class)
+                .addNamed("aFloat", Float.class)
+                .addNamed("aDouble", Double.class)
                 .build();
 
         Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
@@ -127,15 +127,15 @@ class JsonDataWrapperTest {
     void testAllAsObjects() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("aString", String.class)
-                .addField("aBoolean", boolean.class)
-                .addField("aByte", byte.class)
-                .addField("aShort", short.class)
-                .addField("anInt", int.class)
-                .addField("aLong", long.class)
-                .addField("aFloat", float.class)
-                .addField("aDouble", double.class)
-                .addField("aNumber", Number.class)
+                .addNamed("aString", String.class)
+                .addNamed("aBoolean", boolean.class)
+                .addNamed("aByte", byte.class)
+                .addNamed("aShort", short.class)
+                .addNamed("anInt", int.class)
+                .addNamed("aLong", long.class)
+                .addNamed("aFloat", float.class)
+                .addNamed("aDouble", double.class)
+                .addNamed("aNumber", Number.class)
                 .build();
 
         Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
@@ -160,15 +160,15 @@ class JsonDataWrapperTest {
     void testWithAllFieldsAsNull() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("aString", String.class)
-                .addField("aBoolean", boolean.class)
-                .addField("aByte", byte.class)
-                .addField("aShort", short.class)
-                .addField("anInt", int.class)
-                .addField("aLong", long.class)
-                .addField("aFloat", float.class)
-                .addField("aDouble", double.class)
-                .addField("aNumber", Number.class)
+                .addNamed("aString", String.class)
+                .addNamed("aBoolean", boolean.class)
+                .addNamed("aByte", byte.class)
+                .addNamed("aShort", short.class)
+                .addNamed("anInt", int.class)
+                .addNamed("aLong", long.class)
+                .addNamed("aFloat", float.class)
+                .addNamed("aDouble", double.class)
+                .addNamed("aNumber", Number.class)
                 .build();
 
         Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
@@ -201,13 +201,13 @@ class JsonDataWrapperTest {
 
 
         DataSchema nestedSchema = SchemaBuilder.newInstance()
-                .addField("Fruit", String.class)
-                .addField("Qty", int.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", int.class)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("OrderId", String.class)
-                .addRepeatingField("OrderLines", nestedSchema)
+                .addNamed("OrderId", String.class)
+                .addRepeatingNamed("OrderLines", nestedSchema)
                 .build();
 
         Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)

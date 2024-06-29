@@ -59,8 +59,8 @@ class StreamInJsonLinesTest {
         bufferType.configured();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("Qty", Integer.class)
-                .addField("Price", Double.class)
+                .addNamed("Qty", Integer.class)
+                .addNamed("Price", Double.class)
                 .build();
 
         DataIn<NamedData> in = StreamInJsonLines.asWrapperWithPartialSchema(schema)
@@ -101,9 +101,9 @@ class StreamInJsonLinesTest {
         bufferType.configured();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("Fruit", String.class)
-                .addField("Qty", Integer.class)
-                .addField("Price", Double.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", Integer.class)
+                .addNamed("Price", Double.class)
                 .build();
 
         DataIn<NamedData> in = StreamInJsonLines.settings()

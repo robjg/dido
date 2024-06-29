@@ -1,7 +1,7 @@
 package dido.proto;
 
 import com.google.protobuf.Descriptors;
-import dido.data.IndexedData;
+import dido.data.DidoData;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,13 +12,13 @@ import java.util.function.Supplier;
 /**
  *
  */
-public class ToProtoBytesType implements Supplier<Function<IndexedData, byte[]>> {
+public class ToProtoBytesType implements Supplier<Function<DidoData, byte[]>> {
 
     private Class<?> protoClass;
 
 
     @Override
-    public Function<IndexedData, byte[]> get() {
+    public Function<DidoData, byte[]> get() {
 
         Method method;
         try {

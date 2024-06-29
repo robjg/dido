@@ -44,7 +44,7 @@ class SchemaAndCellsTest {
         assertThat(schema.firstIndex(), is(1));
         assertThat(schema.lastIndex(), is(1));
         assertThat(schema.nextIndex(1), is(0));
-        assertThat(schema.getFieldNameAt(1), nullValue());
+        assertThat(schema.getFieldNameAt(1), is("[1]"));
         assertThat(schema.getTypeAt(1), is(String.class));
     }
 
@@ -77,15 +77,15 @@ class SchemaAndCellsTest {
     void testFromSchema() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("String", String.class)
-                .addField("Boolean", boolean.class)
-                .addField("Byte", byte.class)
-                .addField("Short", short.class)
-                .addField("Int", int.class)
-                .addField("Long", long.class)
-                .addField("Float", float.class)
-                .addField("Double", double.class)
-                .addField("Date", Date.class)
+                .addNamed("String", String.class)
+                .addNamed("Boolean", boolean.class)
+                .addNamed("Byte", byte.class)
+                .addNamed("Short", short.class)
+                .addNamed("Int", int.class)
+                .addNamed("Long", long.class)
+                .addNamed("Float", float.class)
+                .addNamed("Double", double.class)
+                .addNamed("Date", Date.class)
                 .build();
 
         SchemaAndCells test = SchemaAndCells.fromSchemaOrCells(schema, null);

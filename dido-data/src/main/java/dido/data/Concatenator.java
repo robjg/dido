@@ -95,7 +95,7 @@ public class Concatenator {
             return new Factory(this);
         }
 
-        public DidoData of(IndexedData... data) {
+        public DidoData of(DidoData... data) {
             return factory().concat(data);
         }
     }
@@ -115,7 +115,7 @@ public class Concatenator {
         return new Settings();
     }
 
-    public static DidoData of(IndexedData... data) {
+    public static DidoData of(DidoData... data) {
         return new Factory(new Settings()).concat(data);
     }
 
@@ -149,7 +149,7 @@ public class Concatenator {
             this.settings = settings;
         }
 
-        public DidoData concat(IndexedData... data) {
+        public DidoData concat(DidoData... data) {
 
             boolean recreate = false;
             if (last == null) {

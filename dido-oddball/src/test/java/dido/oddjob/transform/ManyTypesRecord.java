@@ -13,9 +13,9 @@ public class ManyTypesRecord implements ValueFactory<DidoData> {
     public DidoData toValue() throws ArooaConversionException {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("AnIntString", String.class)
-                .addField("ADoubleString", String.class)
-                .addField("ABooleanString", String.class)
+                .addNamed("AnIntString", String.class)
+                .addNamed("ADoubleString", String.class)
+                .addNamed("ABooleanString", String.class)
                 .build();
 
         return ArrayData.valuesFor(schema).of("65", "456.57", "true");

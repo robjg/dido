@@ -28,7 +28,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
             @Override
             public SchemaField getSchemaFieldAt(int index) {
                 return index > 0 && index <= data.length ?
-                        SchemaFields.of(index, Object.class) : null;
+                        SchemaFields.of(index, SchemaBuilder.nameForIndex(index), Object.class) : null;
             }
 
             @Override
@@ -243,7 +243,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
 
         public BuilderUnknown setIndex(int index, Object value, Class<?> type) {
             values.add(value);
-            schemaFields.add(GenericSchemaField.of(index, type));
+            schemaFields.add(GenericSchemaField.of(index, SchemaBuilder.nameForIndex(index), type));
             if (index > lastIndex) {
                 lastIndex = index;
             }

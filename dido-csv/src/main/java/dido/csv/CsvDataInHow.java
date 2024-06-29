@@ -168,7 +168,7 @@ public class CsvDataInHow implements DataInHow<InputStream, NamedData> {
         SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
         for (String field : record) {
-            schemaBuilder.addField(field, String.class);
+            schemaBuilder.addNamed(field, String.class);
         }
         if (partialSchema != null) {
             schemaBuilder.merge(partialSchema);

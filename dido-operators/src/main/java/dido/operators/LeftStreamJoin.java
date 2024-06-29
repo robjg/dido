@@ -1,8 +1,9 @@
 package dido.operators;
 
+import dido.data.AnonymousData;
+import dido.data.AnonymousSubData;
 import dido.data.Concatenator;
 import dido.data.DidoData;
-import dido.data.SubData;
 
 import java.util.Map;
 import java.util.Objects;
@@ -17,13 +18,13 @@ public class LeftStreamJoin implements StreamJoin {
 
     private final Consumer<DidoData> secondary = new SecondaryConsumer();
 
-    private final Map<DidoData, SingleJoin> data = new ConcurrentHashMap<>();
+    private final Map<AnonymousData, SingleJoin> data = new ConcurrentHashMap<>();
 
-    private final Function<DidoData, DidoData> primaryIndices;
+    private final Function<? super DidoData, ? extends AnonymousData> primaryIndices;
 
-    private final Function<DidoData, DidoData> foreignIndices;
+    private final Function<? super DidoData,  ? extends AnonymousData> foreignIndices;
 
-    private final Function<DidoData, DidoData> secondaryIndices;
+    private final Function<? super DidoData,  ? extends AnonymousData> secondaryIndices;
 
     private volatile Consumer<? super DidoData> to;
 
@@ -80,30 +81,30 @@ public class LeftStreamJoin implements StreamJoin {
             return this;
         }
 
-        private Function<DidoData, DidoData> primaryIndices() {
+        private Function<? super DidoData, ? extends AnonymousData> primaryIndices() {
             if (primaryIndices == null) {
-                return SubData.ofFields(Objects.requireNonNull(primaryFields));
+                return AnonymousSubData.ofFields(Objects.requireNonNull(primaryFields));
             }
             else {
-                return SubData.ofIndices(primaryIndices);
+                return AnonymousSubData.ofIndices(primaryIndices);
             }
         }
 
-        private Function<DidoData, DidoData> foreignIndices() {
+        private Function<? super DidoData, ? extends AnonymousData> foreignIndices() {
             if (foreignIndices == null) {
-                return SubData.ofFields(Objects.requireNonNull(foreignFields));
+                return AnonymousSubData.ofFields(Objects.requireNonNull(foreignFields));
             }
             else {
-                return SubData.ofIndices(foreignIndices);
+                return AnonymousSubData.ofIndices(foreignIndices);
             }
         }
 
-        private Function<DidoData, DidoData> secondaryIndices() {
+        private Function<? super DidoData, ? extends AnonymousData> secondaryIndices() {
             if (secondaryIndices == null) {
-                return SubData.ofFields(Objects.requireNonNull(secondaryFields));
+                return AnonymousSubData.ofFields(Objects.requireNonNull(secondaryFields));
             }
             else {
-                return SubData.ofIndices(secondaryIndices);
+                return AnonymousSubData.ofIndices(secondaryIndices);
             }
         }
 
@@ -136,9 +137,9 @@ public class LeftStreamJoin implements StreamJoin {
         @Override
         public void accept(DidoData primaryData) {
 
-            DidoData keyOfPrimary = primaryIndices.apply(primaryData);
+            AnonymousData keyOfPrimary = primaryIndices.apply(primaryData);
 
-            DidoData foreignKey = foreignIndices.apply(primaryData);
+            AnonymousData foreignKey = foreignIndices.apply(primaryData);
 
             SingleJoin singleJoin = data.computeIfAbsent(foreignKey, k -> new SingleJoin());
 
@@ -155,7 +156,7 @@ public class LeftStreamJoin implements StreamJoin {
         @Override
         public void accept(DidoData secondaryData) {
 
-            DidoData keyOfSecondary = secondaryIndices.apply(secondaryData);
+            AnonymousData keyOfSecondary = secondaryIndices.apply(secondaryData);
 
             SingleJoin singleJoin = data.computeIfAbsent(keyOfSecondary, k -> new SingleJoin());
 
@@ -168,7 +169,7 @@ public class LeftStreamJoin implements StreamJoin {
 
     static class Primaries {
 
-        private final Map<DidoData, DidoData> mappedByKey = new ConcurrentHashMap<>();
+        private final Map<AnonymousData, DidoData> mappedByKey = new ConcurrentHashMap<>();
     }
 
     static class SingleJoin {

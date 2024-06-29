@@ -54,40 +54,20 @@ public interface GenericSchemaField<F> extends SchemaField {
         }
     }
 
-    static <F> GenericSchemaField<F> of(int index, Class<?> type) {
-        return GenericSchemaFields.of(index, null, type);
-    }
-
     static <F> GenericSchemaField<F> of(int index, F field, Class<?> type) {
         return GenericSchemaFields.of(index, field, type);
-    }
-
-    static <F> GenericSchemaField<F> ofNested(int index, DataSchema nested) {
-        return GenericSchemaFields.ofNested(index, null, nested);
     }
 
     static <F> GenericSchemaField<F> ofNested(int index, F field, DataSchema nested) {
         return GenericSchemaFields.ofNested(index, field, nested);
     }
 
-    static <F> GenericSchemaField<F> ofNested(int index, SchemaReference nestedRef) {
-        return GenericSchemaFields.ofNested(index, null, nestedRef);
-    }
-
     static <F> GenericSchemaField<F> ofNested(int index, F field, SchemaReference nestedRef) {
         return GenericSchemaFields.ofNested(index, field, nestedRef);
     }
 
-    static <F, N> GenericSchemaField<F> ofRepeating(int index, DataSchema nested) {
-        return GenericSchemaFields.ofRepeating(index, null, nested);
-    }
-
     static <F, N> GenericSchemaField<F> ofRepeating(int index, F field, DataSchema nested) {
         return GenericSchemaFields.ofRepeating(index, field, nested);
-    }
-
-    static <F> GenericSchemaField<F> ofRepeating(int index, SchemaReference nestedRef) {
-        return GenericSchemaFields.ofRepeating(index, null, nestedRef);
     }
 
     static <F> GenericSchemaField<F> ofRepeating(int index, F field, SchemaReference nestedRef) {

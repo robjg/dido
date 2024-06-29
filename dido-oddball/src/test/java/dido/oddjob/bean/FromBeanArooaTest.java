@@ -69,12 +69,12 @@ class FromBeanArooaTest {
         FromBeanArooa fromBeanArooa = FromBeanArooa.usingAccessor(new BeanUtilsPropertyAccessor());
 
         DataSchema nestedSchema = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", Integer.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", Integer.class)
                 .build();
 
         DataSchema partialIn = SchemaBuilder.newInstance()
-                .addRepeatingField("orderLines", nestedSchema)
+                .addRepeatingNamed("orderLines", nestedSchema)
                 .build();
 
         Function<Order, NamedData> fromBean =
@@ -113,13 +113,13 @@ class FromBeanArooaTest {
         FromBeanArooa fromBeanArooa = FromBeanArooa.usingAccessor(new BeanUtilsPropertyAccessor());
 
         DataSchema nestedSchema = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", Integer.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", Integer.class)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("orderId", String.class)
-                .addRepeatingField("orderLines", nestedSchema)
+                .addNamed("orderId", String.class)
+                .addRepeatingNamed("orderLines", nestedSchema)
                 .build();
 
         Function<Order, NamedData> fromBean =

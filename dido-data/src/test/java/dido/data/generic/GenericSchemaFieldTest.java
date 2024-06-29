@@ -1,7 +1,6 @@
 package dido.data.generic;
 
 import dido.data.SchemaReference;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,9 +11,6 @@ public class GenericSchemaFieldTest {
     @Test
     void testToString() {
 
-        MatcherAssert.assertThat(GenericSchemaField.of(5, Object.class).toString(),
-                is("[5]=java.lang.Object"));
-
         assertThat(GenericSchemaField.of(5, "Foo", Object.class).toString(),
                 is("[5:Foo]=java.lang.Object"));
 
@@ -22,14 +18,8 @@ public class GenericSchemaFieldTest {
                 addField("Nested", int.class)
                 .build();
 
-        assertThat(GenericSchemaField.ofNested(5, nested).toString(),
-                is("[5]={[1:Nested]=int}"));
-
         assertThat(GenericSchemaField.ofNested(5, "Foo", nested).toString(),
                 is("[5:Foo]={[1:Nested]=int}"));
-
-        assertThat(GenericSchemaField.ofRepeating(5, nested).toString(),
-                is("[5]=[{[1:Nested]=int}]"));
 
         assertThat(GenericSchemaField.ofRepeating(5, "Foo", nested).toString(),
                 is("[5:Foo]=[{[1:Nested]=int}]"));
@@ -55,9 +45,6 @@ public class GenericSchemaFieldTest {
     @Test
     void testHashCode() {
 
-        assertThat(GenericSchemaField.of(5, Object.class).hashCode(),
-                is(GenericSchemaField.of(5, Object.class).hashCode()));
-
         assertThat(GenericSchemaField.of(5, "Foo", Object.class).hashCode(),
                 is(GenericSchemaField.of(5, "Foo", Object.class).hashCode()));
 
@@ -65,14 +52,8 @@ public class GenericSchemaFieldTest {
                 addField("Nested", int.class)
                 .build();
 
-        assertThat(GenericSchemaField.ofNested(5, nested).hashCode(),
-                is(GenericSchemaField.ofNested(5, nested).hashCode()));
-
         assertThat(GenericSchemaField.ofNested(5, "Foo", nested).hashCode(),
                 is(GenericSchemaField.ofNested(5, "Foo", nested).hashCode()));
-
-        assertThat(GenericSchemaField.ofRepeating(5, nested),
-                is(GenericSchemaField.ofRepeating(5, nested)));
 
         assertThat(GenericSchemaField.ofRepeating(5, "Foo", nested).hashCode(),
                 is(GenericSchemaField.ofRepeating(5, "Foo", nested).hashCode()));
@@ -97,9 +78,6 @@ public class GenericSchemaFieldTest {
     @Test
     void testEquals() {
 
-        assertThat(GenericSchemaField.of(5, Object.class),
-                is(GenericSchemaField.of(5, Object.class)));
-
         assertThat(GenericSchemaField.of(5, "Foo", Object.class),
                 is(GenericSchemaField.of(5, "Foo", Object.class)));
 
@@ -107,14 +85,8 @@ public class GenericSchemaFieldTest {
                 addField("Nested", int.class)
                 .build();
 
-        assertThat(GenericSchemaField.ofNested(5, nested),
-                is(GenericSchemaField.ofNested(5, nested)));
-
         assertThat(GenericSchemaField.ofNested(5, "Foo", nested),
                 is(GenericSchemaField.ofNested(5, "Foo", nested)));
-
-        assertThat(GenericSchemaField.ofRepeating(5, nested),
-                is(GenericSchemaField.ofRepeating(5, nested)));
 
         assertThat(GenericSchemaField.ofRepeating(5, "Foo", nested),
                 is(GenericSchemaField.ofRepeating(5, "Foo", nested)));
@@ -141,9 +113,6 @@ public class GenericSchemaFieldTest {
     @Test
     void testTypes() {
 
-        assertThat(GenericSchemaField.of(5, Object.class).getType(),
-                is(Object.class));
-
         assertThat(GenericSchemaField.of(5, "Foo", Object.class).getType(),
                 is(Object.class));
 
@@ -151,14 +120,8 @@ public class GenericSchemaFieldTest {
                 addField("Nested", int.class)
                 .build();
 
-        assertThat(GenericSchemaField.ofNested(5, nested).getType(),
-                is(GenericSchemaField.NESTED_TYPE));
-
         assertThat(GenericSchemaField.ofNested(5, "Foo", nested).getType(),
                 is(GenericSchemaField.NESTED_TYPE));
-
-        assertThat(GenericSchemaField.ofRepeating(5, nested).getType(),
-                is(GenericSchemaField.NESTED_REPEATING_TYPE));
 
         assertThat(GenericSchemaField.ofRepeating(5, "Foo", nested).getType(),
                 is(GenericSchemaField.NESTED_REPEATING_TYPE));

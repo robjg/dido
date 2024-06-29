@@ -34,7 +34,7 @@ public class SchemaUtils {
 
             String columnName = metaData.getColumnName(column);
 
-            schemaBuilder.addFieldAt(column, columnName, columnClass);
+            schemaBuilder.addNamedAt(column, columnName, columnClass);
         }
 
         return schemaBuilder.build();

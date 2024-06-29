@@ -2,7 +2,7 @@ package dido.data;
 
 /**
  * Base class providing default implementations for {@link DidoData}. Implementations
- * need only implement {@link IndexedData#getAt(int)} and {@link IndexedData#getSchema()}.
+ * need only implement {@link IndexedData#getAt(int)} and {@link DidoData#getSchema()}.
  *
  */
 abstract public class AbstractData extends AbstractIndexedData implements DidoData {
@@ -79,6 +79,21 @@ abstract public class AbstractData extends AbstractIndexedData implements DidoDa
 
     @Override
     public String getStringNamed(String name) { return getStringAt(indexOfFieldNamed(name)); }
+
+    @Override
+    public int hashCode() {
+        return DidoData.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DidoData) {
+            return DidoData.equals(this, (DidoData) obj);
+        }
+        else {
+            return false;
+        }
+    }
 
     @Override
     public String toString() {

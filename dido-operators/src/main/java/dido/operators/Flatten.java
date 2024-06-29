@@ -126,8 +126,7 @@ public class Flatten {
                     newType = Object.class;
                 }
                 schemaBuilder.addSchemaField(
-                        SchemaField.of(1, newType)
-                                .mapTo(existingSchemaField.getIndex(), existingSchemaField.getName()));
+                        SchemaField.of(existingSchemaField.getIndex(), existingSchemaField.getName(), newType));
             }
         }
 

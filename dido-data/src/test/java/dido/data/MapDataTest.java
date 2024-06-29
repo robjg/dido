@@ -81,9 +81,9 @@ class MapDataTest {
     void testToString() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("type", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("type", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         DidoData data1 = MapData.newBuilder(schema)
@@ -118,10 +118,10 @@ class MapDataTest {
     void testBuilderOf() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("type", String.class)
-                .addField("foo", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("type", String.class)
+                .addNamed("foo", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         DidoData data1 = ArrayData.valuesFor(schema)

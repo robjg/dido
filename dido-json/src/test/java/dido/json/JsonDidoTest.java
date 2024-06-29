@@ -44,9 +44,9 @@ class JsonDidoTest {
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("type", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("type", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         JsonDido test = new JsonDido();
@@ -99,7 +99,7 @@ class JsonDidoTest {
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("qty", int.class)
+                .addNamed("qty", int.class)
                 .build();
 
         JsonDido test = new JsonDido();

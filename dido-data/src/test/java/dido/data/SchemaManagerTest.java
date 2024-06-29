@@ -114,8 +114,8 @@ class SchemaManagerTest {
         DataSchema schema = schemaManager.getDefaultSchema();
 
         DataSchema expectedNested = SchemaBuilder.newInstance()
-                .addField("Title", String.class)
-                .addField("Cost", double.class)
+                .addNamed("Title", String.class)
+                .addNamed("Cost", double.class)
                 .build();
 
         assertThat(schema.getTypeAt(2), is(GenericSchemaField.NESTED_REPEATING_TYPE));

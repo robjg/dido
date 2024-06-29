@@ -10,30 +10,34 @@ import static org.hamcrest.Matchers.*;
 class SchemaBuilderTest {
 
     @Test
-    void testAddSequentiallyNoFields() {
+    void addSequentiallyNoFieldNames() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addAt(0, String.class)
-                .addAt(0, int.class)
-                .addAt(0, double.class)
+                .add(String.class)
+                .add(int.class)
+                .add(double.class)
                 .build();
 
         assertThat(schema.firstIndex(), is(1));
         assertThat(schema.lastIndex(), is(3));
         assertThat(schema.getTypeAt(1), is(String.class));
+        assertThat(schema.getTypeAt(2), is(int.class));
+        assertThat(schema.getTypeAt(3), is(double.class));
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));
         assertThat(schema.nextIndex(3), is(0));
-        assertThat(schema.getFieldNames().isEmpty(), is(true));
+
+        assertThat(schema.getFieldNames(), contains("[1]", "[2]", "[3]"));
     }
 
     @Test
-    void testAddSparseIndexes() {
+    void addSparseIndexes() {
 
         DataSchema schema = SchemaBuilder.newInstance()
                 .addAt(5, String.class)
-                .add(int.class)
+                .add(String.class)
                 .addAt(20, double.class)
+                .addAt(6, int.class)
                 .build();
 
         assertThat(schema.firstIndex(), is(5));
@@ -42,7 +46,7 @@ class SchemaBuilderTest {
         assertThat(schema.nextIndex(5), is(6));
         assertThat(schema.nextIndex(6), is(20));
         assertThat(schema.nextIndex(20), is(0));
-        assertThat(schema.getFieldNames().isEmpty(), is(true));
+        assertThat(schema.getFieldNames(), contains("[5]", "[6]", "[20]"));
 
         try {
             assertThat(schema.getFieldNameAt(2), nullValue());
@@ -54,12 +58,12 @@ class SchemaBuilderTest {
     }
 
     @Test
-    void testAddFields() {
+    void addFieldsSequentiallyByName() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         assertThat(schema.firstIndex(), is(1));
@@ -72,24 +76,99 @@ class SchemaBuilderTest {
     }
 
     @Test
+    void addFieldsOfSameName() {
+
+        DataSchema schema = SchemaBuilder.newInstance()
+                .addNamed("a", String.class)
+                .addNamed("a", int.class)
+                .addNamed("a", double.class)
+                .build();
+
+        assertThat(schema.firstIndex(), is(1));
+        assertThat(schema.lastIndex(), is(3));
+        assertThat(schema.getTypeAt(1), is(String.class));
+        assertThat(schema.getTypeNamed("a"), is(String.class));
+        assertThat(schema.getTypeNamed("a_"), is(int.class));
+        assertThat(schema.getTypeNamed("a__"), is(double.class));
+        assertThat(schema.nextIndex(1), is(2));
+        assertThat(schema.nextIndex(2), is(3));
+        assertThat(schema.getFieldNames(), Matchers.contains("a", "a_", "a__"));
+    }
+
+    @Test
+    void addFieldsSameNameSameIndex() {
+
+        DataSchema schema = SchemaBuilder.newInstance()
+                .addNamedAt(5, "a", String.class)
+                .addNamedAt(5, "a", int.class)
+                .addNamedAt(5, "a", double.class)
+                .build();
+
+        assertThat(schema.firstIndex(), is(5));
+        assertThat(schema.lastIndex(), is(5));
+        assertThat(schema.getTypeAt(5), is(double.class));
+        assertThat(schema.getTypeNamed("a"), is(double.class));
+        assertThat(schema.nextIndex(5), is(0));
+        assertThat(schema.getFieldNames(), Matchers.contains("a"));
+    }
+
+    @Test
+    void removeByIndex() {
+
+        DataSchema schema = SchemaBuilder.newInstance()
+                .addAt(5, String.class)
+                .add(String.class)
+                .addAt(20, double.class)
+                .removeAt(6)
+                .build();
+
+        assertThat(schema.firstIndex(), is(5));
+        assertThat(schema.lastIndex(), is(20));
+        assertThat(schema.getTypeAt(5), is(String.class));
+        assertThat(schema.nextIndex(5), is(20));
+        assertThat(schema.nextIndex(20), is(0));
+        assertThat(schema.getFieldNames(), contains("[5]", "[20]"));
+
+    }
+
+    @Test
+    void removeFieldsByName() {
+
+        DataSchema schema = SchemaBuilder.newInstance()
+                .addNamed("fruit", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
+                .removeNamed("qty")
+                .build();
+
+        assertThat(schema.firstIndex(), is(1));
+        assertThat(schema.lastIndex(), is(3));
+        assertThat(schema.getTypeAt(1), is(String.class));
+        assertThat(schema.getTypeNamed("fruit"), is(String.class));
+        assertThat(schema.nextIndex(1), is(3));
+        assertThat(schema.nextIndex(3), is(0));
+        assertThat(schema.getFieldNames(), Matchers.contains("fruit", "price"));
+    }
+
+    @Test
     void testOverwriteWithSchema() {
 
         DataSchema correction = SchemaBuilder.newInstance()
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", String.class)
-                .addField("price", String.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", String.class)
+                .addNamed("price", String.class)
                 .merge(correction)
                 .build();
 
         DataSchema expected = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         assertThat(schema, is(expected));
@@ -99,20 +178,20 @@ class SchemaBuilderTest {
     void testOverwriteMiddleFieldSchema() {
 
         DataSchema correction = SchemaBuilder.newInstance()
-                .addField("qty", int.class)
+                .addNamed("qty", int.class)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", String.class)
-                .addField("price", double.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", String.class)
+                .addNamed("price", double.class)
                 .merge(correction)
                 .build();
 
         DataSchema expected = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         assertThat(schema, is(expected));
@@ -126,16 +205,18 @@ class SchemaBuilderTest {
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", String.class)
-                .addField("price", double.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", String.class)
+                .addNamed("price", double.class)
                 .merge(correction)
                 .build();
 
+        // The index is ignored now.
         DataSchema expected = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamedAt(4,"[2]", int.class)
+                .addNamedAt(1, "fruit", String.class)
+                .addNamedAt(2, "qty", String.class)
+                .addNamedAt(3, "price", double.class)
                 .build();
 
         assertThat(schema, is(expected));
@@ -145,21 +226,21 @@ class SchemaBuilderTest {
     void testMergeExtraFieldSchema() {
 
         DataSchema extra = SchemaBuilder.newInstance()
-                .addField("colour", String.class)
+                .addNamed("colour", String.class)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .merge(extra)
                 .build();
 
         DataSchema expected = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
-                .addField("colour", String.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
+                .addNamed("colour", String.class)
                 .build();
 
         assertThat(schema, is(expected));
@@ -170,7 +251,7 @@ class SchemaBuilderTest {
 
         SchemaReference self = SchemaReference.blank();
         DataSchema schema = SchemaBuilder.newInstance()
-                .addNestedField("node", self)
+                .addNestedNamed("node", self)
                 .build();
         self.set(schema);
 
@@ -181,11 +262,11 @@ class SchemaBuilderTest {
     void testAddRepeatingSchema() {
 
         DataSchema nested = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
+                .addNamed("fruit", String.class)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addRepeatingField("list", nested)
+                .addRepeatingNamed("list", nested)
                 .build();
 
         assertThat(schema.getSchemaNamed("list"), sameInstance(nested));
@@ -195,15 +276,15 @@ class SchemaBuilderTest {
     void testEqualsAndHashCode() {
 
         DataSchema schema1 = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         DataSchema schema2 = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         assertThat(schema1, is(schema2));
@@ -214,9 +295,9 @@ class SchemaBuilderTest {
     void testToString() {
 
         DataSchema schema1 = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         assertThat(schema1.toString(),

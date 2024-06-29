@@ -15,8 +15,7 @@ abstract public class AbstractGenericData<F> extends AbstractData implements Gen
         int index = getSchema().getIndexOf(field);
         if (index > 0) {
             return getAt(index);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -73,10 +72,9 @@ abstract public class AbstractGenericData<F> extends AbstractData implements Gen
     }
 
     @Override
-    public String getString(F field) { return (String) get(field); }
-
-
-
+    public String getString(F field) {
+        return (String) get(field);
+    }
 
     @Override
     public String toString() {

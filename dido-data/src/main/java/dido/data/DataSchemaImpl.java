@@ -26,7 +26,6 @@ public class DataSchemaImpl extends AbstractDataSchema {
         this.lastIndex = lastIndex;
 
         int offset = firstIndex - 1;
-        Object[] indexToField =  new Object[lastIndex - offset];
         int[] nextIndex = new int[lastIndex - offset];
         SchemaField[] indexToSchemaField = new SchemaField[lastIndex - offset];
 

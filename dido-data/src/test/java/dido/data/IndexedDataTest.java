@@ -3,8 +3,6 @@ package dido.data;
 import dido.data.generic.GenericDataSchema;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -61,44 +59,19 @@ class IndexedDataTest {
     }
 
     @Test
-    void testToString() {
+    void toStringEtc() {
 
-        DidoData data1 = ArrayData.of("Apple", null, 15, 26.5);
+        MyData data1 = new MyData(42);
 
-        assertThat(IndexedData.toString(data1),
-                is("{[1]=Apple, [2]=null, [3]=15, [4]=26.5}"));
+        try {
+            String expected = data1.toString();
+
+            assertThat("Should Fail, not " + expected,false);
+        } catch (UnsupportedOperationException expected) {
+            // expected
+        }
     }
 
-    @Test
-    void testEquals() {
-
-        DataSchema nestedSchema = SchemaBuilder.newInstance()
-                .addField("Fruit", String.class)
-                .addField("Qty", Double.class)
-                .build();
-
-        DataSchema schema = SchemaBuilder.newInstance()
-                .addField("OrderId", String.class)
-                .addRepeatingField("OrderLines", nestedSchema)
-                .build();
-
-        IndexedData data1 = ArrayData.valuesFor(schema)
-                .of("A123",
-                        List.of(ArrayData.valuesFor(nestedSchema)
-                                        .of("Apple", 4),
-                                ArrayData.valuesFor(nestedSchema)
-                                        .of("Pear", 5)));
-
-        IndexedData data2 = ArrayData.valuesFor(schema)
-                .of("A123",
-                        List.of(ArrayData.valuesFor(nestedSchema)
-                                        .of("Apple", 4),
-                                ArrayData.valuesFor(nestedSchema)
-                                        .of("Pear", 5)));
-
-        assertThat(IndexedData.equals(data1, data2), is(true));
-        assertThat(IndexedData.hashCode(data1), is(IndexedData.hashCode(data2)));
-    }
 
     @Test
     void testEqualsIgnoringSchema() {

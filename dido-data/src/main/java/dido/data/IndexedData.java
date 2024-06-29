@@ -13,7 +13,7 @@ public interface IndexedData {
      *
      * @return A Data Schema, never null.
      */
-    DataSchema getSchema();
+    IndexedSchema getSchema();
 
     /**
      * Get the data at the given index. If the index is in the schema then this
@@ -31,9 +31,7 @@ public interface IndexedData {
 
     boolean getBooleanAt(int index);
 
-    default char getCharAt(int index) {
-        return (char) getAt(index);
-    }
+    char getCharAt(int index);
 
     byte getByteAt(int index);
 
@@ -49,25 +47,6 @@ public interface IndexedData {
 
     String getStringAt(int index);
 
-    static boolean equals(IndexedData data1, IndexedData data2) {
-        if (data1 == data2) {
-            return true;
-        }
-        if (data1 == null || data2 == null) {
-            return false;
-        }
-        DataSchema schema = data1.getSchema();
-        if (!schema.equals(data2.getSchema())) {
-            return false;
-        }
-        for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
-            if (! Objects.equals(data1.getAt(index), data2.getAt(index))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     static boolean equalsIgnoringSchema(IndexedData data1, IndexedData data2) {
         if (data1 == data2) {
             return true;
@@ -75,42 +54,21 @@ public interface IndexedData {
         if (data1 == null || data2 == null) {
             return false;
         }
-        DataSchema schema = data1.getSchema();
-        for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
-            if (! Objects.equals(data1.getAt(index), data2.getAt(index))) {
+
+        IndexedSchema schema1 = data1.getSchema();
+        IndexedSchema schema2 = data2.getSchema();
+        for (int index1 = schema1.firstIndex(), index2 = schema2.firstIndex();
+             index1 > 0 || index2 > 0;
+             index1 = schema1.nextIndex(index1), index2 = schema2.nextIndex(index2)) {
+            if (index1 != index2) {
+                return false;
+            }
+
+            if (!Objects.equals(data1.getAt(index1), data2.getAt(index2))) {
                 return false;
             }
         }
         return true;
     }
 
-    static int hashCode(IndexedData data) {
-        DataSchema schema = data.getSchema();
-        int hash = schema.hashCode();
-        for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
-            if (!data.hasIndex(index)) {
-                continue;
-            }
-            Object value = data.getAt(index);
-            hash = hash * 31 + (value == null ? 0 :value.hashCode());
-        }
-        return hash;
-    }
-
-    static String toString(IndexedData data) {
-        DataSchema schema = data.getSchema();
-        StringBuilder sb = new StringBuilder(schema.lastIndex() * 16);
-        sb.append('{');
-        for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
-            sb.append('[');
-            sb.append(index);
-            sb.append("]=");
-            sb.append(data.getAt(index));
-            if (index != schema.lastIndex()) {
-                sb.append(", ");
-            }
-        }
-        sb.append('}');
-        return sb.toString();
-    }
 }

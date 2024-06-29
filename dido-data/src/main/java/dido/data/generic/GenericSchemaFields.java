@@ -4,34 +4,52 @@ import dido.data.DataSchema;
 import dido.data.SchemaField;
 import dido.data.SchemaReference;
 
+import java.util.Objects;
+
 class GenericSchemaFields {
 
     public static <F> GenericSchemaField<F> of(int index, F field, Class<?> type) {
         return new Extension<>(
-                SchemaField.of(index, field == null ? null : field.toString(), type),
+                SchemaField.of(
+                        index,
+                        Objects.requireNonNull(field.toString(), "Field can not be null"),
+                        type),
                 field);
     }
 
     public static <F> GenericSchemaField<F> ofNested(int index, F field, SchemaReference nestedRef) {
         return new Extension<>(
-                SchemaField.ofNested(index, field == null ? null : field.toString(), nestedRef),
+                SchemaField.ofNested(
+                        index,
+                        Objects.requireNonNull(field.toString(), "Field can not be null"),
+                        nestedRef),
                 field);
     }
 
     public static <F> GenericSchemaField<F> ofNested(int index, F field, DataSchema nested) {
-        return new Extension<>(SchemaField.ofNested(
-                index, field == null ? null : field.toString(), nested),
+        return new Extension<>(
+                SchemaField.ofNested(
+                        index,
+                        Objects.requireNonNull(field.toString(), "Field can not be null"),
+                        nested),
                 field);
     }
 
     public static <F> GenericSchemaField<F> ofRepeating(int index, F field, DataSchema nested) {
-        return new Extension<>(SchemaField.ofRepeating(
-                index, field == null ? null : field.toString(), nested), field);
+        return new Extension<>(
+                SchemaField.ofRepeating(
+                        index,
+                        Objects.requireNonNull(field.toString(), "Field can not be null"),
+                        nested),
+                field);
     }
 
     public static <F> GenericSchemaField<F> ofRepeating(int index, F field, SchemaReference nestedRef) {
-        return new Extension<>(SchemaField.ofRepeating(
-                index, field == null ? null : field.toString(), nestedRef),
+        return new Extension<>(
+                SchemaField.ofRepeating(
+                        index,
+                        Objects.requireNonNull(field.toString(), "Field can not be null"),
+                        nestedRef),
                 field);
     }
 

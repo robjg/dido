@@ -115,7 +115,7 @@ class JsonSchemaExtractorTest {
         rootObject.add("OrderLines", orderLines);
 
         DataSchema partialSchema = SchemaBuilder.newInstance()
-                .addRepeatingField("OrderLines", GenericDataSchema.emptySchema())
+                .addRepeatingNamed("OrderLines", GenericDataSchema.emptySchema())
                 .build();
 
         JsonSchemaExtractor test = JsonSchemaExtractor.withPartialSchema(partialSchema);
@@ -123,13 +123,13 @@ class JsonSchemaExtractorTest {
         DataSchema schema = test.fromElement(rootObject);
 
         DataSchema nestedSchema = SchemaBuilder.newInstance()
-                .addField("Fruit", String.class)
-                .addField("Qty", double.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", double.class)
                 .build();
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
-                .addField("OrderId", String.class)
-                .addRepeatingField("OrderLines", nestedSchema)
+                .addNamed("OrderId", String.class)
+                .addRepeatingNamed("OrderLines", nestedSchema)
                 .build();
 
         assertThat(schema, is(expectedSchema));

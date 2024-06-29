@@ -15,9 +15,9 @@ class CsvDataOutHowTest {
     void testHeaderFromSimpleSchema() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("Apple", String.class)
-                .addField("Qty", int.class)
-                .addField("Price", double.class)
+                .addNamed("Apple", String.class)
+                .addNamed("Qty", int.class)
+                .addNamed("Price", double.class)
                 .build();
 
         String[] headings = CsvDataOutHow.headerFrom(schema);
@@ -43,10 +43,10 @@ class CsvDataOutHowTest {
     void testDataWithHeadings() throws Exception {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("Fruit", String.class)
-                .addField("Foo", String.class)
-                .addField("Quantity", int.class)
-                .addField("Price", double.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("Foo", String.class)
+                .addNamed("Quantity", int.class)
+                .addNamed("Price", double.class)
                 .build();
 
         DataBuilders.NamedValues values = MapData.valuesFor(schema);

@@ -35,7 +35,7 @@ class ValueCopyFactoryTest {
         TransformerFactory transformerFactory = test.toValue();
 
         DataSchema inSchema = SchemaBuilder.newInstance()
-                .addField("Foo", String.class)
+                .addNamed("Foo", String.class)
                 .build();
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
@@ -66,7 +66,7 @@ class ValueCopyFactoryTest {
         TransformerFactory transformerFactory = test.toValue();
 
         DataSchema inSchema = SchemaBuilder.newInstance()
-                .addField("Foo", String.class)
+                .addNamed("Foo", String.class)
                 .build();
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
@@ -101,14 +101,14 @@ class ValueCopyFactoryTest {
 
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
-                .addField("AByte", byte.class)
-                .addField("AShort", short.class)
-                .addField("AChar", char.class)
-                .addField("AnInt", int.class)
-                .addField("ALong", long.class)
-                .addField("ADouble", double.class)
-                .addField("AFloat", float.class)
-                .addField("ABoolean", boolean.class)
+                .addNamed("AByte", byte.class)
+                .addNamed("AShort", short.class)
+                .addNamed("AChar", char.class)
+                .addNamed("AnInt", int.class)
+                .addNamed("ALong", long.class)
+                .addNamed("ADouble", double.class)
+                .addNamed("AFloat", float.class)
+                .addNamed("ABoolean", boolean.class)
                 .build();
 
 
@@ -142,13 +142,13 @@ class ValueCopyFactoryTest {
 
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
-                .addField("SomeOne", int.class)
-                .addField("Two", int.class)
-                .addField("SomeThree", int.class)
-                .addField("Four", int.class)
-                .addField("Five", int.class)
-                .addField("SomeSix", int.class)
-                .addField("Seven", int.class)
+                .addNamed("SomeOne", int.class)
+                .addNamed("Two", int.class)
+                .addNamed("SomeThree", int.class)
+                .addNamed("Four", int.class)
+                .addNamed("Five", int.class)
+                .addNamed("SomeSix", int.class)
+                .addNamed("Seven", int.class)
                 .build();
 
 
@@ -182,10 +182,10 @@ class ValueCopyFactoryTest {
 
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
-                .addField("AnInt", int.class)
-                .addField("BlankString", String.class)
-                .addField("CsvString", int[].class)
-                .addField("NullString", String.class)
+                .addNamed("AnInt", int.class)
+                .addNamed("BlankString", String.class)
+                .addNamed("CsvString", int[].class)
+                .addNamed("NullString", String.class)
                 .build();
 
         DataSchema schema = result1.getSchema();

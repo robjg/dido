@@ -4,7 +4,6 @@ import dido.data.DataSchema;
 import dido.data.SchemaBuilder;
 import dido.data.SchemaField;
 import dido.data.SchemaReference;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -16,9 +15,9 @@ class GenericSchemaBuilderTest {
     void testAddSequentiallyNoFields() {
 
         GenericDataSchema<String> schema = GenericSchemaBuilder.forStringFields()
-                .addAt(0, String.class)
-                .addAt(0, int.class)
-                .addAt(0, double.class)
+                .addFieldAt(0, "a", String.class)
+                .addFieldAt(0, "b", int.class)
+                .addFieldAt(0, "c", double.class)
                 .build();
 
         assertThat(schema.firstIndex(), is(1));
@@ -27,16 +26,16 @@ class GenericSchemaBuilderTest {
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));
         assertThat(schema.nextIndex(3), is(0));
-        assertThat(schema.getFields().isEmpty(), is(true));
+        assertThat(schema.getFields(), contains("a", "b", "c"));
     }
 
     @Test
     void testAddSparseIndexes() {
 
         GenericDataSchema<String> schema = GenericSchemaBuilder.forStringFields()
-                .addAt(5, String.class)
-                .add(int.class)
-                .addAt(20, double.class)
+                .addFieldAt(5, "a", String.class)
+                .addField("b", int.class)
+                .addFieldAt(20, "c", double.class)
                 .build();
 
         assertThat(schema.firstIndex(), is(5));
@@ -45,7 +44,7 @@ class GenericSchemaBuilderTest {
         assertThat(schema.nextIndex(5), is(6));
         assertThat(schema.nextIndex(6), is(20));
         assertThat(schema.nextIndex(20), is(0));
-        assertThat(schema.getFields().isEmpty(), is(true));
+        assertThat(schema.getFields(), contains("a", "b", "c"));
 
         try {
             assertThat(schema.getFieldAt(2), nullValue());
@@ -60,9 +59,9 @@ class GenericSchemaBuilderTest {
     void testAddFields() {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("fruit", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("fruit", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         assertThat(schema.firstIndex(), is(1));
@@ -71,7 +70,7 @@ class GenericSchemaBuilderTest {
         assertThat(schema.getTypeNamed("fruit"), is(String.class));
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));
-        assertThat(schema.getFieldNames(), Matchers.contains("fruit", "qty", "price"));
+        assertThat(schema.getFieldNames(), contains("fruit", "qty", "price"));
     }
 
     @Test
@@ -125,7 +124,7 @@ class GenericSchemaBuilderTest {
     void testOverwriteWithIndexOnlySchema() {
 
         GenericDataSchema<String> correction = GenericSchemaBuilder.forStringFields()
-                .addAt(2, int.class)
+                .addFieldAt(7, "qty", int.class)
                 .build();
 
         GenericDataSchema<String> schema = GenericSchemaBuilder.forStringFields()

@@ -17,7 +17,7 @@ public class StreamLines {
     private static final String LINE = "Line";
 
     private static final DataSchema schema = SchemaBuilder.newInstance()
-            .addField(LINE, String.class)
+            .addNamed(LINE, String.class)
             .build();
 
     public static class In implements DataInHow<InputStream, NamedData> {

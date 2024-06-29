@@ -15,10 +15,10 @@ class DataSerializerTest {
     void whenDataOfPrimitivesThenCorrectJsonProduced() throws JSONException {
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("type", String.class)
-                .addField("foo", String.class)
-                .addField("qty", int.class)
-                .addField("price", double.class)
+                .addNamed("type", String.class)
+                .addNamed("foo", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
                 .build();
 
         DidoData data = ArrayData.valuesFor(schema)
@@ -39,18 +39,18 @@ class DataSerializerTest {
     void whenDataOfNestedGenericDataThenCorrectJsonProduced() throws JSONException {
 
         DataSchema fooSchema = SchemaBuilder.newInstance()
-                .addField("foo", String.class)
-                .addField("qty", int.class)
+                .addNamed("foo", String.class)
+                .addNamed("qty", int.class)
                 .build();
 
         DataSchema posSchema = SchemaBuilder.newInstance()
-                .addField("x", double.class)
-                .addField("y", double.class)
+                .addNamed("x", double.class)
+                .addNamed("y", double.class)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addNestedField("foo", fooSchema)
-                .addNestedField("pos", posSchema)
+                .addNestedNamed("foo", fooSchema)
+                .addNestedNamed("pos", posSchema)
                 .build();
 
         DidoData data = MapData.valuesFor(schema)
@@ -74,13 +74,13 @@ class DataSerializerTest {
     void whenDataOfRepeatingThenCorrectJsonProduced() throws JSONException {
 
         DataSchema posSchema = SchemaBuilder.newInstance()
-                .addField("x", double.class)
-                .addField("y", double.class)
+                .addNamed("x", double.class)
+                .addNamed("y", double.class)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addField("foo", String.class)
-                .addNestedField("positions", posSchema)
+                .addNamed("foo", String.class)
+                .addNestedNamed("positions", posSchema)
                 .build();
 
         RepeatingData positions = RepeatingData.of(

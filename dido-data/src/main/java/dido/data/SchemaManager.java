@@ -44,7 +44,7 @@ public class SchemaManager {
         }
 
         public B addFieldAt(int index, String field, Class<?> type) {
-            this.schemaBuilder.addFieldAt(index, field, type);
+            this.schemaBuilder.addNamedAt(index, field, type);
             return self();
         }
 
@@ -65,10 +65,10 @@ public class SchemaManager {
                 SchemaReference schemaRef = SchemaReference.named(schemaName);
                 schemaRefs.computeIfAbsent(schemaName, k -> new ArrayList<>())
                         .add(schemaRef);
-                schemaBuilder.addNestedFieldAt(index, field, schemaRef);
+                schemaBuilder.addNestedNamedAt(index, field, schemaRef);
             }
             else {
-                schemaBuilder.addNestedFieldAt(index, field, schema);
+                schemaBuilder.addNestedNamedAt(index, field, schema);
             }
             return self();
         }
@@ -84,7 +84,7 @@ public class SchemaManager {
         }
 
         public  B addNestedFieldAt(int index, String field, DataSchema nestedSchema) {
-            this.schemaBuilder.addNestedFieldAt(index, field, nestedSchema);
+            this.schemaBuilder.addNestedNamedAt(index, field, nestedSchema);
             return self();
         }
 
@@ -122,10 +122,10 @@ public class SchemaManager {
                 SchemaReference schemaRef = SchemaReference.named(schemaName);
                 schemaRefs.computeIfAbsent(schemaName, k -> new ArrayList<>())
                         .add(schemaRef);
-                schemaBuilder.addRepeatingFieldAt(index, field, schemaRef);
+                schemaBuilder.addRepeatingNamedAt(index, field, schemaRef);
             }
             else {
-                schemaBuilder.addRepeatingFieldAt(index, field, schema);
+                schemaBuilder.addRepeatingNamedAt(index, field, schema);
             }
             return self();
         }
@@ -141,7 +141,7 @@ public class SchemaManager {
         }
 
         public  B addRepeatingFieldAt(int index, String field, DataSchema nestedSchema) {
-            schemaBuilder.addRepeatingFieldAt(index, field, nestedSchema);
+            schemaBuilder.addRepeatingNamedAt(index, field, nestedSchema);
             return self();
         }
 
@@ -240,11 +240,11 @@ public class SchemaManager {
 
         public void add() {
             if (repeating) {
-                this.parentSchema.schemaBuilder.addRepeatingFieldAt(
+                this.parentSchema.schemaBuilder.addRepeatingNamedAt(
                         index, field, this.schemaBuilder.build());
             }
             else {
-                this.parentSchema.schemaBuilder.addNestedFieldAt(
+                this.parentSchema.schemaBuilder.addNestedNamedAt(
                         index, field, this.schemaBuilder.build());
             }
         }

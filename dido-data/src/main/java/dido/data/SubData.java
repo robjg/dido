@@ -4,7 +4,6 @@ import java.util.function.Function;
 
 /**
  * Provide data that is a subset of some other data.
- *
  */
 public class SubData extends AbstractData implements DidoData {
 
@@ -24,19 +23,12 @@ public class SubData extends AbstractData implements DidoData {
 
         private final int[] indices;
 
-        private final boolean withFields;
-
         private DataSchema lastSchema;
 
         private DataSchema subSchema;
 
         private MappingFunc(int[] indices) {
-            this(indices, false);
-        }
-
-        private MappingFunc(int[] indices, boolean withFields) {
             this.indices = indices;
-            this.withFields = withFields;
         }
 
         @Override
@@ -46,12 +38,8 @@ public class SubData extends AbstractData implements DidoData {
                 lastSchema = original.getSchema();
                 SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
                 for (int index : indices) {
-                    if (withFields) {
-                        schemaBuilder.addField(lastSchema.getFieldNameAt(index),
-                                lastSchema.getTypeAt(index));
-                    } else {
-                        schemaBuilder.add(lastSchema.getTypeAt(index));
-                    }
+                    schemaBuilder.addNamed(lastSchema.getFieldNameAt(index),
+                            lastSchema.getTypeAt(index));
                 }
                 subSchema = schemaBuilder.build();
             }
@@ -64,6 +52,7 @@ public class SubData extends AbstractData implements DidoData {
         private final String[] fields;
 
         private final boolean withFields;
+
         private DataSchema lastSchema;
 
         private DataSchema subSchema;
@@ -78,6 +67,7 @@ public class SubData extends AbstractData implements DidoData {
             this.fields = fields;
             this.withFields = withFields;
         }
+
         @Override
         public DidoData apply(DidoData original) {
 
@@ -90,9 +80,8 @@ public class SubData extends AbstractData implements DidoData {
                     int index = lastSchema.getIndexNamed(field);
                     indices[i] = index;
                     if (withFields) {
-                        schemaBuilder.addField(field, lastSchema.getTypeNamed(field));
-                    }
-                    else {
+                        schemaBuilder.addNamed(field, lastSchema.getTypeNamed(field));
+                    } else {
                         schemaBuilder.add(lastSchema.getTypeNamed(field));
                     }
                 }
@@ -102,39 +91,35 @@ public class SubData extends AbstractData implements DidoData {
         }
     }
 
-    public static class Configuration<F> {
+    public static class Configuration {
 
-        private boolean fields;
+        private boolean withFields;
 
-        public Configuration<F> fields(boolean withFields) {
-            this.fields = withFields;
+        public Configuration fields(boolean withFields) {
+            this.withFields = withFields;
             return this;
         }
 
-        public Configuration<F> fields() {
+        public Configuration fields() {
             return fields(true);
         }
 
         public Function<DidoData, DidoData> andIndices(int... indices) {
 
-            return new MappingFunc(indices, fields);
+            return new MappingFunc(indices);
         }
 
         public Function<DidoData, DidoData> andFields(String... fields) {
 
-            return new FieldMappingFunc(fields);
+            return new FieldMappingFunc(fields, this.withFields);
         }
     }
 
-    public static <F> Configuration<F> with() {
-        return new Configuration<>();
+    public static Configuration with() {
+        return new Configuration();
     }
 
-    public static <F> Configuration<F> withFields() {
-        return new Configuration<F>().fields();
-    }
-
-    public static <F> Function<DidoData, DidoData> ofIndices(int... indices) {
+    public static Function<DidoData, DidoData> ofIndices(int... indices) {
 
         return new MappingFunc(indices);
     }
@@ -143,6 +128,7 @@ public class SubData extends AbstractData implements DidoData {
 
         return new FieldMappingFunc(fields);
     }
+
     @Override
     public DataSchema getSchema() {
         return dataSchema;
