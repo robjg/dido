@@ -8,49 +8,59 @@ import java.util.LinkedList;
 
 /**
  * Adds Deserialisers to a GsonBuilder for create DidoData. Done in this way to support nested JSON.
+ *
+ * @param <D> The type of Data that will be produced.
  */
 public class JsonDataCopy<D extends DidoData> {
 
-    private final LinkedList<DataSchema> stack = new LinkedList<>();
+    static class SchemaAndFactory<D extends DidoData> {
 
-    private final DataFactory<D> builder;
+        final DataSchema schema;
 
-    private JsonDataCopy(DataSchema schema,
-                         DataFactory<D> dataBuilder) {
-        this.stack.addFirst(schema);
-        this.builder = dataBuilder;
+        final DataFactory<D> dataFactory;
+
+        SchemaAndFactory(DataSchema schema, DataFactory<D> dataFactory) {
+            this.schema = schema;
+            this.dataFactory = dataFactory;
+        }
     }
 
-    public static GsonBuilder registerSchema(GsonBuilder gsonBuilder,
-                                             DataSchema schema) {
-        return registerSchema(gsonBuilder, schema, new MapDataDataFactoryProvider().provideFactory(schema));
+    private final LinkedList<SchemaAndFactory<D>> stack = new LinkedList<>();
+
+    private final DataFactoryProvider<D> dataFactoryProvider;
+
+    private JsonDataCopy(DataSchema schema,
+                         DataFactoryProvider<D> dataFactoryProvider) {
+        this.stack.addFirst(new SchemaAndFactory<>(schema, dataFactoryProvider.provideFactory(schema)));
+        this.dataFactoryProvider = dataFactoryProvider;
     }
 
     public static <D extends DidoData> GsonBuilder registerSchema(GsonBuilder gsonBuilder,
                                                                   DataSchema schema,
-                                                                  DataFactory<D> dataBuilder) {
-        return new JsonDataCopy<>(schema, dataBuilder).init(gsonBuilder, dataBuilder);
+                                                                  DataFactoryProvider<D> dataFactoryProvider) {
+        return new JsonDataCopy<>(schema, dataFactoryProvider)
+                .init(gsonBuilder, dataFactoryProvider.getDataType());
     }
 
-    private GsonBuilder init(GsonBuilder gsonBuilder, DataFactory<D> dataBuilder) {
-        return gsonBuilder.registerTypeAdapter(dataBuilder.getDataType(),
-                        new DataDeserializer())
-                .registerTypeAdapter(RepeatingData.class, new RepeatingDeserializer());
+    private GsonBuilder init(GsonBuilder gsonBuilder, Class<D> dataType) {
+        return gsonBuilder
+                .registerTypeAdapter(dataType, new DataDeserializer())
+                .registerTypeAdapter(SchemaField.NESTED_REPEATING_TYPE, new RepeatingDeserializer(dataType));
     }
 
-    class DataDeserializer implements JsonDeserializer<DidoData> {
+    class DataDeserializer implements JsonDeserializer<D> {
 
         @Override
-        public DidoData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public D deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
             if (!json.isJsonObject()) {
                 throw new JsonParseException("JsonObject expected, received: " + json +
                         " (" + json.getClass().getSimpleName() + ")");
             }
 
-            DataSetter setter = builder.getSetter();
-
-            DataSchema schema = stack.getFirst();
+            SchemaAndFactory<D> schemaAndFactory = stack.getFirst();
+            DataSetter setter = schemaAndFactory.dataFactory.getSetter();
+            DataSchema schema = schemaAndFactory.schema;
 
             JsonObject jsonObject = (JsonObject) json;
 
@@ -67,8 +77,15 @@ public class JsonDataCopy<D extends DidoData> {
                 Class<?> fieldType = schemaField.getType();
                 if (schemaField.isNested()) {
 
-                    stack.addFirst(schemaField.getNestedSchema());
-                    fieldType = builder.getDataType();
+                    DataSchema nestedSchema = schemaField.getNestedSchema();
+                    stack.addFirst(new SchemaAndFactory<>(
+                            nestedSchema, dataFactoryProvider.provideFactory(nestedSchema)));
+                    if (schemaField.isRepeating()) {
+                        fieldType = SchemaField.NESTED_REPEATING_TYPE;
+                    }
+                    else {
+                        fieldType = dataFactoryProvider.getDataType();
+                    }
                 }
 
                 Object nested = context.deserialize(element, fieldType);
@@ -80,7 +97,7 @@ public class JsonDataCopy<D extends DidoData> {
                 }
             }
 
-            return builder.toData();
+            return schemaAndFactory.dataFactory.toData();
         }
     }
 

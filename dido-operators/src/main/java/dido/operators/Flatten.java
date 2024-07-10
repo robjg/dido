@@ -96,7 +96,7 @@ public class Flatten {
                                                               Collection<Extractor> extractors) {
 
         Map<Integer, Extractor> extractorMap = new HashMap<>();
-        SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
+        DataSchemaFactory schemaBuilder = DataSchemaFactory.newInstance();
 
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
 
@@ -130,7 +130,7 @@ public class Flatten {
             }
         }
 
-        return new KnownIterableFlatten(extractorMap, schema, schemaBuilder.build());
+        return new KnownIterableFlatten(extractorMap, schema, schemaBuilder.toSchema());
     }
 
 

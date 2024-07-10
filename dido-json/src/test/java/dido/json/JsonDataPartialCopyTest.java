@@ -20,15 +20,16 @@ class JsonDataPartialCopyTest {
                 "\t]\n" +
                 "\t}\n";
 
+        DataFactoryProvider<ArrayData> dataFactoryProvider = new ArrayDataDataFactoryProvider();
+
         Gson gson = JsonDataPartialCopy.registerPartialSchema(
                         new GsonBuilder(),
                         SchemaBuilder.newInstance()
                                 .addRepeatingNamed("OrderLines", DataSchema.emptySchema())
-                                .build(),
-                        new ArrayDataDataFactoryProvider())
+                                .build(), dataFactoryProvider)
                 .create();
 
-        NamedData result = gson.fromJson(json, NamedData.class);
+        NamedData result = gson.fromJson(json, dataFactoryProvider.getDataType());
 
         DataSchema nestedSchema = SchemaBuilder.newInstance()
                 .addNamed("Fruit", String.class)

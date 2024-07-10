@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class JsonDataWrapper {
 
-    public static final Class<?> DATA_TYPE = NamedData.class;
+    public static final Class<NamedData> DATA_TYPE = NamedData.class;
 
     public static final Class<?> REPEATING_DATA_TYPE = SchemaField.NESTED_REPEATING_TYPE;
 
@@ -33,7 +33,7 @@ public class JsonDataWrapper {
         deserializer = new DataDeserializer(schema);
         return gsonBuilder
                 .registerTypeAdapter(DATA_TYPE, deserializer)
-                .registerTypeAdapter(REPEATING_DATA_TYPE, new RepeatingDeserializer());
+                .registerTypeAdapter(REPEATING_DATA_TYPE, new RepeatingDeserializer(DATA_TYPE));
     }
 
     DataDeserializer deserializer;

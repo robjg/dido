@@ -11,11 +11,11 @@ import java.util.*;
  */
 public class ArrayData extends AbstractNamedData implements NamedData {
 
-    private final DataSchema schema;
+    private final ArrayDataSchema schema;
 
     private final Object[] data;
 
-    private ArrayData(DataSchema schema, Object[] data) {
+    private ArrayData(ArrayDataSchema schema, Object[] data) {
         this.schema = schema;
         this.data = data;
     }
@@ -23,47 +23,36 @@ public class ArrayData extends AbstractNamedData implements NamedData {
     public static DidoData of(Object... data) {
         Objects.requireNonNull(data);
 
-        DataSchema schema = new AbstractDataSchema() {
+        ArrayDataSchema.ArrayDataSchemaFactory schemaFactory = new ArrayDataSchema.ArrayDataSchemaFactory();
+        for (int i = 0; i < data.length; ++i) {
+            schemaFactory.add(Object.class);
+        }
 
-            @Override
-            public SchemaField getSchemaFieldAt(int index) {
-                return index > 0 && index <= data.length ?
-                        SchemaFields.of(index, SchemaBuilder.nameForIndex(index), Object.class) : null;
-            }
+        return new ArrayData(schemaFactory.toSchema(), data);
+    }
 
-            @Override
-            public int getIndexNamed(String fieldName) {
-                return 0;
-            }
+    public static ArrayDataSchema.ArrayDataSchemaFactory schemaFactory() {
+        return new ArrayDataSchema.ArrayDataSchemaFactory();
+    }
 
-            @Override
-            public int firstIndex() {
-                return data.length > 0 ? 1 : 0;
-            }
+    public static SchemaBuilder<ArrayDataSchema> schemaBuilder() {
+        return SchemaBuilder.builderFor(schemaFactory());
+    }
 
-            @Override
-            public int nextIndex(int index) {
-                return index > 0 && index < data.length ? index + 1 : 0;
-            }
+    public static ArrayDataSchema asArrayDataSchema(DataSchema schema) {
 
-            @Override
-            public int lastIndex() {
-                return data.length;
-            }
+        if (schema instanceof ArrayDataSchema) {
+            return (ArrayDataSchema) schema;
 
-            @Override
-            public Collection<String> getFieldNames() {
-                return Collections.emptyList();
-            }
-
-        };
-
-        return new ArrayData(schema, data);
+        }
+        else {
+            return new ArrayDataSchema(schema);
+        }
     }
 
     public static Builder builderForSchema(DataSchema schema) {
 
-        return new Builder(schema);
+        return new Builder(asArrayDataSchema(schema));
     }
 
     public static BuilderUnknown newBuilder() {
@@ -73,15 +62,15 @@ public class ArrayData extends AbstractNamedData implements NamedData {
 
     public static DataBuilders.Values valuesFor(DataSchema schema) {
 
-        return new Builder(schema).values();
+            return new Builder(asArrayDataSchema(schema)).values();
     }
 
-    public static DataFactory<NamedData> factoryFor(DataSchema schema) {
-        return new ArrayDataFactory(schema);
+    public static DataFactory<ArrayData> factoryFor(DataSchema schema) {
+        return new ArrayDataFactory(asArrayDataSchema(schema));
     }
 
     @Override
-    public DataSchema getSchema() {
+    public ArrayDataSchema getSchema() {
         return schema;
     }
 
@@ -100,11 +89,11 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         return Arrays.toString(data);
     }
 
-    public static class Builder extends DataBuilders.KnownSchema<Builder> {
+    public static class Builder extends DataBuilders.KnownSchema<Builder, ArrayDataSchema> {
 
         private Object[] values;
 
-        Builder(DataSchema schema) {
+        Builder(ArrayDataSchema schema) {
             super(schema);
             values = new Object[schema.lastIndex()];
         }
@@ -243,7 +232,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
 
         public BuilderUnknown setIndex(int index, Object value, Class<?> type) {
             values.add(value);
-            schemaFields.add(GenericSchemaField.of(index, SchemaBuilder.nameForIndex(index), type));
+            schemaFields.add(GenericSchemaField.of(index, DataSchema.nameForIndex(index), type));
             if (index > lastIndex) {
                 lastIndex = index;
             }
@@ -257,41 +246,86 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
 
         public NamedData build() {
-            SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
+            ArrayDataSchema.ArrayDataSchemaFactory schemaBuilder = new ArrayDataSchema.ArrayDataSchemaFactory();
             Object[] values = new Object[lastIndex];
             Iterator<Object> valIt = this.values.iterator();
             for (SchemaField schemaField : this.schemaFields) {
                 schemaBuilder.addSchemaField(schemaField);
                 values[schemaField.getIndex() - 1] = valIt.next();
             }
-            return new ArrayData(schemaBuilder.build(), values);
+            return new ArrayData(schemaBuilder.toSchema(), values);
         }
     }
 
-    static class ArrayDataFactory extends AbstractIndexedSetter implements DataFactory<NamedData> {
+    static class ArrayDataFactory extends AbstractIndexedSetter implements DataFactory<ArrayData> {
 
-        private final DataSchema schema;
+        private final ArrayDataSchema schema;
 
         private Object[] values;
 
-        ArrayDataFactory(DataSchema schema) {
+        ArrayDataFactory(ArrayDataSchema schema) {
             this.schema = schema;
             values = new Object[schema.lastIndex()];
         }
 
         @Override
-        public Class<NamedData> getDataType() {
-            return null;
+        public Class<ArrayData> getDataType() {
+            return ArrayData.class;
         }
 
+        @Override
+        public Setter getSetterAt(int index) {
+            return new AbstractSetter() {
+                @Override
+                public void clear() {
+                    clearAt(index);
+                }
+
+                @Override
+                public void set(Object value) {
+                    setAt(index, value);
+                }
+            };
+        }
+
+        @Override
+        public Setter getSetterNamed(String name) {
+            int index = schema.getIndexNamed(name);
+            if (index == 0) {
+                throw new IllegalArgumentException(
+                        "No field named " + name + ", valid field names: " + schema.getFieldNames());
+            }
+            return getSetterAt(index);
+        }
+
+        @Override
+        public void clearAt(int index) {
+            values[index - 1] = null;
+        }
+
+        @Override
         public void setAt(int index, Object value) {
             values[index - 1] = value;
         }
 
         @Override
-        public void setNamed(String field, Object value) {
-            int index = schema.getIndexNamed(field);
+        public void setNamed(String name, Object value) {
+            int index = schema.getIndexNamed(name);
+            if (index == 0) {
+                throw new IllegalArgumentException(
+                        "No field named " + name + ", valid field names: " + schema.getFieldNames());
+            }
             setAt(index, value);
+        }
+
+        @Override
+        public void clearNamed(String name) {
+            int index = schema.getIndexNamed(name);
+            if (index == 0) {
+                throw new IllegalArgumentException(
+                        "No field named " + name + ", valid field names: " + schema.getFieldNames());
+            }
+            clearAt(index);
         }
 
         @Override
@@ -300,24 +334,24 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public NamedData mapToData(Map<? extends String, ?> map) {
-            Object[] values = new Object[schema.lastIndex()];
-            for (Map.Entry<? extends String, ?> entry: map.entrySet() ) {
-                values[schema.getIndexNamed(entry.getKey()) - 1] = entry.getValue();
+        public void copy(ArrayData data) {
+            DataSchema inSchema = data.getSchema();
+            for (int i = inSchema.firstIndex(); i > 0; i = inSchema.nextIndex(i)) {
+                values[i - 1] = data.data[i - 1];
             }
-            return new ArrayData(schema, values);
         }
 
         @Override
-        public NamedData valuesToData(Object... values) {
+        public ArrayData valuesToData(Object... values) {
             return new ArrayData(schema, Arrays.copyOf(values, schema.lastIndex()));
         }
 
         @Override
-        public NamedData toData() {
+        public ArrayData toData() {
             Object[] values = this.values;
             this.values = new Object[schema.lastIndex()];
             return new ArrayData(schema, values);
         }
     }
+
 }

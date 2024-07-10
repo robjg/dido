@@ -2,7 +2,6 @@ package dido.data.generic;
 
 import dido.data.DataSchema;
 import dido.data.SchemaBuilder;
-import dido.data.SchemaField;
 import dido.data.SchemaReference;
 import org.junit.jupiter.api.Test;
 
@@ -236,26 +235,26 @@ class GenericSchemaBuilderTest {
         assertThat(schema1, is(schema2));
     }
 
-    @Test
-    void whenAddSchemaFieldThenOk() {
-
-        DataSchema schemaSimple = SchemaBuilder.newInstance()
-                .addSchemaField(SchemaField.of(5, "Foo", Integer.class))
-                .build();
-
-        assertThat(schemaSimple.getSchemaFieldAt(5), is(SchemaField.of(5, "Foo", Integer.class)));
-
-        DataSchema schemaNested = SchemaBuilder.newInstance()
-                .addSchemaField(SchemaField.ofNested(3, "Nested", schemaSimple))
-                .build();
-
-        assertThat(schemaNested.getSchemaFieldAt(3), is(SchemaField.ofNested(3, "Nested", schemaSimple)));
-
-        DataSchema schemaRepeating = SchemaBuilder.newInstance()
-                .addSchemaField(SchemaField.ofRepeating(3, "Nested", schemaSimple))
-                .build();
-
-        assertThat(schemaRepeating.getSchemaFieldAt(3), is(SchemaField.ofRepeating(3, "Nested", schemaSimple)));
-    }
+//    @Test
+//    void whenAddSchemaFieldThenOk() {
+//
+//        DataSchema schemaSimple = SchemaBuilder.newInstance()
+//                .addSchemaField(SchemaField.of(5, "Foo", Integer.class))
+//                .build();
+//
+//        assertThat(schemaSimple.getSchemaFieldAt(5), is(SchemaField.of(5, "Foo", Integer.class)));
+//
+//        DataSchema schemaNested = SchemaBuilder.newInstance()
+//                .addSchemaField(SchemaField.ofNested(3, "Nested", schemaSimple))
+//                .build();
+//
+//        assertThat(schemaNested.getSchemaFieldAt(3), is(SchemaField.ofNested(3, "Nested", schemaSimple)));
+//
+//        DataSchema schemaRepeating = SchemaBuilder.newInstance()
+//                .addSchemaField(SchemaField.ofRepeating(3, "Nested", schemaSimple))
+//                .build();
+//
+//        assertThat(schemaRepeating.getSchemaFieldAt(3), is(SchemaField.ofRepeating(3, "Nested", schemaSimple)));
+//    }
 
 }

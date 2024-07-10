@@ -300,7 +300,7 @@ public class FromBeanArooa {
 
         BeanOverview beanOverview = arooaClass.getBeanOverview(this.accessor);
 
-        SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
+        DataSchemaFactory schemaBuilder = DataSchemaFactory.newInstance();
 
         for (String property : beanOverview.getProperties()) {
 
@@ -334,6 +334,6 @@ public class FromBeanArooa {
             schemaBuilder.addSchemaField(schemaField);
         }
 
-        return schemaBuilder.build();
+        return schemaBuilder.toSchema();
     }
 }

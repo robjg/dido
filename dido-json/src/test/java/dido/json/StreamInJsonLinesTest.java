@@ -22,7 +22,8 @@ class StreamInJsonLinesTest {
         });
         bufferType.configured();
 
-        DataIn<NamedData> in = StreamInJsonLines.asWrapperWithPartialSchema(null)
+        DataIn<NamedData> in = StreamInJsonLines.asWrapper()
+                .make()
                 .inFrom(bufferType.toInputStream());
 
         NamedData data1 = in.get();
@@ -63,7 +64,10 @@ class StreamInJsonLinesTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        DataIn<NamedData> in = StreamInJsonLines.asWrapperWithPartialSchema(schema)
+        DataIn<NamedData> in = StreamInJsonLines.asWrapper()
+                .setSchema(schema)
+                .setPartial(true)
+                .make()
                 .inFrom(bufferType.toInputStream());
 
         NamedData data1 = in.get();
@@ -106,7 +110,7 @@ class StreamInJsonLinesTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        DataIn<NamedData> in = StreamInJsonLines.settings()
+        DataIn<NamedData> in = StreamInJsonLines.asWrapper()
                 .setSchema(schema)
                 .make()
                 .inFrom(bufferType.toInputStream());

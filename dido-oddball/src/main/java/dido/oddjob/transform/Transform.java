@@ -90,7 +90,7 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
                 newFields,
                 i -> transformers.add((in, setter) -> ((IndexedSetter) setter).setAt(i, in.getAt(i))));
 
-        DataFactory<NamedData> dataFactory = new ArrayDataDataFactoryProvider().provideFactory(schema);
+        DataFactory<ArrayData> dataFactory = new ArrayDataDataFactoryProvider().provideFactory(schema);
 
         return new TransformerFunctionKnown(dataFactory, transformers);
     }

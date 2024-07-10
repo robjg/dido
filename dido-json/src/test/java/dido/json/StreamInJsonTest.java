@@ -32,11 +32,11 @@ class StreamInJsonTest {
 
         ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(expectedSchema);
 
-        DataInHow<InputStream, NamedData> test = StreamInJson.settings()
+        DataInHow<InputStream, ArrayData> test = StreamInJson.asCopy()
                 .setIsArray(true)
                 .make();
 
-        try (DataIn<NamedData> in = test.inFrom(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
+        try (DataIn<? extends NamedData> in = test.inFrom(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
 
             DidoData data1 = in.get();
 
@@ -72,7 +72,7 @@ class StreamInJsonTest {
                 .addRepeatingNamed("OrderLines", DataSchema.emptySchema())
                 .build();
 
-        DataInHow<InputStream, NamedData> test = StreamInJson.settings()
+        DataInHow<InputStream, ArrayData> test = StreamInJson.asCopy()
                 .setIsArray(true)
                 .setSchema(schema)
                 .setPartial(true)
@@ -88,7 +88,7 @@ class StreamInJsonTest {
                 .addRepeatingNamed("OrderLines", expectedNestedSchema)
                 .build();
 
-        try (DataIn<NamedData> in = test.inFrom(
+        try (DataIn<? extends NamedData> in = test.inFrom(
                 new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
 
             NamedData data1 = in.get();

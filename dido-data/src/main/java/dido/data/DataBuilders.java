@@ -181,16 +181,16 @@ abstract public class DataBuilders<D extends DidoData, B extends DataBuilders<D,
      *
      * @param <B>
      */
-    abstract public static class KnownSchema<B extends KnownSchema<B>>
+    abstract public static class KnownSchema<B extends KnownSchema<B, S>, S extends DataSchema>
             extends Indexed<NamedData, B> implements NamedDataBuilder {
 
-        private final DataSchema schema;
+        private final S schema;
 
-        protected KnownSchema(DataSchema schema) {
+        protected KnownSchema(S schema) {
             this.schema = Objects.requireNonNull(schema);
         }
 
-        protected DataSchema getSchema() {
+        protected S getSchema() {
             return schema;
         }
 
@@ -304,9 +304,9 @@ abstract public class DataBuilders<D extends DidoData, B extends DataBuilders<D,
     public static class ValuesTo {
 
         private final Consumer<? super DidoData> consumer;
-        private final KnownSchema<?> owner;
+        private final KnownSchema<?, ?> owner;
 
-        ValuesTo(Consumer<? super DidoData> consumer, KnownSchema<?> owner) {
+        ValuesTo(Consumer<? super DidoData> consumer, KnownSchema<?, ?> owner) {
             this.consumer = consumer;
             this.owner = owner;
         }

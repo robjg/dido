@@ -9,6 +9,10 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ *
+ * @param <D>
+ */
 public class JsonDataPartialCopy<D extends DidoData> {
 
     private final DataFactoryProvider<D> dataFactoryProvider;
@@ -34,9 +38,11 @@ public class JsonDataPartialCopy<D extends DidoData> {
     }
 
     private GsonBuilder init(GsonBuilder gsonBuilder) {
-        return gsonBuilder.registerTypeAdapter(dataFactoryProvider.getDataType(),
+        return gsonBuilder
+                .registerTypeAdapter(dataFactoryProvider.getDataType(),
                         new DataDeserializer())
-                .registerTypeAdapter(SchemaField.NESTED_REPEATING_TYPE, new RepeatingDeserializer());
+                .registerTypeAdapter(SchemaField.NESTED_REPEATING_TYPE,
+                        new RepeatingDeserializer(dataFactoryProvider.getDataType()));
     }
 
     class DataDeserializer implements JsonDeserializer<D> {
@@ -51,7 +57,7 @@ public class JsonDataPartialCopy<D extends DidoData> {
             }
 
             DataSchema prioritySchema = stack.getFirst();
-            SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
+            DataSchemaFactory schemaBuilder = DataSchemaFactory.newInstance();
             Set<String> knownFields = new HashSet<>(prioritySchema.getFieldNames());
 
             JsonObject jsonObject = (JsonObject) json;
@@ -115,7 +121,7 @@ public class JsonDataPartialCopy<D extends DidoData> {
                 }
             }
 
-            return dataFactoryProvider.provideFactory(schemaBuilder.build())
+            return dataFactoryProvider.provideFactory(schemaBuilder.toSchema())
                     .valuesToData(values);
         }
     }

@@ -276,6 +276,11 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
+        public void clearNamed(String name) {
+            map.remove(name);
+        }
+
+        @Override
         public void setNamed(String field, Object value) {
             map.put(field, value);
         }
@@ -286,13 +291,34 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
+        public Setter getSetterAt(int index) {
+            String name = schema.getFieldNameAt(index);
+            return getSetterNamed(name);
+        }
+
+        @Override
+        public Setter getSetterNamed(String name) {
+            return new AbstractSetter() {
+                @Override
+                public void clear() {
+                    clearNamed(name);
+                }
+
+                @Override
+                public void set(Object value) {
+                    setNamed(name, value);
+                }
+            };
+        }
+
+        @Override
         public DataSetter getSetter() {
             return this;
         }
 
         @Override
-        public NamedData mapToData(Map<? extends String, ?> map) {
-            return new MapData(schema, new HashMap<>(map));
+        public void copy(NamedData data) {
+            throw new UnsupportedOperationException("TODO");
         }
 
         @Override

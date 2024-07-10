@@ -101,10 +101,11 @@ public class RenamedData extends AbstractNamedData {
 
     static DataSchema renamedSchema(Map<String, String> mapping, DataSchema fromSchema) {
 
-        return fromSchema.getSchemaFields().stream()
-                .reduce(SchemaBuilder.newInstance(),
-                        (b, sf) -> b.addSchemaField(sf.mapToFieldName(mapping.get(sf.getName()))),
-                        (b1, b2) -> b1)
-                .build();
+        DataSchemaFactory schemaFactory = DataSchemaFactory.newInstance();
+        for (SchemaField schemaField : fromSchema.getSchemaFields()) {
+            schemaFactory.addSchemaField(schemaField.mapToFieldName(
+                    mapping.get(schemaField.getName())));
+        }
+        return schemaFactory.toSchema();
     }
 }

@@ -1,6 +1,9 @@
 package dido.json;
 
-import dido.data.*;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.MapData;
+import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
@@ -69,7 +72,7 @@ class JsonDidoTest {
 
         List<DidoData> copy = new ArrayList<>();
 
-        try (DataIn<NamedData> supplier = test.toStreamIn().inFrom(
+        try (DataIn<? extends DidoData> supplier = test.toStreamIn().inFrom(
                 new ByteArrayInputStream(results.toByteArray()))) {
 
             while (true) {
@@ -114,13 +117,13 @@ class JsonDidoTest {
             consumer.accept(data2);
         }
 
-        List<NamedData> copy = new ArrayList<>();
+        List<DidoData> copy = new ArrayList<>();
 
-        try (DataIn<NamedData> supplier = test.toStreamIn().inFrom(
+        try (DataIn<? extends DidoData> supplier = test.toStreamIn().inFrom(
                 new ByteArrayInputStream(results.toByteArray()))) {
 
             while (true) {
-                NamedData data = supplier.get();
+                DidoData data = supplier.get();
                 if (data == null) {
                     break;
                 }
@@ -130,16 +133,16 @@ class JsonDidoTest {
 
         assertThat(copy.size(), is(2));
 
-        NamedData copy1 = copy.get(0);
-        NamedData copy2 = copy.get(1);
+        DidoData copy1 = copy.get(0);
+        DidoData copy2 = copy.get(1);
 
-        assertThat(copy1.getString("type"), is("apple"));
-        assertThat(copy1.getInt("qty"), is(2));
-        assertThat(copy1.getDouble("price"), is(26.3));
+        assertThat(copy1.getStringNamed("type"), is("apple"));
+        assertThat(copy1.getIntNamed("qty"), is(2));
+        assertThat(copy1.getDoubleNamed("price"), is(26.3));
 
-        assertThat(copy2.getString("type"), is("orange"));
-        assertThat(copy2.getInt("qty"), is(3));
-        assertThat(copy2.getDouble("price"), is(31.4));
+        assertThat(copy2.getStringNamed("type"), is("orange"));
+        assertThat(copy2.getIntNamed("qty"), is(3));
+        assertThat(copy2.getDoubleNamed("price"), is(31.4));
 
         DataSchema schema1 = copy1.getSchema();
 

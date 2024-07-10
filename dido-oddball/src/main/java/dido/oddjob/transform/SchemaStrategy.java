@@ -1,7 +1,7 @@
 package dido.oddjob.transform;
 
 import dido.data.DataSchema;
-import dido.data.SchemaBuilder;
+import dido.data.DataSchemaFactory;
 import dido.data.SchemaField;
 
 import java.util.*;
@@ -23,7 +23,7 @@ public enum SchemaStrategy {
 
             int index = 0;
 
-            SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
+            DataSchemaFactory schemaBuilder = DataSchemaFactory.newInstance();
 
             for (SchemaFieldOptions fieldOptions : fields) {
 
@@ -36,7 +36,7 @@ public enum SchemaStrategy {
                         SchemaField.of(index, fieldOptions.getField(), fieldOptions.getType()));
             }
 
-            return schemaBuilder.build();
+            return schemaBuilder.toSchema();
         }
     },
 
@@ -84,7 +84,7 @@ public enum SchemaStrategy {
 
             }
 
-            SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
+            DataSchemaFactory schemaBuilder = DataSchemaFactory.newInstance();
 
             for (SchemaField schemaField : fieldsByIndex.values()) {
 
@@ -93,8 +93,7 @@ public enum SchemaStrategy {
 
             existingIndices.forEach(copyThis::accept);
 
-            return schemaBuilder.build();
-
+            return schemaBuilder.toSchema();
         }
     };
 

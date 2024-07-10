@@ -1,6 +1,7 @@
 package dido.data;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -18,7 +19,11 @@ public class DataSchemaImpl extends AbstractDataSchema {
 
     private volatile int hashCode = -1;
 
-    private DataSchemaImpl(Iterable<SchemaField> schemaFields, int firstIndex, int lastIndex) {
+    protected DataSchemaImpl() {
+        this(Collections.emptyList(), 0, 0);
+    }
+
+    protected DataSchemaImpl(Iterable<SchemaField> schemaFields, int firstIndex, int lastIndex) {
 
         this.nameToSchemaField = new LinkedHashMap<>();
 

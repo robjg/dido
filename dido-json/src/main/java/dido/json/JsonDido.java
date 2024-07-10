@@ -1,7 +1,9 @@
 package dido.json;
 
+import dido.data.ArrayDataDataFactoryProvider;
+import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
-import dido.data.NamedData;
+import dido.data.DidoData;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
 
@@ -52,11 +54,20 @@ public class JsonDido {
     private Format format;
 
     /**
-     * @oddjob.description When reading data is the data copied or wrapped. The idea is that wrapping
+     * @oddjob.description When reading data the JSON is copied or wrapped. The idea is that wrapping
      * data will be more performant for limited amounts of Data but tests really need to be done.
+     * If no dataFactoryProvider is specified a default is used.
      * @oddjob.required No, defaults to false.
      */
     private boolean copy;
+
+    /**
+     * @oddjob.description Provide a data factory to use for the copy. If this is provided a copy rather
+     * than wrapping is assumed.
+     * @oddjob.required No, defaults to ArrayData, if copy is true.
+     */
+    private DataFactoryProvider<?> dataFactoryProvider;
+
 
     public DataOutHow<OutputStream> toStreamOut() {
 
@@ -73,28 +84,50 @@ public class JsonDido {
         }
     }
 
-    public DataInHow<InputStream, NamedData> toStreamIn() {
+    public DataInHow<InputStream, ?> toStreamIn() {
 
         Format format = Objects.requireNonNullElse(this.format, Format.LINES);
         switch (format) {
             case SINGLE:
             case ARRAY:
-                return StreamInJson.settings()
-                        .setSchema(schema)
-                        .setPartial(partialSchema)
-                        .setCopy(copy)
-                        .setIsArray(format == Format.ARRAY)
-                        .make();
+                boolean array = format == Format.ARRAY;
+                if (copy || schema == null || partialSchema || dataFactoryProvider != null) {
+
+                    return StreamInJson.asCopy(dataFactoryProvider())
+                            .setSchema(schema)
+                            .setPartial(partialSchema)
+                            .setIsArray(array)
+                            .make();
+                }
+                else {
+                    return StreamInJson.asWrapper(schema)
+                            .setIsArray(array)
+                            .make();
+                }
             case LINES:
-                return StreamInJsonLines.settings()
-                        .setSchema(schema)
-                        .setPartial(partialSchema)
-                        .setCopy(copy)
-                        .make();
+                if (copy) {
+
+                    return StreamInJsonLines.asCopy(dataFactoryProvider())
+                            .setSchema(schema)
+                            .setPartial(partialSchema)
+                            .make();
+                }
+                else {
+
+                    return StreamInJsonLines.asWrapper()
+                            .setSchema(schema)
+                            .setPartial(partialSchema)
+                            .make();
+                }
             default:
                 throw new IllegalArgumentException("Unknown " + format);
         }
     }
+
+    private DataFactoryProvider<? extends DidoData> dataFactoryProvider() {
+        return this.dataFactoryProvider == null ? new ArrayDataDataFactoryProvider() : this.dataFactoryProvider;
+    }
+
 
     public DataSchema getSchema() {
         return schema;

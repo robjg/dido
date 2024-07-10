@@ -3,19 +3,17 @@ package dido.data;
 /**
  * Provide an {@link DataFactory} based on {@link ArrayData}.
  */
-public class ArrayDataDataFactoryProvider implements DataFactoryProvider<NamedData> {
+public class ArrayDataDataFactoryProvider implements DataFactoryProvider<ArrayData> {
 
     @Override
-    public Class<NamedData> getDataType() {
-        return NamedData.class;
+    public Class<ArrayData> getDataType() {
+        return ArrayData.class;
     }
 
     @Override
-    public DataFactory<NamedData> provideFactory(DataSchema schema) {
+    public DataFactory<ArrayData> provideFactory(DataSchema schema) {
 
-
-
-        return ArrayData.factoryFor(schema);
+        return ArrayData.factoryFor(ArrayData.asArrayDataSchema(schema));
 
     }
 }

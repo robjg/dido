@@ -57,7 +57,7 @@ public class Concatenator {
             List<Location> locations = new LinkedList<>();
             Map<String, Location> fieldLocations = new HashMap<>();
 
-            SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
+            DataSchemaFactory schemaFactory = DataSchemaFactory.newInstance();
 
             int locationIndex = 0;
             int dataIndex = 0;
@@ -80,13 +80,12 @@ public class Concatenator {
                         fieldLocations.put(field, location);
                     }
                     locations.add(location);
-                    schemaBuilder.addSchemaField(SchemaField.of(
-                            ++locationIndex, field, schema.getTypeAt(i)));
+                    schemaFactory.addNamedAt(++locationIndex, field, schema.getTypeAt(i));
                 }
                 ++dataIndex;
             }
 
-            return new Concatenator(schemaBuilder.build(),
+            return new Concatenator(schemaFactory.toSchema(),
                     locations.toArray(new Location[0]),
                     fieldLocations);
         }

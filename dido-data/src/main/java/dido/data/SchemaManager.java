@@ -27,10 +27,10 @@ public class SchemaManager {
 
     public abstract class NewSchema<B extends NewSchema<B>> {
 
-        protected final SchemaBuilder schemaBuilder;
+        protected final DataSchemaFactory schemaFactory;
 
         public NewSchema() {
-            this.schemaBuilder = SchemaBuilder.newInstance();
+            this.schemaFactory = DataSchemaFactory.newInstance();
         }
 
         //
@@ -44,7 +44,7 @@ public class SchemaManager {
         }
 
         public B addFieldAt(int index, String field, Class<?> type) {
-            this.schemaBuilder.addNamedAt(index, field, type);
+            this.schemaFactory.addNamedAt(index, field, type);
             return self();
         }
 
@@ -65,10 +65,10 @@ public class SchemaManager {
                 SchemaReference schemaRef = SchemaReference.named(schemaName);
                 schemaRefs.computeIfAbsent(schemaName, k -> new ArrayList<>())
                         .add(schemaRef);
-                schemaBuilder.addNestedNamedAt(index, field, schemaRef);
+                schemaFactory.addNestedNamedAt(index, field, schemaRef);
             }
             else {
-                schemaBuilder.addNestedNamedAt(index, field, schema);
+                schemaFactory.addNestedNamedAt(index, field, schema);
             }
             return self();
         }
@@ -84,7 +84,7 @@ public class SchemaManager {
         }
 
         public  B addNestedFieldAt(int index, String field, DataSchema nestedSchema) {
-            this.schemaBuilder.addNestedNamedAt(index, field, nestedSchema);
+            this.schemaFactory.addNestedNamedAt(index, field, nestedSchema);
             return self();
         }
 
@@ -122,10 +122,10 @@ public class SchemaManager {
                 SchemaReference schemaRef = SchemaReference.named(schemaName);
                 schemaRefs.computeIfAbsent(schemaName, k -> new ArrayList<>())
                         .add(schemaRef);
-                schemaBuilder.addRepeatingNamedAt(index, field, schemaRef);
+                schemaFactory.addRepeatingNamedAt(index, field, schemaRef);
             }
             else {
-                schemaBuilder.addRepeatingNamedAt(index, field, schema);
+                schemaFactory.addRepeatingNamedAt(index, field, schema);
             }
             return self();
         }
@@ -141,7 +141,7 @@ public class SchemaManager {
         }
 
         public  B addRepeatingFieldAt(int index, String field, DataSchema nestedSchema) {
-            schemaBuilder.addRepeatingNamedAt(index, field, nestedSchema);
+            schemaFactory.addRepeatingNamedAt(index, field, nestedSchema);
             return self();
         }
 
@@ -187,7 +187,7 @@ public class SchemaManager {
 
         @Override
         public void add() {
-            DataSchema schema = this.schemaBuilder.build();
+            DataSchema schema = this.schemaFactory.toSchema();
             List<SchemaReference> schemaReferences =
                     SchemaManager.this.schemaRefs.remove(name);
             if (schemaReferences != null) {
@@ -240,12 +240,12 @@ public class SchemaManager {
 
         public void add() {
             if (repeating) {
-                this.parentSchema.schemaBuilder.addRepeatingNamedAt(
-                        index, field, this.schemaBuilder.build());
+                this.parentSchema.schemaFactory.addRepeatingNamedAt(
+                        index, field, this.schemaFactory.toSchema());
             }
             else {
-                this.parentSchema.schemaBuilder.addNestedNamedAt(
-                        index, field, this.schemaBuilder.build());
+                this.parentSchema.schemaFactory.addNestedNamedAt(
+                        index, field, this.schemaFactory.toSchema());
             }
         }
 
@@ -256,12 +256,10 @@ public class SchemaManager {
     }
 
     public  DataSchema getDefaultSchema() {
-        //noinspection unchecked
-        return (DataSchema) schemaMap.get(DEFAULT_SCHEMA_NAME);
+        return schemaMap.get(DEFAULT_SCHEMA_NAME);
     }
 
     public  DataSchema getSchema(String schemaName) {
-        //noinspection unchecked
-        return (DataSchema) schemaMap.get(schemaName);
+        return schemaMap.get(schemaName);
     }
 }

@@ -1,20 +1,26 @@
 package dido.data;
 
-import java.util.Map;
-
+/**
+ * Provides the ability to create Dido Data.
+ *
+ * @param <D> The type of Dido Data.
+ */
 public interface DataFactory<D extends DidoData> {
 
     Class<D> getDataType();
 
+    Setter getSetterAt(int index);
+
+    Setter getSetterNamed(String name);
+
     DataSetter getSetter();
 
     /**
-     * Convenience function to create data from a map.
-     *
-     * @param map The map.
-     * @return The data.
+     * Copy the same sort of data this is a factory of.
+
+     * @param data The data.
      */
-    D mapToData(Map<? extends String, ?> map);
+     void copy(D data);
 
     D valuesToData(Object... values);
 

@@ -1,7 +1,9 @@
 package dido.json;
 
+import dido.data.ArrayDataDataFactoryProvider;
+import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
-import dido.data.NamedData;
+import dido.data.DidoData;
 
 import java.util.function.Function;
 
@@ -37,26 +39,32 @@ public class FromJsonStringType {
      */
     private boolean copy;
 
-    public Function<String, NamedData> toFunction() {
+    /**
+     * @oddjob.description Provide a data factory to use for the copy. If this is provided a copy rather
+     * than wrapping is assumed.
+     * @oddjob.required No, defaults to ArrayData, if copy is true.
+     */
+    private DataFactoryProvider<?> dataFactoryProvider;
+
+    public Function<String, ? extends DidoData> toFunction() {
 
         if (copy) {
-            if (schema == null || partialSchema) {
-                return JsonStringToData.asCopyWithPartialSchema(schema);
-            }
-            else {
-                return JsonStringToData.asCopyWithSchema(schema);
-            }
+
+            DataFactoryProvider<?> dataFactoryProvider =
+                    this.dataFactoryProvider == null ? new ArrayDataDataFactoryProvider() : this.dataFactoryProvider;
+
+            return JsonStringToData.asCopy(dataFactoryProvider)
+                    .setSchema(schema)
+                    .setPartial(partialSchema)
+                    .make();
         }
         else {
-            if (schema == null || partialSchema) {
-                return JsonStringToData.asWrapperWithPartialSchema(schema);
-            }
-            else {
-                return JsonStringToData.asWrapperWithSchema(schema);
-            }
+            return JsonStringToData.asWrapper()
+                    .setSchema(schema)
+                    .setPartial(partialSchema)
+                    .make();
         }
     }
-
 
     public DataSchema getSchema() {
         return schema;

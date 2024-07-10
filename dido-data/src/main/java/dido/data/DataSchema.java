@@ -20,6 +20,10 @@ import java.util.Objects;
  */
 public interface DataSchema extends IndexedSchema {
 
+    static String nameForIndex(int index) {
+        return "[" + index + "]";
+    }
+
     /**
      * Get the {@link GenericSchemaField} for the given index. A Schema Field will exist for
      * all valid indexes. Behaviour is undefined when the index is out of bounds.

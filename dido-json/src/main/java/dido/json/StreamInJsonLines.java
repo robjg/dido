@@ -1,7 +1,6 @@
 package dido.json;
 
-import dido.data.DataSchema;
-import dido.data.NamedData;
+import dido.data.*;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 
@@ -11,74 +10,77 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.function.Function;
 
-public class StreamInJsonLines implements DataInHow<InputStream, NamedData> {
+/**
+ * Read a Stream of newline delimited JSON messages.
+ *
+ * @param <D> The type of Data that will be produced.
+ */
+public class StreamInJsonLines<D extends DidoData> implements DataInHow<InputStream, D> {
 
-    private final Function<? super String, ? extends NamedData> function;
+    private final Function<? super String, ? extends D> function;
 
-    private StreamInJsonLines(Function<? super String, ? extends NamedData> function) {
+    private StreamInJsonLines(Function<? super String, ? extends D> function) {
 
         this.function = function;
     }
 
-    public static DataInHow<InputStream, NamedData> asWrapperWithSchema(DataSchema schema) {
 
-        return new Settings()
-                .setSchema(schema)
-                .make();
+    public static WrapperSettings asWrapper() {
+
+        return new WrapperSettings();
     }
 
-    public static DataInHow<InputStream, NamedData> asWrapperWithPartialSchema(DataSchema partialSchema) {
+    public static  CopySettings<ArrayData> asCopy() {
 
-        return new Settings()
-                .setSchema(partialSchema)
-                .setPartial(true)
-                .make();
+        return asCopy(new ArrayDataDataFactoryProvider());
     }
 
-    public static DataInHow<InputStream, NamedData> asCopyWithSchema(DataSchema schema) {
+    public static <D extends DidoData> CopySettings<D> asCopy(DataFactoryProvider<D> dataFactoryProvider) {
 
-        return new Settings()
-                .setCopy(true)
-                .setSchema(schema)
-                .make();
+        return new CopySettings<>(dataFactoryProvider);
     }
 
-    public static DataInHow<InputStream, NamedData> asCopyWithPartialSchema(DataSchema partialSchema) {
+    public static class WrapperSettings {
 
-        return new Settings()
-                .setCopy(true)
-                .setSchema(partialSchema)
-                .setPartial(true)
-                .make();
-    }
+        private final JsonStringToData.WrapperSettings wrapperSettings = JsonStringToData.asWrapper();
 
-    public static Settings settings() {
-
-        return new Settings();
-    }
-
-    public static class Settings {
-
-        private final JsonStringToData.Settings settings = JsonStringToData.withSettings();
-
-        public Settings setSchema(DataSchema schema) {
-            this.settings.setSchema(schema);
+        public WrapperSettings setSchema(DataSchema schema) {
+            this.wrapperSettings.setSchema(schema);
             return this;
         }
 
-        public Settings setPartial(boolean partial) {
-            this.settings.setPartial(partial);
-            return this;
-        }
-
-        public Settings setCopy(boolean copy) {
-            this.settings.setCopy(copy);
+        public WrapperSettings setPartial(boolean partial) {
+            this.wrapperSettings.setPartial(partial);
             return this;
         }
 
         public DataInHow<InputStream, NamedData> make() {
 
-            return new StreamInJsonLines(this.settings.make());
+            return new StreamInJsonLines<>(this.wrapperSettings.make());
+        }
+    }
+
+    public static class CopySettings<D extends DidoData> {
+
+        private final JsonStringToData.CopySettings<D> copySettings;
+
+        CopySettings(DataFactoryProvider<D> dataFactoryProvider) {
+            this.copySettings = JsonStringToData.asCopy(dataFactoryProvider);
+        }
+
+        public CopySettings<D> setSchema(DataSchema schema) {
+            this.copySettings.setSchema(schema);
+            return this;
+        }
+
+        public CopySettings<D> setPartial(boolean partial) {
+            this.copySettings.setPartial(partial);
+            return this;
+        }
+
+        public DataInHow<InputStream, D> make() {
+
+            return new StreamInJsonLines<>(this.copySettings.make());
         }
     }
 
@@ -88,14 +90,14 @@ public class StreamInJsonLines implements DataInHow<InputStream, NamedData> {
     }
 
     @Override
-    public DataIn<NamedData> inFrom(InputStream inputStream) {
+    public DataIn<D> inFrom(InputStream inputStream) {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
         return new DataIn<>() {
 
             @Override
-            public NamedData get() {
+            public D get() {
                 try {
                     String line = reader.readLine();
                     if (line == null) {

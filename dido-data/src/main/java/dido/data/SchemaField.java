@@ -9,9 +9,9 @@ import java.util.Objects;
  */
 public interface SchemaField {
 
-    Class<?> NESTED_TYPE = DidoData.class;
+    Class<DidoData> NESTED_TYPE = DidoData.class;
 
-    Class<?> NESTED_REPEATING_TYPE = RepeatingData.class;
+    Class<RepeatingData> NESTED_REPEATING_TYPE = RepeatingData.class;
 
     int getIndex();
 

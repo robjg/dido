@@ -8,6 +8,8 @@ package dido.data;
  */
 public interface IndexedSetter extends DataSetter {
 
+    void clearAt(int index);
+
     void setAt(int index, Object value);
 
     void setBooleanAt(int index, boolean value);

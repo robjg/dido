@@ -44,11 +44,11 @@ public class DataSchemaSchema {
         SchemaReference schemaRef = SchemaReference.blank();
 
         DataSchema fieldSchema = SchemaBuilder.newInstance()
-                .addSchemaField(SchemaFields.of(1, INDEX_FIELD, int.class))
-                .addSchemaField(SchemaFields.of(2, FIELD_FIELD, String.class))
-                .addSchemaField(SchemaFields.of(3, TYPE_FIELD, String.class))
-                .addSchemaField(SchemaFields.ofNested(4, NESTED_FIELD, schemaRef))
-                .addSchemaField(SchemaFields.of(5, REPEATING_FIELD, boolean.class))
+                .addNamedAt(1, INDEX_FIELD, int.class)
+                .addNamedAt(2, FIELD_FIELD, String.class)
+                .addNamedAt(3, TYPE_FIELD, String.class)
+                .addNestedNamedAt(4, NESTED_FIELD, schemaRef)
+                .addNamedAt(5, REPEATING_FIELD, boolean.class)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
@@ -102,7 +102,7 @@ public class DataSchemaSchema {
 
         RepeatingData fields = data.getNamedAs(FIELDS_FIELD, RepeatingData.class);
 
-        SchemaBuilder builder = SchemaBuilder.newInstance();
+        SchemaFactory<DataSchema> builder = SchemaFactoryImpl.newInstance();
 
         for (DidoData fieldData : fields) {
 
@@ -126,7 +126,7 @@ public class DataSchemaSchema {
             }
         }
 
-        return builder.build();
+        return builder.toSchema();
     }
 
 }
