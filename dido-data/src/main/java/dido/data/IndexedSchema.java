@@ -5,6 +5,8 @@ package dido.data;
  */
 public interface IndexedSchema {
 
+    boolean hasIndex(int index);
+
     /**
      * Get the first index in an {@link IndexedData} structure
      * at which there may be data. Calling {@link IndexedData#hasIndex(int)} for values

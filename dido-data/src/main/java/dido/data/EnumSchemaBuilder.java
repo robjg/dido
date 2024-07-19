@@ -7,7 +7,9 @@ import dido.data.generic.GenericSchemaField;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Builder for an {@link EnumSchema}.
@@ -28,6 +30,12 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
     public static <E extends Enum<E>> EnumSchemaBuilder<E> forEnumType(Class<E> type) {
 
         return new EnumSchemaBuilder<>(type);
+    }
+
+    public EnumSchemaBuilder<E> addSchemaField(SchemaField schemaField) {
+        E field = Enum.valueOf(type, schemaField.getName());
+        this.fields.put(field, GenericSchemaField.of(field.ordinal() + 1, field, schemaField.getType()));
+        return this;
     }
 
     public EnumSchemaBuilder<E> addField(E field, Class<?> fieldType) {
@@ -79,14 +87,23 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
 
         private final GenericSchemaField<E>[] fields;
 
+        private final Map<String, GenericSchemaField<E>> byName;
+
         Schema(Class<E> enumClass, GenericSchemaField<E>[] fields) {
             this.enumClass = enumClass;
             this.fields = fields;
+            this.byName = Arrays.stream(fields)
+                    .collect(Collectors.toMap(GenericSchemaField::getName, Function.identity()));
         }
 
         @Override
         public Class<E> getFieldType() {
             return enumClass;
+        }
+
+        @Override
+        public boolean hasIndex(int index) {
+            return index > 0 && index < fields.length;
         }
 
         @Override
@@ -110,13 +127,20 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         }
 
         @Override
-        public E getFieldNamed(String fieldName) {
-            return null;
+        public boolean hasNamed(String name) {
+            return byName.containsKey(name);
         }
 
         @Override
-        public int getIndexNamed(String fieldName) {
-            return 0;
+        public E getFieldNamed(String fieldName) {
+            GenericSchemaField<E> field = byName.get(fieldName);
+            return field == null ? null : field.getField();
+        }
+
+        @Override
+        public int getIndexNamed(String name) {
+            GenericSchemaField<E> field = byName.get(name);
+            return field == null ? 0 : field.getIndex();
         }
 
         @Override

@@ -68,6 +68,11 @@ public class DataSchemaImpl extends AbstractDataSchema {
     }
 
     @Override
+    public boolean hasIndex(int index) {
+        return index > 0 && index < indexToSchemaField.length && indexToSchemaField[index -1 ] != null;
+    }
+
+    @Override
     public int firstIndex() {
         return firstIndex;
     }
@@ -99,13 +104,18 @@ public class DataSchemaImpl extends AbstractDataSchema {
     }
 
     @Override
-    public SchemaField getSchemaFieldNamed(String fieldName) {
-        return nameToSchemaField.get(fieldName);
+    public boolean hasNamed(String name) {
+        return nameToSchemaField.containsKey(name);
     }
 
     @Override
-    public int getIndexNamed(String fieldName) {
-        SchemaField schemaField = nameToSchemaField.get(fieldName);
+    public SchemaField getSchemaFieldNamed(String name) {
+        return nameToSchemaField.get(name);
+    }
+
+    @Override
+    public int getIndexNamed(String name) {
+        SchemaField schemaField = nameToSchemaField.get(name);
         return schemaField == null ? 0 : schemaField.getIndex();
     }
 

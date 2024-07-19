@@ -50,6 +50,11 @@ public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDataSchema
     }
 
     @Override
+    public boolean hasIndex(int index) {
+        return indexToFields.containsKey(index);
+    }
+
+    @Override
     public int firstIndex() {
         return Optional.ofNullable(indexToFields.firstEntry())
                 .map(Map.Entry::getKey)
@@ -81,8 +86,13 @@ public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDataSchema
     }
 
     @Override
-    public int getIndexNamed(String fieldName) {
-        return nameToIndex.get(fieldName);
+    public boolean hasNamed(String name) {
+        return nameToIndex.containsKey(name);
+    }
+
+    @Override
+    public int getIndexNamed(String name) {
+        return nameToIndex.get(name);
     }
 
     // Add Simple Fields

@@ -10,20 +10,14 @@ abstract public class AbstractData extends AbstractIndexedData implements DidoDa
     protected int indexOfFieldNamed(String name) {
         int index = getSchema().getIndexNamed(name);
         if (index == 0) {
-            throw new IllegalArgumentException("No field named " + name);
+            throw new NoSuchFieldException(name, getSchema());
         }
         return index;
     }
 
     @Override
     public Object getNamed(String name) {
-        int index = getSchema().getIndexNamed(name);
-        if (index > 0) {
-            return getAt(index);
-        }
-        else {
-            return null;
-        }
+        return getAt(indexOfFieldNamed(name));
     }
 
     @Override

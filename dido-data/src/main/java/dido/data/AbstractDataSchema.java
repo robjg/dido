@@ -28,20 +28,20 @@ public abstract class AbstractDataSchema implements DataSchema {
     }
 
     @Override
-    public SchemaField getSchemaFieldNamed(String fieldName) {
-        int index = getIndexNamed(fieldName);
+    public SchemaField getSchemaFieldNamed(String name) {
+        int index = getIndexNamed(name);
         return index > 0 ? getSchemaFieldAt(index) : null;
     }
 
     @Override
-    public Class<?> getTypeNamed(String fieldName) {
-        SchemaField schemaField = getSchemaFieldNamed(fieldName);
+    public Class<?> getTypeNamed(String name) {
+        SchemaField schemaField = getSchemaFieldNamed(name);
         return schemaField == null ? null : schemaField.getType();
     }
 
     @Override
-    public DataSchema getSchemaNamed(String fieldName) {
-        SchemaField schemaField = getSchemaFieldNamed(fieldName);
+    public DataSchema getSchemaNamed(String name) {
+        SchemaField schemaField = getSchemaFieldNamed(name);
         return schemaField == null ? null : schemaField.getNestedSchema();
     }
 
@@ -64,6 +64,38 @@ public abstract class AbstractDataSchema implements DataSchema {
             schemaFields.add(getSchemaFieldAt(i));
         }
         return schemaFields;
+    }
+
+    @Override
+    public Getter getDataGetterAt(int index) {
+        String toString = "DataGetter for [" + index + ":" + getFieldNameAt(index) + "]";
+        return new AbstractGetter() {
+            @Override
+            public Object get(DidoData data) {
+                return data.getAt(index);
+            }
+
+            @Override
+            public String toString() {
+                return toString;
+            }
+        };
+    }
+
+    @Override
+    public Getter getDataGetterNamed(String name) {
+        String toString = "DataGetter for [" + getIndexNamed(name) + ":" + name + "]";
+        return new AbstractGetter() {
+            @Override
+            public Object get(DidoData data) {
+                return data.getNamed(name);
+            }
+
+            @Override
+            public String toString() {
+                return toString;
+            }
+        };
     }
 
     @Override

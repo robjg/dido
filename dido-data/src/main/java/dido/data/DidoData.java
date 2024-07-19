@@ -11,29 +11,29 @@ public interface DidoData extends IndexedData {
     @Override
     DataSchema getSchema();
 
-    Object getNamed(String fieldName);
+    Object getNamed(String name);
 
-    <T> T getNamedAs(String fieldName, Class<T> type);
+    <T> T getNamedAs(String name, Class<T> type);
 
-    boolean hasNamed(String fieldName);
+    boolean hasNamed(String name);
 
-    boolean getBooleanNamed(String fieldName);
+    boolean getBooleanNamed(String name);
 
-    char getCharNamed(String fieldName);
+    char getCharNamed(String name);
 
-    byte getByteNamed(String fieldName);
+    byte getByteNamed(String name);
 
-    short getShortNamed(String fieldName);
+    short getShortNamed(String name);
 
-    int getIntNamed(String fieldName);
+    int getIntNamed(String name);
 
-    long getLongNamed(String fieldName);
+    long getLongNamed(String name);
 
-    float getFloatNamed(String fieldName);
+    float getFloatNamed(String name);
 
-    double getDoubleNamed(String fieldName);
+    double getDoubleNamed(String name);
 
-    String getStringNamed(String fieldName);
+    String getStringNamed(String name);
 
     static int hashCode(DidoData data) {
         DataSchema schema = data.getSchema();

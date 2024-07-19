@@ -81,6 +81,11 @@ public class GenericSchemaImpl<F> extends AbstractGenericDataSchema<F> {
     }
 
     @Override
+    public boolean hasIndex(int index) {
+        return index > 0 && index < lastIndex && indexToSchemaField[index - 1] != null;
+    }
+
+    @Override
     public int firstIndex() {
         return firstIndex;
     }
@@ -122,13 +127,18 @@ public class GenericSchemaImpl<F> extends AbstractGenericDataSchema<F> {
     }
 
     @Override
+    public boolean hasNamed(String name) {
+        return nameToSchemaField.containsKey(name);
+    }
+
+    @Override
     public GenericSchemaField<F> getSchemaFieldOf(F field) {
         return fieldToSchemaField.get(field);
     }
 
     @Override
-    public GenericSchemaField<F> getSchemaFieldNamed(String fieldName) {
-        return nameToSchemaField.get(fieldName);
+    public GenericSchemaField<F> getSchemaFieldNamed(String name) {
+        return nameToSchemaField.get(name);
     }
 
     @Override
@@ -138,8 +148,8 @@ public class GenericSchemaImpl<F> extends AbstractGenericDataSchema<F> {
     }
 
     @Override
-    public int getIndexNamed(String fieldName) {
-        GenericSchemaField<F> schemaField = nameToSchemaField.get(fieldName);
+    public int getIndexNamed(String name) {
+        GenericSchemaField<F> schemaField = nameToSchemaField.get(name);
         return schemaField == null ? 0 : schemaField.getIndex();
     }
 

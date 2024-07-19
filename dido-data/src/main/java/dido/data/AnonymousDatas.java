@@ -126,6 +126,10 @@ public class AnonymousDatas {
             this.last = indices.length;
         }
 
+        @Override
+        public boolean hasIndex(int index) {
+            return index > 0 && index < last;
+        }
 
         @Override
         public int firstIndex() {
@@ -210,6 +214,11 @@ public class AnonymousDatas {
         }
 
         @Override
+        public boolean hasIndex(int index) {
+            return index > 0 && index < last;
+        }
+
+        @Override
         public int firstIndex() {
             return types.length == 0 ? 0 : 1;
         }
@@ -232,9 +241,20 @@ public class AnonymousDatas {
 
     static class SingleSchema extends AbstractAnonymousSchema implements AnonymousSchema {
 
+        private final Class<?> type;
+
+        SingleSchema(Class<?> type) {
+            this.type = type;
+        }
+
+        @Override
+        public boolean hasIndex(int index) {
+            return index == 1;
+        }
+
         @Override
         public int firstIndex() {
-            return 0;
+            return 1;
         }
 
         @Override
@@ -244,12 +264,17 @@ public class AnonymousDatas {
 
         @Override
         public int lastIndex() {
-            return 0;
+            return 1;
         }
 
         @Override
         public Class<?> getTypeAt(int index) {
-            return null;
+            if (index == 1) {
+                return type;
+            }
+            else {
+                return null;
+            }
         }
     }
 }

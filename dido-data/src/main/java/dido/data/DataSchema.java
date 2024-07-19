@@ -20,9 +20,15 @@ import java.util.Objects;
  */
 public interface DataSchema extends IndexedSchema {
 
+    static SchemaBuilder<DataSchema> newBuilder() {
+        return SchemaBuilder.newInstance();
+    }
+
     static String nameForIndex(int index) {
         return "[" + index + "]";
     }
+
+    boolean hasNamed(String name);
 
     /**
      * Get the {@link GenericSchemaField} for the given index. A Schema Field will exist for
@@ -64,39 +70,39 @@ public interface DataSchema extends IndexedSchema {
      * Get the {@link GenericSchemaField} for the given field. If the
      * field does not exist behaviour is undefined.
      *
-     * @param fieldName The field.
+     * @param name The field.
      * @return The type.
      */
-    SchemaField getSchemaFieldNamed(String fieldName);
+    SchemaField getSchemaFieldNamed(String name);
 
     /**
      * Get the index for a given field. If the field does not
      * exist behaviour is undefined.
      *
-     * @param fieldName The field.
+     * @param name The field.
      * @return The index of the field.
      */
-    int getIndexNamed(String fieldName);
+    int getIndexNamed(String name);
 
     /**
      * Get the type that a value is at a given field. If the
      * field does not exist behaviour is undefined.
      *
-     * @param fieldName The field.
+     * @param name The field.
      * @return The type.
      */
-    Class<?> getTypeNamed(String fieldName);
+    Class<?> getTypeNamed(String name);
 
     /**
      * Get the nested schema for the given field. If the
      * field does not exist this method should return null, or if
      * there is not nested schema it will return null.
      *
-     * @param fieldName The field.
+     * @param name The field.
      *
      * @return The nested schema or null.
      */
-    DataSchema getSchemaNamed(String fieldName);
+    DataSchema getSchemaNamed(String name);
 
     /**
      * Get all the fields in this schema.
@@ -111,6 +117,10 @@ public interface DataSchema extends IndexedSchema {
      * @return A collection of Schema Fields. May be empty. Never null.
      */
     Collection<SchemaField> getSchemaFields();
+
+    Getter getDataGetterAt(int index);
+
+    Getter getDataGetterNamed(String name);
 
     /**
      * Compare two schemas for equality. Because it's forbidden to provide default Object methods in
@@ -181,6 +191,16 @@ public interface DataSchema extends IndexedSchema {
     class EmptySchema implements DataSchema {
 
         @Override
+        public boolean hasIndex(int index) {
+            return false;
+        }
+
+        @Override
+        public boolean hasNamed(String name) {
+            return false;
+        }
+
+        @Override
         public int firstIndex() {
             return 0;
         }
@@ -216,22 +236,22 @@ public interface DataSchema extends IndexedSchema {
         }
 
         @Override
-        public SchemaField getSchemaFieldNamed(String fieldName) {
+        public SchemaField getSchemaFieldNamed(String name) {
             return null;
         }
 
         @Override
-        public int getIndexNamed(String fieldName) {
+        public int getIndexNamed(String name) {
             return 0;
         }
 
         @Override
-        public Class<?> getTypeNamed(String fieldName) {
+        public Class<?> getTypeNamed(String name) {
             return null;
         }
 
         @Override
-        public DataSchema getSchemaNamed(String fieldName) {
+        public DataSchema getSchemaNamed(String name) {
             return null;
         }
 
@@ -243,6 +263,16 @@ public interface DataSchema extends IndexedSchema {
         @Override
         public Collection<SchemaField> getSchemaFields() {
             return List.of();
+        }
+
+        @Override
+        public Getter getDataGetterAt(int index) {
+            throw new NoSuchFieldException(index, this);
+        }
+
+        @Override
+        public Getter getDataGetterNamed(String name) {
+            throw new NoSuchFieldException(name, this);
         }
 
         @Override

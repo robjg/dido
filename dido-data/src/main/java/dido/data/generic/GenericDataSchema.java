@@ -47,10 +47,10 @@ public interface GenericDataSchema<F> extends DataSchema {
      * Get the {@link GenericSchemaField} for the given field. If the
      * field does not exist behaviour is undefined.
      *
-     * @param fieldName The field.
+     * @param name The field.
      * @return The type.
      */
-    GenericSchemaField<F> getSchemaFieldNamed(String fieldName);
+    GenericSchemaField<F> getSchemaFieldNamed(String name);
 
     /**
      * Get the field of the given name. If a field
@@ -141,7 +141,7 @@ public interface GenericDataSchema<F> extends DataSchema {
         }
 
         @Override
-        public GenericSchemaField<F> getSchemaFieldNamed(String fieldName) {
+        public GenericSchemaField<F> getSchemaFieldNamed(String name) {
             return null;
         }
 

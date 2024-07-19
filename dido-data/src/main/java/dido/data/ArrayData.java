@@ -69,6 +69,26 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         return new ArrayDataFactory(asArrayDataSchema(schema));
     }
 
+
+    public static Getter getDataGetterAt(int index, DataSchema schema) {
+        String toString = "ArrayDataGetter for [" + index + ":" + schema.getFieldNameAt(index) + "]";
+        return new AbstractGetter() {
+            @Override
+            public Object get(DidoData data) {
+                return ((ArrayData) data).data[index - 1];
+            }
+            @Override
+            public String toString() {
+                return toString;
+            }
+        };
+    }
+
+    public static Getter getDataGetterNamed(String name, DataSchema schema) {
+        return getDataGetterAt(schema.getIndexNamed(name), schema);
+    }
+
+
     @Override
     public ArrayDataSchema getSchema() {
         return schema;

@@ -22,8 +22,8 @@ public abstract class AbstractGenericDataSchema<F> extends AbstractDataSchema im
     }
 
     @Override
-    public GenericSchemaField<F> getSchemaFieldNamed(String fieldName) {
-        int index = getIndexNamed(fieldName);
+    public GenericSchemaField<F> getSchemaFieldNamed(String name) {
+        int index = getIndexNamed(name);
         return index > 0 ? getSchemaFieldAt(index) : null;
     }
 

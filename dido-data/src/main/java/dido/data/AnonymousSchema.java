@@ -77,6 +77,11 @@ public interface AnonymousSchema extends IndexedSchema {
     class EmptySchema implements AnonymousSchema {
 
         @Override
+        public boolean hasIndex(int index) {
+            return false;
+        }
+
+        @Override
         public int firstIndex() {
             return 0;
         }

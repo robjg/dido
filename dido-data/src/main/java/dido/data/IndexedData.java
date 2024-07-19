@@ -27,6 +27,14 @@ public interface IndexedData {
 
     <T> T getAtAs(int index, Class<T> type);
 
+    /**
+     * Is there data at the given index. If the index is in the schema then this
+     * method will either return true or false. If the index is not
+     * int the schema then behaviour is undefined.
+     *
+     * @param index The index.
+     * @return true if there is data, false if there isn't.
+     */
     boolean hasIndex(int index);
 
     boolean getBooleanAt(int index);

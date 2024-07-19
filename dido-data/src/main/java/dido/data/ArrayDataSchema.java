@@ -42,4 +42,14 @@ public class ArrayDataSchema extends DataSchemaImpl
             super(ArrayDataSchema::new, from);
         }
     }
+
+    @Override
+    public Getter getDataGetterAt(int index) {
+        return ArrayData.getDataGetterAt(index, this);
+    }
+
+    @Override
+    public Getter getDataGetterNamed(String name) {
+        return ArrayData.getDataGetterNamed(name, this);
+    }
 }
