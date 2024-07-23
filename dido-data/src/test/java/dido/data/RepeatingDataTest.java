@@ -28,11 +28,11 @@ class RepeatingDataTest {
         RepeatingData data1 = RepeatingData.of(
                 ArrayData.of("Apple", 5), ArrayData.of("Pear", 3));
 
-        assertThat(data1.toString(), is("[[Apple, 5], [Pear, 3]]"));
+        assertThat(data1.toString(), is("[{[1:f_1]=Apple, [2:f_2]=5}, {[1:f_1]=Pear, [2:f_2]=3}]"));
 
         RepeatingData data2 = RepeatingData.of(
                 List.of(ArrayData.of("Apple", 5), ArrayData.of("Pear", 3)));
 
-        assertThat(data2.toString(), is("[[Apple, 5], [Pear, 3]]"));
+        assertThat(data2.toString(), is("[{[1:f_1]=Apple, [2:f_2]=5}, {[1:f_1]=Pear, [2:f_2]=3}]"));
     }
 }

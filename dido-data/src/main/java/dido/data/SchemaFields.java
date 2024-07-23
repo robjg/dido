@@ -39,11 +39,8 @@ class SchemaFields {
         private final Class<?> type;
 
         private Simple(int index, String name, Class<?> type) {
-            if (index < 1) {
-                throw new IllegalArgumentException("Index must be > 0");
-            }
             this.index = index;
-            this.name = Objects.requireNonNull(name);
+            this.name = name;
             this.type = Objects.requireNonNull(type);
         }
 

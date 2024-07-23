@@ -19,7 +19,7 @@ class TextTableOutTest {
     void testSimple() throws Exception {
 
         String expected =
-                "[1]       |[2]|[3]   " + System.lineSeparator() +
+                "f_1       |f_2|f_3   " + System.lineSeparator() +
                         "----------+---+------" + System.lineSeparator() +
                         "Apple     |5  |22.3  " + System.lineSeparator() +
                         "Cantaloupe|27 |245.3 " + System.lineSeparator() +
@@ -31,7 +31,7 @@ class TextTableOutTest {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        DataOut out = TextTableOut.<String>ofOptions()
+        DataOut out = TextTableOut.ofOptions()
                 .schema(data1.getSchema())
                 .create()
                 .outTo(output);
@@ -47,13 +47,13 @@ class TextTableOutTest {
 
         for (int i = 0; i < a.length; i++) {
             if (a[i] != b[i]) {
-                System.out.println("" + i + ": " + a[i] + " " + b[i]);
+                System.out.println(i + ": " + a[i] + " " + b[i]);
             }
         }
 
-        assertThat(output.toByteArray(), is(expected.getBytes(StandardCharsets.UTF_8)));
-
         assertThat(output.toString(StandardCharsets.UTF_8), is(expected));
+
+        assertThat(output.toByteArray(), is(expected.getBytes(StandardCharsets.UTF_8)));
     }
 
     enum Fruit {
@@ -85,7 +85,7 @@ class TextTableOutTest {
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        DataOut out = TextTableOut.<String>ofOptions()
+        DataOut out = TextTableOut.ofOptions()
                 .schema(data1.getSchema())
                 .create()
                 .outTo(output);

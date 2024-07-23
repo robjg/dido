@@ -27,7 +27,7 @@ class SchemaBuilderTest {
         assertThat(schema.nextIndex(2), is(3));
         assertThat(schema.nextIndex(3), is(0));
 
-        assertThat(schema.getFieldNames(), contains("[1]", "[2]", "[3]"));
+        assertThat(schema.getFieldNames(), contains("f_1", "f_2", "f_3"));
     }
 
     @Test
@@ -46,7 +46,7 @@ class SchemaBuilderTest {
         assertThat(schema.nextIndex(5), is(6));
         assertThat(schema.nextIndex(6), is(20));
         assertThat(schema.nextIndex(20), is(0));
-        assertThat(schema.getFieldNames(), contains("[5]", "[6]", "[20]"));
+        assertThat(schema.getFieldNames(), contains("f_5", "f_6", "f_20"));
 
         try {
             assertThat(schema.getFieldNameAt(2), nullValue());
@@ -127,7 +127,7 @@ class SchemaBuilderTest {
         assertThat(schema.getTypeAt(5), is(String.class));
         assertThat(schema.nextIndex(5), is(20));
         assertThat(schema.nextIndex(20), is(0));
-        assertThat(schema.getFieldNames(), contains("[5]", "[20]"));
+        assertThat(schema.getFieldNames(), contains("f_5", "f_20"));
 
     }
 
@@ -213,7 +213,7 @@ class SchemaBuilderTest {
 
         // The index is ignored now.
         DataSchema expected = SchemaBuilder.newInstance()
-                .addNamedAt(4,"[2]", int.class)
+                .addNamedAt(4,"f_2", int.class)
                 .addNamedAt(1, "fruit", String.class)
                 .addNamedAt(2, "qty", String.class)
                 .addNamedAt(3, "price", double.class)

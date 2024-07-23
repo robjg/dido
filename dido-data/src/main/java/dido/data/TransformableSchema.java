@@ -11,7 +11,5 @@ public interface TransformableSchema<D extends DidoData, S extends Transformable
 
     SchemaFactory<S> newSchemaFactory();
 
-    SchemaFactory<S> newSchemaFactoryAsCopy();
-
     DataFactory<D> newDataFactory();
 }

@@ -25,7 +25,7 @@ public interface DataSchema extends IndexedSchema {
     }
 
     static String nameForIndex(int index) {
-        return "[" + index + "]";
+        return "f_" + index;
     }
 
     boolean hasNamed(String name);

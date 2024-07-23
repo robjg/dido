@@ -13,16 +13,52 @@ public interface SchemaField {
 
     Class<RepeatingData> NESTED_REPEATING_TYPE = RepeatingData.class;
 
+    /**
+     * The index of the field. A Schema Field that belongs to a schema will always have an
+     * index > 0. A Schema Field can have an index < 1 if hasn't been assigned to a Schema yet.
+     *
+     * @return The index, if one has been assigned.
+     */
     int getIndex();
 
-    Class<?> getType();
-
-    boolean isNested();
-
-    boolean isRepeating();
-
+    /**
+     * The name of the field. A Schema Field that belongs to a schema will always have a
+     * none empty name. A Schema Field can have a null name if it hasn't been assigned to a Schema yet.
+     * A Schema Field should never have an empty name.
+     *
+     * @return The name, if one has been assigned, null otherwise.
+     */
     String getName();
 
+    /**
+     * The type of the field. Never null.
+     *
+     * @return The type.
+     */
+    Class<?> getType();
+
+    /**
+     * Does this field contain a nested Schema Definition. The {@link #getType()} of a nested definition
+     * will always be {@link #NESTED_TYPE} or a super class of this.
+     *
+     * @return true if it is nested, false otherwise.
+     */
+    boolean isNested();
+
+    /**
+     * Does this field contain a repeating nested Schema Definition. The {@link #getType()} of a repeating definition
+     * will always be {@link #NESTED_REPEATING_TYPE} or a super class of this. A Schema Field will never be Repeating
+     * but Not Nested.
+     *
+     * @return true if it is nested and repeating, false otherwise.
+     */
+    boolean isRepeating();
+
+    /**
+     * Get the Nested Schema.
+     *
+     * @return The Nested Schema. Will be null if the Schema Field is not Nested.
+     */
     DataSchema getNestedSchema();
 
     default SchemaField mapToIndex(int toIndex) {

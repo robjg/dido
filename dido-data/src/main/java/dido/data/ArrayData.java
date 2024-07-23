@@ -104,11 +104,6 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         return data[index -1] != null;
     }
 
-    @Override
-    public String toString() {
-        return Arrays.toString(data);
-    }
-
     public static class Builder extends DataBuilders.KnownSchema<Builder, ArrayDataSchema> {
 
         private Object[] values;
@@ -295,6 +290,9 @@ public class ArrayData extends AbstractNamedData implements NamedData {
 
         @Override
         public Setter getSetterAt(int index) {
+            if (!schema.hasIndex(index)) {
+                throw new NoSuchFieldException(index, schema);
+            }
             return new AbstractSetter() {
                 @Override
                 public void clear() {
@@ -312,8 +310,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         public Setter getSetterNamed(String name) {
             int index = schema.getIndexNamed(name);
             if (index == 0) {
-                throw new IllegalArgumentException(
-                        "No field named " + name + ", valid field names: " + schema.getFieldNames());
+                throw new NoSuchFieldException(name, schema);
             }
             return getSetterAt(index);
         }
@@ -351,14 +348,6 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         @Override
         public DataSetter getSetter() {
             return this;
-        }
-
-        @Override
-        public void copy(ArrayData data) {
-            DataSchema inSchema = data.getSchema();
-            for (int i = inSchema.firstIndex(); i > 0; i = inSchema.nextIndex(i)) {
-                values[i - 1] = data.data[i - 1];
-            }
         }
 
         @Override

@@ -69,7 +69,7 @@ public class DataSchemaImpl extends AbstractDataSchema {
 
     @Override
     public boolean hasIndex(int index) {
-        return index > 0 && index < indexToSchemaField.length && indexToSchemaField[index -1 ] != null;
+        return index > 0 && index <= indexToSchemaField.length && indexToSchemaField[index - 1] != null;
     }
 
     @Override

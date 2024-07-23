@@ -17,14 +17,13 @@ public class ArrayDataSchema extends DataSchemaImpl
         super(schemaFields, firstIndex, lastIndex);
     }
 
-    @Override
-    public SchemaFactory<ArrayDataSchema> newSchemaFactory() {
-        return new ArrayDataSchemaFactory();
+    public static SchemaBuilder<ArrayDataSchema> newBuilder() {
+        return ArrayData.schemaBuilder();
     }
 
     @Override
-    public SchemaFactory<ArrayDataSchema> newSchemaFactoryAsCopy() {
-        return new ArrayDataSchemaFactory(this);
+    public SchemaFactory<ArrayDataSchema> newSchemaFactory() {
+        return new ArrayDataSchemaFactory();
     }
 
     @Override

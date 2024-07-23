@@ -15,13 +15,6 @@ public interface DataFactory<D extends DidoData> {
 
     DataSetter getSetter();
 
-    /**
-     * Copy the same sort of data this is a factory of.
-
-     * @param data The data.
-     */
-     void copy(D data);
-
     D valuesToData(Object... values);
 
     D toData();

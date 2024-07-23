@@ -92,7 +92,8 @@ public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDataSchema
 
     @Override
     public int getIndexNamed(String name) {
-        return nameToIndex.get(name);
+        Integer index = nameToIndex.get(name);
+        return index == null ? 0 : index;
     }
 
     // Add Simple Fields

@@ -37,7 +37,7 @@ class CsvDataInHowTest {
 
             DataSchema schema = data.getSchema();
 
-            assertThat(schema.getFieldNames(), contains("[1]", "[2]", "[3]"));
+            assertThat(schema.getFieldNames(), contains("f_1", "f_2", "f_3"));
             assertThat(schema.lastIndex(), is(3));
             assertThat(schema.getTypeAt(1), is(String.class));
             assertThat(schema.getTypeAt(3), is(String.class));

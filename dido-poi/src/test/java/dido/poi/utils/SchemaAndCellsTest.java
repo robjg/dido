@@ -44,7 +44,7 @@ class SchemaAndCellsTest {
         assertThat(schema.firstIndex(), is(1));
         assertThat(schema.lastIndex(), is(1));
         assertThat(schema.nextIndex(1), is(0));
-        assertThat(schema.getFieldNameAt(1), is("[1]"));
+        assertThat(schema.getFieldNameAt(1), is("f_1"));
         assertThat(schema.getTypeAt(1), is(String.class));
     }
 

@@ -44,7 +44,7 @@ class ArrayDataTest {
 
         DidoData data1 = ArrayData.of("Apple", null, 15, 26.5);
 
-        assertThat(data1.toString(), is("[Apple, null, 15, 26.5]"));
+        assertThat(data1.toString(), is("{[1:f_1]=Apple, [2:f_2]=null, [3:f_3]=15, [4:f_4]=26.5}"));
     }
 
     @Test

@@ -317,11 +317,6 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public void copy(NamedData data) {
-            throw new UnsupportedOperationException("TODO");
-        }
-
-        @Override
         public NamedData valuesToData(Object... values) {
             Map<String, Object> map = new HashMap<>(values.length);
             for (int i = 0; i < values.length; ++i ) {
