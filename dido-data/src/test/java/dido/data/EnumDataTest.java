@@ -1,7 +1,5 @@
 package dido.data;
 
-import dido.data.generic.GenericData;
-import dido.data.generic.GenericMapData;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -28,7 +26,7 @@ class EnumDataTest {
     @Test
     void testFromStringFieldsAndBack() {
 
-        GenericData<String> stringData = GenericMapData.<String>newBuilderNoSchema()
+        DidoData stringData = MapData.newBuilderNoSchema()
                 .with("Object", Collections.singletonList("Foo"))
                 .withString("String", "Hello")
                 .withBoolean("Boolean", true)
@@ -41,7 +39,7 @@ class EnumDataTest {
                 .withDouble("Double", 42.42)
                 .build();
 
-        EnumData<Fields> enumData = EnumData.fromStringData(stringData, Fields.class);
+        EnumData<Fields> enumData = EnumData.fromDidoData(stringData, Fields.class);
 
         assertThat(enumData.get(Fields.Object), is(Collections.singletonList("Foo")));
         assertThat(enumData.getAt(1), is(Collections.singletonList("Foo")));

@@ -5,55 +5,92 @@ import dido.data.SchemaField;
 import dido.data.SchemaReference;
 
 import java.util.Objects;
+import java.util.function.Function;
 
-class GenericSchemaFields {
+class GenericSchemaFields<F> implements GenericSchemaField.Of<F> {
 
-    public static <F> GenericSchemaField<F> of(int index, F field, Class<?> type) {
-        return new Extension<>(
+    private final Function<? super String, ? extends F> fieldMappingFunc;
+
+    GenericSchemaFields(Function<? super String, ? extends F> fieldMappingFunc) {
+        this.fieldMappingFunc = fieldMappingFunc;
+    }
+
+    @Override
+    public GenericSchemaField<F> of(int index, String name, Class<?> type) {
+        return of(index, fieldMappingFunc.apply(name), type);
+    }
+
+    @Override
+    public GenericSchemaField<F> of(int index, F field, Class<?> type) {
+        return new Extension(
                 SchemaField.of(
                         index,
-                        Objects.requireNonNull(field.toString(), "Field can not be null"),
+                        Objects.requireNonNull(field, "Field can not be null").toString(),
                         type),
                 field);
     }
 
-    public static <F> GenericSchemaField<F> ofNested(int index, F field, SchemaReference nestedRef) {
-        return new Extension<>(
+    @Override
+    public GenericSchemaField<F> ofNested(int index, String name, SchemaReference nestedRef) {
+        return ofNested(index, fieldMappingFunc.apply(name), nestedRef);
+    }
+
+    @Override
+    public GenericSchemaField<F> ofNested(int index, F field, SchemaReference nestedRef) {
+        return new Extension(
                 SchemaField.ofNested(
                         index,
-                        Objects.requireNonNull(field.toString(), "Field can not be null"),
+                        Objects.requireNonNull(field, "Field can not be null").toString(),
                         nestedRef),
                 field);
     }
 
-    public static <F> GenericSchemaField<F> ofNested(int index, F field, DataSchema nested) {
-        return new Extension<>(
+    @Override
+    public GenericSchemaField<F> ofNested(int index, String name, DataSchema nested) {
+        return ofNested(index, fieldMappingFunc.apply(name), nested);
+    }
+
+    @Override
+    public GenericSchemaField<F> ofNested(int index, F field, DataSchema nested) {
+        return new Extension(
                 SchemaField.ofNested(
                         index,
-                        Objects.requireNonNull(field.toString(), "Field can not be null"),
+                        Objects.requireNonNull(field, "Field can not be null").toString(),
                         nested),
                 field);
     }
 
-    public static <F> GenericSchemaField<F> ofRepeating(int index, F field, DataSchema nested) {
-        return new Extension<>(
+    @Override
+    public GenericSchemaField<F> ofRepeating(int index, String name, DataSchema nested) {
+        return ofRepeating(index, fieldMappingFunc.apply(name), nested);
+    }
+
+    @Override
+    public GenericSchemaField<F> ofRepeating(int index, F field, DataSchema nested) {
+        return new Extension(
                 SchemaField.ofRepeating(
                         index,
-                        Objects.requireNonNull(field.toString(), "Field can not be null"),
+                        Objects.requireNonNull(field, "Field can not be null").toString(),
                         nested),
                 field);
     }
 
-    public static <F> GenericSchemaField<F> ofRepeating(int index, F field, SchemaReference nestedRef) {
-        return new Extension<>(
+    @Override
+    public GenericSchemaField<F> ofRepeating(int index, String name, SchemaReference nestedRef) {
+        return ofRepeating(index, fieldMappingFunc.apply(name), nestedRef);
+    }
+
+    @Override
+    public GenericSchemaField<F> ofRepeating(int index, F field, SchemaReference nestedRef) {
+        return new Extension(
                 SchemaField.ofRepeating(
                         index,
-                        Objects.requireNonNull(field.toString(), "Field can not be null"),
+                        Objects.requireNonNull(field, "Field can not be null").toString(),
                         nestedRef),
                 field);
     }
 
-    private static final class Extension<F> implements GenericSchemaField<F> {
+    private final class Extension implements GenericSchemaField<F> {
 
         private final SchemaField delegate;
 
@@ -92,6 +129,25 @@ class GenericSchemaFields {
         @Override
         public DataSchema getNestedSchema() {
             return delegate.getNestedSchema();
+        }
+
+        @Override
+        public SchemaField mapTo(int toIndex, String toName) {
+
+            toName = toName == null ? this.delegate.getName() : toName;
+            F toField = fieldMappingFunc.apply(toName);
+
+            return new Extension(delegate.mapTo(toIndex, toName),
+                    toField);
+        }
+
+        @Override
+        public GenericSchemaField<F> mapTo(int toIndex, F toField) {
+
+            toField = toField == null ? this.field : toField;
+
+            return new Extension(delegate.mapTo(toIndex, toField.toString()),
+                    toField);
         }
 
         @Override

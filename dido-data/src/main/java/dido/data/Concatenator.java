@@ -5,9 +5,8 @@ import java.util.*;
 /**
  * Provides the ability to Concatenate {@link DidoData}. The data isn't copied but linked in a new master
  * {@code DidoData} object.
- *
+ * <p>
  * Concatenation won't cope with repeated or nest fields yet.
- *
  */
 public class Concatenator {
 
@@ -64,23 +63,21 @@ public class Concatenator {
             for (DataSchema schema : schemas) {
                 for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
                     Location location = new Location(dataIndex, i);
-                    String field = schema.getFieldNameAt(i);
-                    if (field != null) {
-                        if (excludeFields.contains(field)) {
-                            continue;
-                        }
-                        if (fieldLocations.containsKey(field)) {
-                            if (skipDuplicates) {
-                                continue;
-                            }
-                            else {
-                                throw new IllegalArgumentException("Fields must be unique: " + field);
-                            }
-                        }
-                        fieldLocations.put(field, location);
+                    SchemaField schemaField = schema.getSchemaFieldAt(i);
+                    String name = schemaField.getName();
+                    if (excludeFields.contains(name)) {
+                        continue;
                     }
+                    if (fieldLocations.containsKey(name)) {
+                        if (skipDuplicates) {
+                            continue;
+                        } else {
+                            throw new IllegalArgumentException("Fields must be unique: " + name);
+                        }
+                    }
+                    fieldLocations.put(name, location);
                     locations.add(location);
-                    schemaFactory.addNamedAt(++locationIndex, field, schema.getTypeAt(i));
+                    schemaFactory.addSchemaField(schemaField.mapToIndex(++locationIndex));
                 }
                 ++dataIndex;
             }
@@ -134,7 +131,6 @@ public class Concatenator {
 
     /**
      * Compares previous schemas so we can maybe shortcut.
-     *
      */
     public static class Factory {
 

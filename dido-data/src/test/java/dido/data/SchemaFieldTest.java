@@ -1,6 +1,5 @@
 package dido.data;
 
-import dido.data.generic.GenericSchemaBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,8 +13,8 @@ public class SchemaFieldTest {
         assertThat(SchemaField.of(5, "Foo", Object.class).toString(),
                 is("[5:Foo]=java.lang.Object"));
 
-        DataSchema nested = GenericSchemaBuilder.impliedType().
-                addField("Nested", int.class)
+        DataSchema nested = SchemaBuilder.newInstance().
+                addNamed("Nested", int.class)
                 .build();
 
         assertThat(SchemaField.ofNested(5, "Foo", nested).toString(),

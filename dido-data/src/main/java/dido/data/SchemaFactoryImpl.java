@@ -96,138 +96,6 @@ public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDataSchema
         return index == null ? 0 : index;
     }
 
-    // Add Simple Fields
-
-    public void add(Class<?> fieldType) {
-        addAt(0, fieldType);
-    }
-
-    public void addAt(int index, Class<?> fieldType) {
-        addNamedAt(index, null, fieldType);
-    }
-
-    public void addNamed(String name, Class<?> fieldType) {
-        addNamedAt(0, name, fieldType);
-    }
-
-    /**
-     * Add a field, replacing as necessary.
-     * If the index is 0, the next available is used. If the index exists the field is
-     * replaced.
-     * If the name is null, the name is derived from the index. If the name exists
-     * a new name is used.
-     *
-     * @param index     The index.
-     * @param name      The name.
-     * @param fieldType The field type. Must not be null.
-     */
-    @Override
-    public void addNamedAt(int index, String name, Class<?> fieldType) {
-
-        addSchemaField(schemaFieldOf(index, name,
-                (i, n) -> SchemaField.of(i, n, fieldType)));
-    }
-
-    // Add Nested Field
-
-    public void addNested(DataSchema nestedSchema) {
-        addNestedAt(0, nestedSchema);
-    }
-
-    public void addNestedAt(int index,
-                                     DataSchema nestedSchema) {
-        addNestedNamedAt(index, null, nestedSchema);
-    }
-
-    public void addNestedNamed(String name,
-                                        DataSchema nestedSchema) {
-        addNestedNamedAt(0, name, nestedSchema);
-    }
-
-    @Override
-    public void addNestedNamedAt(int index,
-                                          String name,
-                                          DataSchema nestedSchema) {
-
-        addSchemaField(schemaFieldOf(index, name,
-                (i, n) -> SchemaField.ofNested(i, n, nestedSchema)));
-    }
-
-    // Add Nested Reference
-
-    public void addNested(SchemaReference nestedSchemaRef) {
-        addNestedAt(0, nestedSchemaRef);
-    }
-
-    public void addNestedAt(int index,
-                                     SchemaReference nestedSchemaRef) {
-        addNestedNamedAt(index, null, nestedSchemaRef);
-    }
-
-    public void addNestedNamed(String field,
-                                        SchemaReference nestedSchemaRef) {
-        addNestedNamedAt(0, field, nestedSchemaRef);
-    }
-
-    @Override
-    public void addNestedNamedAt(int index,
-                                          String name,
-                                          SchemaReference nestedSchemaRef) {
-
-        addSchemaField(schemaFieldOf(index, name,
-                (i, n) -> SchemaField.ofNested(i, n, nestedSchemaRef)));
-    }
-
-    // Add Repeating Nested Schema
-
-    public void addRepeating(DataSchema nestedSchema) {
-        addRepeatingAt(0, nestedSchema);
-    }
-
-    public void addRepeatingAt(int index,
-                                        DataSchema nestedSchema) {
-        addRepeatingNamedAt(index, null, nestedSchema);
-    }
-
-    public void addRepeatingNamed(String name,
-                                           DataSchema nestedSchema) {
-        addRepeatingNamedAt(0, name, nestedSchema);
-    }
-
-    @Override
-    public void addRepeatingNamedAt(int index,
-                                             String name,
-                                             DataSchema nestedSchema) {
-
-        addSchemaField(schemaFieldOf(index, name,
-                (i, n) -> SchemaField.ofRepeating(i, n, nestedSchema)));
-    }
-
-    // Add Repeating Nested Schema Ref
-
-    public void addRepeating(SchemaReference nestedSchemaRef) {
-        addRepeatingAt(0, nestedSchemaRef);
-    }
-
-    public void addRepeatingAt(int index,
-                                        SchemaReference nestedSchemaRef) {
-        addRepeatingNamedAt(index, null, nestedSchemaRef);
-    }
-
-    public void addRepeatingNamed(String name,
-                                           SchemaReference nestedSchemaRef) {
-        addRepeatingNamedAt(0, name, nestedSchemaRef);
-    }
-
-    @Override
-    public void addRepeatingNamedAt(int index,
-                                             String name,
-                                             SchemaReference nestedSchemaRef) {
-
-        addSchemaField(schemaFieldOf(index, name,
-                (i, n) -> SchemaField.ofRepeating(i, n, nestedSchemaRef)));
-    }
-
     @Override
     public void removeAt(int index) {
 
@@ -284,6 +152,13 @@ public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDataSchema
     public void addSchemaField(SchemaField schemaField) {
 
         int index = schemaField.getIndex();
+        if (index == 0) {
+            index = lastIndex() + 1;
+            schemaField = schemaField.mapToIndex(index);
+        }
+        if (schemaField.getName() == null || schemaField.getName().isBlank()) {
+            schemaField = schemaField.mapToFieldName(DataSchema.nameForIndex(index));
+        }
 
         SchemaField existingField = indexToFields.remove(index);
         if (existingField == null) {

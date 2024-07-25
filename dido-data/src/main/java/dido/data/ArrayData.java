@@ -1,7 +1,6 @@
 package dido.data;
 
 import dido.data.generic.GenericData;
-import dido.data.generic.GenericSchemaField;
 
 import java.util.*;
 
@@ -25,7 +24,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
 
         ArrayDataSchema.ArrayDataSchemaFactory schemaFactory = new ArrayDataSchema.ArrayDataSchemaFactory();
         for (int i = 0; i < data.length; ++i) {
-            schemaFactory.add(Object.class);
+            schemaFactory.addSchemaField(SchemaField.of(0, null, Object.class));
         }
 
         return new ArrayData(schemaFactory.toSchema(), data);
@@ -138,7 +137,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
             extends DataBuilders.Indexed<NamedData, BuilderUnknown>
             implements NamedDataBuilder {
 
-        private final List<GenericSchemaField<String>> schemaFields = new LinkedList<>();
+        private final List<SchemaField> schemaFields = new LinkedList<>();
 
         private final List<Object> values = new LinkedList<>();
 
@@ -247,7 +246,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
 
         public BuilderUnknown setIndex(int index, Object value, Class<?> type) {
             values.add(value);
-            schemaFields.add(GenericSchemaField.of(index, DataSchema.nameForIndex(index), type));
+            schemaFields.add(SchemaField.of(index, DataSchema.nameForIndex(index), type));
             if (index > lastIndex) {
                 lastIndex = index;
             }
@@ -256,7 +255,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
 
         private BuilderUnknown setField(String field, Object value, Class<?> type) {
             values.add(value);
-            schemaFields.add(GenericSchemaField.of(++lastIndex, field, type));
+            schemaFields.add(SchemaField.of(++lastIndex, field, type));
             return this;
         }
 

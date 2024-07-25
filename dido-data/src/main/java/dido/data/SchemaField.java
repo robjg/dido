@@ -15,7 +15,7 @@ public interface SchemaField {
 
     /**
      * The index of the field. A Schema Field that belongs to a schema will always have an
-     * index > 0. A Schema Field can have an index < 1 if hasn't been assigned to a Schema yet.
+     * index > 0. A Schema Field can have an index < 1 it hasn't been assigned to a Schema yet.
      *
      * @return The index, if one has been assigned.
      */
@@ -65,49 +65,30 @@ public interface SchemaField {
         return mapTo(toIndex, null);
     }
 
-    default SchemaField mapToFieldName(String toField) {
-        return mapTo(0, toField);
+    default SchemaField mapToFieldName(String toName) {
+        return mapTo(0, toName);
     }
 
-    default SchemaField mapTo(int toIndex, String toField) {
+    SchemaField mapTo(int toIndex, String toName);
 
-        if (toIndex == 0) {
-            toIndex = getIndex();
-        }
-
-        if (toField == null) {
-            toField = getName();
-        }
-
-        if (isNested()) {
-            if (isRepeating()) {
-                return ofRepeating(toIndex, toField, getNestedSchema());
-            } else {
-                return ofNested(toIndex, toField, getNestedSchema());
-            }
-        } else {
-            return of(toIndex, toField, getType());
-        }
+    static SchemaField of(int index, String name, Class<?> type) {
+        return SchemaFields.of(index, name, type);
     }
 
-    static SchemaField of(int index, String field, Class<?> type) {
-        return SchemaFields.of(index, field, type);
+    static SchemaField ofNested(int index, String name, DataSchema nested) {
+        return SchemaFields.ofNested(index, name, nested);
     }
 
-    static SchemaField ofNested(int index, String field, DataSchema nested) {
-        return SchemaFields.ofNested(index, field, nested);
+    static SchemaField ofNested(int index, String name, SchemaReference nestedRef) {
+        return SchemaFields.ofNested(index, name, nestedRef);
     }
 
-    static SchemaField ofNested(int index, String field, SchemaReference nestedRef) {
-        return SchemaFields.ofNested(index, field, nestedRef);
+    static SchemaField ofRepeating(int index, String name, DataSchema nested) {
+        return SchemaFields.ofRepeating(index, name, nested);
     }
 
-    static SchemaField ofRepeating(int index, String field, DataSchema nested) {
-        return SchemaFields.ofRepeating(index, field, nested);
-    }
-
-    static SchemaField ofRepeating(int index, String field, SchemaReference nestedRef) {
-        return SchemaFields.ofRepeating(index, field, nestedRef);
+    static SchemaField ofRepeating(int index, String name, SchemaReference nestedRef) {
+        return SchemaFields.ofRepeating(index, name, nestedRef);
     }
 
     static int hash(SchemaField field) {

@@ -5,6 +5,7 @@ import dido.data.DataSchema;
 import dido.data.SchemaReference;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Builder for an {@link GenericDataSchema}.
@@ -13,27 +14,33 @@ import java.util.*;
  */
 public class GenericSchemaBuilder<F> {
 
+    private final GenericSchemaField.Of<F> genericField;
+
     private final Map<Integer, GenericSchemaField<F>> indexToFields = new TreeMap<>();
 
     private final Map<F, Integer> fieldToIndex = new HashMap<>();
+
+
 
     private int firstIndex;
 
     private int lastIndex;
 
-    private GenericSchemaBuilder() {
+    private GenericSchemaBuilder(Function<? super String, ? extends F> fieldMappingFunc) {
+        this.genericField = GenericSchemaField.with(fieldMappingFunc);
     }
 
     public static GenericSchemaBuilder<String> forStringFields() {
-        return new GenericSchemaBuilder<>();
+        return new GenericSchemaBuilder<>(Function.identity());
     }
 
-    public static <F> GenericSchemaBuilder<F> forFieldType(Class<F> ignored) {
-        return new GenericSchemaBuilder<>();
+    public static <F> GenericSchemaBuilder<F> forFieldType(Class<F> ignored,
+                                                           Function<? super String, ? extends F> fieldMappingFunc) {
+        return new GenericSchemaBuilder<>(fieldMappingFunc);
     }
 
-    public static <F> GenericSchemaBuilder<F> impliedType() {
-        return new GenericSchemaBuilder<>();
+    public static <F> GenericSchemaBuilder<F> impliedType(Function<? super String, ? extends F> fieldMappingFunc) {
+        return new GenericSchemaBuilder<>(fieldMappingFunc);
     }
 
     // Add Simple Fields
@@ -43,7 +50,7 @@ public class GenericSchemaBuilder<F> {
     }
 
     public GenericSchemaBuilder<F> addFieldAt(int index, F field, Class<?> fieldType) {
-        return addGenericSchemaField(GenericSchemaField.of(processIndex(index), field, fieldType));
+        return addGenericSchemaField(genericField.of(processIndex(index), field, fieldType));
     }
 
     // Add Nested Field
@@ -57,7 +64,7 @@ public class GenericSchemaBuilder<F> {
                                                     F field,
                                                     DataSchema nestedSchema) {
 
-        return addGenericSchemaField(GenericSchemaField.ofNested(
+        return addGenericSchemaField(genericField.ofNested(
                 processIndex(index), field, nestedSchema));
     }
 
@@ -68,10 +75,10 @@ public class GenericSchemaBuilder<F> {
         return addNestedFieldAt(0, field, nestedSchemaRef);
     }
 
-    public <N> GenericSchemaBuilder<F> addNestedFieldAt(int index,
+    public GenericSchemaBuilder<F> addNestedFieldAt(int index,
                                                         F field,
                                                         SchemaReference nestedSchemaRef) {
-        return addGenericSchemaField(GenericSchemaField.ofNested(
+        return addGenericSchemaField(genericField.ofNested(
                 processIndex(index), field, nestedSchemaRef));
     }
 
@@ -85,7 +92,7 @@ public class GenericSchemaBuilder<F> {
     public GenericSchemaBuilder<F> addRepeatingFieldAt(int index,
                                                        F field,
                                                        DataSchema nestedSchema) {
-        return addGenericSchemaField(GenericSchemaField.ofRepeating(
+        return addGenericSchemaField(genericField.ofRepeating(
                 processIndex(index), field, nestedSchema));
     }
 
@@ -108,7 +115,7 @@ public class GenericSchemaBuilder<F> {
     public GenericSchemaBuilder<F> addRepeatingFieldAt(int index,
                                                        F field,
                                                        SchemaReference nestedSchemaRef) {
-        return addGenericSchemaField(GenericSchemaField.ofRepeating(
+        return addGenericSchemaField(genericField.ofRepeating(
                 processIndex(index), field, nestedSchemaRef));
     }
 

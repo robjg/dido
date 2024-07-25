@@ -44,7 +44,7 @@ public class SchemaManager {
         }
 
         public B addFieldAt(int index, String field, Class<?> type) {
-            this.schemaFactory.addNamedAt(index, field, type);
+            this.schemaFactory.addSchemaField(SchemaField.of(index, field, type));
             return self();
         }
 
@@ -65,10 +65,10 @@ public class SchemaManager {
                 SchemaReference schemaRef = SchemaReference.named(schemaName);
                 schemaRefs.computeIfAbsent(schemaName, k -> new ArrayList<>())
                         .add(schemaRef);
-                schemaFactory.addNestedNamedAt(index, field, schemaRef);
+                schemaFactory.addSchemaField(SchemaField.ofNested(index, field, schemaRef));
             }
             else {
-                schemaFactory.addNestedNamedAt(index, field, schema);
+                schemaFactory.addSchemaField(SchemaField.ofNested(index, field, schema));
             }
             return self();
         }
@@ -84,7 +84,7 @@ public class SchemaManager {
         }
 
         public  B addNestedFieldAt(int index, String field, DataSchema nestedSchema) {
-            this.schemaFactory.addNestedNamedAt(index, field, nestedSchema);
+            this.schemaFactory.addSchemaField(SchemaField.ofNested(index, field, nestedSchema));
             return self();
         }
 
@@ -122,10 +122,10 @@ public class SchemaManager {
                 SchemaReference schemaRef = SchemaReference.named(schemaName);
                 schemaRefs.computeIfAbsent(schemaName, k -> new ArrayList<>())
                         .add(schemaRef);
-                schemaFactory.addRepeatingNamedAt(index, field, schemaRef);
+                schemaFactory.addSchemaField(SchemaField.ofRepeating(index, field, schemaRef));
             }
             else {
-                schemaFactory.addRepeatingNamedAt(index, field, schema);
+                schemaFactory.addSchemaField(SchemaField.ofRepeating(index, field, schema));
             }
             return self();
         }
@@ -141,7 +141,7 @@ public class SchemaManager {
         }
 
         public  B addRepeatingFieldAt(int index, String field, DataSchema nestedSchema) {
-            schemaFactory.addRepeatingNamedAt(index, field, nestedSchema);
+            schemaFactory.addSchemaField(SchemaField.ofRepeating(index, field, nestedSchema));
             return self();
         }
 
@@ -240,12 +240,12 @@ public class SchemaManager {
 
         public void add() {
             if (repeating) {
-                this.parentSchema.schemaFactory.addRepeatingNamedAt(
-                        index, field, this.schemaFactory.toSchema());
+                this.parentSchema.schemaFactory.addSchemaField(
+                        SchemaField.ofRepeating(index, field, this.schemaFactory.toSchema()));
             }
             else {
-                this.parentSchema.schemaFactory.addNestedNamedAt(
-                        index, field, this.schemaFactory.toSchema());
+                this.parentSchema.schemaFactory.addSchemaField(
+                        SchemaField.ofNested(index, field, this.schemaFactory.toSchema()));
             }
         }
 

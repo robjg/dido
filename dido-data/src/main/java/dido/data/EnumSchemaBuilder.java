@@ -4,10 +4,7 @@ import dido.data.generic.AbstractGenericDataSchema;
 import dido.data.generic.GenericDataSchema;
 import dido.data.generic.GenericSchemaField;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -20,10 +17,13 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
 
     private final Class<E> type;
 
+    private final GenericSchemaField.Of<E> genericField;
+
     private final EnumMap<E, GenericSchemaField<E>> fields;
 
     private EnumSchemaBuilder(Class<E> type) {
-        this.type = type;
+        this.type = Objects.requireNonNull(type);
+        this.genericField = GenericSchemaField.with(name -> Enum.valueOf(type, name));
         this.fields = new EnumMap<>(type);
     }
 
@@ -34,27 +34,27 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
 
     public EnumSchemaBuilder<E> addSchemaField(SchemaField schemaField) {
         E field = Enum.valueOf(type, schemaField.getName());
-        this.fields.put(field, GenericSchemaField.of(field.ordinal() + 1, field, schemaField.getType()));
+        this.fields.put(field, genericField.of(field.ordinal() + 1, field, schemaField.getType()));
         return this;
     }
 
     public EnumSchemaBuilder<E> addField(E field, Class<?> fieldType) {
-        this.fields.put(field, GenericSchemaField.of(field.ordinal() + 1, field, fieldType));
+        this.fields.put(field, genericField.of(field.ordinal() + 1, field, fieldType));
         return this;
     }
 
     public <N> EnumSchemaBuilder<E> addNestedField(E field, GenericDataSchema<N> nestedSchema) {
-        this.fields.put(field, GenericSchemaField.ofNested(field.ordinal() + 1, field, nestedSchema));
+        this.fields.put(field, genericField.ofNested(field.ordinal() + 1, field, nestedSchema));
         return this;
     }
 
     public <N> EnumSchemaBuilder<E> addRepeatingField(E field, GenericDataSchema<N> nestedSchema) {
-        this.fields.put(field, GenericSchemaField.ofRepeating(field.ordinal() + 1, field, nestedSchema));
+        this.fields.put(field, genericField.ofRepeating(field.ordinal() + 1, field, nestedSchema));
         return this;
     }
 
     public EnumSchemaBuilder<E> addRepeatingField(E field, SchemaReference nestedSchemaRef) {
-        this.fields.put(field, GenericSchemaField.ofRepeating(field.ordinal() + 1, field, nestedSchemaRef));
+        this.fields.put(field, genericField.ofRepeating(field.ordinal() + 1, field, nestedSchemaRef));
         return this;
     }
 
@@ -66,16 +66,19 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         return new Schema<>(this.type, types.values().toArray(new GenericSchemaField[0]));
     }
 
-    public static <E extends Enum<E>> EnumSchema<E> forTypeMapping(Class<E> enumClass,
-                                                                   Function<E, Class<?>> typeMapping) {
+    public static <E extends Enum<E>> EnumSchema<E>
+    forTypeMapping(Class<E> enumClass,
+                   Function<? super E, ? extends Class<?>> typeMapping) {
 
         E[] enumConstants = enumClass.getEnumConstants();
+
+        GenericSchemaField.Of<E> genericField = GenericSchemaField.with(name -> Enum.valueOf(enumClass, name));
 
         @SuppressWarnings("unchecked")
         GenericSchemaField<E>[] fields = new GenericSchemaField[enumConstants.length];
 
         for (int i = 0; i < fields.length; i++) {
-            fields[i] = GenericSchemaField.of(i + 1, enumConstants[i], typeMapping.apply(enumConstants[i]));
+            fields[i] = genericField.of(i + 1, enumConstants[i], typeMapping.apply(enumConstants[i]));
         }
 
         return new Schema<>(enumClass, fields);

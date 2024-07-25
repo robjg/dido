@@ -48,7 +48,7 @@ public class SchemaBuilder<S extends DataSchema> {
      */
     public SchemaBuilder<S> addNamedAt(int index, String name, Class<?> fieldType) {
 
-        schemaFactory.addNamedAt(index, name, fieldType);
+        schemaFactory.addSchemaField(SchemaField.of(index, name, fieldType));
         return this;
     }
 
@@ -72,7 +72,7 @@ public class SchemaBuilder<S extends DataSchema> {
                                           String name,
                                           DataSchema nestedSchema) {
 
-        schemaFactory.addNestedNamedAt(index, name, nestedSchema);
+        schemaFactory.addSchemaField(SchemaField.ofNested(index, name, nestedSchema));
         return this;
     }
 
@@ -96,7 +96,7 @@ public class SchemaBuilder<S extends DataSchema> {
                                           String name,
                                           SchemaReference nestedSchemaRef) {
 
-        schemaFactory.addNestedNamedAt(index, name, nestedSchemaRef);
+        schemaFactory.addSchemaField(SchemaField.ofNested(index, name, nestedSchemaRef));
         return this;
     }
 
@@ -119,7 +119,7 @@ public class SchemaBuilder<S extends DataSchema> {
     public SchemaBuilder<S> addRepeatingNamedAt(int index,
                                              String name,
                                              DataSchema nestedSchema) {
-        schemaFactory.addRepeatingNamedAt(index, name, nestedSchema);
+        schemaFactory.addSchemaField(SchemaField.ofRepeating(index, name, nestedSchema));
         return this;
     }
 
@@ -143,7 +143,7 @@ public class SchemaBuilder<S extends DataSchema> {
                                              String name,
                                              SchemaReference nestedSchemaRef) {
 
-        schemaFactory.addRepeatingNamedAt(index, name, nestedSchemaRef);
+        schemaFactory.addSchemaField(SchemaField.ofRepeating(index, name, nestedSchemaRef));
         return this;
     }
 

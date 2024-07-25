@@ -1,7 +1,5 @@
 package dido.data;
 
-import dido.data.generic.GenericData;
-import dido.data.generic.GenericMapData;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,7 +40,7 @@ class SubDataTest {
         assertThat(subData1.getSchema().toString(), is("{[1:Name]=java.lang.String}"));
         assertThat(subData1.toString(), is("{[1:Name]=Alice}"));
 
-        GenericData<String> data2 = GenericMapData.of(
+        DidoData data2 = MapData.of(
                 "Job", "Programmer", "Age", 47, "Name", "Alice");
 
         DidoData subData2 = SubData.ofIndices(3).apply(data2);
@@ -86,7 +84,7 @@ class SubDataTest {
         assertThat(subData1.getSchema().toString(), is("{[1:Name]=java.lang.String}"));
         assertThat(subData1.toString(), is("{[1:Name]=Alice}"));
 
-        GenericData<String> data2 = GenericMapData.of(
+        DidoData data2 = MapData.of(
                 "Occupation", "Programmer", "Age", 47, "Called", "Alice");
 
         DidoData subData2 = SubData.ofFields("Called").apply(data2);

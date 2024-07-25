@@ -13,7 +13,7 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
     @Override
     EnumSchema<E> getSchema();
 
-    static <E extends Enum<E>> EnumData<E> fromStringData(GenericData<String> data, Class<E> enumClass) {
+    static <E extends Enum<E>> EnumData<E> fromDidoData(DidoData data, Class<E> enumClass) {
 
         EnumSchema<E> enumSchema = EnumSchema.enumSchemaFrom(data.getSchema(), enumClass);
 

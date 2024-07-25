@@ -75,6 +75,15 @@ class SchemaFields {
         }
 
         @Override
+        public SchemaField mapTo(int toIndex, String toName) {
+
+            toIndex = toIndex == 0 ? getIndex() : toIndex;
+            toName = toName == null ? getName() : toName;
+
+            return new Simple(toIndex, toName, getType());
+        }
+
+        @Override
         public int hashCode() {
             return SchemaField.hash(this);
         }
@@ -141,6 +150,16 @@ class SchemaFields {
         @Override
         public DataSchema getNestedSchema() {
             return nested;
+        }
+
+        @Override
+        public SchemaField mapTo(int toIndex, String toName) {
+
+            toIndex = toIndex == 0 ? getIndex() : toIndex;
+            toName = toName == null ? getName() : toName;
+
+            return new Nested(new Simple(toIndex, toName, this.simple.getType()),
+                    this.nested, this.repeating);
         }
 
         @Override
@@ -216,6 +235,16 @@ class SchemaFields {
         @Override
         public boolean isRepeating() {
             return repeating;
+        }
+
+        @Override
+        public SchemaField mapTo(int toIndex, String toName) {
+
+            toIndex = toIndex == 0 ? getIndex() : toIndex;
+            toName = toName == null ? getName() : toName;
+
+            return new NestedRef(new Simple(toIndex, toName, this.simple.getType()),
+                    this.nestedRef, this.repeating);
         }
 
         @Override

@@ -9,24 +9,6 @@ package dido.data;
  */
 public interface SchemaFactory<S extends DataSchema> extends DataSchema {
 
-    void addNamedAt(int index, String field, Class<?> fieldType);
-
-    void addNestedNamedAt(int index,
-                          String name,
-                          DataSchema nestedSchema);
-
-    void addNestedNamedAt(int index,
-                          String name,
-                          SchemaReference nestedSchemaRef);
-
-    void addRepeatingNamedAt(int index,
-                             String name,
-                             DataSchema nestedSchema);
-
-    void addRepeatingNamedAt(int index,
-                             String name,
-                             SchemaReference nestedSchemaRef);
-
     void addSchemaField(SchemaField schemaField);
 
     void removeAt(int index);

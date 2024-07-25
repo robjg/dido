@@ -5,6 +5,7 @@ import dido.data.SchemaField;
 import dido.data.SchemaReference;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Definition of a field in a {@link GenericDataSchema}.
@@ -26,52 +27,37 @@ public interface GenericSchemaField<F> extends SchemaField {
         return mapTo(toIndex, (F) null);
     }
 
-    default <T> GenericSchemaField<T> mapToField(T toField) {
+    default GenericSchemaField<F> mapToField(F toField) {
         return mapTo(0, toField);
     }
 
-    default <T> GenericSchemaField<T> mapTo(int toIndex, T toField) {
+    GenericSchemaField<F> mapTo(int toIndex, F toField);
 
-        if (toIndex == 0) {
-            toIndex = getIndex();
-        }
-
-        if (toField == null) {
-            //noinspection unchecked
-            toField = (T) getField();
-        }
-
-        if (isNested()) {
-            if (isRepeating()) {
-                return ofRepeating(toIndex, toField, getNestedSchema());
-            }
-            else {
-                return ofNested(toIndex, toField, getNestedSchema());
-            }
-        }
-        else {
-            return of(toIndex, toField, getType() );
-        }
+    public static <F> Of<F> with(Function<? super String, ? extends F> fieldMappingFunc) {
+        return new GenericSchemaFields<>(fieldMappingFunc);
     }
 
-    static <F> GenericSchemaField<F> of(int index, F field, Class<?> type) {
-        return GenericSchemaFields.of(index, field, type);
-    }
+    interface Of<F> {
 
-    static <F> GenericSchemaField<F> ofNested(int index, F field, DataSchema nested) {
-        return GenericSchemaFields.ofNested(index, field, nested);
-    }
+        GenericSchemaField<F> of(int index, String name, Class<?> type);
 
-    static <F> GenericSchemaField<F> ofNested(int index, F field, SchemaReference nestedRef) {
-        return GenericSchemaFields.ofNested(index, field, nestedRef);
-    }
+        GenericSchemaField<F> of(int index, F field, Class<?> type);
 
-    static <F, N> GenericSchemaField<F> ofRepeating(int index, F field, DataSchema nested) {
-        return GenericSchemaFields.ofRepeating(index, field, nested);
-    }
+        GenericSchemaField<F> ofNested(int index, String name, DataSchema nested);
 
-    static <F> GenericSchemaField<F> ofRepeating(int index, F field, SchemaReference nestedRef) {
-        return GenericSchemaFields.ofRepeating(index, field, nestedRef);
+        GenericSchemaField<F> ofNested(int index, F field, DataSchema nested);
+
+        GenericSchemaField<F> ofNested(int index, String name, SchemaReference nestedRef);
+
+        GenericSchemaField<F> ofNested(int index, F field, SchemaReference nestedRef);
+
+        GenericSchemaField<F> ofRepeating(int index, String field, DataSchema nested);
+
+        GenericSchemaField<F> ofRepeating(int index, F field, DataSchema nested);
+
+        GenericSchemaField<F> ofRepeating(int index, String field, SchemaReference nestedRef);
+
+        GenericSchemaField<F> ofRepeating(int index, F field, SchemaReference nestedRef);
     }
 
     static int hashCode(GenericSchemaField<?> schemaField) {

@@ -107,23 +107,24 @@ public class DataSchemaSchema {
         for (DidoData fieldData : fields) {
 
             int index = fieldData.getIntNamed(INDEX_FIELD);
-            String field = fieldData.getStringNamed(FIELD_FIELD);
+            String name = fieldData.getStringNamed(FIELD_FIELD);
 
+            SchemaField schemaField;
             if (fieldData.hasNamed(NESTED_FIELD)) {
 
                 DidoData nestedData = fieldData.getNamedAs(NESTED_FIELD, DidoData.class);
                 DataSchema nestedSchema = schemaFromData(nestedData, classLoader);
 
                 if (fieldData.hasNamed(REPEATING_FIELD) && fieldData.getBooleanNamed(REPEATING_FIELD)) {
-                    builder.addRepeatingNamedAt(index, field, nestedSchema);
+                    schemaField = SchemaField.ofRepeating(index, name, nestedSchema);
                 } else {
-                    builder.addNestedNamedAt(index, field, nestedSchema);
+                    schemaField = SchemaField.ofNested(index, name, nestedSchema);
                 }
             } else {
                 Class<?> type = classLoader.apply(fieldData.getStringNamed(TYPE_FIELD));
-
-                builder.addNamedAt(index, field, type);
+                schemaField = SchemaField.of(index, name, type);
             }
+            builder.addSchemaField(schemaField);
         }
 
         return builder.toSchema();

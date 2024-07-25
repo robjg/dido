@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Provide an {@link GenericData} structure backed by a Map.
@@ -19,93 +20,103 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         this.map = map;
     }
 
-    public static GenericMapData<String> from(Map<String, ?> map) {
-        return new GenericMapData<>(schemaFromMap(map), new HashMap<>(map));
+    public static <F> Of<F> with(Function<? super String, ? extends F> fieldNameMapping) {
+        return new Of<>(fieldNameMapping);
     }
 
-    public static <F> GenericData<F> of() {
-        return fromInputs();
-    }
+    public static class Of<F> {
 
-    public static <F> GenericData<F> of(F f1, Object v1) {
-        return fromInputs(f1, v1);
-    }
+        private final Function<? super String, ? extends F> fieldNameMapping;
 
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2) {
-        return fromInputs(f1, v1, f2, v2);
-    }
-
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3) {
-        return fromInputs(f1, v1, f2, v2, f3, v3);
-    }
-
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4) {
-        return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4);
-    }
-
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4, F f5, Object v5) {
-        return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5);
-    }
-
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4, F f5, Object v5, F f6, Object v6) {
-        return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6);
-    }
-
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4, F f5, Object v5, F f6, Object v6,
-                                    F f7, Object v7) {
-        return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7);
-    }
-
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4, F f5, Object v5, F f6, Object v6,
-                                    F f7, Object v7, F f8, Object v8) {
-        return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8);
-    }
-
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4, F f5, Object v5, F f6, Object v6,
-                                    F f7, Object v7, F f8, Object v8, F f9, Object v9) {
-        return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8, f9, v9);
-    }
-
-    public static <F> GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
-                                    F f4, Object v4, F f5, Object v5, F f6, Object v6,
-                                    F f7, Object v7, F f8, Object v8, F f9, Object v9,
-                                    F f10, Object v10) {
-        return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8, f9, v9, f10, v10);
-    }
-
-    private static <F> GenericData<F> fromInputs(Object... args) {
-
-        BuilderNoSchema<F> builder = new BuilderNoSchema<>();
-        for (int i = 0; i < args.length; i = i + 2) {
-            //noinspection unchecked
-            builder.with((F) args[i], args[i+1]);
+        public Of(Function<? super String, ? extends F> fieldNameMapping) {
+            this.fieldNameMapping = fieldNameMapping;
         }
-        return builder.build();
-    }
 
-    public static <F> GenericDataSchema<F> schemaFromMap(Map<F, ?> map) {
-
-        GenericSchemaBuilder<F> schemaBuilder = GenericSchemaBuilder.impliedType();
-        for (Map.Entry<F, ?> entry : map.entrySet()) {
-            schemaBuilder.addField(entry.getKey(), entry.getValue().getClass());
+        public GenericData<F> of() {
+            return fromInputs();
         }
-        return schemaBuilder.build();
+
+        public GenericData<F> of(F f1, Object v1) {
+            return fromInputs(f1, v1);
+        }
+
+        public GenericData<F> of(F f1, Object v1, F f2, Object v2) {
+            return fromInputs(f1, v1, f2, v2);
+        }
+
+        public GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3) {
+            return fromInputs(f1, v1, f2, v2, f3, v3);
+        }
+
+        public GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
+                                 F f4, Object v4) {
+            return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4);
+        }
+
+        public GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
+                                 F f4, Object v4, F f5, Object v5) {
+            return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5);
+        }
+
+        public GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
+                                 F f4, Object v4, F f5, Object v5, F f6, Object v6) {
+            return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6);
+        }
+
+        public GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
+                                 F f4, Object v4, F f5, Object v5, F f6, Object v6,
+                                 F f7, Object v7) {
+            return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7);
+        }
+
+        public GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
+                                 F f4, Object v4, F f5, Object v5, F f6, Object v6,
+                                 F f7, Object v7, F f8, Object v8) {
+            return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8);
+        }
+
+        public GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
+                                 F f4, Object v4, F f5, Object v5, F f6, Object v6,
+                                 F f7, Object v7, F f8, Object v8, F f9, Object v9) {
+            return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8, f9, v9);
+        }
+
+        public GenericData<F> of(F f1, Object v1, F f2, Object v2, F f3, Object v3,
+                                 F f4, Object v4, F f5, Object v5, F f6, Object v6,
+                                 F f7, Object v7, F f8, Object v8, F f9, Object v9,
+                                 F f10, Object v10) {
+            return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8, f9, v9, f10, v10);
+        }
+
+        private GenericData<F> fromInputs(Object... args) {
+
+            BuilderNoSchema<F> builder = new BuilderNoSchema<>(fieldNameMapping);
+            for (int i = 0; i < args.length; i = i + 2) {
+                //noinspection unchecked
+                builder.with((F) args[i], args[i + 1]);
+            }
+            return builder.build();
+        }
+
+        public GenericDataSchema<F> schemaFromMap(Map<F, ?> map) {
+
+            GenericSchemaBuilder<F> schemaBuilder = GenericSchemaBuilder.impliedType(fieldNameMapping);
+            for (Map.Entry<F, ?> entry : map.entrySet()) {
+                schemaBuilder.addField(entry.getKey(), entry.getValue().getClass());
+            }
+            return schemaBuilder.build();
+        }
+
+        public BuilderNoSchema<F> newBuilderNoSchema() {
+
+            return new BuilderNoSchema<>(fieldNameMapping);
+        }
     }
+
 
     public static <F> BuilderWithSchema<F> newBuilder(GenericDataSchema<F> schema) {
 
         return new BuilderWithSchema<>(schema);
-    }
-
-    public static <F> BuilderNoSchema<F> newBuilderNoSchema() {
-
-        return new BuilderNoSchema<>();
     }
 
     public static <F> GenericDataBuilders.Values<F> valuesFor(GenericDataSchema<F> schema) {
@@ -184,15 +195,22 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
 
     public static class BuilderNoSchema<F> extends GenericDataBuilders.Fields<F, BuilderNoSchema<F>> {
 
+        private final Function<? super String, ? extends F> fieldNameMapping;
+
         private Map<F, Object> map = new LinkedHashMap<>();
 
-        private GenericSchemaBuilder<F> schemaBuilder = GenericSchemaBuilder.impliedType();
+        private GenericSchemaBuilder<F> schemaBuilder;
+
+        public BuilderNoSchema(Function<? super String, ? extends F> fieldNameMapping) {
+            this.fieldNameMapping = fieldNameMapping;
+            this.schemaBuilder = GenericSchemaBuilder.impliedType(fieldNameMapping);
+        }
 
         @Override
         public GenericData<F> build() {
             GenericData<F> data = new GenericMapData<>(schemaBuilder.build(), map);
             this.map = new LinkedHashMap<>();
-            this.schemaBuilder = GenericSchemaBuilder.impliedType();
+            this.schemaBuilder = GenericSchemaBuilder.impliedType(fieldNameMapping);
             return data;
         }
 
