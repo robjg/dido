@@ -14,6 +14,11 @@ public class SchemaBuilder<S extends DataSchema> {
         this.schemaClass = schemaClass;
     }
 
+    public static <D extends DidoData, S extends WritableSchema<D>> SchemaBuilder<S>
+    builderFor(WritableSchemaFactory<D> schemaFactory) {
+        return new SchemaBuilder<>(schemaFactory, null);
+    }
+
     public static <S extends DataSchema> SchemaBuilder<S> builderFor(SchemaFactory schemaFactory, Class<S> schemaClass) {
         return new SchemaBuilder<>(schemaFactory, schemaClass);
     }
@@ -21,7 +26,6 @@ public class SchemaBuilder<S extends DataSchema> {
     public static SchemaBuilder<DataSchema> newInstance() {
         return new SchemaBuilder<>(DataSchemaFactory.newInstance(), DataSchema.class);
     }
-
 
     // Add Simple Fields
 
@@ -160,6 +164,12 @@ public class SchemaBuilder<S extends DataSchema> {
     public SchemaBuilder<S> removeNamed(String name) {
 
         schemaFactory.removeNamed(name);
+        return this;
+    }
+
+    public SchemaBuilder<S> addSchemaField(SchemaField schemaField) {
+
+        schemaFactory.addSchemaField(schemaField);
         return this;
     }
 

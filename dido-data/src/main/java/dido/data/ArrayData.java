@@ -30,7 +30,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         return new ArrayData(schemaFactory.toSchema(), data);
     }
 
-    public static ArrayDataSchema.ArrayDataSchemaFactory schemaFactory() {
+    public static WritableSchemaFactory<ArrayData> schemaFactory() {
         return new ArrayDataSchema.ArrayDataSchemaFactory();
     }
 
