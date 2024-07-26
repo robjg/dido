@@ -5,9 +5,8 @@ package dido.data;
  * provides a view of the in progress schema by implementing {@link DataSchema}. This allows things
  * like Transformation Factories to understand the data being transformed to.
  *
- * @param <S>
  */
-public interface SchemaFactory<S extends DataSchema> extends DataSchema {
+public interface SchemaFactory extends DataSchema {
 
     void addSchemaField(SchemaField schemaField);
 
@@ -17,5 +16,5 @@ public interface SchemaFactory<S extends DataSchema> extends DataSchema {
 
     void merge(DataSchema prioritySchema);
 
-    S toSchema();
+    DataSchema toSchema();
 }

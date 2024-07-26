@@ -1,10 +1,12 @@
 package dido.data;
 
+import java.util.Collection;
+
 /**
  * Schema for {@link ArrayData}.
  */
 public class ArrayDataSchema extends DataSchemaImpl
-        implements TransformableSchema<ArrayData, ArrayDataSchema> {
+        implements WritableSchema<ArrayData> {
 
     ArrayDataSchema() {
     }
@@ -22,27 +24,6 @@ public class ArrayDataSchema extends DataSchemaImpl
     }
 
     @Override
-    public SchemaFactory<ArrayDataSchema> newSchemaFactory() {
-        return new ArrayDataSchemaFactory();
-    }
-
-    @Override
-    public DataFactory<ArrayData> newDataFactory() {
-        return new ArrayData.ArrayDataFactory(this);
-    }
-
-    public static class ArrayDataSchemaFactory extends SchemaFactoryImpl<ArrayDataSchema> {
-
-        protected ArrayDataSchemaFactory() {
-            super(ArrayDataSchema::new);
-        }
-
-        protected ArrayDataSchemaFactory(DataSchema from) {
-            super(ArrayDataSchema::new, from);
-        }
-    }
-
-    @Override
     public Getter getDataGetterAt(int index) {
         return ArrayData.getDataGetterAt(index, this);
     }
@@ -51,4 +32,31 @@ public class ArrayDataSchema extends DataSchemaImpl
     public Getter getDataGetterNamed(String name) {
         return ArrayData.getDataGetterNamed(name, this);
     }
+
+    @Override
+    public WritableSchemaFactory<ArrayData> newSchemaFactory() {
+        return new ArrayDataSchemaFactory();
+    }
+
+    @Override
+    public DataFactory<ArrayData> newDataFactory() {
+        return new ArrayData.ArrayDataFactory(this);
+    }
+
+    public static class ArrayDataSchemaFactory extends SchemaFactoryImpl<ArrayDataSchema>
+        implements WritableSchemaFactory<ArrayData> {
+
+        protected ArrayDataSchemaFactory() {
+        }
+
+        protected ArrayDataSchemaFactory(DataSchema from) {
+            super(from);
+        }
+
+        @Override
+        ArrayDataSchema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
+            return new ArrayDataSchema(fields, firstIndex, lastIndex);
+        }
+    }
+
 }

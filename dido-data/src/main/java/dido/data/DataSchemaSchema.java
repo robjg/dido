@@ -102,7 +102,7 @@ public class DataSchemaSchema {
 
         RepeatingData fields = data.getNamedAs(FIELDS_FIELD, RepeatingData.class);
 
-        SchemaFactory<DataSchema> builder = SchemaFactoryImpl.newInstance();
+        SchemaFactory builder = DataSchemaFactory.newInstance();
 
         for (DidoData fieldData : fields) {
 

@@ -5,18 +5,21 @@ package dido.data;
  */
 public class SchemaBuilder<S extends DataSchema> {
 
-    private final SchemaFactory<S> schemaFactory;
+    private final SchemaFactory schemaFactory;
 
-    private SchemaBuilder(SchemaFactory<S> schemaFactory) {
+    private final Class<S> schemaClass;
+
+    private SchemaBuilder(SchemaFactory schemaFactory, Class<S> schemaClass) {
         this.schemaFactory = schemaFactory;
+        this.schemaClass = schemaClass;
     }
 
-    public static <S extends DataSchema> SchemaBuilder<S> builderFor(SchemaFactory<S> schemaFactory) {
-        return new SchemaBuilder<>(schemaFactory);
+    public static <S extends DataSchema> SchemaBuilder<S> builderFor(SchemaFactory schemaFactory, Class<S> schemaClass) {
+        return new SchemaBuilder<>(schemaFactory, schemaClass);
     }
 
     public static SchemaBuilder<DataSchema> newInstance() {
-        return new SchemaBuilder<>(SchemaFactoryImpl.newInstance());
+        return new SchemaBuilder<>(DataSchemaFactory.newInstance(), DataSchema.class);
     }
 
 
@@ -178,7 +181,8 @@ public class SchemaBuilder<S extends DataSchema> {
 
 
     public S build() {
-        return schemaFactory.toSchema();
+        //noinspection unchecked
+        return (S) schemaFactory.toSchema();
     }
 
 }

@@ -9,6 +9,7 @@ public interface DataFactoryProvider<D extends DidoData> {
 
     Class<D> getDataType();
 
-    DataFactory<D> provideFactory(DataSchema schema);
+    WritableSchemaFactory<D> getSchemaFactory();
 
+    DataFactory<D> provideFactory(DataSchema schema);
 }

@@ -11,8 +11,12 @@ public class MapDataDataFactoryProvider implements DataFactoryProvider<NamedData
     }
 
     @Override
-    public DataFactory<NamedData> provideFactory(DataSchema schema) {
+    public WritableSchemaFactory<NamedData> getSchemaFactory() {
+        return WritableSchemaAnything.newFactory(MapData::factoryFor);
+    }
 
+    @Override
+    public DataFactory<NamedData> provideFactory(DataSchema schema) {
         return MapData.factoryFor(schema);
     }
 }

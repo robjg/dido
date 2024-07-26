@@ -9,21 +9,8 @@ import java.util.function.UnaryOperator;
  *
  * @param <S> The Data Schema Type this factory will create.
  */
-public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDataSchema
-        implements DataSchema, SchemaFactory<S> {
-
-    /**
-     * Passed by subclasses to create the actual schema.
-     *
-     * @param <S> The type of schema that will be created.
-     */
-    @FunctionalInterface
-    public interface CreationFunction<S extends DataSchema> {
-
-        S create(Collection<SchemaField> fields, int firstIndex, int lastIndex);
-    }
-
-    private final CreationFunction<S> creationFunction;
+abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDataSchema
+        implements DataSchema, SchemaFactory {
 
     private final NavigableMap<Integer, SchemaField> indexToFields = new TreeMap<>();
 
@@ -33,21 +20,22 @@ public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDataSchema
     private static final UnaryOperator<String> fieldRenameStrategy = s -> s + "_";
 
 
-    protected SchemaFactoryImpl(CreationFunction<S> creationFunction) {
-        this.creationFunction = creationFunction;
+    protected SchemaFactoryImpl() {
     }
 
-    protected SchemaFactoryImpl(CreationFunction<S> creationFunction, DataSchema from) {
-        this.creationFunction = creationFunction;
+    protected SchemaFactoryImpl(DataSchema from) {
         for (SchemaField schemaField : from.getSchemaFields()) {
             indexToFields.put(schemaField.getIndex(), schemaField);
             nameToIndex.put(schemaField.getName(), schemaField.getIndex());
         }
     }
 
-    public static SchemaFactory<DataSchema> newInstance() {
-            return new SchemaFactoryImpl<>(DataSchemaImpl::fromFields);
-    }
+    /**
+     * implemented by subclasses to create the actual schema.
+     *
+     */
+    abstract S create(Collection<SchemaField> fields, int firstIndex, int lastIndex);
+
 
     @Override
     public boolean hasIndex(int index) {
@@ -182,7 +170,7 @@ public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDataSchema
 
     @Override
     public S toSchema() {
-        return creationFunction.create(indexToFields.values(), firstIndex(), lastIndex());
+        return create(indexToFields.values(), firstIndex(), lastIndex());
     }
 
     // Implementation
