@@ -8,11 +8,18 @@ package dido.data;
  */
 public interface SchemaFactory extends DataSchema {
 
-    void addSchemaField(SchemaField schemaField);
+    /**
+     * Add a schema field to be included in the created schema. If the index is < 1, the field will be
+     * added to the end of the schema definition. If the index exists, the definition will be updated.
+     * If the field name is null, the name will be derived from the index.
+     *
+     * @param schemaField The schema field. Must not be null.
+     */
+    SchemaField addSchemaField(SchemaField schemaField);
 
-    void removeAt(int index);
+    SchemaField removeAt(int index);
 
-    void removeNamed(String name);
+    SchemaField removeNamed(String name);
 
     void merge(DataSchema prioritySchema);
 

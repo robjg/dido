@@ -1,4 +1,4 @@
-package dido.data.operators;
+package dido.operators.transform;
 
 import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;

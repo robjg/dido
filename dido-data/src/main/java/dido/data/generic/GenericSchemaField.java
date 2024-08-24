@@ -24,16 +24,16 @@ public interface GenericSchemaField<F> extends SchemaField {
     DataSchema getNestedSchema();
 
     default GenericSchemaField<F> mapToIndex(int toIndex) {
-        return mapTo(toIndex, (F) null);
+        return mapTo(toIndex, getField());
     }
 
     default GenericSchemaField<F> mapToField(F toField) {
-        return mapTo(0, toField);
+        return mapTo(getIndex(), toField);
     }
 
     GenericSchemaField<F> mapTo(int toIndex, F toField);
 
-    public static <F> Of<F> with(Function<? super String, ? extends F> fieldMappingFunc) {
+    static <F> Of<F> with(Function<? super String, ? extends F> fieldMappingFunc) {
         return new GenericSchemaFields<>(fieldMappingFunc);
     }
 

@@ -20,8 +20,6 @@ public class GenericSchemaBuilder<F> {
 
     private final Map<F, Integer> fieldToIndex = new HashMap<>();
 
-
-
     private int firstIndex;
 
     private int lastIndex;
@@ -50,7 +48,7 @@ public class GenericSchemaBuilder<F> {
     }
 
     public GenericSchemaBuilder<F> addFieldAt(int index, F field, Class<?> fieldType) {
-        return addGenericSchemaField(genericField.of(processIndex(index), field, fieldType));
+        return addGenericSchemaField(genericField.of(index, field, fieldType));
     }
 
     // Add Nested Field
@@ -64,8 +62,7 @@ public class GenericSchemaBuilder<F> {
                                                     F field,
                                                     DataSchema nestedSchema) {
 
-        return addGenericSchemaField(genericField.ofNested(
-                processIndex(index), field, nestedSchema));
+        return addGenericSchemaField(genericField.ofNested(index, field, nestedSchema));
     }
 
     // Add Nested Reference
@@ -78,8 +75,7 @@ public class GenericSchemaBuilder<F> {
     public GenericSchemaBuilder<F> addNestedFieldAt(int index,
                                                         F field,
                                                         SchemaReference nestedSchemaRef) {
-        return addGenericSchemaField(genericField.ofNested(
-                processIndex(index), field, nestedSchemaRef));
+        return addGenericSchemaField(genericField.ofNested(index, field, nestedSchemaRef));
     }
 
     // Add Repeating Nested Schema
@@ -92,8 +88,7 @@ public class GenericSchemaBuilder<F> {
     public GenericSchemaBuilder<F> addRepeatingFieldAt(int index,
                                                        F field,
                                                        DataSchema nestedSchema) {
-        return addGenericSchemaField(genericField.ofRepeating(
-                processIndex(index), field, nestedSchema));
+        return addGenericSchemaField(genericField.ofRepeating(index, field, nestedSchema));
     }
 
     // Add Repeating Nested Schema Ref
@@ -104,7 +99,7 @@ public class GenericSchemaBuilder<F> {
 
     public GenericSchemaBuilder<F> addRepeatingAt(int index,
                                                   SchemaReference nestedSchemaRef) {
-        return addRepeatingFieldAt(processIndex(index), null, nestedSchemaRef);
+        return addRepeatingFieldAt(index, null, nestedSchemaRef);
     }
 
     public GenericSchemaBuilder<F> addRepeatingField(F field,
@@ -115,8 +110,7 @@ public class GenericSchemaBuilder<F> {
     public GenericSchemaBuilder<F> addRepeatingFieldAt(int index,
                                                        F field,
                                                        SchemaReference nestedSchemaRef) {
-        return addGenericSchemaField(genericField.ofRepeating(
-                processIndex(index), field, nestedSchemaRef));
+        return addGenericSchemaField(genericField.ofRepeating(index, field, nestedSchemaRef));
     }
 
 
@@ -147,6 +141,11 @@ public class GenericSchemaBuilder<F> {
 
         int index = schemaField.getIndex();
 
+        if (index == 0) {
+            index = ++lastIndex;
+            schemaField = schemaField.mapToIndex(index);
+        }
+
         indexToFields.put(index, schemaField);
 
         F field = schemaField.getField();
@@ -174,18 +173,4 @@ public class GenericSchemaBuilder<F> {
                 firstIndex, lastIndex);
     }
 
-    // Implementation
-
-
-    private int processIndex(int index) {
-        if (index == 0) {
-            return ++lastIndex;
-        } else if (index <= lastIndex) {
-            throw new IllegalArgumentException(
-                    "Index [" + index + "] must be greater than Last index [" + lastIndex + "]");
-        } else {
-            lastIndex = index;
-            return index;
-        }
-    }
 }

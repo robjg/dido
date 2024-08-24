@@ -29,4 +29,16 @@ class DataSchemaFactoryTest {
         assertThat(schemaRepeating.getSchemaFieldAt(3), is(SchemaField.ofRepeating(3, "Nested", schemaSimple)));
     }
 
+    @Test
+    void fieldRemoved() {
+
+        DataSchema schema = SchemaBuilder.newInstance()
+                .addNamed("fruit", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
+                .build();
+
+
+    }
+
 }

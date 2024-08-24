@@ -1,4 +1,4 @@
-package dido.data.operators;
+package dido.operators.transform;
 
 import dido.data.DataSchema;
 
@@ -10,6 +10,6 @@ import dido.data.DataSchema;
  */
 public interface FieldOperationDefinition {
 
-    void define(DataSchema incomingSchema,
-                FieldOperationManager operationManager);
+    FieldOperationFactory define(DataSchema incomingSchema,
+                                 SchemaSetter schemaSetter);
 }

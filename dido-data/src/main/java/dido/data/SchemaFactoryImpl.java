@@ -85,23 +85,28 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
     }
 
     @Override
-    public void removeAt(int index) {
+    public SchemaField removeAt(int index) {
 
         SchemaField schemaField = this.indexToFields.remove(index);
         if (schemaField == null) {
-            throw new IllegalArgumentException("No field at index " + index);
+            return null;
         }
-        this.nameToIndex.remove(schemaField.getName());
+        else {
+            this.nameToIndex.remove(schemaField.getName());
+            return schemaField;
+        }
     }
 
     @Override
-    public void removeNamed(String name) {
+    public SchemaField removeNamed(String name) {
 
         Integer index = nameToIndex.get(name);
         if (index == null) {
-            throw new IllegalArgumentException("No field named " + name);
+            return null;
         }
-        removeAt(index);
+        else {
+            return removeAt(index);
+        }
     }
 
     /**
@@ -135,12 +140,13 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
      * the new field.
      *
      * @param schemaField The field. Never null.
+     * @return The actual schema field added to the schema.
      */
     @Override
-    public void addSchemaField(SchemaField schemaField) {
+    public SchemaField addSchemaField(SchemaField schemaField) {
 
         int index = schemaField.getIndex();
-        if (index == 0) {
+        if (index < 1) {
             index = lastIndex() + 1;
             schemaField = schemaField.mapToIndex(index);
         }
@@ -154,19 +160,19 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
             // Ensure name is unique.
             String name = schemaField.getName();
             if (nameToIndex.containsKey(name)) {
-                addSchemaField(schemaField.mapToFieldName(
+                return addSchemaField(schemaField.mapToFieldName(
                         fieldRenameStrategy.apply(name)));
             }
             else {
                 indexToFields.put(index, schemaField);
                 nameToIndex.put(name, index);
+                return schemaField;
             }
         } else {
             nameToIndex.remove(existingField.getName());
-            addSchemaField(schemaField);
+            return addSchemaField(schemaField);
         }
     }
-
 
     @Override
     public S toSchema() {

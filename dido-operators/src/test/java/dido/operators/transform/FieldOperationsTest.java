@@ -1,4 +1,4 @@
-package dido.data.operators;
+package dido.operators.transform;
 
 import dido.data.*;
 import org.junit.jupiter.api.Test;
@@ -41,15 +41,12 @@ class FieldOperationsTest {
     }
 
     /**
-     * Demo of some a bad approach that works but isn't thread safe.
+     * Demo of a more complicated field definition.
      */
     static class MarkupOperation implements FieldOperationDefinition {
 
-        double markup;
-        double markupAmount;
-
         @Override
-        public void define(DataSchema incomingSchema, FieldOperationManager operationManager) {
+        public FieldOperationFactory define(DataSchema incomingSchema, SchemaSetter schemaSetter) {
 
             Getter priceGetter = schema.getDataGetterNamed("Price");
 
@@ -57,41 +54,33 @@ class FieldOperationsTest {
             SchemaField amountField = SchemaField.of(0, "MarkupAmount", double.class);
             SchemaField totalField = SchemaField.of(0, "FinalPrice", double.class);
 
-            operationManager.addOperation(markupField, dataFactory -> {
+            schemaSetter.addSchemaField(markupField);
+            schemaSetter.addSchemaField(amountField);
+            schemaSetter.addSchemaField(totalField);
 
-                Setter setter = dataFactory.getSetterNamed("Markup");
+            return dataFactory -> {
+
+                Setter markupSetter = dataFactory.getSetterNamed("Markup");
+                Setter amountSetter = dataFactory.getSetterNamed("MarkupAmount");
+                Setter finalSetter = dataFactory.getSetterNamed("FinalPrice");
 
                 return data -> {
                     double price = priceGetter.getDouble(data);
+
+                    double markup;
                     if (price > 100.0) {
                         markup = 0.3;
                     } else {
                         markup = 0.5;
                     }
-                    setter.setDouble(markup);
+                    markupSetter.setDouble(markup);
+
+                    double markupAmount = price * markup;
+                    amountSetter.setDouble(markupAmount);
+
+                    finalSetter.setDouble(price + markupAmount);
                 };
-            });
-
-            operationManager.addOperation(amountField, dataFactory -> {
-
-                Setter setter = dataFactory.getSetterNamed("MarkupAmount");
-
-                return data -> {
-                    double price = priceGetter.getDouble(data);
-                    markupAmount = price * markup;
-                    setter.setDouble(markupAmount);
-                };
-            });
-
-            operationManager.addOperation(totalField, dataFactory -> {
-
-                Setter setter = dataFactory.getSetterNamed("FinalPrice");
-
-                return data -> {
-                    double price = priceGetter.getDouble(data);
-                    setter.setDouble(price + markupAmount);
-                };
-            });
+            };
         }
     }
 

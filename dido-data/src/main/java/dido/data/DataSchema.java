@@ -77,10 +77,10 @@ public interface DataSchema extends IndexedSchema {
 
     /**
      * Get the index for a given field. If the field does not
-     * exist behaviour is undefined.
+     * exist 0 will be returned.
      *
      * @param name The field.
-     * @return The index of the field.
+     * @return The index of the field, or 0.
      */
     int getIndexNamed(String name);
 

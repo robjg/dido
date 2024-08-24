@@ -62,11 +62,11 @@ public interface SchemaField {
     DataSchema getNestedSchema();
 
     default SchemaField mapToIndex(int toIndex) {
-        return mapTo(toIndex, null);
+        return mapTo(toIndex, getName());
     }
 
     default SchemaField mapToFieldName(String toName) {
-        return mapTo(0, toName);
+        return mapTo(getIndex(), toName);
     }
 
     SchemaField mapTo(int toIndex, String toName);

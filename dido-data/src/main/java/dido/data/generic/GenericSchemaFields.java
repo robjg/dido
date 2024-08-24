@@ -134,8 +134,8 @@ class GenericSchemaFields<F> implements GenericSchemaField.Of<F> {
         @Override
         public SchemaField mapTo(int toIndex, String toName) {
 
-            toName = toName == null ? this.delegate.getName() : toName;
-            F toField = fieldMappingFunc.apply(toName);
+
+            F toField = toName == null ? null : fieldMappingFunc.apply(toName);
 
             return new Extension(delegate.mapTo(toIndex, toName),
                     toField);
@@ -144,9 +144,9 @@ class GenericSchemaFields<F> implements GenericSchemaField.Of<F> {
         @Override
         public GenericSchemaField<F> mapTo(int toIndex, F toField) {
 
-            toField = toField == null ? this.field : toField;
+            String name = toField == null ? null : toField.toString();
 
-            return new Extension(delegate.mapTo(toIndex, toField.toString()),
+            return new Extension(delegate.mapTo(toIndex, name),
                     toField);
         }
 

@@ -152,5 +152,8 @@ public class SchemaFieldTest {
 
         assertThat(schemaField.mapToIndex(42).toString(),
                 is("[42:Foo]=java.lang.Object"));
+
+        assertThat(schemaField.mapTo(0, "Bar").toString(),
+                is("[0:Bar]=java.lang.Object"));
     }
 }

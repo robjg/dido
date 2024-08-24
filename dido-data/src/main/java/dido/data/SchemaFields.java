@@ -77,9 +77,6 @@ class SchemaFields {
         @Override
         public SchemaField mapTo(int toIndex, String toName) {
 
-            toIndex = toIndex == 0 ? getIndex() : toIndex;
-            toName = toName == null ? getName() : toName;
-
             return new Simple(toIndex, toName, getType());
         }
 
