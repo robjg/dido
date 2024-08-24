@@ -12,13 +12,13 @@ import org.oddjob.state.ParentState;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class ValueCopyFactoryTest {
 
@@ -29,6 +29,7 @@ class ValueCopyFactoryTest {
 
         ValueCopyFactory test =  new ValueCopyFactory();
         test.setArooaSession(session);
+        test.setField("Foo");
         test.setType(Integer.class);
         test.setTo("FooAmount");
 
@@ -40,17 +41,20 @@ class ValueCopyFactoryTest {
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
-        Transformer transformer = transformerFactory.create(1, inSchema, schemaSetter);
+        Transformer transformer = transformerFactory.create(inSchema, schemaSetter);
 
-        verify(schemaSetter).setFieldAt(1, "FooAmount", Integer.class);
+        verify(schemaSetter).addField(SchemaField.of(1, "FooAmount", Integer.class));
 
-        DataSetter dataSetter = mock(DataSetter.class);
+        Setter dataSetter = mock(Setter.class);
+        DataFactory<?> dataFactory = mock(DataFactory.class);
+        when(dataFactory.getSetterNamed("FooAmount")).thenReturn(dataSetter);
 
         DidoData data = MapData.of("Foo", "423");
 
-        transformer.transform(data, dataSetter);
+        Consumer<DidoData> consumer = transformer.transform(dataFactory);
+        consumer.accept(data);
 
-        verify(dataSetter).setNamed("FooAmount", 423);
+        verify(dataSetter).set(423);
     }
 
     @Test
@@ -60,6 +64,7 @@ class ValueCopyFactoryTest {
 
         ValueCopyFactory test =  new ValueCopyFactory();
         test.setArooaSession(session);
+        test.setField("Foo");
         test.setType(int.class);
         test.setTo("FooAmount");
 
@@ -71,17 +76,20 @@ class ValueCopyFactoryTest {
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
-        Transformer transformer = transformerFactory.create(1, inSchema, schemaSetter);
+        Transformer transformer = transformerFactory.create(inSchema, schemaSetter);
 
-        verify(schemaSetter).setFieldAt(1, "FooAmount", int.class);
+        verify(schemaSetter).addField(SchemaField.of(1, "FooAmount", int.class));
 
-        DataSetter dataSetter = mock(DataSetter.class);
+        Setter dataSetter = mock(Setter.class);
+        DataFactory<?> dataFactory = mock(DataFactory.class);
+        when(dataFactory.getSetterNamed("FooAmount")).thenReturn(dataSetter);
 
         DidoData data = MapData.of("Foo", "423");
 
-        transformer.transform(data, dataSetter);
+        Consumer<DidoData> consumer = transformer.transform(dataFactory);
+        consumer.accept(data);
 
-        verify(dataSetter).setNamed("FooAmount", 423);
+        verify(dataSetter).set(423);
     }
 
     @Test

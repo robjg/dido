@@ -2,6 +2,7 @@ package dido.oddjob.transform;
 
 import dido.data.DataSchema;
 import dido.data.SchemaBuilder;
+import dido.data.SchemaField;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -16,9 +17,9 @@ class SchemaStrategyTest {
     @Test
     void testNewFields() {
 
-        List<SchemaFieldOptions> fields =
-                List.of(SchemaFieldOptions.of(0, "One", int.class),
-                        SchemaFieldOptions.of(0, "Two", long.class));
+        List<SchemaField> fields =
+                List.of(SchemaField.of(0, "One", int.class),
+                        SchemaField.of(0, "Two", long.class));
 
         DataSchema result =
                 SchemaStrategy.NEW.newSchemaFrom(DataSchema.emptySchema(), fields,
@@ -35,9 +36,9 @@ class SchemaStrategyTest {
     @Test
     void testMergeNewFieldsIntoEmptySchema() {
 
-        List<SchemaFieldOptions> fields =
-                List.of(SchemaFieldOptions.of(0, "One", int.class),
-                        SchemaFieldOptions.of(0, "Two", long.class));
+        List<SchemaField> fields =
+                List.of(SchemaField.of(0, "One", int.class),
+                        SchemaField.of(0, "Two", long.class));
 
         DataSchema result =
                 SchemaStrategy.MERGE.newSchemaFrom(DataSchema.emptySchema(), fields,
@@ -54,9 +55,9 @@ class SchemaStrategyTest {
     @Test
     void testNewFieldsAddedToExisting() {
 
-        List<SchemaFieldOptions> fields =
-                List.of(SchemaFieldOptions.of(0, "One", int.class),
-                        SchemaFieldOptions.of(0, "Two", long.class));
+        List<SchemaField> fields =
+                List.of(SchemaField.of(0, "One", int.class),
+                        SchemaField.of(0, "Two", long.class));
 
         DataSchema existing = SchemaBuilder.newInstance()
                 .addNamedAt(10, "Here", int.class)
@@ -80,10 +81,10 @@ class SchemaStrategyTest {
     @Test
     void testCopyFieldsOutOfOrderExisting() {
 
-        List<SchemaFieldOptions> fields =
-                List.of(SchemaFieldOptions.of(30, "One", Integer.class),
-                        SchemaFieldOptions.of(20, "Two", Long.class),
-                        SchemaFieldOptions.of(10, "Three", Double.class));
+        List<SchemaField> fields =
+                List.of(SchemaField.of(30, "One", Integer.class),
+                        SchemaField.of(20, "Two", Long.class),
+                        SchemaField.of(10, "Three", Double.class));
 
         DataSchema existing = SchemaBuilder.newInstance()
                 .addNamedAt(10, "One", int.class)
@@ -102,7 +103,6 @@ class SchemaStrategyTest {
                 .build();
 
         assertThat(result, is(expected));
-
     }
 
 }

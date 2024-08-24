@@ -54,9 +54,9 @@ class FieldOperationsTest {
             SchemaField amountField = SchemaField.of(0, "MarkupAmount", double.class);
             SchemaField totalField = SchemaField.of(0, "FinalPrice", double.class);
 
-            schemaSetter.addSchemaField(markupField);
-            schemaSetter.addSchemaField(amountField);
-            schemaSetter.addSchemaField(totalField);
+            schemaSetter.addField(markupField);
+            schemaSetter.addField(amountField);
+            schemaSetter.addField(totalField);
 
             return dataFactory -> {
 

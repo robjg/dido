@@ -1,7 +1,8 @@
 package dido.oddjob.transform;
 
 import dido.data.DataSchema;
-import dido.data.IndexedSetter;
+import dido.data.SchemaField;
+import dido.data.Setter;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConverter;
 import org.oddjob.arooa.convert.ConversionFailedException;
@@ -20,7 +21,6 @@ import java.util.function.Function;
  * When the {@link Transform} schema strategy is {@link SchemaStrategy#MERGE} then
  * this acts like Rename which is probably wrong. There should be a rename
  * and also a remove as well.
- *
  * </p>
  */
 public class ValueCopyFactory implements ValueFactory<TransformerFactory>, ArooaSessionAware {
@@ -146,16 +146,15 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
         }
 
         @Override
-        public Transformer create(int position,
-                                                  DataSchema fromSchema,
-                                                  SchemaSetter schemaSetter) {
+        public Transformer create(DataSchema fromSchema,
+                                  SchemaSetter schemaSetter) {
 
             String from;
             int index;
 
             if (this.from == null) {
                 if (this.index == 0) {
-                    index = position;
+                    throw new IllegalArgumentException("Index or Field Name required.");
                 } else {
                     index = this.index;
                 }
@@ -185,25 +184,12 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
 
             Function<Function<Object, Object>, Transformer> transformerFn;
 
-            if (to == null) {
-                // from must also be null
-                logger.info("Creating Copy from {} to {}", index, at);
-                // TODO: need to insure index setting
-                transformerFn = (conversion) ->
-                        (fromData, into) -> ((IndexedSetter) into).setAt(at, conversion.apply(fromData.getAt(index)));
-
-            } else {
-                if (from == null) {
-                    logger.info("Creating Copy from {} to {}", index, to);
-                    transformerFn = (conversion) ->
-                            (fromData, into) -> into.setNamed(to, conversion.apply(fromData.getAt(index)));
-                } else {
-                    logger.info("Creating Copy from {} to {}", from, to);
-                    transformerFn = (conversion) ->
-                            (fromData, into) -> into.setNamed(to, conversion.apply(fromData.getNamed(from)));
-
-                }
-            }
+            logger.info("Creating Copy from {} to {}", from, to);
+            transformerFn = (conversion) ->
+                    into -> {
+                        Setter setter = into.getSetterNamed(to);
+                        return fromData -> setter.set(conversion.apply(fromData.getAt(index)));
+                    };
 
             Class<?> toType;
             Function<Object, Object> conversion;
@@ -225,7 +211,7 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
                 conversion = function;
             }
 
-            schemaSetter.setFieldAt(at, to, toType);
+            schemaSetter.addField(SchemaField.of(at, to, toType));
 
             return transformerFn.apply(conversion);
         }

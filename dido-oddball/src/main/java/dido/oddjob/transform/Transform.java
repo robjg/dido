@@ -7,7 +7,9 @@ import org.oddjob.arooa.utils.ListSetterHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Copies fields from one data item to another allowing for change of field names, indexes
@@ -70,25 +72,25 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
                                                 DataSchema schemaFrom,
                                                 SchemaStrategy partial) {
 
-        int position = 0;
+        List<SchemaField> newFields = new ArrayList<>();
 
-        List<SchemaFieldOptions> newFields = new ArrayList<>();
-
-        SchemaSetter schemaSetter = (index, field, fieldType)
-                -> newFields.add(SchemaFieldOptions.of(index, field, fieldType));
+        SchemaSetter schemaSetter = newFields::add;
 
         List<Transformer> transformers = new ArrayList<>(factories.size());
 
         for (TransformerFactory factory : factories) {
 
-            transformers.add(factory.create(++position, schemaFrom, schemaSetter));
+            transformers.add(factory.create(schemaFrom, schemaSetter));
         }
 
         SchemaStrategy schemaStrategy = Objects.requireNonNullElse(partial, SchemaStrategy.MERGE);
 
         DataSchema schema = schemaStrategy.newSchemaFrom(schemaFrom,
                 newFields,
-                i -> transformers.add((in, setter) -> ((IndexedSetter) setter).setAt(i, in.getAt(i))));
+                i -> transformers.add(into -> {
+                    Setter setter = into.getSetterAt(i);
+                    return in -> setter.set(in.getAt(i));
+                }));
 
         DataFactory<ArrayData> dataFactory = new ArrayDataDataFactoryProvider().provideFactory(schema);
 
@@ -99,17 +101,18 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
 
         private final DataFactory<? extends DidoData> dataFactory;
 
-        private final List<Transformer> transformers;
+        private final List<Consumer<DidoData>> transformers;
 
         TransformerFunctionKnown(DataFactory<? extends DidoData> dataFactory, List<Transformer> transformers) {
             this.dataFactory = dataFactory;
-            this.transformers = transformers;
+            this.transformers = transformers.stream().map(t -> t.transform(dataFactory))
+                    .collect(Collectors.toList());
         }
 
         @Override
         public DidoData apply(DidoData dataIn) {
-            for (Transformer transformer : transformers) {
-                transformer.transform(dataIn, dataFactory.getSetter());
+            for (Consumer<DidoData> transformer : transformers) {
+                transformer.accept(dataIn);
             }
 
             return dataFactory.toData();

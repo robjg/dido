@@ -28,7 +28,7 @@ public class FieldOperations {
 
             SchemaField newField = originalField.mapToIndex(0);
 
-            schemaSetter.addSchemaField(newField);
+            schemaSetter.addField(newField);
 
             return dataFactory ->
                     new Copy(getter, dataFactory.getSetterNamed(originalField.getName()));
@@ -45,7 +45,7 @@ public class FieldOperations {
             SchemaField field = incomingSchema.getSchemaFieldNamed(from)
                     .mapTo(0, finalTo);
 
-            schemaSetter.addSchemaField(field);
+            schemaSetter.addField(field);
 
             Getter getter = incomingSchema.getDataGetterNamed(from);
 
@@ -63,7 +63,7 @@ public class FieldOperations {
             if (field == null) {
                 field = SchemaField.of(0, to, type);
             }
-            schemaSetter.addSchemaField(field);
+            schemaSetter.addField(field);
 
             return dataFactory -> new Compute(dataFactory.getSetterNamed(to), func);
         };
@@ -76,7 +76,7 @@ public class FieldOperations {
             if (field == null) {
                 throw new NoSuchFieldException(name, incomingSchema);
             }
-            schemaSetter.removeNamed(field);
+            schemaSetter.removeField(field);
             return dataFactory -> dataIn -> {
             };
         };

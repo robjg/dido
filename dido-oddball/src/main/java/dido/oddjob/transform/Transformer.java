@@ -1,7 +1,9 @@
 package dido.oddjob.transform;
 
-import dido.data.DataSetter;
+import dido.data.DataFactory;
 import dido.data.DidoData;
+
+import java.util.function.Consumer;
 
 /**
  * Sets one or more items of data in a {@link DidoData} record, possibly using data from the incoming record.
@@ -10,5 +12,5 @@ import dido.data.DidoData;
 @FunctionalInterface
 public interface Transformer {
 
-    void transform(DidoData from, DataSetter into);
+    Consumer<DidoData> transform(DataFactory<?> into);
 }

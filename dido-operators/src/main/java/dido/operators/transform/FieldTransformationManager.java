@@ -51,12 +51,12 @@ public class FieldTransformationManager<D extends DidoData> {
         SchemaSetter  schemaSetter = new SchemaSetter() {
 
             @Override
-            public void addSchemaField(SchemaField schemaField) {
+            public void addField(SchemaField schemaField) {
                 // Ignored
             }
 
             @Override
-            public void removeNamed(SchemaField schemaField) {
+            public void removeField(SchemaField schemaField) {
                 throw new IllegalStateException("Should not be called for copy");
             }
         };
@@ -90,13 +90,13 @@ public class FieldTransformationManager<D extends DidoData> {
 
         SchemaSetter  schemaFactory = new SchemaSetter() {
             @Override
-            public void addSchemaField(SchemaField schemaField) {
+            public void addField(SchemaField schemaField) {
                 copyOperations.remove(incomingSchema.getIndexNamed(schemaField.getName()));
                 schemaFields.add(schemaField);
             }
 
             @Override
-            public void removeNamed(SchemaField schemaField) {
+            public void removeField(SchemaField schemaField) {
                 copyOperations.remove(incomingSchema.getIndexNamed(schemaField.getName()));
             }
         };

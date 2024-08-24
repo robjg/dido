@@ -36,17 +36,17 @@
                     <function>
                         <dido:transform xmlns:dido="oddjob:dido">
                             <of>
-                                <dido:copy>
+                                <dido:copy field="AnInt">
                                     <function>
                                         <bean class="dido.oddjob.transform.ValueCopyFactoryTest$AddOne"/>
                                     </function>
                                 </dido:copy>
-                                <dido:copy>
+                                <dido:copy field="BlankString">
                                     <function>
                                         <bean class="dido.oddjob.transform.ValueCopyFactoryTest$NullWhenBlank"/>
                                     </function>
                                 </dido:copy>
-                                <dido:copy>
+                                <dido:copy field="CsvString">
                                     <type>
                                         <class name="[I"/>
                                     </type>
@@ -54,7 +54,7 @@
                                         <bean class="dido.oddjob.transform.ValueCopyFactoryTest$SplitAndConvert"/>
                                     </function>
                                 </dido:copy>
-                                <dido:copy>
+                                <dido:copy field="NullString">
                                     <function>
                                         <bean class="dido.oddjob.transform.ValueCopyFactoryTest$WhenNull"/>
                                     </function>

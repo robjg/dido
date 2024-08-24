@@ -1,8 +1,10 @@
 package dido.oddjob.transform;
 
+import dido.data.SchemaField;
+
 public interface SchemaSetter {
 
-    void setFieldAt(int index, String field, Class<?> fieldType);
+    void addField(SchemaField field);
 
 
 }

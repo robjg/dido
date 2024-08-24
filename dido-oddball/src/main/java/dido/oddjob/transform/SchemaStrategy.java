@@ -18,25 +18,25 @@ public enum SchemaStrategy {
      */
     NEW {
         public DataSchema newSchemaFrom(DataSchema existingSchema,
-                                        List<SchemaFieldOptions> fields,
+                                        List<SchemaField> fields,
                                         IntConsumer copyThis) {
 
             int index = 0;
 
-            DataSchemaFactory schemaBuilder = DataSchemaFactory.newInstance();
+            DataSchemaFactory schemaFactory = DataSchemaFactory.newInstance();
 
-            for (SchemaFieldOptions fieldOptions : fields) {
+            for (SchemaField schemaField : fields) {
 
-                if (index < fieldOptions.getIndex()) {
-                    index = fieldOptions.getIndex();
+                if (index < schemaField.getIndex()) {
+                    index = schemaField.getIndex();
                 } else {
                     ++index;
                 }
-                schemaBuilder.addSchemaField(
-                        SchemaField.of(index, fieldOptions.getField(), fieldOptions.getType()));
+
+                schemaFactory.addSchemaField(schemaField.mapToIndex(index));
             }
 
-            return schemaBuilder.toSchema();
+            return schemaFactory.toSchema();
         }
     },
 
@@ -46,7 +46,7 @@ public enum SchemaStrategy {
      */
     MERGE {
         public DataSchema newSchemaFrom(DataSchema existingSchema,
-                                        List<SchemaFieldOptions> fields,
+                                        List<SchemaField> fields,
                                         IntConsumer copyThis) {
 
             SortedMap<Integer, SchemaField> fieldsByIndex = new TreeMap<>();
@@ -60,28 +60,25 @@ public enum SchemaStrategy {
             }
 
             int lastIndex = existingSchema.lastIndex();
-            List<SchemaFieldOptions> newFields = new ArrayList<>();
+            List<SchemaField> newFields = new ArrayList<>();
 
-            for (SchemaFieldOptions fieldOptions : fields) {
+            for (SchemaField field : fields) {
 
-                int index = fieldOptions.getIndex();
+                int index = field.getIndex();
                 if (index == 0) {
 
-                    newFields.add(fieldOptions);
+                    newFields.add(field);
                 } else {
-                    fieldsByIndex.put(index, SchemaField.of(
-                            index, fieldOptions.getField(), fieldOptions.getType()));
+                    fieldsByIndex.put(index, field);
                     existingIndices.remove(index);
                     lastIndex = Math.max(lastIndex, index);
                 }
             }
 
-            for (SchemaFieldOptions fieldOptions : newFields) {
+            for (SchemaField field : newFields) {
 
                 ++lastIndex;
-                fieldsByIndex.put(lastIndex,
-                        SchemaField.of(lastIndex, fieldOptions.getField(), fieldOptions.getType()));
-
+                fieldsByIndex.put(lastIndex, field.mapToIndex(lastIndex));
             }
 
             DataSchemaFactory schemaBuilder = DataSchemaFactory.newInstance();
@@ -98,7 +95,7 @@ public enum SchemaStrategy {
     };
 
     abstract public DataSchema newSchemaFrom(DataSchema existingSchema,
-                                             List<SchemaFieldOptions> fields,
+                                             List<SchemaField> fields,
                                              IntConsumer copyThis);
 
 }

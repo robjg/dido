@@ -11,8 +11,8 @@ public interface SchemaSetter {
      *
      * @param schemaField The schema field. Must not be null.
      */
-    void addSchemaField(SchemaField schemaField);
+    void addField(SchemaField schemaField);
 
-    void removeNamed(SchemaField schemaField);
+    void removeField(SchemaField schemaField);
 
 }
