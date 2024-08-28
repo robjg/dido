@@ -3,14 +3,13 @@ package dido.oddjob.transform;
 import dido.data.DataSchema;
 import dido.data.SchemaField;
 import dido.data.Setter;
-import org.oddjob.arooa.ArooaSession;
-import org.oddjob.arooa.ArooaValue;
-import org.oddjob.arooa.convert.ArooaConverter;
-import org.oddjob.arooa.convert.ConversionFailedException;
-import org.oddjob.arooa.convert.NoConversionAvailableException;
+import dido.how.conversion.DefaultConversionProvider;
+import dido.how.conversion.DidoConversionProvider;
 import org.oddjob.arooa.deploy.annotations.ArooaHidden;
-import org.oddjob.arooa.life.ArooaSessionAware;
-import org.oddjob.arooa.types.ValueFactory;
+
+import javax.inject.Inject;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * @oddjob.description Set the value for a field or index. Participates in an {@link Transform}. If
@@ -18,7 +17,7 @@ import org.oddjob.arooa.types.ValueFactory;
  * @oddjob.example Set a value.
  * {@oddjob.xml.resource dido/oddjob/transform/DataSetExample.xml}
  */
-public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaSessionAware {
+public class ValueSetFactory implements Supplier<TransformerFactory> {
 
     /**
      * @oddjob.description The field name.
@@ -36,7 +35,7 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaS
      * @oddjob.description The value.
      * @oddjob.required No. If not specified null will be attempted to be set on the field.
      */
-    private ArooaValue value;
+    private Object value;
 
     /**
      * @oddjob.description The type. A conversion will be attempted from the value to this type.
@@ -45,16 +44,16 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaS
      */
     private Class<?> type;
 
-    private ArooaSession session;
+    private DidoConversionProvider conversionProvider;
 
-    @Override
     @ArooaHidden
-    public void setArooaSession(ArooaSession session) {
-        this.session = session;
+    @Inject
+    public void setConversionProvider(DidoConversionProvider conversionProvider) {
+        this.conversionProvider = conversionProvider;
     }
 
     @Override
-    public TransformerFactory toValue() {
+    public TransformerFactory get() {
         return new CopyTransformerFactory(this);
     }
 
@@ -74,11 +73,11 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaS
         this.index = index;
     }
 
-    public ArooaValue getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(ArooaValue value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
@@ -96,18 +95,19 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaS
 
         private final int index;
 
-        private final ArooaValue value;
+        private final Object value;
 
         private final Class<?> type;
 
-        private final ArooaConverter converter;
+        private final DidoConversionProvider conversionProvider;
 
         CopyTransformerFactory(ValueSetFactory config) {
             this.from = config.field;
             this.index = config.index;
             this.value = config.value;
             this.type = config.type;
-            this.converter = config.session.getTools().getArooaConverter();
+            this.conversionProvider = Objects.requireNonNullElseGet(config.conversionProvider,
+                    DefaultConversionProvider::defaultInstance);
         }
 
         @Override
@@ -135,17 +135,23 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaS
 
             Class<?> toType = type;
             if (type == null) {
-                toType = fromSchema.getTypeAt(at);
+                if (at != 0 && fromSchema.hasIndex(at)) {
+                    toType = fromSchema.getTypeAt(at);
+                }
+                else {
+                    toType = Object.class;
+                }
+
             }
 
             schemaSetter.addField(SchemaField.of(at, to, toType));
 
             final Object value;
-            try {
-                value = converter.convert(this.value, toType);
-            } catch (NoConversionAvailableException | ConversionFailedException e) {
-                throw new IllegalArgumentException("Conversion of " + this.value +
-                        " to " + toType + " failed", e);
+            if (this.value == null) {
+                value = null;
+            }
+            else {
+                value = inferredConversion(this.value, toType);
             }
 
             return into -> {
@@ -153,6 +159,12 @@ public class ValueSetFactory implements ValueFactory<TransformerFactory>, ArooaS
                 return from ->
                     setter.set(value);
             };
+        }
+
+        <F, T> T inferredConversion(F from, Class<T> toType) {
+            //noinspection unchecked
+            return conversionProvider.conversionFor((Class<F>) from.getClass(), toType)
+                    .apply(from);
         }
     }
 

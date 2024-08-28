@@ -21,12 +21,11 @@ class TransformTest {
         ArooaSession session = new StandardArooaSession();
 
         ValueCopyFactory copy1 = new ValueCopyFactory();
-        copy1.setArooaSession(session);
         copy1.setField("fruit");
         copy1.setTo("food");
 
         Transform transform = new Transform();
-        transform.setOf(0, copy1.toValue());
+        transform.setOf(0, copy1.get());
 
         Function<DidoData, DidoData> func = transform.toValue();
 
@@ -53,12 +52,11 @@ class TransformTest {
         ArooaSession session = new StandardArooaSession();
 
         ValueCopyFactory copy1 = new ValueCopyFactory();
-        copy1.setArooaSession(session);
         copy1.setField("fruit");
         copy1.setTo("food");
 
         Transform transform = new Transform();
-        transform.setOf(0, copy1.toValue());
+        transform.setOf(0, copy1.get());
         transform.setStrategy(SchemaStrategy.NEW);
 
         Function<DidoData, DidoData> func = transform.toValue();

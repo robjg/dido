@@ -3,17 +3,16 @@ package dido.oddjob.transform;
 import dido.data.DataSchema;
 import dido.data.SchemaField;
 import dido.data.Setter;
-import org.oddjob.arooa.ArooaSession;
-import org.oddjob.arooa.convert.ArooaConverter;
-import org.oddjob.arooa.convert.ConversionFailedException;
-import org.oddjob.arooa.convert.NoConversionAvailableException;
+import dido.how.conversion.DefaultConversionProvider;
+import dido.how.conversion.DidoConversionProvider;
 import org.oddjob.arooa.deploy.annotations.ArooaHidden;
-import org.oddjob.arooa.life.ArooaSessionAware;
-import org.oddjob.arooa.types.ValueFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Copy a field from one position and/or field and/or type to another.
@@ -23,7 +22,7 @@ import java.util.function.Function;
  * and also a remove as well.
  * </p>
  */
-public class ValueCopyFactory implements ValueFactory<TransformerFactory>, ArooaSessionAware {
+public class ValueCopyFactory implements Supplier<TransformerFactory> {
 
     private static final Logger logger = LoggerFactory.getLogger(ValueCopyFactory.class);
 
@@ -57,16 +56,16 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
      */
     private Function<Object, Object> function;
 
-    private ArooaSession session;
+    private DidoConversionProvider conversionProvider;
 
-    @Override
     @ArooaHidden
-    public void setArooaSession(ArooaSession session) {
-        this.session = session;
+    @Inject
+    public void setConversionProvider(DidoConversionProvider conversionProvider) {
+        this.conversionProvider = conversionProvider;
     }
 
     @Override
-    public TransformerFactory toValue() {
+    public TransformerFactory get() {
         return new CopyTransformerFactory(this);
     }
 
@@ -132,7 +131,7 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
 
         private final Function<Object, Object> function;
 
-        private final ArooaConverter converter;
+        private final DidoConversionProvider conversionProvider;
 
         CopyTransformerFactory(ValueCopyFactory from) {
             this.from = from.field;
@@ -141,8 +140,8 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
             this.at = from.at;
             this.type = from.type;
             this.function = from.function;
-            this.converter = from.session.getTools().getArooaConverter();
-
+            this.conversionProvider = Objects.requireNonNullElseGet(from.conversionProvider,
+                    DefaultConversionProvider::defaultInstance);
         }
 
         @Override
@@ -182,7 +181,7 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
                 to = this.to;
             }
 
-            Function<Function<Object, Object>, Transformer> transformerFn;
+            Function<Function<Object, ?>, Transformer> transformerFn;
 
             logger.info("Creating Copy from {} to {}", from, to);
             transformerFn = (conversion) ->
@@ -191,29 +190,31 @@ public class ValueCopyFactory implements ValueFactory<TransformerFactory>, Arooa
                         return fromData -> setter.set(conversion.apply(fromData.getAt(index)));
                     };
 
+            Class<?> fromType = fromSchema.getTypeAt(index);
             Class<?> toType;
-            Function<Object, Object> conversion;
             if (this.type == null) {
-                conversion = Function.identity();
                 toType = fromSchema.getTypeAt(index);
             } else {
                 toType = type;
-                conversion = in -> {
-                    try {
-                        return converter.convert(in, toType);
-                    } catch (ConversionFailedException | NoConversionAvailableException e) {
-                        throw new IllegalArgumentException(e);
-                    }
-                };
             }
 
-            if (function != null) {
-                conversion = function;
+            Function<Object, ?> function;
+            if (this.function == null) {
+                if (fromType == toType) {
+                    function = Function.identity();
+                }
+                else {
+                    //noinspection unchecked
+                    function =  (Function<Object, ?>) conversionProvider.conversionFor(fromType, toType);
+                }
+            }
+            else {
+                function = this.function;
             }
 
             schemaSetter.addField(SchemaField.of(at, to, toType));
 
-            return transformerFn.apply(conversion);
+            return transformerFn.apply(function);
         }
     }
 

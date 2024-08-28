@@ -28,12 +28,11 @@ class ValueCopyFactoryTest {
         ArooaSession session = new StandardArooaSession();
 
         ValueCopyFactory test =  new ValueCopyFactory();
-        test.setArooaSession(session);
         test.setField("Foo");
         test.setType(Integer.class);
         test.setTo("FooAmount");
 
-        TransformerFactory transformerFactory = test.toValue();
+        TransformerFactory transformerFactory = test.get();
 
         DataSchema inSchema = SchemaBuilder.newInstance()
                 .addNamed("Foo", String.class)
@@ -63,12 +62,11 @@ class ValueCopyFactoryTest {
         ArooaSession session = new StandardArooaSession();
 
         ValueCopyFactory test =  new ValueCopyFactory();
-        test.setArooaSession(session);
         test.setField("Foo");
         test.setType(int.class);
         test.setTo("FooAmount");
 
-        TransformerFactory transformerFactory = test.toValue();
+        TransformerFactory transformerFactory = test.get();
 
         DataSchema inSchema = SchemaBuilder.newInstance()
                 .addNamed("Foo", String.class)

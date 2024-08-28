@@ -5,6 +5,10 @@
 		<arooa:conversion className="dido.oddjob.bean.FromBeanTransformer$Conversions"/>
 		<arooa:conversion className="dido.oddjob.schema.SchemaBean$Conversions"/>
 		<arooa:conversion className="dido.oddjob.schema.SchemaFieldBean$Conversions"/>
+		<arooa:conversion className="dido.oddjob.transform.ValueSetFactory"
+						  methodName="get"/>
+		<arooa:conversion className="dido.oddjob.transform.ValueCopyFactory"
+						  methodName="get"/>
 	</conversions>
 	<values>
 		<arooa:bean-def element='schema'
