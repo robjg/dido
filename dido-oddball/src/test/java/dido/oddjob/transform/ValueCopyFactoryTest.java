@@ -32,7 +32,7 @@ class ValueCopyFactoryTest {
         test.setType(Integer.class);
         test.setTo("FooAmount");
 
-        TransformerFactory transformerFactory = test.get();
+        TransformerDefinition transformerDefinition = test.get();
 
         DataSchema inSchema = SchemaBuilder.newInstance()
                 .addNamed("Foo", String.class)
@@ -40,7 +40,7 @@ class ValueCopyFactoryTest {
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
-        Transformer transformer = transformerFactory.create(inSchema, schemaSetter);
+        TransformerFactory transformerFactory = transformerDefinition.define(inSchema, schemaSetter);
 
         verify(schemaSetter).addField(SchemaField.of(1, "FooAmount", Integer.class));
 
@@ -50,7 +50,7 @@ class ValueCopyFactoryTest {
 
         DidoData data = MapData.of("Foo", "423");
 
-        Consumer<DidoData> consumer = transformer.transform(dataFactory);
+        Consumer<DidoData> consumer = transformerFactory.create(dataFactory);
         consumer.accept(data);
 
         verify(dataSetter).set(423);
@@ -66,7 +66,7 @@ class ValueCopyFactoryTest {
         test.setType(int.class);
         test.setTo("FooAmount");
 
-        TransformerFactory transformerFactory = test.get();
+        TransformerDefinition transformerDefinition = test.get();
 
         DataSchema inSchema = SchemaBuilder.newInstance()
                 .addNamed("Foo", String.class)
@@ -74,7 +74,7 @@ class ValueCopyFactoryTest {
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
-        Transformer transformer = transformerFactory.create(inSchema, schemaSetter);
+        TransformerFactory transformerFactory = transformerDefinition.define(inSchema, schemaSetter);
 
         verify(schemaSetter).addField(SchemaField.of(1, "FooAmount", int.class));
 
@@ -84,7 +84,7 @@ class ValueCopyFactoryTest {
 
         DidoData data = MapData.of("Foo", "423");
 
-        Consumer<DidoData> consumer = transformer.transform(dataFactory);
+        Consumer<DidoData> consumer = transformerFactory.create(dataFactory);
         consumer.accept(data);
 
         verify(dataSetter).set(423);

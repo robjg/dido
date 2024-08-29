@@ -1,23 +1,22 @@
 package dido.oddjob.transform;
 
 import dido.data.*;
-import org.oddjob.arooa.types.ValueFactory;
-import org.oddjob.arooa.utils.ListSetterHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
  * Copies fields from one data item to another allowing for change of field names, indexes
  * and type.
  */
-public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
+public class TransformationFactory implements Supplier<Function<DidoData, DidoData>> {
 
-    private final ListSetterHelper<TransformerFactory> of = new ListSetterHelper<>();
+    private final List<TransformerDefinition> of = new ArrayList<>();
 
     /**
      * Strategy for creating the new schema for outgoing data. Defaults to merge.
@@ -25,13 +24,18 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
     private SchemaStrategy strategy;
 
     @Override
-    public Function<DidoData, DidoData> toValue() {
+    public Function<DidoData, DidoData> get() {
 
-        return new TransformerFunctionInitial(of.getList(), strategy);
+        return new TransformerFunctionInitial(of, strategy);
     }
 
-    public void setOf(int index, TransformerFactory transformer) {
-        this.of.set(index, transformer);
+    public void setOf(int index, TransformerDefinition transformer) {
+        if (transformer == null) {
+            of.remove(index);
+        }
+        else {
+            of.add(index, transformer);
+        }
     }
 
     public SchemaStrategy getStrategy() {
@@ -44,7 +48,7 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
 
     static class TransformerFunctionInitial implements Function<DidoData, DidoData> {
 
-        private final List<TransformerFactory> transformerFactories;
+        private final List<TransformerDefinition> transformerFactories;
 
         private final SchemaStrategy strategy;
 
@@ -52,7 +56,7 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
 
         private DataSchema lastSchema;
 
-        TransformerFunctionInitial(List<TransformerFactory> transformerFactories, SchemaStrategy strategy) {
+        TransformerFunctionInitial(List<TransformerDefinition> transformerFactories, SchemaStrategy strategy) {
             this.transformerFactories = new ArrayList<>(transformerFactories);
             this.strategy = strategy;
         }
@@ -68,7 +72,7 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
         }
     }
 
-    static TransformerFunctionKnown functionFor(List<TransformerFactory> factories,
+    static TransformerFunctionKnown functionFor(List<TransformerDefinition> factories,
                                                 DataSchema schemaFrom,
                                                 SchemaStrategy partial) {
 
@@ -76,25 +80,25 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
 
         SchemaSetter schemaSetter = newFields::add;
 
-        List<Transformer> transformers = new ArrayList<>(factories.size());
+        List<TransformerFactory> transformerFactories = new ArrayList<>(factories.size());
 
-        for (TransformerFactory factory : factories) {
+        for (TransformerDefinition factory : factories) {
 
-            transformers.add(factory.create(schemaFrom, schemaSetter));
+            transformerFactories.add(factory.define(schemaFrom, schemaSetter));
         }
 
         SchemaStrategy schemaStrategy = Objects.requireNonNullElse(partial, SchemaStrategy.MERGE);
 
         DataSchema schema = schemaStrategy.newSchemaFrom(schemaFrom,
                 newFields,
-                i -> transformers.add(into -> {
+                i -> transformerFactories.add(into -> {
                     Setter setter = into.getSetterAt(i);
                     return in -> setter.set(in.getAt(i));
                 }));
 
         DataFactory<ArrayData> dataFactory = new ArrayDataDataFactoryProvider().provideFactory(schema);
 
-        return new TransformerFunctionKnown(dataFactory, transformers);
+        return new TransformerFunctionKnown(dataFactory, transformerFactories);
     }
 
     static class TransformerFunctionKnown implements Function<DidoData, DidoData> {
@@ -103,9 +107,9 @@ public class Transform implements ValueFactory<Function<DidoData, DidoData>> {
 
         private final List<Consumer<DidoData>> transformers;
 
-        TransformerFunctionKnown(DataFactory<? extends DidoData> dataFactory, List<Transformer> transformers) {
+        TransformerFunctionKnown(DataFactory<? extends DidoData> dataFactory, List<TransformerFactory> transformerFactories) {
             this.dataFactory = dataFactory;
-            this.transformers = transformers.stream().map(t -> t.transform(dataFactory))
+            this.transformers = transformerFactories.stream().map(t -> t.create(dataFactory))
                     .collect(Collectors.toList());
         }
 

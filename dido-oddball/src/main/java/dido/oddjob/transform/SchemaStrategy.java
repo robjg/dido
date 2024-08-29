@@ -8,13 +8,13 @@ import java.util.*;
 import java.util.function.IntConsumer;
 
 /**
- * Provided to {@link Transform} to decide how to handle the {@link DataSchema} of the outgoing
+ * Provided to {@link TransformationFactory} to decide how to handle the {@link DataSchema} of the outgoing
  * type.
  */
 public enum SchemaStrategy {
 
     /**
-     * The schema is just created from the {@link Transformer}s used.
+     * The schema is just created from the {@link TransformerFactory}s used.
      */
     NEW {
         public DataSchema newSchemaFrom(DataSchema existingSchema,

@@ -12,12 +12,12 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * @oddjob.description Set the value for a field or index. Participates in an {@link Transform}. If
+ * @oddjob.description Set the value for a field or index. Participates in an {@link TransformationFactory}. If
  * no field or index is specified the index is taken by the position in the transform.
  * @oddjob.example Set a value.
  * {@oddjob.xml.resource dido/oddjob/transform/DataSetExample.xml}
  */
-public class ValueSetFactory implements Supplier<TransformerFactory> {
+public class ValueSetFactory implements Supplier<TransformerDefinition> {
 
     /**
      * @oddjob.description The field name.
@@ -53,7 +53,7 @@ public class ValueSetFactory implements Supplier<TransformerFactory> {
     }
 
     @Override
-    public TransformerFactory get() {
+    public TransformerDefinition get() {
         return new CopyTransformerFactory(this);
     }
 
@@ -89,7 +89,7 @@ public class ValueSetFactory implements Supplier<TransformerFactory> {
         this.type = type;
     }
 
-    static class CopyTransformerFactory implements TransformerFactory {
+    static class CopyTransformerFactory implements TransformerDefinition {
 
         private final String from;
 
@@ -111,8 +111,8 @@ public class ValueSetFactory implements Supplier<TransformerFactory> {
         }
 
         @Override
-        public Transformer create(DataSchema fromSchema,
-                                  SchemaSetter schemaSetter) {
+        public TransformerFactory define(DataSchema fromSchema,
+                                         SchemaSetter schemaSetter) {
 
             int at;
 

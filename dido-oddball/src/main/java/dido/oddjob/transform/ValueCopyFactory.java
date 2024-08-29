@@ -17,12 +17,12 @@ import java.util.function.Supplier;
 /**
  * Copy a field from one position and/or field and/or type to another.
  * <p>
- * When the {@link Transform} schema strategy is {@link SchemaStrategy#MERGE} then
+ * When the {@link TransformationFactory} schema strategy is {@link SchemaStrategy#MERGE} then
  * this acts like Rename which is probably wrong. There should be a rename
  * and also a remove as well.
  * </p>
  */
-public class ValueCopyFactory implements Supplier<TransformerFactory> {
+public class ValueCopyFactory implements Supplier<TransformerDefinition> {
 
     private static final Logger logger = LoggerFactory.getLogger(ValueCopyFactory.class);
 
@@ -65,7 +65,7 @@ public class ValueCopyFactory implements Supplier<TransformerFactory> {
     }
 
     @Override
-    public TransformerFactory get() {
+    public TransformerDefinition get() {
         return new CopyTransformerFactory(this);
     }
 
@@ -117,7 +117,7 @@ public class ValueCopyFactory implements Supplier<TransformerFactory> {
         this.function = function;
     }
 
-    static class CopyTransformerFactory implements TransformerFactory {
+    static class CopyTransformerFactory implements TransformerDefinition {
 
         private final String from;
 
@@ -145,8 +145,8 @@ public class ValueCopyFactory implements Supplier<TransformerFactory> {
         }
 
         @Override
-        public Transformer create(DataSchema fromSchema,
-                                  SchemaSetter schemaSetter) {
+        public TransformerFactory define(DataSchema fromSchema,
+                                         SchemaSetter schemaSetter) {
 
             String from;
             int index;
@@ -181,7 +181,7 @@ public class ValueCopyFactory implements Supplier<TransformerFactory> {
                 to = this.to;
             }
 
-            Function<Function<Object, ?>, Transformer> transformerFn;
+            Function<Function<Object, ?>, TransformerFactory> transformerFn;
 
             logger.info("Creating Copy from {} to {}", from, to);
             transformerFn = (conversion) ->

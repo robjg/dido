@@ -13,7 +13,7 @@ import java.util.function.Function;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class TransformTest {
+class TransformationFactoryTest {
 
     @Test
     void testSimpleFieldCopy() {
@@ -24,10 +24,10 @@ class TransformTest {
         copy1.setField("fruit");
         copy1.setTo("food");
 
-        Transform transform = new Transform();
-        transform.setOf(0, copy1.get());
+        TransformationFactory transformationFactory = new TransformationFactory();
+        transformationFactory.setOf(0, copy1.get());
 
-        Function<DidoData, DidoData> func = transform.toValue();
+        Function<DidoData, DidoData> func = transformationFactory.get();
 
         NamedData data = MapData.of("fruit", "apple", "quantity", 12);
 
@@ -55,11 +55,11 @@ class TransformTest {
         copy1.setField("fruit");
         copy1.setTo("food");
 
-        Transform transform = new Transform();
-        transform.setOf(0, copy1.get());
-        transform.setStrategy(SchemaStrategy.NEW);
+        TransformationFactory transformationFactory = new TransformationFactory();
+        transformationFactory.setOf(0, copy1.get());
+        transformationFactory.setStrategy(SchemaStrategy.NEW);
 
-        Function<DidoData, DidoData> func = transform.toValue();
+        Function<DidoData, DidoData> func = transformationFactory.get();
 
         DidoData data = MapData.of("fruit", "apple", "quantity", 12);
 
@@ -78,9 +78,9 @@ class TransformTest {
     @Test
     void testCopyAll() {
 
-        Transform transform = new Transform();
+        TransformationFactory transformationFactory = new TransformationFactory();
 
-        Function<DidoData, DidoData> func = transform.toValue();
+        Function<DidoData, DidoData> func = transformationFactory.get();
 
         DidoData data = MapData.of("fruit", "apple", "quantity", 12);
 

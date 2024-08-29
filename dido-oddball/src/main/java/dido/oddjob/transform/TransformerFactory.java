@@ -1,24 +1,16 @@
 package dido.oddjob.transform;
 
-import dido.data.DataSchema;
+import dido.data.DataFactory;
+import dido.data.DidoData;
 
+import java.util.function.Consumer;
 
 /**
- * Creates a {@link Transformer}
+ * Sets one or more items of data in a {@link DidoData} record, possibly using data from the incoming record.
  *
  */
+@FunctionalInterface
 public interface TransformerFactory {
 
-    /**
-     * Creates the {@link Transformer}.
-     *
-     * @param fromSchema The incoming data schema.
-     * @param schemaSetter The ability to set part of the outgoing data schema.
-     *
-     * @return The complete Transformer. Not expected to ever be null.
-     */
-    Transformer create(DataSchema fromSchema,
-                       SchemaSetter schemaSetter);
-
-
+    Consumer<DidoData> create(DataFactory<?> into);
 }
