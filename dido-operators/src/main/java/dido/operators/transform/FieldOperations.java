@@ -4,6 +4,7 @@ import dido.data.NoSuchFieldException;
 import dido.data.*;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class FieldOperations {
@@ -14,7 +15,7 @@ public class FieldOperations {
      * @param index The index to copy.
      * @return An Copy Operation Definition.
      */
-    public static FieldOperationDefinition copyAt(int index) {
+    public static TransformerDefinition copyAt(int index) {
 
         return (incomingSchema, schemaSetter) -> {
 
@@ -35,7 +36,7 @@ public class FieldOperations {
         };
     }
 
-    public static FieldOperationDefinition copyNamed(String from, String to) {
+    public static TransformerDefinition copyNamed(String from, String to) {
 
         Objects.requireNonNull(from, "From");
         String finalTo = Objects.requireNonNullElse(to, from);
@@ -53,9 +54,9 @@ public class FieldOperations {
         };
     }
 
-    public static <T> FieldOperationDefinition computeNamed(String to,
-                                                            Class<T> type,
-                                                            Function<? super DidoData, T> func) {
+    public static <T> TransformerDefinition computeNamed(String to,
+                                                         Class<T> type,
+                                                         Function<? super DidoData, T> func) {
 
         return (incomingSchema, schemaSetter) -> {
 
@@ -69,7 +70,7 @@ public class FieldOperations {
         };
     }
 
-    public static FieldOperationDefinition removeNamed(String name) {
+    public static TransformerDefinition removeNamed(String name) {
 
         return (incomingSchema, schemaSetter) -> {
             SchemaField field = incomingSchema.getSchemaFieldNamed(name);
@@ -82,7 +83,7 @@ public class FieldOperations {
         };
     }
 
-    static class Copy implements FieldOperation {
+    static class Copy implements Consumer<DidoData> {
 
         private final Getter getter;
 
@@ -104,7 +105,7 @@ public class FieldOperations {
     }
 
 
-    static class Compute implements FieldOperation {
+    static class Compute implements Consumer<DidoData> {
 
         private final Setter setter;
 

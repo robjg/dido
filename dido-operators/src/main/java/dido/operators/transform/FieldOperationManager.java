@@ -4,7 +4,7 @@ import dido.data.SchemaField;
 
 public interface FieldOperationManager {
 
-    void addOperation(FieldOperationFactory fieldOperationFactory, SchemaField... schemaFields);
+    void addOperation(TransformerFactory transformerFactory, SchemaField... schemaFields);
 
     void removeField(SchemaField schemaField);
 

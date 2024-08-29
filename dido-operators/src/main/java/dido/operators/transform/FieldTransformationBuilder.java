@@ -33,8 +33,8 @@ public class FieldTransformationBuilder<D extends DidoData> {
         return new FieldTransformationBuilder<>(FieldTransformationManager.forSchemaWithCopy(writableSchema));
     }
 
-    public FieldTransformationBuilder<D> addFieldOperation(FieldOperationDefinition fieldOperationDefinition) {
-        fieldOperationTransformation.addOperation(fieldOperationDefinition);
+    public FieldTransformationBuilder<D> addFieldOperation(TransformerDefinition transformerDefinition) {
+        fieldOperationTransformation.addOperation(transformerDefinition);
         return this;
     }
 

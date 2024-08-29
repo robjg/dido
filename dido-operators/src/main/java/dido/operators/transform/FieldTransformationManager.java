@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 public class FieldTransformationManager<D extends DidoData> {
 
@@ -13,7 +14,7 @@ public class FieldTransformationManager<D extends DidoData> {
 
     private final List<SchemaField> schemaFields = new ArrayList<>();
 
-    private final List<FieldOperationFactory> operationFactories = new ArrayList<>();
+    private final List<TransformerFactory> operationFactories = new ArrayList<>();
 
     private final DataSchema incomingSchema;
 
@@ -65,7 +66,7 @@ public class FieldTransformationManager<D extends DidoData> {
 
         for (SchemaField field: incomingSchema.getSchemaFields()) {
 
-            FieldOperationFactory copy = FieldOperations.copyAt(field.getIndex())
+            TransformerFactory copy = FieldOperations.copyAt(field.getIndex())
                     .define(incomingSchema, schemaSetter);
 
             copyOperations.put(field.getIndex(), new FieldAndOpFactory(field, copy));
@@ -78,15 +79,15 @@ public class FieldTransformationManager<D extends DidoData> {
 
         private final SchemaField schemaField;
 
-        private final FieldOperationFactory operationFactory;
+        private final TransformerFactory operationFactory;
 
-        FieldAndOpFactory(SchemaField schemaField, FieldOperationFactory operationFactory) {
+        FieldAndOpFactory(SchemaField schemaField, TransformerFactory operationFactory) {
             this.schemaField = schemaField;
             this.operationFactory = operationFactory;
         }
     }
 
-    public void addOperation(FieldOperationDefinition operation) {
+    public void addOperation(TransformerDefinition operation) {
 
         SchemaSetter  schemaFactory = new SchemaSetter() {
             @Override
@@ -101,7 +102,7 @@ public class FieldTransformationManager<D extends DidoData> {
             }
         };
 
-        FieldOperationFactory factory = operation.define(incomingSchema, schemaFactory);
+        TransformerFactory factory = operation.define(incomingSchema, schemaFactory);
         operationFactories.add(factory);
     }
 
@@ -121,11 +122,11 @@ public class FieldTransformationManager<D extends DidoData> {
 
         DataFactory<D> dataFactory = newSchema.newDataFactory();
 
-        List<FieldOperation> fieldOperations = new ArrayList<>(newSchema.lastIndex());
+        List<Consumer<DidoData>> fieldOperations = new ArrayList<>(newSchema.lastIndex());
         for (FieldAndOpFactory fieldAndOpFactory : copyOperations.values()) {
             fieldOperations.add(fieldAndOpFactory.operationFactory.create(dataFactory));
         }
-        for (FieldOperationFactory operationFactory : operationFactories) {
+        for (TransformerFactory operationFactory : operationFactories) {
             fieldOperations.add(operationFactory.create(dataFactory));
         }
 
@@ -134,13 +135,13 @@ public class FieldTransformationManager<D extends DidoData> {
 
     class TransformImpl implements  Transformation<D> {
 
-        private final List<FieldOperation> operationList;
+        private final List<Consumer<DidoData>> operationList;
 
         private final WritableSchema<D> schema;
 
         private final DataFactory<D> dataFactory;
 
-        TransformImpl(List<FieldOperation> operationList, WritableSchema<D> schema, DataFactory<D> dataFactory) {
+        TransformImpl(List<Consumer<DidoData>> operationList, WritableSchema<D> schema, DataFactory<D> dataFactory) {
             this.operationList = operationList;
             this.schema = schema;
             this.dataFactory = dataFactory;

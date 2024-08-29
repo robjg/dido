@@ -43,10 +43,10 @@ class FieldOperationsTest {
     /**
      * Demo of a more complicated field definition.
      */
-    static class MarkupOperation implements FieldOperationDefinition {
+    static class MarkupOperation implements TransformerDefinition {
 
         @Override
-        public FieldOperationFactory define(DataSchema incomingSchema, SchemaSetter schemaSetter) {
+        public TransformerFactory define(DataSchema incomingSchema, SchemaSetter schemaSetter) {
 
             Getter priceGetter = schema.getDataGetterNamed("Price");
 
