@@ -1,11 +1,10 @@
-package dido.oddjob.transform;
+package dido.operators.transform;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
 import dido.data.Setter;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
-import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +16,6 @@ import java.util.function.Supplier;
 /**
  * Copy a field from one position and/or field and/or type to another.
  * <p>
- * When the {@link TransformationFactory} schema strategy is {@link SchemaStrategy#MERGE} then
- * this acts like Rename which is probably wrong. There should be a rename
- * and also a remove as well.
- * </p>
  */
 public class ValueCopyFactory implements Supplier<TransformerDefinition> {
 
@@ -58,7 +53,6 @@ public class ValueCopyFactory implements Supplier<TransformerDefinition> {
 
     private DidoConversionProvider conversionProvider;
 
-    @ArooaHidden
     @Inject
     public void setConversionProvider(DidoConversionProvider conversionProvider) {
         this.conversionProvider = conversionProvider;
@@ -167,13 +161,6 @@ public class ValueCopyFactory implements Supplier<TransformerDefinition> {
                 }
             }
 
-            int at;
-            if (this.at == 0) {
-                at = index;
-            } else {
-                at = this.at;
-            }
-
             String to;
             if (this.to == null) {
                 to = from;
@@ -212,7 +199,7 @@ public class ValueCopyFactory implements Supplier<TransformerDefinition> {
                 function = this.function;
             }
 
-            schemaSetter.addField(SchemaField.of(at, to, toType));
+            schemaSetter.addField(SchemaField.of(this.at, to, toType));
 
             return transformerFn.apply(function);
         }

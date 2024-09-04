@@ -45,6 +45,17 @@
 
         <dependency>
             <groupId>uk.co.rgordon</groupId>
+            <artifactId>dido-how</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.co.rgordon</groupId>
             <artifactId>dido-csv</artifactId>
             <scope>test</scope>
         </dependency>

@@ -1,5 +1,6 @@
 package dido.operators.transform;
 
+import dido.data.NoSuchFieldException;
 import dido.data.*;
 
 import java.util.ArrayList;
@@ -10,110 +11,117 @@ import java.util.function.Consumer;
 
 public class FieldTransformationManager<D extends DidoData> {
 
-    private final NavigableMap<Integer, FieldAndOpFactory> copyOperations;
+    private final NavigableMap<Integer, SchemaField> indexFields = new TreeMap<>();
 
-    private final List<SchemaField> schemaFields = new ArrayList<>();
+    private final NavigableMap<Integer, TransformerFactory> indexFactories = new TreeMap<>();
 
-    private final List<TransformerFactory> operationFactories = new ArrayList<>();
+    private final List<SchemaField> extraFields = new ArrayList<>();
+
+    private final List<TransformerFactory> extraFactories = new ArrayList<>();
 
     private final DataSchema incomingSchema;
 
     private final WritableSchemaFactory<D> schemaFactory;
 
-    protected FieldTransformationManager(DataSchema incomingSchema,
-                                         WritableSchemaFactory<D> schemaFactory) {
-        this(incomingSchema, schemaFactory, new TreeMap<>());
-    }
+    private Consumer<TransformerFactory> factoryConsumer;
+
+    private final SchemaSetter schemaSetter = new SchemaSetter() {
+        @Override
+        public void addField(SchemaField schemaField) {
+            int oldIndex = incomingSchema.getIndexNamed(schemaField.getName());
+
+            if (oldIndex != 0) {
+                indexFields.remove(oldIndex);
+                indexFactories.remove(oldIndex);
+            }
+
+            int newIndex = schemaField.getIndex();
+
+            if (newIndex == 0) {
+                extraFields.add(schemaField);
+                factoryConsumer = extraFactories::add;
+            }
+            else {
+                indexFields.put(newIndex, schemaField);
+                factoryConsumer = factory -> {
+                    indexFactories.put(newIndex, factory);
+                    // reset the consumer in case the next operation doesn't set
+                    // a schema field.
+                    factoryConsumer = extraFactories::add;
+                };
+            }
+        }
+
+        @Override
+        public void removeField(SchemaField schemaField) {
+
+            int oldIndex = incomingSchema.getIndexNamed(schemaField.getName());
+
+            if (oldIndex == 0) {
+                throw new NoSuchFieldException(schemaField.getName(), incomingSchema);
+            }
+
+            indexFields.remove(oldIndex);
+            indexFactories.remove(oldIndex);
+
+            factoryConsumer = factory-> {
+                // Ignore this factory and reset the consumer in case the next operation
+                // doesn't set a schema field.
+                factoryConsumer = extraFactories::add;
+            };
+        }
+    };
 
     protected FieldTransformationManager(DataSchema incomingSchema,
-                                         WritableSchemaFactory<D> schemaFactory,
-                                         NavigableMap<Integer, FieldAndOpFactory> copyOperations) {
+                                         WritableSchemaFactory<D> schemaFactory) {
         this.incomingSchema = incomingSchema;
         this.schemaFactory = schemaFactory;
-        this.copyOperations = copyOperations;
     }
 
     public static <D extends DidoData>
-    FieldTransformationManager<D> forTransformableSchema(WritableSchema<D> incomingSchema) {
+    FieldTransformationManager<D> forWriteableSchema(WritableSchema<D> incomingSchema) {
         return new FieldTransformationManager<>(incomingSchema, incomingSchema.newSchemaFactory());
     }
 
     public static <D extends DidoData>
     FieldTransformationManager<D> forSchema(DataSchema incomingSchema,
-                                               WritableSchemaFactory<D> schemaFactory) {
+                                            WritableSchemaFactory<D> schemaFactory) {
         return new FieldTransformationManager<>(incomingSchema, schemaFactory);
     }
 
     public static <D extends DidoData>
-    FieldTransformationManager<D> forSchemaWithCopy(WritableSchema<D> incomingSchema) {
-
-        WritableSchemaFactory<D> schemaFactory = incomingSchema.newSchemaFactory();
-
-        SchemaSetter  schemaSetter = new SchemaSetter() {
-
-            @Override
-            public void addField(SchemaField schemaField) {
-                // Ignored
-            }
-
-            @Override
-            public void removeField(SchemaField schemaField) {
-                throw new IllegalStateException("Should not be called for copy");
-            }
-        };
-
-        NavigableMap<Integer, FieldAndOpFactory> copyOperations = new TreeMap<>();
-
-        for (SchemaField field: incomingSchema.getSchemaFields()) {
-
-            TransformerFactory copy = FieldOperations.copyAt(field.getIndex())
-                    .define(incomingSchema, schemaSetter);
-
-            copyOperations.put(field.getIndex(), new FieldAndOpFactory(field, copy));
-        }
-
-        return new FieldTransformationManager<>(incomingSchema, schemaFactory, copyOperations);
+    FieldTransformationManager<D> forWritableSchemaWithCopy(WritableSchema<D> incomingSchema) {
+        return forSchemaWithCopy(incomingSchema, incomingSchema.newSchemaFactory());
     }
 
-    protected static class FieldAndOpFactory {
+    public static <D extends DidoData>
+    FieldTransformationManager<D> forSchemaWithCopy(DataSchema incomingSchema,
+                                            WritableSchemaFactory<D> schemaFactory) {
 
-        private final SchemaField schemaField;
+        FieldTransformationManager<D> transformationManager =
+                new FieldTransformationManager<>(incomingSchema, schemaFactory);
 
-        private final TransformerFactory operationFactory;
+        for (SchemaField field : incomingSchema.getSchemaFields()) {
 
-        FieldAndOpFactory(SchemaField schemaField, TransformerFactory operationFactory) {
-            this.schemaField = schemaField;
-            this.operationFactory = operationFactory;
+            transformationManager.addOperation(FieldOperations.copyAt(field.getIndex()));
         }
+
+        return transformationManager;
     }
 
     public void addOperation(TransformerDefinition operation) {
 
-        SchemaSetter  schemaFactory = new SchemaSetter() {
-            @Override
-            public void addField(SchemaField schemaField) {
-                copyOperations.remove(incomingSchema.getIndexNamed(schemaField.getName()));
-                schemaFields.add(schemaField);
-            }
-
-            @Override
-            public void removeField(SchemaField schemaField) {
-                copyOperations.remove(incomingSchema.getIndexNamed(schemaField.getName()));
-            }
-        };
-
-        TransformerFactory factory = operation.define(incomingSchema, schemaFactory);
-        operationFactories.add(factory);
+        TransformerFactory factory = operation.define(incomingSchema, schemaSetter);
+        factoryConsumer.accept(factory);
     }
 
     public Transformation<D> createTransformation() {
 
         int index = 0;
-        for (FieldAndOpFactory fieldAndOpFactory : copyOperations.values()) {
-            SchemaField newField = fieldAndOpFactory.schemaField.mapToIndex(++index);
-            schemaFactory.addSchemaField(newField);
+        for (SchemaField schemaField : indexFields.values()) {
+            schemaFactory.addSchemaField(schemaField.mapToIndex(++index));
         }
-        for (SchemaField schemaField : schemaFields) {
+        for (SchemaField schemaField : extraFields) {
             SchemaField newField = schemaField.mapToIndex(++index);
             schemaFactory.addSchemaField(newField);
         }
@@ -123,17 +131,17 @@ public class FieldTransformationManager<D extends DidoData> {
         DataFactory<D> dataFactory = newSchema.newDataFactory();
 
         List<Consumer<DidoData>> fieldOperations = new ArrayList<>(newSchema.lastIndex());
-        for (FieldAndOpFactory fieldAndOpFactory : copyOperations.values()) {
-            fieldOperations.add(fieldAndOpFactory.operationFactory.create(dataFactory));
+        for (TransformerFactory operationFactory : indexFactories.values()) {
+            fieldOperations.add(operationFactory.create(dataFactory));
         }
-        for (TransformerFactory operationFactory : operationFactories) {
+        for (TransformerFactory operationFactory : extraFactories) {
             fieldOperations.add(operationFactory.create(dataFactory));
         }
 
         return new TransformImpl(fieldOperations, newSchema, dataFactory);
     }
 
-    class TransformImpl implements  Transformation<D> {
+    class TransformImpl implements Transformation<D> {
 
         private final List<Consumer<DidoData>> operationList;
 

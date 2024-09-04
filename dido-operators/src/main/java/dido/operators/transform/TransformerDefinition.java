@@ -10,6 +10,13 @@ import dido.data.DataSchema;
  */
 public interface TransformerDefinition {
 
-    TransformerFactory define(DataSchema incomingSchema,
+    /**
+     * Creates the {@link TransformerFactory}.
+     *
+     * @param incomingSchema The incoming data schema.
+     * @param schemaSetter The ability to set part of the outgoing data schema.
+     *
+     * @return The complete Transformer. Not expected to ever be null.
+     */    TransformerFactory define(DataSchema incomingSchema,
                               SchemaSetter schemaSetter);
 }

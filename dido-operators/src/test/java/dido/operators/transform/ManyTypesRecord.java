@@ -1,4 +1,4 @@
-package dido.oddjob.transform;
+package dido.operators.transform;
 
 import dido.data.ArrayData;
 import dido.data.DataSchema;

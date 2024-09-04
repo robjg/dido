@@ -1,12 +1,7 @@
-package dido.oddjob.transform;
+package dido.operators.transform;
 
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.MapData;
-import dido.data.NamedData;
+import dido.data.*;
 import org.junit.jupiter.api.Test;
-import org.oddjob.arooa.ArooaSession;
-import org.oddjob.arooa.standard.StandardArooaSession;
 
 import java.util.function.Function;
 
@@ -18,14 +13,13 @@ class TransformationFactoryTest {
     @Test
     void testSimpleFieldCopy() {
 
-        ArooaSession session = new StandardArooaSession();
-
         ValueCopyFactory copy1 = new ValueCopyFactory();
         copy1.setField("fruit");
         copy1.setTo("food");
 
         TransformationFactory transformationFactory = new TransformationFactory();
         transformationFactory.setOf(0, copy1.get());
+        transformationFactory.setWithCopy(true);
 
         Function<DidoData, DidoData> func = transformationFactory.get();
 
@@ -33,23 +27,21 @@ class TransformationFactoryTest {
 
         DidoData result = func.apply(data);
 
-        DataSchema schema = result.getSchema();
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
+                .addNamed("fruit", String.class)
+                .addNamed("quantity", Integer.class)
+                .addNamed("food", String.class)
+                .build();
 
-        assertThat(schema.getFieldNameAt(1), is("food"));
-        assertThat(schema.getTypeNamed("food"), is(String.class));
-        assertThat(schema.getFieldNameAt(2), is("quantity"));
-        assertThat(schema.getTypeNamed("quantity"), is(Integer.class));
+        assertThat(result.getSchema(), is(expectedSchema));
 
-        assertThat(result.getNamed("food"), is("apple"));
-        assertThat(result.getAt(1), is("apple"));
-        assertThat(result.getIntNamed("quantity"), is(12));
-        assertThat(result.getAt(2), is(12));
+        DidoData expectedData = ArrayData.valuesFor(expectedSchema).of("apple", 12, "apple");
+
+        assertThat(result, is(expectedData));
     }
 
     @Test
     void testPartialFieldCopy() {
-
-        ArooaSession session = new StandardArooaSession();
 
         ValueCopyFactory copy1 = new ValueCopyFactory();
         copy1.setField("fruit");
@@ -57,7 +49,7 @@ class TransformationFactoryTest {
 
         TransformationFactory transformationFactory = new TransformationFactory();
         transformationFactory.setOf(0, copy1.get());
-        transformationFactory.setStrategy(SchemaStrategy.NEW);
+        transformationFactory.setWithCopy(false);
 
         Function<DidoData, DidoData> func = transformationFactory.get();
 
@@ -79,6 +71,7 @@ class TransformationFactoryTest {
     void testCopyAll() {
 
         TransformationFactory transformationFactory = new TransformationFactory();
+        transformationFactory.setWithCopy(true);
 
         Function<DidoData, DidoData> func = transformationFactory.get();
 

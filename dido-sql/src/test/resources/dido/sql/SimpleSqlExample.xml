@@ -69,7 +69,7 @@ Grape,55]]>
                         </dido:data-in>
                         <bus:map>
                             <function>
-                                <dido:transform xmlns:dido="oddjob:dido"/>
+                                <dido:transform withCopy="true" xmlns:dido="oddjob:dido"/>
                             </function>
                         </bus:map>
                         <bus:collect id="results"/>

@@ -1,9 +1,9 @@
 package dido.operators.transform;
 
-import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.WritableSchema;
+import dido.data.WritableSchemaFactory;
 
 public class FieldTransformationBuilder<D extends DidoData> {
 
@@ -14,23 +14,29 @@ public class FieldTransformationBuilder<D extends DidoData> {
     }
 
     public static <D extends DidoData>
-    FieldTransformationBuilder<D> forSchema(DataSchema incomingSchema, DataFactoryProvider<D> dataFactoryProvider) {
+    FieldTransformationBuilder<D> forSchema(DataSchema incomingSchema, WritableSchemaFactory<D> schemaFactory) {
 
         return new FieldTransformationBuilder<>(
-                FieldTransformationManager.forSchema(incomingSchema,
-                        dataFactoryProvider.getSchemaFactory()));
+                FieldTransformationManager.forSchema(incomingSchema, schemaFactory));
     }
 
     public static <D extends DidoData>
-    FieldTransformationBuilder<D> forTransformableSchema(WritableSchema<D> writableSchema) {
+    FieldTransformationBuilder<D> forWritableSchema(WritableSchema<D> writableSchema) {
 
-        return new FieldTransformationBuilder<>(FieldTransformationManager.forTransformableSchema(writableSchema));
+        return new FieldTransformationBuilder<>(FieldTransformationManager.forWriteableSchema(writableSchema));
     }
 
     public static <D extends DidoData, S extends WritableSchema<D>>
-    FieldTransformationBuilder<D> forSchemaWithCopy(WritableSchema<D> writableSchema) {
+    FieldTransformationBuilder<D> forWritableSchemaWithCopy(WritableSchema<D> writableSchema) {
 
-        return new FieldTransformationBuilder<>(FieldTransformationManager.forSchemaWithCopy(writableSchema));
+        return new FieldTransformationBuilder<>(FieldTransformationManager.forWritableSchemaWithCopy(writableSchema));
+    }
+
+    public static <D extends DidoData, S extends WritableSchema<D>>
+    FieldTransformationBuilder<D> forSchemaWithCopy(DataSchema incomingSchema, WritableSchemaFactory<D> schemaFactory) {
+
+        return new FieldTransformationBuilder<>(FieldTransformationManager
+                .forSchemaWithCopy(incomingSchema, schemaFactory));
     }
 
     public FieldTransformationBuilder<D> addFieldOperation(TransformerDefinition transformerDefinition) {

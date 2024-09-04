@@ -7,16 +7,16 @@
                     <values>
                         <list>
                             <values>
-                                <bean class="dido.oddjob.bean.FruitData" price="27.2" qty="5" type="Apple"/>
-                                <bean class="dido.oddjob.bean.FruitData" price="31.6" qty="10" type="Orange"/>
-                                <bean class="dido.oddjob.bean.FruitData" price="22.1" qty="7" type="Pear"/>
+                                <bean class="dido.operators.transform.FruitData" price="27.2" qty="5" type="Apple"/>
+                                <bean class="dido.operators.transform.FruitData" price="31.6" qty="10" type="Orange"/>
+                                <bean class="dido.operators.transform.FruitData" price="22.1" qty="7" type="Pear"/>
                             </values>
                         </list>
                     </values>
                 </bus:driver>
                 <bus:map>
                     <function>
-                        <dido:transform xmlns:dido="oddjob:dido">
+                        <dido:transform xmlns:dido="oddjob:dido" withCopy="true">
                             <of>
                                 <dido:set field="qty">
                                     <value>

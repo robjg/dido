@@ -78,6 +78,12 @@
 
         <dependency>
             <groupId>uk.co.rgordon</groupId>
+            <artifactId>dido-operators</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.co.rgordon</groupId>
             <artifactId>dido-csv</artifactId>
             <scope>test</scope>
         </dependency>

@@ -1,4 +1,4 @@
-package dido.oddjob.transform;
+package dido.operators.transform;
 
 import dido.data.*;
 import org.junit.jupiter.api.Test;
@@ -22,10 +22,9 @@ import static org.mockito.Mockito.*;
 
 class ValueCopyFactoryTest {
 
+
     @Test
     void testConvertingStringToIntegerType() {
-
-        ArooaSession session = new StandardArooaSession();
 
         ValueCopyFactory test =  new ValueCopyFactory();
         test.setField("Foo");
@@ -42,7 +41,7 @@ class ValueCopyFactoryTest {
 
         TransformerFactory transformerFactory = transformerDefinition.define(inSchema, schemaSetter);
 
-        verify(schemaSetter).addField(SchemaField.of(1, "FooAmount", Integer.class));
+        verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", Integer.class));
 
         Setter dataSetter = mock(Setter.class);
         DataFactory<?> dataFactory = mock(DataFactory.class);
@@ -76,7 +75,7 @@ class ValueCopyFactoryTest {
 
         TransformerFactory transformerFactory = transformerDefinition.define(inSchema, schemaSetter);
 
-        verify(schemaSetter).addField(SchemaField.of(1, "FooAmount", int.class));
+        verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", int.class));
 
         Setter dataSetter = mock(Setter.class);
         DataFactory<?> dataFactory = mock(DataFactory.class);
@@ -146,29 +145,29 @@ class ValueCopyFactoryTest {
 
         DidoData result1 = lookup.lookup("results.list.value[0]", DidoData.class);
 
-
         DataSchema expectedSchema = SchemaBuilder.newInstance()
-                .addNamed("SomeOne", int.class)
+                .addNamed("One", int.class)
                 .addNamed("Two", int.class)
-                .addNamed("SomeThree", int.class)
+                .addNamed("Three", int.class)
                 .addNamed("Four", int.class)
                 .addNamed("Five", int.class)
-                .addNamed("SomeSix", int.class)
+                .addNamed("Six", int.class)
                 .addNamed("Seven", int.class)
+                .addNamed("SomeSix", int.class)
+                .addNamed("SomeThree", int.class)
+                .addNamed("SomeOne", int.class)
                 .build();
-
 
         DataSchema schema = result1.getSchema();
 
         assertThat(schema, is(expectedSchema));
 
         DidoData expectedData = ArrayData.valuesFor(schema)
-                .of(1, 2, 3, 4, 5, 6,  7);
+                .of(1, 2, 3, 4, 5, 6, 7, 6, 3, 1);
 
         assertThat(result1, is(expectedData));
 
         oddjob.destroy();
-
     }
 
     @Test

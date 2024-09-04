@@ -1,11 +1,8 @@
-package dido.oddjob.transform;
+package dido.operators.transform;
 
 import dido.data.DataSchema;
-import dido.data.SchemaField;
-import dido.data.Setter;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
-import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 
 import javax.inject.Inject;
 import java.util.Objects;
@@ -26,12 +23,6 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
     private String field;
 
     /**
-     * @oddjob.description The index.
-     * @oddjob.required No
-     */
-    private int index;
-
-    /**
      * @oddjob.description The value.
      * @oddjob.required No. If not specified null will be attempted to be set on the field.
      */
@@ -44,9 +35,12 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
      */
     private Class<?> type;
 
+    /**
+     * @oddjob.description A Conversion provider that will be used to convert the value to the type.
+     * @oddjob.required No. Defaults to a simple one.
+     */
     private DidoConversionProvider conversionProvider;
 
-    @ArooaHidden
     @Inject
     public void setConversionProvider(DidoConversionProvider conversionProvider) {
         this.conversionProvider = conversionProvider;
@@ -63,14 +57,6 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
 
     public void setField(String field) {
         this.field = field;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
     }
 
     public Object getValue() {
@@ -91,9 +77,7 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
 
     static class CopyTransformerFactory implements TransformerDefinition {
 
-        private final String from;
-
-        private final int index;
+        private final String field;
 
         private final Object value;
 
@@ -102,8 +86,7 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
         private final DidoConversionProvider conversionProvider;
 
         CopyTransformerFactory(ValueSetFactory config) {
-            this.from = config.field;
-            this.index = config.index;
+            this.field = config.field;
             this.value = config.value;
             this.type = config.type;
             this.conversionProvider = Objects.requireNonNullElseGet(config.conversionProvider,
@@ -114,37 +97,21 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
         public TransformerFactory define(DataSchema fromSchema,
                                          SchemaSetter schemaSetter) {
 
-            int at;
+            int index = fromSchema.getIndexNamed(
+                    Objects.requireNonNull(field, "Field Name must be provided"));
 
-            if (this.index == 0) {
-                if (this.from == null) {
-                    throw new IllegalArgumentException("Index or Field Name required.");
-                } else {
-                    at = fromSchema.getIndexNamed(this.from);
-                }
-            } else {
-                at = this.index;
-            }
-
-            String to;
-            if (this.from == null) {
-                to = fromSchema.getFieldNameAt(at);
-            } else {
-                to = from;
-            }
-
-            Class<?> toType = type;
+            Class<?> toType;
             if (type == null) {
-                if (at != 0 && fromSchema.hasIndex(at)) {
-                    toType = fromSchema.getTypeAt(at);
-                }
-                else {
+                if (index == 0) {
                     toType = Object.class;
                 }
-
+                else {
+                    toType = fromSchema.getTypeAt(index);
+                }
             }
-
-            schemaSetter.addField(SchemaField.of(at, to, toType));
+            else {
+                toType = type;
+            }
 
             final Object value;
             if (this.value == null) {
@@ -154,11 +121,7 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
                 value = inferredConversion(this.value, toType);
             }
 
-            return into -> {
-                Setter setter = into.getSetterAt(at);
-                return from ->
-                    setter.set(value);
-            };
+            return FieldOperations.setNamed(field, value, toType).define(fromSchema, schemaSetter);
         }
 
         <F, T> T inferredConversion(F from, Class<T> toType) {

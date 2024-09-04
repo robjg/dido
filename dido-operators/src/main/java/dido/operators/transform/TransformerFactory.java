@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 /**
  * Created by {@link TransformerDefinition}
  */
+@FunctionalInterface
 public interface TransformerFactory {
 
     Consumer<DidoData> create(DataFactory<?> dataFactory);

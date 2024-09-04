@@ -5,12 +5,6 @@
 		<arooa:conversion className="dido.oddjob.bean.FromBeanTransformer$Conversions"/>
 		<arooa:conversion className="dido.oddjob.schema.SchemaBean$Conversions"/>
 		<arooa:conversion className="dido.oddjob.schema.SchemaFieldBean$Conversions"/>
-		<arooa:conversion className="dido.oddjob.transform.TransformationFactory"
-						  methodName="get"/>
-		<arooa:conversion className="dido.oddjob.transform.ValueSetFactory"
-						  methodName="get"/>
-		<arooa:conversion className="dido.oddjob.transform.ValueCopyFactory"
-						  methodName="get"/>
 	</conversions>
 	<values>
 		<arooa:bean-def element='schema'
@@ -76,48 +70,6 @@
 		    className='dido.oddjob.bean.ToBeanTransformer'/>
 		<arooa:bean-def element='from-bean'
 						className='dido.oddjob.bean.FromBeanTransformer'/>
-		<arooa:bean-def element='transform'
-						className='dido.oddjob.transform.TransformationFactory'/>
-		<arooa:bean-def element='copy'
-						className='dido.oddjob.transform.ValueCopyFactory'>
-			<design>
-				<design:form xmlns:design="arooa:design">
-					<formItems>
-						<design:group bordered="true" title="From">
-							<formItems>
-								<design:text property="index" title="Index"/>
-								<design:text property="field" title="Field"/>
-							</formItems>
-						</design:group>
-						<design:group bordered="true" title="To">
-							<formItems>
-								<design:text property="at" title="Index"/>
-								<design:text property="to" title="Field"/>
-								<design:single property="type" title="Type"/>
-								<design:single property="function" title="Function"/>
-							</formItems>
-						</design:group>
-					</formItems>
-				</design:form>
-			</design>
-		</arooa:bean-def>
-		<arooa:bean-def element='set'
-						className='dido.oddjob.transform.ValueSetFactory'>
-			<design>
-				<design:form xmlns:design="arooa:design">
-					<formItems>
-						<design:group bordered="true" title="Properties">
-							<formItems>
-								<design:text property="index" title="Index"/>
-								<design:text property="field" title="Field"/>
-								<design:single property="value" title="Value"/>
-								<design:single property="type" title="Type"/>
-							</formItems>
-						</design:group>
-					</formItems>
-				</design:form>
-			</design>
-		</arooa:bean-def>
 	</values>
 	<components>
 		<arooa:bean-def element='converter'

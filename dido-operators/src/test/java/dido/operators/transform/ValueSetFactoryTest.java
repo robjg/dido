@@ -1,7 +1,9 @@
-package dido.oddjob.transform;
+package dido.operators.transform;
 
+import dido.data.ArrayData;
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
@@ -39,22 +41,25 @@ class ValueSetFactoryTest {
 
         DataSchema schema = result1.getSchema();
 
-        assertThat(schema.getFieldNameAt(1), is("type"));
-        assertThat(schema.getTypeNamed("type"), is(String.class));
-        assertThat(schema.getFieldNameAt(2), is("qty"));
-        assertThat(schema.getTypeNamed("qty"), is(int.class));
-        assertThat(schema.getFieldNameAt(3), is("price"));
-        assertThat(schema.getTypeNamed("price"), is(double.class));
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
+                .addNamed("type", String.class)
+                .addNamed("qty", int.class)
+                .addNamed("price", double.class)
+                .build();
 
-        assertThat(result1.getNamed("type"), is("Apple"));
-        assertThat(result1.getIntNamed("qty"), is(20));
-        assertThat(result1.getDoubleNamed("price"), is(27.2));
+        assertThat(schema, is(expectedSchema));
+
+        DidoData expectedData1 = ArrayData.valuesFor(expectedSchema)
+                        .of("Apple", 20, 27.2);
+
+        assertThat(result1, is(expectedData1));
 
         DidoData result2 = results.get(1);
 
-        assertThat(result2.getAt(1), is("Orange"));
-        assertThat(result2.getIntAt(2), is(20));
-        assertThat(result2.getDoubleAt(3), is(31.6));
+        DidoData expectedData2 = ArrayData.valuesFor(expectedSchema)
+                .of("Orange", 20, 31.6);
+
+        assertThat(result2, is(expectedData2));
 
         oddjob.destroy();
     }

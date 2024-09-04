@@ -5,6 +5,12 @@
 						  methodName="get"/>
 		<arooa:conversion className="dido.operators.FlattenType"
 						  methodName="get"/>
+		<arooa:conversion className="dido.operators.transform.TransformationFactory"
+						  methodName="get"/>
+		<arooa:conversion className="dido.operators.transform.ValueSetFactory"
+						  methodName="get"/>
+		<arooa:conversion className="dido.operators.transform.ValueCopyFactory"
+						  methodName="get"/>
 	</conversions>
 	<values>
 		<arooa:bean-def element='left-join' className='dido.operators.LeftStreamJoinType'>
@@ -49,6 +55,47 @@
 			<properties>
 				<arooa:property name="fields" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
 			</properties>
+		</arooa:bean-def>
+		<arooa:bean-def element='transform'
+						className='dido.operators.transform.TransformationFactory'/>
+		<arooa:bean-def element='set'
+						className='dido.operators.transform.ValueSetFactory'>
+			<design>
+				<design:form xmlns:design="arooa:design">
+					<formItems>
+						<design:group bordered="true" title="Properties">
+							<formItems>
+								<design:text property="field" title="Field"/>
+								<design:single property="value" title="Value"/>
+								<design:single property="type" title="Type"/>
+							</formItems>
+						</design:group>
+					</formItems>
+				</design:form>
+			</design>
+		</arooa:bean-def>
+		<arooa:bean-def element='copy'
+						className='dido.operators.transform.ValueCopyFactory'>
+			<design>
+				<design:form xmlns:design="arooa:design">
+					<formItems>
+						<design:group bordered="true" title="From">
+							<formItems>
+								<design:text property="index" title="Index"/>
+								<design:text property="field" title="Field"/>
+							</formItems>
+						</design:group>
+						<design:group bordered="true" title="To">
+							<formItems>
+								<design:text property="at" title="Index"/>
+								<design:text property="to" title="Field"/>
+								<design:single property="type" title="Type"/>
+								<design:single property="function" title="Function"/>
+							</formItems>
+						</design:group>
+					</formItems>
+				</design:form>
+			</design>
 		</arooa:bean-def>
 	</values>
 	<components>

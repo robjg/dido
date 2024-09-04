@@ -13,7 +13,7 @@ public class FieldOperations {
      * Create an operation that copies the field at an index.
      *
      * @param index The index to copy.
-     * @return An Copy Operation Definition.
+     * @return A Copy Operation Definition.
      */
     public static TransformerDefinition copyAt(int index) {
 
@@ -27,9 +27,32 @@ public class FieldOperations {
                 throw new NoSuchFieldException(index, incomingSchema);
             }
 
-            SchemaField newField = originalField.mapToIndex(0);
+            schemaSetter.addField(originalField);
 
-            schemaSetter.addField(newField);
+            return dataFactory ->
+                    new Copy(getter, dataFactory.getSetterNamed(originalField.getName()));
+        };
+    }
+
+    /**
+     * Create an operation that copies the field at an index.
+     *
+     * @param name The field name to copy.
+     * @return A Copy Operation Definition.
+     */
+    public static TransformerDefinition copyNamed(String name) {
+
+        return (incomingSchema, schemaSetter) -> {
+
+            Getter getter = incomingSchema.getDataGetterNamed(name);
+
+            SchemaField originalField = incomingSchema.getSchemaFieldNamed(name);
+
+            if (originalField == null) {
+                throw new NoSuchFieldException(name, incomingSchema);
+            }
+
+            schemaSetter.addField(originalField);
 
             return dataFactory ->
                     new Copy(getter, dataFactory.getSetterNamed(originalField.getName()));
@@ -55,8 +78,8 @@ public class FieldOperations {
     }
 
     public static <T> TransformerDefinition computeNamed(String to,
-                                                         Class<T> type,
-                                                         Function<? super DidoData, T> func) {
+                                                         Function<? super DidoData, ? extends T> func,
+                                                         Class<T> type) {
 
         return (incomingSchema, schemaSetter) -> {
 
@@ -69,6 +92,78 @@ public class FieldOperations {
             return dataFactory -> new Compute(dataFactory.getSetterNamed(to), func);
         };
     }
+
+    public static TransformerDefinition setNamed(String to,
+                                                 Object value) {
+
+        return (incomingSchema, schemaSetter) -> {
+
+            SchemaField field = incomingSchema.getSchemaFieldNamed(to);
+            if (field == null) {
+                throw new NoSuchFieldException(to, incomingSchema);
+            }
+
+            schemaSetter.addField(field);
+
+            return setterFactoryFor(to, value, field.getType());
+        };
+    }
+
+    public static TransformerDefinition setNamed(String to,
+                                                 Object value,
+                                                 Class<?> type) {
+
+        return (incomingSchema, schemaSetter) -> {
+
+            SchemaField field = incomingSchema.getSchemaFieldNamed(to);
+            if (field == null) {
+                field = SchemaField.of(0, to, type);
+            } else {
+                field = SchemaField.of(field.getIndex(), to, type);
+            }
+
+            schemaSetter.addField(field);
+
+            return setterFactoryFor(to, value, type);
+        };
+    }
+
+    static TransformerFactory setterFactoryFor(String to, Object value, Class<?> type) {
+
+        return dataFactory -> {
+            Setter setter = dataFactory.getSetterNamed(to);
+            if (value == null) {
+                return data -> setter.clear();
+            } else if (boolean.class.isAssignableFrom(type)) {
+                boolean boolValue = (boolean) value;
+                return data -> setter.setBoolean(boolValue);
+            } else if (byte.class.isAssignableFrom(type)) {
+                byte byteValue = (byte) value;
+                return data -> setter.setByte(byteValue);
+            } else if (short.class.isAssignableFrom(type)) {
+                short shortValue = (short) value;
+                return data -> setter.setShort(shortValue);
+            } else if (char.class.isAssignableFrom(type)) {
+                char charValue = (char) value;
+                return data -> setter.setChar(charValue);
+            } else if (int.class.isAssignableFrom(type)) {
+                int intValue = (int) value;
+                return data -> setter.setInt(intValue);
+            } else if (long.class.isAssignableFrom(type)) {
+                long longValue = (long) value;
+                return data -> setter.setLong(longValue);
+            } else if (float.class.isAssignableFrom(type)) {
+                float floatValue = (float) value;
+                return data -> setter.setFloat(floatValue);
+            } else if (double.class.isAssignableFrom(type)) {
+                double doubleValue = (double) value;
+                return data -> setter.setDouble(doubleValue);
+            } else {
+                return data -> setter.set(value);
+            }
+        };
+    }
+
 
     public static TransformerDefinition removeNamed(String name) {
 
@@ -104,7 +199,6 @@ public class FieldOperations {
         }
     }
 
-
     static class Compute implements Consumer<DidoData> {
 
         private final Setter setter;
@@ -126,5 +220,4 @@ public class FieldOperations {
             }
         }
     }
-
 }
