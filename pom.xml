@@ -232,7 +232,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.6.4-SNAPSHOT</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -337,7 +336,14 @@
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>3.2.0</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.10.0</version>
+                </plugin>
             </plugins>
+
         </pluginManagement>
 
         <plugins>
@@ -401,6 +407,59 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+
+            <!-- Create Aggregate Javadocs.
+                 Run in this directory with maven java:aggregate@aggregate -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>aggregate</id>
+                        <inherited>false</inherited>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <phase>none</phase>
+                        <configuration>
+                            <additionalOptions>--ignore-source-errors,-Xdoclint:none</additionalOptions>
+                            <taglets>
+                                <taglet>
+                                    <tagletClass>org.oddjob.doc.taglet.PropertyTaglet</tagletClass>
+                                </taglet>
+                                <taglet>
+                                    <tagletClass>org.oddjob.doc.taglet.DescriptionTaglet</tagletClass>
+                                </taglet>
+                                <taglet>
+                                    <tagletClass>org.oddjob.doc.taglet.ExampleTaglet</tagletClass>
+                                </taglet>
+                                <taglet>
+                                    <tagletClass>org.oddjob.doc.taglet.RequiredTaglet</tagletClass>
+                                </taglet>
+                                <taglet>
+                                    <tagletClass>org.oddjob.doc.taglet.XmlResourceTaglet</tagletClass>
+                                </taglet>
+                                <taglet>
+                                    <tagletClass>org.oddjob.doc.taglet.PlainTextResourceTaglet</tagletClass>
+                                </taglet>
+                            </taglets>
+                            <tagletArtifacts>
+                                <tagletArtifact>
+                                    <groupId>uk.co.rgordon</groupId>
+                                    <artifactId>oj-doc</artifactId>
+                                    <version>${oj-doc.version}</version>
+                                </tagletArtifact>
+                                <tagletArtifact>
+                                    <groupId>uk.co.rgordon</groupId>
+                                    <artifactId>arooa</artifactId>
+                                    <version>${oj-doc.version}</version>
+                                </tagletArtifact>
+                            </tagletArtifacts>
+                            <tagletpath>${project.basedir}/src/test/resources</tagletpath>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
