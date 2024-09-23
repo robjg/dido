@@ -1,9 +1,6 @@
 package dido.operators;
 
-import dido.data.ArrayData;
-import dido.data.DidoData;
-import dido.data.MapData;
-import dido.data.SchemaBuilder;
+import dido.data.*;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
@@ -20,27 +17,27 @@ class LeftStreamJoinTest {
     @Test
     void testSimpleExample() {
 
-        ArrayData.Builder farmBuilder = ArrayData.builderForSchema(
+        DataBuilder<ArrayData> farmBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Id", int.class)
                         .addNamed("Farmer", String.class)
                         .build());
 
-        DidoData farm1 = farmBuilder.build(1, "Brown");
-        DidoData farm2 = farmBuilder.build(2, "Giles");
+        DidoData farm1 = farmBuilder.values().of(1, "Brown");
+        DidoData farm2 = farmBuilder.values().of(2, "Giles");
 
-        ArrayData.Builder produceBuilder = ArrayData.builderForSchema(
+        DataBuilder<ArrayData> produceBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
                         .addNamed("FarmId", int.class)
                         .build());
 
-        DidoData produce1 = produceBuilder.build("Apples", 12, 2);
-        DidoData produce2 = produceBuilder.build("Pears", 7, 1);
-        DidoData produce3 = produceBuilder.build("Carrots", 15, 2);
+        DidoData produce1 = produceBuilder.values().of("Apples", 12, 2);
+        DidoData produce2 = produceBuilder.values().of("Pears", 7, 1);
+        DidoData produce3 = produceBuilder.values().of("Carrots", 15, 2);
 
-        ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
+        DataBuilder<ArrayData> expectedBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -49,9 +46,9 @@ class LeftStreamJoinTest {
                         .addNamed("Farmer", String.class)
                         .build());
 
-        DidoData expected1 = expectedBuilder.build("Apples", 12, 2, 2, "Giles");
-        DidoData expected2 = expectedBuilder.build("Pears", 7, 1, 1, "Brown");
-        DidoData expected3 = expectedBuilder.build("Carrots", 15, 2, 2, "Giles");
+        DidoData expected1 = expectedBuilder.values().of("Apples", 12, 2, 2, "Giles");
+        DidoData expected2 = expectedBuilder.values().of("Pears", 7, 1, 1, "Brown");
+        DidoData expected3 = expectedBuilder.values().of("Carrots", 15, 2, 2, "Giles");
 
         List<DidoData> results = new ArrayList<>(3);
 

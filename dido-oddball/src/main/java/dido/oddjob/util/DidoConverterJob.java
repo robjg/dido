@@ -17,6 +17,9 @@ import org.oddjob.framework.adapt.SoftReset;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 
 /**
  * @oddjob.description Provides a {@link DidoConverter} using Oddjob's conversions.
@@ -90,8 +93,7 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
         public String serviceNameFor(Class<?> theClass, String flavour) {
             if (theClass == DidoConversionProvider.class) {
                 return DIDO_CONVERSION_PROVIDER_SERVICE_NAME;
-            }
-            else if (theClass == DidoConverter.class) {
+            } else if (theClass == DidoConverter.class) {
                 return DIDO_CONVERTER_SERVICE_NAME;
             } else {
                 return null;
@@ -106,8 +108,7 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
             }
             if (DIDO_CONVERTER_SERVICE_NAME.equals(serviceName)) {
                 return didoConverter;
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("No Service " + serviceName);
             }
         }
@@ -139,6 +140,36 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
                     throw new RuntimeException(e);
                 }
             };
+        }
+
+        @Override
+        public <F> ToIntFunction<F> toIntFrom(Class<F> from) {
+            if (String.class == from) {
+                return string -> Integer.parseInt((String) string);
+            } else {
+                Function<F, Integer> otherwise = conversionFor(from, int.class);
+                return otherwise::apply;
+            }
+        }
+
+        @Override
+        public <F> ToDoubleFunction<F> toDoubleFrom(Class<F> from) {
+            if (String.class == from) {
+                return string -> Double.parseDouble((String) string);
+            } else {
+                Function<F, Double> otherwise = conversionFor(from, double.class);
+                return otherwise::apply;
+            }
+        }
+
+        @Override
+        public <F> ToLongFunction<F> toLongFrom(Class<F> from) {
+            if (String.class == from) {
+                return string -> Long.parseLong((String) string);
+            } else {
+                Function<F, Long> otherwise = conversionFor(from, long.class);
+                return otherwise::apply;
+            }
         }
     }
 

@@ -1,7 +1,7 @@
 package dido.operators.transform;
 
-import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.ReadableSchema;
 import dido.data.WritableSchema;
 import dido.data.WritableSchemaFactory;
 
@@ -14,7 +14,7 @@ public class FieldTransformationBuilder<D extends DidoData> {
     }
 
     public static <D extends DidoData>
-    FieldTransformationBuilder<D> forSchema(DataSchema incomingSchema, WritableSchemaFactory<D> schemaFactory) {
+    FieldTransformationBuilder<D> forSchema(ReadableSchema incomingSchema, WritableSchemaFactory<D> schemaFactory) {
 
         return new FieldTransformationBuilder<>(
                 FieldTransformationManager.forSchema(incomingSchema, schemaFactory));
@@ -33,7 +33,7 @@ public class FieldTransformationBuilder<D extends DidoData> {
     }
 
     public static <D extends DidoData, S extends WritableSchema<D>>
-    FieldTransformationBuilder<D> forSchemaWithCopy(DataSchema incomingSchema, WritableSchemaFactory<D> schemaFactory) {
+    FieldTransformationBuilder<D> forSchemaWithCopy(ReadableSchema incomingSchema, WritableSchemaFactory<D> schemaFactory) {
 
         return new FieldTransformationBuilder<>(FieldTransformationManager
                 .forSchemaWithCopy(incomingSchema, schemaFactory));

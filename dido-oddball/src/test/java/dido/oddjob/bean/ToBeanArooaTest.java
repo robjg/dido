@@ -52,7 +52,7 @@ class ToBeanArooaTest {
         Function<DidoData, Object> test = new ToBeanArooa(new BeanUtilsPropertyAccessor())
                 .ofSchema(schema);
 
-        DidoData data = MapData.newBuilder(schema)
+        DidoData data = MapData.builderForSchema(schema)
                 .withBoolean("boolean", true)
                 .withByte("byte", (byte) 1)
                 .withChar("char", 'A')

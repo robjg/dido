@@ -1,6 +1,7 @@
 package dido.oddjob.types;
 
 import dido.data.ArrayData;
+import dido.data.DataFactory;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import org.oddjob.arooa.ArooaSession;
@@ -35,7 +36,7 @@ public class DidoDataType implements ValueFactory<DidoData>, ArooaSessionAware {
         }
         else {
             ArooaConverter converter = session.getTools().getArooaConverter();
-            ArrayData.Builder builder = ArrayData.builderForSchema(schema);
+            DataFactory<ArrayData> dataFactory = ArrayData.factoryFor(schema);
             for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
                 Object value;
                 if (i > values.size()) {
@@ -46,9 +47,9 @@ public class DidoDataType implements ValueFactory<DidoData>, ArooaSessionAware {
                 }
 
                 Object v = converter.convert(value, schema.getTypeAt(i));
-                builder.withAt(i, v);
+                dataFactory.getSetterAt(i).set(v);
             }
-            return builder.build();
+            return dataFactory.toData();
         }
     }
 

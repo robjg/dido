@@ -14,20 +14,22 @@ public class Concatenator {
     static class Location {
         private final int dataIndex;
         private final int index;
+        private final Getter getter;
 
-        Location(int dataSet, int index) {
+        Location(int dataSet, int index, Getter getter) {
             this.dataIndex = dataSet;
             this.index = index;
+            this.getter = getter;
         }
     }
 
-    private final DataSchema schema;
+    private final ReadableSchema schema;
 
     private final Location[] locations;
 
     private final Map<String, Location> fieldLocations;
 
-    private Concatenator(DataSchema schema,
+    private Concatenator(ReadableSchema schema,
                          Location[] locations,
                          Map<String, Location> fieldLocations) {
         this.schema = schema;
@@ -51,18 +53,48 @@ public class Concatenator {
             return this;
         }
 
-        public Concatenator makeFromSchemas(DataSchema... schemas) {
+        public Concatenator makeFromSchemas(ReadableSchema... schemas) {
 
             List<Location> locations = new LinkedList<>();
             Map<String, Location> fieldLocations = new HashMap<>();
 
-            DataSchemaFactory schemaFactory = DataSchemaFactory.newInstance();
+            class Schema extends DataSchemaImpl implements ReadableSchema {
+
+                Schema(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
+                    super(fields, firstIndex, lastIndex);
+                }
+
+                @Override
+                public Getter getDataGetterAt(int index) {
+                    if (!hasIndex(index)) {
+                        throw new NoSuchFieldException(index, this);
+                    }
+                    return getDataGetterNamed(getFieldNameAt(index));
+                }
+
+                @Override
+                public Getter getDataGetterNamed(String name) {
+                    Location location = fieldLocations.get(name);
+                    if (location == null) {
+                        throw new NoSuchFieldException(name, this);
+                    }
+                    ;
+                    return location.getter;
+                }
+            }
+
+            SchemaFactoryImpl<ReadableSchema> schemaFactory = new SchemaFactoryImpl<>() {
+                @Override
+                protected ReadableSchema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
+                    return new Schema(fields, firstIndex, lastIndex);
+                }
+            };
 
             int locationIndex = 0;
             int dataIndex = 0;
-            for (DataSchema schema : schemas) {
+            for (ReadableSchema schema : schemas) {
                 for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
-                    Location location = new Location(dataIndex, i);
+                    Location location = new Location(dataIndex, i, schema.getDataGetterAt(i));
                     SchemaField schemaField = schema.getSchemaFieldAt(i);
                     String name = schemaField.getName();
                     if (excludeFields.contains(name)) {
@@ -102,7 +134,7 @@ public class Concatenator {
      * @param schemas The schemas of the records that will be concatenated.
      * @return A {@code Concatenator}.
      */
-    public static Concatenator fromSchemas(DataSchema... schemas) {
+    public static Concatenator fromSchemas(ReadableSchema... schemas) {
 
         return new Settings().makeFromSchemas(schemas);
     }
@@ -125,7 +157,7 @@ public class Concatenator {
         return new ConcatenatedData(data);
     }
 
-    public DataSchema getSchema() {
+    public ReadableSchema getSchema() {
         return schema;
     }
 
@@ -138,7 +170,7 @@ public class Concatenator {
 
         private Concatenator last;
 
-        private DataSchema[] previous;
+        private ReadableSchema[] previous;
 
         public Factory(Settings settings) {
             this.settings = settings;
@@ -149,7 +181,7 @@ public class Concatenator {
             boolean recreate = false;
             if (last == null) {
                 recreate = true;
-                previous = new DataSchema[data.length];
+                previous = new ReadableSchema[data.length];
                 for (int i = 0; i < data.length; ++i) {
                     previous[i] = data[i].getSchema();
                 }
@@ -182,7 +214,7 @@ public class Concatenator {
         }
 
         @Override
-        public DataSchema getSchema() {
+        public ReadableSchema getSchema() {
             return schema;
         }
 

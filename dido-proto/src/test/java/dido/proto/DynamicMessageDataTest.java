@@ -22,7 +22,7 @@ class DynamicMessageDataTest {
                 .addNamed("email", String.class)
                 .build();
 
-        DidoData data = MapData.newBuilder(schema)
+        DidoData data = MapData.builderForSchema(schema)
                 .with("name", "Alice")
                 .with("id", 234)
                 .with("email", "alice@foo.com")

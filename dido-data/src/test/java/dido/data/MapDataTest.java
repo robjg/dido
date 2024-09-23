@@ -15,7 +15,7 @@ class MapDataTest {
     @Test
     void testBuilderNoSchema() throws ParseException {
 
-        NamedDataBuilder builder = MapData.newBuilderNoSchema();
+        MapData.BuilderNoSchema builder = MapData.newBuilderNoSchema();
 
         NamedData data1 = builder
                 .withString("type", "apple")
@@ -86,7 +86,7 @@ class MapDataTest {
                 .addNamed("price", double.class)
                 .build();
 
-        DidoData data1 = MapData.newBuilder(schema)
+        DidoData data1 = MapData.builderForSchema(schema)
                 .withString("type", "apple")
                 .withInt("qty", 2)
                 .withDouble("price", 26.3)

@@ -49,7 +49,7 @@ class CsvDataOutHowTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        DataBuilders.NamedValues values = MapData.valuesFor(schema);
+        DataBuilder.Values<MapData> values = MapData.valuesFor(schema);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 

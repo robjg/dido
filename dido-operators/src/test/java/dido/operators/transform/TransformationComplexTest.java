@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.is;
 
 public class TransformationComplexTest {
 
-    static ArrayDataSchema schema = ArrayDataSchema.newBuilder()
+    static ArrayData.Schema schema = ArrayData.schemaBuilder()
             .addNamed("Fruit", String.class)
             .addNamed("Qty", int.class)
             .addNamed("Price", double.class)
@@ -23,7 +23,7 @@ public class TransformationComplexTest {
     static class MarkupOperation implements TransformerDefinition {
 
         @Override
-        public TransformerFactory define(DataSchema incomingSchema, SchemaSetter schemaSetter) {
+        public TransformerFactory define(ReadableSchema incomingSchema, SchemaSetter schemaSetter) {
 
             Getter priceGetter = schema.getDataGetterNamed("Price");
 
@@ -92,7 +92,7 @@ public class TransformationComplexTest {
      */
     static class MarkupTransformationFactory<D extends DidoData> {
 
-        public Transformation<D> define(DataSchema incomingSchema, WritableSchemaFactory<D> schemaFactory) {
+        public Transformation<D> define(ReadableSchema incomingSchema, WritableSchemaFactory<D> schemaFactory) {
 
             WritableSchema<D> outSchema = SchemaBuilder.builderFor(schemaFactory)
                     .addSchemaField(incomingSchema.getSchemaFieldNamed("Fruit").mapToIndex(1))

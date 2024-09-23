@@ -152,9 +152,46 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         }
 
         @Override
+        public boolean hasField(E field) {
+            return true;
+        }
+
+        @Override
+        public Collection<GenericSchemaField<E>> getGenericSchemaFields() {
+            return Arrays.asList(fields);
+        }
+
+        @Override
         public Collection<E> getFields() {
             return Arrays.asList(enumClass.getEnumConstants());
         }
 
+        @Override
+        public Getter getDataGetter(E field) {
+            return new AbstractGetter() {
+                @Override
+                public Object get(DidoData data) {
+                    return ((EnumData<E>) data).get(field);
+                }
+            };
+        }
+
+        @Override
+        public Getter getDataGetterAt(int index) {
+            E field = Schema.this.getFieldAt(index);
+            if (field == null) {
+                throw new NoSuchFieldException(index, Schema.this);
+            }
+            return getDataGetter(field);
+        }
+
+        @Override
+        public Getter getDataGetterNamed(String name) {
+            E field = Schema.this.getFieldNamed(name);
+            if (field == null) {
+                throw new NoSuchFieldException(name, Schema.this);
+            }
+            return getDataGetter(field);
+        }
     }
 }

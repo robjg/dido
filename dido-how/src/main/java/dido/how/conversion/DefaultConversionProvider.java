@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 
 /**
  * Simple implementation of {@link DidoConversionProvider}.
@@ -103,5 +106,35 @@ public class DefaultConversionProvider implements DidoConversionProvider {
         Function<F, String> func = (Function<F, String>) toString.get(from);
 
         return Objects.requireNonNullElseGet(func, () -> Object::toString);
+    }
+
+    @Override
+    public <F> ToIntFunction<F> toIntFrom(Class<F> from) {
+        if (String.class == from) {
+            return string -> Integer.parseInt((String) string);
+        }
+        else {
+            return value -> Integer.parseInt(value.toString());
+        }
+    }
+
+    @Override
+    public <F> ToDoubleFunction<F> toDoubleFrom(Class<F> from) {
+        if (String.class == from) {
+            return string -> Double.parseDouble((String) string);
+        }
+        else {
+            return value -> Double.parseDouble(value.toString());
+        }
+    }
+
+    @Override
+    public <F> ToLongFunction<F> toLongFrom(Class<F> from) {
+        if (String.class == from) {
+            return string -> Long.parseLong((String) string);
+        }
+        else {
+            return value -> Long.parseLong(value.toString());
+        }
     }
 }

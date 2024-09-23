@@ -58,6 +58,8 @@ public interface GenericSchemaField<F> extends SchemaField {
         GenericSchemaField<F> ofRepeating(int index, String field, SchemaReference nestedRef);
 
         GenericSchemaField<F> ofRepeating(int index, F field, SchemaReference nestedRef);
+
+        GenericSchemaField<F> from(SchemaField schemaField);
     }
 
     static int hashCode(GenericSchemaField<?> schemaField) {

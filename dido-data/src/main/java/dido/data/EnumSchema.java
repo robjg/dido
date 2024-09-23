@@ -1,6 +1,6 @@
 package dido.data;
 
-import dido.data.generic.GenericDataSchema;
+import dido.data.generic.GenericReadableSchema;
 
 import java.util.function.Function;
 
@@ -9,7 +9,7 @@ import java.util.function.Function;
  *
  * @param <E> The Enum type.
  */
-public interface EnumSchema<E extends Enum<E>> extends GenericDataSchema<E> {
+public interface EnumSchema<E extends Enum<E>> extends GenericReadableSchema<E> {
 
     Class<E> getFieldType();
 

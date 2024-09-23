@@ -1,11 +1,14 @@
 package dido.poi.layouts;
 
 import dido.data.DidoData;
+import dido.how.conversion.DefaultConversionProvider;
+import dido.how.conversion.DidoConversionProvider;
 import dido.how.util.Primitives;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * @oddjob.description Define a number column. Nests within a {@link DataRows}.
@@ -13,6 +16,9 @@ import java.util.Optional;
  * @param <T>
  */
 public class NumericCell<T extends Number> extends AbstractDataCell<T> {
+
+    // TODO: Inject this.
+    private DidoConversionProvider conversionProvider = DefaultConversionProvider.defaultInstance();
 
     /**
      * @oddjob.description The type of Number.
@@ -76,13 +82,15 @@ public class NumericCell<T extends Number> extends AbstractDataCell<T> {
     @Override
     void insertValueInto(Cell cell, int index, DidoData data) {
 
-        Number value = Optional.<Number>ofNullable(this.value)
-                .orElseGet(() -> data.getAtAs(index, Number.class));
+        Function<Object, Double> conversion = (Function<Object, Double>)
+                conversionProvider.conversionFor(data.getSchema().getTypeAt(index), Double.class);
+
+        Object value = data.getAt(index);
 
         if (value == null) {
             cell.setBlank();
         } else {
-            cell.setCellValue(value.doubleValue());
+            cell.setCellValue(conversion.apply(value));
         }
     }
 

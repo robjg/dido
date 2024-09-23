@@ -12,17 +12,17 @@ class GenericDataTest {
     @Test
     void testEmptyDataToString() {
 
-        assertThat(GenericData.toStringFieldsOnly(GenericData.emptyData()), is("{}"));
-        assertThat(GenericData.toString(GenericData.emptyData()), is("{}"));
-        MatcherAssert.assertThat(DidoData.toString(GenericData.emptyData()), is("{}"));
-        assertThat(GenericData.emptyData().toString(), is("{}"));
+        assertThat(GenericData.toStringFieldsOnly(GenericData.emptyData(String.class)), is("{}"));
+        assertThat(GenericData.toString(GenericData.emptyData(String.class)), is("{}"));
+        MatcherAssert.assertThat(DidoData.toString(GenericData.emptyData(String.class)), is("{}"));
+        assertThat(GenericData.emptyData(String.class).toString(), is("{}"));
     }
 
     @Test
     void testEmptyEqualsAndHashCode() {
 
-        GenericData<String> emptyStringData = GenericData.emptyData();
-        GenericData<Number> emptyNumberData = GenericData.emptyData();
+        GenericData<String> emptyStringData = GenericData.emptyData(String.class);
+        GenericData<Number> emptyNumberData = GenericData.emptyData(Number.class);
 
         assertThat(emptyNumberData.equals(emptyStringData), is(true));
         assertThat(emptyStringData.equals(emptyNumberData), is(true));

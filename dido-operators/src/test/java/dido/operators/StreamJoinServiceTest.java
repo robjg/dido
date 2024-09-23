@@ -1,6 +1,7 @@
 package dido.operators;
 
 import dido.data.ArrayData;
+import dido.data.DataBuilder;
 import dido.data.DidoData;
 import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
+        DataBuilder<ArrayData> expectedBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -75,7 +76,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
+        DataBuilder<ArrayData> expectedBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -111,7 +112,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        ArrayData.Builder expectedBuilder = ArrayData.builderForSchema(
+        DataBuilder<ArrayData> expectedBuilder = ArrayData.builderForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Variety", String.class)

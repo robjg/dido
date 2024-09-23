@@ -1,9 +1,11 @@
 package dido.data.generic;
 
+import dido.data.NoSuchFieldException;
+import dido.data.*;
+
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -11,24 +13,28 @@ import java.util.function.Function;
  */
 public class GenericMapData<F> extends AbstractGenericData<F> {
 
-    private final GenericDataSchema<F> schema;
+    private final GenericReadableSchema<F> schema;
 
     private final Map<F, ?> map;
 
-    private GenericMapData(GenericDataSchema<F> schema, Map<F, ?> map) {
+    private GenericMapData(GenericReadableSchema<F> schema, Map<F, ?> map) {
         this.schema = schema;
         this.map = map;
     }
 
-    public static <F> Of<F> with(Function<? super String, ? extends F> fieldNameMapping) {
-        return new Of<>(fieldNameMapping);
+    public static <F> Of<F> with(Class<F> fieldType,
+                                 Function<? super String, ? extends F> fieldNameMapping) {
+        return new Of<>(fieldType, fieldNameMapping);
     }
 
     public static class Of<F> {
 
+        private final Class<F> fieldType;
+
         private final Function<? super String, ? extends F> fieldNameMapping;
 
-        public Of(Function<? super String, ? extends F> fieldNameMapping) {
+        public Of(Class<F> fieldType, Function<? super String, ? extends F> fieldNameMapping) {
+            this.fieldType = fieldType;
             this.fieldNameMapping = fieldNameMapping;
         }
 
@@ -90,7 +96,9 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
 
         private GenericData<F> fromInputs(Object... args) {
 
-            BuilderNoSchema<F> builder = new BuilderNoSchema<>(fieldNameMapping);
+            GenericDataBuilders.BuilderNoSchema<F, GenericMapData<F>> builder =
+                    new GenericDataBuilders.BuilderNoSchema<>(
+                            new SchemaFactory<>(this), fieldNameMapping);
             for (int i = 0; i < args.length; i = i + 2) {
                 //noinspection unchecked
                 builder.with((F) args[i], args[i + 1]);
@@ -100,33 +108,62 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
 
         public GenericDataSchema<F> schemaFromMap(Map<F, ?> map) {
 
-            GenericSchemaBuilder<F> schemaBuilder = GenericSchemaBuilder.impliedType(fieldNameMapping);
+            SchemaFactory<F> schemaFactory = new SchemaFactory<>(this);
             for (Map.Entry<F, ?> entry : map.entrySet()) {
-                schemaBuilder.addField(entry.getKey(), entry.getValue().getClass());
+                schemaFactory.addGenericSchemaField(schemaFactory.of()
+                        .of(0, entry.getKey(), entry.getValue().getClass()));
             }
-            return schemaBuilder.build();
+            return schemaFactory.toSchema();
         }
 
-        public BuilderNoSchema<F> newBuilderNoSchema() {
+        public GenericWritableSchema<F, GenericMapData<F>> asGenericMapDataSchema(DataSchema schema) {
 
-            return new BuilderNoSchema<>(fieldNameMapping);
+            if (schema instanceof Schema) {
+                return (Schema<F>) schema;
+
+            } else {
+
+                return schemaFactory(schema).toSchema();
+            }
         }
-    }
 
+        public GenericDataBuilder<F> newBuilderNoSchema() {
 
-    public static <F> BuilderWithSchema<F> newBuilder(GenericDataSchema<F> schema) {
+            return new GenericDataBuilders.BuilderNoSchema<>(
+                    new SchemaFactory<>(this), fieldNameMapping);
+        }
 
-        return new BuilderWithSchema<>(schema);
-    }
+        public GenericWritableSchemaFactory<F, GenericMapData<F>> schemaFactory() {
 
-    public static <F> GenericDataBuilders.Values<F> valuesFor(GenericDataSchema<F> schema) {
+            return new SchemaFactory<>(this);
+        }
 
-        return new BuilderWithSchema<>(schema).values();
-    }
+        public GenericWritableSchemaFactory<F, GenericMapData<F>> schemaFactory(DataSchema schema) {
 
-    public static <F> BuilderWithSchema<F> copy(GenericData<F> from) {
+            SchemaFactory<F> factory = new SchemaFactory<>(this);
+            for (SchemaField schemaField : schema.getSchemaFields()) {
+                factory.addSchemaField(schemaField);
+            }
+            return factory;
+        }
 
-        return new BuilderWithSchema<>(from.getSchema()).copy(from);
+        public GenericDataBuilder<F> newBuilder(DataSchema schema) {
+
+            return new GenericDataBuilders.KnownSchema<>(asGenericMapDataSchema(schema));
+        }
+
+        public GenericDataBuilders.Values<F> valuesFor(DataSchema schema) {
+
+            return new GenericDataBuilders.KnownSchema<>(asGenericMapDataSchema(schema))
+                    .values();
+        }
+
+        public GenericDataBuilder<F> copy(GenericData<F> from) {
+
+            return new GenericDataBuilders.KnownSchema<>(asGenericMapDataSchema(from.getSchema()))
+                    .copy(from);
+        }
+
     }
 
     @Override
@@ -150,7 +187,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
     }
 
     @Override
-    public GenericDataSchema<F> getSchema() {
+    public GenericReadableSchema<F> getSchema() {
         return schema;
     }
 
@@ -159,156 +196,142 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         return GenericData.toStringFieldsOnly(this);
     }
 
-    /**
-     * A Builder that knows the schema. Setter don't validate the type.
-     *
-     * @param <F> The field type.
-     */
-    public static class BuilderWithSchema<F>
-            extends GenericDataBuilders.KnownSchema<F, GenericData<F>, BuilderWithSchema<F>> {
+    static class Factory<F> implements GenericDataFactory<F, GenericMapData<F>> {
 
-        private Map<F, Object> map = new HashMap<>();
+        private final Schema<F> schema;
 
-        BuilderWithSchema(GenericDataSchema<F> schema) {
-            super(schema);
+        private Map<F, Object> data = new HashMap<>();
+
+        Factory(Schema<F> schema) {
+            this.schema = schema;
         }
 
         @Override
-        public GenericData<F> build() {
-            GenericData<F> data = new GenericMapData<>(getSchema(), map);
-            this.map = new HashMap<>();
-            return data;
-        }
-
-        @Override
-        public BuilderWithSchema<F> with(F field, Object value) {
-            map.put(field, value);
-            return this;
-        }
-
-        @Override
-        public BuilderWithSchema<F> withAt(int index, Object value) {
-            with(getSchema().getFieldAt(index), value);
-            return this;
-        }
-    }
-
-    public static class BuilderNoSchema<F> extends GenericDataBuilders.Fields<F, BuilderNoSchema<F>> {
-
-        private final Function<? super String, ? extends F> fieldNameMapping;
-
-        private Map<F, Object> map = new LinkedHashMap<>();
-
-        private GenericSchemaBuilder<F> schemaBuilder;
-
-        public BuilderNoSchema(Function<? super String, ? extends F> fieldNameMapping) {
-            this.fieldNameMapping = fieldNameMapping;
-            this.schemaBuilder = GenericSchemaBuilder.impliedType(fieldNameMapping);
-        }
-
-        @Override
-        public GenericData<F> build() {
-            GenericData<F> data = new GenericMapData<>(schemaBuilder.build(), map);
-            this.map = new LinkedHashMap<>();
-            this.schemaBuilder = GenericSchemaBuilder.impliedType(fieldNameMapping);
-            return data;
-        }
-
-        @Override
-        public BuilderNoSchema<F> with(F field, Object value) {
-            map.put(field, value);
-            schemaBuilder.addField(field, value == null ? void.class : value.getClass());
-            return this;
-        }
-
-        @Override
-        public BuilderNoSchema<F> withBoolean(F field, boolean value) {
-            map.put(field, value);
-            schemaBuilder.addField(field, boolean.class);
-            return this;
-        }
-
-        @Override
-        public BuilderNoSchema<F> withByte(F field, byte value) {
-            map.put(field, value);
-            schemaBuilder.addField(field, byte.class);
-            return this;
-        }
-
-        @Override
-        public BuilderNoSchema<F> withChar(F field, char value) {
-            map.put(field, value);
-            schemaBuilder.addField(field, char.class);
-            return this;
-        }
-
-        @Override
-        public BuilderNoSchema<F> withShort(F field, short value) {
-            map.put(field, value);
-            schemaBuilder.addField(field, short.class);
-            return this;
-        }
-
-        @Override
-        public BuilderNoSchema<F> withInt(F field, int value) {
-            map.put(field, value);
-            schemaBuilder.addField(field, int.class);
-            return this;
-        }
-
-        @Override
-        public BuilderNoSchema<F> withLong(F field, long value) {
-            map.put(field, value);
-            schemaBuilder.addField(field, long.class);
-            return this;
-        }
-
-        @Override
-        public BuilderNoSchema<F> withFloat(F field, float value) {
-            map.put(field, value);
-            schemaBuilder.addField(field, float.class);
-            return this;
-        }
-
-        @Override
-        public BuilderNoSchema<F> withDouble(F field, double value) {
-            map.put(field, value);
-            schemaBuilder.addField(field, double.class);
-            return this;
-        }
-
-        @Override
-        public BuilderNoSchema<F> withString(F field, String value) {
-            map.put(field, value);
-            schemaBuilder.addField(field, String.class);
-            return this;
-        }
-
-    }
-
-    /**
-     * For A fluent way of providing MapData
-     *
-     * @param <F> The field type.
-     */
-    public static class Values<F> {
-
-        private final GenericDataSchema<F> schema;
-
-        Values(GenericDataSchema<F> schema) {
-            this.schema = Objects.requireNonNull(schema);
-        }
-
-        public GenericData<F> of(Object... values) {
-            Map<F, Object> map = new HashMap<>();
-            for (int i = 0; i < values.length; ++i) {
-                F field = schema.getFieldAt(i + 1);
-                if (field == null) {
-                    throw new IllegalArgumentException("No field for index " + i + 1);
+        public Setter getSetter(F field) {
+            return new AbstractSetter() {
+                @Override
+                public void clear() {
+                    data.remove(field);
                 }
-                map.put(field, values[i]);
+
+                @Override
+                public void set(Object value) {
+                    data.put(field, value);
+                }
+            };
+        }
+
+        @Override
+        public Class<GenericMapData<F>> getDataType() {
+            return null;
+        }
+
+        @Override
+        public Setter getSetterAt(int index) {
+            return null;
+        }
+
+        @Override
+        public Setter getSetterNamed(String name) {
+            return null;
+        }
+
+        @Override
+        public DataSetter getSetter() {
+            return null;
+        }
+
+        @Override
+        public GenericMapData<F> valuesToData(Object... values) {
+            return null;
+        }
+
+        @Override
+        public GenericMapData<F> toData() {
+            GenericMapData<F> mapData = new GenericMapData<>(schema, data);
+            this.data = new HashMap<>();
+            return mapData;
+        }
+    }
+
+    static class Schema<F> extends GenericSchemaImpl<F>
+            implements GenericWritableSchema<F, GenericMapData<F>> {
+
+        private final Of<F> of;
+
+        protected Schema(Of<F> of,
+                         GenericDataSchema<F> genericSchemaFields) {
+            super(of.fieldType, genericSchemaFields);
+            this.of = of;
+        }
+
+        protected Schema(Of<F> of,
+                         Iterable<GenericSchemaField<F>> genericSchemaFields,
+                         int firstIndex,
+                         int lastIndex) {
+            super(of.fieldType, genericSchemaFields, firstIndex, lastIndex);
+            this.of = of;
+        }
+
+        @Override
+        public GenericWritableSchemaFactory<F, GenericMapData<F>> newSchemaFactory() {
+            return new SchemaFactory<>(of);
+        }
+
+        @Override
+        public GenericDataFactory<F, GenericMapData<F>> newDataFactory() {
+            return new Factory<>(this);
+        }
+
+        @Override
+        public Getter getDataGetter(F field) {
+            if (!Schema.this.hasField(field)) {
+                throw new NoSuchFieldException(field.toString(), Schema.this);
             }
-            return new GenericMapData<>(schema, map);
+            return new AbstractGetter() {
+                @Override
+                public Object get(DidoData data) {
+                    return ((GenericMapData<F>) data).get(field);
+                }
+            };
+        }
+
+        @Override
+        public Getter getDataGetterAt(int index) {
+            F field = Schema.this.getFieldAt(index);
+            if (field == null) {
+                throw new NoSuchFieldException(index, Schema.this);
+            }
+            return getDataGetter(field);
+        }
+
+        @Override
+        public Getter getDataGetterNamed(String name) {
+            F field = Schema.this.getFieldNamed(name);
+            if (field == null) {
+                throw new NoSuchFieldException(name, Schema.this);
+            }
+            return getDataGetter(field);
+        }
+    }
+
+
+    static class SchemaFactory<F> extends GenericSchemaFactoryImpl<F, GenericWritableSchema<F, GenericMapData<F>>>
+            implements GenericWritableSchemaFactory<F, GenericMapData<F>> {
+
+        private final Of<F> of;
+
+        SchemaFactory(Of<F> of) {
+            super(of.fieldType, of.fieldNameMapping);
+            this.of = of;
+        }
+
+
+        @Override
+        protected GenericWritableSchema<F, GenericMapData<F>> createGeneric(Collection<GenericSchemaField<F>> genericSchemaFields,
+                                                                            int firstIndex,
+                                                                            int lastIndex) {
+            return new Schema<>(of, genericSchemaFields, firstIndex, lastIndex);
         }
     }
 }

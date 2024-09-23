@@ -3,14 +3,13 @@ package dido.proto;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.DynamicMessage;
 import dido.data.AbstractData;
-import dido.data.DataSchema;
 import dido.data.DidoData;
 
 public class DynamicMessageData extends AbstractData implements DidoData {
 
     private final DescriptorSchema schema;
 
-    private final DynamicMessage message;
+    final DynamicMessage message;
 
     private DynamicMessageData(DescriptorSchema schema, DynamicMessage message) {
         this.schema = schema;
@@ -22,7 +21,7 @@ public class DynamicMessageData extends AbstractData implements DidoData {
     }
 
     @Override
-    public DataSchema getSchema() {
+    public DescriptorSchema getSchema() {
         return schema;
     }
 

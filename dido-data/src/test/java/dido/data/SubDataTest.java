@@ -79,7 +79,7 @@ class SubDataTest {
         NamedData data1 = MapData.of(
                 "Name", "Alice",  "Id", 1234, "Colour", "Green");
 
-        DidoData subData1 = SubData.with().fields().andFields("Name").apply(data1);
+        DidoData subData1 = SubData.ofFields("Name").apply(data1);
 
         assertThat(subData1.getSchema().toString(), is("{[1:Name]=java.lang.String}"));
         assertThat(subData1.toString(), is("{[1:Name]=Alice}"));

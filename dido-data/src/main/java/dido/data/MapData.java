@@ -2,6 +2,7 @@ package dido.data;
 
 import dido.data.generic.GenericData;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,11 +12,11 @@ import java.util.Map;
  */
 public class MapData extends AbstractNamedData implements NamedData {
 
-    private final DataSchema schema;
+    private final Schema schema;
 
     private final Map<String, ?> map;
 
-    private MapData(DataSchema schema, Map<String, ?> map) {
+    private MapData(Schema schema, Map<String, ?> map) {
         this.schema = schema;
         this.map = map;
     }
@@ -41,85 +42,109 @@ public class MapData extends AbstractNamedData implements NamedData {
     }
 
     public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
-                                    String f4, Object v4) {
+                               String f4, Object v4) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4);
     }
 
     public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
-                                    String f4, Object v4, String f5, Object v5) {
+                               String f4, Object v4, String f5, Object v5) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5);
     }
 
     public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
-                                    String f4, Object v4, String f5, Object v5, String f6, Object v6) {
+                               String f4, Object v4, String f5, Object v5, String f6, Object v6) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6);
     }
 
     public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
-                                    String f4, Object v4, String f5, Object v5, String f6, Object v6,
-                                    String f7, Object v7) {
+                               String f4, Object v4, String f5, Object v5, String f6, Object v6,
+                               String f7, Object v7) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7);
     }
 
     public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
-                                    String f4, Object v4, String f5, Object v5, String f6, Object v6,
-                                    String f7, Object v7, String f8, Object v8) {
+                               String f4, Object v4, String f5, Object v5, String f6, Object v6,
+                               String f7, Object v7, String f8, Object v8) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8);
     }
 
     public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
-                                    String f4, Object v4, String f5, Object v5, String f6, Object v6,
-                                    String f7, Object v7, String f8, Object v8, String f9, Object v9) {
+                               String f4, Object v4, String f5, Object v5, String f6, Object v6,
+                               String f7, Object v7, String f8, Object v8, String f9, Object v9) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8, f9, v9);
     }
 
     public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
-                                    String f4, Object v4, String f5, Object v5, String f6, Object v6,
-                                    String f7, Object v7, String f8, Object v8, String f9, Object v9,
-                                    String f10, Object v10) {
+                               String f4, Object v4, String f5, Object v5, String f6, Object v6,
+                               String f7, Object v7, String f8, Object v8, String f9, Object v9,
+                               String f10, Object v10) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8, f9, v9, f10, v10);
     }
 
     private static NamedData fromInputs(Object... args) {
 
-        NamedDataBuilder builder = new BuilderNoSchema();
+        BuilderNoSchema builder = new BuilderNoSchema();
         for (int i = 0; i < args.length; i = i + 2) {
-            builder.with((String) args[i], args[i+1]);
+            builder.with((String) args[i], args[i + 1]);
         }
         return builder.build();
     }
 
-    public static DataSchema schemaFromMap(Map<String, ?> map) {
+    public static WritableSchemaFactory<MapData> schemaFactory() {
+        return new MapDataSchemaFactory();
+    }
 
-        SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
-        for (Map.Entry<String, ?> entry : map.entrySet()) {
-            schemaBuilder.addNamed(entry.getKey(), entry.getValue().getClass());
+    public static SchemaBuilder<Schema> schemaBuilder() {
+        return SchemaBuilder.builderFor(schemaFactory(), Schema.class);
+    }
+
+    public static Schema asMapDataSchema(DataSchema schema) {
+
+        if (schema instanceof Schema) {
+            return (Schema) schema;
+
+        } else {
+            return new Schema(schema);
         }
-        return schemaBuilder.build();
     }
 
-    public static NamedDataBuilder newBuilder(DataSchema schema) {
+    public static Schema schemaFromMap(Map<String, ?> map) {
 
-        return new BuilderWithSchema(schema);
+        MapDataSchemaFactory schemaFactory = new MapDataSchemaFactory();
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
+            schemaFactory.addSchemaField(SchemaField.of(0, entry.getKey(), entry.getValue().getClass()));
+        }
+        return schemaFactory.toSchema();
     }
 
-    public static NamedDataBuilder newBuilderNoSchema() {
+    public static DataBuilder<MapData> builderForSchema(DataSchema schema) {
+
+        return builderForSchema(asMapDataSchema(schema));
+    }
+
+    public static DataBuilder<MapData> builderForSchema(Schema schema) {
+
+        return new DataBuilder<>(schema);
+    }
+
+
+    public static BuilderNoSchema newBuilderNoSchema() {
 
         return new BuilderNoSchema();
     }
 
-    public static DataBuilders.NamedValues valuesFor(DataSchema schema) {
+    public static DataBuilder.Values<MapData> valuesFor(DataSchema schema) {
 
-        return new BuilderWithSchema(schema).values();
+        return new DataBuilder<>(asMapDataSchema(schema)).values();
     }
 
-    public static BuilderWithSchema copy(DidoData from) {
+    public static DataBuilder<MapData> copy(DidoData from) {
 
-        return new BuilderWithSchema(from.getSchema()).copy(from);
+        return new DataBuilder<>(asMapDataSchema(from.getSchema())).copy(from);
     }
 
-    public static DataFactory<NamedData> factoryFor(DataSchema schema) {
-        return new MapDataFactory(schema);
+    public static DataFactory<MapData> factoryFor(DataSchema schema) {
+        return new MapDataFactory(asMapDataSchema(schema));
     }
 
     @Override
@@ -143,7 +168,7 @@ public class MapData extends AbstractNamedData implements NamedData {
     }
 
     @Override
-    public DataSchema getSchema() {
+    public ReadableSchema getSchema() {
         return schema;
     }
 
@@ -152,110 +177,74 @@ public class MapData extends AbstractNamedData implements NamedData {
         return DidoData.toStringFieldsOnly(this);
     }
 
-    /**
-     * A Builder that knows the schema. Setter don't validate the type.
-     *
-     */
-    public static class BuilderWithSchema extends DataBuilders.NamedKnownSchema<BuilderWithSchema> {
 
-        private Map<String, Object> map = new HashMap<>();
-
-        BuilderWithSchema(DataSchema schema) {
-            super(schema);
-        }
-
-        @Override
-        public NamedData build() {
-            NamedData data = new MapData(getSchema(), map);
-            this.map = new HashMap<>();
-            return data;
-        }
-
-        @Override
-        public BuilderWithSchema with(String field, Object value) {
-            map.put(field, value);
-            return this;
-        }
-    }
-
-    static class BuilderNoSchema extends DataBuilders.NamedFields<BuilderNoSchema> {
+    public static class BuilderNoSchema {
 
         private Map<String, Object> map = new LinkedHashMap<>();
 
-        private SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
+        private SchemaBuilder<Schema> schemaBuilder = SchemaBuilder.builderFor(new MapDataSchemaFactory());
 
-        @Override
         public NamedData build() {
             NamedData data = new MapData(schemaBuilder.build(), map);
             this.map = new LinkedHashMap<>();
-            this.schemaBuilder = SchemaBuilder.newInstance();
+            this.schemaBuilder = SchemaBuilder.builderFor(new MapDataSchemaFactory());
             return data;
         }
 
-        @Override
         public BuilderNoSchema with(String field, Object value) {
             map.put(field, value);
             schemaBuilder.addNamed(field, value == null ? void.class : value.getClass());
             return this;
         }
 
-        @Override
         public BuilderNoSchema withBoolean(String field, boolean value) {
             map.put(field, value);
             schemaBuilder.addNamed(field, boolean.class);
             return this;
         }
 
-        @Override
         public BuilderNoSchema withByte(String field, byte value) {
             map.put(field, value);
             schemaBuilder.addNamed(field, byte.class);
             return this;
         }
 
-        @Override
         public BuilderNoSchema withChar(String field, char value) {
             map.put(field, value);
             schemaBuilder.addNamed(field, char.class);
             return this;
         }
 
-        @Override
         public BuilderNoSchema withShort(String field, short value) {
             map.put(field, value);
             schemaBuilder.addNamed(field, short.class);
             return this;
         }
 
-        @Override
         public BuilderNoSchema withInt(String field, int value) {
             map.put(field, value);
             schemaBuilder.addNamed(field, int.class);
             return this;
         }
 
-        @Override
         public BuilderNoSchema withLong(String field, long value) {
             map.put(field, value);
             schemaBuilder.addNamed(field, long.class);
             return this;
         }
 
-        @Override
         public BuilderNoSchema withFloat(String field, float value) {
             map.put(field, value);
             schemaBuilder.addNamed(field, float.class);
             return this;
         }
 
-        @Override
         public BuilderNoSchema withDouble(String field, double value) {
             map.put(field, value);
             schemaBuilder.addNamed(field, double.class);
             return this;
         }
 
-        @Override
         public BuilderNoSchema withString(String field, String value) {
             map.put(field, value);
             schemaBuilder.addNamed(field, String.class);
@@ -264,13 +253,13 @@ public class MapData extends AbstractNamedData implements NamedData {
 
     }
 
-    static class MapDataFactory extends AbstractDataSetter implements DataFactory<NamedData> {
+    static class MapDataFactory extends AbstractDataSetter implements DataFactory<MapData> {
 
-        private final DataSchema schema;
+        private final Schema schema;
 
         private Map<String, Object> map;
 
-        MapDataFactory(DataSchema schema) {
+        MapDataFactory(Schema schema) {
             this.schema = schema;
             this.map = new HashMap<>(schema.lastIndex());
         }
@@ -286,8 +275,8 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public Class<NamedData> getDataType() {
-            return NamedData.class;
+        public Class<MapData> getDataType() {
+            return MapData.class;
         }
 
         @Override
@@ -317,21 +306,90 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public NamedData valuesToData(Object... values) {
+        public MapData valuesToData(Object... values) {
             Map<String, Object> map = new HashMap<>(values.length);
-            for (int i = 0; i < values.length; ++i ) {
+            for (int i = 0; i < values.length; ++i) {
                 map.put(schema.getFieldNameAt(i + 1), values[i]);
             }
             return new MapData(schema, map);
         }
 
         @Override
-        public NamedData toData() {
-            NamedData data = new MapData(schema, map);
+        public MapData toData() {
+            MapData data = new MapData(schema, map);
             this.map = new HashMap<>(schema.lastIndex());
             return data;
         }
 
+    }
+
+    public static class Schema extends DataSchemaImpl
+            implements WritableSchema<MapData> {
+
+        Schema(DataSchema from) {
+            super(from.getSchemaFields(), from.firstIndex(), from.lastIndex());
+        }
+
+        Schema(Iterable<SchemaField> schemaFields, int firstIndex, int lastIndex) {
+            super(schemaFields, firstIndex, lastIndex);
+        }
+
+        @Override
+        public Getter getDataGetterAt(int index) {
+
+            String name = getFieldNameAt(index);
+            if (name == null) {
+                throw new NoSuchFieldException(index, this);
+            }
+
+            return new AbstractGetter() {
+                @Override
+                public Object get(DidoData data) {
+                    return ((MapData) data).map.get(name);
+                }
+            };
+        }
+
+        @Override
+        public Getter getDataGetterNamed(String name) {
+            if (!hasNamed(name)) {
+                throw new NoSuchFieldException(name, this);
+            }
+
+            return new AbstractGetter() {
+                @Override
+                public Object get(DidoData data) {
+                    return ((MapData) data).map.get(name);
+                }
+            };
+        }
+
+        @Override
+        public WritableSchemaFactory<MapData> newSchemaFactory() {
+            return new MapDataSchemaFactory();
+        }
+
+        @Override
+        public DataFactory<MapData> newDataFactory() {
+            return new MapData.MapDataFactory(this);
+        }
+
+    }
+
+    public static class MapDataSchemaFactory extends SchemaFactoryImpl<Schema>
+            implements WritableSchemaFactory<MapData> {
+
+        protected MapDataSchemaFactory() {
+        }
+
+        protected MapDataSchemaFactory(DataSchema from) {
+            super(from);
+        }
+
+        @Override
+        protected Schema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
+            return new Schema(fields, firstIndex, lastIndex);
+        }
     }
 
 }

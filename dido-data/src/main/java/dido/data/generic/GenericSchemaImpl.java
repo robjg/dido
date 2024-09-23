@@ -9,6 +9,8 @@ import java.util.Map;
 
 public class GenericSchemaImpl<F> extends AbstractGenericDataSchema<F> {
 
+    private final Class<F> fieldType;
+
     private final Map<F, GenericSchemaField<F>> fieldToSchemaField;
 
     private final Map<String, GenericSchemaField<F>> nameToSchemaField;
@@ -25,8 +27,17 @@ public class GenericSchemaImpl<F> extends AbstractGenericDataSchema<F> {
 
     private volatile int hashCode = -1;
 
-    @SuppressWarnings("unchecked")
-    private GenericSchemaImpl(Iterable<GenericSchemaField<F>> schemaFields, int firstIndex, int lastIndex) {
+    protected GenericSchemaImpl(Class<F> fieldType,
+                                GenericDataSchema<F> schema) {
+        this(fieldType, schema.getGenericSchemaFields(), schema.firstIndex(), schema.lastIndex());
+    }
+
+    protected GenericSchemaImpl(Class<F> fieldType,
+                                Iterable<GenericSchemaField<F>> schemaFields,
+                                int firstIndex,
+                                int lastIndex) {
+
+        this.fieldType = fieldType;
 
         this.fieldToSchemaField = new LinkedHashMap<>();
         this.nameToSchemaField = new LinkedHashMap<>();
@@ -68,16 +79,36 @@ public class GenericSchemaImpl<F> extends AbstractGenericDataSchema<F> {
         this.indexToSchemaField = indexToSchemaField;
     }
 
-    public static <F> GenericDataSchema<F> fromFields(GenericSchemaField<F>... schemaFields) {
+    public static <F> GenericDataSchema<F> fromFields(Class<F> fieldType,
+                                                      GenericSchemaField<F>... schemaFields) {
 
-        return new GenericSchemaImpl<>(() -> Arrays.stream(schemaFields).iterator(),
-                schemaFields[0].getIndex(), schemaFields[schemaFields.length - 1].getIndex());
+        if (schemaFields.length == 0) {
+            return GenericDataSchema.emptySchema(fieldType);
+        }
+        else {
+            return new GenericSchemaImpl<>(fieldType,
+                    () -> Arrays.stream(schemaFields).iterator(),
+                    schemaFields[0].getIndex(), schemaFields[schemaFields.length - 1].getIndex());
+        }
     }
 
 
-    public static <F> GenericDataSchema<F> fromFields(Iterable<GenericSchemaField<F>> schemaFields, int firstIndex, int lastIndex) {
+    public static <F> GenericDataSchema<F> fromFields(Class<F> fieldType,
+                                                      Iterable<GenericSchemaField<F>> schemaFields,
+                                                      int firstIndex,
+                                                      int lastIndex) {
 
-        return new GenericSchemaImpl<>(schemaFields, firstIndex, lastIndex);
+        return new GenericSchemaImpl<>(fieldType, schemaFields, firstIndex, lastIndex);
+    }
+
+    @Override
+    public Class<F> getFieldType() {
+        return fieldType;
+    }
+
+    @Override
+    public boolean hasField(F field) {
+        return fieldToSchemaField.containsKey(field);
     }
 
     @Override
@@ -151,6 +182,11 @@ public class GenericSchemaImpl<F> extends AbstractGenericDataSchema<F> {
     public int getIndexNamed(String name) {
         GenericSchemaField<F> schemaField = nameToSchemaField.get(name);
         return schemaField == null ? 0 : schemaField.getIndex();
+    }
+
+    @Override
+    public Collection<GenericSchemaField<F>> getGenericSchemaFields() {
+        return Arrays.asList(indexToSchemaField);
     }
 
     @Override

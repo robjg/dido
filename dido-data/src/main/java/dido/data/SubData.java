@@ -1,5 +1,6 @@
 package dido.data;
 
+import java.util.Collection;
 import java.util.function.Function;
 
 /**
@@ -7,27 +8,120 @@ import java.util.function.Function;
  */
 public class SubData extends AbstractData implements DidoData {
 
-    private final DataSchema dataSchema;
+    private final ReadableSchema dataSchema;
 
     private final int[] indices;
+
     private final IndexedData original;
 
-
-    private SubData(DataSchema dataSchema, int[] indices, IndexedData original) {
+    private SubData(ReadableSchema dataSchema, int[] indices, IndexedData original) {
         this.dataSchema = dataSchema;
         this.indices = indices;
         this.original = original;
+    }
+
+    public static Function<DidoData, DidoData> subDataOf(ReadableSchema original, int... indices) {
+
+        SubSchemaFactory schemaFactory = new SubSchemaFactory(
+                original, indices);
+
+        for (int index : indices) {
+            SchemaField originalField = original.getSchemaFieldAt(index);
+            if (originalField == null) {
+                throw new NoSuchFieldException(index, original);
+            }
+            schemaFactory.addSchemaField(originalField.mapToIndex(0));
+        }
+        return new MappingFunc(schemaFactory.toSchema(), indices);
+    }
+
+    public static Function<DidoData, DidoData> subDataOf(ReadableSchema original, String... fields) {
+
+        int[] indices = new int[fields.length];
+        for (int i = 0; i < indices.length; ++i) {
+            String field = fields[i];
+            int index = original.getIndexNamed(field);
+            if (index == 0) {
+                throw new NoSuchFieldException(field, original);
+            }
+            indices[i] = index;
+        }
+        return subDataOf(original, indices);
     }
 
     private static class MappingFunc implements Function<DidoData, DidoData> {
 
         private final int[] indices;
 
-        private DataSchema lastSchema;
+        private final SubSchema subSchema;
 
-        private DataSchema subSchema;
+        private MappingFunc(SubSchema subSchema, int[] indices) {
+            this.subSchema = subSchema;
+            this.indices = indices;
+        }
 
-        private MappingFunc(int[] indices) {
+        @Override
+        public DidoData apply(DidoData original) {
+
+            return new SubData(subSchema, indices, original);
+        }
+    }
+
+    static class SubSchemaFactory extends SchemaFactoryImpl<SubSchema> {
+
+        private final ReadableSchema original;
+
+        private final int[] indices;
+
+        SubSchemaFactory(ReadableSchema original, int[] indices) {
+            this.original = original;
+            this.indices = indices;
+        }
+
+        @Override
+        protected SubSchema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
+            return new SubSchema(fields, firstIndex, lastIndex, original, indices);
+        }
+    }
+
+    static class SubSchema extends DataSchemaImpl implements ReadableSchema {
+
+        private final ReadableSchema original;
+
+        private final int[] indices;
+
+        SubSchema(Collection<SchemaField> fields, int firstIndex, int lastIndex,
+                  ReadableSchema original, int[] indices) {
+            super(fields, firstIndex, lastIndex);
+            this.original = original;
+            this.indices = indices;
+        }
+
+        @Override
+        public Getter getDataGetterAt(int index) {
+            int oldIndex = indices[index - 1];
+            return original.getDataGetterAt(oldIndex);
+        }
+
+        @Override
+        public Getter getDataGetterNamed(String name) {
+            int index = getIndexNamed(name);
+            if (index == 0) {
+                throw new NoSuchFieldException(name, SubSchema.this);
+            }
+            return getDataGetterAt(index);
+        }
+    }
+
+    private static class SchemaUnknownMappingFunc implements Function<DidoData, DidoData> {
+
+        private final int[] indices;
+
+        private ReadableSchema lastSchema;
+
+        private Function<DidoData, DidoData> mappingFunc;
+
+        private SchemaUnknownMappingFunc(int[] indices) {
             this.indices = indices;
         }
 
@@ -36,36 +130,24 @@ public class SubData extends AbstractData implements DidoData {
 
             if (lastSchema == null || !lastSchema.equals(original.getSchema())) {
                 lastSchema = original.getSchema();
-                SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
-                for (int index : indices) {
-                    schemaBuilder.addNamed(lastSchema.getFieldNameAt(index),
-                            lastSchema.getTypeAt(index));
-                }
-                subSchema = schemaBuilder.build();
+
+                mappingFunc = subDataOf(lastSchema, indices);
+
             }
-            return new SubData(subSchema, indices, original);
+            return mappingFunc.apply(original);
         }
     }
 
-    public static class FieldMappingFunc implements Function<DidoData, DidoData> {
+    public static class SchemaUnknownFieldMappingFunc implements Function<DidoData, DidoData> {
 
         private final String[] fields;
 
-        private final boolean withFields;
+        private ReadableSchema lastSchema;
 
-        private DataSchema lastSchema;
+        private Function<DidoData, DidoData> mappingFunc;
 
-        private DataSchema subSchema;
-
-        private int[] indices;
-
-        private FieldMappingFunc(String[] fields) {
-            this(fields, false);
-        }
-
-        private FieldMappingFunc(String[] fields, boolean withFields) {
+        private SchemaUnknownFieldMappingFunc(String[] fields) {
             this.fields = fields;
-            this.withFields = withFields;
         }
 
         @Override
@@ -73,64 +155,26 @@ public class SubData extends AbstractData implements DidoData {
 
             if (lastSchema == null || !lastSchema.equals(original.getSchema())) {
                 lastSchema = original.getSchema();
-                indices = new int[fields.length];
-                SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
-                for (int i = 0; i < indices.length; ++i) {
-                    String field = fields[i];
-                    int index = lastSchema.getIndexNamed(field);
-                    indices[i] = index;
-                    if (withFields) {
-                        schemaBuilder.addNamed(field, lastSchema.getTypeNamed(field));
-                    } else {
-                        schemaBuilder.add(lastSchema.getTypeNamed(field));
-                    }
-                }
-                subSchema = schemaBuilder.build();
+
+                mappingFunc = subDataOf(lastSchema, fields);
             }
-            return new SubData(subSchema, indices, original);
+
+            return mappingFunc.apply(original);
         }
-    }
-
-    public static class Configuration {
-
-        private boolean withFields;
-
-        public Configuration fields(boolean withFields) {
-            this.withFields = withFields;
-            return this;
-        }
-
-        public Configuration fields() {
-            return fields(true);
-        }
-
-        public Function<DidoData, DidoData> andIndices(int... indices) {
-
-            return new MappingFunc(indices);
-        }
-
-        public Function<DidoData, DidoData> andFields(String... fields) {
-
-            return new FieldMappingFunc(fields, this.withFields);
-        }
-    }
-
-    public static Configuration with() {
-        return new Configuration();
     }
 
     public static Function<DidoData, DidoData> ofIndices(int... indices) {
 
-        return new MappingFunc(indices);
+        return new SchemaUnknownMappingFunc(indices);
     }
 
     public static Function<DidoData, DidoData> ofFields(String... fields) {
 
-        return new FieldMappingFunc(fields);
+        return new SchemaUnknownFieldMappingFunc(fields);
     }
 
     @Override
-    public DataSchema getSchema() {
+    public ReadableSchema getSchema() {
         return dataSchema;
     }
 

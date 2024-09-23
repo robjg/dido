@@ -61,7 +61,8 @@ public class Flatten {
                 "No Nested Schema for " + extractor);
 
         Concatenator concatenator = extractor.bodgeFields(Concatenator.withSettings())
-                .makeFromSchemas(schema, nestedSchema);
+                .makeFromSchemas(ReadableSchema.readableSchemaFrom(schema),
+                        ReadableSchema.readableSchemaFrom(nestedSchema));
 
         return new KnownRepeatingFlatten(concatenator, extractor);
     }
@@ -198,23 +199,23 @@ public class Flatten {
 
             List<DidoData> flattened = new ArrayList<>(maxSize);
 
-            for (int l = 0; l < maxSize; ++l) {
+            DataFactory<ArrayData> arrayData = ArrayData.factoryFor(newSchema);
 
-                ArrayData.Builder arrayData = ArrayData.builderForSchema(newSchema);
+            for (int l = 0; l < maxSize; ++l) {
 
                 for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
 
                     List<Object> list = lists.get(i);
                     if (list == null) {
-                        arrayData.withAt(i, data.getAt(i));
+                        arrayData.getSetterAt(i).set(data.getAt(i));
                     } else {
                         if (l < list.size()) {
-                            arrayData.withAt(i, list.get(l));
+                            arrayData.getSetterAt(i).set(list.get(l));
                         }
                     }
                 }
 
-                flattened.add(arrayData.build());
+                flattened.add(arrayData.toData());
             }
 
             return flattened;

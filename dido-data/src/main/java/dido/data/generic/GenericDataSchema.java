@@ -3,7 +3,7 @@ package dido.data.generic;
 import dido.data.DataSchema;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 /**
  * Define a Schema for Data. A schema is always defined by index but
@@ -19,6 +19,10 @@ import java.util.Collections;
  * @param <F> The type of the fields used in the schema.
  */
 public interface GenericDataSchema<F> extends DataSchema {
+
+    Class<F> getFieldType();
+
+    boolean hasField(F field);
 
     /**
      * Get the {@link GenericSchemaField} for the given index. A Schema Field will exist for
@@ -117,18 +121,43 @@ public interface GenericDataSchema<F> extends DataSchema {
     Collection<F> getFields();
 
     /**
+     * Get all the {@link GenericSchemaField}s in this schema.
+     *
+     * @return A collection of Schema Fields. May be empty. Never null.
+     */
+    Collection<GenericSchemaField<F>> getGenericSchemaFields();
+
+
+
+    /**
      * Provide an empty schema.
      *
      * @param <F> The type of the field.
      *
      * @return An empty schema.
      */
-    static <F> GenericDataSchema<F> emptySchema() {
-        return new EmptySchema<F>();
+    static <F> GenericDataSchema<F> emptySchema(Class<F> fieldType) {
+        return new EmptySchema<F>(fieldType);
     }
 
 
     class EmptySchema<F> extends DataSchema.EmptySchema implements GenericDataSchema<F> {
+
+        private final Class<F> fieldType;
+
+        @Override
+        public Class<F> getFieldType() {
+            return fieldType;
+        }
+
+        public EmptySchema(Class<F> fieldType) {
+            this.fieldType = fieldType;
+        }
+
+        @Override
+        public boolean hasField(F field) {
+            return false;
+        }
 
         @Override
         public GenericSchemaField<F> getSchemaFieldAt(int index) {
@@ -177,9 +206,13 @@ public interface GenericDataSchema<F> extends DataSchema {
 
         @Override
         public Collection<F> getFields() {
-            return Collections.emptyList();
+            return List.of();
         }
 
+        @Override
+        public Collection<GenericSchemaField<F>> getGenericSchemaFields() {
+            return List.of();
+        }
     }
 
 }

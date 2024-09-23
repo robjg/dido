@@ -1,8 +1,7 @@
 package dido.sql;
 
-import dido.data.AbstractData;
-import dido.data.DataSchema;
-import dido.data.NamedData;
+import dido.data.NoSuchFieldException;
+import dido.data.*;
 import dido.how.DataException;
 
 import java.sql.ResultSet;
@@ -12,15 +11,22 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
 
     private final ResultSet resultSet;
 
-    private final DataSchema schema;
+    private final Schema schema;
 
-    private ResultSetWrapper(ResultSet resultSet, DataSchema schema) {
+    private ResultSetWrapper(ResultSet resultSet, Schema schema) {
         this.resultSet = resultSet;
         this.schema = schema;
     }
 
     public static NamedData from(ResultSet resultSet, DataSchema schema) {
-        return new ResultSetWrapper(resultSet, schema);
+        return new ResultSetWrapper(resultSet,
+                schema instanceof DataSchemaImpl ? new Schema((DataSchemaImpl) schema) :
+                new Schema(schema.getSchemaFields(), schema.firstIndex(), schema.lastIndex()));
+    }
+
+    @Override
+    public ReadableSchema getSchema() {
+        return schema;
     }
 
     @Override
@@ -133,11 +139,6 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
     }
 
     @Override
-    public DataSchema getSchema() {
-        return schema;
-    }
-
-    @Override
     public Object getAt(int index) {
         try {
             return resultSet.getObject(index);
@@ -243,6 +244,145 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
             return resultSet.getString(index);
         } catch (SQLException e) {
             throw new DataException(e);
+        }
+    }
+
+    static class IndexGetter implements Getter {
+
+        private final int index;
+
+
+        IndexGetter(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            try {
+                return ((ResultSetWrapper) data).resultSet.getObject(index);
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
+
+        @Override
+        public <T> T getAs(Class<T> type, DidoData data) {
+            try {
+                return ((ResultSetWrapper) data).resultSet.getObject(index, type);
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
+
+        @Override
+        public boolean has(DidoData data) {
+            try {
+                ((ResultSetWrapper) data).resultSet.getObject(index);
+                return !((ResultSetWrapper) data).resultSet.wasNull();
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
+
+        @Override
+        public boolean getBoolean(DidoData data) {
+            try {
+                return ((ResultSetWrapper) data).resultSet.getBoolean(index);
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
+
+        @Override
+        public byte getByte(DidoData data) {
+            try {
+                return ((ResultSetWrapper) data).resultSet.getByte(index);
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
+
+        @Override
+        public char getChar(DidoData data) {
+            try {
+                return (char) ((ResultSetWrapper) data).resultSet.getInt(index);
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
+
+        @Override
+        public short getShort(DidoData data) {
+            try {
+                return ((ResultSetWrapper) data).resultSet.getShort(index);
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
+
+        @Override
+        public int getInt(DidoData data) {
+            try {
+                return ((ResultSetWrapper) data).resultSet.getInt(index);
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
+
+        @Override
+        public long getLong(DidoData data) {
+            try {
+                return ((ResultSetWrapper) data).resultSet.getLong(index);
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
+
+        @Override
+        public float getFloat(DidoData data) {
+            try {
+                return ((ResultSetWrapper) data).resultSet.getFloat(index);
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
+
+        @Override
+        public double getDouble(DidoData data) {
+            try {
+                return ((ResultSetWrapper) data).resultSet.getDouble(index);
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
+
+        @Override
+        public String getString(DidoData data) {
+            try {
+                return ((ResultSetWrapper) data).resultSet.getString(index);
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
+
+    }
+
+    static class Schema extends DataSchemaImpl implements ReadableSchema {
+
+        Schema(DataSchemaImpl schema) {
+            super(schema);
+        }
+
+        Schema(Iterable<SchemaField> schemaFields, int firstIndex, int lastIndex) {
+            super(schemaFields, firstIndex, lastIndex);
+        }
+
+        @Override
+        public Getter getDataGetterAt(int index) {
+            if (!hasIndex(index)) {
+                throw new NoSuchFieldException(index, this);
+            }
+            return new IndexGetter(index);
         }
     }
 

@@ -22,7 +22,7 @@ public class StreamLines {
 
     public static class In implements DataInHow<InputStream, NamedData> {
 
-        NamedDataBuilder dataBuilder = MapData.newBuilder(schema);
+        DataBuilder<MapData> dataBuilder = MapData.builderForSchema(schema);
 
         @Override
         public Class<InputStream> getInType() {

@@ -33,21 +33,17 @@ class ValueCopyFactoryTest {
 
         TransformerDefinition transformerDefinition = test.get();
 
-        DataSchema inSchema = SchemaBuilder.newInstance()
-                .addNamed("Foo", String.class)
-                .build();
+        DidoData data = MapData.of("Foo", "423");
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
-        TransformerFactory transformerFactory = transformerDefinition.define(inSchema, schemaSetter);
+        TransformerFactory transformerFactory = transformerDefinition.define(data.getSchema(), schemaSetter);
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", Integer.class));
 
         Setter dataSetter = mock(Setter.class);
         DataFactory<?> dataFactory = mock(DataFactory.class);
         when(dataFactory.getSetterNamed("FooAmount")).thenReturn(dataSetter);
-
-        DidoData data = MapData.of("Foo", "423");
 
         Consumer<DidoData> consumer = transformerFactory.create(dataFactory);
         consumer.accept(data);
@@ -67,21 +63,17 @@ class ValueCopyFactoryTest {
 
         TransformerDefinition transformerDefinition = test.get();
 
-        DataSchema inSchema = SchemaBuilder.newInstance()
-                .addNamed("Foo", String.class)
-                .build();
+        DidoData data = MapData.of("Foo", "423");
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
-        TransformerFactory transformerFactory = transformerDefinition.define(inSchema, schemaSetter);
+        TransformerFactory transformerFactory = transformerDefinition.define(data.getSchema(), schemaSetter);
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", int.class));
 
         Setter dataSetter = mock(Setter.class);
         DataFactory<?> dataFactory = mock(DataFactory.class);
         when(dataFactory.getSetterNamed("FooAmount")).thenReturn(dataSetter);
-
-        DidoData data = MapData.of("Foo", "423");
 
         Consumer<DidoData> consumer = transformerFactory.create(dataFactory);
         consumer.accept(data);

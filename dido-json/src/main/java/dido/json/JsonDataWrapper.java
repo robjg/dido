@@ -1,6 +1,7 @@
 package dido.json;
 
 import com.google.gson.*;
+import dido.data.NoSuchFieldException;
 import dido.data.*;
 
 import java.lang.reflect.Type;
@@ -17,12 +18,11 @@ public class JsonDataWrapper {
 
     private static final Object NONE = new Object();
 
-    private final DataSchema schema;
+    private final DataDeserializer deserializer;
 
     private JsonDataWrapper(DataSchema schema) {
-        this.schema = schema;
+        this.deserializer = new DataDeserializer(schema);
     }
-
 
     public static GsonBuilder registerSchema(GsonBuilder gsonBuilder,
                                              DataSchema schema) {
@@ -30,20 +30,23 @@ public class JsonDataWrapper {
     }
 
     private GsonBuilder init(GsonBuilder gsonBuilder) {
-        deserializer = new DataDeserializer(schema);
         return gsonBuilder
                 .registerTypeAdapter(DATA_TYPE, deserializer)
                 .registerTypeAdapter(REPEATING_DATA_TYPE, new RepeatingDeserializer(DATA_TYPE));
     }
 
-    DataDeserializer deserializer;
-
     class DataDeserializer implements JsonDeserializer<NamedData> {
 
-        private DataSchema schema;
+        private Schema schema;
 
         DataDeserializer(DataSchema schema) {
-            this.schema = schema;
+            setSchema(schema);
+        }
+
+        void setSchema(DataSchema schema) {
+            this.schema = Objects.requireNonNull(schema) instanceof DataSchemaImpl ?
+                    new Schema((DataSchemaImpl) schema) :
+                    new Schema(schema.getSchemaFields(), schema.firstIndex(), schema.lastIndex());
         }
 
         @Override
@@ -55,14 +58,14 @@ public class JsonDataWrapper {
 
     public NamedData wrap(JsonObject jsonObject, JsonDeserializationContext context) {
 
-        final DataSchema schema = Objects.requireNonNull(deserializer.schema);
+        final Schema schema = deserializer.schema;
 
         final Object[] values = new Object[schema.lastIndex()];
 
         return new AbstractNamedData() {
 
             @Override
-            public DataSchema getSchema() {
+            public ReadableSchema getSchema() {
                 return schema;
             }
 
@@ -87,14 +90,13 @@ public class JsonDataWrapper {
 
                 Class<?> fieldType = schemaField.getType();
 
-                DataSchema restore = null;
+                Schema restore = null;
                 if (schemaField.isNested()) {
                     restore = deserializer.schema;
-                    deserializer.schema = schemaField.getNestedSchema();
+                    deserializer.setSchema(schemaField.getNestedSchema());
                     if (schemaField.isRepeating()) {
                         fieldType = REPEATING_DATA_TYPE;
-                    }
-                    else {
+                    } else {
                         fieldType = DATA_TYPE;
                     }
                 }
@@ -124,8 +126,7 @@ public class JsonDataWrapper {
                 Object value = values[index - 1];
                 if (value == null) {
                     return getAt(index) != null;
-                }
-                else {
+                } else {
                     return value != NONE;
                 }
             }
@@ -135,5 +136,35 @@ public class JsonDataWrapper {
                 return DidoData.toStringFieldsOnly(this);
             }
         };
+    }
+
+    static class Schema extends DataSchemaImpl implements ReadableSchema {
+
+        Schema(DataSchemaImpl schema) {
+            super(schema);
+        }
+
+        Schema(Iterable<SchemaField> schemaFields, int firstIndex, int lastIndex) {
+            super(schemaFields, firstIndex, lastIndex);
+        }
+
+        @Override
+        public Getter getDataGetterAt(int index) {
+            return new AbstractGetter() {
+                @Override
+                public Object get(DidoData data) {
+                    return data.getAt(index);
+                }
+            };
+        }
+
+        @Override
+        public Getter getDataGetterNamed(String name) {
+            int index = getIndexNamed(name);
+            if (index == 0) {
+                throw new NoSuchFieldException(name, Schema.this);
+            }
+            return getDataGetterAt(index);
+        }
     }
 }

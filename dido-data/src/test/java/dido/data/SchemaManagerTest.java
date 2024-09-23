@@ -1,6 +1,5 @@
 package dido.data;
 
-import dido.data.generic.GenericDataSchema;
 import dido.data.generic.GenericSchemaField;
 import org.junit.jupiter.api.Test;
 
@@ -134,7 +133,7 @@ class SchemaManagerTest {
 
         DataSchema dataSchema = schemaManager.getDefaultSchema();
 
-        assertThat(dataSchema, is(GenericDataSchema.emptySchema()));
+        assertThat(dataSchema, is(DataSchema.emptySchema()));
     }
 
     @Test
@@ -150,7 +149,7 @@ class SchemaManagerTest {
 
         SchemaField nestedField = dataSchema.getSchemaFieldNamed("Foo");
 
-        assertThat(nestedField.getNestedSchema(), is(GenericDataSchema.emptySchema()));
+        assertThat(nestedField.getNestedSchema(), is(DataSchema.emptySchema()));
         assertThat(nestedField.isRepeating(), is(false));
     }
 
@@ -167,7 +166,7 @@ class SchemaManagerTest {
 
         SchemaField nestedField = dataSchema.getSchemaFieldNamed("Foo");
 
-        assertThat(nestedField.getNestedSchema(), is(GenericDataSchema.emptySchema()));
+        assertThat(nestedField.getNestedSchema(), is(DataSchema.emptySchema()));
         assertThat(nestedField.isRepeating(), is(true));
     }
 }

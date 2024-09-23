@@ -72,7 +72,7 @@ class ArrayDataTest {
     @Test
     void whenUsingBuilderThenSchemaDerived() {
 
-        DidoData data1 = ArrayData.<String>newBuilder()
+        DidoData data1 = ArrayData.<String>newBuilderNoSchema()
                 .withString("Fruit", "Apple")
                 .withString("Flavour", null)
                 .withInt("Qty", 15)

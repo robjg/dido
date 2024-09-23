@@ -1,9 +1,6 @@
 package dido.operators.transform;
 
-import dido.data.ArrayData;
-import dido.data.DataSchema;
-import dido.data.SchemaBuilder;
-import dido.data.SchemaField;
+import dido.data.*;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,7 +12,7 @@ class SchemaStrategyTest {
     void testNewFields() {
 
         FieldTransformationBuilder<?> transformationBuilder = FieldTransformationBuilder
-                .forSchema(DataSchema.emptySchema(), ArrayData.schemaFactory());
+                .forSchema(ReadableSchema.emptySchema(), ArrayData.schemaFactory());
 
         transformationBuilder
                 .addFieldOperation((s, sf) -> {
@@ -46,7 +43,7 @@ class SchemaStrategyTest {
     void testMergeNewFieldsIntoEmptySchema() {
 
         FieldTransformationBuilder<?> transformationBuilder = FieldTransformationBuilder
-                .forSchemaWithCopy(DataSchema.emptySchema(), ArrayData.schemaFactory());
+                .forSchemaWithCopy(ReadableSchema.emptySchema(), ArrayData.schemaFactory());
 
         transformationBuilder
                 .addFieldOperation((s, sf) -> {
@@ -76,7 +73,7 @@ class SchemaStrategyTest {
     @Test
     void testNewFieldsAddedToExisting() {
 
-        DataSchema existing = SchemaBuilder.newInstance()
+        ReadableSchema existing = MapData.schemaBuilder()
                 .addNamedAt(10, "Here", int.class)
                 .build();
 
@@ -112,7 +109,7 @@ class SchemaStrategyTest {
     @Test
     void testCopyFieldsOutOfOrderExisting() {
 
-        DataSchema existing = SchemaBuilder.newInstance()
+        ReadableSchema existing = MapData.schemaBuilder()
                 .addNamedAt(10, "One", int.class)
                 .addNamedAt(20, "Two", long.class)
                 .addNamedAt(30, "Three", double.class)

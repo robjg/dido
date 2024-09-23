@@ -229,7 +229,7 @@ class GenericSchemaBuilderTest {
 
         GenericDataSchema<?> schema1 = GenericSchemaBuilder.forStringFields().build();
 
-        GenericDataSchema<?> schema2 = GenericDataSchema.emptySchema();
+        GenericDataSchema<?> schema2 = GenericDataSchema.emptySchema(String.class);
 
         assertThat(schema1.hashCode(), is(schema2.hashCode()));
         assertThat(schema1, is(schema2));

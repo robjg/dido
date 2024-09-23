@@ -4,8 +4,11 @@ import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.IndexedDataBuilder;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Base class for {@link GenericDataBuilder}s that convert primitives into Objects.
@@ -153,14 +156,17 @@ abstract public class GenericDataBuilders<F, D extends GenericData<F>, B extends
     }
 
 
-    abstract public static class KnownSchema<F, D extends GenericData<F>, B extends KnownSchema<F, D, B>>
+    public static class KnownSchema<F, D extends GenericData<F>, B extends KnownSchema<F, D, B>>
         extends Indexed<F, D, B> implements GenericDataBuilder<F> {
 
-        private final GenericDataSchema<F> schema;
+        private final GenericWritableSchema<F, D> schema;
 
-        protected KnownSchema(GenericDataSchema<F> schema) {
+        private final GenericDataFactory<F, D> dataFactory;
+
+        protected KnownSchema(GenericWritableSchema<F, D> schema) {
             super();
             this.schema = Objects.requireNonNull(schema);
+            this.dataFactory = schema.newDataFactory();
         }
 
         protected GenericDataSchema<F> getSchema() {
@@ -176,7 +182,16 @@ abstract public class GenericDataBuilders<F, D extends GenericData<F>, B extends
         }
 
         @Override
-        abstract public B with(F field, Object value);
+        public B withAt(int index, Object value) {
+            dataFactory.getSetterAt(index).set(value);
+            return self();
+        }
+
+        @Override
+        public B with(F field, Object value) {
+            dataFactory.getSetter(field).set(value);
+            return self();
+        }
 
         @Override
         public B withBoolean(F field, boolean value) {
@@ -222,6 +237,20 @@ abstract public class GenericDataBuilders<F, D extends GenericData<F>, B extends
         public B withString(F field, String value) {
             return with(field, value);
         }
+
+        public B copy(GenericData<F> from) {
+
+            GenericDataSchema<F> schema = from.getSchema();
+            for (F field : schema.getFields()) {
+                with(field, from.getAt(schema.getIndexOf(field)));
+            }
+            return self();
+        }
+
+        @Override
+        public D build() {
+            return dataFactory.toData();
+        }
     }
 
     /**
@@ -263,6 +292,115 @@ abstract public class GenericDataBuilders<F, D extends GenericData<F>, B extends
         public ValuesTo<F> of(Object... values) {
             GenericData<F> data = owner.values().of(values);
             consumer.accept(data);
+            return this;
+        }
+    }
+
+    public static class BuilderNoSchema<F, D extends GenericData<F>> extends GenericDataBuilders.Fields<F, BuilderNoSchema<F, D>> {
+
+        private final Map<F, Object> map = new LinkedHashMap<>();
+
+        private final GenericWritableSchemaFactory<F, D> schemaBuilder;
+
+        private final GenericSchemaField.Of<F> of;
+
+        public BuilderNoSchema(GenericWritableSchemaFactory<F, D> writableSchemaFactory,
+                               Function<? super String, ? extends F> fieldMappingFunc) {
+            this.schemaBuilder = writableSchemaFactory;
+            this.of = GenericSchemaField.with(fieldMappingFunc);
+        }
+
+        @Override
+        public D build() {
+            GenericWritableSchema<F, D> writableSchema = schemaBuilder.toSchema();
+
+            GenericDataFactory<F, D> dataFactory = writableSchema.newDataFactory();
+
+            for (F field : writableSchema.getFields()) {
+                dataFactory.getSetter(field).set(map.get(field));
+            }
+
+            return dataFactory.toData();
+        }
+
+        @Override
+        public BuilderNoSchema<F, D> with(F field, Object value) {
+            map.put(field, value);
+
+            schemaBuilder.addGenericSchemaField(of
+                    .of(0, field, value == null ? void.class : value.getClass()));
+            return this;
+        }
+
+        @Override
+        public BuilderNoSchema<F, D> withBoolean(F field, boolean value) {
+            map.put(field, value);
+            schemaBuilder.addGenericSchemaField(of
+                    .of(0, field, boolean.class));
+            return this;
+        }
+
+        @Override
+        public BuilderNoSchema<F, D> withByte(F field, byte value) {
+            map.put(field, value);
+            schemaBuilder.addGenericSchemaField(of
+                    .of(0, field, byte.class));
+            return this;
+        }
+
+        @Override
+        public BuilderNoSchema<F, D> withChar(F field, char value) {
+            map.put(field, value);
+            schemaBuilder.addGenericSchemaField(of
+                    .of(0, field, char.class));
+            return this;
+        }
+
+        @Override
+        public BuilderNoSchema<F, D> withShort(F field, short value) {
+            map.put(field, value);
+            schemaBuilder.addGenericSchemaField(of
+                    .of(0, field, short.class));
+            return this;
+        }
+
+        @Override
+        public BuilderNoSchema<F, D> withInt(F field, int value) {
+            map.put(field, value);
+            schemaBuilder.addGenericSchemaField(of
+                    .of(0, field, int.class));
+            return this;
+        }
+
+        @Override
+        public BuilderNoSchema<F, D> withLong(F field, long value) {
+            map.put(field, value);
+            schemaBuilder.addGenericSchemaField(of
+                    .of(0, field, long.class));
+            return this;
+        }
+
+        @Override
+        public BuilderNoSchema<F, D> withFloat(F field, float value) {
+            map.put(field, value);
+            schemaBuilder.addGenericSchemaField(of
+                    .of(0, field, float.class));
+            return this;
+        }
+
+        @Override
+        public BuilderNoSchema<F, D> withDouble(F field, double value) {
+            map.put(field, value);
+            schemaBuilder.addGenericSchemaField(of
+                    .of(0, field, double.class));
+            return this;
+        }
+
+        @Override
+        public BuilderNoSchema<F, D> withString(F field, String value) {
+            map.put(field, value);
+            schemaBuilder.addGenericSchemaField(of
+                    .of(0, field, String.class));
             return this;
         }
     }

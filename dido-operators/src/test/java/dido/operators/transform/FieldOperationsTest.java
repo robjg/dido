@@ -1,7 +1,6 @@
 package dido.operators.transform;
 
 import dido.data.ArrayData;
-import dido.data.ArrayDataSchema;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,7 @@ import static org.hamcrest.Matchers.is;
 
 class FieldOperationsTest {
 
-    static ArrayDataSchema schema = ArrayDataSchema.newBuilder()
+    static ArrayData.Schema schema = ArrayData.schemaBuilder()
             .addNamed("Fruit", String.class)
             .addNamed("Qty", int.class)
             .addNamed("Price", double.class)

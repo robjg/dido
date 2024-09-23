@@ -48,13 +48,7 @@ class SchemaBuilderTest {
         assertThat(schema.nextIndex(20), is(0));
         assertThat(schema.getFieldNames(), contains("f_5", "f_6", "f_20"));
 
-        try {
-            assertThat(schema.getFieldNameAt(2), nullValue());
-            assertThat("Expected to fail", false);
-        }
-        catch (IndexOutOfBoundsException e) {
-            // expected
-        }
+        assertThat(schema.getFieldNameAt(2), nullValue());
     }
 
     @Test
@@ -349,7 +343,7 @@ class SchemaBuilderTest {
 
         DataSchema schema1 = SchemaBuilder.newInstance().build();
 
-        DataSchema schema2 = GenericDataSchema.emptySchema();
+        DataSchema schema2 = GenericDataSchema.emptySchema(String.class);
 
         assertThat(schema1.hashCode(), is(schema2.hashCode()));
         assertThat(schema1, is(schema2));

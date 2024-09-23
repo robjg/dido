@@ -2,12 +2,12 @@ package dido.proto;
 
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Message;
-import dido.data.AbstractDataSchema;
-import dido.data.SchemaField;
+import dido.data.NoSuchFieldException;
+import dido.data.*;
 
 import java.util.*;
 
-public class DescriptorSchema extends AbstractDataSchema {
+public class DescriptorSchema extends AbstractDataSchema implements ReadableSchema {
 
     private final static Map<Descriptors.FieldDescriptor.JavaType, Class<?>> types =
             Map.of(Descriptors.FieldDescriptor.JavaType.INT, int.class,
@@ -102,6 +102,34 @@ public class DescriptorSchema extends AbstractDataSchema {
     @Override
     public boolean hasNamed(String name) {
         return byName.get(name) != null;
+    }
+
+    @Override
+    public Getter getDataGetterAt(int index) {
+        Descriptors.FieldDescriptor fieldDescriptor = getFieldDescriptorAt(index);
+        if (fieldDescriptor == null) {
+            throw new NoSuchFieldException(index, this);
+        }
+        return new AbstractGetter() {
+            @Override
+            public Object get(DidoData data) {
+                return ((DynamicMessageData) data).message.getField(fieldDescriptor);
+            }
+        };
+    }
+
+    @Override
+    public Getter getDataGetterNamed(String name) {
+        Descriptors.FieldDescriptor fieldDescriptor = getFieldDescriptorNamed(name);
+        if (fieldDescriptor == null) {
+            throw new NoSuchFieldException(name, this);
+        }
+        return new AbstractGetter() {
+            @Override
+            public Object get(DidoData data) {
+                return ((DynamicMessageData) data).message.getField(fieldDescriptor);
+            }
+        };
     }
 
     private static class Pair {

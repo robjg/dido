@@ -118,10 +118,6 @@ public interface DataSchema extends IndexedSchema {
      */
     Collection<SchemaField> getSchemaFields();
 
-    Getter getDataGetterAt(int index);
-
-    Getter getDataGetterNamed(String name);
-
     /**
      * Compare two schemas for equality. Because it's forbidden to provide default Object methods in
      * interfaces each these statics are available as a convenience for implementations.
@@ -263,16 +259,6 @@ public interface DataSchema extends IndexedSchema {
         @Override
         public Collection<SchemaField> getSchemaFields() {
             return List.of();
-        }
-
-        @Override
-        public Getter getDataGetterAt(int index) {
-            throw new NoSuchFieldException(index, this);
-        }
-
-        @Override
-        public Getter getDataGetterNamed(String name) {
-            throw new NoSuchFieldException(name, this);
         }
 
         @Override

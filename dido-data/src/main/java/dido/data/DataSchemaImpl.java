@@ -1,7 +1,6 @@
 package dido.data;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -18,10 +17,6 @@ public class DataSchemaImpl extends AbstractDataSchema {
     private final int lastIndex;
 
     private volatile int hashCode = -1;
-
-    protected DataSchemaImpl() {
-        this(Collections.emptyList(), 0, 0);
-    }
 
     protected DataSchemaImpl(Iterable<SchemaField> schemaFields, int firstIndex, int lastIndex) {
 
@@ -53,6 +48,15 @@ public class DataSchemaImpl extends AbstractDataSchema {
 
         this.nextIndex = nextIndex;
         this.indexToSchemaField = indexToSchemaField;
+    }
+
+    protected DataSchemaImpl(DataSchemaImpl other) {
+        this.nameToSchemaField = other.nameToSchemaField;
+        this.nextIndex = other.nextIndex;
+        this.indexToSchemaField = other.indexToSchemaField;
+        this.firstIndex = other.firstIndex;
+        this.lastIndex = other.lastIndex;
+        this.hashCode = other.hashCode;
     }
 
     public static  DataSchema fromFields(SchemaField... schemaFields) {
@@ -89,12 +93,17 @@ public class DataSchemaImpl extends AbstractDataSchema {
 
     @Override
     public SchemaField getSchemaFieldAt(int index) {
-        return indexToSchemaField[index - firstIndex];
+        try {
+            return indexToSchemaField[index - firstIndex];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
     @Override
     public Class<?> getTypeAt(int index) {
-        return indexToSchemaField[index - firstIndex].getType();
+        SchemaField schemaField = indexToSchemaField[index - firstIndex];
+        return schemaField == null ? null : schemaField.getType();
     }
 
     @Override

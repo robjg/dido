@@ -11,7 +11,7 @@ public class GenericDataSchemaTest {
     @Test
     public void testEmptySchema() {
 
-        GenericDataSchema<String> schema = GenericDataSchema.emptySchema();
+        GenericDataSchema<String> schema = GenericDataSchema.emptySchema(String.class);
 
         assertThat(schema.firstIndex(), is(0));
         assertThat(schema.lastIndex(), is(0));
@@ -22,11 +22,11 @@ public class GenericDataSchemaTest {
     @Test
     public void testEmptySchemaEquality() {
 
-        GenericDataSchema<String> schema1 = GenericDataSchema.emptySchema();
+        GenericDataSchema<String> schema1 = GenericDataSchema.emptySchema(String.class);
 
-        GenericDataSchema<String> schema2 = GenericDataSchema.emptySchema();
+        GenericDataSchema<String> schema2 = GenericDataSchema.emptySchema(String.class);
 
-        GenericDataSchema<Integer> schema3 = GenericDataSchema.emptySchema();
+        GenericDataSchema<Integer> schema3 = GenericDataSchema.emptySchema(Integer.class);
 
         assertThat(schema1.hashCode(), is(0));
 

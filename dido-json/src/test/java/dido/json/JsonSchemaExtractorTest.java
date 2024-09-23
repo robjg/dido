@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import dido.data.DataSchema;
 import dido.data.SchemaBuilder;
-import dido.data.generic.GenericDataSchema;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;
@@ -115,7 +114,7 @@ class JsonSchemaExtractorTest {
         rootObject.add("OrderLines", orderLines);
 
         DataSchema partialSchema = SchemaBuilder.newInstance()
-                .addRepeatingNamed("OrderLines", GenericDataSchema.emptySchema())
+                .addRepeatingNamed("OrderLines", DataSchema.emptySchema())
                 .build();
 
         JsonSchemaExtractor test = JsonSchemaExtractor.withPartialSchema(partialSchema);

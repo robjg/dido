@@ -1,5 +1,6 @@
 package dido.oddjob.bean;
 
+import dido.data.NoSuchFieldException;
 import dido.data.*;
 
 import java.util.LinkedHashMap;
@@ -8,15 +9,14 @@ import java.util.function.Function;
 
 /**
  * Todo: What does this do.
- *
  */
 public class RenamedData extends AbstractNamedData {
 
-    private final DataSchema toSchema;
+    private final Schema toSchema;
 
     private final DidoData original;
 
-    public RenamedData(DataSchema toSchema, DidoData original) {
+    RenamedData(Schema toSchema, DidoData original) {
         this.toSchema = toSchema;
         this.original = original;
     }
@@ -25,9 +25,9 @@ public class RenamedData extends AbstractNamedData {
 
         private final Map<String, String> fieldMap;
 
-        private DataSchema schemaOut;
+        private Schema schemaOut;
 
-        private DataSchema lastIn;
+        private ReadableSchema lastIn;
 
         Transform(Map<String, String> fieldMap) {
             this.fieldMap = fieldMap;
@@ -76,8 +76,7 @@ public class RenamedData extends AbstractNamedData {
         public TransformBuilder addMapping(String from, String to) {
             if (map.containsValue(to)) {
                 return addMapping(from, nameClash.apply(to));
-            }
-            else {
+            } else {
                 map.put(from, to);
                 return this;
             }
@@ -85,7 +84,7 @@ public class RenamedData extends AbstractNamedData {
     }
 
     @Override
-    public DataSchema getSchema() {
+    public ReadableSchema getSchema() {
         return toSchema;
     }
 
@@ -99,13 +98,39 @@ public class RenamedData extends AbstractNamedData {
         return original.hasIndex(index);
     }
 
-    static DataSchema renamedSchema(Map<String, String> mapping, DataSchema fromSchema) {
+    static Schema renamedSchema(Map<String, String> mapping, ReadableSchema fromSchema) {
 
         DataSchemaFactory schemaFactory = DataSchemaFactory.newInstance();
         for (SchemaField schemaField : fromSchema.getSchemaFields()) {
             schemaFactory.addSchemaField(schemaField.mapToFieldName(
                     mapping.get(schemaField.getName())));
         }
-        return schemaFactory.toSchema();
+        return new Schema((DataSchemaImpl) schemaFactory.toSchema(), fromSchema);
     }
+
+    static class Schema extends DataSchemaImpl implements ReadableSchema {
+
+        private final ReadableSchema fromSchema;
+
+        Schema(DataSchemaImpl schema,
+               ReadableSchema fromSchema) {
+            super(schema);
+            this.fromSchema = fromSchema;
+        }
+
+        @Override
+        public Getter getDataGetterAt(int index) {
+            return fromSchema.getDataGetterAt(index);
+        }
+
+        @Override
+        public Getter getDataGetterNamed(String name) {
+            int index = Schema.this.getIndexNamed(name);
+            if (index == 0) {
+                throw new NoSuchFieldException(index, Schema.this);
+            }
+            return getDataGetterAt(index);
+        }
+    }
+
 }

@@ -1,15 +1,12 @@
 package dido.data.generic;
 
-import dido.data.DataBuilder;
-
 /**
  * Something that is capable of building creating {@link GenericData}. Instances should be reusable,
  * once {@link #build()} has been called, any internal state should be reset so that new data can be built.
  *
  * @param <F> The type of the fields.
  */
-public interface GenericDataBuilder<F> extends
-        DataBuilder<GenericData<F>> {
+public interface GenericDataBuilder<F> {
 
     GenericDataBuilder<F> with(F field, Object value);
 

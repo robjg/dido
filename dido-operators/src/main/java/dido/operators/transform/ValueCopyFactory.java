@@ -1,6 +1,6 @@
 package dido.operators.transform;
 
-import dido.data.DataSchema;
+import dido.data.ReadableSchema;
 import dido.data.SchemaField;
 import dido.data.Setter;
 import dido.how.conversion.DefaultConversionProvider;
@@ -139,7 +139,7 @@ public class ValueCopyFactory implements Supplier<TransformerDefinition> {
         }
 
         @Override
-        public TransformerFactory define(DataSchema fromSchema,
+        public TransformerFactory define(ReadableSchema fromSchema,
                                          SchemaSetter schemaSetter) {
 
             String from;

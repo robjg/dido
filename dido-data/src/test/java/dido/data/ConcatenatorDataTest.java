@@ -14,22 +14,22 @@ class ConcatenatorDataTest {
     @Test
     void testConcatSchema() {
 
-        DataSchema schema1 = SchemaBuilder.newInstance()
+        ReadableSchema schema1 = MapData.schemaBuilder()
                 .addNamed("fruit", String.class)
                 .addNamed("qty", int.class)
                 .addNamed("price", double.class)
                 .build();
 
-        DataSchema schema2 = SchemaBuilder.newInstance()
+        ReadableSchema schema2 = MapData.schemaBuilder()
                 .addNamed("supplier", String.class)
                 .build();
 
-        DataSchema schema3 = SchemaBuilder.newInstance()
+        ReadableSchema schema3 = MapData.schemaBuilder()
                 .addNamed("checked", String.class)
                 .addNamed("good", boolean.class)
                 .build();
 
-        DataSchema schema = Concatenator.fromSchemas(schema1, schema2, schema3)
+        ReadableSchema schema = Concatenator.fromSchemas(schema1, schema2, schema3)
                 .getSchema();
 
         assertThat(schema.firstIndex(), is(1));
@@ -75,7 +75,7 @@ class ConcatenatorDataTest {
     @Test
     void testConcatData() {
 
-        NamedDataBuilder builder = MapData.newBuilderNoSchema();
+        MapData.BuilderNoSchema builder = MapData.newBuilderNoSchema();
 
         DidoData data1 = builder
                 .withString("type", "apple")
@@ -113,7 +113,7 @@ class ConcatenatorDataTest {
     @Test
     void testOtherTypes() {
 
-        NamedDataBuilder builder = MapData.newBuilderNoSchema();
+        MapData.BuilderNoSchema builder = MapData.newBuilderNoSchema();
 
         builder.withString("first", "Ignored" );
         DidoData data1 = builder.build();

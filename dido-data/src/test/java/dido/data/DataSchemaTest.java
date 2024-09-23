@@ -25,11 +25,11 @@ public class DataSchemaTest {
     @Test
     public void testEmptySchemaEquality() {
 
-        DataSchema schema1 = GenericDataSchema.emptySchema();
+        DataSchema schema1 = DataSchema.emptySchema();
 
-        DataSchema schema2 = GenericDataSchema.emptySchema();
+        DataSchema schema2 = DataSchema.emptySchema();
 
-        DataSchema schema3 = GenericDataSchema.emptySchema();
+        DataSchema schema3 = DataSchema.emptySchema();
 
         assertThat(schema1.hashCode(), is(0));
 

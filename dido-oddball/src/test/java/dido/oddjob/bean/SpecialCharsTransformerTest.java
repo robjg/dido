@@ -23,7 +23,7 @@ class SpecialCharsTransformerTest {
 
         Function<DidoData, NamedData> test = new SpecialCharsTransformer().toValue();
 
-        DidoData data = MapData.newBuilder(schema)
+        DidoData data = MapData.builderForSchema(schema)
                 .withString("Fruit", "Apple")
                 .withString("Flavour (taste)", "Yummy")
                 .withDouble("Weight (lbs.)", 22.2)

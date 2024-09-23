@@ -4,7 +4,7 @@ import dido.data.DataSchema;
 import dido.data.NamedData;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
-import dido.how.conversion.DidoConverter;
+import dido.how.conversion.DidoConversionProvider;
 import org.apache.commons.csv.CSVFormat;
 
 import java.io.InputStream;
@@ -52,7 +52,7 @@ public class CsvDido {
      * if values should be quoted, so we can't pre convert to a String.
      * @oddjob.required No
      */
-    private DidoConverter converter;
+    private DidoConversionProvider converter;
 
     public DataOutHow<OutputStream> toStreamOut() {
 
@@ -106,11 +106,11 @@ public class CsvDido {
         this.withHeader = withHeader;
     }
 
-    public DidoConverter getConverter() {
+    public DidoConversionProvider getConverter() {
         return converter;
     }
 
-    public void setConverter(DidoConverter converter) {
+    public void setConverter(DidoConversionProvider converter) {
         this.converter = converter;
     }
 }

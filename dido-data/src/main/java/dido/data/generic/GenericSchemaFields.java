@@ -90,6 +90,11 @@ class GenericSchemaFields<F> implements GenericSchemaField.Of<F> {
                 field);
     }
 
+    @Override
+    public GenericSchemaField<F> from(SchemaField schemaField) {
+        return new Extension(schemaField, fieldMappingFunc.apply(schemaField.getName()));
+    }
+
     private final class Extension implements GenericSchemaField<F> {
 
         private final SchemaField delegate;

@@ -67,38 +67,6 @@ public abstract class AbstractDataSchema implements DataSchema {
     }
 
     @Override
-    public Getter getDataGetterAt(int index) {
-        String toString = "DataGetter for [" + index + ":" + getFieldNameAt(index) + "]";
-        return new AbstractGetter() {
-            @Override
-            public Object get(DidoData data) {
-                return data.getAt(index);
-            }
-
-            @Override
-            public String toString() {
-                return toString;
-            }
-        };
-    }
-
-    @Override
-    public Getter getDataGetterNamed(String name) {
-        String toString = "DataGetter for [" + getIndexNamed(name) + ":" + name + "]";
-        return new AbstractGetter() {
-            @Override
-            public Object get(DidoData data) {
-                return data.getNamed(name);
-            }
-
-            @Override
-            public String toString() {
-                return toString;
-            }
-        };
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (obj instanceof DataSchema) {
             return DataSchema.equals(this, (DataSchema) obj);

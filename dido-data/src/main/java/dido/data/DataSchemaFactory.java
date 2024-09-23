@@ -9,7 +9,7 @@ import java.util.Collection;
 public class DataSchemaFactory extends SchemaFactoryImpl<DataSchema> implements SchemaFactory {
 
     @Override
-    DataSchema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
+    protected DataSchema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
         return DataSchemaImpl.fromFields(fields, firstIndex, lastIndex);
     }
 

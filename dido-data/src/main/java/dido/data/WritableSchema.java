@@ -5,7 +5,7 @@ package dido.data;
  *
  * @param <D> The type of {@link DidoData} this is for.
  */
-public interface WritableSchema<D extends DidoData> extends DataSchema {
+public interface WritableSchema<D extends DidoData> extends ReadableSchema {
 
     WritableSchemaFactory<D> newSchemaFactory();
 

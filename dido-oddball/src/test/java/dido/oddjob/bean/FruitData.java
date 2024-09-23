@@ -53,7 +53,7 @@ public class FruitData implements ValueFactory<DidoData> {
 
     @Override
     public DidoData toValue() throws ArooaConversionException {
-        return MapData.newBuilder(schema)
+        return MapData.builderForSchema(schema)
                 .withString(TYPE, type)
                 .withInt(QUANTITY, qty)
                 .withDouble(PRICE, price)

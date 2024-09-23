@@ -64,7 +64,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
 
         private Function<? super DidoData, ? extends DidoData> delegate;
 
-        private DataSchema lastSchema;
+        private ReadableSchema lastSchema;
 
         TransformerFunctionInitial(TransformationFactory config) {
             this.transformerFactories = new ArrayList<>(config.of);
@@ -86,7 +86,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
     }
 
     static <D extends DidoData> Transformation<D> functionFor(List<TransformerDefinition> definitions,
-                                                DataSchema schemaFrom,
+                                                ReadableSchema schemaFrom,
                                                 boolean withCopy,
                                                 WritableSchemaFactory<D> writableSchemaFactory) {
 

@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class AbstractGenericDataSchema<F> extends AbstractDataSchema implements GenericDataSchema<F> {
+public abstract class AbstractGenericDataSchema<F> extends AbstractDataSchema
+        implements GenericDataSchema<F> {
 
     @Override
     public F getFieldAt(int index) {

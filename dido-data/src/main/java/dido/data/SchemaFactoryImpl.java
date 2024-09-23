@@ -34,7 +34,7 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
      * implemented by subclasses to create the actual schema.
      *
      */
-    abstract S create(Collection<SchemaField> fields, int firstIndex, int lastIndex);
+    protected abstract S create(Collection<SchemaField> fields, int firstIndex, int lastIndex);
 
 
     @Override
@@ -126,12 +126,9 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
 
             String priorityName = schemaField.getName();
             Integer existingIndex = nameToIndex.get(priorityName);
-            if (existingIndex == null) {
-                addSchemaField(schemaField.mapToIndex(lastIndex() + 1));
-            } else {
-                SchemaField newField = schemaField.mapToIndex(existingIndex);
-                indexToFields.put(existingIndex, newField);
-            }
+            addSchemaField(
+                    schemaField.mapToIndex(Objects.requireNonNullElseGet(
+                            existingIndex, () -> lastIndex() + 1)));
         }
     }
 

@@ -62,7 +62,7 @@ public class DataSchemaSchema {
 
     public static DidoData schemaToData(DataSchema schema) {
 
-        NamedDataBuilder builder = MapData.newBuilder(DATA_SCHEMA_SCHEMA);
+        DataBuilder<MapData> builder = MapData.builderForSchema(DATA_SCHEMA_SCHEMA);
 
         DataSchema fieldSchema = DATA_SCHEMA_SCHEMA.getSchemaNamed(FIELDS_FIELD);
 
@@ -73,7 +73,7 @@ public class DataSchemaSchema {
 
             SchemaField schemaField = schema.getSchemaFieldAt(index);
 
-            NamedDataBuilder fieldBuilder = MapData.newBuilder(fieldSchema);
+            DataBuilder<MapData> fieldBuilder = MapData.builderForSchema(fieldSchema);
 
             fieldBuilder.withInt(INDEX_FIELD, index);
             if (schemaField.getName() != null) {

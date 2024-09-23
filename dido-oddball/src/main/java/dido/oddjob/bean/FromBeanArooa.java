@@ -1,5 +1,6 @@
 package dido.oddjob.bean;
 
+import dido.data.NoSuchFieldException;
 import dido.data.*;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.life.SimpleArooaClass;
@@ -8,6 +9,7 @@ import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -62,7 +64,7 @@ public class FromBeanArooa {
             } else if (partial) {
                 return new Unknown<>(schema);
             } else {
-                return new Known<>(schema);
+                return new Known<>(new Schema(schema));
             }
         }
 
@@ -84,23 +86,23 @@ public class FromBeanArooa {
 
     public <T> Function<T, NamedData> ofClass(Class<T> aClass) {
 
-        DataSchema schema = schemaFrom(new SimpleArooaClass(aClass));
+        Schema schema = schemaFrom(new SimpleArooaClass(aClass));
 
         return bean -> new Impl(schema, bean);
     }
 
     public <T> Function<T, DidoData> ofArooaClass(ArooaClass arooaClass) {
 
-        DataSchema schema = schemaFrom(arooaClass);
+        Schema schema = schemaFrom(arooaClass);
 
         return bean -> new Impl(schema, bean);
     }
 
     protected <T> Function<T, NamedData> ofArooaClassWithSchema(ArooaClass arooaClass,
-                                                               DataSchema schema,
-                                                               boolean partial) {
+                                                                DataSchema schema,
+                                                                boolean partial) {
 
-        DataSchema outSchema = schemaFrom(arooaClass,
+        Schema outSchema = schemaFrom(arooaClass,
                 schema, partial);
 
         return new Known<>(outSchema);
@@ -110,7 +112,7 @@ public class FromBeanArooa {
 
         private final DataSchema schema;
 
-        private DataSchema outSchema;
+        private Schema outSchema;
 
         Unknown(DataSchema schema) {
             this.schema = schema;
@@ -134,9 +136,9 @@ public class FromBeanArooa {
 
     class Known<T> implements Function<T, NamedData> {
 
-        private final DataSchema schema;
+        private final Schema schema;
 
-        Known(DataSchema schema) {
+        Known(Schema schema) {
             this.schema = schema;
         }
 
@@ -157,17 +159,17 @@ public class FromBeanArooa {
 
     class Impl extends AbstractNamedData {
 
-        private final DataSchema schema;
+        private final Schema schema;
 
         private final Object bean;
 
-        Impl(DataSchema schema, Object bean) {
+        Impl(Schema schema, Object bean) {
             this.schema = schema;
             this.bean = bean;
         }
 
         @Override
-        public DataSchema getSchema() {
+        public ReadableSchema getSchema() {
             return schema;
         }
 
@@ -185,11 +187,11 @@ public class FromBeanArooa {
                     List<DidoData> data = new ArrayList<>();
                     if (value instanceof Iterable) {
                         for (Object element : ((Iterable<?>) value)) {
-                            data.add(new Impl(nestedSchema, element));
+                            data.add(new Impl(new Schema(nestedSchema), element));
                         }
                     } else if (value instanceof Object[]) {
                         for (Object element : ((Object[]) value)) {
-                            data.add(new Impl(nestedSchema, element));
+                            data.add(new Impl(new Schema(nestedSchema), element));
                         }
                     } else {
                         throw new IllegalArgumentException("Can't extract Repeating Data from " + value);
@@ -199,7 +201,7 @@ public class FromBeanArooa {
                     if (value == null) {
                         return null;
                     } else {
-                        return new Impl(nestedSchema, value);
+                        return new Impl(new Schema(nestedSchema), value);
                     }
                 }
             } else {
@@ -289,18 +291,18 @@ public class FromBeanArooa {
     }
 
 
-    protected DataSchema schemaFrom(ArooaClass arooaClass) {
+    protected Schema schemaFrom(ArooaClass arooaClass) {
 
         return schemaFrom(arooaClass, DataSchema.emptySchema(), true);
     }
 
-    protected DataSchema schemaFrom(ArooaClass arooaClass,
-                                    DataSchema schema,
-                                    boolean partial) {
+    protected Schema schemaFrom(ArooaClass arooaClass,
+                                DataSchema schema,
+                                boolean partial) {
 
         BeanOverview beanOverview = arooaClass.getBeanOverview(this.accessor);
 
-        DataSchemaFactory schemaBuilder = DataSchemaFactory.newInstance();
+        SchemaFactory schemaFactory = new SchemaFactory();
 
         for (String property : beanOverview.getProperties()) {
 
@@ -325,15 +327,58 @@ public class FromBeanArooa {
                 if (!partial) {
                     continue;
                 }
-                schemaField = SchemaField.of(schemaBuilder.lastIndex() + 1, property,
+                schemaField = SchemaField.of(schemaFactory.lastIndex() + 1, property,
                         beanOverview.getPropertyType(property));
             } else {
-                schemaField.mapToIndex(schemaBuilder.lastIndex() + 1);
+                schemaField.mapToIndex(schemaFactory.lastIndex() + 1);
             }
 
-            schemaBuilder.addSchemaField(schemaField);
+            schemaFactory.addSchemaField(schemaField);
         }
 
-        return schemaBuilder.toSchema();
+        return schemaFactory.toSchema();
     }
+
+    protected static class Schema extends DataSchemaImpl implements ReadableSchema {
+
+        Schema(Collection<SchemaField> fields,
+               int firstIndex,
+               int lastIndex) {
+
+            super(fields, firstIndex, lastIndex);
+        }
+
+        Schema(DataSchema schema) {
+
+            super(schema.getSchemaFields(), schema.firstIndex(), schema.lastIndex());
+        }
+
+        @Override
+        public Getter getDataGetterAt(int index) {
+            if (hasIndex(index)) {
+                return Getter.getterAt(index);
+
+            } else {
+                throw new NoSuchFieldException(index, Schema.this);
+            }
+        }
+
+        @Override
+        public Getter getDataGetterNamed(String name) {
+            if (hasNamed(name)) {
+                return getDataGetterNamed(name);
+            } else {
+                throw new NoSuchFieldException(name, Schema.this);
+            }
+        }
+    }
+
+    static class SchemaFactory extends SchemaFactoryImpl<Schema> {
+
+        @Override
+        protected Schema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
+            return new Schema(fields, firstIndex, lastIndex);
+        }
+    }
+
 }
