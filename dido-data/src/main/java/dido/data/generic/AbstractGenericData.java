@@ -21,12 +21,6 @@ abstract public class AbstractGenericData<F> extends AbstractData implements Gen
     }
 
     @Override
-    public <T> T getAs(F field, Class<T> type) {
-        //noinspection unchecked
-        return (T) get(field);
-    }
-
-    @Override
     public boolean has(F field) {
         return get(field) != null;
     }

@@ -112,16 +112,6 @@ public class JsonDataWrapper {
             }
 
             @Override
-            public <T> T getAs(String fieldName, Class<T> type) {
-                int index = getSchema().getIndexNamed(fieldName);
-                if (index > 0) {
-                    return getAtAs(index, type);
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
             public boolean hasIndex(int index) {
                 Object value = values[index - 1];
                 if (value == null) {

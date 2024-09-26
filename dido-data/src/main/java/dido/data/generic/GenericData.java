@@ -15,8 +15,6 @@ public interface GenericData<F> extends DidoData {
 
     Object get(F field);
 
-    <T> T getAs(F field, Class<T> type);
-
     boolean has(F field);
 
     boolean getBoolean(F field);

@@ -168,7 +168,7 @@ public class ToBeanArooa {
                         value = ofClass(type).apply((DidoData) data.getNamed(propertyName));
                     }
                 } else {
-                    value = data.getNamedAs(propertyName, type);
+                    value = data.getNamed(propertyName);
                 }
 
                 accessor.setSimpleProperty(t, propertyName, value);

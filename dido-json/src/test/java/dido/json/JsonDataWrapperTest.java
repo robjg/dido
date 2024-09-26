@@ -62,7 +62,7 @@ class JsonDataWrapperTest {
         assertThat(result.getLongAt(6), is(Long.MAX_VALUE));
         assertThat(result.getFloatAt(7), is(1.234F));
         assertThat(result.getDoubleAt(8), is(123456.78));
-        assertThat(result.getAtAs(9, Number.class).doubleValue(), is(67.2));
+        assertThat(((Number) result.getAt(9)).doubleValue(), is(67.2));
     }
 
     static class NumberNaNs {
@@ -186,7 +186,7 @@ class JsonDataWrapperTest {
         assertThat(result.hasIndex(6), is(false));
         assertThat(result.hasIndex(7), is(false));
         assertThat(result.hasIndex(8), is(false));
-        assertThat(result.getAtAs(9, Number.class), nullValue());
+        assertThat(((Number) result.getAt(9)), nullValue());
     }
 
     @Test

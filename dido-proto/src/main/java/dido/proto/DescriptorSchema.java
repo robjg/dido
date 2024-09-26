@@ -74,9 +74,9 @@ public class DescriptorSchema extends AbstractDataSchema implements ReadableSche
     }
 
     @Override
-    public int getIndexNamed(String name) {
+    public SchemaField getSchemaFieldNamed(String name) {
         Pair pair = byName.get(name);
-        return pair == null ? 0 : pair.schemaField.getIndex();
+        return pair == null ? null : pair.schemaField;
     }
 
     @Override

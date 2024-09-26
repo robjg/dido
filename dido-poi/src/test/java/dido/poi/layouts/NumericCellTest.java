@@ -88,7 +88,7 @@ public class NumericCellTest extends TestCase {
 
 		NamedData result = reader.get();
 
-		assertThat(result.getAtAs(1, Integer.class), is(12));
+		assertThat(result.getAt(1), is(12));
 
 		assertNull(reader.get());
 
@@ -119,7 +119,7 @@ public class NumericCellTest extends TestCase {
 
 		NamedData result = reader.get();
 
-		assertThat(result.getAtAs(1, Double.class), is(0.0));
+		assertThat(result.getAt(1), is(0.0));
 		assertThat(result.hasIndex(1), is(true));
 
 		assertNull(reader.get());

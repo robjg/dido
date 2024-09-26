@@ -9,12 +9,6 @@ package dido.data;
 abstract public class AbstractIndexedData implements IndexedData {
 
     @Override
-    public <T> T getAtAs(int index, Class<T> type) {
-        //noinspection unchecked
-        return (T) getAt(index);
-    }
-
-    @Override
     public boolean hasIndex(int index) {
         return getAt(index) != null;
     }

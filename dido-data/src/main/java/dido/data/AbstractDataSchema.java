@@ -28,9 +28,9 @@ public abstract class AbstractDataSchema implements DataSchema {
     }
 
     @Override
-    public SchemaField getSchemaFieldNamed(String name) {
-        int index = getIndexNamed(name);
-        return index > 0 ? getSchemaFieldAt(index) : null;
+    public int getIndexNamed(String name) {
+        SchemaField schemaField = getSchemaFieldNamed(name);
+        return schemaField == null ? 0 : schemaField.getIndex();
     }
 
     @Override

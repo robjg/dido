@@ -6,7 +6,10 @@ import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Objects;
 
 /**
@@ -22,11 +25,15 @@ public class SqlDataInHow implements DataInHow<Connection, NamedData> {
 
 	private final ClassLoader classLoader;
 
+	private final DataSchema schema;
+
 	public static class Options {
 
 		private final String sql;
 
 		private int batchSize;
+
+		private DataSchema schema;
 
 		private ClassLoader classLoader;
 
@@ -44,6 +51,11 @@ public class SqlDataInHow implements DataInHow<Connection, NamedData> {
 			return this;
 		}
 
+		public Options schema(DataSchema schema) {
+			this.schema = schema;
+			return this;
+		}
+
 		public DataInHow<Connection, NamedData> make() {
 			return new SqlDataInHow(this);
 		}
@@ -56,6 +68,7 @@ public class SqlDataInHow implements DataInHow<Connection, NamedData> {
 	private SqlDataInHow(Options options) {
 		this.sql = Objects.requireNonNull(options.sql);
 		this.batchSize = options.batchSize;
+		this.schema = options.schema;
 		this.classLoader = Objects.requireNonNullElse(options.classLoader, getClass().getClassLoader());
 	}
 
@@ -72,32 +85,28 @@ public class SqlDataInHow implements DataInHow<Connection, NamedData> {
 
 		ResultSet resultSet = stmt.executeQuery(sql);
 
-		ResultSetMetaData metaData = resultSet.getMetaData();
+		NamedData wrapper = ResultSetWrapper.from(resultSet, schema, null);
 
-		DataSchema schema = SchemaUtils.schemaFrom(metaData, classLoader);
+		return new DataIn<>() {
+            @Override
+            public NamedData get() {
+                try {
+                    if (resultSet.next()) {
+                        return wrapper;
+                    } else {
+                        return null;
+                    }
+                } catch (SQLException e) {
+                    throw new DataException(e);
+                }
+            }
 
-		NamedData wrapper = ResultSetWrapper.from(resultSet, schema);
+            @Override
+            public void close() throws Exception {
 
-		return new DataIn<NamedData>() {
-			@Override
-			public NamedData get() {
-				try {
-					if (resultSet.next()) {
-						return wrapper;
-					} else {
-						return null;
-					}
-				} catch (SQLException e) {
-					throw new DataException(e);
-				}
-			}
-
-			@Override
-			public void close() throws Exception {
-
-				stmt.close();
-				connection.close();
-			}
-		};
+                stmt.close();
+                connection.close();
+            }
+        };
 	}
 }

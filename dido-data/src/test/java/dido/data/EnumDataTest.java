@@ -3,7 +3,6 @@ package dido.data;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -43,8 +42,7 @@ class EnumDataTest {
 
         assertThat(enumData.get(Fields.Object), is(Collections.singletonList("Foo")));
         assertThat(enumData.getAt(1), is(Collections.singletonList("Foo")));
-        assertThat(enumData.getAs(Fields.Object, List.class), is(Collections.singletonList("Foo")));
-        assertThat(enumData.getAtAs(1, List.class), is(Collections.singletonList("Foo")));
+        assertThat(enumData.getAt(1), is(Collections.singletonList("Foo")));
         assertThat(enumData.getString(Fields.String), is("Hello"));
         assertThat(enumData.getStringAt(2), is("Hello"));
         assertThat(enumData.getBoolean(Fields.Boolean), is(true));

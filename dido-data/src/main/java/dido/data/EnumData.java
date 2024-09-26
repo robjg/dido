@@ -84,11 +84,6 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
             }
 
             @Override
-            public <T> T getAs(E field, Class<T> type) {
-                return data.getNamedAs(field.toString(), type);
-            }
-
-            @Override
             public boolean getBoolean(E field) {
                 return data.getBooleanNamed(field.toString());
             }

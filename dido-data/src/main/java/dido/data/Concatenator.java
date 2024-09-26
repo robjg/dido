@@ -225,12 +225,6 @@ public class Concatenator {
         }
 
         @Override
-        public <T> T getAtAs(int index, Class<T> type) {
-            Location loc = locations[index - 1];
-            return data[loc.dataIndex].getAtAs(loc.index, type);
-        }
-
-        @Override
         public boolean hasIndex(int index) {
             Location loc = locations[index - 1];
             return data[loc.dataIndex].hasIndex(loc.index);
@@ -294,12 +288,6 @@ public class Concatenator {
         public Object getNamed(String name) {
             Location loc = fieldLocations.get(name);
             return data[loc.dataIndex].getAt(loc.index);
-        }
-
-        @Override
-        public <T> T getNamedAs(String name, Class<T> type) {
-            Location loc = fieldLocations.get(name);
-            return data[loc.dataIndex].getAtAs(loc.index, type);
         }
 
         @Override

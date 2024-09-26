@@ -12,12 +12,6 @@ public abstract class AbstractNamedData extends AbstractData implements NamedDat
     }
 
     @Override
-    public <T> T getAs(String name, Class<T> type) {
-        //noinspection unchecked
-        return (T) get(name);
-    }
-
-    @Override
     public boolean has(String name) {
         return hasNamed(name);
     }

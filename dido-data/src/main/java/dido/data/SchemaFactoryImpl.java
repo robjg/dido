@@ -85,6 +85,12 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
     }
 
     @Override
+    public SchemaField getSchemaFieldNamed(String name) {
+        Integer index = nameToIndex.get(name);
+        return index == null ? null : indexToFields.get(index);
+    }
+
+    @Override
     public SchemaField removeAt(int index) {
 
         SchemaField schemaField = this.indexToFields.remove(index);

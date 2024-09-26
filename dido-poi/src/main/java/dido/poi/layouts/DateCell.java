@@ -46,7 +46,7 @@ public class DateCell extends AbstractDataCell<Date> {
 			Class<?> dataType = schema.getTypeAt(index);
 
 			if (Date.class.isAssignableFrom(dataType)) {
-				value = data.getAtAs(index, Date.class);
+				value = (Date) data.getAt(index);
 			}
 			else if (String.class.isAssignableFrom(dataType)) {
 				value = Optional.ofNullable(data.getStringAt(index))

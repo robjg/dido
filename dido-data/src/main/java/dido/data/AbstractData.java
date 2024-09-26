@@ -21,12 +21,6 @@ abstract public class AbstractData extends AbstractIndexedData implements DidoDa
     }
 
     @Override
-    public <T> T getNamedAs(String name, Class<T> type) {
-        //noinspection unchecked
-        return (T) getNamed(name);
-    }
-
-    @Override
     public boolean hasNamed(String name) {
         return getNamed(name) != null;
     }

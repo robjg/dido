@@ -27,12 +27,6 @@ class IndexedDataTest {
         }
 
         @Override
-        public <T> T getAtAs(int index, Class<T> type) {
-            //noinspection unchecked
-            return (T) data;
-        }
-
-        @Override
         public boolean hasIndex(int index) {
             return false;
         }

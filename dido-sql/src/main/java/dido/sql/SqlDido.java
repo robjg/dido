@@ -1,5 +1,6 @@
 package dido.sql;
 
+import dido.data.DataSchema;
 import dido.data.NamedData;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
@@ -38,11 +39,19 @@ public class SqlDido {
      */
     private int batchSize;
 
+    /**
+     * @oddjob.description An override schema that supplies a desired type to the underlying
+     * {@link java.sql.ResultSet#getObject(int, Class)} method. Weather this is honoured is
+     * dependent on the JDBC implementation.
+     * @oddjob.required No.
+     */
+    private DataSchema schema;
 
     public DataInHow<Connection, NamedData> toIn()  {
         return SqlDataInHow.fromSql(sql)
                 .classLoader(classLoader)
                 .batchSize(batchSize)
+                .schema(schema)
                 .make();
     }
 
@@ -76,6 +85,14 @@ public class SqlDido {
 
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
+    }
+
+    public DataSchema getSchema() {
+        return schema;
+    }
+
+    public void setSchema(DataSchema schema) {
+        this.schema = schema;
     }
 
     @Override

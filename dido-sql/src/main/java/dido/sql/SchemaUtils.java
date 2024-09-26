@@ -1,13 +1,26 @@
 package dido.sql;
 
 import dido.data.DataSchema;
-import dido.data.SchemaBuilder;
+import dido.data.DataSchemaFactory;
+import dido.data.SchemaField;
 import dido.how.util.ClassUtils;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public class SchemaUtils {
+
+    private final ClassLoader classLoader;
+
+    protected SchemaUtils(ClassLoader classLoader) {
+        if (classLoader == null) {
+            classLoader = Thread.currentThread().getContextClassLoader();
+        }
+        if (classLoader == null) {
+            classLoader = getClass().getClassLoader();
+        }
+        this.classLoader = classLoader;
+    }
 
     public static DataSchema schemaFrom(ResultSetMetaData metaData)
             throws SQLException, ClassNotFoundException {
@@ -17,26 +30,46 @@ public class SchemaUtils {
     public static DataSchema schemaFrom(ResultSetMetaData metaData, ClassLoader classLoader)
             throws SQLException, ClassNotFoundException {
 
-        if (classLoader == null) {
-            classLoader = Thread.currentThread().getContextClassLoader();
-        }
+        SchemaUtils schemaUtils = new SchemaUtils(classLoader);
 
         int columnCount = metaData.getColumnCount();
 
-        SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
+        DataSchemaFactory schemaFactory = DataSchemaFactory.newInstance();
 
         for (int column = 1; column <= columnCount; ++column) {
 
-            String columnClassName = metaData.getColumnClassName(column);
-
-            Class<?> columnClass = ClassUtils.classFor(
-                    columnClassName, classLoader);
-
-            String columnName = metaData.getColumnName(column);
-
-            schemaBuilder.addNamedAt(column, columnName, columnClass);
+            schemaFactory.addSchemaField(schemaUtils.getSchemaField(column, metaData));
         }
 
-        return schemaBuilder.build();
+        return schemaFactory.toSchema();
+    }
+
+    public static SchemaUtils forClassLoader(ClassLoader classLoader) {
+        return new SchemaUtils(classLoader);
+    }
+
+    public SchemaField getSchemaField(int column, ResultSetMetaData metaData) throws SQLException, ClassNotFoundException {
+
+        String columnClassName = metaData.getColumnClassName(column);
+
+        Class<?> columnClass = ClassUtils.classFor(
+                columnClassName, classLoader);
+
+        String columnName = metaData.getColumnLabel(column);
+        // JDBC spec says this shouldn't happen but seems to with HSQL.
+        if (columnName == null) {
+            columnName = metaData.getColumnName(column);
+        }
+
+        return SchemaField.of(0, columnName, columnClass);
+    }
+
+    public Class<?> getColumnType(int column, ResultSetMetaData metaData) throws SQLException, ClassNotFoundException {
+
+        String columnClassName = metaData.getColumnClassName(column);
+
+        return ClassUtils.classFor(
+                columnClassName, classLoader);
+
     }
 }

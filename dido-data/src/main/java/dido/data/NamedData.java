@@ -9,8 +9,6 @@ public interface NamedData extends DidoData {
 
     Object get(String name);
 
-    <T> T getAs(String name, Class<T> type);
-
     boolean has(String name);
 
     boolean getBoolean(String name);

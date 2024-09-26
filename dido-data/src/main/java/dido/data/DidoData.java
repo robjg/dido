@@ -13,8 +13,6 @@ public interface DidoData extends IndexedData {
 
     Object getNamed(String name);
 
-    <T> T getNamedAs(String name, Class<T> type);
-
     boolean hasNamed(String name);
 
     boolean getBooleanNamed(String name);

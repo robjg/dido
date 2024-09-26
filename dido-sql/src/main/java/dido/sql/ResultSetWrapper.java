@@ -3,9 +3,14 @@ package dido.sql;
 import dido.data.NoSuchFieldException;
 import dido.data.*;
 import dido.how.DataException;
+import dido.how.FieldAccessException;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 public class ResultSetWrapper extends AbstractData implements NamedData {
 
@@ -18,11 +23,25 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         this.schema = schema;
     }
 
-    public static NamedData from(ResultSet resultSet, DataSchema schema) {
-        return new ResultSetWrapper(resultSet,
-                schema instanceof DataSchemaImpl ? new Schema((DataSchemaImpl) schema) :
-                new Schema(schema.getSchemaFields(), schema.firstIndex(), schema.lastIndex()));
+    public static NamedData from(ResultSet resultSet,
+                                 ClassLoader classLoader)
+            throws SQLException, ClassNotFoundException {
+
+        return from(resultSet, null,
+                classLoader);
     }
+
+    public static NamedData from(ResultSet resultSet,
+                                 DataSchema schema,
+                                 ClassLoader classLoader)
+            throws SQLException, ClassNotFoundException {
+
+        return new ResultSetWrapper(resultSet,
+                new Schema(resultSet.getMetaData(),
+                        Objects.requireNonNullElseGet(schema, DataSchema::emptySchema),
+                        classLoader));
+    }
+
 
     @Override
     public ReadableSchema getSchema() {
@@ -31,20 +50,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
 
     @Override
     public Object get(String field) {
-        try {
-            return resultSet.getObject(field);
-        } catch (SQLException e) {
-            throw new DataException(e);
-        }
-    }
-
-    @Override
-    public <T> T getAs(String field, Class<T> type) {
-        try {
-            return resultSet.getObject(field, type);
-        } catch (SQLException e) {
-            throw new DataException(e);
-        }
+        return schema.getDataGetterNamed(field).get(this);
     }
 
     @Override
@@ -53,7 +59,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
             resultSet.getObject(field);
             return !resultSet.wasNull();
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(field, schema, e);
         }
     }
 
@@ -62,7 +68,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getBoolean(field);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(field, schema, e);
         }
     }
 
@@ -71,7 +77,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getByte(field);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(field, schema, e);
         }
     }
 
@@ -80,7 +86,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return (char) resultSet.getInt(field);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(field, schema, e);
         }
     }
 
@@ -89,7 +95,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getShort(field);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(field, schema, e);
         }
     }
 
@@ -98,7 +104,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getInt(field);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(field, schema, e);
         }
     }
 
@@ -107,7 +113,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getLong(field);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(field, schema, e);
         }
     }
 
@@ -116,7 +122,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getFloat(field);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(field, schema, e);
         }
     }
 
@@ -125,7 +131,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getDouble(field);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(field, schema, e);
         }
     }
 
@@ -134,26 +140,13 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getString(field);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(field, schema, e);
         }
     }
 
     @Override
     public Object getAt(int index) {
-        try {
-            return resultSet.getObject(index);
-        } catch (SQLException e) {
-            throw new DataException(e);
-        }
-    }
-
-    @Override
-    public <T> T getAtAs(int index, Class<T> type) {
-        try {
-            return resultSet.getObject(index, type);
-        } catch (SQLException e) {
-            throw new DataException(e);
-        }
+        return schema.getDataGetterAt(index).get(this);
     }
 
     @Override
@@ -162,7 +155,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
             resultSet.getObject(index);
             return !resultSet.wasNull();
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(index, schema, e);
         }
     }
 
@@ -171,7 +164,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getBoolean(index);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(index, schema, e);
         }
     }
 
@@ -180,7 +173,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getByte(index);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(index, schema, e);
         }
     }
 
@@ -189,7 +182,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return (char) resultSet.getInt(index);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(index, schema, e);
         }
     }
 
@@ -198,7 +191,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getShort(index);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(index, schema, e);
         }
     }
 
@@ -207,7 +200,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getInt(index);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(index, schema, e);
         }
     }
 
@@ -216,7 +209,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getLong(index);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(index, schema, e);
         }
     }
 
@@ -225,7 +218,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getFloat(index);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(index, schema, e);
         }
     }
 
@@ -234,7 +227,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getDouble(index);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(index, schema, e);
         }
     }
 
@@ -243,114 +236,114 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         try {
             return resultSet.getString(index);
         } catch (SQLException e) {
-            throw new DataException(e);
+            throw new FieldAccessException(index, schema, e);
         }
     }
 
-    static class IndexGetter implements Getter {
+    static class ColumnGetter implements Getter {
 
-        private final int index;
+        final int column;
 
-
-        IndexGetter(int index) {
-            this.index = index;
+        ColumnGetter(int column) {
+            this.column = column;
         }
 
         @Override
         public Object get(DidoData data) {
+            ResultSetWrapper wrapper = ((ResultSetWrapper) data);
             try {
-                return ((ResultSetWrapper) data).resultSet.getObject(index);
+                return wrapper.resultSet.getObject(column);
             } catch (SQLException e) {
-                throw new DataException(e);
-            }
-        }
-
-        @Override
-        public <T> T getAs(Class<T> type, DidoData data) {
-            try {
-                return ((ResultSetWrapper) data).resultSet.getObject(index, type);
-            } catch (SQLException e) {
-                throw new DataException(e);
+                throw new FieldAccessException(column, wrapper.schema, e);
             }
         }
 
         @Override
         public boolean has(DidoData data) {
+            ResultSetWrapper wrapper = ((ResultSetWrapper) data);
             try {
-                ((ResultSetWrapper) data).resultSet.getObject(index);
+                wrapper.resultSet.getObject(column);
                 return !((ResultSetWrapper) data).resultSet.wasNull();
             } catch (SQLException e) {
-                throw new DataException(e);
+                throw new FieldAccessException(column, wrapper.schema, e);
             }
         }
 
         @Override
         public boolean getBoolean(DidoData data) {
+            ResultSetWrapper wrapper = ((ResultSetWrapper) data);
             try {
-                return ((ResultSetWrapper) data).resultSet.getBoolean(index);
+                return wrapper.resultSet.getBoolean(column);
             } catch (SQLException e) {
-                throw new DataException(e);
+                throw new FieldAccessException(column, wrapper.schema, e);
             }
         }
 
         @Override
         public byte getByte(DidoData data) {
+            ResultSetWrapper wrapper = ((ResultSetWrapper) data);
             try {
-                return ((ResultSetWrapper) data).resultSet.getByte(index);
+                return wrapper.resultSet.getByte(column);
             } catch (SQLException e) {
-                throw new DataException(e);
+                throw new FieldAccessException(column, wrapper.schema, e);
             }
         }
 
         @Override
         public char getChar(DidoData data) {
+            ResultSetWrapper wrapper = ((ResultSetWrapper) data);
             try {
-                return (char) ((ResultSetWrapper) data).resultSet.getInt(index);
+                return (char) wrapper.resultSet.getInt(column);
             } catch (SQLException e) {
-                throw new DataException(e);
+                throw new FieldAccessException(column, wrapper.schema, e);
             }
         }
 
         @Override
         public short getShort(DidoData data) {
+            ResultSetWrapper wrapper = ((ResultSetWrapper) data);
             try {
-                return ((ResultSetWrapper) data).resultSet.getShort(index);
+                return wrapper.resultSet.getShort(column);
             } catch (SQLException e) {
-                throw new DataException(e);
+                throw new FieldAccessException(column, wrapper.schema, e);
             }
         }
 
         @Override
         public int getInt(DidoData data) {
+            ResultSetWrapper wrapper = ((ResultSetWrapper) data);
             try {
-                return ((ResultSetWrapper) data).resultSet.getInt(index);
+                return wrapper.resultSet.getInt(column);
             } catch (SQLException e) {
-                throw new DataException(e);
+                throw new FieldAccessException(column, wrapper.schema, e);
             }
         }
 
         @Override
         public long getLong(DidoData data) {
+            ResultSetWrapper wrapper = ((ResultSetWrapper) data);
             try {
-                return ((ResultSetWrapper) data).resultSet.getLong(index);
+                return wrapper.resultSet.getLong(column);
             } catch (SQLException e) {
-                throw new DataException(e);
+                throw new FieldAccessException(column, wrapper.schema, e);
             }
         }
 
         @Override
         public float getFloat(DidoData data) {
+            ResultSetWrapper wrapper = ((ResultSetWrapper) data);
             try {
-                return ((ResultSetWrapper) data).resultSet.getFloat(index);
+                return wrapper.resultSet.getFloat(column);
             } catch (SQLException e) {
-                throw new DataException(e);
+                throw new FieldAccessException(column, wrapper.schema, e);
             }
         }
 
         @Override
         public double getDouble(DidoData data) {
+            ResultSetWrapper wrapper = ((ResultSetWrapper) data);
             try {
-                return ((ResultSetWrapper) data).resultSet.getDouble(index);
+                return wrapper.resultSet.getDouble(column);
             } catch (SQLException e) {
                 throw new DataException(e);
             }
@@ -358,31 +351,139 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
 
         @Override
         public String getString(DidoData data) {
+            ResultSetWrapper wrapper = ((ResultSetWrapper) data);
             try {
-                return ((ResultSetWrapper) data).resultSet.getString(index);
+                return wrapper.resultSet.getString(column);
             } catch (SQLException e) {
-                throw new DataException(e);
+                throw new FieldAccessException(column, wrapper.schema, e);
             }
         }
 
     }
 
-    static class Schema extends DataSchemaImpl implements ReadableSchema {
+    static class TypeOverrideGetter extends ColumnGetter {
 
-        Schema(DataSchemaImpl schema) {
-            super(schema);
+        private final Class<?> type;
+
+        TypeOverrideGetter(int index,
+                           Class<?> type) {
+            super(index);
+            this.type = type;
         }
 
-        Schema(Iterable<SchemaField> schemaFields, int firstIndex, int lastIndex) {
-            super(schemaFields, firstIndex, lastIndex);
+        @Override
+        public Object get(DidoData data) {
+            ResultSetWrapper wrapper = ((ResultSetWrapper) data);
+            try {
+                return wrapper.resultSet.getObject(column, type);
+            } catch (SQLException e) {
+                throw new FieldAccessException(column, wrapper.schema, e);
+            }
+        }
+    }
+
+    static class TypeOverrides {
+
+        final Map<String, SchemaField> types = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
+        TypeOverrides(DataSchema schema) {
+            for (SchemaField field : schema.getSchemaFields()) {
+                types.put(field.getName(), field);
+            }
+        }
+
+        SchemaField getOverride(String label) {
+            return types.get(label);
+        }
+    }
+
+    static class Schema extends AbstractDataSchema implements ReadableSchema {
+
+        private final Map<String, SchemaField> nameToSchemaField = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
+        private final SchemaField[] indexToSchemaField;
+
+        private final Getter[] getters;
+
+        Schema(ResultSetMetaData metaData,
+               DataSchema overrideSchema,
+               ClassLoader classLoader) throws SQLException, ClassNotFoundException {
+
+            int columnCount = metaData.getColumnCount();
+
+            this.indexToSchemaField = new SchemaField[columnCount];
+            this.getters = new Getter[columnCount];
+
+            TypeOverrides typeOverrides = new TypeOverrides(overrideSchema);
+            SchemaUtils schemaUtils = new SchemaUtils(classLoader);
+
+            for (int index = 0; index < columnCount; ++index) {
+                int column = index + 1;
+
+                String name = metaData.getColumnLabel(column);
+                Class<?> type = schemaUtils.getColumnType(column, metaData);
+
+                SchemaField override = typeOverrides.getOverride(name);
+
+                if (override == null) {
+                    getters[index] = new ColumnGetter(column);
+                } else {
+                    name = override.getName();
+                    if (override.getType() != type) {
+                        type = override.getType();
+                        getters[index] = new TypeOverrideGetter(column, type);
+                    }
+                }
+
+                SchemaField schemaField = SchemaField.of(column, name, type);
+                nameToSchemaField.put(name, schemaField);
+                indexToSchemaField[index] = schemaField;
+            }
+        }
+
+        @Override
+        public boolean hasNamed(String name) {
+            return nameToSchemaField.containsKey(name);
+        }
+
+        @Override
+        public SchemaField getSchemaFieldAt(int index) {
+            return index > 0 && index <= indexToSchemaField.length ?
+                    indexToSchemaField[index - 1] : null;
+        }
+
+        @Override
+        public SchemaField getSchemaFieldNamed(String name) {
+            return nameToSchemaField.get(name);
+        }
+
+        @Override
+        public boolean hasIndex(int index) {
+            return index > 0 && index <= indexToSchemaField.length;
+        }
+
+        @Override
+        public int firstIndex() {
+            return 1;
+        }
+
+        @Override
+        public int nextIndex(int index) {
+            return index == indexToSchemaField.length ? 0 : index + 1;
+        }
+
+        @Override
+        public int lastIndex() {
+            return indexToSchemaField.length;
         }
 
         @Override
         public Getter getDataGetterAt(int index) {
-            if (!hasIndex(index)) {
+            try {
+                return getters[index - 1];
+            } catch (ArrayIndexOutOfBoundsException e) {
                 throw new NoSuchFieldException(index, this);
             }
-            return new IndexGetter(index);
         }
     }
 

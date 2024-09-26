@@ -129,7 +129,7 @@ public class QuickRowsTest extends TestCase {
         NamedData result = reader.get();
 
         assertEquals("John", result.getString("name"));
-        assertThat(result.getAs("dateOfBirth", Date.class), is(DateHelper.parseDate("1970-03-25")));
+        assertThat(result.get("dateOfBirth"), is(DateHelper.parseDate("1970-03-25")));
         assertEquals(45000.0, result.getDouble("salary"));
     }
 

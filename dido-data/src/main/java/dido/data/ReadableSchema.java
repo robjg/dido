@@ -61,18 +61,8 @@ public interface ReadableSchema extends DataSchema {
         }
 
         @Override
-        public boolean hasNamed(String name) {
-            return delegate.hasNamed(name);
-        }
-
-        @Override
         public SchemaField getSchemaFieldAt(int index) {
             return delegate.getSchemaFieldAt(index);
-        }
-
-        @Override
-        public int getIndexNamed(String name) {
-            return delegate.getIndexNamed(name);
         }
 
         @Override
@@ -93,6 +83,16 @@ public interface ReadableSchema extends DataSchema {
         @Override
         public int lastIndex() {
             return delegate.lastIndex();
+        }
+
+        @Override
+        public boolean hasNamed(String name) {
+            return delegate.hasNamed(name);
+        }
+
+        @Override
+        public SchemaField getSchemaFieldNamed(String name) {
+            return delegate.getSchemaFieldNamed(name);
         }
     }
 

@@ -143,8 +143,8 @@ class ConcatenatorDataTest {
 
         assertThat(result1.getNamed("object"), is(List.of("Foo")));
         assertThat(result1.getAt(2), is(List.of("Foo")));
-        assertThat(result1.getNamedAs("object", List.class), is(List.of("Foo")));
-        assertThat(result1.getAtAs(2, List.class), is(List.of("Foo")));
+        assertThat(result1.getNamed("object"), is(List.of("Foo")));
+        assertThat(result1.getAt(2), is(List.of("Foo")));
         assertThat(result1.getBooleanNamed("boolean"), is(true));
         assertThat(result1.getBooleanAt(3), is(true));
         assertThat(result1.getByteNamed("byte"), is((byte) 32));

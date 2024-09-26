@@ -25,8 +25,6 @@ public interface IndexedData {
      */
     Object getAt(int index);
 
-    <T> T getAtAs(int index, Class<T> type);
-
     /**
      * Is there data at the given index. If the index is in the schema then this
      * method will either return true or false. If the index is not

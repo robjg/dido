@@ -213,14 +213,14 @@ public class FromBeanArooa {
         public Object getAt(int index) {
             SchemaField schemaField = schema.getSchemaFieldAt(index);
             if (schemaField == null) {
-                throw new NullPointerException("No Property for index [" + index + "]");
+                throw new NoSuchFieldException(index, schema);
             }
             return getFrom(schemaField);
         }
 
         @Override
         public boolean hasIndex(int index) {
-            return getAtAs(index, Object.class) != null;
+            return getAt(index) != null;
         }
 
         @Override
@@ -228,7 +228,7 @@ public class FromBeanArooa {
 
             SchemaField schemaField = schema.getSchemaFieldNamed(name);
             if (schemaField == null) {
-                throw new NullPointerException("No Property for for [" + name + "]");
+                throw new NoSuchFieldException(name, schema);
             }
 
             return getFrom(schemaField);

@@ -11,12 +11,6 @@ abstract public class AbstractGetter implements Getter {
     abstract public Object get(DidoData data);
 
     @Override
-    public <T> T getAs(Class<T> type, DidoData data) {
-        //noinspection unchecked
-        return (T) get(data);
-    }
-
-    @Override
     public boolean has(DidoData data) {
         return get(data) != null;
     }

@@ -30,14 +30,14 @@ public class DataSchemaImpl extends AbstractDataSchema {
         SchemaField[] indexToSchemaField = new SchemaField[lastIndex - offset];
 
         int last = 0;
-        for (SchemaField meta : schemaFields) {
-            int index = meta.getIndex();
+        for (SchemaField schemaField : schemaFields) {
+            int index = schemaField.getIndex();
 
-            indexToSchemaField[index - firstIndex] = meta;
+            indexToSchemaField[index - firstIndex] = schemaField;
 
-            String name = meta.getName();
+            String name = schemaField.getName();
             if (name != null) {
-                nameToSchemaField.put(name, meta);
+                nameToSchemaField.put(name, schemaField);
             }
 
             if (last != 0) {

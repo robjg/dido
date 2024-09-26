@@ -34,7 +34,7 @@ public class BooleanCell extends AbstractDataCell<Boolean> {
     void insertValueInto(Cell cell, int index, DidoData data) {
 
         Boolean value = Optional.ofNullable(this.value)
-                .orElseGet(() -> data.getAtAs(index, Boolean.class));
+                .orElseGet(() -> (Boolean) data.getAt(index));
 
         if (value == null) {
             cell.setBlank();

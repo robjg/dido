@@ -6,11 +6,9 @@ package dido.data;
  */
 public interface Getter {
 
-    Object get(DidoData data);
-
-    <T> T getAs(Class<T> type, DidoData data);
-
     boolean has(DidoData data);
+
+    Object get(DidoData data);
 
     boolean getBoolean(DidoData data);
 
@@ -37,11 +35,6 @@ public interface Getter {
             @Override
             public Object get(DidoData data) {
                 return data.getAt(index);
-            }
-
-            @Override
-            public <T> T getAs(Class<T> type, DidoData data) {
-                return data.getAtAs(index, type);
             }
 
             @Override
@@ -102,11 +95,6 @@ public interface Getter {
             @Override
             public Object get(DidoData data) {
                 return data.getNamed(name);
-            }
-
-            @Override
-            public <T> T getAs(Class<T> type, DidoData data) {
-                return data.getNamedAs(name, type);
             }
 
             @Override

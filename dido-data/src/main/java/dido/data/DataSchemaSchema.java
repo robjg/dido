@@ -100,7 +100,7 @@ public class DataSchemaSchema {
     public static DataSchema schemaFromData(DidoData data,
                                             Function<? super String, ? extends Class<?>> classLoader) {
 
-        RepeatingData fields = data.getNamedAs(FIELDS_FIELD, RepeatingData.class);
+        RepeatingData fields = (RepeatingData) data.getNamed(FIELDS_FIELD);
 
         SchemaFactory builder = DataSchemaFactory.newInstance();
 
@@ -112,7 +112,7 @@ public class DataSchemaSchema {
             SchemaField schemaField;
             if (fieldData.hasNamed(NESTED_FIELD)) {
 
-                DidoData nestedData = fieldData.getNamedAs(NESTED_FIELD, DidoData.class);
+                DidoData nestedData = (DidoData) fieldData.getNamed(NESTED_FIELD);
                 DataSchema nestedSchema = schemaFromData(nestedData, classLoader);
 
                 if (fieldData.hasNamed(REPEATING_FIELD) && fieldData.getBooleanNamed(REPEATING_FIELD)) {
