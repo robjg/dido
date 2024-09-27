@@ -100,6 +100,11 @@ public class NonBoxedData extends AbstractData {
         }
 
         @Override
+        public WritableSchema<NonBoxedData> getSchema() {
+            return schema;
+        }
+
+        @Override
         public Class<NonBoxedData> getDataType() {
             return NonBoxedData.class;
         }
@@ -129,11 +134,6 @@ public class NonBoxedData extends AbstractData {
 
         @Override
         public DataSetter getSetter() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public NonBoxedData valuesToData(Object... values) {
             throw new UnsupportedOperationException();
         }
 

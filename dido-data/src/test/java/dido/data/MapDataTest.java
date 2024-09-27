@@ -124,10 +124,10 @@ class MapDataTest {
                 .addNamed("price", double.class)
                 .build();
 
-        DidoData data1 = ArrayData.valuesFor(schema)
+        DidoData data1 = ArrayData.valuesForSchema(schema)
                 .of("Apple", null, 15, 26.5);
 
-        DidoData data2 = MapData.valuesFor(schema)
+        DidoData data2 = MapData.valuesForSchema(schema)
                 .of("Apple", null, 15, 26.5);
 
         assertThat(data1, is(data2));

@@ -16,7 +16,7 @@ class FieldOperationsTest {
             .addNamed("Price", double.class)
             .build();
 
-    DidoData data = ArrayData.valuesFor(schema)
+    DidoData data = ArrayData.valuesForSchema(schema)
             .of("Apple", 10, 23.5);
 
     @Test
@@ -36,7 +36,7 @@ class FieldOperationsTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesFor(expectedSchema)
+        DidoData expectedData = ArrayData.valuesForSchema(expectedSchema)
                 .of(10, 23.5);
 
         assertThat(result, is(expectedData));
@@ -59,7 +59,7 @@ class FieldOperationsTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesFor(expectedSchema)
+        DidoData expectedData = ArrayData.valuesForSchema(expectedSchema)
                 .of("Apple", 23.5);
 
         assertThat(result, is(expectedData));
@@ -82,7 +82,7 @@ class FieldOperationsTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesFor(expectedSchema)
+        DidoData expectedData = ArrayData.valuesForSchema(expectedSchema)
                 .of("Apple", 23.5);
 
         assertThat(result, is(expectedData));
@@ -107,7 +107,7 @@ class FieldOperationsTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesFor(expectedSchema)
+        DidoData expectedData = ArrayData.valuesForSchema(expectedSchema)
                 .of(10, 23.5, "Apple");
 
         assertThat(result, is(expectedData));
@@ -125,7 +125,7 @@ class FieldOperationsTest {
 
         assertThat(transformation.getResultantSchema(), is(schema));
 
-        DidoData expectedData = ArrayData.valuesFor(schema)
+        DidoData expectedData = ArrayData.valuesForSchema(schema)
                 .of("Apple", 20, 23.5);
 
         assertThat(result, is(expectedData));
@@ -148,7 +148,7 @@ class FieldOperationsTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesFor(expectedSchema)
+        DidoData expectedData = ArrayData.valuesForSchema(expectedSchema)
                 .of("Apple", 10, 23.5, 20);
 
         assertThat(result, is(expectedData));
@@ -170,7 +170,7 @@ class FieldOperationsTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesFor(expectedSchema)
+        DidoData expectedData = ArrayData.valuesForSchema(expectedSchema)
                 .of(10);
 
         assertThat(result, is(expectedData));
@@ -196,7 +196,7 @@ class FieldOperationsTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesFor(expectedSchema)
+        DidoData expectedData = ArrayData.valuesForSchema(expectedSchema)
                 .of("Orange", 1234L, 23.5, true);
 
         assertThat(result, is(expectedData));

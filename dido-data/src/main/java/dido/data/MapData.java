@@ -133,9 +133,9 @@ public class MapData extends AbstractNamedData implements NamedData {
         return new BuilderNoSchema();
     }
 
-    public static DataBuilder.Values<MapData> valuesFor(DataSchema schema) {
+    public static Values<MapData> valuesForSchema(DataSchema schema) {
 
-        return new DataBuilder<>(asMapDataSchema(schema)).values();
+        return Values.valuesFor(asMapDataSchema(schema));
     }
 
     public static DataBuilder<MapData> copy(DidoData from) {
@@ -265,6 +265,11 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
+        public WritableSchema<MapData> getSchema() {
+            return schema;
+        }
+
+        @Override
         public void clearNamed(String name) {
             map.remove(name);
         }
@@ -306,21 +311,11 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public MapData valuesToData(Object... values) {
-            Map<String, Object> map = new HashMap<>(values.length);
-            for (int i = 0; i < values.length; ++i) {
-                map.put(schema.getFieldNameAt(i + 1), values[i]);
-            }
-            return new MapData(schema, map);
-        }
-
-        @Override
         public MapData toData() {
             MapData data = new MapData(schema, map);
             this.map = new HashMap<>(schema.lastIndex());
             return data;
         }
-
     }
 
     public static class Schema extends DataSchemaImpl

@@ -62,9 +62,9 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         return new BuilderUnknown();
     }
 
-    public static DataBuilder.Values<ArrayData> valuesFor(DataSchema schema) {
+    public static Values<ArrayData> valuesForSchema(DataSchema schema) {
 
-        return new DataBuilder<>(asArrayDataSchema(schema)).values();
+        return Values.valuesFor(asArrayDataSchema(schema));
     }
 
     public static DataFactory<ArrayData> factoryFor(DataSchema schema) {
@@ -165,6 +165,11 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
 
         @Override
+        public WritableSchema<ArrayData> getSchema() {
+            return schema;
+        }
+
+        @Override
         public Class<ArrayData> getDataType() {
             return ArrayData.class;
         }
@@ -229,11 +234,6 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         @Override
         public DataSetter getSetter() {
             return this;
-        }
-
-        @Override
-        public ArrayData valuesToData(Object... values) {
-            return new ArrayData(schema, Arrays.copyOf(values, schema.lastIndex()));
         }
 
         @Override

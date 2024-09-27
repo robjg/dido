@@ -13,11 +13,11 @@ import java.util.function.Function;
  */
 public class GenericMapData<F> extends AbstractGenericData<F> {
 
-    private final GenericReadableSchema<F> schema;
+    private final Schema<F> schema;
 
     private final Map<F, ?> map;
 
-    private GenericMapData(GenericReadableSchema<F> schema, Map<F, ?> map) {
+    private GenericMapData(Schema<F> schema, Map<F, ?> map) {
         this.schema = schema;
         this.map = map;
     }
@@ -207,6 +207,11 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
 
         @Override
+        public WritableSchema<GenericMapData<F>> getSchema() {
+            return schema;
+        }
+
+        @Override
         public Setter getSetter(F field) {
             return new AbstractSetter() {
                 @Override
@@ -238,11 +243,6 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
 
         @Override
         public DataSetter getSetter() {
-            return null;
-        }
-
-        @Override
-        public GenericMapData<F> valuesToData(Object... values) {
             return null;
         }
 

@@ -30,7 +30,7 @@ class StreamInJsonTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        DataBuilder<ArrayData> expectedBuilder = ArrayData.builderForSchema(expectedSchema);
+        Values<ArrayData> values = ArrayData.valuesForSchema(expectedSchema);
 
         DataInHow<InputStream, ArrayData> test = StreamInJson.asCopy()
                 .setIsArray(true)
@@ -42,15 +42,15 @@ class StreamInJsonTest {
 
             assertThat(data1.getSchema(), is(expectedSchema));
 
-            assertThat(data1, is(expectedBuilder.values().of("Apple", 5.0, 27.2)));
+            assertThat(data1, is(values.of("Apple", 5.0, 27.2)));
 
             DidoData data2 = in.get();
 
-            assertThat(data2, is(expectedBuilder.values().of("Orange", 10.0, 31.6)));
+            assertThat(data2, is(values.of("Orange", 10.0, 31.6)));
 
             DidoData data3 = in.get();
 
-            assertThat(data3, is(expectedBuilder.values().of("Pear", 7.0, 22.1)));
+            assertThat(data3, is(values.of("Pear", 7.0, 22.1)));
 
             assertThat(in.get(), nullValue());
         }

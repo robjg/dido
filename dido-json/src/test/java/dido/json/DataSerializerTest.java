@@ -21,7 +21,7 @@ class DataSerializerTest {
                 .addNamed("price", double.class)
                 .build();
 
-        DidoData data = ArrayData.valuesFor(schema)
+        DidoData data = ArrayData.valuesForSchema(schema)
                 .of("Apple", null, 15, 26.5);
 
         Gson gson = new GsonBuilder()
@@ -53,10 +53,10 @@ class DataSerializerTest {
                 .addNestedNamed("pos", posSchema)
                 .build();
 
-        DidoData data = MapData.valuesFor(schema)
-                .of(MapData.valuesFor(fooSchema)
+        DidoData data = MapData.valuesForSchema(schema)
+                .of(MapData.valuesForSchema(fooSchema)
                                 .of("Stuff", 15),
-                        MapData.valuesFor(posSchema)
+                        MapData.valuesForSchema(posSchema)
                                 .of(1.2, 3.4));
 
         Gson gson = new GsonBuilder()
@@ -84,12 +84,12 @@ class DataSerializerTest {
                 .build();
 
         RepeatingData positions = RepeatingData.of(
-                MapData.valuesFor(posSchema).of(1.2, 3.4),
-                MapData.valuesFor(posSchema).of(2.0, 3.0),
-                MapData.valuesFor(posSchema).of(-7.7, -8.8));
+                MapData.valuesForSchema(posSchema).of(1.2, 3.4),
+                MapData.valuesForSchema(posSchema).of(2.0, 3.0),
+                MapData.valuesForSchema(posSchema).of(-7.7, -8.8));
 
 
-        DidoData data = MapData.valuesFor(schema)
+        DidoData data = MapData.valuesForSchema(schema)
                 .of("Foo", positions);
 
         Gson gson = new GsonBuilder()

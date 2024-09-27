@@ -215,11 +215,11 @@ class JsonDataWrapperTest {
 
         NamedData result = gson.fromJson(json, NamedData.class);
 
-        IndexedData expectedData = ArrayData.valuesFor(schema)
+        IndexedData expectedData = ArrayData.valuesForSchema(schema)
                 .of("A123",
-                        RepeatingData.of(ArrayData.valuesFor(nestedSchema)
+                        RepeatingData.of(ArrayData.valuesForSchema(nestedSchema)
                                         .of("Apple", 4),
-                                ArrayData.valuesFor(nestedSchema)
+                                ArrayData.valuesForSchema(nestedSchema)
                                         .of("Pear", 5)));
 
         assertThat(result, is(expectedData));

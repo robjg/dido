@@ -17,27 +17,27 @@ class LeftStreamJoinTest {
     @Test
     void testSimpleExample() {
 
-        DataBuilder<ArrayData> farmBuilder = ArrayData.builderForSchema(
+        Values<ArrayData> farmBuilder = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Id", int.class)
                         .addNamed("Farmer", String.class)
                         .build());
 
-        DidoData farm1 = farmBuilder.values().of(1, "Brown");
-        DidoData farm2 = farmBuilder.values().of(2, "Giles");
+        DidoData farm1 = farmBuilder.of(1, "Brown");
+        DidoData farm2 = farmBuilder.of(2, "Giles");
 
-        DataBuilder<ArrayData> produceBuilder = ArrayData.builderForSchema(
+        Values<ArrayData> produceBuilder = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
                         .addNamed("FarmId", int.class)
                         .build());
 
-        DidoData produce1 = produceBuilder.values().of("Apples", 12, 2);
-        DidoData produce2 = produceBuilder.values().of("Pears", 7, 1);
-        DidoData produce3 = produceBuilder.values().of("Carrots", 15, 2);
+        DidoData produce1 = produceBuilder.of("Apples", 12, 2);
+        DidoData produce2 = produceBuilder.of("Pears", 7, 1);
+        DidoData produce3 = produceBuilder.of("Carrots", 15, 2);
 
-        DataBuilder<ArrayData> expectedBuilder = ArrayData.builderForSchema(
+        Values<ArrayData> expectedBuilder = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -46,9 +46,9 @@ class LeftStreamJoinTest {
                         .addNamed("Farmer", String.class)
                         .build());
 
-        DidoData expected1 = expectedBuilder.values().of("Apples", 12, 2, 2, "Giles");
-        DidoData expected2 = expectedBuilder.values().of("Pears", 7, 1, 1, "Brown");
-        DidoData expected3 = expectedBuilder.values().of("Carrots", 15, 2, 2, "Giles");
+        DidoData expected1 = expectedBuilder.of("Apples", 12, 2, 2, "Giles");
+        DidoData expected2 = expectedBuilder.of("Pears", 7, 1, 1, "Brown");
+        DidoData expected3 = expectedBuilder.of("Carrots", 15, 2, 2, "Giles");
 
         List<DidoData> results = new ArrayList<>(3);
 

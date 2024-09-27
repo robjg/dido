@@ -37,18 +37,6 @@ public class DataBuilder<D extends DidoData> {
         return schema;
     }
 
-    public Values<D> values() {
-        return new Values<>(dataFactory, getSchema());
-    }
-
-    public D build(Object... values) {
-        return values().of(values);
-    }
-
-    public ValuesTo<D> valuesTo(Consumer<? super D> consumer) {
-        return new ValuesTo<>(consumer, values());
-    }
-
     private Setter getSetterWithNameCheck(String name) {
         Setter setter = setters.get(name);
         if (setter == null) {
@@ -111,37 +99,13 @@ public class DataBuilder<D extends DidoData> {
 
         DataSchema schema = from.getSchema();
         for (String field : schema.getFieldNames()) {
-            with(field, from.getAt(schema.getIndexNamed(field)));
+            with(field, from.getNamed(field));
         }
         return this;
     }
 
     public D build() {
         return dataFactory.toData();
-    }
-
-    /**
-     * For A fluent way of providing data for a known schema
-     */
-    public static class Values<D extends DidoData> {
-
-        private final DataFactory<D> dataFactory;
-
-        private final DataSchema schema;
-
-        Values(DataFactory<D> dataFactory, DataSchema schema) {
-            this.dataFactory = dataFactory;
-            this.schema = schema;
-        }
-
-        public D of(Object... values) {
-            int index = schema.firstIndex();
-            for (int i = 0; i < values.length && index > 0; ++i) {
-                dataFactory.getSetterAt(index).set(values[i]);
-                index = schema.nextIndex(index);
-            }
-            return dataFactory.toData();
-        }
     }
 
     public static class ValuesTo<D extends DidoData> {

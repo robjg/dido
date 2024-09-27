@@ -7,6 +7,8 @@ package dido.data;
  */
 public interface DataFactory<D extends DidoData> {
 
+    WritableSchema<D> getSchema();
+
     Class<D> getDataType();
 
     Setter getSetterAt(int index);
@@ -14,8 +16,6 @@ public interface DataFactory<D extends DidoData> {
     Setter getSetterNamed(String name);
 
     DataSetter getSetter();
-
-    D valuesToData(Object... values);
 
     D toData();
 

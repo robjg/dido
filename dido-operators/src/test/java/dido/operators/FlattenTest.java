@@ -24,11 +24,11 @@ class FlattenTest {
                 .addRepeatingNamed("OrderLines", nestedSchema)
                 .build();
 
-        DidoData data = ArrayData.valuesFor(schema)
+        DidoData data = ArrayData.valuesForSchema(schema)
                 .of("A123",
-                        RepeatingData.of(ArrayData.valuesFor(nestedSchema)
+                        RepeatingData.of(ArrayData.valuesForSchema(nestedSchema)
                                         .of("Apple", 4),
-                                ArrayData.valuesFor(nestedSchema)
+                                ArrayData.valuesForSchema(nestedSchema)
                                         .of("Pear", 5)));
 
         List<DidoData> results = Flatten.fieldOfSchema("OrderLines", schema)
@@ -40,9 +40,9 @@ class FlattenTest {
                 .addNamed("Qty", int.class)
                 .build();
 
-        DidoData expected1 = ArrayData.valuesFor(expectedSchema)
+        DidoData expected1 = ArrayData.valuesForSchema(expectedSchema)
                 .of("A123", "Apple", 4);
-        DidoData expected2 = ArrayData.valuesFor(expectedSchema)
+        DidoData expected2 = ArrayData.valuesForSchema(expectedSchema)
                 .of("A123", "Pear", 5);
 
         assertThat(results, contains(expected1, expected2));

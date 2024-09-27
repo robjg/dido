@@ -14,7 +14,7 @@ public class TransformationComplexTest {
             .addNamed("Price", double.class)
             .build();
 
-    DidoData data = ArrayData.valuesFor(schema)
+    DidoData data = ArrayData.valuesForSchema(schema)
             .of("Apple", 10, 23.5);
 
     /**
@@ -81,7 +81,7 @@ public class TransformationComplexTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesFor(expectedSchema)
+        DidoData expectedData = ArrayData.valuesForSchema(expectedSchema)
                 .of("Apple", 23.5, 0.5, 11.75, 35.25);
 
         assertThat(result, is(expectedData));
@@ -165,7 +165,7 @@ public class TransformationComplexTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesFor(expectedSchema)
+        DidoData expectedData = ArrayData.valuesForSchema(expectedSchema)
                 .of("Apple", 23.5, 0.5, 11.75, 35.25);
 
         assertThat(result, is(expectedData));

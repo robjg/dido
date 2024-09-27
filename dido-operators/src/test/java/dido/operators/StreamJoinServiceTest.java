@@ -1,9 +1,9 @@
 package dido.operators;
 
 import dido.data.ArrayData;
-import dido.data.DataBuilder;
 import dido.data.DidoData;
 import dido.data.SchemaBuilder;
+import dido.data.Values;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
@@ -40,7 +40,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        DataBuilder<ArrayData> expectedBuilder = ArrayData.builderForSchema(
+        Values<ArrayData> expectedValues = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -49,9 +49,9 @@ class StreamJoinServiceTest {
                         .addNamed("Farmer", String.class)
                         .build());
 
-        DidoData expected1 = expectedBuilder.build("Apples", 12, 2, 2, "Giles");
-        DidoData expected2 = expectedBuilder.build("Pears", 7, 1, 1, "Brown");
-        DidoData expected3 = expectedBuilder.build("Carrots", 15, 2, 2, "Giles");
+        DidoData expected1 = expectedValues.of("Apples", 12, 2, 2, "Giles");
+        DidoData expected2 = expectedValues.of("Pears", 7, 1, 1, "Brown");
+        DidoData expected3 = expectedValues.of("Carrots", 15, 2, 2, "Giles");
 
         assertThat(results, containsInAnyOrder(expected1, expected2, expected3));
     }
@@ -76,7 +76,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        DataBuilder<ArrayData> expectedBuilder = ArrayData.builderForSchema(
+        Values<ArrayData> values = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -85,9 +85,9 @@ class StreamJoinServiceTest {
                         .addNamed("Farmer", String.class)
                         .build());
 
-        DidoData expected1 = expectedBuilder.build("Apples", 12, 2, 2, "Giles");
-        DidoData expected2 = expectedBuilder.build("Pears", 7, 1, 1, "Brown");
-        DidoData expected3 = expectedBuilder.build("Carrots", 15, 2, 2, "Giles");
+        DidoData expected1 = values.of("Apples", 12, 2, 2, "Giles");
+        DidoData expected2 = values.of("Pears", 7, 1, 1, "Brown");
+        DidoData expected3 = values.of("Carrots", 15, 2, 2, "Giles");
 
         assertThat(results, containsInAnyOrder(expected1, expected2, expected3));
     }
@@ -112,7 +112,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        DataBuilder<ArrayData> expectedBuilder = ArrayData.builderForSchema(
+        Values<ArrayData> values = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Variety", String.class)
@@ -123,9 +123,9 @@ class StreamJoinServiceTest {
                         .addNamed("Farmer", String.class)
                         .build());
 
-        DidoData expected1 = expectedBuilder.build("Apples", "Cox", 12, 2, "UK", 2, "Giles");
-        DidoData expected2 = expectedBuilder.build("Pears", "Conference", 7, 1, "FR", 1, "Brun");
-        DidoData expected3 = expectedBuilder.build("Carrots", "", 15, 2, "UK", 2, "Giles");
+        DidoData expected1 = values.of("Apples", "Cox", 12, 2, "UK", 2, "Giles");
+        DidoData expected2 = values.of("Pears", "Conference", 7, 1, "FR", 1, "Brun");
+        DidoData expected3 = values.of("Carrots", "", 15, 2, "UK", 2, "Giles");
 
         assertThat(results, containsInAnyOrder(expected1, expected2, expected3));
     }

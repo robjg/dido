@@ -41,11 +41,11 @@ class JsonDataPartialCopyTest {
                 .addRepeatingNamed("OrderLines", nestedSchema)
                 .build();
 
-        DidoData expectedData = ArrayData.valuesFor(expectedSchema)
+        DidoData expectedData = ArrayData.valuesForSchema(expectedSchema)
                 .of("A123",
-                        RepeatingData.of(ArrayData.valuesFor(nestedSchema)
+                        RepeatingData.of(ArrayData.valuesForSchema(nestedSchema)
                                         .of("Apple", 5.0),
-                                ArrayData.valuesFor(nestedSchema)
+                                ArrayData.valuesForSchema(nestedSchema)
                                         .of("Pear", 4.0)));
 
         DataSchema resultSchema = result.getSchema();

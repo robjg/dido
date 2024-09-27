@@ -63,7 +63,7 @@ class ArrayDataTest {
 
         DidoData data1 = ArrayData.of("Apple", null, 15, 26.5);
 
-        DidoData data2 = ArrayData.valuesFor(data1.getSchema())
+        DidoData data2 = ArrayData.valuesForSchema(data1.getSchema())
                 .of("Apple", null, 15, 26.5);
 
         assertThat(data1, is(data2));

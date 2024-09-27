@@ -47,9 +47,9 @@ class FlattenTypeTest {
                 .addNamed("Qty", int.class)
                 .build();
 
-        DidoData expected1 = ArrayData.valuesFor(expectedSchema)
+        DidoData expected1 = ArrayData.valuesForSchema(expectedSchema)
                 .of("A123", "Apple", 4);
-        DidoData expected2 = ArrayData.valuesFor(expectedSchema)
+        DidoData expected2 = ArrayData.valuesForSchema(expectedSchema)
                 .of("A123", "Pear", 5);
 
         assertThat(results, contains(expected1, expected2));
@@ -85,11 +85,11 @@ class FlattenTypeTest {
 
         assertThat(results.get(0).getSchema(), is(expectedSchema));
 
-        DidoData expected1 = ArrayData.valuesFor(expectedSchema)
+        DidoData expected1 = ArrayData.valuesForSchema(expectedSchema)
                 .of("Foo", 1, "X");
-        DidoData expected2 = ArrayData.valuesFor(expectedSchema)
+        DidoData expected2 = ArrayData.valuesForSchema(expectedSchema)
                 .of("Foo", 2, "Y");
-        DidoData expected3 = ArrayData.valuesFor(expectedSchema)
+        DidoData expected3 = ArrayData.valuesForSchema(expectedSchema)
                 .of("Foo", 3, null);
 
         assertThat(results, contains(expected1, expected2, expected3));
