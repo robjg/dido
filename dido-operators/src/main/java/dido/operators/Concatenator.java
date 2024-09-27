@@ -1,4 +1,7 @@
-package dido.data;
+package dido.operators;
+
+import dido.data.NoSuchFieldException;
+import dido.data.*;
 
 import java.util.*;
 
@@ -67,7 +70,7 @@ public class Concatenator {
                 @Override
                 public Getter getDataGetterAt(int index) {
                     if (!hasIndex(index)) {
-                        throw new NoSuchFieldException(index, this);
+                        throw new dido.data.NoSuchFieldException(index, this);
                     }
                     return getDataGetterNamed(getFieldNameAt(index));
                 }

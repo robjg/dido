@@ -1,5 +1,8 @@
-package dido.data;
+package dido.operators;
 
+import dido.data.DidoData;
+import dido.data.MapData;
+import dido.data.ReadableSchema;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

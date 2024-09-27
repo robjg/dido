@@ -2,7 +2,6 @@ package dido.operators;
 
 import dido.data.AnonymousData;
 import dido.data.AnonymousSubData;
-import dido.data.Concatenator;
 import dido.data.DidoData;
 
 import java.util.Map;

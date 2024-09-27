@@ -1,4 +1,7 @@
-package dido.data;
+package dido.operators;
+
+import dido.data.NoSuchFieldException;
+import dido.data.*;
 
 import java.util.Collection;
 import java.util.function.Function;
@@ -28,7 +31,7 @@ public class SubData extends AbstractData implements DidoData {
         for (int index : indices) {
             SchemaField originalField = original.getSchemaFieldAt(index);
             if (originalField == null) {
-                throw new NoSuchFieldException(index, original);
+                throw new dido.data.NoSuchFieldException(index, original);
             }
             schemaFactory.addSchemaField(originalField.mapToIndex(0));
         }
@@ -42,7 +45,7 @@ public class SubData extends AbstractData implements DidoData {
             String field = fields[i];
             int index = original.getIndexNamed(field);
             if (index == 0) {
-                throw new NoSuchFieldException(field, original);
+                throw new dido.data.NoSuchFieldException(field, original);
             }
             indices[i] = index;
         }

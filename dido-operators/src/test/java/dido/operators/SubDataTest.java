@@ -1,5 +1,8 @@
-package dido.data;
+package dido.operators;
 
+import dido.data.DidoData;
+import dido.data.MapData;
+import dido.data.NamedData;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
