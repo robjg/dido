@@ -19,7 +19,7 @@ public class FieldOperations {
 
         return (incomingSchema, schemaSetter) -> {
 
-            Getter getter = incomingSchema.getDataGetterAt(index);
+            FieldGetter getter = incomingSchema.getFieldGetterAt(index);
 
             SchemaField originalField = incomingSchema.getSchemaFieldAt(index);
 
@@ -44,7 +44,7 @@ public class FieldOperations {
 
         return (incomingSchema, schemaSetter) -> {
 
-            Getter getter = incomingSchema.getDataGetterNamed(name);
+            FieldGetter getter = incomingSchema.getFieldGetterNamed(name);
 
             SchemaField originalField = incomingSchema.getSchemaFieldNamed(name);
 
@@ -71,7 +71,7 @@ public class FieldOperations {
 
             schemaSetter.addField(field);
 
-            Getter getter = incomingSchema.getDataGetterNamed(from);
+            FieldGetter getter = incomingSchema.getFieldGetterNamed(from);
 
             return dataFactory -> new Copy(getter, dataFactory.getSetterNamed(finalTo));
         };
@@ -131,7 +131,7 @@ public class FieldOperations {
     static TransformerFactory setterFactoryFor(String to, Object value, Class<?> type) {
 
         return dataFactory -> {
-            Setter setter = dataFactory.getSetterNamed(to);
+            FieldSetter setter = dataFactory.getSetterNamed(to);
             if (value == null) {
                 return data -> setter.clear();
             } else if (boolean.class.isAssignableFrom(type)) {
@@ -180,11 +180,11 @@ public class FieldOperations {
 
     static class Copy implements Consumer<DidoData> {
 
-        private final Getter getter;
+        private final FieldGetter getter;
 
-        private final Setter setter;
+        private final FieldSetter setter;
 
-        Copy(Getter getter, Setter setter) {
+        Copy(FieldGetter getter, FieldSetter setter) {
             this.getter = getter;
             this.setter = setter;
         }
@@ -201,11 +201,11 @@ public class FieldOperations {
 
     static class Compute implements Consumer<DidoData> {
 
-        private final Setter setter;
+        private final FieldSetter setter;
 
         private final Function<? super DidoData, ?> func;
 
-        Compute(Setter setter, Function<? super DidoData, ?> func) {
+        Compute(FieldSetter setter, Function<? super DidoData, ?> func) {
             this.setter = setter;
             this.func = func;
         }

@@ -167,8 +167,8 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         }
 
         @Override
-        public Getter getDataGetter(E field) {
-            return new AbstractGetter() {
+        public FieldGetter getDataGetter(E field) {
+            return new AbstractFieldGetter() {
                 @Override
                 public Object get(DidoData data) {
                     return ((EnumData<E>) data).get(field);
@@ -177,7 +177,7 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         }
 
         @Override
-        public Getter getDataGetterAt(int index) {
+        public FieldGetter getFieldGetterAt(int index) {
             E field = Schema.this.getFieldAt(index);
             if (field == null) {
                 throw new NoSuchFieldException(index, Schema.this);
@@ -186,7 +186,7 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         }
 
         @Override
-        public Getter getDataGetterNamed(String name) {
+        public FieldGetter getFieldGetterNamed(String name) {
             E field = Schema.this.getFieldNamed(name);
             if (field == null) {
                 throw new NoSuchFieldException(name, Schema.this);

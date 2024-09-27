@@ -3,7 +3,7 @@ package dido.data;
 /**
  * Provides the ability to set data.
  */
-public interface Setter {
+public interface FieldSetter {
 
     void clear();
     

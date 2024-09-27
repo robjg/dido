@@ -1,12 +1,56 @@
 package dido.data;
 
 /**
- * Implementations need only provide {@link DataSetter#setNamed(String, Object)}.
+ * Implementations need only provide {@link WritableData#setNamed(String, Object)}.
  */
-abstract public class AbstractDataSetter implements DataSetter {
+abstract public class AbstractWritableData implements WritableData {
 
     @Override
     abstract public void setNamed(String field, Object value);
+
+    @Override
+    abstract public void setAt(int index, Object value);
+
+
+    @Override
+    public void setBooleanAt(int index, boolean value) {
+        setAt(index, value);
+    }
+
+    @Override
+    public void setByteAt(int index, byte value) {
+        setAt(index, value);
+    }
+
+    @Override
+    public void setShortAt(int index, short value) {
+        setAt(index, value);
+    }
+
+    @Override
+    public void setIntAt(int index, int value) {
+        setAt(index, value);
+    }
+
+    @Override
+    public void setLongAt(int index, long value) {
+        setAt(index, value);
+    }
+
+    @Override
+    public void setFloatAt(int index, float value) {
+        setAt(index, value);
+    }
+
+    @Override
+    public void setDoubleAt(int index, double value) {
+        setAt(index, value);
+    }
+
+    @Override
+    public void setStringAt(int index, String value) {
+        setAt(index, value);
+    }
 
     @Override
     public void setBooleanNamed(String field, boolean value) {

@@ -71,7 +71,7 @@ public class NonBoxedData extends AbstractData {
 
         private final Schema schema;
 
-        private final Setter[] setters;
+        private final FieldSetter[] setters;
 
         private Object[] values;
 
@@ -84,17 +84,17 @@ public class NonBoxedData extends AbstractData {
             this.values = new Object[schema.values];
             this.ints = new int[schema.ints];
             this.doubles = new double[schema.doubles];
-            this.setters = new Setter[schema.getters.length];
+            this.setters = new FieldSetter[schema.getters.length];
             for (int i = 0; i < setters.length; ++i) {
-                Getter getter = schema.getters[i];
+                FieldGetter getter = schema.getters[i];
                 if (getter instanceof IntGetter) {
-                    setters[i] = new IntSetter(((IntGetter) getter).index);
+                    setters[i] = new IntFieldSetter(((IntGetter) getter).index);
                 }
                 else if (getter instanceof DoubleGetter) {
-                    setters[i] = new DoubleSetter(((DoubleGetter) getter).index);
+                    setters[i] = new DoubleFieldSetter(((DoubleGetter) getter).index);
                 }
                 else {
-                    setters[i] = new ValueSetter(((ValueGetter) getter).index);
+                    setters[i] = new ValueFieldSetter(((ValueGetter) getter).index);
                 }
             }
         }
@@ -110,9 +110,9 @@ public class NonBoxedData extends AbstractData {
         }
 
         @Override
-        public Setter getSetterAt(int index) {
+        public FieldSetter getSetterAt(int index) {
             try {
-                Setter setter = setters[index - 1];
+                FieldSetter setter = setters[index - 1];
                 if (setter == null) {
                     throw new NoSuchFieldException(index, schema);
                 }
@@ -124,7 +124,7 @@ public class NonBoxedData extends AbstractData {
         }
 
         @Override
-        public Setter getSetterNamed(String name) {
+        public FieldSetter getSetterNamed(String name) {
             int index = schema.getIndexNamed(name);
             if (index == 0) {
                 throw new NoSuchFieldException(name, schema);
@@ -133,7 +133,7 @@ public class NonBoxedData extends AbstractData {
         }
 
         @Override
-        public DataSetter getSetter() {
+        public WritableData getSetter() {
             throw new UnsupportedOperationException();
         }
 
@@ -146,11 +146,11 @@ public class NonBoxedData extends AbstractData {
             return nonBoxedData;
         }
 
-        class IntSetter extends AbstractSetter {
+        class IntFieldSetter extends AbstractFieldSetter {
 
             private final int index;
 
-            IntSetter(int index) {
+            IntFieldSetter(int index) {
                 this.index = index;
             }
 
@@ -170,11 +170,11 @@ public class NonBoxedData extends AbstractData {
             }
         }
 
-        class DoubleSetter extends AbstractSetter {
+        class DoubleFieldSetter extends AbstractFieldSetter {
 
             private final int index;
 
-            DoubleSetter(int index) {
+            DoubleFieldSetter(int index) {
                 this.index = index;
             }
 
@@ -194,11 +194,11 @@ public class NonBoxedData extends AbstractData {
             }
         }
 
-        class ValueSetter extends AbstractSetter {
+        class ValueFieldSetter extends AbstractFieldSetter {
 
             private final int index;
 
-            ValueSetter(int index) {
+            ValueFieldSetter(int index) {
                 this.index = index;
             }
 
@@ -214,7 +214,7 @@ public class NonBoxedData extends AbstractData {
         }
     }
 
-    static class IntGetter extends AbstractGetter {
+    static class IntGetter extends AbstractFieldGetter {
 
         private final int index;
 
@@ -233,7 +233,7 @@ public class NonBoxedData extends AbstractData {
         }
     }
 
-    static class DoubleGetter extends AbstractGetter {
+    static class DoubleGetter extends AbstractFieldGetter {
 
         private final int index;
 
@@ -252,7 +252,7 @@ public class NonBoxedData extends AbstractData {
         }
     }
 
-    static class ValueGetter extends AbstractGetter {
+    static class ValueGetter extends AbstractFieldGetter {
 
         private final int index;
 
@@ -269,7 +269,7 @@ public class NonBoxedData extends AbstractData {
     public static class Schema extends DataSchemaImpl
             implements WritableSchema<NonBoxedData> {
 
-        private final Getter[] getters;
+        private final FieldGetter[] getters;
 
         private final int values;
 
@@ -280,7 +280,7 @@ public class NonBoxedData extends AbstractData {
         private Schema(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
             super(fields, firstIndex, lastIndex);
 
-            getters = new Getter[lastIndex];
+            getters = new FieldGetter[lastIndex];
 
             int values = 0;
             int ints = 0;
@@ -316,9 +316,9 @@ public class NonBoxedData extends AbstractData {
         }
 
         @Override
-        public Getter getDataGetterAt(int index) {
+        public FieldGetter getFieldGetterAt(int index) {
             try {
-                Getter getter = getters[index - 1];
+                FieldGetter getter = getters[index - 1];
                 if (getter == null) {
                     throw new NoSuchFieldException(index, Schema.this);
                 }
@@ -330,12 +330,12 @@ public class NonBoxedData extends AbstractData {
         }
 
         @Override
-        public Getter getDataGetterNamed(String name) {
+        public FieldGetter getFieldGetterNamed(String name) {
             int index = getIndexNamed(name);
             if (index == 0) {
                 throw new NoSuchFieldException(name, Schema.this);
             }
-            return getDataGetterAt(index);
+            return getFieldGetterAt(index);
         }
     }
 

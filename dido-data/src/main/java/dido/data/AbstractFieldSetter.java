@@ -3,7 +3,7 @@ package dido.data;
 /**
  * Provides the ability to set data.
  */
-public abstract class AbstractSetter implements Setter {
+public abstract class AbstractFieldSetter implements FieldSetter {
 
     @Override
     abstract public void clear();

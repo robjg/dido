@@ -139,8 +139,8 @@ public class JsonDataWrapper {
         }
 
         @Override
-        public Getter getDataGetterAt(int index) {
-            return new AbstractGetter() {
+        public FieldGetter getFieldGetterAt(int index) {
+            return new AbstractFieldGetter() {
                 @Override
                 public Object get(DidoData data) {
                     return data.getAt(index);
@@ -149,12 +149,12 @@ public class JsonDataWrapper {
         }
 
         @Override
-        public Getter getDataGetterNamed(String name) {
+        public FieldGetter getFieldGetterNamed(String name) {
             int index = getIndexNamed(name);
             if (index == 0) {
                 throw new NoSuchFieldException(name, Schema.this);
             }
-            return getDataGetterAt(index);
+            return getFieldGetterAt(index);
         }
     }
 }

@@ -42,9 +42,9 @@ class DataReaderTest {
                 .build();
 
         DataFactory<?> dataFactory = schema.newDataFactory();
-        Setter fruitSetter = dataFactory.getSetterNamed("Fruit");
-        Setter quantitySetter = dataFactory.getSetterNamed("Quantity");
-        Setter priceSetter = dataFactory.getSetterNamed("Price");
+        FieldSetter fruitSetter = dataFactory.getSetterNamed("Fruit");
+        FieldSetter quantitySetter = dataFactory.getSetterNamed("Quantity");
+        FieldSetter priceSetter = dataFactory.getSetterNamed("Price");
 
         List<DidoData> data = new ArrayList<>(SAMPLE_SIZE);
         for (int i = 0; i < SAMPLE_SIZE; i++) {
@@ -68,8 +68,8 @@ class DataReaderTest {
 
         double avg = 0.0;
 
-        Getter quantityGetter = schema.getDataGetterNamed("Quantity");
-        Getter priceGetter = schema.getDataGetterNamed("Price");
+        FieldGetter quantityGetter = schema.getFieldGetterNamed("Quantity");
+        FieldGetter priceGetter = schema.getFieldGetterNamed("Price");
 
         long millis = System.currentTimeMillis();
 

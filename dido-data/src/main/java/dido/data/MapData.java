@@ -253,7 +253,7 @@ public class MapData extends AbstractNamedData implements NamedData {
 
     }
 
-    static class MapDataFactory extends AbstractDataSetter implements DataFactory<MapData> {
+    static class MapDataFactory extends AbstractWritableData implements DataFactory<MapData> {
 
         private final Schema schema;
 
@@ -267,6 +267,16 @@ public class MapData extends AbstractNamedData implements NamedData {
         @Override
         public WritableSchema<MapData> getSchema() {
             return schema;
+        }
+
+        @Override
+        public void setAt(int index, Object value) {
+            setNamed(schema.getFieldNameAt(index), value);
+        }
+
+        @Override
+        public void clearAt(int index) {
+            clearNamed(schema.getFieldNameAt(index));
         }
 
         @Override
@@ -285,14 +295,14 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public Setter getSetterAt(int index) {
+        public FieldSetter getSetterAt(int index) {
             String name = schema.getFieldNameAt(index);
             return getSetterNamed(name);
         }
 
         @Override
-        public Setter getSetterNamed(String name) {
-            return new AbstractSetter() {
+        public FieldSetter getSetterNamed(String name) {
+            return new AbstractFieldSetter() {
                 @Override
                 public void clear() {
                     clearNamed(name);
@@ -306,7 +316,7 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public DataSetter getSetter() {
+        public WritableData getSetter() {
             return this;
         }
 
@@ -330,14 +340,14 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public Getter getDataGetterAt(int index) {
+        public FieldGetter getFieldGetterAt(int index) {
 
             String name = getFieldNameAt(index);
             if (name == null) {
                 throw new NoSuchFieldException(index, this);
             }
 
-            return new AbstractGetter() {
+            return new AbstractFieldGetter() {
                 @Override
                 public Object get(DidoData data) {
                     return ((MapData) data).map.get(name);
@@ -346,12 +356,12 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public Getter getDataGetterNamed(String name) {
+        public FieldGetter getFieldGetterNamed(String name) {
             if (!hasNamed(name)) {
                 throw new NoSuchFieldException(name, this);
             }
 
-            return new AbstractGetter() {
+            return new AbstractFieldGetter() {
                 @Override
                 public Object get(DidoData data) {
                     return ((MapData) data).map.get(name);

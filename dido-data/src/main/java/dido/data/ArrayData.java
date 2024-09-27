@@ -153,7 +153,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
     }
 
-    static class ArrayDataFactory extends AbstractIndexedSetter implements DataFactory<ArrayData> {
+    static class ArrayDataFactory extends AbstractWritableData implements DataFactory<ArrayData> {
 
         private final Schema schema;
 
@@ -175,11 +175,11 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public Setter getSetterAt(int index) {
+        public FieldSetter getSetterAt(int index) {
             if (!schema.hasIndex(index)) {
                 throw new NoSuchFieldException(index, schema);
             }
-            return new AbstractSetter() {
+            return new AbstractFieldSetter() {
                 @Override
                 public void clear() {
                     clearAt(index);
@@ -193,7 +193,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public Setter getSetterNamed(String name) {
+        public FieldSetter getSetterNamed(String name) {
             int index = schema.getIndexNamed(name);
             if (index == 0) {
                 throw new NoSuchFieldException(name, schema);
@@ -232,7 +232,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public DataSetter getSetter() {
+        public WritableData getSetter() {
             return this;
         }
 
@@ -256,14 +256,14 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public Getter getDataGetterAt(int index) {
+        public FieldGetter getFieldGetterAt(int index) {
             String fieldName = getFieldNameAt(index);
             if (fieldName == null) {
                 throw new NoSuchFieldException(index, this);
             }
             String toString = "ArrayDataGetter for [" + index + ":" + fieldName + "]";
 
-            return new AbstractGetter() {
+            return new AbstractFieldGetter() {
                 @Override
                 public Object get(DidoData data) {
                     return ((ArrayData) data).data[index - 1];
@@ -277,13 +277,13 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public Getter getDataGetterNamed(String name) {
+        public FieldGetter getFieldGetterNamed(String name) {
             int index = getIndexNamed(name);
             if (index == 0) {
                 throw new NoSuchFieldException(name, this);
             }
 
-            return getDataGetterAt(index);
+            return getFieldGetterAt(index);
         }
 
         @Override

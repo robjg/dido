@@ -7,11 +7,11 @@ public class Values<D extends DidoData> {
 
     private final DataFactory<D> dataFactory;
 
-    private final Setter[] setters;
+    private final FieldSetter[] setters;
 
     private Values(WritableSchema<D> schema) {
         this.dataFactory = schema.newDataFactory();
-        setters = new Setter[schema.lastIndex()];
+        setters = new FieldSetter[schema.lastIndex()];
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
             setters[index - 1] = dataFactory.getSetterAt(index);
         }

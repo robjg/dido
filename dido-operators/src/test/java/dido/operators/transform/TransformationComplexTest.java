@@ -25,7 +25,7 @@ public class TransformationComplexTest {
         @Override
         public TransformerFactory define(ReadableSchema incomingSchema, SchemaSetter schemaSetter) {
 
-            Getter priceGetter = schema.getDataGetterNamed("Price");
+            FieldGetter priceGetter = schema.getFieldGetterNamed("Price");
 
             SchemaField markupField = SchemaField.of(0, "Markup", double.class);
             SchemaField amountField = SchemaField.of(0, "MarkupAmount", double.class);
@@ -37,9 +37,9 @@ public class TransformationComplexTest {
 
             return dataFactory -> {
 
-                Setter markupSetter = dataFactory.getSetterNamed("Markup");
-                Setter amountSetter = dataFactory.getSetterNamed("MarkupAmount");
-                Setter finalSetter = dataFactory.getSetterNamed("FinalPrice");
+                FieldSetter markupSetter = dataFactory.getSetterNamed("Markup");
+                FieldSetter amountSetter = dataFactory.getSetterNamed("MarkupAmount");
+                FieldSetter finalSetter = dataFactory.getSetterNamed("FinalPrice");
 
                 return data -> {
                     double price = priceGetter.getDouble(data);
@@ -102,16 +102,16 @@ public class TransformationComplexTest {
                     .addSchemaField(SchemaField.of(5, "FinalPrice", double.class))
                     .build();
 
-            Getter fruitGetter = incomingSchema.getDataGetterNamed("Fruit");
-            Getter priceGetter = incomingSchema.getDataGetterNamed("Price");
+            FieldGetter fruitGetter = incomingSchema.getFieldGetterNamed("Fruit");
+            FieldGetter priceGetter = incomingSchema.getFieldGetterNamed("Price");
 
             DataFactory<D> dataFactory = outSchema.newDataFactory();
 
-            Setter fruitSetter = dataFactory.getSetterNamed("Fruit");
-            Setter priceSetter = dataFactory.getSetterNamed("Price");
-            Setter markupSetter = dataFactory.getSetterNamed("Markup");
-            Setter amountSetter = dataFactory.getSetterNamed("MarkupAmount");
-            Setter finalSetter = dataFactory.getSetterNamed("FinalPrice");
+            FieldSetter fruitSetter = dataFactory.getSetterNamed("Fruit");
+            FieldSetter priceSetter = dataFactory.getSetterNamed("Price");
+            FieldSetter markupSetter = dataFactory.getSetterNamed("Markup");
+            FieldSetter amountSetter = dataFactory.getSetterNamed("MarkupAmount");
+            FieldSetter finalSetter = dataFactory.getSetterNamed("FinalPrice");
 
             return new Transformation<>() {
 

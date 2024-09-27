@@ -1,11 +1,11 @@
 package dido.data;
 
 /**
- * Base class for {@link Getter}s that don't mind autoboxing. Implementations must override
- * {@link Getter#get(DidoData)}.
+ * Base class for {@link FieldGetter}s that don't mind autoboxing. Implementations must override
+ * {@link FieldGetter#get(DidoData)}.
  *
  */
-abstract public class AbstractGetter implements Getter {
+abstract public class AbstractFieldGetter implements FieldGetter {
 
     @Override
     abstract public Object get(DidoData data);

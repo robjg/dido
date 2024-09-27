@@ -17,9 +17,9 @@ public class Concatenator {
     static class Location {
         private final int dataIndex;
         private final int index;
-        private final Getter getter;
+        private final FieldGetter getter;
 
-        Location(int dataSet, int index, Getter getter) {
+        Location(int dataSet, int index, FieldGetter getter) {
             this.dataIndex = dataSet;
             this.index = index;
             this.getter = getter;
@@ -68,15 +68,15 @@ public class Concatenator {
                 }
 
                 @Override
-                public Getter getDataGetterAt(int index) {
+                public FieldGetter getFieldGetterAt(int index) {
                     if (!hasIndex(index)) {
                         throw new dido.data.NoSuchFieldException(index, this);
                     }
-                    return getDataGetterNamed(getFieldNameAt(index));
+                    return getFieldGetterNamed(getFieldNameAt(index));
                 }
 
                 @Override
-                public Getter getDataGetterNamed(String name) {
+                public FieldGetter getFieldGetterNamed(String name) {
                     Location location = fieldLocations.get(name);
                     if (location == null) {
                         throw new NoSuchFieldException(name, this);
@@ -97,7 +97,7 @@ public class Concatenator {
             int dataIndex = 0;
             for (ReadableSchema schema : schemas) {
                 for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
-                    Location location = new Location(dataIndex, i, schema.getDataGetterAt(i));
+                    Location location = new Location(dataIndex, i, schema.getFieldGetterAt(i));
                     SchemaField schemaField = schema.getSchemaFieldAt(i);
                     String name = schemaField.getName();
                     if (excludeFields.contains(name)) {

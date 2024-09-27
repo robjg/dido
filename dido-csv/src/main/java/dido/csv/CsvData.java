@@ -91,7 +91,7 @@ public class CsvData extends AbstractNamedData {
         return schema.getters[index - 1].getDouble(this);
     }
 
-    static class StringGetter extends AbstractGetter {
+    static class StringGetter extends AbstractFieldGetter {
 
         private final int arrayIndex;
 
@@ -110,7 +110,7 @@ public class CsvData extends AbstractNamedData {
         }
     }
 
-    static class ConversionGetter<F> extends AbstractGetter {
+    static class ConversionGetter<F> extends AbstractFieldGetter {
 
         private final int arrayIndex;
 
@@ -129,7 +129,7 @@ public class CsvData extends AbstractNamedData {
 
     }
 
-    static class CharGetter extends AbstractGetter {
+    static class CharGetter extends AbstractFieldGetter {
 
         private final int arrayIndex;
 
@@ -149,7 +149,7 @@ public class CsvData extends AbstractNamedData {
         }
     }
 
-    static class IntGetter extends AbstractGetter {
+    static class IntGetter extends AbstractFieldGetter {
 
         private final int arrayIndex;
 
@@ -172,7 +172,7 @@ public class CsvData extends AbstractNamedData {
         }
     }
 
-    static class LongGetter extends AbstractGetter {
+    static class LongGetter extends AbstractFieldGetter {
 
         private final int arrayIndex;
 
@@ -195,7 +195,7 @@ public class CsvData extends AbstractNamedData {
         }
     }
 
-    static class DoubleGetter extends AbstractGetter {
+    static class DoubleGetter extends AbstractFieldGetter {
 
         private final int arrayIndex;
 
@@ -221,7 +221,7 @@ public class CsvData extends AbstractNamedData {
     public static Function<CSVRecord, CsvData> wrapperFunctionFor(DataSchema schema,
                                                                   DidoConversionProvider conversionProvider) {
 
-        Getter[] getters = new Getter[schema.lastIndex()];
+        FieldGetter[] getters = new FieldGetter[schema.lastIndex()];
 
         for (SchemaField schemaField : schema.getSchemaFields()) {
 
@@ -256,28 +256,28 @@ public class CsvData extends AbstractNamedData {
 
     static class Schema extends DataSchemaImpl implements ReadableSchema {
 
-        private final Getter[] getters;
+        private final FieldGetter[] getters;
 
         Schema(Collection<SchemaField> fields,
                int firstIndex,
                int lastIndex,
-               Getter[] getters) {
+               FieldGetter[] getters) {
 
             super(fields, firstIndex, lastIndex);
             this.getters = getters;
         }
 
         Schema(DataSchemaImpl schemaImpl,
-               Getter[] getters) {
+               FieldGetter[] getters) {
 
             super(schemaImpl);
             this.getters = getters;
         }
 
         @Override
-        public Getter getDataGetterAt(int index) {
+        public FieldGetter getFieldGetterAt(int index) {
             try {
-                Getter getter = getters[index - 1];
+                FieldGetter getter = getters[index - 1];
                 if (getter == null) {
                     throw new NoSuchFieldException(index, Schema.this);
                 }
@@ -288,12 +288,12 @@ public class CsvData extends AbstractNamedData {
         }
 
         @Override
-        public Getter getDataGetterNamed(String name) {
+        public FieldGetter getFieldGetterNamed(String name) {
             int index = getIndexNamed(name);
             if (index == 0) {
                 throw new NoSuchFieldException(name, Schema.this);
             }
-            return getDataGetterAt(index);
+            return getFieldGetterAt(index);
         }
     }
 

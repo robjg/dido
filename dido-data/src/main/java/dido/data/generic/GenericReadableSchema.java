@@ -1,17 +1,17 @@
 package dido.data.generic;
 
-import dido.data.Getter;
+import dido.data.FieldGetter;
 import dido.data.NoSuchFieldException;
 import dido.data.ReadableSchema;
 
 public interface GenericReadableSchema<F> extends GenericDataSchema<F>, ReadableSchema {
 
-    default Getter getDataGetter(F field) {
+    default FieldGetter getDataGetter(F field) {
         if (!hasField(field)) {
             throw new NoSuchFieldException(field.toString(), this);
         }
         else {
-            return getDataGetterAt(getIndexOf(field));
+            return getFieldGetterAt(getIndexOf(field));
         }
     }
 
@@ -37,19 +37,19 @@ public interface GenericReadableSchema<F> extends GenericDataSchema<F>, Readable
 
 
         @Override
-        public Getter getDataGetter(F field) {
+        public FieldGetter getDataGetter(F field) {
             throw new NoSuchFieldException(field.toString(),
                     GenericReadableSchema.EmptySchema.this);
         }
 
         @Override
-        public Getter getDataGetterAt(int index) {
+        public FieldGetter getFieldGetterAt(int index) {
             throw new NoSuchFieldException(index,
                     GenericReadableSchema.EmptySchema.this);
         }
 
         @Override
-        public Getter getDataGetterNamed(String name) {
+        public FieldGetter getFieldGetterNamed(String name) {
             throw new NoSuchFieldException(name,
                     GenericReadableSchema.EmptySchema.this);
         }

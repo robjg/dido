@@ -50,7 +50,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
 
     @Override
     public Object get(String field) {
-        return schema.getDataGetterNamed(field).get(this);
+        return schema.getFieldGetterNamed(field).get(this);
     }
 
     @Override
@@ -146,7 +146,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
 
     @Override
     public Object getAt(int index) {
-        return schema.getDataGetterAt(index).get(this);
+        return schema.getFieldGetterAt(index).get(this);
     }
 
     @Override
@@ -240,7 +240,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         }
     }
 
-    static class ColumnGetter implements Getter {
+    static class ColumnGetter implements FieldGetter {
 
         final int column;
 
@@ -403,7 +403,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
 
         private final SchemaField[] indexToSchemaField;
 
-        private final Getter[] getters;
+        private final FieldGetter[] getters;
 
         Schema(ResultSetMetaData metaData,
                DataSchema overrideSchema,
@@ -412,7 +412,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
             int columnCount = metaData.getColumnCount();
 
             this.indexToSchemaField = new SchemaField[columnCount];
-            this.getters = new Getter[columnCount];
+            this.getters = new FieldGetter[columnCount];
 
             TypeOverrides typeOverrides = new TypeOverrides(overrideSchema);
             SchemaUtils schemaUtils = new SchemaUtils(classLoader);
@@ -478,7 +478,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         }
 
         @Override
-        public Getter getDataGetterAt(int index) {
+        public FieldGetter getFieldGetterAt(int index) {
             try {
                 return getters[index - 1];
             } catch (ArrayIndexOutOfBoundsException e) {

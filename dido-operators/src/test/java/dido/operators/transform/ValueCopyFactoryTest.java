@@ -41,7 +41,7 @@ class ValueCopyFactoryTest {
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", Integer.class));
 
-        Setter dataSetter = mock(Setter.class);
+        FieldSetter dataSetter = mock(FieldSetter.class);
         DataFactory<?> dataFactory = mock(DataFactory.class);
         when(dataFactory.getSetterNamed("FooAmount")).thenReturn(dataSetter);
 
@@ -71,7 +71,7 @@ class ValueCopyFactoryTest {
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", int.class));
 
-        Setter dataSetter = mock(Setter.class);
+        FieldSetter dataSetter = mock(FieldSetter.class);
         DataFactory<?> dataFactory = mock(DataFactory.class);
         when(dataFactory.getSetterNamed("FooAmount")).thenReturn(dataSetter);
 

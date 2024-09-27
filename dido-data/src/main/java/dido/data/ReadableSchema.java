@@ -6,11 +6,11 @@ package dido.data;
  */
 public interface ReadableSchema extends DataSchema {
 
-    default Getter getDataGetterAt(int index) {
+    default FieldGetter getFieldGetterAt(int index) {
         if (!hasIndex(index)) {
             throw new NoSuchFieldException(index, this);
         } else {
-            return new AbstractGetter() {
+            return new AbstractFieldGetter() {
                 @Override
                 public Object get(DidoData data) {
                     return data.getAt(index);
@@ -19,11 +19,11 @@ public interface ReadableSchema extends DataSchema {
         }
     }
 
-    default Getter getDataGetterNamed(String name) {
+    default FieldGetter getFieldGetterNamed(String name) {
         if (!hasNamed(name)) {
             throw new NoSuchFieldException(name, this);
         } else {
-            return getDataGetterAt(getIndexNamed(name));
+            return getFieldGetterAt(getIndexNamed(name));
         }
     }
 
@@ -34,12 +34,12 @@ public interface ReadableSchema extends DataSchema {
     class EmptySchema extends DataSchema.EmptySchema implements ReadableSchema {
 
         @Override
-        public Getter getDataGetterAt(int index) {
+        public FieldGetter getFieldGetterAt(int index) {
             throw new NoSuchFieldException(index, ReadableSchema.EmptySchema.this);
         }
 
         @Override
-        public Getter getDataGetterNamed(String name) {
+        public FieldGetter getFieldGetterNamed(String name) {
             throw new NoSuchFieldException(name, ReadableSchema.EmptySchema.this);
         }
     }

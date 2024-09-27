@@ -212,8 +212,8 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
 
         @Override
-        public Setter getSetter(F field) {
-            return new AbstractSetter() {
+        public FieldSetter getSetter(F field) {
+            return new AbstractFieldSetter() {
                 @Override
                 public void clear() {
                     data.remove(field);
@@ -232,17 +232,17 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
 
         @Override
-        public Setter getSetterAt(int index) {
+        public FieldSetter getSetterAt(int index) {
             return null;
         }
 
         @Override
-        public Setter getSetterNamed(String name) {
+        public FieldSetter getSetterNamed(String name) {
             return null;
         }
 
         @Override
-        public DataSetter getSetter() {
+        public WritableData getSetter() {
             return null;
         }
 
@@ -284,11 +284,11 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
 
         @Override
-        public Getter getDataGetter(F field) {
+        public FieldGetter getDataGetter(F field) {
             if (!Schema.this.hasField(field)) {
                 throw new NoSuchFieldException(field.toString(), Schema.this);
             }
-            return new AbstractGetter() {
+            return new AbstractFieldGetter() {
                 @Override
                 public Object get(DidoData data) {
                     return ((GenericMapData<F>) data).get(field);
@@ -297,7 +297,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
 
         @Override
-        public Getter getDataGetterAt(int index) {
+        public FieldGetter getFieldGetterAt(int index) {
             F field = Schema.this.getFieldAt(index);
             if (field == null) {
                 throw new NoSuchFieldException(index, Schema.this);
@@ -306,7 +306,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
 
         @Override
-        public Getter getDataGetterNamed(String name) {
+        public FieldGetter getFieldGetterNamed(String name) {
             F field = Schema.this.getFieldNamed(name);
             if (field == null) {
                 throw new NoSuchFieldException(name, Schema.this);

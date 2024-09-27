@@ -11,11 +11,11 @@ public interface DataFactory<D extends DidoData> {
 
     Class<D> getDataType();
 
-    Setter getSetterAt(int index);
+    FieldSetter getSetterAt(int index);
 
-    Setter getSetterNamed(String name);
+    FieldSetter getSetterNamed(String name);
 
-    DataSetter getSetter();
+    WritableData getSetter();
 
     D toData();
 

@@ -4,7 +4,7 @@ package dido.data;
  * Something capable of getting data. Getters are designed to be reused and so can be
  * optimised for the fastest possible access.
  */
-public interface Getter {
+public interface FieldGetter {
 
     boolean has(DidoData data);
 
@@ -28,9 +28,9 @@ public interface Getter {
 
     String getString(DidoData data);
 
-    static Getter getterAt(int index) {
+    static FieldGetter getterAt(int index) {
 
-        return new Getter() {
+        return new FieldGetter() {
 
             @Override
             public Object get(DidoData data) {
@@ -89,9 +89,9 @@ public interface Getter {
         };
     }
 
-    static Getter getterNamed(String name) {
+    static FieldGetter getterNamed(String name) {
 
-        return new Getter() {
+        return new FieldGetter() {
             @Override
             public Object get(DidoData data) {
                 return data.getNamed(name);

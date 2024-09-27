@@ -1,8 +1,8 @@
 package dido.operators.transform;
 
+import dido.data.FieldSetter;
 import dido.data.ReadableSchema;
 import dido.data.SchemaField;
-import dido.data.Setter;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 import org.slf4j.Logger;
@@ -173,7 +173,7 @@ public class ValueCopyFactory implements Supplier<TransformerDefinition> {
             logger.info("Creating Copy from {} to {}", from, to);
             transformerFn = (conversion) ->
                     into -> {
-                        Setter setter = into.getSetterNamed(to);
+                        FieldSetter setter = into.getSetterNamed(to);
                         return fromData -> setter.set(conversion.apply(fromData.getAt(index)));
                     };
 

@@ -119,17 +119,17 @@ public class RenamedData extends AbstractNamedData {
         }
 
         @Override
-        public Getter getDataGetterAt(int index) {
-            return fromSchema.getDataGetterAt(index);
+        public FieldGetter getFieldGetterAt(int index) {
+            return fromSchema.getFieldGetterAt(index);
         }
 
         @Override
-        public Getter getDataGetterNamed(String name) {
+        public FieldGetter getFieldGetterNamed(String name) {
             int index = Schema.this.getIndexNamed(name);
             if (index == 0) {
                 throw new NoSuchFieldException(index, Schema.this);
             }
-            return getDataGetterAt(index);
+            return getFieldGetterAt(index);
         }
     }
 

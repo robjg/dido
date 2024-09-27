@@ -101,18 +101,18 @@ public class SubData extends AbstractData implements DidoData {
         }
 
         @Override
-        public Getter getDataGetterAt(int index) {
+        public FieldGetter getFieldGetterAt(int index) {
             int oldIndex = indices[index - 1];
-            return original.getDataGetterAt(oldIndex);
+            return original.getFieldGetterAt(oldIndex);
         }
 
         @Override
-        public Getter getDataGetterNamed(String name) {
+        public FieldGetter getFieldGetterNamed(String name) {
             int index = getIndexNamed(name);
             if (index == 0) {
                 throw new NoSuchFieldException(name, SubSchema.this);
             }
-            return getDataGetterAt(index);
+            return getFieldGetterAt(index);
         }
     }
 

@@ -105,12 +105,12 @@ public class DescriptorSchema extends AbstractDataSchema implements ReadableSche
     }
 
     @Override
-    public Getter getDataGetterAt(int index) {
+    public FieldGetter getFieldGetterAt(int index) {
         Descriptors.FieldDescriptor fieldDescriptor = getFieldDescriptorAt(index);
         if (fieldDescriptor == null) {
             throw new NoSuchFieldException(index, this);
         }
-        return new AbstractGetter() {
+        return new AbstractFieldGetter() {
             @Override
             public Object get(DidoData data) {
                 return ((DynamicMessageData) data).message.getField(fieldDescriptor);
@@ -119,12 +119,12 @@ public class DescriptorSchema extends AbstractDataSchema implements ReadableSche
     }
 
     @Override
-    public Getter getDataGetterNamed(String name) {
+    public FieldGetter getFieldGetterNamed(String name) {
         Descriptors.FieldDescriptor fieldDescriptor = getFieldDescriptorNamed(name);
         if (fieldDescriptor == null) {
             throw new NoSuchFieldException(name, this);
         }
-        return new AbstractGetter() {
+        return new AbstractFieldGetter() {
             @Override
             public Object get(DidoData data) {
                 return ((DynamicMessageData) data).message.getField(fieldDescriptor);

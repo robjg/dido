@@ -354,9 +354,9 @@ public class FromBeanArooa {
         }
 
         @Override
-        public Getter getDataGetterAt(int index) {
+        public FieldGetter getFieldGetterAt(int index) {
             if (hasIndex(index)) {
-                return Getter.getterAt(index);
+                return FieldGetter.getterAt(index);
 
             } else {
                 throw new NoSuchFieldException(index, Schema.this);
@@ -364,9 +364,9 @@ public class FromBeanArooa {
         }
 
         @Override
-        public Getter getDataGetterNamed(String name) {
+        public FieldGetter getFieldGetterNamed(String name) {
             if (hasNamed(name)) {
-                return getDataGetterNamed(name);
+                return getFieldGetterNamed(name);
             } else {
                 throw new NoSuchFieldException(name, Schema.this);
             }

@@ -16,12 +16,12 @@ public class DataBuilder<D extends DidoData> {
 
     private final DataFactory<D> dataFactory;
 
-    private final Map<String, Setter> setters;
+    private final Map<String, FieldSetter> setters;
 
     public DataBuilder(WritableSchema<D> schema) {
         this.schema = Objects.requireNonNull(schema);
         this.dataFactory = schema.newDataFactory();
-        Map<String, Setter> setters = new HashMap<>();
+        Map<String, FieldSetter> setters = new HashMap<>();
         for (String name : schema.getFieldNames()) {
             setters.put(name, dataFactory.getSetterNamed(name));
         }
@@ -37,8 +37,8 @@ public class DataBuilder<D extends DidoData> {
         return schema;
     }
 
-    private Setter getSetterWithNameCheck(String name) {
-        Setter setter = setters.get(name);
+    private FieldSetter getSetterWithNameCheck(String name) {
+        FieldSetter setter = setters.get(name);
         if (setter == null) {
             throw new NoSuchFieldException(name, schema);
         }
