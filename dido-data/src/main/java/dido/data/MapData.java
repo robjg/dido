@@ -90,8 +90,8 @@ public class MapData extends AbstractNamedData implements NamedData {
         return builder.build();
     }
 
-    public static WritableSchemaFactory<MapData> schemaFactory() {
-        return new MapDataSchemaFactory();
+    public static SchemaFactory schemaFactory() {
+        return new SchemaFactory();
     }
 
     public static SchemaBuilder<Schema> schemaBuilder() {
@@ -110,7 +110,7 @@ public class MapData extends AbstractNamedData implements NamedData {
 
     public static Schema schemaFromMap(Map<String, ?> map) {
 
-        MapDataSchemaFactory schemaFactory = new MapDataSchemaFactory();
+        SchemaFactory schemaFactory = new SchemaFactory();
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             schemaFactory.addSchemaField(SchemaField.of(0, entry.getKey(), entry.getValue().getClass()));
         }
@@ -124,7 +124,7 @@ public class MapData extends AbstractNamedData implements NamedData {
 
     public static DataBuilder<MapData> builderForSchema(Schema schema) {
 
-        return new DataBuilder<>(schema);
+        return new DataBuilder<>(factoryForSchema(schema));
     }
 
 
@@ -135,15 +135,15 @@ public class MapData extends AbstractNamedData implements NamedData {
 
     public static Values<MapData> valuesForSchema(DataSchema schema) {
 
-        return Values.valuesFor(asMapDataSchema(schema));
+        return Values.withDataFactory(factoryForSchema(schema));
     }
 
     public static DataBuilder<MapData> copy(DidoData from) {
 
-        return new DataBuilder<>(asMapDataSchema(from.getSchema())).copy(from);
+        return new DataBuilder<>(factoryForSchema(from.getSchema())).copy(from);
     }
 
-    public static DataFactory<MapData> factoryFor(DataSchema schema) {
+    public static DataFactory<MapData> factoryForSchema(DataSchema schema) {
         return new MapDataFactory(asMapDataSchema(schema));
     }
 
@@ -168,7 +168,7 @@ public class MapData extends AbstractNamedData implements NamedData {
     }
 
     @Override
-    public ReadableSchema getSchema() {
+    public ReadSchema getSchema() {
         return schema;
     }
 
@@ -182,12 +182,12 @@ public class MapData extends AbstractNamedData implements NamedData {
 
         private Map<String, Object> map = new LinkedHashMap<>();
 
-        private SchemaBuilder<Schema> schemaBuilder = SchemaBuilder.builderFor(new MapDataSchemaFactory());
+        private SchemaBuilder<Schema> schemaBuilder = SchemaBuilder.builderFor(new SchemaFactory());
 
         public NamedData build() {
             NamedData data = new MapData(schemaBuilder.build(), map);
             this.map = new LinkedHashMap<>();
-            this.schemaBuilder = SchemaBuilder.builderFor(new MapDataSchemaFactory());
+            this.schemaBuilder = SchemaBuilder.builderFor(new SchemaFactory());
             return data;
         }
 
@@ -253,7 +253,7 @@ public class MapData extends AbstractNamedData implements NamedData {
 
     }
 
-    static class MapDataFactory extends AbstractWritableData implements DataFactory<MapData> {
+    private static class MapDataFactory extends AbstractWritableData implements DataFactory<MapData> {
 
         private final Schema schema;
 
@@ -265,7 +265,7 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public WritableSchema<MapData> getSchema() {
+        public ReadWriteSchema getSchema() {
             return schema;
         }
 
@@ -285,34 +285,13 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public void setNamed(String field, Object value) {
-            map.put(field, value);
+        public void setNamed(String name, Object value) {
+            map.put(name, value);
         }
 
         @Override
         public Class<MapData> getDataType() {
             return MapData.class;
-        }
-
-        @Override
-        public FieldSetter getSetterAt(int index) {
-            String name = schema.getFieldNameAt(index);
-            return getSetterNamed(name);
-        }
-
-        @Override
-        public FieldSetter getSetterNamed(String name) {
-            return new AbstractFieldSetter() {
-                @Override
-                public void clear() {
-                    clearNamed(name);
-                }
-
-                @Override
-                public void set(Object value) {
-                    setNamed(name, value);
-                }
-            };
         }
 
         @Override
@@ -329,7 +308,7 @@ public class MapData extends AbstractNamedData implements NamedData {
     }
 
     public static class Schema extends DataSchemaImpl
-            implements WritableSchema<MapData> {
+            implements ReadWriteSchema {
 
         Schema(DataSchema from) {
             super(from.getSchemaFields(), from.firstIndex(), from.lastIndex());
@@ -370,24 +349,35 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public WritableSchemaFactory<MapData> newSchemaFactory() {
-            return new MapDataSchemaFactory();
+        public FieldSetter getFieldSetterAt(int index) {
+            String name = getFieldNameAt(index);
+            return getFieldSetterNamed(name);
         }
 
         @Override
-        public DataFactory<MapData> newDataFactory() {
-            return new MapData.MapDataFactory(this);
-        }
+        public FieldSetter getFieldSetterNamed(String name) {
 
+            return new AbstractFieldSetter() {
+                @Override
+                public void clear(WritableData writable) {
+                    ((MapDataFactory) writable).map.remove(name);
+                }
+
+                @Override
+                public void set(WritableData writable, Object value) {
+                    ((MapDataFactory) writable).map.put(name, value);
+                }
+            };
+        }
     }
 
-    public static class MapDataSchemaFactory extends SchemaFactoryImpl<Schema>
-            implements WritableSchemaFactory<MapData> {
+    public static class SchemaFactory extends SchemaFactoryImpl<Schema>
+            implements WriteSchemaFactory {
 
-        protected MapDataSchemaFactory() {
+        protected SchemaFactory() {
         }
 
-        protected MapDataSchemaFactory(DataSchema from) {
+        protected SchemaFactory(DataSchema from) {
             super(from);
         }
 

@@ -22,4 +22,5 @@ public interface DataOutHow<O> {
 	 * 
 	 */
 	DataOut outTo(O dataOut) throws Exception;
+
 }

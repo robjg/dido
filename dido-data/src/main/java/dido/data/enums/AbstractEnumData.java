@@ -1,4 +1,4 @@
-package dido.data;
+package dido.data.enums;
 
 import dido.data.generic.AbstractGenericData;
 

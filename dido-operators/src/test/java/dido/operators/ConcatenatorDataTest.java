@@ -2,7 +2,7 @@ package dido.operators;
 
 import dido.data.DidoData;
 import dido.data.MapData;
-import dido.data.ReadableSchema;
+import dido.data.ReadSchema;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,22 +17,22 @@ class ConcatenatorDataTest {
     @Test
     void testConcatSchema() {
 
-        ReadableSchema schema1 = MapData.schemaBuilder()
+        ReadSchema schema1 = MapData.schemaBuilder()
                 .addNamed("fruit", String.class)
                 .addNamed("qty", int.class)
                 .addNamed("price", double.class)
                 .build();
 
-        ReadableSchema schema2 = MapData.schemaBuilder()
+        ReadSchema schema2 = MapData.schemaBuilder()
                 .addNamed("supplier", String.class)
                 .build();
 
-        ReadableSchema schema3 = MapData.schemaBuilder()
+        ReadSchema schema3 = MapData.schemaBuilder()
                 .addNamed("checked", String.class)
                 .addNamed("good", boolean.class)
                 .build();
 
-        ReadableSchema schema = Concatenator.fromSchemas(schema1, schema2, schema3)
+        ReadSchema schema = Concatenator.fromSchemas(schema1, schema2, schema3)
                 .getSchema();
 
         assertThat(schema.firstIndex(), is(1));

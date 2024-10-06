@@ -5,11 +5,10 @@ import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.poi.data.PoiWorkbook;
 import dido.test.OurDirs;
-import junit.framework.TestCase;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
 import org.oddjob.arooa.convert.ArooaConversionException;
@@ -21,7 +20,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
-public class NullAndBlankCellsTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class NullAndBlankCellsTest {
 	
 	public static class Fruit {
 		
@@ -56,7 +58,7 @@ public class NullAndBlankCellsTest extends TestCase {
 		}
 	}
 	
-
+	@Test
 	public void testNullCells() throws Exception {
 
 		TextCell column1 = new TextCell();
@@ -80,7 +82,6 @@ public class NullAndBlankCellsTest extends TestCase {
 	}
 
 	@Disabled
-	@Ignore
 	public void testWriteAndReadBlankCell() throws ArooaPropertyException, ArooaConversionException, IOException {
 		if (true) {
 			return;

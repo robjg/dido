@@ -5,26 +5,26 @@ package dido.data;
  */
 public interface FieldSetter {
 
-    void clear();
+    void clear(WritableData data);
     
-    void set(Object value);
+    void set(WritableData data, Object value);
 
-    void setBoolean(boolean value);
+    void setBoolean(WritableData data, boolean value);
 
-    void setByte(byte value);
+    void setByte(WritableData data, byte value);
 
-    void setChar(char value);
+    void setChar(WritableData data, char value);
 
-    void setShort(short value);
+    void setShort(WritableData data, short value);
 
-    void setInt(int value);
+    void setInt(WritableData data, int value);
 
-    void setLong(long value);
+    void setLong(WritableData data, long value);
 
-    void setFloat(float value);
+    void setFloat(WritableData data, float value);
 
-    void setDouble(double value);
+    void setDouble(WritableData data, double value);
 
-    void setString(String value);
+    void setString(WritableData data, String value);
 
 }

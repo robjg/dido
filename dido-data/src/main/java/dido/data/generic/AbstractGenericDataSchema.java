@@ -11,27 +11,38 @@ public abstract class AbstractGenericDataSchema<F> extends AbstractDataSchema
         implements GenericDataSchema<F> {
 
     @Override
-    public F getFieldAt(int index) {
-        GenericSchemaField<F> schemaField = getSchemaFieldAt(index);
+    abstract public Class<F> getFieldType();
+
+    @Override
+    abstract public GenericSchemaField<F> getSchemaFieldOf(F field);
+
+    @Override
+    abstract public GenericSchemaField<F> getSchemaFieldAt(int index);
+
+    @Override
+    abstract public GenericSchemaField<F> getSchemaFieldNamed(String name);
+
+    @Override
+    public boolean hasField(F field) {
+        return  getSchemaFieldOf(field) != null;
+    }
+
+    @Override
+    public F getFieldNamed(String name) {
+        GenericSchemaField<F> schemaField = getSchemaFieldNamed(name);
         return schemaField == null ? null : schemaField.getField();
     }
 
     @Override
+    public F getFieldAt(int index) {
+        GenericSchemaField<F> schemaField = getSchemaFieldAt(index);
+        return schemaField == null ? null : schemaField.getField();
+    };
+
+    @Override
     public String getFieldNameAt(int index) {
-        F field = getFieldAt(index);
-        return field == null ? null : field.toString();
-    }
-
-    @Override
-    public GenericSchemaField<F> getSchemaFieldNamed(String name) {
-        int index = getIndexNamed(name);
-        return index > 0 ? getSchemaFieldAt(index) : null;
-    }
-
-    @Override
-    public GenericSchemaField<F> getSchemaFieldOf(F field) {
-        int index = getIndexOf(field);
-        return index > 0 ? getSchemaFieldAt(index) : null;
+        GenericSchemaField<F> schemaField = getSchemaFieldAt(index);
+        return schemaField == null ? null : schemaField.getName();
     }
 
     @Override
@@ -68,6 +79,15 @@ public abstract class AbstractGenericDataSchema<F> extends AbstractDataSchema
             }
         }
         return fields;
+    }
+
+    @Override
+    public Collection<GenericSchemaField<F>> getGenericSchemaFields() {
+        List<GenericSchemaField<F>> schemaFields = new ArrayList<>(lastIndex());
+        for (int i = firstIndex(); i > 0; i = nextIndex(i)) {
+            schemaFields.add(getSchemaFieldAt(i));
+        }
+        return schemaFields;
     }
 
 }

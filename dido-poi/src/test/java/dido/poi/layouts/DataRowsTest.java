@@ -6,18 +6,22 @@ import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;
-import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.standard.StandardArooaSession;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-public class DataRowsTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+public class DataRowsTest {
+
+	@Test
 	public void testWriteAndReadWithHeadings() throws Exception {
 		
 		ArooaSession session = new StandardArooaSession();

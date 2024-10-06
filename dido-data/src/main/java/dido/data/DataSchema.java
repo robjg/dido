@@ -32,11 +32,11 @@ public interface DataSchema extends IndexedSchema {
 
     /**
      * Get the {@link GenericSchemaField} for the given index. A Schema Field will exist for
-     * all valid indexes. Behaviour is undefined when the index is out of bounds.
+     * all valid indexes.
      *
      * @param index The index, from 1.
      *
-     * @return The Schema Field.
+     * @return The Schema Field. Null if one doesn't exist.
      */
     SchemaField getSchemaFieldAt(int index);
 

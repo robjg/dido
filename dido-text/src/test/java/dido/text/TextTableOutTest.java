@@ -2,8 +2,8 @@ package dido.text;
 
 import dido.data.ArrayData;
 import dido.data.DidoData;
-import dido.data.EnumData;
-import dido.data.EnumMapData;
+import dido.data.enums.EnumDataBuilder;
+import dido.data.enums.EnumMapData;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
 
@@ -72,7 +72,7 @@ class TextTableOutTest {
                         "Cantaloupe|      27| 245.3" + System.lineSeparator() +
                         "Pear      |     232|11.328" + System.lineSeparator();
 
-        EnumData.Builder<Fruit> builder = EnumMapData.builderForEnum(Fruit.class);
+        EnumDataBuilder<Fruit> builder = EnumMapData.builderForEnum(Fruit.class);
 
         DidoData data1 =
                 builder.withString(Fruit.Fruit, "Apple")

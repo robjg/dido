@@ -169,7 +169,7 @@ public class FromBeanArooa {
         }
 
         @Override
-        public ReadableSchema getSchema() {
+        public ReadSchema getSchema() {
             return schema;
         }
 
@@ -339,7 +339,7 @@ public class FromBeanArooa {
         return schemaFactory.toSchema();
     }
 
-    protected static class Schema extends DataSchemaImpl implements ReadableSchema {
+    protected static class Schema extends DataSchemaImpl implements ReadSchema {
 
         Schema(Collection<SchemaField> fields,
                int firstIndex,

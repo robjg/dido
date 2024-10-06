@@ -1,42 +1,46 @@
 package dido.operators.transform;
 
+import dido.data.DataFactoryProvider;
 import dido.data.DidoData;
-import dido.data.ReadableSchema;
-import dido.data.WritableSchema;
-import dido.data.WritableSchemaFactory;
+import dido.data.ReadSchema;
 
 public class FieldTransformationBuilder<D extends DidoData> {
 
     private final FieldTransformationManager<D> fieldOperationTransformation;
 
-    private FieldTransformationBuilder(FieldTransformationManager<D> fieldTransformationManager) {
+    private final DataFactoryProvider<D> dataFactoryProvider;
+
+    private FieldTransformationBuilder(FieldTransformationManager<D> fieldTransformationManager,
+                                       DataFactoryProvider<D> dataFactoryProvider) {
         this.fieldOperationTransformation = fieldTransformationManager;
+        this.dataFactoryProvider = dataFactoryProvider;
+    }
+
+    public static class WithFactory<D extends DidoData> {
+
+        private final DataFactoryProvider<D> dataFactoryProvider;
+
+        public WithFactory(DataFactoryProvider<D> dataFactoryProvider) {
+            this.dataFactoryProvider = dataFactoryProvider;
+        }
+
+        public FieldTransformationBuilder<D> forSchema(ReadSchema incomingSchema) {
+
+            return new FieldTransformationBuilder<>(
+                    FieldTransformationManager.forSchema(incomingSchema),
+                    dataFactoryProvider);
+        }
+
+        public FieldTransformationBuilder<D> forSchemaWithCopy(ReadSchema incomingSchema) {
+
+            return new FieldTransformationBuilder<>(FieldTransformationManager
+                    .forSchemaWithCopy(incomingSchema), dataFactoryProvider);
+        }
     }
 
     public static <D extends DidoData>
-    FieldTransformationBuilder<D> forSchema(ReadableSchema incomingSchema, WritableSchemaFactory<D> schemaFactory) {
-
-        return new FieldTransformationBuilder<>(
-                FieldTransformationManager.forSchema(incomingSchema, schemaFactory));
-    }
-
-    public static <D extends DidoData>
-    FieldTransformationBuilder<D> forWritableSchema(WritableSchema<D> writableSchema) {
-
-        return new FieldTransformationBuilder<>(FieldTransformationManager.forWriteableSchema(writableSchema));
-    }
-
-    public static <D extends DidoData, S extends WritableSchema<D>>
-    FieldTransformationBuilder<D> forWritableSchemaWithCopy(WritableSchema<D> writableSchema) {
-
-        return new FieldTransformationBuilder<>(FieldTransformationManager.forWritableSchemaWithCopy(writableSchema));
-    }
-
-    public static <D extends DidoData, S extends WritableSchema<D>>
-    FieldTransformationBuilder<D> forSchemaWithCopy(ReadableSchema incomingSchema, WritableSchemaFactory<D> schemaFactory) {
-
-        return new FieldTransformationBuilder<>(FieldTransformationManager
-                .forSchemaWithCopy(incomingSchema, schemaFactory));
+    WithFactory<D> withFactory(DataFactoryProvider<D> dataFactoryProvider) {
+        return new WithFactory<>(dataFactoryProvider);
     }
 
     public FieldTransformationBuilder<D> addFieldOperation(TransformerDefinition transformerDefinition) {
@@ -45,6 +49,6 @@ public class FieldTransformationBuilder<D extends DidoData> {
     }
 
     public Transformation<D> build() {
-        return fieldOperationTransformation.createTransformation();
+        return fieldOperationTransformation.createTransformation(dataFactoryProvider);
     }
 }

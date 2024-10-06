@@ -1,5 +1,7 @@
 package dido.data;
 
+import java.lang.reflect.Type;
+
 /**
  * Provides the ability to create Dido Data.
  *
@@ -7,13 +9,19 @@ package dido.data;
  */
 public interface DataFactory<D extends DidoData> {
 
-    WritableSchema<D> getSchema();
+    Type getDataType();
 
-    Class<D> getDataType();
+    ReadWriteSchema getSchema();
 
-    FieldSetter getSetterAt(int index);
+    @Deprecated
+    default FieldSetter getFieldSetterAt(int index) {
+        return getSchema().getFieldSetterAt(index);
+    }
 
-    FieldSetter getSetterNamed(String name);
+    @Deprecated
+    default FieldSetter getFieldSetterNamed(String name) {
+        return getSchema().getFieldSetterNamed(name);
+    }
 
     WritableData getSetter();
 

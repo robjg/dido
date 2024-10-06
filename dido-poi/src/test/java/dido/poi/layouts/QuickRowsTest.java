@@ -11,8 +11,10 @@ import dido.poi.BookInProvider;
 import dido.poi.BookOutProvider;
 import dido.poi.data.PoiWorkbook;
 import dido.test.OurDirs;
-import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
 import org.oddjob.arooa.standard.StandardArooaSession;
@@ -30,18 +32,18 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class QuickRowsTest extends TestCase {
+public class QuickRowsTest {
 
     File workDir;
 
     private static final Logger logger = LoggerFactory.getLogger(QuickRowsTest.class);
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @BeforeEach
+    protected void setUp(TestInfo testInfo) throws Exception {
 
-        logger.info("----------------------------    " + getName() +
+        logger.info("----------------------------    " + testInfo.getDisplayName() +
                 "   -------------------------");
 
         workDir = OurDirs.workPathDir(QuickRowsTest.class).toFile();
@@ -93,6 +95,7 @@ public class QuickRowsTest extends TestCase {
         }
     }
 
+    @Test
     public void testIdea() throws Exception {
 
         DataRows test = new DataRows();
@@ -133,6 +136,7 @@ public class QuickRowsTest extends TestCase {
         assertEquals(45000.0, result.getDouble("salary"));
     }
 
+    @Test
     public void testWriteReadWithHeadings() throws Exception {
 
         doWriteRead("dido/poi/QuickRowsWithHeadings.xml");

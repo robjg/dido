@@ -1,9 +1,10 @@
 package dido.operators.transform;
 
-import dido.data.DataFactory;
 import dido.data.DidoData;
+import dido.data.WritableData;
+import dido.data.WriteSchema;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /**
  * Created by {@link TransformerDefinition}
@@ -11,5 +12,5 @@ import java.util.function.Consumer;
 @FunctionalInterface
 public interface TransformerFactory {
 
-    Consumer<DidoData> create(DataFactory<?> dataFactory);
+    BiConsumer<DidoData, WritableData> create(WriteSchema writableData);
 }

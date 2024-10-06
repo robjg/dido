@@ -12,7 +12,7 @@ import org.oddjob.state.ParentState;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,14 +41,15 @@ class ValueCopyFactoryTest {
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", Integer.class));
 
-        FieldSetter dataSetter = mock(FieldSetter.class);
-        DataFactory<?> dataFactory = mock(DataFactory.class);
-        when(dataFactory.getSetterNamed("FooAmount")).thenReturn(dataSetter);
+        FieldSetter fieldSetter = mock(FieldSetter.class);
+        WriteSchema writeSchema = mock(WriteSchema.class);
+        WritableData writableData = mock(WritableData.class);
+        when(writeSchema.getFieldSetterNamed("FooAmount")).thenReturn(fieldSetter);
 
-        Consumer<DidoData> consumer = transformerFactory.create(dataFactory);
-        consumer.accept(data);
+        BiConsumer<DidoData, WritableData> consumer = transformerFactory.create(writeSchema);
+        consumer.accept(data, writableData);
 
-        verify(dataSetter).set(423);
+        verify(fieldSetter).set(writableData, 423);
     }
 
     @Test
@@ -71,14 +72,15 @@ class ValueCopyFactoryTest {
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", int.class));
 
-        FieldSetter dataSetter = mock(FieldSetter.class);
-        DataFactory<?> dataFactory = mock(DataFactory.class);
-        when(dataFactory.getSetterNamed("FooAmount")).thenReturn(dataSetter);
+        FieldSetter fieldSetter = mock(FieldSetter.class);
+        WriteSchema writeSchema = mock(WriteSchema.class);
+        WritableData writableData = mock(WritableData.class);
+        when(writeSchema.getFieldSetterNamed("FooAmount")).thenReturn(fieldSetter);
 
-        Consumer<DidoData> consumer = transformerFactory.create(dataFactory);
-        consumer.accept(data);
+        BiConsumer<DidoData, WritableData> consumer = transformerFactory.create(writeSchema);
+        consumer.accept(data, writableData);
 
-        verify(dataSetter).set(423);
+        verify(fieldSetter).set(writableData, 423);
     }
 
     @Test

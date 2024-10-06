@@ -1,6 +1,8 @@
 package dido.how.conversion;
 
 
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -45,4 +47,25 @@ class DefaultConversionProviderTest {
                         .apply(Instant.parse("2023-01-25T19:05:00Z")),
                 is("Whenever"));
     }
+
+    @Test
+    void testNoConversionRequired() {
+
+        DidoConversionProvider conversionProvider = DefaultConversionProvider.defaultInstance();
+
+        Function<Double, Double> conversion1 = conversionProvider.conversionFor(Double.class, Double.class);
+
+        assertThat(conversion1.apply(12.4), Matchers.is((12.4)));
+
+        Function<Double, Number> conversion2 = conversionProvider.conversionFor(Double.class, Number.class);
+
+        assertThat(conversion2.apply(12.4), Matchers.is((12.4)));
+
+        assertThat(Assertions.assertThrows(IllegalArgumentException.class,
+                        () -> conversionProvider.conversionFor(Object.class, Double.class))
+                .getMessage(), Matchers.containsString("No Conversion"));
+
+
+    }
+
 }

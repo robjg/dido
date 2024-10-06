@@ -61,8 +61,8 @@ public class Flatten {
                 "No Nested Schema for " + extractor);
 
         Concatenator concatenator = extractor.bodgeFields(Concatenator.withSettings())
-                .makeFromSchemas(ReadableSchema.readableSchemaFrom(schema),
-                        ReadableSchema.readableSchemaFrom(nestedSchema));
+                .makeFromSchemas(ReadSchema.readableSchemaFrom(schema),
+                        ReadSchema.readableSchemaFrom(nestedSchema));
 
         return new KnownRepeatingFlatten(concatenator, extractor);
     }
@@ -174,14 +174,14 @@ public class Flatten {
                     if (component.isPrimitive()) {
                         if (component == int.class) {
                             int[] ia = (int[]) value;
-                            list = Arrays.stream(ia).mapToObj(Integer::valueOf).collect(Collectors.toList());
+                            list = Arrays.stream(ia).boxed().collect(Collectors.toList());
                         } else if (component == double.class) {
                             double[] da = (double[]) value;
-                            list = Arrays.stream(da).mapToObj(Double::valueOf).collect(Collectors.toList());
+                            list = Arrays.stream(da).boxed().collect(Collectors.toList());
 
                         } else if (component == long.class) {
                             long[] la = (long[]) value;
-                            list = Arrays.stream(la).mapToObj(Long::valueOf).collect(Collectors.toList());
+                            list = Arrays.stream(la).boxed().collect(Collectors.toList());
 
                         } else {
                             throw new IllegalArgumentException("No implemented " + type);
@@ -199,7 +199,9 @@ public class Flatten {
 
             List<DidoData> flattened = new ArrayList<>(maxSize);
 
-            DataFactory<ArrayData> arrayData = ArrayData.factoryFor(newSchema);
+            DataFactory<ArrayData> arrayData = ArrayData.factoryForSchema(newSchema);
+
+            WritableData writableData = arrayData.getSetter();
 
             for (int l = 0; l < maxSize; ++l) {
 
@@ -207,10 +209,12 @@ public class Flatten {
 
                     List<Object> list = lists.get(i);
                     if (list == null) {
-                        arrayData.getSetterAt(i).set(data.getAt(i));
+                        arrayData.getSchema()
+                                .getFieldSetterAt(i).set(writableData, data.getAt(i));
                     } else {
                         if (l < list.size()) {
-                            arrayData.getSetterAt(i).set(list.get(l));
+                            arrayData.getSchema()
+                                    .getFieldSetterAt(i).set(writableData, list.get(l));
                         }
                     }
                 }
@@ -233,7 +237,7 @@ public class Flatten {
 
         private DataSchema previous;
 
-        public DynamicIterableFlatten(Collection<Extractor> extractors) {
+        DynamicIterableFlatten(Collection<Extractor> extractors) {
             this.extractors = extractors;
         }
 
@@ -260,7 +264,7 @@ public class Flatten {
 
         private DataSchema previous;
 
-        public DynamicFlatten(Extractor extractor) {
+        DynamicFlatten(Extractor extractor) {
             this.extractor = extractor;
         }
 

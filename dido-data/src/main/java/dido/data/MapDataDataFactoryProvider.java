@@ -11,12 +11,12 @@ public class MapDataDataFactoryProvider implements DataFactoryProvider<MapData> 
     }
 
     @Override
-    public WritableSchemaFactory<MapData> getSchemaFactory() {
+    public WriteSchemaFactory getSchemaFactory() {
         return MapData.schemaFactory();
     }
 
     @Override
     public DataFactory<MapData> provideFactory(DataSchema schema) {
-        return MapData.factoryFor(schema);
+        return MapData.factoryForSchema(schema);
     }
 }

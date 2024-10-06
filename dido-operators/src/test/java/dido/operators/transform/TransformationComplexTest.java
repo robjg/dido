@@ -23,7 +23,7 @@ public class TransformationComplexTest {
     static class MarkupOperation implements TransformerDefinition {
 
         @Override
-        public TransformerFactory define(ReadableSchema incomingSchema, SchemaSetter schemaSetter) {
+        public TransformerFactory define(ReadSchema incomingSchema, SchemaSetter schemaSetter) {
 
             FieldGetter priceGetter = schema.getFieldGetterNamed("Price");
 
@@ -35,13 +35,13 @@ public class TransformationComplexTest {
             schemaSetter.addField(amountField);
             schemaSetter.addField(totalField);
 
-            return dataFactory -> {
+            return writableSchema -> {
 
-                FieldSetter markupSetter = dataFactory.getSetterNamed("Markup");
-                FieldSetter amountSetter = dataFactory.getSetterNamed("MarkupAmount");
-                FieldSetter finalSetter = dataFactory.getSetterNamed("FinalPrice");
+                FieldSetter markupSetter = writableSchema.getFieldSetterNamed("Markup");
+                FieldSetter amountSetter = writableSchema.getFieldSetterNamed("MarkupAmount");
+                FieldSetter finalSetter = writableSchema.getFieldSetterNamed("FinalPrice");
 
-                return data -> {
+                return (data, out) -> {
                     double price = priceGetter.getDouble(data);
 
                     double markup;
@@ -50,12 +50,12 @@ public class TransformationComplexTest {
                     } else {
                         markup = 0.5;
                     }
-                    markupSetter.setDouble(markup);
+                    markupSetter.setDouble(out, markup);
 
                     double markupAmount = price * markup;
-                    amountSetter.setDouble(markupAmount);
+                    amountSetter.setDouble(out, markupAmount);
 
-                    finalSetter.setDouble(price + markupAmount);
+                    finalSetter.setDouble(out, price + markupAmount);
                 };
             };
         }
@@ -64,7 +64,9 @@ public class TransformationComplexTest {
     @Test
     void complicated() {
 
-        Transformation<ArrayData> transformation = FieldTransformationBuilder.forWritableSchemaWithCopy(schema)
+        Transformation<ArrayData> transformation = FieldTransformationBuilder
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchemaWithCopy(schema)
                 .addFieldOperation(FieldOperations.removeNamed("Qty"))
                 .addFieldOperation(new MarkupOperation())
                 .build();
@@ -92,9 +94,11 @@ public class TransformationComplexTest {
      */
     static class MarkupTransformationFactory<D extends DidoData> {
 
-        public Transformation<D> define(ReadableSchema incomingSchema, WritableSchemaFactory<D> schemaFactory) {
+        public Transformation<D> define(ReadSchema incomingSchema, DataFactoryProvider<D> factoryProvider) {
 
-            WritableSchema<D> outSchema = SchemaBuilder.builderFor(schemaFactory)
+            WriteSchemaFactory schemaFactory = factoryProvider.getSchemaFactory();
+
+            WriteSchema outSchema = SchemaBuilder.builderFor(schemaFactory)
                     .addSchemaField(incomingSchema.getSchemaFieldNamed("Fruit").mapToIndex(1))
                     .addSchemaField(incomingSchema.getSchemaFieldNamed("Price").mapToIndex(2))
                     .addSchemaField(SchemaField.of(3, "Markup", double.class))
@@ -105,18 +109,18 @@ public class TransformationComplexTest {
             FieldGetter fruitGetter = incomingSchema.getFieldGetterNamed("Fruit");
             FieldGetter priceGetter = incomingSchema.getFieldGetterNamed("Price");
 
-            DataFactory<D> dataFactory = outSchema.newDataFactory();
+            DataFactory<D> dataFactory = factoryProvider.provideFactory(outSchema);
 
-            FieldSetter fruitSetter = dataFactory.getSetterNamed("Fruit");
-            FieldSetter priceSetter = dataFactory.getSetterNamed("Price");
-            FieldSetter markupSetter = dataFactory.getSetterNamed("Markup");
-            FieldSetter amountSetter = dataFactory.getSetterNamed("MarkupAmount");
-            FieldSetter finalSetter = dataFactory.getSetterNamed("FinalPrice");
+            FieldSetter fruitSetter = outSchema.getFieldSetterNamed("Fruit");
+            FieldSetter priceSetter = outSchema.getFieldSetterNamed("Price");
+            FieldSetter markupSetter = outSchema.getFieldSetterNamed("Markup");
+            FieldSetter amountSetter = outSchema.getFieldSetterNamed("MarkupAmount");
+            FieldSetter finalSetter = outSchema.getFieldSetterNamed("FinalPrice");
 
             return new Transformation<>() {
 
                 @Override
-                public WritableSchema<D> getResultantSchema() {
+                public WriteSchema getResultantSchema() {
                     return outSchema;
                 }
 
@@ -135,11 +139,13 @@ public class TransformationComplexTest {
 
                     markupAmount = price * markup;
 
-                    fruitSetter.setString(fruitGetter.getString(data));
-                    priceSetter.setDouble(price);
-                    markupSetter.setDouble(markup);
-                    amountSetter.setDouble(markupAmount);
-                    finalSetter.setDouble(price + markupAmount);
+                    WritableData out = dataFactory.getSetter();
+
+                    fruitSetter.setString(out, fruitGetter.getString(data));
+                    priceSetter.setDouble(out, price);
+                    markupSetter.setDouble(out, markup);
+                    amountSetter.setDouble(out, markupAmount);
+                    finalSetter.setDouble(out, price + markupAmount);
 
                     return dataFactory.toData();
                 }
@@ -151,7 +157,7 @@ public class TransformationComplexTest {
     void complicatedWithTransformation() {
 
         Transformation<ArrayData> transformation = new MarkupTransformationFactory<ArrayData>()
-                .define(schema, ArrayData.schemaFactory());
+                .define(schema, new ArrayDataDataFactoryProvider());
 
         ArrayData result = transformation.apply(data);
 

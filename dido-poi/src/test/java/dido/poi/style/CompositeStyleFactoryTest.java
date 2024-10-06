@@ -1,12 +1,13 @@
 package dido.poi.style;
 
-import dido.poi.style.*;
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.jupiter.api.Test;
 
-public class CompositeStyleFactoryTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+public class CompositeStyleFactoryTest {
+
+	@Test
 	public void testTwoFactories() {
 		
 		StyleBean percentage = new StyleBean();

@@ -14,8 +14,8 @@ public class SchemaBuilder<S extends DataSchema> {
         this.schemaClass = schemaClass;
     }
 
-    public static <D extends DidoData, S extends WritableSchema<D>> SchemaBuilder<S>
-    builderFor(WritableSchemaFactory<D> schemaFactory) {
+    public static <S extends WriteSchema> SchemaBuilder<S>
+    builderFor(WriteSchemaFactory schemaFactory) {
         return new SchemaBuilder<>(schemaFactory, null);
     }
 

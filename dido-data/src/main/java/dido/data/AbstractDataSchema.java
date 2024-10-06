@@ -10,6 +10,31 @@ import java.util.List;
 public abstract class AbstractDataSchema implements DataSchema {
 
     @Override
+    abstract public int firstIndex();
+
+    @Override
+    abstract public int nextIndex(int index);
+
+    @Override
+    abstract public int lastIndex();
+
+    @Override
+    abstract public SchemaField getSchemaFieldAt(int index);
+
+    @Override
+    abstract public SchemaField getSchemaFieldNamed(String name);
+
+    @Override
+    public boolean hasIndex(int index) {
+        return getSchemaFieldAt(index) != null;
+    }
+
+    @Override
+    public boolean hasNamed(String name) {
+        return getSchemaNamed(name) != null;
+    }
+
+    @Override
     public String getFieldNameAt(int index) {
         SchemaField schemaField = getSchemaFieldAt(index);
         return schemaField == null ? null : schemaField.getName();

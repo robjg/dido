@@ -62,12 +62,12 @@ public class DefaultConversionProvider implements DidoConversionProvider {
             return (Function<F, T>) convertToString(from);
         }
 
-        if (from.isAssignableFrom(String.class)) {
+        if (from == String.class) {
             return (Function<F, T>) convertFromString(to);
         }
 
         if (to.isAssignableFrom(from)) {
-            return f -> (T) from;
+            return value -> (T) value;
         }
 
         throw new IllegalArgumentException("No Conversion of {" + from + "} to " + to);

@@ -1,14 +1,15 @@
 package dido.operators.transform;
 
-import dido.data.ArrayData;
-import dido.data.DataSchema;
-import dido.data.DidoData;
+import dido.data.*;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 class FieldOperationsTest {
+
+    static DataFactoryProvider<ArrayData> dataDataFactoryProvider =
+            new ArrayDataDataFactoryProvider();
 
     static ArrayData.Schema schema = ArrayData.schemaBuilder()
             .addNamed("Fruit", String.class)
@@ -22,7 +23,9 @@ class FieldOperationsTest {
     @Test
     void copyAt() {
 
-        Transformation<ArrayData> transformation = FieldTransformationBuilder.forWritableSchema(schema)
+        Transformation<ArrayData> transformation = FieldTransformationBuilder
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchema(schema)
                 .addFieldOperation(FieldOperations.copyAt(3))
                 .addFieldOperation(FieldOperations.copyAt(2))
                 .build();
@@ -45,7 +48,9 @@ class FieldOperationsTest {
     @Test
     void copyNamed() {
 
-        Transformation<ArrayData> transformation = FieldTransformationBuilder.forWritableSchema(schema)
+        Transformation<ArrayData> transformation = FieldTransformationBuilder
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchema(schema)
                 .addFieldOperation(FieldOperations.copyNamed("Price"))
                 .addFieldOperation(FieldOperations.copyNamed("Fruit"))
                 .build();
@@ -68,7 +73,9 @@ class FieldOperationsTest {
     @Test
     void copyNamedFromTo() {
 
-        Transformation<ArrayData> transformation = FieldTransformationBuilder.forWritableSchema(schema)
+        Transformation<ArrayData> transformation = FieldTransformationBuilder
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchema(schema)
                 .addFieldOperation(FieldOperations.copyNamed("Fruit", "Type"))
                 .addFieldOperation(FieldOperations.copyNamed("Price", "Price"))
                 .build();
@@ -91,7 +98,9 @@ class FieldOperationsTest {
     @Test
     void copySameName() {
 
-        Transformation<ArrayData> transformation = FieldTransformationBuilder.forWritableSchema(schema)
+        Transformation<ArrayData> transformation = FieldTransformationBuilder
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchema(schema)
                 .addFieldOperation(FieldOperations.copyNamed("Qty", "Qty"))
                 .addFieldOperation(FieldOperations.copyNamed("Price", "Price"))
                 .addFieldOperation(FieldOperations.copyNamed("Fruit", "Fruit"))
@@ -116,9 +125,11 @@ class FieldOperationsTest {
     @Test
     void computeInPlace() {
 
-        Transformation<ArrayData> transformation = FieldTransformationBuilder.forWritableSchemaWithCopy(schema)
+        Transformation<ArrayData> transformation = FieldTransformationBuilder
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchemaWithCopy(schema)
                 .addFieldOperation(FieldOperations.computeNamed("Qty",
-                                data -> data.getIntAt(2) * 2, int.class))
+                        data -> data.getIntAt(2) * 2, int.class))
                 .build();
 
         ArrayData result = transformation.apply(data);
@@ -134,7 +145,9 @@ class FieldOperationsTest {
     @Test
     void computeNewField() {
 
-        Transformation<ArrayData> transformation = FieldTransformationBuilder.forWritableSchemaWithCopy(schema)
+        Transformation<ArrayData> transformation = FieldTransformationBuilder
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchemaWithCopy(schema)
                 .addFieldOperation(FieldOperations.computeNamed("QtyDoubled",
                         data -> data.getIntAt(2) * 2, int.class))
                 .build();
@@ -157,7 +170,9 @@ class FieldOperationsTest {
     @Test
     void remove() {
 
-        Transformation<ArrayData> transformation = FieldTransformationBuilder.forWritableSchemaWithCopy(schema)
+        Transformation<ArrayData> transformation = FieldTransformationBuilder
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchemaWithCopy(schema)
                 .addFieldOperation(FieldOperations.removeNamed("Fruit"))
                 .addFieldOperation(FieldOperations.removeNamed("Price"))
                 .build();
@@ -179,7 +194,9 @@ class FieldOperationsTest {
     @Test
     void set() {
 
-        Transformation<ArrayData> transformation = FieldTransformationBuilder.forWritableSchemaWithCopy(schema)
+        Transformation<ArrayData> transformation = FieldTransformationBuilder
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchemaWithCopy(schema)
                 .addFieldOperation(FieldOperations.setNamed("Fruit", "Orange"))
                 .addFieldOperation(FieldOperations.setNamed("Qty", 1234L, long.class))
                 .addFieldOperation(FieldOperations.setNamed("InStock", true, boolean.class))

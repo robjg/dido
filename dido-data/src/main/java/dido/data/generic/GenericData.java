@@ -11,7 +11,7 @@ import java.util.Iterator;
  */
 public interface GenericData<F> extends DidoData {
 
-    GenericReadableSchema<F> getSchema();
+    GenericReadSchema<F> getSchema();
 
     Object get(F field);
 
@@ -81,14 +81,14 @@ public interface GenericData<F> extends DidoData {
 
     class EmptyData<F> extends AbstractGenericData<F> {
 
-        private final GenericReadableSchema<F> schema;
+        private final GenericReadSchema<F> schema;
 
         EmptyData(Class<F> fieldType) {
-            this.schema = GenericReadableSchema.emptySchema(fieldType);
+            this.schema = GenericReadSchema.emptySchema(fieldType);
         }
 
         @Override
-        public GenericReadableSchema<F> getSchema() {
+        public GenericReadSchema<F> getSchema() {
             return schema;
         }
 

@@ -4,7 +4,7 @@ import dido.data.NoSuchFieldException;
 import dido.data.*;
 
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class FieldOperations {
@@ -29,8 +29,8 @@ public class FieldOperations {
 
             schemaSetter.addField(originalField);
 
-            return dataFactory ->
-                    new Copy(getter, dataFactory.getSetterNamed(originalField.getName()));
+                return writableSchema ->
+                    new Copy(getter, writableSchema.getFieldSetterNamed(originalField.getName()));
         };
     }
 
@@ -54,8 +54,8 @@ public class FieldOperations {
 
             schemaSetter.addField(originalField);
 
-            return dataFactory ->
-                    new Copy(getter, dataFactory.getSetterNamed(originalField.getName()));
+            return writableSchema ->
+                    new Copy(getter, writableSchema.getFieldSetterNamed(originalField.getName()));
         };
     }
 
@@ -73,7 +73,7 @@ public class FieldOperations {
 
             FieldGetter getter = incomingSchema.getFieldGetterNamed(from);
 
-            return dataFactory -> new Copy(getter, dataFactory.getSetterNamed(finalTo));
+            return dataFactory -> new Copy(getter, dataFactory.getFieldSetterNamed(finalTo));
         };
     }
 
@@ -89,7 +89,7 @@ public class FieldOperations {
             }
             schemaSetter.addField(field);
 
-            return dataFactory -> new Compute(dataFactory.getSetterNamed(to), func);
+            return dataFactory -> new Compute(dataFactory.getFieldSetterNamed(to), func);
         };
     }
 
@@ -130,36 +130,36 @@ public class FieldOperations {
 
     static TransformerFactory setterFactoryFor(String to, Object value, Class<?> type) {
 
-        return dataFactory -> {
-            FieldSetter setter = dataFactory.getSetterNamed(to);
+        return writableSchema -> {
+            FieldSetter setter = writableSchema.getFieldSetterNamed(to);
             if (value == null) {
-                return data -> setter.clear();
+                return (data, out) -> setter.clear(out);
             } else if (boolean.class.isAssignableFrom(type)) {
                 boolean boolValue = (boolean) value;
-                return data -> setter.setBoolean(boolValue);
+                return (data, out) -> setter.setBoolean(out, boolValue);
             } else if (byte.class.isAssignableFrom(type)) {
                 byte byteValue = (byte) value;
-                return data -> setter.setByte(byteValue);
+                return (data, out) -> setter.setByte(out, byteValue);
             } else if (short.class.isAssignableFrom(type)) {
                 short shortValue = (short) value;
-                return data -> setter.setShort(shortValue);
+                return (data, out) -> setter.setShort(out, shortValue);
             } else if (char.class.isAssignableFrom(type)) {
                 char charValue = (char) value;
-                return data -> setter.setChar(charValue);
+                return (data, out) -> setter.setChar(out, charValue);
             } else if (int.class.isAssignableFrom(type)) {
                 int intValue = (int) value;
-                return data -> setter.setInt(intValue);
+                return (data, out) -> setter.setInt(out, intValue);
             } else if (long.class.isAssignableFrom(type)) {
                 long longValue = (long) value;
-                return data -> setter.setLong(longValue);
+                return (data, out) -> setter.setLong(out, longValue);
             } else if (float.class.isAssignableFrom(type)) {
                 float floatValue = (float) value;
-                return data -> setter.setFloat(floatValue);
+                return (data, out) -> setter.setFloat(out, floatValue);
             } else if (double.class.isAssignableFrom(type)) {
                 double doubleValue = (double) value;
-                return data -> setter.setDouble(doubleValue);
+                return (data, out) -> setter.setDouble(out, doubleValue);
             } else {
-                return data -> setter.set(value);
+                return (data, out) -> setter.set(out, value);
             }
         };
     }
@@ -173,12 +173,13 @@ public class FieldOperations {
                 throw new NoSuchFieldException(name, incomingSchema);
             }
             schemaSetter.removeField(field);
-            return dataFactory -> dataIn -> {
+            return dataFactory -> (dataIn, dataOut) -> {
+                // Nothing to do - the new data is assumed not to have the field.
             };
         };
     }
 
-    static class Copy implements Consumer<DidoData> {
+    static class Copy implements BiConsumer<DidoData, WritableData> {
 
         private final FieldGetter getter;
 
@@ -190,16 +191,16 @@ public class FieldOperations {
         }
 
         @Override
-        public void accept(DidoData data) {
+        public void accept(DidoData data, WritableData out) {
             if (getter.has(data)) {
-                setter.set(getter.get(data));
+                setter.set(out, getter.get(data));
             } else {
-                setter.clear();
+                setter.clear(out);
             }
         }
     }
 
-    static class Compute implements Consumer<DidoData> {
+    static class Compute implements BiConsumer<DidoData, WritableData> {
 
         private final FieldSetter setter;
 
@@ -211,12 +212,12 @@ public class FieldOperations {
         }
 
         @Override
-        public void accept(DidoData data) {
+        public void accept(DidoData data, WritableData out) {
             Object now = func.apply(data);
             if (now == null) {
-                setter.clear();
+                setter.clear(out);
             } else {
-                setter.set(now);
+                setter.set(out, now);
             }
         }
     }

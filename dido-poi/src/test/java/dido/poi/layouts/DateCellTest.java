@@ -8,7 +8,6 @@ import dido.poi.data.PoiWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.utils.DateHelper;
@@ -18,11 +17,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 @Disabled
-@Ignore
 class DateCellTest {
 
     @Disabled
-    @Ignore
     @Test
     void testWriteAndRead() throws Exception {
 

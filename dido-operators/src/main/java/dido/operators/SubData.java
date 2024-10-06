@@ -11,19 +11,19 @@ import java.util.function.Function;
  */
 public class SubData extends AbstractData implements DidoData {
 
-    private final ReadableSchema dataSchema;
+    private final ReadSchema dataSchema;
 
     private final int[] indices;
 
     private final IndexedData original;
 
-    private SubData(ReadableSchema dataSchema, int[] indices, IndexedData original) {
+    private SubData(ReadSchema dataSchema, int[] indices, IndexedData original) {
         this.dataSchema = dataSchema;
         this.indices = indices;
         this.original = original;
     }
 
-    public static Function<DidoData, DidoData> subDataOf(ReadableSchema original, int... indices) {
+    public static Function<DidoData, DidoData> subDataOf(ReadSchema original, int... indices) {
 
         SubSchemaFactory schemaFactory = new SubSchemaFactory(
                 original, indices);
@@ -38,7 +38,7 @@ public class SubData extends AbstractData implements DidoData {
         return new MappingFunc(schemaFactory.toSchema(), indices);
     }
 
-    public static Function<DidoData, DidoData> subDataOf(ReadableSchema original, String... fields) {
+    public static Function<DidoData, DidoData> subDataOf(ReadSchema original, String... fields) {
 
         int[] indices = new int[fields.length];
         for (int i = 0; i < indices.length; ++i) {
@@ -72,11 +72,11 @@ public class SubData extends AbstractData implements DidoData {
 
     static class SubSchemaFactory extends SchemaFactoryImpl<SubSchema> {
 
-        private final ReadableSchema original;
+        private final ReadSchema original;
 
         private final int[] indices;
 
-        SubSchemaFactory(ReadableSchema original, int[] indices) {
+        SubSchemaFactory(ReadSchema original, int[] indices) {
             this.original = original;
             this.indices = indices;
         }
@@ -87,14 +87,14 @@ public class SubData extends AbstractData implements DidoData {
         }
     }
 
-    static class SubSchema extends DataSchemaImpl implements ReadableSchema {
+    static class SubSchema extends DataSchemaImpl implements ReadSchema {
 
-        private final ReadableSchema original;
+        private final ReadSchema original;
 
         private final int[] indices;
 
         SubSchema(Collection<SchemaField> fields, int firstIndex, int lastIndex,
-                  ReadableSchema original, int[] indices) {
+                  ReadSchema original, int[] indices) {
             super(fields, firstIndex, lastIndex);
             this.original = original;
             this.indices = indices;
@@ -120,7 +120,7 @@ public class SubData extends AbstractData implements DidoData {
 
         private final int[] indices;
 
-        private ReadableSchema lastSchema;
+        private ReadSchema lastSchema;
 
         private Function<DidoData, DidoData> mappingFunc;
 
@@ -145,7 +145,7 @@ public class SubData extends AbstractData implements DidoData {
 
         private final String[] fields;
 
-        private ReadableSchema lastSchema;
+        private ReadSchema lastSchema;
 
         private Function<DidoData, DidoData> mappingFunc;
 
@@ -177,7 +177,7 @@ public class SubData extends AbstractData implements DidoData {
     }
 
     @Override
-    public ReadableSchema getSchema() {
+    public ReadSchema getSchema() {
         return dataSchema;
     }
 

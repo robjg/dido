@@ -6,11 +6,10 @@ import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;
 import dido.test.OurDirs;
-import junit.framework.TestCase;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
 import org.oddjob.arooa.convert.ArooaConversionException;
@@ -21,8 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-public class TextCellTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+public class TextCellTest {
+
+	@Test
 	public void testWriteRead() throws Exception {
 
 		TextCell test = new TextCell();
@@ -50,7 +52,7 @@ public class TextCellTest extends TestCase {
 	}
 
 	@Disabled
-	@Ignore
+	@Test
 	public void testWriteAndReadTextCellOfNamedValues() throws ArooaPropertyException, ArooaConversionException, IOException {
 
 		if (true) {

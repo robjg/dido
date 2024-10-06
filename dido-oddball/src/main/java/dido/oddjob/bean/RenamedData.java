@@ -27,7 +27,7 @@ public class RenamedData extends AbstractNamedData {
 
         private Schema schemaOut;
 
-        private ReadableSchema lastIn;
+        private ReadSchema lastIn;
 
         Transform(Map<String, String> fieldMap) {
             this.fieldMap = fieldMap;
@@ -84,7 +84,7 @@ public class RenamedData extends AbstractNamedData {
     }
 
     @Override
-    public ReadableSchema getSchema() {
+    public ReadSchema getSchema() {
         return toSchema;
     }
 
@@ -98,7 +98,7 @@ public class RenamedData extends AbstractNamedData {
         return original.hasIndex(index);
     }
 
-    static Schema renamedSchema(Map<String, String> mapping, ReadableSchema fromSchema) {
+    static Schema renamedSchema(Map<String, String> mapping, ReadSchema fromSchema) {
 
         DataSchemaFactory schemaFactory = DataSchemaFactory.newInstance();
         for (SchemaField schemaField : fromSchema.getSchemaFields()) {
@@ -108,12 +108,12 @@ public class RenamedData extends AbstractNamedData {
         return new Schema((DataSchemaImpl) schemaFactory.toSchema(), fromSchema);
     }
 
-    static class Schema extends DataSchemaImpl implements ReadableSchema {
+    static class Schema extends DataSchemaImpl implements ReadSchema {
 
-        private final ReadableSchema fromSchema;
+        private final ReadSchema fromSchema;
 
         Schema(DataSchemaImpl schema,
-               ReadableSchema fromSchema) {
+               ReadSchema fromSchema) {
             super(schema);
             this.fromSchema = fromSchema;
         }

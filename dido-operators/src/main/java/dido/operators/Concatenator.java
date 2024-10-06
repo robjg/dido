@@ -26,13 +26,13 @@ public class Concatenator {
         }
     }
 
-    private final ReadableSchema schema;
+    private final ReadSchema schema;
 
     private final Location[] locations;
 
     private final Map<String, Location> fieldLocations;
 
-    private Concatenator(ReadableSchema schema,
+    private Concatenator(ReadSchema schema,
                          Location[] locations,
                          Map<String, Location> fieldLocations) {
         this.schema = schema;
@@ -56,12 +56,12 @@ public class Concatenator {
             return this;
         }
 
-        public Concatenator makeFromSchemas(ReadableSchema... schemas) {
+        public Concatenator makeFromSchemas(ReadSchema... schemas) {
 
             List<Location> locations = new LinkedList<>();
             Map<String, Location> fieldLocations = new HashMap<>();
 
-            class Schema extends DataSchemaImpl implements ReadableSchema {
+            class Schema extends DataSchemaImpl implements ReadSchema {
 
                 Schema(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
                     super(fields, firstIndex, lastIndex);
@@ -86,16 +86,16 @@ public class Concatenator {
                 }
             }
 
-            SchemaFactoryImpl<ReadableSchema> schemaFactory = new SchemaFactoryImpl<>() {
+            SchemaFactoryImpl<ReadSchema> schemaFactory = new SchemaFactoryImpl<>() {
                 @Override
-                protected ReadableSchema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
+                protected ReadSchema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
                     return new Schema(fields, firstIndex, lastIndex);
                 }
             };
 
             int locationIndex = 0;
             int dataIndex = 0;
-            for (ReadableSchema schema : schemas) {
+            for (ReadSchema schema : schemas) {
                 for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
                     Location location = new Location(dataIndex, i, schema.getFieldGetterAt(i));
                     SchemaField schemaField = schema.getSchemaFieldAt(i);
@@ -137,7 +137,7 @@ public class Concatenator {
      * @param schemas The schemas of the records that will be concatenated.
      * @return A {@code Concatenator}.
      */
-    public static Concatenator fromSchemas(ReadableSchema... schemas) {
+    public static Concatenator fromSchemas(ReadSchema... schemas) {
 
         return new Settings().makeFromSchemas(schemas);
     }
@@ -160,7 +160,7 @@ public class Concatenator {
         return new ConcatenatedData(data);
     }
 
-    public ReadableSchema getSchema() {
+    public ReadSchema getSchema() {
         return schema;
     }
 
@@ -173,7 +173,7 @@ public class Concatenator {
 
         private Concatenator last;
 
-        private ReadableSchema[] previous;
+        private ReadSchema[] previous;
 
         public Factory(Settings settings) {
             this.settings = settings;
@@ -184,7 +184,7 @@ public class Concatenator {
             boolean recreate = false;
             if (last == null) {
                 recreate = true;
-                previous = new ReadableSchema[data.length];
+                previous = new ReadSchema[data.length];
                 for (int i = 0; i < data.length; ++i) {
                     previous[i] = data[i].getSchema();
                 }
@@ -217,7 +217,7 @@ public class Concatenator {
         }
 
         @Override
-        public ReadableSchema getSchema() {
+        public ReadSchema getSchema() {
             return schema;
         }
 

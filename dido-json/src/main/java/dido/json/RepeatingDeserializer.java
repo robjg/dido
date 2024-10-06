@@ -8,9 +8,9 @@ import java.lang.reflect.Type;
 
 class RepeatingDeserializer implements JsonDeserializer<RepeatingData> {
 
-    private final Class<?> dataType;
+    private final Type dataType;
 
-    RepeatingDeserializer(Class<?> dataType) {
+    RepeatingDeserializer(Type dataType) {
         this.dataType = dataType;
     }
 

@@ -42,7 +42,7 @@ public class JsonDataCopy<D extends DidoData> {
                 .init(gsonBuilder, dataFactoryProvider.getDataType());
     }
 
-    private GsonBuilder init(GsonBuilder gsonBuilder, Class<D> dataType) {
+    private GsonBuilder init(GsonBuilder gsonBuilder, Type dataType) {
         return gsonBuilder
                 .registerTypeAdapter(dataType, new DataDeserializer())
                 .registerTypeAdapter(SchemaField.NESTED_REPEATING_TYPE, new RepeatingDeserializer(dataType));
@@ -74,7 +74,7 @@ public class JsonDataCopy<D extends DidoData> {
                     continue;
                 }
 
-                Class<?> fieldType = schemaField.getType();
+                Type fieldType = schemaField.getType();
                 if (schemaField.isNested()) {
 
                     DataSchema nestedSchema = schemaField.getNestedSchema();

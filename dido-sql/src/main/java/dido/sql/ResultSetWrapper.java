@@ -44,7 +44,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
 
 
     @Override
-    public ReadableSchema getSchema() {
+    public ReadSchema getSchema() {
         return schema;
     }
 
@@ -397,7 +397,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         }
     }
 
-    static class Schema extends AbstractDataSchema implements ReadableSchema {
+    static class Schema extends AbstractDataSchema implements ReadSchema {
 
         private final Map<String, SchemaField> nameToSchemaField = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 

@@ -57,7 +57,7 @@ public class JsonDataPartialCopy<D extends DidoData> {
             }
 
             DataSchema prioritySchema = stack.getFirst();
-            WritableSchemaFactory<D> schemaFactory = dataFactoryProvider.getSchemaFactory();
+            WriteSchemaFactory schemaFactory = dataFactoryProvider.getSchemaFactory();
             Set<String> knownFields = new HashSet<>(prioritySchema.getFieldNames());
 
             JsonObject jsonObject = (JsonObject) json;
@@ -74,7 +74,7 @@ public class JsonDataPartialCopy<D extends DidoData> {
                 if (knownFields.contains(fieldName)) {
 
                     SchemaField schemaField = prioritySchema.getSchemaFieldNamed(fieldName);
-                    Class<?> fieldType = schemaField.getType();
+                    Type fieldType = schemaField.getType();
 
                     if (schemaField.isNested()) {
 
@@ -121,7 +121,9 @@ public class JsonDataPartialCopy<D extends DidoData> {
                 }
             }
 
-            return Values.valuesFor(schemaFactory.toSchema())
+            WriteSchema schema = schemaFactory.toSchema();
+
+            return Values.withDataFactory(dataFactoryProvider.provideFactory(schema))
                     .of(values);
         }
     }

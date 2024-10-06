@@ -1,5 +1,7 @@
 package dido.data;
 
+import java.lang.reflect.Type;
+
 /**
  * Something that is able to provide a {@link DataFactory}.
  *
@@ -7,9 +9,9 @@ package dido.data;
  */
 public interface DataFactoryProvider<D extends DidoData> {
 
-    Class<D> getDataType();
+    Type getDataType();
 
-    WritableSchemaFactory<D> getSchemaFactory();
+    WriteSchemaFactory getSchemaFactory();
 
     DataFactory<D> provideFactory(DataSchema schema);
 }

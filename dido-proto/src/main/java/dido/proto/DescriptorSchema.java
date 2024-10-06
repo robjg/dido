@@ -7,7 +7,7 @@ import dido.data.*;
 
 import java.util.*;
 
-public class DescriptorSchema extends AbstractDataSchema implements ReadableSchema {
+public class DescriptorSchema extends AbstractDataSchema implements ReadSchema {
 
     private final static Map<Descriptors.FieldDescriptor.JavaType, Class<?>> types =
             Map.of(Descriptors.FieldDescriptor.JavaType.INT, int.class,

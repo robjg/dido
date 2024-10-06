@@ -1,6 +1,9 @@
 package dido.operators.transform;
 
-import dido.data.*;
+import dido.data.ArrayDataDataFactoryProvider;
+import dido.data.DataFactoryProvider;
+import dido.data.DidoData;
+import dido.data.ReadSchema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +67,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
 
         private Function<? super DidoData, ? extends DidoData> delegate;
 
-        private ReadableSchema lastSchema;
+        private ReadSchema lastSchema;
 
         TransformerFunctionInitial(TransformationFactory config) {
             this.transformerFactories = new ArrayList<>(config.of);
@@ -79,27 +82,27 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
             if (delegate == null || !dataIn.getSchema().equals(lastSchema)) {
                 lastSchema = dataIn.getSchema();
                 delegate = functionFor(transformerFactories, lastSchema, withCopy,
-                        dataFactoryProvider.getSchemaFactory());
+                        dataFactoryProvider);
             }
             return delegate.apply(dataIn);
         }
     }
 
     static <D extends DidoData> Transformation<D> functionFor(List<TransformerDefinition> definitions,
-                                                ReadableSchema schemaFrom,
+                                                ReadSchema schemaFrom,
                                                 boolean withCopy,
-                                                WritableSchemaFactory<D> writableSchemaFactory) {
+                                                DataFactoryProvider<D> dataFactoryProvider) {
 
         FieldTransformationManager<D> transformationManager = withCopy ?
-                FieldTransformationManager.forSchemaWithCopy(schemaFrom, writableSchemaFactory) :
-                FieldTransformationManager.forSchema(schemaFrom, writableSchemaFactory);
+                FieldTransformationManager.forSchemaWithCopy(schemaFrom) :
+                FieldTransformationManager.forSchema(schemaFrom);
 
         for (TransformerDefinition definition : definitions) {
 
             transformationManager.addOperation(definition);
         }
 
-        return transformationManager.createTransformation();
+        return transformationManager.createTransformation(dataFactoryProvider);
     }
 
 }

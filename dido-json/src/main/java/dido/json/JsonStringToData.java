@@ -7,6 +7,7 @@ import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.NamedData;
 
+import java.lang.reflect.Type;
 import java.util.function.Function;
 
 public class JsonStringToData {
@@ -141,11 +142,11 @@ public class JsonStringToData {
 
         private final Gson gson;
 
-        private final Class<D> dataType;
+        private final Type dataType;
 
         private final String toString;
 
-        Known(Gson gson, Class<D> dataType, String toString) {
+        Known(Gson gson, Type dataType, String toString) {
             this.gson = gson;
             this.dataType = dataType;
             this.toString = toString;

@@ -1,7 +1,8 @@
-package dido.data;
+package dido.data.enums;
 
+import dido.data.DidoData;
+import dido.data.ReadSchema;
 import dido.data.generic.GenericData;
-import dido.data.generic.GenericDataBuilder;
 
 /**
  * Data with an Enum Field.
@@ -11,16 +12,25 @@ import dido.data.generic.GenericDataBuilder;
 public interface EnumData<E extends Enum<E>> extends GenericData<E> {
 
     @Override
-    EnumSchema<E> getSchema();
+    EnumReadSchema<E> getSchema();
 
     static <E extends Enum<E>> EnumData<E> fromDidoData(DidoData data, Class<E> enumClass) {
 
-        EnumSchema<E> enumSchema = EnumSchema.enumSchemaFrom(data.getSchema(), enumClass);
+        ReadSchema schema = data.getSchema();
+
+        EnumSchema<E> enumSchema = EnumSchema.enumSchemaFrom(schema, enumClass);
+
+        class Schema extends EnumSchemaDelegate<E> implements EnumReadSchema<E> {
+
+            Schema() {
+                super(enumSchema);
+            }
+        }
 
         return new AbstractEnumData<>() {
             @Override
-            public EnumSchema<E> getSchema() {
-                return enumSchema;
+            public EnumReadSchema<E> getSchema() {
+                return new Schema() ;
             }
 
             @Override
@@ -136,40 +146,4 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
     }
 
 
-    interface Builder<E extends Enum<E>>
-            extends GenericDataBuilder<E> {
-
-        @Override
-        Builder<E> with(E field, Object value);
-
-        @Override
-        Builder<E> withBoolean(E field, boolean value);
-
-        @Override
-        Builder<E> withByte(E field, byte value);
-
-        @Override
-        Builder<E> withChar(E field, char value);
-
-        @Override
-        Builder<E> withShort(E field, short value);
-
-        @Override
-        Builder<E> withInt(E field, int value);
-
-        @Override
-        Builder<E> withLong(E field, long value);
-
-        @Override
-        Builder<E> withFloat(E field, float value);
-
-        @Override
-        Builder<E> withDouble(E field, double value);
-
-        @Override
-        Builder<E> withString(E field, String value);
-
-        @Override
-        EnumData<E> build();
-    }
 }

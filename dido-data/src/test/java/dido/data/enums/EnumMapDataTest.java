@@ -1,5 +1,6 @@
-package dido.data;
+package dido.data.enums;
 
+import dido.data.SchemaReference;
 import dido.data.generic.GenericData;
 import org.junit.jupiter.api.Test;
 
@@ -63,7 +64,7 @@ class EnumMapDataTest {
     @Test
     void builderWithNoSchema() {
 
-        EnumData.Builder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
+        EnumDataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
 
         GenericData<Fields> data3 = builderNoSchema
                 .withString(Fields.Fruit, "Apple")
@@ -83,7 +84,7 @@ class EnumMapDataTest {
 
         EnumSchema<Fields> schema = EnumSchema.schemaFor(Fields.class, Fields::getType);
 
-        EnumData.Builder<Fields> builder = EnumMapData.newBuilder(schema);
+        EnumDataBuilder<Fields> builder = EnumMapData.newBuilder(schema);
 
         GenericData<Fields> data1 = builder
                 .with(Fields.Fruit, "Apple")
@@ -110,7 +111,7 @@ class EnumMapDataTest {
         assertThat(data2.getString(Fields.Fruit), is("Orange"));
         assertThat(data2.getStringAt(1), is("Orange"));
 
-        EnumData.Builder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
+        EnumDataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
 
         GenericData<Fields> data3 = builderNoSchema
                 .withString(Fields.Fruit, "Apple")

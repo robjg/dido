@@ -13,7 +13,9 @@ import dido.poi.test.Fruit;
 import dido.poi.test.Person;
 import dido.poi.test.PersonBonus;
 import dido.test.OurDirs;
-import junit.framework.TestCase;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
 import org.oddjob.OddjobSessionFactory;
@@ -39,26 +41,31 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.function.Function;
 
-public class DataBookTest extends TestCase {
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class DataBookTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(DataBookTest.class);
 
 	File workDir;
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		logger.info("-------------------   " + getName() + "   --------------");
+	@BeforeEach
+	protected void setUp(TestInfo testInfo) throws Exception {
+
+		logger.info("-------------------   " + testInfo.getDisplayName() + "   --------------");
 		
 		workDir = OurDirs.workPathDir(DataBookTest.class).toFile();
 	}
-	
+
+	@Test
 	public void testWriteReadWithHeadings() throws Exception {
 		
 		doWriteRead("dido/poi/DataBookWithHeadings.xml");
 	}
 
+	@Test
 	public void testWriteReadWithoutHeadings() throws Exception {
 		
 		doWriteRead("dido/poi/DataBookWithoutHeadings.xml");
@@ -116,8 +123,8 @@ public class DataBookTest extends TestCase {
 		read.setTo(data -> results.add(transformerToBean.apply(data)));
 
 		read.run();
-		
-		assertEquals(3, results.size());
+
+		assertThat(results.size(), is(3));
 		
 		PersonBonus person1 = results.get(0);
 		assertEquals("John", person1.getName());
@@ -140,7 +147,8 @@ public class DataBookTest extends TestCase {
 		assertEquals(0.1, person3.getPercentage());
 		assertEquals(2250.0, person3.getBonus());
 	}
-	
+
+	@Test
 	public void testNoData() throws Exception {
 		
 		ArooaSession session = new StandardArooaSession(
@@ -182,7 +190,8 @@ public class DataBookTest extends TestCase {
 		
 		assertEquals(0, results.size());
 	}
-	
+
+	@Test
 	public void testDataBookWithHeadingsInOddjob() {
 		
 		Properties properties = new Properties();
@@ -203,7 +212,8 @@ public class DataBookTest extends TestCase {
 				oddjob.lastStateEvent().getState());
 
 	}
-	
+
+	@Test
 	public void testSimpleWriteReadExample() throws ArooaPropertyException, ArooaConversionException, ParseException, IOException {
 		
 		Properties properties = new Properties();

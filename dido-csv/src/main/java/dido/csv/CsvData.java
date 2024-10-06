@@ -26,7 +26,7 @@ public class CsvData extends AbstractNamedData {
     }
 
     @Override
-    public ReadableSchema getSchema() {
+    public ReadSchema getSchema() {
         return schema;
     }
 
@@ -254,7 +254,7 @@ public class CsvData extends AbstractNamedData {
     }
 
 
-    static class Schema extends DataSchemaImpl implements ReadableSchema {
+    static class Schema extends DataSchemaImpl implements ReadSchema {
 
         private final FieldGetter[] getters;
 

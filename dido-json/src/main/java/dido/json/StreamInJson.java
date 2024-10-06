@@ -10,6 +10,7 @@ import dido.how.DataInHow;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -27,9 +28,9 @@ public class StreamInJson<D extends DidoData> implements DataInHow<InputStream, 
 
     private final boolean isArray;
 
-    private final Class<D> dataType;
+    private final Type dataType;
 
-    private StreamInJson(Gson gson, boolean isArray, Class<D> dataType) {
+    private StreamInJson(Gson gson, boolean isArray, Type dataType) {
         this.gson = gson;
         this.isArray = isArray;
         this.dataType = dataType;

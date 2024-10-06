@@ -7,12 +7,11 @@ import dido.poi.layouts.*;
 import dido.poi.style.StyleBean;
 import dido.poi.style.StyleFactoryRegistry;
 import dido.poi.style.StyleProvider;
-import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.oddjob.arooa.utils.DateHelper;
 
@@ -22,9 +21,12 @@ import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class PoiRowsTest extends TestCase {
+public class PoiRowsTest {
 
+	@Test
 	public void testWriteNextAndGetNext() throws IOException {
 		
 		TextCell text = new TextCell();
@@ -75,7 +77,8 @@ public class PoiRowsTest extends TestCase {
 
 		assertThat(test2.nextRow(), nullValue());
 	}
-	
+
+	@Test
 	public void testDifferentCellTypes() throws IOException {
 		
 		PoiWorkbook workbook = new PoiWorkbook();
@@ -204,7 +207,6 @@ public class PoiRowsTest extends TestCase {
 	 * what it proves any more.
 	 * 
 	 */
-	@Ignore
 	@Disabled
 	public void testDateCellTypes() throws ParseException, IOException {
 

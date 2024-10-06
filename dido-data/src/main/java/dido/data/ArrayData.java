@@ -29,7 +29,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         return new ArrayData(schemaFactory.toSchema(), data);
     }
 
-    public static WritableSchemaFactory<ArrayData> schemaFactory() {
+    public static WriteSchemaFactory schemaFactory() {
         return new ArrayDataSchemaFactory();
     }
 
@@ -54,7 +54,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
 
     public static DataBuilder<ArrayData> builderForSchema(Schema schema) {
 
-        return new DataBuilder<>(schema);
+        return new DataBuilder<>(schema.newDataFactory());
     }
 
     public static BuilderUnknown newBuilderNoSchema() {
@@ -64,10 +64,10 @@ public class ArrayData extends AbstractNamedData implements NamedData {
 
     public static Values<ArrayData> valuesForSchema(DataSchema schema) {
 
-        return Values.valuesFor(asArrayDataSchema(schema));
+        return Values.withDataFactory(factoryForSchema(schema));
     }
 
-    public static DataFactory<ArrayData> factoryFor(DataSchema schema) {
+    public static DataFactory<ArrayData> factoryForSchema(DataSchema schema) {
         return new ArrayDataFactory(asArrayDataSchema(schema));
     }
 
@@ -165,40 +165,13 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public WritableSchema<ArrayData> getSchema() {
+        public ReadWriteSchema getSchema() {
             return schema;
         }
 
         @Override
         public Class<ArrayData> getDataType() {
             return ArrayData.class;
-        }
-
-        @Override
-        public FieldSetter getSetterAt(int index) {
-            if (!schema.hasIndex(index)) {
-                throw new NoSuchFieldException(index, schema);
-            }
-            return new AbstractFieldSetter() {
-                @Override
-                public void clear() {
-                    clearAt(index);
-                }
-
-                @Override
-                public void set(Object value) {
-                    setAt(index, value);
-                }
-            };
-        }
-
-        @Override
-        public FieldSetter getSetterNamed(String name) {
-            int index = schema.getIndexNamed(name);
-            if (index == 0) {
-                throw new NoSuchFieldException(name, schema);
-            }
-            return getSetterAt(index);
         }
 
         @Override
@@ -245,7 +218,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
     }
 
     public static class Schema extends DataSchemaImpl
-            implements WritableSchema<ArrayData> {
+            implements ReadWriteSchema {
 
         Schema(DataSchema from) {
             super(from.getSchemaFields(), from.firstIndex(), from.lastIndex());
@@ -286,19 +259,41 @@ public class ArrayData extends AbstractNamedData implements NamedData {
             return getFieldGetterAt(index);
         }
 
-        @Override
-        public WritableSchemaFactory<ArrayData> newSchemaFactory() {
-            return new ArrayDataSchemaFactory();
-        }
-
-        @Override
         public DataFactory<ArrayData> newDataFactory() {
             return new ArrayDataFactory(this);
         }
+
+        @Override
+        public FieldSetter getFieldSetterAt(int index) {
+            if (!hasIndex(index)) {
+                throw new NoSuchFieldException(index, this);
+            }
+            return new AbstractFieldSetter() {
+                @Override
+                public void clear(WritableData writable) {
+                    ((ArrayDataFactory) writable).values[index - 1] = null;
+                }
+
+                @Override
+                public void set(WritableData writable, Object value) {
+                    ((ArrayDataFactory) writable).values[index - 1] = value;
+                }
+            };
+        }
+
+        @Override
+        public FieldSetter getFieldSetterNamed(String name) {
+            int index = getIndexNamed(name);
+            if (index == 0) {
+                throw new NoSuchFieldException(name, this);
+            }
+            return getFieldSetterAt(index);
+        }
+
     }
 
     static class ArrayDataSchemaFactory extends SchemaFactoryImpl<Schema>
-            implements WritableSchemaFactory<ArrayData> {
+            implements WriteSchemaFactory {
 
         protected ArrayDataSchemaFactory() {
         }

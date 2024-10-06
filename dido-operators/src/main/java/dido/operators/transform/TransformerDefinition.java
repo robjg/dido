@@ -1,6 +1,6 @@
 package dido.operators.transform;
 
-import dido.data.ReadableSchema;
+import dido.data.ReadSchema;
 
 /**
  * Defines an Operation that can be applied to a field. Creating an {@link Transformation} is a
@@ -17,6 +17,7 @@ public interface TransformerDefinition {
      * @param schemaSetter The ability to set part of the outgoing data schema.
      *
      * @return The complete Transformer. Not expected to ever be null.
-     */    TransformerFactory define(ReadableSchema incomingSchema,
-                                     SchemaSetter schemaSetter);
+     */
+    TransformerFactory define(ReadSchema incomingSchema,
+                              SchemaSetter schemaSetter);
 }

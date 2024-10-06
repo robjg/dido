@@ -1,14 +1,16 @@
 package dido.poi.data;
 
-import dido.poi.data.SimpleHeadings;
-import junit.framework.TestCase;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.jupiter.api.Test;
 
-public class SimpleHeadingsTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+public class SimpleHeadingsTest  {
+
+	@Test
 	public void testHeadingColumns() {
 		
 		Workbook workbook = new HSSFWorkbook();
@@ -28,7 +30,8 @@ public class SimpleHeadingsTest extends TestCase {
 		assertEquals(1, test.position("Name"));
 		assertEquals(0, test.position("Fruit"));
 	}
-	
+
+	@Test
 	public void testOffset() {
 		
 		Workbook workbook = new HSSFWorkbook();

@@ -19,7 +19,7 @@ public class NonBoxedData extends AbstractData {
         this.doubles = factory.doubles;
     }
 
-    public static WritableSchemaFactory<NonBoxedData> schemaFactory() {
+    public static WriteSchemaFactory schemaFactory() {
         return new SchemaFactory();
     }
 
@@ -31,188 +31,45 @@ public class NonBoxedData extends AbstractData {
 
         if (schema instanceof Schema) {
             return (Schema) schema;
-        }
-        else {
+        } else {
             return new Schema(schema.getSchemaFields(), schema.firstIndex(), schema.lastIndex());
         }
     }
 
     public static DataBuilder<NonBoxedData> builderForSchema(DataSchema schema) {
 
-        return new DataBuilder<>(asNonBoxedDataSchema(schema));
+        return new DataBuilder<>(factoryForSchema(schema));
     }
 
     public static DataBuilder<NonBoxedData> builderForSchema(Schema schema) {
 
-        return new DataBuilder<>(schema);
+        return new DataBuilder<>(factoryForSchema(schema));
+    }
+
+    public static DataFactory<NonBoxedData> factoryForSchema(DataSchema schema) {
+        return new Factory(asNonBoxedDataSchema(schema));
     }
 
     @Override
-    public WritableSchema<NonBoxedData> getSchema() {
+    public Schema getSchema() {
         return schema;
     }
 
     @Override
     public Object getAt(int index) {
-        return schema.getters[index -1].get(this);
+        return schema.getters[index - 1].get(this);
     }
 
     @Override
     public int getIntAt(int index) {
-        return schema.getters[index -1].getInt(this);
+        return schema.getters[index - 1].getInt(this);
     }
 
     @Override
     public double getDoubleAt(int index) {
-        return schema.getters[index -1].getDouble(this);
+        return schema.getters[index - 1].getDouble(this);
     }
 
-    static class Factory implements DataFactory<NonBoxedData> {
-
-        private final Schema schema;
-
-        private final FieldSetter[] setters;
-
-        private Object[] values;
-
-        private int[] ints;
-
-        private double[] doubles;
-
-        private Factory(Schema schema) {
-            this.schema = schema;
-            this.values = new Object[schema.values];
-            this.ints = new int[schema.ints];
-            this.doubles = new double[schema.doubles];
-            this.setters = new FieldSetter[schema.getters.length];
-            for (int i = 0; i < setters.length; ++i) {
-                FieldGetter getter = schema.getters[i];
-                if (getter instanceof IntGetter) {
-                    setters[i] = new IntFieldSetter(((IntGetter) getter).index);
-                }
-                else if (getter instanceof DoubleGetter) {
-                    setters[i] = new DoubleFieldSetter(((DoubleGetter) getter).index);
-                }
-                else {
-                    setters[i] = new ValueFieldSetter(((ValueGetter) getter).index);
-                }
-            }
-        }
-
-        @Override
-        public WritableSchema<NonBoxedData> getSchema() {
-            return schema;
-        }
-
-        @Override
-        public Class<NonBoxedData> getDataType() {
-            return NonBoxedData.class;
-        }
-
-        @Override
-        public FieldSetter getSetterAt(int index) {
-            try {
-                FieldSetter setter = setters[index - 1];
-                if (setter == null) {
-                    throw new NoSuchFieldException(index, schema);
-                }
-                return setter;
-            }
-            catch (ArrayIndexOutOfBoundsException e) {
-                throw new NoSuchFieldException(index, schema);
-            }
-        }
-
-        @Override
-        public FieldSetter getSetterNamed(String name) {
-            int index = schema.getIndexNamed(name);
-            if (index == 0) {
-                throw new NoSuchFieldException(name, schema);
-            }
-            return getSetterAt(index);
-        }
-
-        @Override
-        public WritableData getSetter() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public NonBoxedData toData() {
-            NonBoxedData nonBoxedData = new NonBoxedData(this);
-            this.values = new Object[schema.values];
-            this.ints = new int[schema.ints];
-            this.doubles = new double[schema.doubles];
-            return nonBoxedData;
-        }
-
-        class IntFieldSetter extends AbstractFieldSetter {
-
-            private final int index;
-
-            IntFieldSetter(int index) {
-                this.index = index;
-            }
-
-            @Override
-            public void clear() {
-                throw new UnsupportedOperationException("Can not clear a primitive field");
-            }
-
-            @Override
-            public void set(Object value) {
-                setInt((int) value);
-            }
-
-            @Override
-            public void setInt(int value) {
-                ints[index] = value;
-            }
-        }
-
-        class DoubleFieldSetter extends AbstractFieldSetter {
-
-            private final int index;
-
-            DoubleFieldSetter(int index) {
-                this.index = index;
-            }
-
-            @Override
-            public void clear() {
-                throw new UnsupportedOperationException("Can not clear a primitive field");
-            }
-
-            @Override
-            public void set(Object value) {
-                setDouble((double) value);
-            }
-
-            @Override
-            public void setDouble(double value) {
-                doubles[index] = value;
-            }
-        }
-
-        class ValueFieldSetter extends AbstractFieldSetter {
-
-            private final int index;
-
-            ValueFieldSetter(int index) {
-                this.index = index;
-            }
-
-            @Override
-            public void clear() {
-                values[index] = null;
-            }
-
-            @Override
-            public void set(Object value) {
-                values[index] = value;
-            }
-        }
-    }
 
     static class IntGetter extends AbstractFieldGetter {
 
@@ -266,10 +123,242 @@ public class NonBoxedData extends AbstractData {
         }
     }
 
+    static class Factory implements DataFactory<NonBoxedData>, WritableData {
+
+        private final Schema schema;
+
+        private Object[] values;
+
+        private int[] ints;
+
+        private double[] doubles;
+
+        private Factory(Schema schema) {
+            this.schema = schema;
+            this.values = new Object[schema.values];
+            this.ints = new int[schema.ints];
+            this.doubles = new double[schema.doubles];
+        }
+
+        @Override
+        public ReadWriteSchema getSchema() {
+            return schema;
+        }
+
+        @Override
+        public Class<NonBoxedData> getDataType() {
+            return NonBoxedData.class;
+        }
+
+        @Override
+        public WritableData getSetter() {
+            return this;
+        }
+
+        @Override
+        public NonBoxedData toData() {
+            NonBoxedData nonBoxedData = new NonBoxedData(this);
+            this.values = new Object[schema.values];
+            this.ints = new int[schema.ints];
+            this.doubles = new double[schema.doubles];
+            return nonBoxedData;
+        }
+
+        @Override
+        public void clearAt(int index) {
+            getSetterWithCheck(index).clear(this);
+        }
+
+        @Override
+        public void setAt(int index, Object value) {
+            getSetterWithCheck(index).set(this, value);
+        }
+
+        @Override
+        public void setBooleanAt(int index, boolean value) {
+            getSetterWithCheck(index).setBoolean(this, value);
+        }
+
+        @Override
+        public void setByteAt(int index, byte value) {
+            getSetterWithCheck(index).setByte(this, value);
+        }
+
+        @Override
+        public void setShortAt(int index, short value) {
+            getSetterWithCheck(index).setShort(this, value);
+        }
+
+        @Override
+        public void setIntAt(int index, int value) {
+            getSetterWithCheck(index).setInt(this, value);
+        }
+
+        @Override
+        public void setLongAt(int index, long value) {
+            getSetterWithCheck(index).setLong(this, value);
+        }
+
+        @Override
+        public void setFloatAt(int index, float value) {
+            getSetterWithCheck(index).setFloat(this, value);
+        }
+
+        @Override
+        public void setDoubleAt(int index, double value) {
+            getSetterWithCheck(index).setDouble(this, value);
+       }
+
+        @Override
+        public void setStringAt(int index, String value) {
+            getSetterWithCheck(index).setString(this, value);
+        }
+
+        @Override
+        public void clearNamed(String name) {
+            getSetterWithCheck(name).clear(this);
+        }
+
+        @Override
+        public void setNamed(String name, Object value) {
+            getSetterWithCheck(name).set(this, value);
+        }
+
+        @Override
+        public void setBooleanNamed(String name, boolean value) {
+            getSetterWithCheck(name).setBoolean(this, value);
+        }
+
+        @Override
+        public void setByteNamed(String name, byte value) {
+            getSetterWithCheck(name).setByte(this, value);
+        }
+
+        @Override
+        public void setCharNamed(String name, char value) {
+            getSetterWithCheck(name).setChar(this, value);
+        }
+
+        @Override
+        public void setShortNamed(String name, short value) {
+            getSetterWithCheck(name).setShort(this, value);
+        }
+
+        @Override
+        public void setIntNamed(String name, int value) {
+            getSetterWithCheck(name).setInt(this, value);
+        }
+
+        @Override
+        public void setLongNamed(String name, long value) {
+            getSetterWithCheck(name).setLong(this, value);
+        }
+
+        @Override
+        public void setFloatNamed(String name, float value) {
+            getSetterWithCheck(name).setFloat(this, value);
+        }
+
+        @Override
+        public void setDoubleNamed(String name, double value) {
+            getSetterWithCheck(name).setDouble(this, value);
+        }
+
+        @Override
+        public void setStringNamed(String name, String value) {
+            getSetterWithCheck(name).setString(this, value);
+        }
+
+        FieldSetter getSetterWithCheck(int index) {
+            try {
+                return schema.setters[index - 1];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new NoSuchFieldException(index, schema);
+            }
+        }
+
+        FieldSetter getSetterWithCheck(String name) {
+            int index = schema.getIndexNamed(name);
+            if (index == 0) {
+                throw new NoSuchFieldException(name, schema);
+            }
+            return schema.setters[index];
+        }
+    }
+
+    static class IntFieldSetter extends AbstractFieldSetter {
+
+        private final int index;
+
+        IntFieldSetter(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public void clear(WritableData writeable) {
+            throw new UnsupportedOperationException("Can not clear a primitive field");
+        }
+
+        @Override
+        public void set(WritableData writeable, Object value) {
+            setInt(writeable, (int) value);
+        }
+
+        @Override
+        public void setInt(WritableData writeable, int value) {
+            ((Factory) writeable).ints[index] = value;
+        }
+    }
+
+    static class DoubleFieldSetter extends AbstractFieldSetter {
+
+        private final int index;
+
+        DoubleFieldSetter(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public void clear(WritableData writeable) {
+            throw new UnsupportedOperationException("Can not clear a primitive field");
+        }
+
+        @Override
+        public void set(WritableData writeable, Object value) {
+            setDouble(writeable, (double) value);
+        }
+
+        @Override
+        public void setDouble(WritableData writeable, double value) {
+            ((Factory) writeable).doubles[index] = value;
+        }
+    }
+
+    static class ValueFieldSetter extends AbstractFieldSetter {
+
+        private final int index;
+
+        ValueFieldSetter(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public void clear(WritableData writeable) {
+            ((Factory) writeable).values[index] = null;
+        }
+
+        @Override
+        public void set(WritableData writeable, Object value) {
+            ((Factory) writeable).values[index] = value;
+        }
+    }
+
     public static class Schema extends DataSchemaImpl
-            implements WritableSchema<NonBoxedData> {
+            implements ReadWriteSchema {
 
         private final FieldGetter[] getters;
+
+        private final FieldSetter[] setters;
 
         private final int values;
 
@@ -280,39 +369,32 @@ public class NonBoxedData extends AbstractData {
         private Schema(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
             super(fields, firstIndex, lastIndex);
 
-            getters = new FieldGetter[lastIndex];
+            this.getters = new FieldGetter[lastIndex];
+            this.setters = new FieldSetter[lastIndex];
 
             int values = 0;
             int ints = 0;
             int doubles = 0;
 
             for (SchemaField schemaField : fields) {
-                Class<?> type =  schemaField.getType();
+                Class<?> type = schemaField.getType();
                 int index = schemaField.getIndex();
+                int arrayIndex = index - 1;
                 if (type == int.class) {
-                    getters[index - 1] = new IntGetter(ints++);
-                }
-                else if (type == double.class) {
-                    getters[index - 1] = new DoubleGetter(doubles++);
-                }
-                else {
-                    getters[index - 1] = new ValueGetter(values++);
+                    getters[arrayIndex] = new IntGetter(ints);
+                    setters[arrayIndex] = new IntFieldSetter(ints++);
+                } else if (type == double.class) {
+                    getters[arrayIndex] = new DoubleGetter(doubles);
+                    setters[arrayIndex] = new DoubleFieldSetter(doubles++);
+                } else {
+                    getters[arrayIndex] = new ValueGetter(values);
+                    setters[arrayIndex] = new ValueFieldSetter(values++);
                 }
             }
 
             this.values = values;
             this.ints = ints;
             this.doubles = doubles;
-        }
-
-        @Override
-        public WritableSchemaFactory<NonBoxedData> newSchemaFactory() {
-            return new SchemaFactory();
-        }
-
-        @Override
-        public DataFactory<NonBoxedData> newDataFactory() {
-            return new Factory(this);
         }
 
         @Override
@@ -323,8 +405,7 @@ public class NonBoxedData extends AbstractData {
                     throw new NoSuchFieldException(index, Schema.this);
                 }
                 return getter;
-            }
-            catch (ArrayIndexOutOfBoundsException e) {
+            } catch (ArrayIndexOutOfBoundsException e) {
                 throw new NoSuchFieldException(index, Schema.this);
             }
         }
@@ -337,10 +418,32 @@ public class NonBoxedData extends AbstractData {
             }
             return getFieldGetterAt(index);
         }
+
+        @Override
+        public FieldSetter getFieldSetterAt(int index) {
+            try {
+                FieldSetter setter = setters[index - 1];
+                if (setter == null) {
+                    throw new NoSuchFieldException(index, this);
+                }
+                return setter;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new NoSuchFieldException(index, this);
+            }
+        }
+
+        @Override
+        public FieldSetter getFieldSetterNamed(String name) {
+            int index = getIndexNamed(name);
+            if (index == 0) {
+                throw new NoSuchFieldException(name, this);
+            }
+            return getFieldSetterAt(index);
+        }
     }
 
     static class SchemaFactory extends SchemaFactoryImpl<Schema>
-            implements WritableSchemaFactory<NonBoxedData> {
+            implements WriteSchemaFactory {
 
         @Override
         protected Schema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {

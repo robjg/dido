@@ -2,11 +2,11 @@ package dido.data.generic;
 
 import dido.data.FieldGetter;
 import dido.data.NoSuchFieldException;
-import dido.data.ReadableSchema;
+import dido.data.ReadSchema;
 
-public interface GenericReadableSchema<F> extends GenericDataSchema<F>, ReadableSchema {
+public interface GenericReadSchema<F> extends GenericDataSchema<F>, ReadSchema {
 
-    default FieldGetter getDataGetter(F field) {
+    default FieldGetter getFieldGetter(F field) {
         if (!hasField(field)) {
             throw new NoSuchFieldException(field.toString(), this);
         }
@@ -24,12 +24,12 @@ public interface GenericReadableSchema<F> extends GenericDataSchema<F>, Readable
      *
      * @return An empty schema.
      */
-    static <F> GenericReadableSchema<F> emptySchema(Class<F> fieldType) {
+    static <F> GenericReadSchema<F> emptySchema(Class<F> fieldType) {
         return new EmptySchema<F>(fieldType);
     }
 
 
-    class EmptySchema<F> extends GenericDataSchema.EmptySchema<F> implements GenericReadableSchema<F> {
+    class EmptySchema<F> extends GenericDataSchema.EmptySchema<F> implements GenericReadSchema<F> {
 
         public EmptySchema(Class<F> fieldType) {
             super(fieldType);
@@ -37,21 +37,21 @@ public interface GenericReadableSchema<F> extends GenericDataSchema<F>, Readable
 
 
         @Override
-        public FieldGetter getDataGetter(F field) {
+        public FieldGetter getFieldGetter(F field) {
             throw new NoSuchFieldException(field.toString(),
-                    GenericReadableSchema.EmptySchema.this);
+                    GenericReadSchema.EmptySchema.this);
         }
 
         @Override
         public FieldGetter getFieldGetterAt(int index) {
             throw new NoSuchFieldException(index,
-                    GenericReadableSchema.EmptySchema.this);
+                    GenericReadSchema.EmptySchema.this);
         }
 
         @Override
         public FieldGetter getFieldGetterNamed(String name) {
             throw new NoSuchFieldException(name,
-                    GenericReadableSchema.EmptySchema.this);
+                    GenericReadSchema.EmptySchema.this);
         }
     }
 }

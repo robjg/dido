@@ -7,7 +7,9 @@ import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;
-import junit.framework.TestCase;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.oddjob.arooa.ArooaBeanDescriptor;
 import org.oddjob.arooa.ConfiguredHow;
 import org.oddjob.arooa.life.SimpleArooaClass;
@@ -25,19 +27,21 @@ import java.beans.PropertyDescriptor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class NumericCellTest extends TestCase {
+public class NumericCellTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(NumericCellTest.class);
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		logger.info("-------------------------   " + getName()  + 
+	@BeforeEach
+	protected void setUp(TestInfo testInfo) throws Exception {
+
+		logger.info("-------------------------   " + testInfo.getDisplayName()  +
 				"   ----------------------");
 	}
-	
+
+	@Test
 	public void testWriteAndRead() throws Exception {
 		
 		PoiWorkbook workbook = new PoiWorkbook();
@@ -66,6 +70,7 @@ public class NumericCellTest extends TestCase {
 		reader.close();
 	}
 
+	@Test
 	public void testWriteAndReadOtherNumericTypes() throws Exception {
 
 		PoiWorkbook workbook = new PoiWorkbook();
@@ -96,6 +101,7 @@ public class NumericCellTest extends TestCase {
 	}
 
 	// Used to be null, but now all fields have names, the cell is created.
+	@Test
 	public void testWriteAndReadNull() throws Exception {
 
 		PoiWorkbook workbook = new PoiWorkbook();
@@ -159,6 +165,7 @@ public class NumericCellTest extends TestCase {
 	 * 
 	 * @throws IntrospectionException 
 	 */
+	@Test
 	public void testValueConfiguredHow() throws IntrospectionException {
 		
 		String javaVersion = System.getProperty("java.version");

@@ -12,23 +12,23 @@ import dido.poi.data.PoiWorkbook;
 import dido.poi.layouts.DataRows;
 import dido.poi.layouts.TextCell;
 import dido.test.OurDirs;
-import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
-public class AllStylesTest extends TestCase {
+public class AllStylesTest {
 
 	File workDir;
 	
-	@Override
+	@BeforeEach
 	protected void setUp() throws Exception {
-		super.setUp();
-		
+
 		workDir = OurDirs.workPathDir(AllStylesTest.class).toFile();
 	}
 
@@ -74,6 +74,7 @@ public class AllStylesTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testColoursAndFills() throws Exception {
 		
 		PoiWorkbook workbook = new PoiWorkbook();
@@ -138,6 +139,7 @@ public class AllStylesTest extends TestCase {
 		
 	}
 
+	@Test
 	public void testAllColourAndBackgroundStyles() throws Exception {
 		
 		PoiWorkbook workbook = new PoiWorkbook();

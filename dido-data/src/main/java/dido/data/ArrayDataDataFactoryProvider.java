@@ -11,13 +11,13 @@ public class ArrayDataDataFactoryProvider implements DataFactoryProvider<ArrayDa
     }
 
     @Override
-    public WritableSchemaFactory<ArrayData> getSchemaFactory() {
+    public WriteSchemaFactory getSchemaFactory() {
         return ArrayData.schemaFactory();
     }
 
     @Override
     public DataFactory<ArrayData> provideFactory(DataSchema schema) {
 
-        return ArrayData.factoryFor(ArrayData.asArrayDataSchema(schema));
+        return ArrayData.factoryForSchema(ArrayData.asArrayDataSchema(schema));
     }
 }

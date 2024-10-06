@@ -2,28 +2,26 @@ package dido.data;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * A Fluent builder for creating data from an {@link WritableSchema}.
+ * A Fluent builder for creating data from an {@link WriteSchema}.
  *
  * @param <D> The data type.
  */
 public class DataBuilder<D extends DidoData> {
 
-    private final WritableSchema<D> schema;
-
     private final DataFactory<D> dataFactory;
 
     private final Map<String, FieldSetter> setters;
 
-    public DataBuilder(WritableSchema<D> schema) {
-        this.schema = Objects.requireNonNull(schema);
-        this.dataFactory = schema.newDataFactory();
+    public DataBuilder(DataFactory<D> dataFactory) {
+        this.dataFactory = dataFactory;
+        WriteSchema schema = dataFactory.getSchema();
+
         Map<String, FieldSetter> setters = new HashMap<>();
         for (String name : schema.getFieldNames()) {
-            setters.put(name, dataFactory.getSetterNamed(name));
+            setters.put(name, schema.getFieldSetterNamed(name));
         }
         this.setters = setters;
     }
@@ -33,65 +31,65 @@ public class DataBuilder<D extends DidoData> {
         return this;
     }
 
-    protected WritableSchema<D> getSchema() {
-        return schema;
+    protected WriteSchema getSchema() {
+        return dataFactory.getSchema();
     }
 
     private FieldSetter getSetterWithNameCheck(String name) {
         FieldSetter setter = setters.get(name);
         if (setter == null) {
-            throw new NoSuchFieldException(name, schema);
+            throw new NoSuchFieldException(name, getSchema());
         }
         return setter;
     }
 
     public DataBuilder<D> with(String field, Object value) {
-        getSetterWithNameCheck(field).set(value);
+        getSetterWithNameCheck(field).set(dataFactory.getSetter(), value);
         return this;
     }
 
     public DataBuilder<D> withBoolean(String field, boolean value) {
-        getSetterWithNameCheck(field).setBoolean(value);
+        getSetterWithNameCheck(field).setBoolean(dataFactory.getSetter(), value);
         return this;
     }
 
     public DataBuilder<D> withByte(String field, byte value) {
-        getSetterWithNameCheck(field).setByte(value);
+        getSetterWithNameCheck(field).setByte(dataFactory.getSetter(), value);
         return this;
     }
 
     public DataBuilder<D> withChar(String field, char value) {
-        getSetterWithNameCheck(field).setChar(value);
+        getSetterWithNameCheck(field).setChar(dataFactory.getSetter(), value);
         return this;
     }
 
     public DataBuilder<D> withShort(String field, short value) {
-        getSetterWithNameCheck(field).setShort(value);
+        getSetterWithNameCheck(field).setShort(dataFactory.getSetter(), value);
         return this;
     }
 
     public DataBuilder<D> withInt(String field, int value) {
-        getSetterWithNameCheck(field).setInt(value);
+        getSetterWithNameCheck(field).setInt(dataFactory.getSetter(), value);
         return this;
     }
 
     public DataBuilder<D> withLong(String field, long value) {
-        getSetterWithNameCheck(field).setLong(value);
+        getSetterWithNameCheck(field).setLong(dataFactory.getSetter(), value);
         return this;
     }
 
     public DataBuilder<D> withFloat(String field, float value) {
-        getSetterWithNameCheck(field).setFloat(value);
+        getSetterWithNameCheck(field).setFloat(dataFactory.getSetter(), value);
         return this;
     }
 
     public DataBuilder<D> withDouble(String field, double value) {
-        getSetterWithNameCheck(field).setDouble(value);
+        getSetterWithNameCheck(field).setDouble(dataFactory.getSetter(), value);
         return this;
     }
 
     public DataBuilder<D> withString(String field, String value) {
-        getSetterWithNameCheck(field).setString(value);
+        getSetterWithNameCheck(field).setString(dataFactory.getSetter(), value);
         return this;
     }
 

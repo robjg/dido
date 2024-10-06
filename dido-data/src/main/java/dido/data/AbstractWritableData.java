@@ -6,11 +6,27 @@ package dido.data;
 abstract public class AbstractWritableData implements WritableData {
 
     @Override
-    abstract public void setNamed(String field, Object value);
+    abstract public WriteSchema getSchema();
 
     @Override
-    abstract public void setAt(int index, Object value);
+    public void clearAt(int index) {
+        getSchema().getFieldSetterAt(index).clear(this);
+    }
 
+    @Override
+    public void clearNamed(String name) {
+        getSchema().getFieldSetterNamed(name).clear(this);
+    }
+
+    @Override
+    public void setAt(int index, Object value) {
+        getSchema().getFieldSetterAt(index).set(this, value);
+    }
+
+    @Override
+    public void setNamed(String name, Object value) {
+        getSchema().getFieldSetterNamed(name).set(this, value);
+    }
 
     @Override
     public void setBooleanAt(int index, boolean value) {
@@ -53,47 +69,47 @@ abstract public class AbstractWritableData implements WritableData {
     }
 
     @Override
-    public void setBooleanNamed(String field, boolean value) {
-        setNamed(field, value);
+    public void setBooleanNamed(String name, boolean value) {
+        setNamed(name, value);
     }
 
     @Override
-    public void setByteNamed(String field, byte value) {
-        setNamed(field, value);
+    public void setByteNamed(String name, byte value) {
+        setNamed(name, value);
     }
 
     @Override
-    public void setCharNamed(String field, char value) {
-        setNamed(field, value);
+    public void setCharNamed(String name, char value) {
+        setNamed(name, value);
     }
 
     @Override
-    public void setShortNamed(String field, short value) {
-        setNamed(field, value);
+    public void setShortNamed(String name, short value) {
+        setNamed(name, value);
     }
 
     @Override
-    public void setIntNamed(String field, int value) {
-        setNamed(field, value);
+    public void setIntNamed(String name, int value) {
+        setNamed(name, value);
     }
 
     @Override
-    public void setLongNamed(String field, long value) {
-        setNamed(field, value);
+    public void setLongNamed(String name, long value) {
+        setNamed(name, value);
     }
 
     @Override
-    public void setFloatNamed(String field, float value) {
-        setNamed(field, value);
+    public void setFloatNamed(String name, float value) {
+        setNamed(name, value);
     }
 
     @Override
-    public void setDoubleNamed(String field, double value) {
-        setNamed(field, value);
+    public void setDoubleNamed(String name, double value) {
+        setNamed(name, value);
     }
 
     @Override
-    public void setStringNamed(String field, String value) {
-        setNamed(field, value);
+    public void setStringNamed(String name, String value) {
+        setNamed(name, value);
     }
 }

@@ -14,7 +14,7 @@ class DataReaderTest {
 
         System.out.println("Map Data");
         System.out.println("--------");
-        doTest(MapData.schemaFactory());
+        doTest(new MapDataDataFactoryProvider());
     }
 
     @Test
@@ -22,7 +22,7 @@ class DataReaderTest {
 
         System.out.println("Array Data");
         System.out.println("----------");
-        doTest(ArrayData.schemaFactory());
+        doTest(new ArrayDataDataFactoryProvider());
     }
 
     @Test
@@ -30,39 +30,40 @@ class DataReaderTest {
 
         System.out.println("None Boxed Data");
         System.out.println("---------------");
-        doTest(NonBoxedData.schemaFactory());
+        doTest(new NonBoxedDataFactoryProvider());
     }
 
-    void doTest(WritableSchemaFactory<?> schemaFactory) {
+    void doTest(DataFactoryProvider<?> dataFactoryProvider) {
 
-        WritableSchema<?> schema = SchemaBuilder.builderFor(schemaFactory)
+        WriteSchema schema = SchemaBuilder.builderFor(dataFactoryProvider.getSchemaFactory())
                 .addNamed("Fruit", String.class)
                 .addNamed("Quantity", int.class)
                 .addNamed("Price", double.class)
                 .build();
 
-        DataFactory<?> dataFactory = schema.newDataFactory();
-        FieldSetter fruitSetter = dataFactory.getSetterNamed("Fruit");
-        FieldSetter quantitySetter = dataFactory.getSetterNamed("Quantity");
-        FieldSetter priceSetter = dataFactory.getSetterNamed("Price");
+        DataFactory<?> dataFactory = dataFactoryProvider.provideFactory(schema);
+        FieldSetter fruitSetter = schema.getFieldSetterNamed("Fruit");
+        FieldSetter quantitySetter = schema.getFieldSetterNamed("Quantity");
+        FieldSetter priceSetter = schema.getFieldSetterNamed("Price");
 
         List<DidoData> data = new ArrayList<>(SAMPLE_SIZE);
         for (int i = 0; i < SAMPLE_SIZE; i++) {
-            fruitSetter.setString("Apple");
-            quantitySetter.setInt((int) (Math.random() * 10));
-            priceSetter.setDouble( Math.random() * 30);
+            WritableData writable = dataFactory.getSetter();
+            fruitSetter.setString(writable,"Apple");
+            quantitySetter.setInt(writable, (int) (Math.random() * 10));
+            priceSetter.setDouble(writable, Math.random() * 30);
             data.add(dataFactory.toData());
         }
 
-        System.out.println(withReader(schema, data));
+        System.out.println(withReader(dataFactory.getSchema(), data));
         System.out.println(withNamedGetter(data));
         System.out.println(withIntGetter(data));
         System.out.println(withIntGetter(data));
         System.out.println(withNamedGetter(data));
-        System.out.println(withReader(schema, data));
+        System.out.println(withReader(dataFactory.getSchema(), data));
     }
 
-    static double withReader(ReadableSchema schema, List<DidoData> list) {
+    static double withReader(ReadSchema schema, List<DidoData> list) {
 
         System.gc();
 

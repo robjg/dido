@@ -82,15 +82,25 @@ public class NumericCell<T extends Number> extends AbstractDataCell<T> {
     @Override
     void insertValueInto(Cell cell, int index, DidoData data) {
 
-        Function<Object, Double> conversion = (Function<Object, Double>)
-                conversionProvider.conversionFor(data.getSchema().getTypeAt(index), Double.class);
+        Double use = this.value;
+        if (use == null) {
+            Object value = data.getAt(index);
+            if (value != null) {
+                if (Number.class.isAssignableFrom(value.getClass())) {
+                    use = ((Number) value).doubleValue();
+                } else {
+                    Function<Object, Double> conversion = (Function<Object, Double>)
+                            conversionProvider.conversionFor(value.getClass(), Double.class);
+                    use = conversion.apply(value);
+                }
+            }
+        }
 
-        Object value = data.getAt(index);
-
-        if (value == null) {
+        if (use == null) {
             cell.setBlank();
-        } else {
-            cell.setCellValue(conversion.apply(value));
+        }
+        else {
+            cell.setCellValue(use);
         }
     }
 

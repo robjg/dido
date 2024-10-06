@@ -65,7 +65,7 @@ public class JsonDataWrapper {
         return new AbstractNamedData() {
 
             @Override
-            public ReadableSchema getSchema() {
+            public ReadSchema getSchema() {
                 return schema;
             }
 
@@ -128,7 +128,7 @@ public class JsonDataWrapper {
         };
     }
 
-    static class Schema extends DataSchemaImpl implements ReadableSchema {
+    static class Schema extends DataSchemaImpl implements ReadSchema {
 
         Schema(DataSchemaImpl schema) {
             super(schema);

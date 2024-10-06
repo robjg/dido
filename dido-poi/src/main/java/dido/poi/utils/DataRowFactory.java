@@ -3,7 +3,7 @@ package dido.poi.utils;
 import dido.data.AbstractNamedData;
 import dido.data.DataSchema;
 import dido.data.NamedData;
-import dido.data.ReadableSchema;
+import dido.data.ReadSchema;
 import dido.poi.CellIn;
 import dido.poi.CellInProvider;
 import dido.poi.RowIn;
@@ -14,11 +14,11 @@ import java.util.Objects;
 
 public class DataRowFactory {
 
-    private final ReadableSchema schema;
+    private final ReadSchema schema;
 
     private final CellIn<?>[] cells;
 
-    private DataRowFactory(ReadableSchema schema, CellIn<?>[] cells) {
+    private DataRowFactory(ReadSchema schema, CellIn<?>[] cells) {
         this.schema = Objects.requireNonNull(schema);
         this.cells = cells;
     }
@@ -40,14 +40,14 @@ public class DataRowFactory {
             cells[lastIndex - 1] = cellProvider.provideCellIn(lastIndex);
         }
 
-        return new DataRowFactory(ReadableSchema.readableSchemaFrom(schema), cells);
+        return new DataRowFactory(ReadSchema.readableSchemaFrom(schema), cells);
     }
 
 
     public NamedData wrap(RowIn row) {
         return new AbstractNamedData() {
             @Override
-            public ReadableSchema getSchema() {
+            public ReadSchema getSchema() {
                 return schema;
             }
 

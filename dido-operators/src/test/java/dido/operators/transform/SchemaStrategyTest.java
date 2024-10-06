@@ -12,18 +12,19 @@ class SchemaStrategyTest {
     void testNewFields() {
 
         FieldTransformationBuilder<?> transformationBuilder = FieldTransformationBuilder
-                .forSchema(ReadableSchema.emptySchema(), ArrayData.schemaFactory());
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchema(ReadSchema.emptySchema());
 
         transformationBuilder
                 .addFieldOperation((s, sf) -> {
                     sf.addField(SchemaField.of(0, "One", int.class));
-                    return df -> d -> {
+                    return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
                 .addFieldOperation((s, sf) -> {
                     sf.addField(SchemaField.of(0, "Two", long.class));
-                    return df -> d -> {
+                    return df -> (d, o) -> {
                     };
                 });
 
@@ -43,18 +44,19 @@ class SchemaStrategyTest {
     void testMergeNewFieldsIntoEmptySchema() {
 
         FieldTransformationBuilder<?> transformationBuilder = FieldTransformationBuilder
-                .forSchemaWithCopy(ReadableSchema.emptySchema(), ArrayData.schemaFactory());
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchemaWithCopy(ReadSchema.emptySchema());
 
         transformationBuilder
                 .addFieldOperation((s, sf) -> {
                     sf.addField(SchemaField.of(0, "One", int.class));
-                    return df -> d -> {
+                    return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
                 .addFieldOperation((s, sf) -> {
                     sf.addField(SchemaField.of(0, "Two", long.class));
-                    return df -> d -> {
+                    return df -> (d, o) -> {
                     };
                 });
 
@@ -73,23 +75,24 @@ class SchemaStrategyTest {
     @Test
     void testNewFieldsAddedToExisting() {
 
-        ReadableSchema existing = MapData.schemaBuilder()
+        ReadSchema existing = MapData.schemaBuilder()
                 .addNamedAt(10, "Here", int.class)
                 .build();
 
         FieldTransformationBuilder<?> transformationBuilder = FieldTransformationBuilder
-                .forSchemaWithCopy(existing, ArrayData.schemaFactory());
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchemaWithCopy(existing);
 
         transformationBuilder
                 .addFieldOperation((s, sf) -> {
                     sf.addField(SchemaField.of(0, "One", int.class));
-                    return df -> d -> {
+                    return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
                 .addFieldOperation((s, sf) -> {
                     sf.addField(SchemaField.of(0, "Two", long.class));
-                    return df -> d -> {
+                    return df -> (d, o) -> {
                     };
                 });
 
@@ -109,31 +112,32 @@ class SchemaStrategyTest {
     @Test
     void testCopyFieldsOutOfOrderExisting() {
 
-        ReadableSchema existing = MapData.schemaBuilder()
+        ReadSchema existing = MapData.schemaBuilder()
                 .addNamedAt(10, "One", int.class)
                 .addNamedAt(20, "Two", long.class)
                 .addNamedAt(30, "Three", double.class)
                 .build();
 
         FieldTransformationBuilder<?> transformationBuilder = FieldTransformationBuilder
-                .forSchemaWithCopy(existing, ArrayData.schemaFactory());
+                .withFactory(new ArrayDataDataFactoryProvider())
+                .forSchemaWithCopy(existing);
 
         transformationBuilder
                 .addFieldOperation((s, sf) -> {
                     sf.addField(SchemaField.of(30, "One", Integer.class));
-                    return df -> d -> {
+                    return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
                 .addFieldOperation((s, sf) -> {
                     sf.addField(SchemaField.of(20, "Two", Long.class));
-                    return df -> d -> {
+                    return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
                 .addFieldOperation((s, sf) -> {
                     sf.addField(SchemaField.of(10, "Three", Double.class));
-                    return df -> d -> {
+                    return df -> (d, o) -> {
                     };
                 });
 
