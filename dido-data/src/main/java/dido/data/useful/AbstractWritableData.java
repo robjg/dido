@@ -1,4 +1,7 @@
-package dido.data;
+package dido.data.useful;
+
+import dido.data.WritableData;
+import dido.data.WriteSchema;
 
 /**
  * Implementations need only provide {@link WritableData#setNamed(String, Object)}.

@@ -1,6 +1,7 @@
 package dido.data;
 
 import dido.data.generic.GenericData;
+import dido.data.useful.*;
 
 import java.util.*;
 

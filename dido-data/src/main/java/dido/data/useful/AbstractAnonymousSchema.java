@@ -1,4 +1,6 @@
-package dido.data;
+package dido.data.useful;
+
+import dido.data.AnonymousSchema;
 
 /**
  * Base class providing default implementations of {@link AnonymousSchema}.

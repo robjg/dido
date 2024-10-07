@@ -2,6 +2,8 @@ package dido.sql;
 
 import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.useful.AbstractData;
+import dido.data.useful.AbstractDataSchema;
 import dido.how.DataException;
 import dido.how.FieldAccessException;
 

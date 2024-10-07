@@ -2,6 +2,9 @@ package dido.operators;
 
 import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.useful.AbstractData;
+import dido.data.useful.DataSchemaImpl;
+import dido.data.useful.SchemaFactoryImpl;
 
 import java.util.Collection;
 import java.util.function.Function;

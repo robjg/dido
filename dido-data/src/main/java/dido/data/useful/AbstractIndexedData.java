@@ -1,4 +1,6 @@
-package dido.data;
+package dido.data.useful;
+
+import dido.data.IndexedData;
 
 /**
  * Base class for {@link IndexedData}. Note that this is preferable to the default methods on

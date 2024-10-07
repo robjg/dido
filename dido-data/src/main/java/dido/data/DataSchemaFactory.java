@@ -1,6 +1,9 @@
 package dido.data;
 
 
+import dido.data.useful.DataSchemaImpl;
+import dido.data.useful.SchemaFactoryImpl;
+
 import java.util.Collection;
 
 /**

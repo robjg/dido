@@ -1,4 +1,6 @@
-package dido.data;
+package dido.operators;
+
+import dido.data.*;
 
 import java.util.function.Function;
 

@@ -1,4 +1,7 @@
-package dido.data;
+package dido.data.useful;
+
+import dido.data.AnonymousData;
+import dido.data.IndexedData;
 
 /**
  * Base class providing default implementations for {@link AnonymousData}. Implementations

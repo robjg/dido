@@ -1,4 +1,8 @@
-package dido.data;
+package dido.data.useful;
+
+import dido.data.DataSchema;
+import dido.data.SchemaFactory;
+import dido.data.SchemaField;
 
 import java.util.*;
 import java.util.function.UnaryOperator;

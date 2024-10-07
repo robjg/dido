@@ -1,4 +1,7 @@
-package dido.data;
+package dido.data.useful;
+
+import dido.data.IndexedData;
+import dido.data.NamedData;
 
 /**
  * Base class providing default implementations for {@link NamedData}. Implementations

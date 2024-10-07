@@ -1,10 +1,15 @@
 package dido.data;
 
+import dido.data.useful.AbstractFieldGetter;
+import dido.data.useful.SchemaDelegate;
+
 /**
  * A Data Schema that can provide the most efficient way of reading the
  * data it represents.
  */
 public interface ReadSchema extends DataSchema {
+
+
 
     default FieldGetter getFieldGetterAt(int index) {
         if (!hasIndex(index)) {

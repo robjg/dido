@@ -1,4 +1,7 @@
-package dido.data;
+package dido.data.useful;
+
+import dido.data.DataSchema;
+import dido.data.SchemaField;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -59,7 +62,7 @@ public class DataSchemaImpl extends AbstractDataSchema {
         this.hashCode = other.hashCode;
     }
 
-    public static  DataSchema fromFields(SchemaField... schemaFields) {
+    public static DataSchema fromFields(SchemaField... schemaFields) {
 
         return new DataSchemaImpl(() -> Arrays.stream(schemaFields).iterator(),
                 schemaFields[0].getIndex(), schemaFields[schemaFields.length - 1].getIndex());

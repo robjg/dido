@@ -1,4 +1,7 @@
-package dido.data;
+package dido.data.useful;
+
+import dido.data.FieldSetter;
+import dido.data.WritableData;
 
 /**
  * Provides the ability to set data.

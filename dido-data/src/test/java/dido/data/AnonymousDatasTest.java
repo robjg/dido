@@ -99,7 +99,7 @@ class AnonymousDatasTest {
         NamedData data2 = MapData.of(
                 "Name","Alice", "Number", 4567, "Colour", "Green");
 
-        AnonymousData copy2_1 = AnonymousSubData.ofIndices(1, 3).apply(data2);
+        AnonymousData copy2_1 = AnonymousDatas.partialWrap(data2, 1, 3);
 
         assertThat(copy2_1.getSchema(), is(copy1.getSchema()));
         assertThat(copy2_1, is(copy1));

@@ -4,6 +4,8 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.Message;
 import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.useful.AbstractDataSchema;
+import dido.data.useful.AbstractFieldGetter;
 
 import java.util.*;
 

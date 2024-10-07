@@ -1,7 +1,7 @@
 package dido.data.generic;
 
-import dido.data.SchemaFactoryImpl;
 import dido.data.SchemaField;
+import dido.data.useful.SchemaFactoryImpl;
 
 import java.util.Collection;
 import java.util.function.Function;

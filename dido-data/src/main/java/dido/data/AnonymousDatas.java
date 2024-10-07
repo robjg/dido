@@ -1,5 +1,8 @@
 package dido.data;
 
+import dido.data.useful.AbstractAnonymousData;
+import dido.data.useful.AbstractAnonymousSchema;
+
 import java.util.Arrays;
 import java.util.function.Function;
 

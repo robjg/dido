@@ -2,6 +2,8 @@ package dido.oddjob.bean;
 
 import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.useful.AbstractNamedData;
+import dido.data.useful.DataSchemaImpl;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

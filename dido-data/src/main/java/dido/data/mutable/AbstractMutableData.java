@@ -1,6 +1,6 @@
 package dido.data.mutable;
 
-import dido.data.AbstractData;
+import dido.data.useful.AbstractData;
 
 public abstract class AbstractMutableData extends AbstractData implements MutableData {
 

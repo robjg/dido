@@ -1,9 +1,9 @@
 package dido.poi.utils;
 
-import dido.data.AbstractNamedData;
 import dido.data.DataSchema;
 import dido.data.NamedData;
 import dido.data.ReadSchema;
+import dido.data.useful.AbstractNamedData;
 import dido.poi.CellIn;
 import dido.poi.CellInProvider;
 import dido.poi.RowIn;

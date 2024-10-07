@@ -2,8 +2,8 @@ package dido.proto;
 
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.DynamicMessage;
-import dido.data.AbstractData;
 import dido.data.DidoData;
+import dido.data.useful.AbstractData;
 
 public class DynamicMessageData extends AbstractData implements DidoData {
 

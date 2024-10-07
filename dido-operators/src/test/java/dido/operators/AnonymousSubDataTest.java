@@ -1,5 +1,8 @@
-package dido.data;
+package dido.operators;
 
+import dido.data.AnonymousData;
+import dido.data.MapData;
+import dido.data.NamedData;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -89,5 +92,26 @@ class AnonymousSubDataTest {
         assertThat(subData2.getSchema(), is(subData1.getSchema()));
         assertThat(subData2, is(subData1));
         assertThat(subData2.hashCode(), is(subData1.hashCode()));
+    }
+
+    @Test
+    void subDataOfIndicesOnDifferentData() {
+
+        NamedData data1 = MapData.of(
+                "Name","Alice", "Number", 1234, "Colour", "Green");
+
+        AnonymousData copy1 = AnonymousSubData.ofIndices(1, 3).apply(data1);
+
+        assertThat(copy1.getSchema().toString(), is("{[1]=java.lang.String, [2]=java.lang.String}"));
+        assertThat(copy1.toString(), is("{[1]=Alice, [2]=Green}"));
+
+        NamedData data2 = MapData.of(
+                "Name","Alice", "Number", 4567, "Colour", "Green");
+
+        AnonymousData copy2 = AnonymousSubData.ofIndices(1, 3).apply(data2);
+
+        assertThat(copy2.getSchema(), is(copy1.getSchema()));
+        assertThat(copy2, is(copy1));
+        assertThat(copy2.hashCode(), is(copy1.hashCode()));
     }
 }

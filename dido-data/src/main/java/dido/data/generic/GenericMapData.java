@@ -2,6 +2,8 @@ package dido.data.generic;
 
 import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.useful.AbstractFieldGetter;
+import dido.data.useful.AbstractFieldSetter;
 
 import java.util.Collection;
 import java.util.HashMap;

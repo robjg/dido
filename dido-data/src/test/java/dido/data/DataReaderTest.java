@@ -7,10 +7,10 @@ import java.util.List;
 
 class DataReaderTest {
 
-    static final int SAMPLE_SIZE = 10; // _000_000;
+    static final int SAMPLE_SIZE = 10; //_000_000;
 
     @Test
-    void howMuchBetterIsDataReaderWithMapData() {
+    void howMuchBetterAreFieldGettersWithMapData() {
 
         System.out.println("Map Data");
         System.out.println("--------");
@@ -18,7 +18,7 @@ class DataReaderTest {
     }
 
     @Test
-    void howMuchBetterIsDataReaderWithArrayData() {
+    void howMuchBetterAreFieldGettersWithArrayData() {
 
         System.out.println("Array Data");
         System.out.println("----------");
@@ -26,7 +26,7 @@ class DataReaderTest {
     }
 
     @Test
-    void howMuchBetterIsDataReaderWithNonBoxedData() {
+    void howMuchBetterAreFieldGettersWithNonBoxedData() {
 
         System.out.println("None Boxed Data");
         System.out.println("---------------");
@@ -42,11 +42,29 @@ class DataReaderTest {
                 .build();
 
         DataFactory<?> dataFactory = dataFactoryProvider.provideFactory(schema);
+
+        List<DidoData> data = writeWithFieldSetters(dataFactory);
+
+        System.out.println(withFieldGetters(dataFactory.getSchema(), data));
+        System.out.println(withNamedGetters(data));
+        System.out.println(withIndexedGetters(data));
+        System.out.println(withIndexedGetters(data));
+        System.out.println(withNamedGetters(data));
+        System.out.println(withFieldGetters(dataFactory.getSchema(), data));
+    }
+
+    static List<DidoData> writeWithFieldSetters(DataFactory<?> dataFactory) {
+
+        WriteSchema schema = dataFactory.getSchema();
+
         FieldSetter fruitSetter = schema.getFieldSetterNamed("Fruit");
         FieldSetter quantitySetter = schema.getFieldSetterNamed("Quantity");
         FieldSetter priceSetter = schema.getFieldSetterNamed("Price");
 
         List<DidoData> data = new ArrayList<>(SAMPLE_SIZE);
+
+        long millis = System.currentTimeMillis();
+
         for (int i = 0; i < SAMPLE_SIZE; i++) {
             WritableData writable = dataFactory.getSetter();
             fruitSetter.setString(writable,"Apple");
@@ -55,15 +73,12 @@ class DataReaderTest {
             data.add(dataFactory.toData());
         }
 
-        System.out.println(withReader(dataFactory.getSchema(), data));
-        System.out.println(withNamedGetter(data));
-        System.out.println(withIntGetter(data));
-        System.out.println(withIntGetter(data));
-        System.out.println(withNamedGetter(data));
-        System.out.println(withReader(dataFactory.getSchema(), data));
+        System.out.println("Write: " + (System.currentTimeMillis() - millis));
+
+        return data;
     }
 
-    static double withReader(ReadSchema schema, List<DidoData> list) {
+    static double withFieldGetters(ReadSchema schema, List<DidoData> list) {
 
         System.gc();
 
@@ -78,12 +93,12 @@ class DataReaderTest {
             avg = (avg + (quantityGetter.getInt(data) * priceGetter.getDouble(data))) / 2.0;
         }
 
-        System.out.println("Reader: " + (System.currentTimeMillis() - millis));
+        System.out.println("Field Getters: " + (System.currentTimeMillis() - millis));
 
         return avg;
     }
 
-    static double withNamedGetter(List<DidoData> list) {
+    static double withNamedGetters(List<DidoData> list) {
 
         System.gc();
 
@@ -95,12 +110,12 @@ class DataReaderTest {
             avg = (avg + (data.getIntNamed("Quantity") * data.getDoubleNamed("Price"))) / 2.0;
         }
 
-        System.out.println("Named Getter: " + (System.currentTimeMillis() - millis));
+        System.out.println("Named Getters: " + (System.currentTimeMillis() - millis));
 
         return avg;
     }
 
-    static double withIntGetter(List<DidoData> list) {
+    static double withIndexedGetters(List<DidoData> list) {
 
         System.gc();
 
@@ -112,7 +127,7 @@ class DataReaderTest {
             avg = (avg + (data.getIntAt(2) * data.getDoubleAt(3))) / 2.0;
         }
 
-        System.out.println("Int Getter: " + (System.currentTimeMillis() - millis));
+        System.out.println("Indexed Getters: " + (System.currentTimeMillis() - millis));
 
         return avg;
     }

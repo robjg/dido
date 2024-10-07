@@ -1,4 +1,8 @@
-package dido.data;
+package dido.data.useful;
+
+import dido.data.DidoData;
+import dido.data.IndexedData;
+import dido.data.NoSuchFieldException;
 
 /**
  * Base class providing default implementations for {@link DidoData}. Implementations

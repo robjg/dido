@@ -1,6 +1,6 @@
 package dido.data.generic;
 
-import dido.data.AbstractWritableData;
+import dido.data.useful.AbstractWritableData;
 
 public abstract class AbstractGenericWritableData<F> extends AbstractWritableData
     implements GenericWritableData<F> {

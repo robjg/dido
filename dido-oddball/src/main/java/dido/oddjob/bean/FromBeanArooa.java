@@ -2,6 +2,9 @@ package dido.oddjob.bean;
 
 import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.useful.AbstractNamedData;
+import dido.data.useful.DataSchemaImpl;
+import dido.data.useful.SchemaFactoryImpl;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.ArooaClass;

@@ -1,4 +1,7 @@
-package dido.data;
+package dido.data.useful;
+
+import dido.data.DidoData;
+import dido.data.FieldGetter;
 
 /**
  * Base class for {@link FieldGetter}s that don't mind autoboxing. Implementations must override

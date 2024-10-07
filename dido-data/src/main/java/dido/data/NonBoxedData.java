@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.useful.*;
+
 import java.util.Collection;
 
 public class NonBoxedData extends AbstractData {

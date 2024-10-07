@@ -1,6 +1,7 @@
 package dido.data;
 
 import dido.data.generic.GenericDataSchema;
+import dido.data.useful.AbstractIndexedData;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
