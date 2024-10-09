@@ -109,7 +109,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
 
         public GenericDataSchema<F> schemaFromMap(Map<F, ?> map) {
 
-            SchemaFactory<F> schemaFactory = new SchemaFactory<>(this);
+            GenericMapDataSchemaFactory<F> schemaFactory = new GenericMapDataSchemaFactory<>(this);
             for (Map.Entry<F, ?> entry : map.entrySet()) {
                 schemaFactory.addGenericSchemaField(schemaFactory.of()
                         .of(0, entry.getKey(), entry.getValue().getClass()));
@@ -135,14 +135,14 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
                     new GenericMapDataFactoryProvider<>(this), fieldNameMapping);
         }
 
-        public GenericWriteSchemaFactory<F> schemaFactory() {
+        public GenericSchemaFactory<F> schemaFactory() {
 
-            return new SchemaFactory<>(this);
+            return new GenericMapDataSchemaFactory<>(this);
         }
 
-        public SchemaFactory<F> schemaFactory(DataSchema schema) {
+        public GenericMapDataSchemaFactory<F> schemaFactory(DataSchema schema) {
 
-            SchemaFactory<F> factory = new SchemaFactory<>(this);
+            GenericMapDataSchemaFactory<F> factory = new GenericMapDataSchemaFactory<>(this);
             for (SchemaField schemaField : schema.getSchemaFields()) {
                 factory.addSchemaField(schemaField);
             }
@@ -247,7 +247,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
 
         @Override
-        public GenericWritableData<F> getSetter() {
+        public GenericWritableData<F> getWritableData() {
             return this;
         }
 
@@ -357,12 +357,12 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
     }
 
-    public static class SchemaFactory<F> extends GenericSchemaFactoryImpl<F, Schema<F>>
-            implements GenericWriteSchemaFactory<F> {
+    public static class GenericMapDataSchemaFactory<F> extends GenericSchemaFactoryImpl<F, Schema<F>>
+            implements GenericSchemaFactory<F> {
 
         private final Of<F> of;
 
-        SchemaFactory(Of<F> of) {
+        GenericMapDataSchemaFactory(Of<F> of) {
             super(of.fieldType, of.fieldNameMapping);
             this.of = of;
         }

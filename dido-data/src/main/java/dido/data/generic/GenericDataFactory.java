@@ -14,5 +14,5 @@ public interface GenericDataFactory<F, D extends GenericData<F>> extends DataFac
     }
 
     @Override
-    GenericWritableData<F> getSetter();
+    GenericWritableData<F> getWritableData();
 }

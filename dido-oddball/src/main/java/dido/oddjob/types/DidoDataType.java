@@ -34,7 +34,7 @@ public class DidoDataType implements ValueFactory<DidoData>, ArooaSessionAware {
         else {
             ArooaConverter converter = session.getTools().getArooaConverter();
             DataFactory<ArrayData> dataFactory = ArrayData.factoryForSchema(schema);
-            WritableData writableData = dataFactory.getSetter();
+            WritableData writableData = dataFactory.getWritableData();
             for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
                 Object value;
                 if (i > values.size()) {

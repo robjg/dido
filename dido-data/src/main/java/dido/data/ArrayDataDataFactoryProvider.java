@@ -11,7 +11,7 @@ public class ArrayDataDataFactoryProvider implements DataFactoryProvider<ArrayDa
     }
 
     @Override
-    public WriteSchemaFactory getSchemaFactory() {
+    public SchemaFactory getSchemaFactory() {
         return ArrayData.schemaFactory();
     }
 

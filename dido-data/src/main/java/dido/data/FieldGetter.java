@@ -1,7 +1,7 @@
 package dido.data;
 
 /**
- * Something capable of getting data. Getters are designed to be reused and so can be
+ * Something capable of getting data. Field Getters are designed to be reused and so can be
  * optimised for the fastest possible access.
  */
 public interface FieldGetter {
@@ -28,7 +28,7 @@ public interface FieldGetter {
 
     String getString(DidoData data);
 
-    static FieldGetter getterAt(int index) {
+    static FieldGetter at(int index) {
 
         return new FieldGetter() {
 
@@ -89,7 +89,7 @@ public interface FieldGetter {
         };
     }
 
-    static FieldGetter getterNamed(String name) {
+    static FieldGetter named(String name) {
 
         return new FieldGetter() {
             @Override

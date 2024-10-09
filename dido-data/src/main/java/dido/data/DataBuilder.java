@@ -44,52 +44,52 @@ public class DataBuilder<D extends DidoData> {
     }
 
     public DataBuilder<D> with(String field, Object value) {
-        getSetterWithNameCheck(field).set(dataFactory.getSetter(), value);
+        getSetterWithNameCheck(field).set(dataFactory.getWritableData(), value);
         return this;
     }
 
     public DataBuilder<D> withBoolean(String field, boolean value) {
-        getSetterWithNameCheck(field).setBoolean(dataFactory.getSetter(), value);
+        getSetterWithNameCheck(field).setBoolean(dataFactory.getWritableData(), value);
         return this;
     }
 
     public DataBuilder<D> withByte(String field, byte value) {
-        getSetterWithNameCheck(field).setByte(dataFactory.getSetter(), value);
+        getSetterWithNameCheck(field).setByte(dataFactory.getWritableData(), value);
         return this;
     }
 
     public DataBuilder<D> withChar(String field, char value) {
-        getSetterWithNameCheck(field).setChar(dataFactory.getSetter(), value);
+        getSetterWithNameCheck(field).setChar(dataFactory.getWritableData(), value);
         return this;
     }
 
     public DataBuilder<D> withShort(String field, short value) {
-        getSetterWithNameCheck(field).setShort(dataFactory.getSetter(), value);
+        getSetterWithNameCheck(field).setShort(dataFactory.getWritableData(), value);
         return this;
     }
 
     public DataBuilder<D> withInt(String field, int value) {
-        getSetterWithNameCheck(field).setInt(dataFactory.getSetter(), value);
+        getSetterWithNameCheck(field).setInt(dataFactory.getWritableData(), value);
         return this;
     }
 
     public DataBuilder<D> withLong(String field, long value) {
-        getSetterWithNameCheck(field).setLong(dataFactory.getSetter(), value);
+        getSetterWithNameCheck(field).setLong(dataFactory.getWritableData(), value);
         return this;
     }
 
     public DataBuilder<D> withFloat(String field, float value) {
-        getSetterWithNameCheck(field).setFloat(dataFactory.getSetter(), value);
+        getSetterWithNameCheck(field).setFloat(dataFactory.getWritableData(), value);
         return this;
     }
 
     public DataBuilder<D> withDouble(String field, double value) {
-        getSetterWithNameCheck(field).setDouble(dataFactory.getSetter(), value);
+        getSetterWithNameCheck(field).setDouble(dataFactory.getWritableData(), value);
         return this;
     }
 
     public DataBuilder<D> withString(String field, String value) {
-        getSetterWithNameCheck(field).setString(dataFactory.getSetter(), value);
+        getSetterWithNameCheck(field).setString(dataFactory.getWritableData(), value);
         return this;
     }
 

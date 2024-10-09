@@ -21,8 +21,8 @@ public class NonBoxedData extends AbstractData {
         this.doubles = factory.doubles;
     }
 
-    public static WriteSchemaFactory schemaFactory() {
-        return new SchemaFactory();
+    public static SchemaFactory schemaFactory() {
+        return new NonBoxedDataSchemaFactory();
     }
 
     public static SchemaBuilder<Schema> schemaBuilder() {
@@ -153,7 +153,7 @@ public class NonBoxedData extends AbstractData {
         }
 
         @Override
-        public WritableData getSetter() {
+        public WritableData getWritableData() {
             return this;
         }
 
@@ -184,6 +184,11 @@ public class NonBoxedData extends AbstractData {
         @Override
         public void setByteAt(int index, byte value) {
             getSetterWithCheck(index).setByte(this, value);
+        }
+
+        @Override
+        public void setCharAt(int index, char value) {
+            getSetterWithCheck(index).setChar(this, value);
         }
 
         @Override
@@ -444,8 +449,8 @@ public class NonBoxedData extends AbstractData {
         }
     }
 
-    static class SchemaFactory extends SchemaFactoryImpl<Schema>
-            implements WriteSchemaFactory {
+    static class NonBoxedDataSchemaFactory extends SchemaFactoryImpl<Schema>
+            implements SchemaFactory {
 
         @Override
         protected Schema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {

@@ -1,36 +1,12 @@
 package dido.data;
 
-import dido.data.useful.AbstractFieldGetter;
 import dido.data.useful.SchemaDelegate;
 
 /**
  * A Data Schema that can provide the most efficient way of reading the
  * data it represents.
  */
-public interface ReadSchema extends DataSchema {
-
-
-
-    default FieldGetter getFieldGetterAt(int index) {
-        if (!hasIndex(index)) {
-            throw new NoSuchFieldException(index, this);
-        } else {
-            return new AbstractFieldGetter() {
-                @Override
-                public Object get(DidoData data) {
-                    return data.getAt(index);
-                }
-            };
-        }
-    }
-
-    default FieldGetter getFieldGetterNamed(String name) {
-        if (!hasNamed(name)) {
-            throw new NoSuchFieldException(name, this);
-        } else {
-            return getFieldGetterAt(getIndexNamed(name));
-        }
-    }
+public interface ReadSchema extends DataSchema, ReadStrategy {
 
     static ReadSchema emptySchema() {
         return new EmptySchema();
@@ -49,7 +25,7 @@ public interface ReadSchema extends DataSchema {
         }
     }
 
-    static ReadSchema readableSchemaFrom(DataSchema schema) {
+    static ReadSchema from(DataSchema schema) {
         if (schema instanceof ReadSchema) {
             return (ReadSchema) schema;
         } else {
@@ -57,10 +33,29 @@ public interface ReadSchema extends DataSchema {
         }
     }
 
+    static ReadSchema from(DataSchema schema, ReadStrategy readStrategy) {
+            return new DelegateReadSchema(schema, readStrategy);
+    }
+
     class DelegateReadSchema extends SchemaDelegate implements ReadSchema {
 
-        public DelegateReadSchema(DataSchema delegate) {
+        private final ReadStrategy readStrategy;
+
+        DelegateReadSchema(DataSchema delegate) {
+            this(delegate, ReadStrategy.fromSchema(delegate));
+        }
+
+        DelegateReadSchema(DataSchema delegate, ReadStrategy readStrategy) {
             super(delegate);
+            this.readStrategy = readStrategy;
+        }
+
+        public FieldGetter getFieldGetterAt(int index) {
+            return readStrategy.getFieldGetterAt(index);
+        }
+
+        public FieldGetter getFieldGetterNamed(String name) {
+            return readStrategy.getFieldGetterNamed(name);
         }
     }
 }

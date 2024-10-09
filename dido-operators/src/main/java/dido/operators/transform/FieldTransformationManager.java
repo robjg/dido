@@ -102,7 +102,7 @@ public class FieldTransformationManager<D extends DidoData> {
 
     public Transformation<D> createTransformation(DataFactoryProvider<D> dataFactoryProvider) {
 
-        WriteSchemaFactory schemaFactory = dataFactoryProvider.getSchemaFactory();
+        SchemaFactory schemaFactory = dataFactoryProvider.getSchemaFactory();
 
         int index = 0;
         for (SchemaField schemaField : indexFields.values()) {
@@ -113,7 +113,7 @@ public class FieldTransformationManager<D extends DidoData> {
             schemaFactory.addSchemaField(newField);
         }
 
-        WriteSchema newSchema = schemaFactory.toSchema();
+        WriteSchema newSchema = WriteSchema.from(schemaFactory.toSchema());
 
         DataFactory<D> dataFactory = dataFactoryProvider.provideFactory(newSchema);
 
@@ -152,7 +152,7 @@ public class FieldTransformationManager<D extends DidoData> {
         @Override
         public D apply(DidoData data) {
 
-            WritableData writableData = dataFactory.getSetter();
+            WritableData writableData = dataFactory.getWritableData();
 
             operationList.forEach(consumer -> consumer.accept(data, writableData));
 

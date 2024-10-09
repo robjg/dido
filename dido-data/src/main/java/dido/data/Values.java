@@ -29,7 +29,7 @@ public class Values<D extends DidoData> {
     }
 
     public D of(Object... values) {
-        WritableData writableData = dataFactory.getSetter();
+        WritableData writableData = dataFactory.getWritableData();
         for (int i = 0; i < values.length; ++i) {
             Object value = values[i];
             if (value != null) {
@@ -40,7 +40,7 @@ public class Values<D extends DidoData> {
     }
 
     public D ofList(List<?> values) {
-        WritableData writableData = dataFactory.getSetter();
+        WritableData writableData = dataFactory.getWritableData();
         int i = 0;
         for (Object value : values) {
             if (value != null) {

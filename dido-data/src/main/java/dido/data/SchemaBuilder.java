@@ -7,24 +7,21 @@ public class SchemaBuilder<S extends DataSchema> {
 
     private final SchemaFactory schemaFactory;
 
-    private final Class<S> schemaClass;
-
-    private SchemaBuilder(SchemaFactory schemaFactory, Class<S> schemaClass) {
+    private SchemaBuilder(SchemaFactory schemaFactory) {
         this.schemaFactory = schemaFactory;
-        this.schemaClass = schemaClass;
     }
 
     public static <S extends WriteSchema> SchemaBuilder<S>
-    builderFor(WriteSchemaFactory schemaFactory) {
-        return new SchemaBuilder<>(schemaFactory, null);
+    builderFor(SchemaFactory schemaFactory) {
+        return new SchemaBuilder<>(schemaFactory);
     }
 
     public static <S extends DataSchema> SchemaBuilder<S> builderFor(SchemaFactory schemaFactory, Class<S> schemaClass) {
-        return new SchemaBuilder<>(schemaFactory, schemaClass);
+        return new SchemaBuilder<>(schemaFactory);
     }
 
     public static SchemaBuilder<DataSchema> newInstance() {
-        return new SchemaBuilder<>(DataSchemaFactory.newInstance(), DataSchema.class);
+        return new SchemaBuilder<>(DataSchemaFactory.newInstance());
     }
 
     // Add Simple Fields

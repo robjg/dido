@@ -18,6 +18,8 @@ public interface WritableData {
 
     void setByteAt(int index, byte value);
 
+    void setCharAt(int index, char value);
+
     void setShortAt(int index, short value);
 
     void setIntAt(int index, int value);

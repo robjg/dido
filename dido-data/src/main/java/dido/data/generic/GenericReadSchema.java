@@ -4,16 +4,7 @@ import dido.data.FieldGetter;
 import dido.data.NoSuchFieldException;
 import dido.data.ReadSchema;
 
-public interface GenericReadSchema<F> extends GenericDataSchema<F>, ReadSchema {
-
-    default FieldGetter getFieldGetter(F field) {
-        if (!hasField(field)) {
-            throw new NoSuchFieldException(field.toString(), this);
-        }
-        else {
-            return getFieldGetterAt(getIndexOf(field));
-        }
-    }
+public interface GenericReadSchema<F> extends GenericDataSchema<F>, ReadSchema, GenericReadStrategy<F> {
 
     /**
      * Provide an empty schema.

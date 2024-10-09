@@ -11,7 +11,7 @@ public class NonBoxedDataFactoryProvider implements DataFactoryProvider<NonBoxed
     }
 
     @Override
-    public WriteSchemaFactory getSchemaFactory() {
+    public SchemaFactory getSchemaFactory() {
         return NonBoxedData.schemaFactory();
     }
 

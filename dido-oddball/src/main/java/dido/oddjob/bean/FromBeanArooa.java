@@ -359,7 +359,7 @@ public class FromBeanArooa {
         @Override
         public FieldGetter getFieldGetterAt(int index) {
             if (hasIndex(index)) {
-                return FieldGetter.getterAt(index);
+                return FieldGetter.at(index);
 
             } else {
                 throw new NoSuchFieldException(index, Schema.this);

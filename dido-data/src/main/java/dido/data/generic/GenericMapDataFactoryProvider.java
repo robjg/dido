@@ -3,7 +3,7 @@ package dido.data.generic;
 import dido.data.DataFactory;
 import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
-import dido.data.WriteSchemaFactory;
+import dido.data.SchemaFactory;
 
 import java.util.function.Function;
 
@@ -26,7 +26,7 @@ public class GenericMapDataFactoryProvider<F> implements DataFactoryProvider<Gen
     }
 
     @Override
-    public WriteSchemaFactory getSchemaFactory() {
+    public SchemaFactory getSchemaFactory() {
         return of.schemaFactory();
     }
 

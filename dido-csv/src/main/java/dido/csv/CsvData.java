@@ -296,7 +296,7 @@ public class CsvData extends AbstractNamedData {
             if (index == 0) {
                 throw new NoSuchFieldException(name, Schema.this);
             }
-            return getFieldGetterAt(index);
+            return getters[index - 1];
         }
     }
 

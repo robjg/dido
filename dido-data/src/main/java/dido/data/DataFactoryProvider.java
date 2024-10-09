@@ -11,7 +11,7 @@ public interface DataFactoryProvider<D extends DidoData> {
 
     Type getDataType();
 
-    WriteSchemaFactory getSchemaFactory();
+    SchemaFactory getSchemaFactory();
 
     DataFactory<D> provideFactory(DataSchema schema);
 }

@@ -40,7 +40,7 @@ public class DataRowFactory {
             cells[lastIndex - 1] = cellProvider.provideCellIn(lastIndex);
         }
 
-        return new DataRowFactory(ReadSchema.readableSchemaFrom(schema), cells);
+        return new DataRowFactory(ReadSchema.from(schema), cells);
     }
 
 

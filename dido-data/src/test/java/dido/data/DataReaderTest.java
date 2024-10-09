@@ -66,7 +66,7 @@ class DataReaderTest {
         long millis = System.currentTimeMillis();
 
         for (int i = 0; i < SAMPLE_SIZE; i++) {
-            WritableData writable = dataFactory.getSetter();
+            WritableData writable = dataFactory.getWritableData();
             fruitSetter.setString(writable,"Apple");
             quantitySetter.setInt(writable, (int) (Math.random() * 10));
             priceSetter.setDouble(writable, Math.random() * 30);

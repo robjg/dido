@@ -1,8 +1,10 @@
 package dido.data.enums;
 
-import dido.data.DidoData;
-import dido.data.ReadSchema;
+import dido.data.NoSuchFieldException;
+import dido.data.*;
 import dido.data.generic.GenericData;
+
+import java.util.Objects;
 
 /**
  * Data with an Enum Field.
@@ -18,12 +20,35 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
 
         ReadSchema schema = data.getSchema();
 
+        ReadStrategy readStrategy = ReadStrategy.fromSchema(schema);
+
         EnumSchema<E> enumSchema = EnumSchema.enumSchemaFrom(schema, enumClass);
 
         class Schema extends EnumSchemaDelegate<E> implements EnumReadSchema<E> {
 
             Schema() {
                 super(enumSchema);
+            }
+
+            @Override
+            public FieldGetter getFieldGetterAt(int index) {
+                return readStrategy.getFieldGetterAt(index);
+            }
+
+            @Override
+            public FieldGetter getFieldGetterNamed(String name) {
+                return readStrategy.getFieldGetterNamed(name);
+            }
+
+            @Override
+            public FieldGetter getFieldGetter(E field) {
+                int index = enumSchema.getIndexOf(Objects.requireNonNull(field));
+                if (index == 0) {
+                    throw new NoSuchFieldException(field.toString(), enumSchema);
+                }
+                else {
+                    return getFieldGetterAt(index);
+                }
             }
         }
 

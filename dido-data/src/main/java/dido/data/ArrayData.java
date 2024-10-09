@@ -30,7 +30,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         return new ArrayData(schemaFactory.toSchema(), data);
     }
 
-    public static WriteSchemaFactory schemaFactory() {
+    public static SchemaFactory schemaFactory() {
         return new ArrayDataSchemaFactory();
     }
 
@@ -206,7 +206,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public WritableData getSetter() {
+        public WritableData getWritableData() {
             return this;
         }
 
@@ -293,8 +293,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
 
     }
 
-    static class ArrayDataSchemaFactory extends SchemaFactoryImpl<Schema>
-            implements WriteSchemaFactory {
+    static class ArrayDataSchemaFactory extends SchemaFactoryImpl<Schema> {
 
         protected ArrayDataSchemaFactory() {
         }

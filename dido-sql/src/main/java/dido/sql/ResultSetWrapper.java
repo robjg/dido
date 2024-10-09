@@ -487,6 +487,15 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
                 throw new NoSuchFieldException(index, this);
             }
         }
+
+        @Override
+        public FieldGetter getFieldGetterNamed(String name) {
+            int index = getIndexNamed(name);
+            if (index == 0) {
+                throw new NoSuchFieldException(name, this);
+            }
+            return getters[index - 1];
+        }
     }
 
 }

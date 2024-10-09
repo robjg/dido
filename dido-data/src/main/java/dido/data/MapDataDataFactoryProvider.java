@@ -11,7 +11,7 @@ public class MapDataDataFactoryProvider implements DataFactoryProvider<MapData> 
     }
 
     @Override
-    public WriteSchemaFactory getSchemaFactory() {
+    public SchemaFactory getSchemaFactory() {
         return MapData.schemaFactory();
     }
 

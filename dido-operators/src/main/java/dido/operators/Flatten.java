@@ -61,8 +61,8 @@ public class Flatten {
                 "No Nested Schema for " + extractor);
 
         Concatenator concatenator = extractor.bodgeFields(Concatenator.withSettings())
-                .makeFromSchemas(ReadSchema.readableSchemaFrom(schema),
-                        ReadSchema.readableSchemaFrom(nestedSchema));
+                .makeFromSchemas(ReadSchema.from(schema),
+                        ReadSchema.from(nestedSchema));
 
         return new KnownRepeatingFlatten(concatenator, extractor);
     }
@@ -201,7 +201,7 @@ public class Flatten {
 
             DataFactory<ArrayData> arrayData = ArrayData.factoryForSchema(newSchema);
 
-            WritableData writableData = arrayData.getSetter();
+            WritableData writableData = arrayData.getWritableData();
 
             for (int l = 0; l < maxSize; ++l) {
 

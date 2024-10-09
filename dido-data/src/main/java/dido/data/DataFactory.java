@@ -23,7 +23,14 @@ public interface DataFactory<D extends DidoData> {
         return getSchema().getFieldSetterNamed(name);
     }
 
-    WritableData getSetter();
+    /**
+     * Provides Writable data that can be written to either directly using the {@code set} methods
+     * or using a {@link FieldSetter} provided by a {@link WriteStrategy} appropriate for the data type.
+     *
+     * @return Writable Data. Never null.
+     */
+    WritableData getWritableData();
+
 
     D toData();
 

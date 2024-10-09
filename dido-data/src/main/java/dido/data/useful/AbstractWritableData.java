@@ -42,6 +42,11 @@ abstract public class AbstractWritableData implements WritableData {
     }
 
     @Override
+    public void setCharAt(int index, char value) {
+        setAt(index, value);
+    }
+
+    @Override
     public void setShortAt(int index, short value) {
         setAt(index, value);
     }

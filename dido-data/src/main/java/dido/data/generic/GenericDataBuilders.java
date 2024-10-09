@@ -29,7 +29,7 @@ abstract public class GenericDataBuilders {
                 setters.put(field, schema.getFieldSetter(field));
             }
             this.setters = setters;
-            this.writableData = dataFactory.getSetter();
+            this.writableData = dataFactory.getWritableData();
         }
 
         public D build() {
@@ -136,14 +136,14 @@ abstract public class GenericDataBuilders {
         @Override
         public D build() {
 
-            WriteSchemaFactory schemaFactory = factoryProvider.getSchemaFactory();
+            SchemaFactory schemaFactory = factoryProvider.getSchemaFactory();
             for (SchemaField schemaField : schemaFields) {
                 schemaFactory.addSchemaField(schemaField);
             }
 
-            WriteSchema writeSchema = schemaFactory.toSchema();
+            DataSchema schema = schemaFactory.toSchema();
 
-            DataFactory<D> dataFactory = factoryProvider.provideFactory(writeSchema);
+            DataFactory<D> dataFactory = factoryProvider.provideFactory(schema);
 
             return Values.withDataFactory(dataFactory).ofList(values);
         }

@@ -96,7 +96,7 @@ public class TransformationComplexTest {
 
         public Transformation<D> define(ReadSchema incomingSchema, DataFactoryProvider<D> factoryProvider) {
 
-            WriteSchemaFactory schemaFactory = factoryProvider.getSchemaFactory();
+            SchemaFactory schemaFactory = factoryProvider.getSchemaFactory();
 
             WriteSchema outSchema = SchemaBuilder.builderFor(schemaFactory)
                     .addSchemaField(incomingSchema.getSchemaFieldNamed("Fruit").mapToIndex(1))
@@ -139,7 +139,7 @@ public class TransformationComplexTest {
 
                     markupAmount = price * markup;
 
-                    WritableData out = dataFactory.getSetter();
+                    WritableData out = dataFactory.getWritableData();
 
                     fruitSetter.setString(out, fruitGetter.getString(data));
                     priceSetter.setDouble(out, price);

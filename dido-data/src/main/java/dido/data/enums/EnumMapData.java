@@ -47,13 +47,13 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
             }
         }
 
-        public SchemaFactory<E> schemaFactory() {
-            return new SchemaFactory<>(this);
+        public EnumMapDataSchemaFactory<E> schemaFactory() {
+            return new EnumMapDataSchemaFactory<>(this);
         }
 
-        public SchemaFactory<E> schemaFactory(DataSchema schema) {
+        public EnumMapDataSchemaFactory<E> schemaFactory(DataSchema schema) {
 
-            SchemaFactory<E> factory = new SchemaFactory<>(this);
+            EnumMapDataSchemaFactory<E> factory = new EnumMapDataSchemaFactory<>(this);
             for (SchemaField schemaField : schema.getSchemaFields()) {
                 factory.addSchemaField(schemaField);
             }
@@ -141,7 +141,7 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
         }
 
         @Override
-        public GenericWritableData<E> getSetter() {
+        public GenericWritableData<E> getWritableData() {
             return this;
         }
 
@@ -256,13 +256,13 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
         }
     }
 
-    public static class SchemaFactory<E extends Enum<E>>
+    public static class EnumMapDataSchemaFactory<E extends Enum<E>>
             extends GenericSchemaFactoryImpl<E, Schema<E>>
-            implements GenericWriteSchemaFactory<E> {
+            implements GenericSchemaFactory<E> {
 
         private final Of<E> of;
 
-        SchemaFactory(Of<E> of) {
+        EnumMapDataSchemaFactory(Of<E> of) {
             super(of.fieldType, of.fieldNameMapping);
             this.of = of;
         }

@@ -59,7 +59,7 @@ public class JsonDataCopy<D extends DidoData> {
             }
 
             SchemaAndFactory<D> schemaAndFactory = stack.getFirst();
-            WritableData setter = schemaAndFactory.dataFactory.getSetter();
+            WritableData setter = schemaAndFactory.dataFactory.getWritableData();
             DataSchema schema = schemaAndFactory.schema;
 
             JsonObject jsonObject = (JsonObject) json;
