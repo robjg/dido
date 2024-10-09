@@ -45,12 +45,14 @@ class DataReaderTest {
 
         List<DidoData> data = writeWithFieldSetters(dataFactory);
 
-        System.out.println(withFieldGetters(dataFactory.getSchema(), data));
+        System.out.println(withFieldGetters(
+                ReadStrategy.fromSchema(dataFactory.getSchema()), data));
         System.out.println(withNamedGetters(data));
         System.out.println(withIndexedGetters(data));
         System.out.println(withIndexedGetters(data));
         System.out.println(withNamedGetters(data));
-        System.out.println(withFieldGetters(dataFactory.getSchema(), data));
+        System.out.println(withFieldGetters(
+                ReadStrategy.fromSchema(dataFactory.getSchema()), data));
     }
 
     static List<DidoData> writeWithFieldSetters(DataFactory<?> dataFactory) {
@@ -78,14 +80,14 @@ class DataReaderTest {
         return data;
     }
 
-    static double withFieldGetters(ReadSchema schema, List<DidoData> list) {
+    static double withFieldGetters(ReadStrategy readStrategy, List<DidoData> list) {
 
         System.gc();
 
         double avg = 0.0;
 
-        FieldGetter quantityGetter = schema.getFieldGetterNamed("Quantity");
-        FieldGetter priceGetter = schema.getFieldGetterNamed("Price");
+        FieldGetter quantityGetter = readStrategy.getFieldGetterNamed("Quantity");
+        FieldGetter priceGetter = readStrategy.getFieldGetterNamed("Price");
 
         long millis = System.currentTimeMillis();
 

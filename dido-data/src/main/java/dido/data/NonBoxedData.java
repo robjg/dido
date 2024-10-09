@@ -6,7 +6,7 @@ import java.util.Collection;
 
 public class NonBoxedData extends AbstractData {
 
-    private final Schema schema;
+    private final NonBoxedDataSchema schema;
 
     private final Object[] values;
 
@@ -25,16 +25,16 @@ public class NonBoxedData extends AbstractData {
         return new NonBoxedDataSchemaFactory();
     }
 
-    public static SchemaBuilder<Schema> schemaBuilder() {
-        return SchemaBuilder.builderFor(schemaFactory(), Schema.class);
+    public static SchemaBuilder<NonBoxedDataSchema> schemaBuilder() {
+        return SchemaBuilder.builderFor(schemaFactory(), NonBoxedDataSchema.class);
     }
 
-    public static Schema asNonBoxedDataSchema(DataSchema schema) {
+    public static NonBoxedDataSchema asNonBoxedDataSchema(DataSchema schema) {
 
-        if (schema instanceof Schema) {
-            return (Schema) schema;
+        if (schema instanceof NonBoxedDataSchema) {
+            return (NonBoxedDataSchema) schema;
         } else {
-            return new Schema(schema.getSchemaFields(), schema.firstIndex(), schema.lastIndex());
+            return new NonBoxedDataSchema(schema.getSchemaFields(), schema.firstIndex(), schema.lastIndex());
         }
     }
 
@@ -43,7 +43,7 @@ public class NonBoxedData extends AbstractData {
         return new DataBuilder<>(factoryForSchema(schema));
     }
 
-    public static DataBuilder<NonBoxedData> builderForSchema(Schema schema) {
+    public static DataBuilder<NonBoxedData> builderForSchema(NonBoxedDataSchema schema) {
 
         return new DataBuilder<>(factoryForSchema(schema));
     }
@@ -53,7 +53,7 @@ public class NonBoxedData extends AbstractData {
     }
 
     @Override
-    public Schema getSchema() {
+    public NonBoxedDataSchema getSchema() {
         return schema;
     }
 
@@ -127,7 +127,7 @@ public class NonBoxedData extends AbstractData {
 
     static class Factory implements DataFactory<NonBoxedData>, WritableData {
 
-        private final Schema schema;
+        private final NonBoxedDataSchema schema;
 
         private Object[] values;
 
@@ -135,7 +135,7 @@ public class NonBoxedData extends AbstractData {
 
         private double[] doubles;
 
-        private Factory(Schema schema) {
+        private Factory(NonBoxedDataSchema schema) {
             this.schema = schema;
             this.values = new Object[schema.values];
             this.ints = new int[schema.ints];
@@ -143,7 +143,7 @@ public class NonBoxedData extends AbstractData {
         }
 
         @Override
-        public ReadWriteSchema getSchema() {
+        public NonBoxedDataSchema getSchema() {
             return schema;
         }
 
@@ -360,8 +360,8 @@ public class NonBoxedData extends AbstractData {
         }
     }
 
-    public static class Schema extends DataSchemaImpl
-            implements ReadWriteSchema {
+    public static class NonBoxedDataSchema extends DataSchemaImpl
+            implements ReadSchema, WriteSchema {
 
         private final FieldGetter[] getters;
 
@@ -373,7 +373,7 @@ public class NonBoxedData extends AbstractData {
 
         private final int doubles;
 
-        private Schema(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
+        private NonBoxedDataSchema(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
             super(fields, firstIndex, lastIndex);
 
             this.getters = new FieldGetter[lastIndex];
@@ -409,11 +409,11 @@ public class NonBoxedData extends AbstractData {
             try {
                 FieldGetter getter = getters[index - 1];
                 if (getter == null) {
-                    throw new NoSuchFieldException(index, Schema.this);
+                    throw new NoSuchFieldException(index, NonBoxedDataSchema.this);
                 }
                 return getter;
             } catch (ArrayIndexOutOfBoundsException e) {
-                throw new NoSuchFieldException(index, Schema.this);
+                throw new NoSuchFieldException(index, NonBoxedDataSchema.this);
             }
         }
 
@@ -421,7 +421,7 @@ public class NonBoxedData extends AbstractData {
         public FieldGetter getFieldGetterNamed(String name) {
             int index = getIndexNamed(name);
             if (index == 0) {
-                throw new NoSuchFieldException(name, Schema.this);
+                throw new NoSuchFieldException(name, NonBoxedDataSchema.this);
             }
             return getFieldGetterAt(index);
         }
@@ -449,12 +449,12 @@ public class NonBoxedData extends AbstractData {
         }
     }
 
-    static class NonBoxedDataSchemaFactory extends SchemaFactoryImpl<Schema>
+    static class NonBoxedDataSchemaFactory extends SchemaFactoryImpl<NonBoxedDataSchema>
             implements SchemaFactory {
 
         @Override
-        protected Schema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
-            return new Schema(fields, firstIndex, lastIndex);
+        protected NonBoxedDataSchema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
+            return new NonBoxedDataSchema(fields, firstIndex, lastIndex);
         }
     }
 

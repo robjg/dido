@@ -266,7 +266,7 @@ public class MapData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        public ReadWriteSchema getSchema() {
+        public MapDataSchema getSchema() {
             return schema;
         }
 
@@ -309,7 +309,7 @@ public class MapData extends AbstractNamedData implements NamedData {
     }
 
     public static class MapDataSchema extends DataSchemaImpl
-            implements ReadWriteSchema {
+            implements ReadSchema, WriteSchema {
 
         MapDataSchema(DataSchema from) {
             super(from.getSchemaFields(), from.firstIndex(), from.lastIndex());

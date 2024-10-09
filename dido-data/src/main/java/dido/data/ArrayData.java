@@ -10,11 +10,11 @@ import java.util.*;
  */
 public class ArrayData extends AbstractNamedData implements NamedData {
 
-    private final Schema schema;
+    private final ArrayDataSchema schema;
 
     private final Object[] data;
 
-    private ArrayData(Schema schema, Object[] data) {
+    private ArrayData(ArrayDataSchema schema, Object[] data) {
         this.schema = schema;
         this.data = data;
     }
@@ -34,17 +34,17 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         return new ArrayDataSchemaFactory();
     }
 
-    public static SchemaBuilder<Schema> schemaBuilder() {
-        return SchemaBuilder.builderFor(schemaFactory(), Schema.class);
+    public static SchemaBuilder<ArrayDataSchema> schemaBuilder() {
+        return SchemaBuilder.builderFor(schemaFactory(), ArrayDataSchema.class);
     }
 
-    public static Schema asArrayDataSchema(DataSchema schema) {
+    public static ArrayDataSchema asArrayDataSchema(DataSchema schema) {
 
-        if (schema instanceof Schema) {
-            return (Schema) schema;
+        if (schema instanceof ArrayDataSchema) {
+            return (ArrayDataSchema) schema;
 
         } else {
-            return new Schema(schema);
+            return new ArrayDataSchema(schema);
         }
     }
 
@@ -53,7 +53,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         return builderForSchema(asArrayDataSchema(schema));
     }
 
-    public static DataBuilder<ArrayData> builderForSchema(Schema schema) {
+    public static DataBuilder<ArrayData> builderForSchema(ArrayDataSchema schema) {
 
         return new DataBuilder<>(schema.newDataFactory());
     }
@@ -73,7 +73,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
     }
 
     @Override
-    public Schema getSchema() {
+    public ArrayDataSchema getSchema() {
         return schema;
     }
 
@@ -156,17 +156,17 @@ public class ArrayData extends AbstractNamedData implements NamedData {
 
     static class ArrayDataFactory extends AbstractWritableData implements DataFactory<ArrayData> {
 
-        private final Schema schema;
+        private final ArrayDataSchema schema;
 
         private Object[] values;
 
-        ArrayDataFactory(Schema schema) {
+        ArrayDataFactory(ArrayDataSchema schema) {
             this.schema = schema;
             values = new Object[schema.lastIndex()];
         }
 
         @Override
-        public ReadWriteSchema getSchema() {
+        public ArrayDataSchema getSchema() {
             return schema;
         }
 
@@ -218,14 +218,14 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
     }
 
-    public static class Schema extends DataSchemaImpl
-            implements ReadWriteSchema {
+    public static class ArrayDataSchema extends DataSchemaImpl
+            implements ReadSchema, WriteSchema {
 
-        Schema(DataSchema from) {
+        ArrayDataSchema(DataSchema from) {
             super(from.getSchemaFields(), from.firstIndex(), from.lastIndex());
         }
 
-        Schema(Iterable<SchemaField> schemaFields, int firstIndex, int lastIndex) {
+        ArrayDataSchema(Iterable<SchemaField> schemaFields, int firstIndex, int lastIndex) {
             super(schemaFields, firstIndex, lastIndex);
         }
 
@@ -293,7 +293,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
 
     }
 
-    static class ArrayDataSchemaFactory extends SchemaFactoryImpl<Schema> {
+    static class ArrayDataSchemaFactory extends SchemaFactoryImpl<ArrayDataSchema> {
 
         protected ArrayDataSchemaFactory() {
         }
@@ -303,8 +303,8 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         }
 
         @Override
-        protected Schema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
-            return new Schema(fields, firstIndex, lastIndex);
+        protected ArrayDataSchema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
+            return new ArrayDataSchema(fields, firstIndex, lastIndex);
         }
     }
 }

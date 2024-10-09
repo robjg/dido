@@ -11,17 +11,7 @@ public interface DataFactory<D extends DidoData> {
 
     Type getDataType();
 
-    ReadWriteSchema getSchema();
-
-    @Deprecated
-    default FieldSetter getFieldSetterAt(int index) {
-        return getSchema().getFieldSetterAt(index);
-    }
-
-    @Deprecated
-    default FieldSetter getFieldSetterNamed(String name) {
-        return getSchema().getFieldSetterNamed(name);
-    }
+    WriteSchema getSchema();
 
     /**
      * Provides Writable data that can be written to either directly using the {@code set} methods
@@ -30,7 +20,6 @@ public interface DataFactory<D extends DidoData> {
      * @return Writable Data. Never null.
      */
     WritableData getWritableData();
-
 
     D toData();
 

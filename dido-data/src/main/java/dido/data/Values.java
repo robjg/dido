@@ -24,7 +24,7 @@ public class Values<D extends DidoData> {
         return new Values<>(dataFactory);
     }
 
-    public ReadWriteSchema getSchema() {
+    public WriteSchema getSchema() {
         return dataFactory.getSchema();
     }
 

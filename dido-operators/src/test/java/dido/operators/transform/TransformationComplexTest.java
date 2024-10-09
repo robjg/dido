@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.is;
 
 public class TransformationComplexTest {
 
-    static ArrayData.Schema schema = ArrayData.schemaBuilder()
+    static ArrayData.ArrayDataSchema schema = ArrayData.schemaBuilder()
             .addNamed("Fruit", String.class)
             .addNamed("Qty", int.class)
             .addNamed("Price", double.class)

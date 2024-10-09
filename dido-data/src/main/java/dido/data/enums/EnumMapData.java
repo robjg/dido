@@ -11,11 +11,11 @@ import java.util.function.Function;
 
 public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> implements EnumData<E> {
 
-    private final Schema<E> schema;
+    private final EnumMapDataSchema<E> schema;
 
     private final EnumMap<E, ?> map;
 
-    private EnumMapData(Schema<E> schema, EnumMap<E, ?> map) {
+    private EnumMapData(EnumMapDataSchema<E> schema, EnumMap<E, ?> map) {
         this.schema = schema;
         this.map = map;
     }
@@ -36,10 +36,10 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
         }
 
         @SuppressWarnings("unchecked")
-        public Schema<E> asEnumMapDataSchema(DataSchema schema) {
+        public EnumMapDataSchema<E> asEnumMapDataSchema(DataSchema schema) {
 
-            if (schema instanceof Schema && ((Schema<E>) schema).getFieldType() == this.fieldType) {
-                return (Schema<E>) schema;
+            if (schema instanceof EnumMapData.EnumMapDataSchema && ((EnumMapDataSchema<E>) schema).getFieldType() == this.fieldType) {
+                return (EnumMapDataSchema<E>) schema;
 
             } else {
 
@@ -69,7 +69,7 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
     public static <E extends Enum<E>> GenericData<E> from(EnumSchema<E> schema, EnumMap<E, ?> map) {
 
         return new EnumMapData<>(
-                new Schema<>(schema.getFieldType(), schema),
+                new EnumMapDataSchema<>(schema.getFieldType(), schema),
                 new EnumMap<E, Object>(map));
     }
 
@@ -121,17 +121,17 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
     static class Factory<E extends Enum<E>> extends AbstractGenericWritableData<E>
             implements GenericDataFactory<E, EnumMapData<E>>, GenericWritableData<E> {
 
-        private final Schema<E> schema;
+        private final EnumMapDataSchema<E> schema;
 
         private EnumMap<E, Object> map;
 
-        Factory(Schema<E> schema) {
+        Factory(EnumMapDataSchema<E> schema) {
             this.schema = schema;
             this.map = new EnumMap<>(schema.getFieldType());
         }
 
         @Override
-        public GenericReadWriteSchema<E> getSchema() {
+        public EnumMapDataSchema<E> getSchema() {
             return schema;
         }
 
@@ -153,28 +153,28 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
         }
     }
 
-    public static class Schema<E extends Enum<E>> extends GenericSchemaImpl<E>
-            implements EnumReadWriteSchema<E> {
+    public static class EnumMapDataSchema<E extends Enum<E>> extends GenericSchemaImpl<E>
+            implements EnumReadSchema<E>, EnumWriteSchema<E> {
 
-        protected Schema(Class<E> enumClass, GenericDataSchema<E> schema) {
+        protected EnumMapDataSchema(Class<E> enumClass, GenericDataSchema<E> schema) {
             super(enumClass, schema);
         }
 
-        protected Schema(Of<E> of, GenericDataSchema<E> schema) {
+        protected EnumMapDataSchema(Of<E> of, GenericDataSchema<E> schema) {
             super(of.fieldType, schema);
         }
 
-        protected Schema(Of<E> of,
-                         Iterable<GenericSchemaField<E>> genericSchemaFields,
-                         int firstIndex,
-                         int lastIndex) {
+        protected EnumMapDataSchema(Of<E> of,
+                                    Iterable<GenericSchemaField<E>> genericSchemaFields,
+                                    int firstIndex,
+                                    int lastIndex) {
             super(of.fieldType, genericSchemaFields, firstIndex, lastIndex);
         }
 
-        protected Schema(Class<E> fieldType,
-                         Iterable<GenericSchemaField<E>> genericSchemaFields,
-                         int firstIndex,
-                         int lastIndex) {
+        protected EnumMapDataSchema(Class<E> fieldType,
+                                    Iterable<GenericSchemaField<E>> genericSchemaFields,
+                                    int firstIndex,
+                                    int lastIndex) {
             super(fieldType, genericSchemaFields, firstIndex, lastIndex);
         }
 
@@ -257,7 +257,7 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
     }
 
     public static class EnumMapDataSchemaFactory<E extends Enum<E>>
-            extends GenericSchemaFactoryImpl<E, Schema<E>>
+            extends GenericSchemaFactoryImpl<E, EnumMapDataSchema<E>>
             implements GenericSchemaFactory<E> {
 
         private final Of<E> of;
@@ -268,10 +268,10 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
         }
 
         @Override
-        protected Schema<E> createGeneric(Collection<GenericSchemaField<E>> genericSchemaFields,
-                                          int firstIndex,
-                                          int lastIndex) {
-            return new Schema<>(of, genericSchemaFields, firstIndex, lastIndex);
+        protected EnumMapDataSchema<E> createGeneric(Collection<GenericSchemaField<E>> genericSchemaFields,
+                                                     int firstIndex,
+                                                     int lastIndex) {
+            return new EnumMapDataSchema<>(of, genericSchemaFields, firstIndex, lastIndex);
         }
     }
 
@@ -306,7 +306,7 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
             @SuppressWarnings({"unchecked", "rawtypes"}) EnumSchema<E> schema = EnumSchema.schemaFor(enumClass, e ->
                     Optional.ofNullable(typeMap.get(e)).orElse((Class) void.class));
             EnumData<E> data = new EnumMapData<>(
-                    new Schema<>(schema.getFieldType(), schema), map);
+                    new EnumMapDataSchema<>(schema.getFieldType(), schema), map);
             this.typeMap = new HashMap<>();
             this.map = new EnumMap<>(enumClass);
             return data;

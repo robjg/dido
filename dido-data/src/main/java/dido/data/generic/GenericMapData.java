@@ -15,11 +15,11 @@ import java.util.function.Function;
  */
 public class GenericMapData<F> extends AbstractGenericData<F> {
 
-    private final Schema<F> schema;
+    private final GenericMapDataSchema<F> schema;
 
     private final Map<F, ?> map;
 
-    private GenericMapData(Schema<F> schema, Map<F, ?> map) {
+    private GenericMapData(GenericMapDataSchema<F> schema, Map<F, ?> map) {
         this.schema = schema;
         this.map = map;
     }
@@ -118,10 +118,10 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
 
         @SuppressWarnings("unchecked")
-        public Schema<F> asGenericMapDataSchema(DataSchema schema) {
+        public GenericMapDataSchema<F> asGenericMapDataSchema(DataSchema schema) {
 
-            if (schema instanceof Schema && ((Schema<F>) schema).getFieldType() == this.fieldType) {
-                return (Schema<F>) schema;
+            if (schema instanceof GenericMapData.GenericMapDataSchema && ((GenericMapDataSchema<F>) schema).getFieldType() == this.fieldType) {
+                return (GenericMapDataSchema<F>) schema;
 
             } else {
 
@@ -213,16 +213,16 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
     static class Factory<F> extends AbstractGenericWritableData<F>
             implements GenericDataFactory<F, GenericMapData<F>> {
 
-        private final Schema<F> schema;
+        private final GenericMapDataSchema<F> schema;
 
         private Map<F, Object> data = new HashMap<>();
 
-        Factory(Schema<F> schema) {
+        Factory(GenericMapDataSchema<F> schema) {
             this.schema = schema;
         }
 
         @Override
-        public GenericReadWriteSchema<F> getSchema() {
+        public GenericMapDataSchema<F> getSchema() {
             return schema;
         }
 
@@ -269,29 +269,29 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
     }
 
-    public static class Schema<F> extends GenericSchemaImpl<F>
-            implements GenericReadWriteSchema<F> {
+    public static class GenericMapDataSchema<F> extends GenericSchemaImpl<F>
+            implements  GenericReadSchema<F>, GenericWriteSchema<F> {
 
         private final Of<F> of;
 
-        protected Schema(Of<F> of,
-                         GenericDataSchema<F> schema) {
+        protected GenericMapDataSchema(Of<F> of,
+                                       GenericDataSchema<F> schema) {
             super(of.fieldType, schema);
             this.of = of;
         }
 
-        protected Schema(Of<F> of,
-                         Iterable<GenericSchemaField<F>> genericSchemaFields,
-                         int firstIndex,
-                         int lastIndex) {
+        protected GenericMapDataSchema(Of<F> of,
+                                       Iterable<GenericSchemaField<F>> genericSchemaFields,
+                                       int firstIndex,
+                                       int lastIndex) {
             super(of.fieldType, genericSchemaFields, firstIndex, lastIndex);
             this.of = of;
         }
 
         @Override
         public FieldGetter getFieldGetter(F field) {
-            if (!Schema.this.hasField(field)) {
-                throw new NoSuchFieldException(field.toString(), Schema.this);
+            if (!GenericMapDataSchema.this.hasField(field)) {
+                throw new NoSuchFieldException(field.toString(), GenericMapDataSchema.this);
             }
             return new AbstractFieldGetter() {
                 @Override
@@ -303,18 +303,18 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
 
         @Override
         public FieldGetter getFieldGetterAt(int index) {
-            F field = Schema.this.getFieldAt(index);
+            F field = GenericMapDataSchema.this.getFieldAt(index);
             if (field == null) {
-                throw new NoSuchFieldException(index, Schema.this);
+                throw new NoSuchFieldException(index, GenericMapDataSchema.this);
             }
             return getFieldGetter(field);
         }
 
         @Override
         public FieldGetter getFieldGetterNamed(String name) {
-            F field = Schema.this.getFieldNamed(name);
+            F field = GenericMapDataSchema.this.getFieldNamed(name);
             if (field == null) {
-                throw new NoSuchFieldException(name, Schema.this);
+                throw new NoSuchFieldException(name, GenericMapDataSchema.this);
             }
             return getFieldGetter(field);
         }
@@ -330,9 +330,9 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
 
         @Override
         public FieldSetter getFieldSetterNamed(String name) {
-            F field = Schema.this.getFieldNamed(name);
+            F field = GenericMapDataSchema.this.getFieldNamed(name);
             if (field == null) {
-                throw new NoSuchFieldException(name, Schema.this);
+                throw new NoSuchFieldException(name, GenericMapDataSchema.this);
             }
             return getFieldSetter(field);
         }
@@ -357,7 +357,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
     }
 
-    public static class GenericMapDataSchemaFactory<F> extends GenericSchemaFactoryImpl<F, Schema<F>>
+    public static class GenericMapDataSchemaFactory<F> extends GenericSchemaFactoryImpl<F, GenericMapDataSchema<F>>
             implements GenericSchemaFactory<F> {
 
         private final Of<F> of;
@@ -368,10 +368,10 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         }
 
         @Override
-        protected Schema<F> createGeneric(Collection<GenericSchemaField<F>> genericSchemaFields,
-                                                                            int firstIndex,
-                                                                            int lastIndex) {
-            return new Schema<>(of, genericSchemaFields, firstIndex, lastIndex);
+        protected GenericMapDataSchema<F> createGeneric(Collection<GenericSchemaField<F>> genericSchemaFields,
+                                                        int firstIndex,
+                                                        int lastIndex) {
+            return new GenericMapDataSchema<>(of, genericSchemaFields, firstIndex, lastIndex);
         }
     }
 }

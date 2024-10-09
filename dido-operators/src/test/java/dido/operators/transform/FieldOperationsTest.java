@@ -11,7 +11,7 @@ class FieldOperationsTest {
     static DataFactoryProvider<ArrayData> dataDataFactoryProvider =
             new ArrayDataDataFactoryProvider();
 
-    static ArrayData.Schema schema = ArrayData.schemaBuilder()
+    static ArrayData.ArrayDataSchema schema = ArrayData.schemaBuilder()
             .addNamed("Fruit", String.class)
             .addNamed("Qty", int.class)
             .addNamed("Price", double.class)
