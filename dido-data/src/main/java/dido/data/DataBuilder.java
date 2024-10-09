@@ -17,11 +17,12 @@ public class DataBuilder<D extends DidoData> {
 
     public DataBuilder(DataFactory<D> dataFactory) {
         this.dataFactory = dataFactory;
-        WriteSchema schema = dataFactory.getSchema();
+        DataSchema schema = dataFactory.getSchema();
+        WriteStrategy writeStrategy = WriteStrategy.fromSchema(schema);
 
         Map<String, FieldSetter> setters = new HashMap<>();
         for (String name : schema.getFieldNames()) {
-            setters.put(name, schema.getFieldSetterNamed(name));
+            setters.put(name, writeStrategy.getFieldSetterNamed(name));
         }
         this.setters = setters;
     }
@@ -31,7 +32,7 @@ public class DataBuilder<D extends DidoData> {
         return this;
     }
 
-    protected WriteSchema getSchema() {
+    protected DataSchema getSchema() {
         return dataFactory.getSchema();
     }
 

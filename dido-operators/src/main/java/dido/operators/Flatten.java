@@ -14,7 +14,7 @@ public class Flatten {
     }
 
     public static List<DidoData> flattenAt(int index, DidoData data) {
-        return new DynamicFlatten(extractorForFieldOrIndex((String) null, 0)).apply(data);
+        return new DynamicFlatten(extractorForFieldOrIndex( null, 0)).apply(data);
     }
 
     public static Function<DidoData, List<DidoData>> field(String field) {
@@ -199,9 +199,8 @@ public class Flatten {
 
             List<DidoData> flattened = new ArrayList<>(maxSize);
 
-            DataFactory<ArrayData> arrayData = ArrayData.factoryForSchema(newSchema);
-
-            WritableData writableData = arrayData.getWritableData();
+            DataFactory<ArrayData> dataFactory = ArrayData.factoryForSchema(newSchema);
+            WritableData writableData = dataFactory.getWritableData();
 
             for (int l = 0; l < maxSize; ++l) {
 
@@ -209,17 +208,15 @@ public class Flatten {
 
                     List<Object> list = lists.get(i);
                     if (list == null) {
-                        arrayData.getSchema()
-                                .getFieldSetterAt(i).set(writableData, data.getAt(i));
+                        writableData.setAt(i, data.getAt(i));
                     } else {
                         if (l < list.size()) {
-                            arrayData.getSchema()
-                                    .getFieldSetterAt(i).set(writableData, list.get(l));
+                            writableData.setAt(i, list.get(l));
                         }
                     }
                 }
 
-                flattened.add(arrayData.toData());
+                flattened.add(dataFactory.toData());
             }
 
             return flattened;

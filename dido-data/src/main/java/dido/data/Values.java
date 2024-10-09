@@ -13,10 +13,11 @@ public class Values<D extends DidoData> {
 
     private Values(DataFactory<D> dataFactory) {
         this.dataFactory = dataFactory;
-        WriteSchema schema = dataFactory.getSchema();
+        DataSchema schema = dataFactory.getSchema();
+        WriteStrategy writeStrategy = WriteStrategy.fromSchema(schema);
         setters = new FieldSetter[schema.lastIndex()];
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
-            setters[index - 1] = schema.getFieldSetterAt(index);
+            setters[index - 1] = writeStrategy.getFieldSetterAt(index);
         }
     }
 
@@ -24,7 +25,7 @@ public class Values<D extends DidoData> {
         return new Values<>(dataFactory);
     }
 
-    public WriteSchema getSchema() {
+    public DataSchema getSchema() {
         return dataFactory.getSchema();
     }
 

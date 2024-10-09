@@ -11,7 +11,7 @@ public interface DataFactory<D extends DidoData> {
 
     Type getDataType();
 
-    WriteSchema getSchema();
+    DataSchema getSchema();
 
     /**
      * Provides Writable data that can be written to either directly using the {@code set} methods

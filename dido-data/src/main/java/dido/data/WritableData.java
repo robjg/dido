@@ -8,7 +8,7 @@ package dido.data;
  */
 public interface WritableData {
 
-    WriteSchema getSchema();
+    DataSchema getSchema();
 
     void clearAt(int index);
 

@@ -57,7 +57,7 @@ class DataReaderTest {
 
     static List<DidoData> writeWithFieldSetters(DataFactory<?> dataFactory) {
 
-        WriteSchema schema = dataFactory.getSchema();
+        WriteStrategy schema = WriteStrategy.fromSchema(dataFactory.getSchema());
 
         FieldSetter fruitSetter = schema.getFieldSetterNamed("Fruit");
         FieldSetter quantitySetter = schema.getFieldSetterNamed("Quantity");
