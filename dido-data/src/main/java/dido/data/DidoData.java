@@ -9,7 +9,7 @@ import java.util.Objects;
 public interface DidoData extends IndexedData {
 
     @Override
-    ReadSchema getSchema();
+    DataSchema getSchema();
 
     Object getNamed(String name);
 

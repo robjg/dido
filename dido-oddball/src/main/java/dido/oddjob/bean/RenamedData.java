@@ -29,7 +29,7 @@ public class RenamedData extends AbstractNamedData {
 
         private Schema schemaOut;
 
-        private ReadSchema lastIn;
+        private DataSchema lastIn;
 
         Transform(Map<String, String> fieldMap) {
             this.fieldMap = fieldMap;
@@ -100,7 +100,7 @@ public class RenamedData extends AbstractNamedData {
         return original.hasIndex(index);
     }
 
-    static Schema renamedSchema(Map<String, String> mapping, ReadSchema fromSchema) {
+    static Schema renamedSchema(Map<String, String> mapping, DataSchema fromSchema) {
 
         DataSchemaFactory schemaFactory = DataSchemaFactory.newInstance();
         for (SchemaField schemaField : fromSchema.getSchemaFields()) {
@@ -115,9 +115,9 @@ public class RenamedData extends AbstractNamedData {
         private final ReadSchema fromSchema;
 
         Schema(DataSchemaImpl schema,
-               ReadSchema fromSchema) {
+               DataSchema fromSchema) {
             super(schema);
-            this.fromSchema = fromSchema;
+            this.fromSchema = ReadSchema.from(fromSchema);
         }
 
         @Override

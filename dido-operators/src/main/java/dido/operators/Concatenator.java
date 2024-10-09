@@ -190,13 +190,13 @@ public class Concatenator {
                 recreate = true;
                 previous = new ReadSchema[data.length];
                 for (int i = 0; i < data.length; ++i) {
-                    previous[i] = data[i].getSchema();
+                    previous[i] = ReadSchema.from(data[i].getSchema());
                 }
             } else {
                 for (int i = 0; i < data.length; ++i) {
                     if (previous[i] != data[i].getSchema()) {
                         recreate = true;
-                        previous[i] = data[i].getSchema();
+                        previous[i] = ReadSchema.from(data[i].getSchema());
                     }
                 }
             }

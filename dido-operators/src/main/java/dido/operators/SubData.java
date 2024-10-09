@@ -26,7 +26,7 @@ public class SubData extends AbstractData implements DidoData {
         this.original = original;
     }
 
-    public static Function<DidoData, DidoData> subDataOf(ReadSchema original, int... indices) {
+    public static Function<DidoData, DidoData> subDataOf(DataSchema original, int... indices) {
 
         SubSchemaFactory schemaFactory = new SubSchemaFactory(
                 original, indices);
@@ -41,7 +41,7 @@ public class SubData extends AbstractData implements DidoData {
         return new MappingFunc(schemaFactory.toSchema(), indices);
     }
 
-    public static Function<DidoData, DidoData> subDataOf(ReadSchema original, String... fields) {
+    public static Function<DidoData, DidoData> subDataOf(DataSchema original, String... fields) {
 
         int[] indices = new int[fields.length];
         for (int i = 0; i < indices.length; ++i) {
@@ -79,8 +79,8 @@ public class SubData extends AbstractData implements DidoData {
 
         private final int[] indices;
 
-        SubSchemaFactory(ReadSchema original, int[] indices) {
-            this.original = original;
+        SubSchemaFactory(DataSchema original, int[] indices) {
+            this.original = ReadSchema.from(original);
             this.indices = indices;
         }
 
@@ -123,7 +123,7 @@ public class SubData extends AbstractData implements DidoData {
 
         private final int[] indices;
 
-        private ReadSchema lastSchema;
+        private DataSchema lastSchema;
 
         private Function<DidoData, DidoData> mappingFunc;
 
@@ -148,7 +148,7 @@ public class SubData extends AbstractData implements DidoData {
 
         private final String[] fields;
 
-        private ReadSchema lastSchema;
+        private DataSchema lastSchema;
 
         private Function<DidoData, DidoData> mappingFunc;
 

@@ -2,8 +2,8 @@ package dido.operators.transform;
 
 import dido.data.ArrayDataDataFactoryProvider;
 import dido.data.DataFactoryProvider;
+import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.ReadSchema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
 
         private Function<? super DidoData, ? extends DidoData> delegate;
 
-        private ReadSchema lastSchema;
+        private DataSchema lastSchema;
 
         TransformerFunctionInitial(TransformationFactory config) {
             this.transformerFactories = new ArrayList<>(config.of);
@@ -89,7 +89,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
     }
 
     static <D extends DidoData> Transformation<D> functionFor(List<TransformerDefinition> definitions,
-                                                ReadSchema schemaFrom,
+                                                DataSchema schemaFrom,
                                                 boolean withCopy,
                                                 DataFactoryProvider<D> dataFactoryProvider) {
 

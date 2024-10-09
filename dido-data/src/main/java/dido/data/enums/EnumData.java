@@ -18,7 +18,7 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
 
     static <E extends Enum<E>> EnumData<E> fromDidoData(DidoData data, Class<E> enumClass) {
 
-        ReadSchema schema = data.getSchema();
+        DataSchema schema = data.getSchema();
 
         ReadStrategy readStrategy = ReadStrategy.fromSchema(schema);
 
