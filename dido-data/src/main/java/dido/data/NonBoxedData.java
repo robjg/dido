@@ -25,8 +25,8 @@ public class NonBoxedData extends AbstractData {
         return new NonBoxedDataSchemaFactory();
     }
 
-    public static SchemaBuilder<NonBoxedDataSchema> schemaBuilder() {
-        return SchemaBuilder.builderFor(schemaFactory(), NonBoxedDataSchema.class);
+    public static SchemaBuilder schemaBuilder() {
+        return SchemaBuilder.builderFor(schemaFactory());
     }
 
     public static NonBoxedDataSchema asNonBoxedDataSchema(DataSchema schema) {

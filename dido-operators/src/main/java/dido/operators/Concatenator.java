@@ -59,7 +59,7 @@ public class Concatenator {
             return this;
         }
 
-        public Concatenator makeFromSchemas(ReadSchema... schemas) {
+        public Concatenator makeFromSchemas(DataSchema... schemas) {
 
             List<Location> locations = new LinkedList<>();
             Map<String, Location> fieldLocations = new HashMap<>();
@@ -98,9 +98,10 @@ public class Concatenator {
 
             int locationIndex = 0;
             int dataIndex = 0;
-            for (ReadSchema schema : schemas) {
+            for (DataSchema schema : schemas) {
+                ReadStrategy readStrategy = ReadStrategy.fromSchema(schema);
                 for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
-                    Location location = new Location(dataIndex, i, schema.getFieldGetterAt(i));
+                    Location location = new Location(dataIndex, i, readStrategy.getFieldGetterAt(i));
                     SchemaField schemaField = schema.getSchemaFieldAt(i);
                     String name = schemaField.getName();
                     if (excludeFields.contains(name)) {
@@ -140,7 +141,7 @@ public class Concatenator {
      * @param schemas The schemas of the records that will be concatenated.
      * @return A {@code Concatenator}.
      */
-    public static Concatenator fromSchemas(ReadSchema... schemas) {
+    public static Concatenator fromSchemas(DataSchema... schemas) {
 
         return new Settings().makeFromSchemas(schemas);
     }

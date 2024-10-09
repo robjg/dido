@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.is;
 
 public class TransformationComplexTest {
 
-    static ArrayData.ArrayDataSchema schema = ArrayData.schemaBuilder()
+    static DataSchema schema = ArrayData.schemaBuilder()
             .addNamed("Fruit", String.class)
             .addNamed("Qty", int.class)
             .addNamed("Price", double.class)
@@ -23,9 +23,11 @@ public class TransformationComplexTest {
     static class MarkupOperation implements TransformerDefinition {
 
         @Override
-        public TransformerFactory define(ReadSchema incomingSchema, SchemaSetter schemaSetter) {
+        public TransformerFactory define(DataSchema incomingSchema, SchemaSetter schemaSetter) {
 
-            FieldGetter priceGetter = schema.getFieldGetterNamed("Price");
+            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
+
+            FieldGetter priceGetter = readStrategy.getFieldGetterNamed("Price");
 
             SchemaField markupField = SchemaField.of(0, "Markup", double.class);
             SchemaField amountField = SchemaField.of(0, "MarkupAmount", double.class);
@@ -94,11 +96,11 @@ public class TransformationComplexTest {
      */
     static class MarkupTransformationFactory<D extends DidoData> {
 
-        public Transformation<D> define(ReadSchema incomingSchema, DataFactoryProvider<D> factoryProvider) {
+        public Transformation<D> define(DataSchema incomingSchema, DataFactoryProvider<D> factoryProvider) {
 
             SchemaFactory schemaFactory = factoryProvider.getSchemaFactory();
 
-            WriteSchema outSchema = SchemaBuilder.builderFor(schemaFactory)
+            DataSchema outSchema = SchemaBuilder.builderFor(schemaFactory)
                     .addSchemaField(incomingSchema.getSchemaFieldNamed("Fruit").mapToIndex(1))
                     .addSchemaField(incomingSchema.getSchemaFieldNamed("Price").mapToIndex(2))
                     .addSchemaField(SchemaField.of(3, "Markup", double.class))
@@ -106,21 +108,25 @@ public class TransformationComplexTest {
                     .addSchemaField(SchemaField.of(5, "FinalPrice", double.class))
                     .build();
 
-            FieldGetter fruitGetter = incomingSchema.getFieldGetterNamed("Fruit");
-            FieldGetter priceGetter = incomingSchema.getFieldGetterNamed("Price");
+            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
+
+            FieldGetter fruitGetter = readStrategy.getFieldGetterNamed("Fruit");
+            FieldGetter priceGetter = readStrategy.getFieldGetterNamed("Price");
 
             DataFactory<D> dataFactory = factoryProvider.provideFactory(outSchema);
 
-            FieldSetter fruitSetter = outSchema.getFieldSetterNamed("Fruit");
-            FieldSetter priceSetter = outSchema.getFieldSetterNamed("Price");
-            FieldSetter markupSetter = outSchema.getFieldSetterNamed("Markup");
-            FieldSetter amountSetter = outSchema.getFieldSetterNamed("MarkupAmount");
-            FieldSetter finalSetter = outSchema.getFieldSetterNamed("FinalPrice");
+            WriteStrategy writeStrategy = WriteStrategy.fromSchema(outSchema);
+
+            FieldSetter fruitSetter = writeStrategy.getFieldSetterNamed("Fruit");
+            FieldSetter priceSetter = writeStrategy.getFieldSetterNamed("Price");
+            FieldSetter markupSetter = writeStrategy.getFieldSetterNamed("Markup");
+            FieldSetter amountSetter = writeStrategy.getFieldSetterNamed("MarkupAmount");
+            FieldSetter finalSetter = writeStrategy.getFieldSetterNamed("FinalPrice");
 
             return new Transformation<>() {
 
                 @Override
-                public WriteSchema getResultantSchema() {
+                public DataSchema getResultantSchema() {
                     return outSchema;
                 }
 

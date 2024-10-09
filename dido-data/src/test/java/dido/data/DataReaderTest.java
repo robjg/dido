@@ -35,7 +35,7 @@ class DataReaderTest {
 
     void doTest(DataFactoryProvider<?> dataFactoryProvider) {
 
-        WriteSchema schema = SchemaBuilder.builderFor(dataFactoryProvider.getSchemaFactory())
+        DataSchema schema = SchemaBuilder.builderFor(dataFactoryProvider.getSchemaFactory())
                 .addNamed("Fruit", String.class)
                 .addNamed("Quantity", int.class)
                 .addNamed("Price", double.class)

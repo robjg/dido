@@ -75,7 +75,7 @@ class SchemaStrategyTest {
     @Test
     void testNewFieldsAddedToExisting() {
 
-        ReadSchema existing = MapData.schemaBuilder()
+        DataSchema existing = MapData.schemaBuilder()
                 .addNamedAt(10, "Here", int.class)
                 .build();
 
@@ -112,7 +112,7 @@ class SchemaStrategyTest {
     @Test
     void testCopyFieldsOutOfOrderExisting() {
 
-        ReadSchema existing = MapData.schemaBuilder()
+        DataSchema existing = MapData.schemaBuilder()
                 .addNamedAt(10, "One", int.class)
                 .addNamedAt(20, "Two", long.class)
                 .addNamedAt(30, "Three", double.class)

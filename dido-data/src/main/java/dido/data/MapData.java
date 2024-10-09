@@ -95,8 +95,8 @@ public class MapData extends AbstractNamedData implements NamedData {
         return new MapDataSchemaFactory();
     }
 
-    public static SchemaBuilder<MapDataSchema> schemaBuilder() {
-        return SchemaBuilder.builderFor(schemaFactory(), MapDataSchema.class);
+    public static SchemaBuilder schemaBuilder() {
+        return SchemaBuilder.builderFor(schemaFactory());
     }
 
     public static MapDataSchema asMapDataSchema(DataSchema schema) {
@@ -183,10 +183,10 @@ public class MapData extends AbstractNamedData implements NamedData {
 
         private Map<String, Object> map = new LinkedHashMap<>();
 
-        private SchemaBuilder<MapDataSchema> schemaBuilder = SchemaBuilder.builderFor(new MapDataSchemaFactory());
+        private SchemaBuilder schemaBuilder = SchemaBuilder.builderFor(new MapDataSchemaFactory());
 
         public NamedData build() {
-            NamedData data = new MapData(schemaBuilder.build(), map);
+            NamedData data = new MapData((MapDataSchema) schemaBuilder.build(), map);
             this.map = new LinkedHashMap<>();
             this.schemaBuilder = SchemaBuilder.builderFor(new MapDataSchemaFactory());
             return data;

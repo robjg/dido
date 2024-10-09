@@ -1,6 +1,6 @@
 package dido.operators.transform;
 
-import dido.data.ReadSchema;
+import dido.data.DataSchema;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 
@@ -94,7 +94,7 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
         }
 
         @Override
-        public TransformerFactory define(ReadSchema fromSchema,
+        public TransformerFactory define(DataSchema fromSchema,
                                          SchemaSetter schemaSetter) {
 
             int index = fromSchema.getIndexNamed(

@@ -1,8 +1,8 @@
 package dido.operators.transform;
 
 import dido.data.DataFactoryProvider;
+import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.ReadSchema;
 
 public class FieldTransformationBuilder<D extends DidoData> {
 
@@ -24,14 +24,14 @@ public class FieldTransformationBuilder<D extends DidoData> {
             this.dataFactoryProvider = dataFactoryProvider;
         }
 
-        public FieldTransformationBuilder<D> forSchema(ReadSchema incomingSchema) {
+        public FieldTransformationBuilder<D> forSchema(DataSchema incomingSchema) {
 
             return new FieldTransformationBuilder<>(
                     FieldTransformationManager.forSchema(incomingSchema),
                     dataFactoryProvider);
         }
 
-        public FieldTransformationBuilder<D> forSchemaWithCopy(ReadSchema incomingSchema) {
+        public FieldTransformationBuilder<D> forSchemaWithCopy(DataSchema incomingSchema) {
 
             return new FieldTransformationBuilder<>(FieldTransformationManager
                     .forSchemaWithCopy(incomingSchema), dataFactoryProvider);

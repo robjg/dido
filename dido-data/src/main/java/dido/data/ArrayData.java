@@ -34,8 +34,8 @@ public class ArrayData extends AbstractNamedData implements NamedData {
         return new ArrayDataSchemaFactory();
     }
 
-    public static SchemaBuilder<ArrayDataSchema> schemaBuilder() {
-        return SchemaBuilder.builderFor(schemaFactory(), ArrayDataSchema.class);
+    public static SchemaBuilder schemaBuilder() {
+        return SchemaBuilder.builderFor(schemaFactory());
     }
 
     public static ArrayDataSchema asArrayDataSchema(DataSchema schema) {

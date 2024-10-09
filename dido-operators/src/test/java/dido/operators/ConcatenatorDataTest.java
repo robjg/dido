@@ -1,5 +1,6 @@
 package dido.operators;
 
+import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.MapData;
 import dido.data.ReadSchema;
@@ -17,17 +18,17 @@ class ConcatenatorDataTest {
     @Test
     void testConcatSchema() {
 
-        ReadSchema schema1 = MapData.schemaBuilder()
+        DataSchema schema1 = MapData.schemaBuilder()
                 .addNamed("fruit", String.class)
                 .addNamed("qty", int.class)
                 .addNamed("price", double.class)
                 .build();
 
-        ReadSchema schema2 = MapData.schemaBuilder()
+        DataSchema schema2 = MapData.schemaBuilder()
                 .addNamed("supplier", String.class)
                 .build();
 
-        ReadSchema schema3 = MapData.schemaBuilder()
+        DataSchema schema3 = MapData.schemaBuilder()
                 .addNamed("checked", String.class)
                 .addNamed("good", boolean.class)
                 .build();

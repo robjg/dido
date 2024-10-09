@@ -3,7 +3,7 @@ package dido.data;
 /**
  * Builder for an {@link DataSchema}.
  */
-public class SchemaBuilder<S extends DataSchema> {
+public class SchemaBuilder {
 
     private final SchemaFactory schemaFactory;
 
@@ -11,30 +11,25 @@ public class SchemaBuilder<S extends DataSchema> {
         this.schemaFactory = schemaFactory;
     }
 
-    public static <S extends WriteSchema> SchemaBuilder<S>
-    builderFor(SchemaFactory schemaFactory) {
-        return new SchemaBuilder<>(schemaFactory);
+    public static SchemaBuilder builderFor(SchemaFactory schemaFactory) {
+        return new SchemaBuilder(schemaFactory);
     }
 
-    public static <S extends DataSchema> SchemaBuilder<S> builderFor(SchemaFactory schemaFactory, Class<S> schemaClass) {
-        return new SchemaBuilder<>(schemaFactory);
-    }
-
-    public static SchemaBuilder<DataSchema> newInstance() {
-        return new SchemaBuilder<>(DataSchemaFactory.newInstance());
+    public static SchemaBuilder newInstance() {
+        return new SchemaBuilder(DataSchemaFactory.newInstance());
     }
 
     // Add Simple Fields
 
-    public SchemaBuilder<S> add(Class<?> fieldType) {
+    public SchemaBuilder add(Class<?> fieldType) {
         return addAt(0, fieldType);
     }
 
-    public SchemaBuilder<S> addAt(int index, Class<?> fieldType) {
+    public SchemaBuilder addAt(int index, Class<?> fieldType) {
         return addNamedAt(index, null, fieldType);
     }
 
-    public SchemaBuilder<S> addNamed(String name, Class<?> fieldType) {
+    public SchemaBuilder addNamed(String name, Class<?> fieldType) {
         return addNamedAt(0, name, fieldType);
     }
 
@@ -50,7 +45,7 @@ public class SchemaBuilder<S extends DataSchema> {
      * @param fieldType The field type. Must not be null.
      * @return This builder
      */
-    public SchemaBuilder<S> addNamedAt(int index, String name, Class<?> fieldType) {
+    public SchemaBuilder addNamedAt(int index, String name, Class<?> fieldType) {
 
         schemaFactory.addSchemaField(SchemaField.of(index, name, fieldType));
         return this;
@@ -58,21 +53,21 @@ public class SchemaBuilder<S extends DataSchema> {
 
     // Add Nested Field
 
-    public SchemaBuilder<S> addNested(DataSchema nestedSchema) {
+    public SchemaBuilder addNested(DataSchema nestedSchema) {
         return addNestedAt(0, nestedSchema);
     }
 
-    public SchemaBuilder<S> addNestedAt(int index,
+    public SchemaBuilder addNestedAt(int index,
                                      DataSchema nestedSchema) {
         return addNestedNamedAt(index, null, nestedSchema);
     }
 
-    public SchemaBuilder<S> addNestedNamed(String name,
+    public SchemaBuilder addNestedNamed(String name,
                                         DataSchema nestedSchema) {
         return addNestedNamedAt(0, name, nestedSchema);
     }
 
-    public SchemaBuilder<S> addNestedNamedAt(int index,
+    public SchemaBuilder addNestedNamedAt(int index,
                                           String name,
                                           DataSchema nestedSchema) {
 
@@ -82,21 +77,21 @@ public class SchemaBuilder<S extends DataSchema> {
 
     // Add Nested Reference
 
-    public SchemaBuilder<S> addNested(SchemaReference nestedSchemaRef) {
+    public SchemaBuilder addNested(SchemaReference nestedSchemaRef) {
         return addNestedAt(0, nestedSchemaRef);
     }
 
-    public SchemaBuilder<S> addNestedAt(int index,
+    public SchemaBuilder addNestedAt(int index,
                                      SchemaReference nestedSchemaRef) {
         return addNestedNamedAt(index, null, nestedSchemaRef);
     }
 
-    public SchemaBuilder<S> addNestedNamed(String field,
+    public SchemaBuilder addNestedNamed(String field,
                                         SchemaReference nestedSchemaRef) {
         return addNestedNamedAt(0, field, nestedSchemaRef);
     }
 
-    public SchemaBuilder<S> addNestedNamedAt(int index,
+    public SchemaBuilder addNestedNamedAt(int index,
                                           String name,
                                           SchemaReference nestedSchemaRef) {
 
@@ -106,21 +101,21 @@ public class SchemaBuilder<S extends DataSchema> {
 
     // Add Repeating Nested Schema
 
-    public SchemaBuilder<S> addRepeating(DataSchema nestedSchema) {
+    public SchemaBuilder addRepeating(DataSchema nestedSchema) {
         return addRepeatingAt(0, nestedSchema);
     }
 
-    public SchemaBuilder<S> addRepeatingAt(int index,
+    public SchemaBuilder addRepeatingAt(int index,
                                         DataSchema nestedSchema) {
         return addRepeatingNamedAt(index, null, nestedSchema);
     }
 
-    public SchemaBuilder<S> addRepeatingNamed(String name,
+    public SchemaBuilder addRepeatingNamed(String name,
                                            DataSchema nestedSchema) {
         return addRepeatingNamedAt(0, name, nestedSchema);
     }
 
-    public SchemaBuilder<S> addRepeatingNamedAt(int index,
+    public SchemaBuilder addRepeatingNamedAt(int index,
                                              String name,
                                              DataSchema nestedSchema) {
         schemaFactory.addSchemaField(SchemaField.ofRepeating(index, name, nestedSchema));
@@ -129,21 +124,21 @@ public class SchemaBuilder<S extends DataSchema> {
 
     // Add Repeating Nested Schema Ref
 
-    public SchemaBuilder<S> addRepeating(SchemaReference nestedSchemaRef) {
+    public SchemaBuilder addRepeating(SchemaReference nestedSchemaRef) {
         return addRepeatingAt(0, nestedSchemaRef);
     }
 
-    public SchemaBuilder<S> addRepeatingAt(int index,
+    public SchemaBuilder addRepeatingAt(int index,
                                         SchemaReference nestedSchemaRef) {
         return addRepeatingNamedAt(index, null, nestedSchemaRef);
     }
 
-    public SchemaBuilder<S> addRepeatingNamed(String name,
+    public SchemaBuilder addRepeatingNamed(String name,
                                            SchemaReference nestedSchemaRef) {
         return addRepeatingNamedAt(0, name, nestedSchemaRef);
     }
 
-    public SchemaBuilder<S> addRepeatingNamedAt(int index,
+    public SchemaBuilder addRepeatingNamedAt(int index,
                                              String name,
                                              SchemaReference nestedSchemaRef) {
 
@@ -151,20 +146,20 @@ public class SchemaBuilder<S extends DataSchema> {
         return this;
     }
 
-    public SchemaBuilder<S> removeAt(int index) {
+    public SchemaBuilder removeAt(int index) {
 
         schemaFactory.removeAt(index);
         return this;
 
     }
 
-    public SchemaBuilder<S> removeNamed(String name) {
+    public SchemaBuilder removeNamed(String name) {
 
         schemaFactory.removeNamed(name);
         return this;
     }
 
-    public SchemaBuilder<S> addSchemaField(SchemaField schemaField) {
+    public SchemaBuilder addSchemaField(SchemaField schemaField) {
 
         schemaFactory.addSchemaField(schemaField);
         return this;
@@ -180,16 +175,16 @@ public class SchemaBuilder<S extends DataSchema> {
      * @param prioritySchema The schema to take priority in the merge.
      * @return This builder.
      */
-    public SchemaBuilder<S> merge(DataSchema prioritySchema) {
+    public SchemaBuilder merge(DataSchema prioritySchema) {
 
         schemaFactory.merge(prioritySchema);
         return this;
     }
 
 
-    public S build() {
-        //noinspection unchecked
-        return (S) schemaFactory.toSchema();
+    public DataSchema build() {
+
+        return schemaFactory.toSchema();
     }
 
 }

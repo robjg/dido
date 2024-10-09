@@ -20,7 +20,7 @@ import java.util.Objects;
  */
 public interface DataSchema extends IndexedSchema {
 
-    static SchemaBuilder<DataSchema> newBuilder() {
+    static SchemaBuilder newBuilder() {
         return SchemaBuilder.newInstance();
     }
 

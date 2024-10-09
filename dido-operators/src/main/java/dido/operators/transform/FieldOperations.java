@@ -19,7 +19,9 @@ public class FieldOperations {
 
         return (incomingSchema, schemaSetter) -> {
 
-            FieldGetter getter = incomingSchema.getFieldGetterAt(index);
+            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
+
+            FieldGetter getter = readStrategy.getFieldGetterAt(index);
 
             SchemaField originalField = incomingSchema.getSchemaFieldAt(index);
 
@@ -44,7 +46,9 @@ public class FieldOperations {
 
         return (incomingSchema, schemaSetter) -> {
 
-            FieldGetter getter = incomingSchema.getFieldGetterNamed(name);
+            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
+
+            FieldGetter getter = readStrategy.getFieldGetterNamed(name);
 
             SchemaField originalField = incomingSchema.getSchemaFieldNamed(name);
 
@@ -71,7 +75,9 @@ public class FieldOperations {
 
             schemaSetter.addField(field);
 
-            FieldGetter getter = incomingSchema.getFieldGetterNamed(from);
+            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
+
+            FieldGetter getter = readStrategy.getFieldGetterNamed(from);
 
             return dataFactory -> new Copy(getter, dataFactory.getFieldSetterNamed(finalTo));
         };

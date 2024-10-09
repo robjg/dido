@@ -1,9 +1,6 @@
 package dido.operators.transform;
 
-import dido.data.FieldGetter;
-import dido.data.FieldSetter;
-import dido.data.ReadSchema;
-import dido.data.SchemaField;
+import dido.data.*;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 import org.slf4j.Logger;
@@ -140,7 +137,7 @@ public class ValueCopyFactory implements Supplier<TransformerDefinition> {
         }
 
         @Override
-        public TransformerFactory define(ReadSchema fromSchema,
+        public TransformerFactory define(DataSchema fromSchema,
                                          SchemaSetter schemaSetter) {
 
             String from;
@@ -170,12 +167,13 @@ public class ValueCopyFactory implements Supplier<TransformerDefinition> {
             }
 
             Function<Function<Object, ?>, TransformerFactory> transformerFn;
+            ReadStrategy readStrategy = ReadStrategy.fromSchema(fromSchema);
 
             logger.info("Creating Copy from {} to {}", from, to);
             transformerFn = (conversion) ->
                     writableSchema -> {
                         FieldSetter setter = writableSchema.getFieldSetterNamed(to);
-                        FieldGetter getter = fromSchema.getFieldGetterAt(index);
+                        FieldGetter getter = readStrategy.getFieldGetterAt(index);
                         return (fromData, toData) -> setter.set(toData, conversion.apply(getter.get(fromData)));
                     };
 

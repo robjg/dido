@@ -1,7 +1,7 @@
 package dido.operators.transform;
 
+import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.WriteSchema;
 
 import java.util.function.Function;
 
@@ -12,6 +12,6 @@ import java.util.function.Function;
  */
 public interface Transformation<D extends DidoData> extends Function<DidoData, D> {
 
-    WriteSchema getResultantSchema();
+    DataSchema getResultantSchema();
 
 }

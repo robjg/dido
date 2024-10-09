@@ -20,7 +20,7 @@ public class FieldTransformationManager<D extends DidoData> {
 
     private final List<TransformerFactory> extraFactories = new ArrayList<>();
 
-    private final ReadSchema incomingSchema;
+    private final DataSchema incomingSchema;
 
     private Consumer<TransformerFactory> factoryConsumer;
 
@@ -71,17 +71,17 @@ public class FieldTransformationManager<D extends DidoData> {
         }
     };
 
-    protected FieldTransformationManager(ReadSchema incomingSchema) {
+    protected FieldTransformationManager(DataSchema incomingSchema) {
         this.incomingSchema = incomingSchema;
     }
 
     public static <D extends DidoData>
-    FieldTransformationManager<D> forSchema(ReadSchema incomingSchema) {
+    FieldTransformationManager<D> forSchema(DataSchema incomingSchema) {
         return new FieldTransformationManager<>(incomingSchema);
     }
 
     public static <D extends DidoData>
-    FieldTransformationManager<D> forSchemaWithCopy(ReadSchema incomingSchema) {
+    FieldTransformationManager<D> forSchemaWithCopy(DataSchema incomingSchema) {
 
         FieldTransformationManager<D> transformationManager =
                 new FieldTransformationManager<>(incomingSchema);
