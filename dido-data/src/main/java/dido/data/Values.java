@@ -1,6 +1,12 @@
 package dido.data;
 
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 
 /**
  * For A fluent way of providing data for a known schema
@@ -51,4 +57,36 @@ public class Values<D extends DidoData> {
         return dataFactory.toData();
     }
 
+    public Collector<Object, WritableData, D> toCollector() {
+        return new Collector<>() {
+            int i = 1;
+
+            @Override
+            public Supplier<WritableData> supplier() {
+                return dataFactory::getWritableData;
+            }
+
+            @Override
+            public BiConsumer<WritableData, Object> accumulator() {
+                return (writableData, o) -> writableData.setAt(i++, o);
+            }
+
+            @Override
+            public BinaryOperator<WritableData> combiner() {
+                return (left, right) -> {
+                    throw new UnsupportedOperationException("Can't run in parallel");
+                };
+            }
+
+            @Override
+            public Function<WritableData, D> finisher() {
+                return writableData -> dataFactory.toData();
+            }
+
+            @Override
+            public Set<Characteristics> characteristics() {
+                return Set.of();
+            }
+        };
+    }
 }

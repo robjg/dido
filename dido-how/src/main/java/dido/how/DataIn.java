@@ -4,6 +4,10 @@ package dido.how;
 import dido.data.DidoData;
 
 import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Something that data provide data by being read. This is one of the 
@@ -54,6 +58,12 @@ public interface DataIn<D extends DidoData> extends CloseableSupplier<D>, Iterab
                     next = null;
                 }
             }
+
         };
+    }
+
+    default Stream<D> stream() {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+                iterator(), Spliterator.ORDERED | Spliterator.NONNULL), false);
     }
 }

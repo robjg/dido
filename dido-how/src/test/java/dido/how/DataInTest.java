@@ -3,10 +3,11 @@ package dido.how;
 import dido.data.DidoData;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -15,32 +16,54 @@ import static org.mockito.Mockito.*;
 
 class DataInTest {
 
+    DidoData[] data = (DidoData[]) new DidoData[]{
+            mock(DidoData.class), mock(DidoData.class), null};
+
+    AtomicBoolean closed = new AtomicBoolean();
+
+    class SomeDataIn implements DataIn<DidoData> {
+
+        int index = 0;
+
+        @Override
+        public void close() {
+            closed.set(true);
+        }
+
+        @Override
+        public DidoData get() {
+            return data[index++];
+        }
+    }
+
     @Test
     void iterable() throws Exception {
 
-        DidoData[] data = (DidoData[]) new DidoData[] {
-                mock(DidoData.class), mock(DidoData.class), null };
+        List<DidoData> copy = new ArrayList<>();
 
-        try (DataIn<DidoData> dataIn = new DataIn<>() {
-                    int index = 0;
+        try (DataIn<DidoData> dataIn = new SomeDataIn()) {
 
-                    @Override
-                    public void close() {
+            for (DidoData data : dataIn) {
+                copy.add(data);
+            }
+        }
 
-                    }
+        assertThat(copy, contains(data[0], data[1]));
 
-                    @Override
-                    public DidoData get() {
-                        return data[index++];
-                    }
-                }) {
+        assertThat(closed.get(), is(true));
+    }
 
-            List<DidoData> copy = StreamSupport.stream(dataIn.spliterator(), false)
-                    .collect(Collectors.toList());
+    @Test
+    void stream() throws Exception {
+
+        try (DataIn<?> in = new SomeDataIn()) {
+
+            List<DidoData> copy = in.stream().collect(Collectors.toList());
 
             assertThat(copy, contains(data[0], data[1]));
 
         }
+        assertThat(closed.get(), is(true));
     }
 
     @Test
