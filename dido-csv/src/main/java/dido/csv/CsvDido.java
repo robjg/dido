@@ -1,7 +1,7 @@
 package dido.csv;
 
 import dido.data.DataSchema;
-import dido.data.NamedData;
+import dido.data.DidoData;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
 import dido.how.conversion.DidoConversionProvider;
@@ -56,16 +56,16 @@ public class CsvDido {
 
     public DataOutHow<OutputStream> toStreamOut() {
 
-        return CsvDataOutHow.withOptions()
+        return CsvDataOutHow.with()
                 .csvFormat(csvFormat)
                 .schema(schema)
                 .withHeader(withHeader)
                 .make();
     }
 
-    public DataInHow<InputStream, NamedData> toStreamIn() {
+    public DataInHow<InputStream, DidoData> toStreamIn() {
 
-        return CsvDataInHow.withOptions()
+        return CsvDataInHow.with()
                 .csvFormat(csvFormat)
                 .schema(schema)
                 .withHeader(withHeader)

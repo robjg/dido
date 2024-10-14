@@ -2,7 +2,7 @@ package dido.oddjob.bean;
 
 import dido.data.NoSuchFieldException;
 import dido.data.*;
-import dido.data.useful.AbstractNamedData;
+import dido.data.useful.AbstractData;
 import dido.data.useful.DataSchemaImpl;
 
 import java.util.LinkedHashMap;
@@ -12,7 +12,7 @@ import java.util.function.Function;
 /**
  * Todo: What does this do.
  */
-public class RenamedData extends AbstractNamedData {
+public class RenamedData extends AbstractData {
 
     private final Schema toSchema;
 
@@ -23,7 +23,7 @@ public class RenamedData extends AbstractNamedData {
         this.original = original;
     }
 
-    static class Transform implements Function<DidoData, NamedData> {
+    static class Transform implements Function<DidoData, DidoData> {
 
         private final Map<String, String> fieldMap;
 
@@ -36,7 +36,7 @@ public class RenamedData extends AbstractNamedData {
         }
 
         @Override
-        public NamedData apply(DidoData dataIn) {
+        public DidoData apply(DidoData dataIn) {
             if (schemaOut == null || lastIn != dataIn.getSchema()) {
                 lastIn = dataIn.getSchema();
                 schemaOut = renamedSchema(fieldMap, lastIn);
@@ -69,7 +69,7 @@ public class RenamedData extends AbstractNamedData {
         }
 
 
-        public Function<DidoData, NamedData> build() {
+        public Function<DidoData, DidoData> build() {
             Map<String, String> copy = this.map;
             this.map = new LinkedHashMap<>();
             return new Transform(copy);

@@ -2,7 +2,7 @@ package dido.sql;
 
 import dido.data.ArrayData;
 import dido.data.DataSchema;
-import dido.data.NamedData;
+import dido.data.DidoData;
 import dido.data.SchemaBuilder;
 import dido.how.*;
 import org.junit.jupiter.api.Test;
@@ -52,7 +52,7 @@ public class SqlDataHowTest {
                 = SqlDataOutHow.fromSql("insert into fruit (type, quantity) values (?, ?)")
                 .make();
 
-        DataInHow<Connection, NamedData> inHow
+        DataInHow<Connection, DidoData> inHow
                 = SqlDataInHow.fromSql("select type, quantity from fruit order by type")
                 .make();
 
@@ -72,22 +72,22 @@ public class SqlDataHowTest {
 
         Connection connectionIn = lookup.lookup("vars.connection", Connection.class);
 
-        DataIn<NamedData> reader = inHow.inFrom(connectionIn);
+        DataIn<DidoData> reader = inHow.inFrom(connectionIn);
 
         {
-            NamedData fruit = reader.get();
-            assertThat(fruit.getString("type"), is("apple"));
-            assertThat(fruit.getInt("quantity"), is(20));
+            DidoData fruit = reader.get();
+            assertThat(fruit.getStringNamed("type"), is("apple"));
+            assertThat(fruit.getIntNamed("quantity"), is(20));
         }
         {
-            NamedData fruit = reader.get();
-            assertThat(fruit.getString("type"), is("banana"));
-            assertThat(fruit.getInt("quantity"), is(10));
+            DidoData fruit = reader.get();
+            assertThat(fruit.getStringNamed("type"), is("banana"));
+            assertThat(fruit.getIntNamed("quantity"), is(10));
         }
         {
-            NamedData fruit = reader.get();
-            assertThat(fruit.getString("type"), is("orange"));
-            assertThat(fruit.getInt("quantity"), is(102));
+            DidoData fruit = reader.get();
+            assertThat(fruit.getStringNamed("type"), is("orange"));
+            assertThat(fruit.getIntNamed("quantity"), is(102));
         }
 
         assertThat(reader.get(), nullValue());
@@ -131,17 +131,17 @@ public class SqlDataHowTest {
 
         logger.info("** Reading **");
 
-        DataInHow<Connection, NamedData> inHow
+        DataInHow<Connection, DidoData> inHow
                 = SqlDataInHow.fromSql("select A_TinyInt, A_SmallInt, A_Integer, A_BigInt, A_Numeric, A_Decimal, A_Real, A_Float, A_Double " +
                         "from Numbers order by Description")
                 .make();
 
         Connection connectionIn = lookup.lookup("vars.connection", Connection.class);
 
-        DataIn<NamedData> reader = inHow.inFrom(connectionIn);
+        DataIn<DidoData> reader = inHow.inFrom(connectionIn);
 
         {
-            NamedData numbers = reader.get();
+            DidoData numbers = reader.get();
 
             DataSchema schema = numbers.getSchema();
 
@@ -163,130 +163,130 @@ public class SqlDataHowTest {
             assertThat(schema.getTypeNamed("A_FLOAT"), is(Double.class));
             assertThat(schema.getTypeNamed("A_DOUBLE"), is(Double.class));
 
-            assertThat(numbers.getByte("A_TinyInt"), is((byte) 42));
-            assertThat(numbers.getShort("A_TinyInt"), is((short) 42));
-            assertThat(numbers.getInt("A_TinyInt"), is(42));
-            assertThat(numbers.getLong("A_TinyInt"), is(42L));
-            assertThat(numbers.getFloat("A_TinyInt"), is(42.0F));
-            assertThat(numbers.getDouble("A_TinyInt"), is(42.0));
-            assertThat(numbers.getString("A_TinyInt"), is("42"));
-            assertThat(numbers.get("A_TinyInt"), is(42));
-            assertThat(numbers.get("A_TINYINT").getClass(), is(Integer.class));
+            assertThat(numbers.getByteNamed("A_TinyInt"), is((byte) 42));
+            assertThat(numbers.getShortNamed("A_TinyInt"), is((short) 42));
+            assertThat(numbers.getIntNamed("A_TinyInt"), is(42));
+            assertThat(numbers.getLongNamed("A_TinyInt"), is(42L));
+            assertThat(numbers.getFloatNamed("A_TinyInt"), is(42.0F));
+            assertThat(numbers.getDoubleNamed("A_TinyInt"), is(42.0));
+            assertThat(numbers.getStringNamed("A_TinyInt"), is("42"));
+            assertThat(numbers.getNamed("A_TinyInt"), is(42));
+            assertThat(numbers.getNamed("A_TINYINT").getClass(), is(Integer.class));
 
-            assertThat(numbers.getByte("A_SmallInt"), is((byte) 42));
-            assertThat(numbers.getShort("A_SmallInt"), is((short) 42));
-            assertThat(numbers.getInt("A_SmallInt"), is(42));
-            assertThat(numbers.getLong("A_SmallInt"), is(42L));
-            assertThat(numbers.getFloat("A_SmallInt"), is(42.0F));
-            assertThat(numbers.getDouble("A_SmallInt"), is(42.0));
-            assertThat(numbers.getString("A_SmallInt"), is("42"));
-            assertThat(numbers.get("A_SMALLINT"), is(42));
-            assertThat(numbers.get("A_SmallInt").getClass(), is(Integer.class));
+            assertThat(numbers.getByteNamed("A_SmallInt"), is((byte) 42));
+            assertThat(numbers.getShortNamed("A_SmallInt"), is((short) 42));
+            assertThat(numbers.getIntNamed("A_SmallInt"), is(42));
+            assertThat(numbers.getLongNamed("A_SmallInt"), is(42L));
+            assertThat(numbers.getFloatNamed("A_SmallInt"), is(42.0F));
+            assertThat(numbers.getDoubleNamed("A_SmallInt"), is(42.0));
+            assertThat(numbers.getStringNamed("A_SmallInt"), is("42"));
+            assertThat(numbers.getNamed("A_SMALLINT"), is(42));
+            assertThat(numbers.getNamed("A_SmallInt").getClass(), is(Integer.class));
 
-            assertThat(numbers.getByte("A_Integer"), is((byte) 42));
-            assertThat(numbers.getShort("A_Integer"), is((short) 42));
-            assertThat(numbers.getInt("A_Integer"), is(42));
-            assertThat(numbers.getLong("A_Integer"), is(42L));
-            assertThat(numbers.getFloat("A_Integer"), is(42.0F));
-            assertThat(numbers.getDouble("A_Integer"), is(42.0));
-            assertThat(numbers.getString("A_Integer"), is("42"));
-            assertThat(numbers.get("A_Integer").getClass(), is(Integer.class));
+            assertThat(numbers.getByteNamed("A_Integer"), is((byte) 42));
+            assertThat(numbers.getShortNamed("A_Integer"), is((short) 42));
+            assertThat(numbers.getIntNamed("A_Integer"), is(42));
+            assertThat(numbers.getLongNamed("A_Integer"), is(42L));
+            assertThat(numbers.getFloatNamed("A_Integer"), is(42.0F));
+            assertThat(numbers.getDoubleNamed("A_Integer"), is(42.0));
+            assertThat(numbers.getStringNamed("A_Integer"), is("42"));
+            assertThat(numbers.getNamed("A_Integer").getClass(), is(Integer.class));
 
-            assertThat(numbers.getByte("A_BigInt"), is((byte) 42));
-            assertThat(numbers.getShort("A_BigInt"), is((short) 42));
-            assertThat(numbers.getInt("A_BigInt"), is(42));
-            assertThat(numbers.getLong("A_BigInt"), is(42L));
-            assertThat(numbers.getFloat("A_BigInt"), is(42.0F));
-            assertThat(numbers.getDouble("A_BigInt"), is(42.0));
-            assertThat(numbers.getString("A_BigInt"), is("42"));
-            assertThat(numbers.get("A_BigInt").getClass(), is(Long.class));
+            assertThat(numbers.getByteNamed("A_BigInt"), is((byte) 42));
+            assertThat(numbers.getShortNamed("A_BigInt"), is((short) 42));
+            assertThat(numbers.getIntNamed("A_BigInt"), is(42));
+            assertThat(numbers.getLongNamed("A_BigInt"), is(42L));
+            assertThat(numbers.getFloatNamed("A_BigInt"), is(42.0F));
+            assertThat(numbers.getDoubleNamed("A_BigInt"), is(42.0));
+            assertThat(numbers.getStringNamed("A_BigInt"), is("42"));
+            assertThat(numbers.getNamed("A_BigInt").getClass(), is(Long.class));
 
-            assertThat(numbers.getByte("A_Numeric"), is((byte) 42));
-            assertThat(numbers.getShort("A_Numeric"), is((short) 42));
-            assertThat(numbers.getInt("A_Numeric"), is(42));
-            assertThat(numbers.getLong("A_Numeric"), is(42L));
-            assertThat(numbers.getFloat("A_Numeric"), is(42.24F));
-            assertThat(numbers.getDouble("A_Numeric"), is(42.24));
-            assertThat(numbers.getString("A_Numeric"), is("42.24"));
-            assertThat(numbers.get("A_Numeric").getClass(), is(BigDecimal.class));
+            assertThat(numbers.getByteNamed("A_Numeric"), is((byte) 42));
+            assertThat(numbers.getShortNamed("A_Numeric"), is((short) 42));
+            assertThat(numbers.getIntNamed("A_Numeric"), is(42));
+            assertThat(numbers.getLongNamed("A_Numeric"), is(42L));
+            assertThat(numbers.getFloatNamed("A_Numeric"), is(42.24F));
+            assertThat(numbers.getDoubleNamed("A_Numeric"), is(42.24));
+            assertThat(numbers.getStringNamed("A_Numeric"), is("42.24"));
+            assertThat(numbers.getNamed("A_Numeric").getClass(), is(BigDecimal.class));
 
-            assertThat(numbers.getByte("A_Decimal"), is((byte) 42));
-            assertThat(numbers.getShort("A_Decimal"), is((short) 42));
-            assertThat(numbers.getInt("A_Decimal"), is(42));
-            assertThat(numbers.getLong("A_Decimal"), is(42L));
-            assertThat(numbers.getFloat("A_Decimal"), is(42.24F));
-            assertThat(numbers.getDouble("A_Decimal"), is(42.24));
-            assertThat(numbers.getString("A_Decimal"), is("42.24"));
-            assertThat(numbers.get("A_Decimal").getClass(), is(BigDecimal.class));
+            assertThat(numbers.getByteNamed("A_Decimal"), is((byte) 42));
+            assertThat(numbers.getShortNamed("A_Decimal"), is((short) 42));
+            assertThat(numbers.getIntNamed("A_Decimal"), is(42));
+            assertThat(numbers.getLongNamed("A_Decimal"), is(42L));
+            assertThat(numbers.getFloatNamed("A_Decimal"), is(42.24F));
+            assertThat(numbers.getDoubleNamed("A_Decimal"), is(42.24));
+            assertThat(numbers.getStringNamed("A_Decimal"), is("42.24"));
+            assertThat(numbers.getNamed("A_Decimal").getClass(), is(BigDecimal.class));
 
-            assertThat(numbers.getByte("A_Real"), is((byte) 42));
-            assertThat(numbers.getShort("A_Real"), is((short) 42));
-            assertThat(numbers.getInt("A_Real"), is(42));
-            assertThat(numbers.getLong("A_Real"), is(42L));
-            assertThat(numbers.getFloat("A_Real"), is(42.24F));
-            assertThat(numbers.getDouble("A_Real"), is(42.24));
-            assertThat(numbers.getString("A_Real"), is("42.24E0"));
-            assertThat(numbers.get("A_Real").getClass(), is(Double.class));
+            assertThat(numbers.getByteNamed("A_Real"), is((byte) 42));
+            assertThat(numbers.getShortNamed("A_Real"), is((short) 42));
+            assertThat(numbers.getIntNamed("A_Real"), is(42));
+            assertThat(numbers.getLongNamed("A_Real"), is(42L));
+            assertThat(numbers.getFloatNamed("A_Real"), is(42.24F));
+            assertThat(numbers.getDoubleNamed("A_Real"), is(42.24));
+            assertThat(numbers.getStringNamed("A_Real"), is("42.24E0"));
+            assertThat(numbers.getNamed("A_Real").getClass(), is(Double.class));
 
-            assertThat(numbers.getByte("A_Float"), is((byte) 42));
-            assertThat(numbers.getShort("A_Float"), is((short) 42));
-            assertThat(numbers.getInt("A_Float"), is(42));
-            assertThat(numbers.getLong("A_Float"), is(42L));
-            assertThat(numbers.getFloat("A_Float"), is(42.24F));
-            assertThat(numbers.getDouble("A_Float"), is(42.24));
-            assertThat(numbers.getString("A_Float"), is("42.24E0"));
-            assertThat(numbers.get("A_Float").getClass(), is(Double.class));
+            assertThat(numbers.getByteNamed("A_Float"), is((byte) 42));
+            assertThat(numbers.getShortNamed("A_Float"), is((short) 42));
+            assertThat(numbers.getIntNamed("A_Float"), is(42));
+            assertThat(numbers.getLongNamed("A_Float"), is(42L));
+            assertThat(numbers.getFloatNamed("A_Float"), is(42.24F));
+            assertThat(numbers.getDoubleNamed("A_Float"), is(42.24));
+            assertThat(numbers.getStringNamed("A_Float"), is("42.24E0"));
+            assertThat(numbers.getNamed("A_Float").getClass(), is(Double.class));
 
-            assertThat(numbers.getByte("A_Double"), is((byte) 42));
-            assertThat(numbers.getShort("A_Double"), is((short) 42));
-            assertThat(numbers.getInt("A_Double"), is(42));
-            assertThat(numbers.getLong("A_Double"), is(42L));
-            assertThat(numbers.getFloat("A_Double"), is(42.24F));
-            assertThat(numbers.getDouble("A_Double"), is(42.24));
-            assertThat(numbers.getString("A_Double"), is("42.24E0"));
-            assertThat(numbers.get("A_Double").getClass(), is(Double.class));
+            assertThat(numbers.getByteNamed("A_Double"), is((byte) 42));
+            assertThat(numbers.getShortNamed("A_Double"), is((short) 42));
+            assertThat(numbers.getIntNamed("A_Double"), is(42));
+            assertThat(numbers.getLongNamed("A_Double"), is(42L));
+            assertThat(numbers.getFloatNamed("A_Double"), is(42.24F));
+            assertThat(numbers.getDoubleNamed("A_Double"), is(42.24));
+            assertThat(numbers.getStringNamed("A_Double"), is("42.24E0"));
+            assertThat(numbers.getNamed("A_Double").getClass(), is(Double.class));
         }
 
         {
-            NamedData numbers = reader.get();
+            DidoData numbers = reader.get();
 
-            assertThat(numbers.getByte("A_TinyInt"), is((byte) 42));
-            assertThat(numbers.getShort("A_SmallInt"), is((short) 42));
-            assertThat(numbers.getInt("A_Integer"), is(42));
-            assertThat(numbers.getLong("A_BigInt"), is(42L));
-            assertThat(numbers.getDouble("A_Numeric"), is(42.0));
-            assertThat(numbers.getDouble("A_Decimal"), is(42.0));
-            assertThat(numbers.getDouble("A_Real"), is(42.0));
-            assertThat(numbers.getFloat("A_Float"), is(42.0F));
-            assertThat(numbers.getDouble("A_Double"), is(42.0));
+            assertThat(numbers.getByteNamed("A_TinyInt"), is((byte) 42));
+            assertThat(numbers.getShortNamed("A_SmallInt"), is((short) 42));
+            assertThat(numbers.getIntNamed("A_Integer"), is(42));
+            assertThat(numbers.getLongNamed("A_BigInt"), is(42L));
+            assertThat(numbers.getDoubleNamed("A_Numeric"), is(42.0));
+            assertThat(numbers.getDoubleNamed("A_Decimal"), is(42.0));
+            assertThat(numbers.getDoubleNamed("A_Real"), is(42.0));
+            assertThat(numbers.getFloatNamed("A_Float"), is(42.0F));
+            assertThat(numbers.getDoubleNamed("A_Double"), is(42.0));
         }
 
         {
-            NamedData numbers = reader.get();
+            DidoData numbers = reader.get();
 
-            assertThat(numbers.has("A_TinyInt"), is(false));
-            assertThat(numbers.has("A_SmallInt"), is(false));
-            assertThat(numbers.has("A_Integer"), is(false));
-            assertThat(numbers.has("A_BigInt"), is(false));
-            assertThat(numbers.has("A_Numeric"), is(false));
-            assertThat(numbers.has("A_Decimal"), is(false));
-            assertThat(numbers.has("A_Real"), is(false));
-            assertThat(numbers.has("A_Float"), is(false));
-            assertThat(numbers.has("A_Double"), is(false));
+            assertThat(numbers.hasNamed("A_TinyInt"), is(false));
+            assertThat(numbers.hasNamed("A_SmallInt"), is(false));
+            assertThat(numbers.hasNamed("A_Integer"), is(false));
+            assertThat(numbers.hasNamed("A_BigInt"), is(false));
+            assertThat(numbers.hasNamed("A_Numeric"), is(false));
+            assertThat(numbers.hasNamed("A_Decimal"), is(false));
+            assertThat(numbers.hasNamed("A_Real"), is(false));
+            assertThat(numbers.hasNamed("A_Float"), is(false));
+            assertThat(numbers.hasNamed("A_Double"), is(false));
         }
 
         {
-            NamedData numbers = reader.get();
+            DidoData numbers = reader.get();
 
-            assertThat(numbers.getByte("A_TinyInt"), is((byte) 42));
-            assertThat(numbers.getShort("A_SmallInt"), is((short) 42));
-            assertThat(numbers.getInt("A_Integer"), is(42));
-            assertThat(numbers.getLong("A_BigInt"), is(42L));
-            assertThat(numbers.getDouble("A_Numeric"), is(42.24));
-            assertThat(numbers.getDouble("A_Decimal"), is(42.24));
-            assertThat(numbers.getDouble("A_Real"), is(42.24));
-            assertThat(numbers.getFloat("A_Float"), is(42.24F));
-            assertThat(numbers.getDouble("A_Double"), is(42.24));
+            assertThat(numbers.getByteNamed("A_TinyInt"), is((byte) 42));
+            assertThat(numbers.getShortNamed("A_SmallInt"), is((short) 42));
+            assertThat(numbers.getIntNamed("A_Integer"), is(42));
+            assertThat(numbers.getLongNamed("A_BigInt"), is(42L));
+            assertThat(numbers.getDoubleNamed("A_Numeric"), is(42.24));
+            assertThat(numbers.getDoubleNamed("A_Decimal"), is(42.24));
+            assertThat(numbers.getDoubleNamed("A_Real"), is(42.24));
+            assertThat(numbers.getFloatNamed("A_Float"), is(42.24F));
+            assertThat(numbers.getDoubleNamed("A_Double"), is(42.24));
         }
 
         assertThat(reader.get(), nullValue());
@@ -342,7 +342,7 @@ public class SqlDataHowTest {
 
         logger.info("** Reading **");
 
-        DataInHow<Connection, NamedData> inHow
+        DataInHow<Connection, DidoData> inHow
                 = SqlDataInHow.fromSql("select A_TinyInt, A_SmallInt, A_Integer, A_BigInt, A_Numeric, A_Decimal, A_Real, A_Float, A_Double " +
                         "from Numbers order by Description")
                 .schema(overrideSchema)
@@ -350,36 +350,36 @@ public class SqlDataHowTest {
 
         Connection connectionIn = lookup.lookup("vars.connection", Connection.class);
 
-        DataIn<NamedData> reader = inHow.inFrom(connectionIn);
+        DataIn<DidoData> reader = inHow.inFrom(connectionIn);
 
         {
-            NamedData numbers = reader.get();
+            DidoData numbers = reader.get();
 
             DataSchema schema = numbers.getSchema();
 
             assertThat(schema, is(overrideSchema));
 
-            assertThat(numbers.get("A_TINYINT"), is((short) 42));
-            assertThat(numbers.get("A_TinyInt").getClass(), is(Short.class));
+            assertThat(numbers.getNamed("A_TINYINT"), is((short) 42));
+            assertThat(numbers.getNamed("A_TinyInt").getClass(), is(Short.class));
 
-            assertThat(numbers.get("A_SMALLINT"), is((byte) 42));
-            assertThat(numbers.get("A_SmallInt").getClass(), is(Byte.class));
+            assertThat(numbers.getNamed("A_SMALLINT"), is((byte) 42));
+            assertThat(numbers.getNamed("A_SmallInt").getClass(), is(Byte.class));
 
-            assertThat(numbers.get("A_INTEGER"), is(42L));
-            assertThat(numbers.get("A_Integer").getClass(), is(Long.class));
+            assertThat(numbers.getNamed("A_INTEGER"), is(42L));
+            assertThat(numbers.getNamed("A_Integer").getClass(), is(Long.class));
 
-            assertThat(numbers.get("A_BIGINT"), is(42));
-            assertThat(numbers.get("A_BigInt").getClass(), is(Integer.class));
+            assertThat(numbers.getNamed("A_BIGINT"), is(42));
+            assertThat(numbers.getNamed("A_BigInt").getClass(), is(Integer.class));
 
-            assertThat(numbers.get("A_Numeric"), is(42.24));
-            assertThat(numbers.get("A_Numeric").getClass(), is(Double.class));
+            assertThat(numbers.getNamed("A_Numeric"), is(42.24));
+            assertThat(numbers.getNamed("A_Numeric").getClass(), is(Double.class));
 
-            assertThat(numbers.get("A_Decimal"), is(42.24));
-            assertThat(numbers.get("A_Decimal").getClass(), is(Double.class));
+            assertThat(numbers.getNamed("A_Decimal"), is(42.24));
+            assertThat(numbers.getNamed("A_Decimal").getClass(), is(Double.class));
 
 
             try {
-                assertThat(numbers.get("A_Real"), is(42.24F));
+                assertThat(numbers.getNamed("A_Real"), is(42.24F));
                 assertThat("Expected to fail", false);
             }
             catch(FieldAccessException e) {
@@ -388,7 +388,7 @@ public class SqlDataHowTest {
 
             try {
                 // This is wierd - HSQL can't convert a float column to a float.
-                assertThat(numbers.get("A_Float"), is(42.24F));
+                assertThat(numbers.getNamed("A_Float"), is(42.24F));
                 assertThat("Expected to fail", false);
             }
             catch(FieldAccessException e) {
@@ -397,7 +397,7 @@ public class SqlDataHowTest {
 
             try {
                 // ditto a double column to a float.
-                assertThat(numbers.get("A_Double"), is(42.24F));
+                assertThat(numbers.getNamed("A_Double"), is(42.24F));
                 assertThat("Expected to fail", false);
             }
             catch(FieldAccessException e) {
@@ -406,15 +406,15 @@ public class SqlDataHowTest {
         }
 
         {
-            NamedData numbers = reader.get();
+            DidoData numbers = reader.get();
 
 
-            assertThat(numbers.get("A_TinyInt"), is((short) 42));
-            assertThat(numbers.get("A_SmallInt"), is((byte) 42));
-            assertThat(numbers.get("A_Integer"), is(42L));
-            assertThat(numbers.get("A_BigInt"), is(42));
-            assertThat(numbers.get("A_Numeric"), is(42.0));
-            assertThat(numbers.get("A_Decimal"), is(42.0));
+            assertThat(numbers.getNamed("A_TinyInt"), is((short) 42));
+            assertThat(numbers.getNamed("A_SmallInt"), is((byte) 42));
+            assertThat(numbers.getNamed("A_Integer"), is(42L));
+            assertThat(numbers.getNamed("A_BigInt"), is(42));
+            assertThat(numbers.getNamed("A_Numeric"), is(42.0));
+            assertThat(numbers.getNamed("A_Decimal"), is(42.0));
 
 //            assertThat(numbers.get("A_Real"), is(42.0));
 //            assertThat(numbers.get("A_Float"), is(42.0F));
@@ -422,28 +422,28 @@ public class SqlDataHowTest {
         }
 
         {
-            NamedData numbers = reader.get();
+            DidoData numbers = reader.get();
 
-            assertThat(numbers.has("A_TinyInt"), is(false));
-            assertThat(numbers.has("A_SmallInt"), is(false));
-            assertThat(numbers.has("A_Integer"), is(false));
-            assertThat(numbers.has("A_BigInt"), is(false));
-            assertThat(numbers.has("A_Numeric"), is(false));
-            assertThat(numbers.has("A_Decimal"), is(false));
-            assertThat(numbers.has("A_Real"), is(false));
-            assertThat(numbers.has("A_Float"), is(false));
-            assertThat(numbers.has("A_Double"), is(false));
+            assertThat(numbers.hasNamed("A_TinyInt"), is(false));
+            assertThat(numbers.hasNamed("A_SmallInt"), is(false));
+            assertThat(numbers.hasNamed("A_Integer"), is(false));
+            assertThat(numbers.hasNamed("A_BigInt"), is(false));
+            assertThat(numbers.hasNamed("A_Numeric"), is(false));
+            assertThat(numbers.hasNamed("A_Decimal"), is(false));
+            assertThat(numbers.hasNamed("A_Real"), is(false));
+            assertThat(numbers.hasNamed("A_Float"), is(false));
+            assertThat(numbers.hasNamed("A_Double"), is(false));
         }
 
         {
-            NamedData numbers = reader.get();
+            DidoData numbers = reader.get();
 
-            assertThat(numbers.get("A_TinyInt"), is((short) 42));
-            assertThat(numbers.get("A_SmallInt"), is((byte) 42));
-            assertThat(numbers.get("A_Integer"), is(42L));
-            assertThat(numbers.get("A_BigInt"), is(42));
-            assertThat(numbers.get("A_Numeric"), is(42.24));
-            assertThat(numbers.get("A_Decimal"), is(42.24));
+            assertThat(numbers.getNamed("A_TinyInt"), is((short) 42));
+            assertThat(numbers.getNamed("A_SmallInt"), is((byte) 42));
+            assertThat(numbers.getNamed("A_Integer"), is(42L));
+            assertThat(numbers.getNamed("A_BigInt"), is(42));
+            assertThat(numbers.getNamed("A_Numeric"), is(42.24));
+            assertThat(numbers.getNamed("A_Decimal"), is(42.24));
 //            assertThat(numbers.get("A_Real"), is(42.24));
 //            assertThat(numbers.get("A_Float"), is(42.24F));
 //            assertThat(numbers.get("A_Double"), is(42.24));
@@ -500,17 +500,17 @@ public class SqlDataHowTest {
 
         logger.info("** Reading **");
 
-        DataInHow<Connection, NamedData> inHow
+        DataInHow<Connection, DidoData> inHow
                 = SqlDataInHow.fromSql("select A_Date, A_Time, A_Zoned_Time, A_TimeStamp, A_Zoned_TimeStamp " +
                         "from Dates order by Description")
                 .make();
 
         Connection connectionIn = lookup.lookup("vars.connection", Connection.class);
 
-        DataIn<NamedData> reader = inHow.inFrom(connectionIn);
+        DataIn<DidoData> reader = inHow.inFrom(connectionIn);
 
         {
-            NamedData dates = reader.get();
+            DidoData dates = reader.get();
 
             DataSchema schema = dates.getSchema();
 
@@ -523,70 +523,70 @@ public class SqlDataHowTest {
             assertThat(schema.getTypeNamed("A_TIMESTAMP"), is(java.sql.Timestamp.class));
             assertThat(schema.getTypeNamed("A_ZONED_TIMESTAMP"), is(java.time.OffsetDateTime.class));
 
-            assertThat(dates.get("A_Date").getClass(), is(java.sql.Date.class));
+            assertThat(dates.getNamed("A_Date").getClass(), is(java.sql.Date.class));
             assertThat(Instant.ofEpochMilli(
-                            ((java.sql.Date) dates.get("A_Date")).getTime()),
+                            ((java.sql.Date) dates.getNamed("A_Date")).getTime()),
                     is(localDate.atStartOfDay(ZoneOffset.systemDefault())
                             .toInstant()));
-            assertThat(dates.getString("A_Date"), is("2008-08-22"));
+            assertThat(dates.getStringNamed("A_Date"), is("2008-08-22"));
 
-            assertThat(dates.get("A_Time").getClass(), is(java.sql.Time.class));
-            java.sql.Time aTime = (java.sql.Time) dates.get("A_Time");
+            assertThat(dates.getNamed("A_Time").getClass(), is(java.sql.Time.class));
+            java.sql.Time aTime = (java.sql.Time) dates.getNamed("A_Time");
             assertThat(aTime.getTime(),
                     is(20 * HOUR + 8 * MINUTE + 8 * SECOND));
             // HSQLDB stores time with zone. This will depend on your default time zone.
 //            assertThat(aTime.toString(), is("20:08:08"));
             ZonedDateTime utcDateTime = localTime.truncatedTo(ChronoUnit.SECONDS)
                     .atDate(LocalDate.now()).atZone(ZoneId.of("UTC"));
-            assertThat(dates.getString("A_Time"),
+            assertThat(dates.getStringNamed("A_Time"),
                     is(utcDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalTime().toString()));
 
-            assertThat(dates.get("A_Zoned_Time").getClass(), is(java.time.OffsetTime.class));
-            assertThat(dates.get("A_Zoned_Time"),
+            assertThat(dates.getNamed("A_Zoned_Time").getClass(), is(java.time.OffsetTime.class));
+            assertThat(dates.getNamed("A_Zoned_Time"),
                     is(offsetTime.truncatedTo(ChronoUnit.SECONDS)));
-            assertThat(dates.getString("A_Zoned_Time"), is("20:08:08+8:00"));
+            assertThat(dates.getStringNamed("A_Zoned_Time"), is("20:08:08+8:00"));
 
-            assertThat(dates.get("A_TimeStamp").getClass(), is(java.sql.Timestamp.class));
-            assertThat(Instant.ofEpochMilli(((java.sql.Timestamp) dates.get("A_TimeStamp")).getTime()),
+            assertThat(dates.getNamed("A_TimeStamp").getClass(), is(java.sql.Timestamp.class));
+            assertThat(Instant.ofEpochMilli(((java.sql.Timestamp) dates.getNamed("A_TimeStamp")).getTime()),
                     is(localDateTime.truncatedTo(ChronoUnit.MILLIS).atZone(ZoneOffset.systemDefault()).toInstant()));
-            assertThat(dates.getString("A_TimeStamp"), is("2008-08-08 20:08:08.034900"));
+            assertThat(dates.getStringNamed("A_TimeStamp"), is("2008-08-08 20:08:08.034900"));
 
-            assertThat(dates.get("A_Zoned_TimeStamp").getClass(), is(java.time.OffsetDateTime.class));
-            assertThat(dates.get("A_Zoned_TimeStamp"),
+            assertThat(dates.getNamed("A_Zoned_TimeStamp").getClass(), is(java.time.OffsetDateTime.class));
+            assertThat(dates.getNamed("A_Zoned_TimeStamp"),
                     is(offsetDateTime));
-            assertThat(dates.getString("A_Zoned_TimeStamp"), is("2008-08-08 20:08:08.034900+8:00"));
+            assertThat(dates.getStringNamed("A_Zoned_TimeStamp"), is("2008-08-08 20:08:08.034900+8:00"));
         }
 
         {
-            NamedData dates = reader.get();
+            DidoData dates = reader.get();
 
-            assertThat(dates.has("A_Date"), is(false));
-            assertThat(dates.has("A_Time"), is(false));
-            assertThat(dates.has("A_Zoned_Time"), is(false));
-            assertThat(dates.has("A_TimeStamp"), is(false));
-            assertThat(dates.has("A_Zoned_TimeStamp"), is(false));
+            assertThat(dates.hasNamed("A_Date"), is(false));
+            assertThat(dates.hasNamed("A_Time"), is(false));
+            assertThat(dates.hasNamed("A_Zoned_Time"), is(false));
+            assertThat(dates.hasNamed("A_TimeStamp"), is(false));
+            assertThat(dates.hasNamed("A_Zoned_TimeStamp"), is(false));
         }
 
         {
-            NamedData dates = reader.get();
+            DidoData dates = reader.get();
 
             assertThat(Instant.ofEpochMilli(((java.sql.Date)
-                            dates.get("A_Date")).getTime()),
+                            dates.getNamed("A_Date")).getTime()),
                     is(localDate.atStartOfDay(ZoneOffset.systemDefault())
                             .toInstant()));
 
             assertThat(Instant.ofEpochMilli(((java.sql.Time)
-                            dates.get("A_Time")).getTime()),
+                            dates.getNamed("A_Time")).getTime()),
                     is(localTime.truncatedTo(ChronoUnit.SECONDS).atDate(LocalDate.ofEpochDay(0))
                             .atZone(ZoneOffset.systemDefault()).toInstant()));
 
-            assertThat(dates.get("A_Zoned_Time"),
+            assertThat(dates.getNamed("A_Zoned_Time"),
                     is(offsetTime.truncatedTo(ChronoUnit.SECONDS)));
 
-            assertThat(Instant.ofEpochMilli(((java.sql.Timestamp) dates.get("A_TimeStamp")).getTime()),
+            assertThat(Instant.ofEpochMilli(((java.sql.Timestamp) dates.getNamed("A_TimeStamp")).getTime()),
                     is(localDateTime.truncatedTo(ChronoUnit.MILLIS).atZone(ZoneOffset.systemDefault()).toInstant()));
 
-            assertThat(dates.get("A_Zoned_TimeStamp"),
+            assertThat(dates.getNamed("A_Zoned_TimeStamp"),
                     is(offsetDateTime));
         }
 

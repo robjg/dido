@@ -36,7 +36,7 @@ class StreamInJsonTest {
                 .setIsArray(true)
                 .make();
 
-        try (DataIn<? extends NamedData> in = test.inFrom(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
+        try (DataIn<? extends DidoData> in = test.inFrom(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
 
             DidoData data1 = in.get();
 
@@ -88,14 +88,14 @@ class StreamInJsonTest {
                 .addRepeatingNamed("OrderLines", expectedNestedSchema)
                 .build();
 
-        try (DataIn<? extends NamedData> in = test.inFrom(
+        try (DataIn<? extends DidoData> in = test.inFrom(
                 new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
 
-            NamedData data1 = in.get();
+            DidoData data1 = in.get();
 
             assertThat(data1.getSchema(), is(expectedSchema));
 
-            RepeatingData repeatingData = (RepeatingData) data1.get("OrderLines");
+            RepeatingData repeatingData = (RepeatingData) data1.getNamed("OrderLines");
 
             assertThat(repeatingData.size(), is(2));
 

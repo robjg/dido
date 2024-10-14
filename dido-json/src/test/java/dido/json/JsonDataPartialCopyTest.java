@@ -29,7 +29,7 @@ class JsonDataPartialCopyTest {
                                 .build(), dataFactoryProvider)
                 .create();
 
-        NamedData result = gson.fromJson(json, dataFactoryProvider.getDataType());
+        DidoData result = gson.fromJson(json, dataFactoryProvider.getDataType());
 
         DataSchema nestedSchema = SchemaBuilder.newInstance()
                 .addNamed("Fruit", String.class)

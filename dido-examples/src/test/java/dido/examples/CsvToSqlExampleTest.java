@@ -2,7 +2,7 @@ package dido.examples;
 
 import dido.csv.CsvDataInHow;
 import dido.csv.CsvDataOutHow;
-import dido.data.NamedData;
+import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.sql.SqlDataInHow;
@@ -41,36 +41,31 @@ class CsvToSqlExampleTest {
         connection.createStatement().execute(create);
 
         // #snippet1{
-        try (DataIn<NamedData> in = CsvDataInHow.withOptions()
-                .withHeader(true)
-                .make()
-                .inFrom(getClass().getResourceAsStream("/examples/people-100.csv"));
+        try (DataIn<DidoData> in = CsvDataInHow.with()
+                .header()
+                .from(getClass().getResourceAsStream("/examples/people-100.csv"));
+             DataOut out = SqlDataOutHow.with()
+                     .sql("insert into PEOPLE " +
+                             "(\"Index\",\"User Id\",\"First Name\",\"Last Name\",\"Sex\",\"Email\",\"Phone\",\"Date of birth\",\"Job Title\")" +
+                             " values (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                     .to(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""))) {
 
-             DataOut out = SqlDataOutHow.fromSql(
-                             "insert into PEOPLE " +
-                                     "(\"Index\",\"User Id\",\"First Name\",\"Last Name\",\"Sex\",\"Email\",\"Phone\",\"Date of birth\",\"Job Title\")" +
-                                     " values (?, ?, ?, ?, ?, ?, ?, ?, ?)")
-                     .make()
-                     .outTo(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""))) {
-
-            for (NamedData data : in) {
-                out.accept(data);
-            }
+            in.stream().forEach(out);
         }
         // }#snippet1
 
         BufferType bufferType = new BufferType();
         bufferType.configured();
 
-        try (DataIn<NamedData> in = SqlDataInHow.fromSql("select * from people")
+        try (DataIn<DidoData> in = SqlDataInHow.fromSql("select * from people")
                 .make()
                 .inFrom(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""));
-             DataOut out = CsvDataOutHow.withOptions()
+             DataOut out = CsvDataOutHow.with()
                      .withHeader(true)
                      .make()
                      .outTo(bufferType.toOutputStream())) {
 
-            for (NamedData data : in) {
+            for (DidoData data : in) {
                 out.accept(data);
             }
         }

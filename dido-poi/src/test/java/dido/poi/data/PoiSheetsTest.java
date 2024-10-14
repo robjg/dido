@@ -2,7 +2,6 @@ package dido.poi.data;
 
 import dido.data.DidoData;
 import dido.data.MapData;
-import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.layouts.DataRows;
@@ -41,7 +40,7 @@ public class PoiSheetsTest  {
 		////////////
 		// Read Part
 
-		DataIn<NamedData> reader = rows.inFrom(workbook);
+		DataIn<DidoData> reader = rows.inFrom(workbook);
 		
 		DidoData result = reader.get();
 		
@@ -76,7 +75,7 @@ public class PoiSheetsTest  {
 		////////////
 		// Read Part
 
-		DataIn<NamedData> reader = rows.inFrom(workbook);
+		DataIn<DidoData> reader = rows.inFrom(workbook);
 
 		DidoData result = reader.get();
 

@@ -20,7 +20,7 @@ public class StreamLines {
             .addNamed(LINE, String.class)
             .build();
 
-    public static class In implements DataInHow<InputStream, NamedData> {
+    public static class In implements DataInHow<InputStream, DidoData> {
 
         DataBuilder<MapData> dataBuilder = MapData.builderForSchema(schema);
 
@@ -30,7 +30,7 @@ public class StreamLines {
         }
 
         @Override
-        public DataIn<NamedData> inFrom(InputStream inputStream) {
+        public DataIn<DidoData> inFrom(InputStream inputStream) {
 
             LineNumberReader reader = new LineNumberReader(
                     new InputStreamReader(inputStream));
@@ -46,7 +46,7 @@ public class StreamLines {
                 }
 
                 @Override
-                public NamedData get() {
+                public DidoData get() {
                     try {
                         String line = reader.readLine();
                         if (line == null) {

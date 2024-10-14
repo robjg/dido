@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * {@link GenericData} stored in an Array.
  */
-public class ArrayData extends AbstractNamedData implements NamedData {
+public class ArrayData extends AbstractData implements DidoData {
 
     private final ArrayDataSchema schema;
 
@@ -142,7 +142,7 @@ public class ArrayData extends AbstractNamedData implements NamedData {
             return this;
         }
 
-        public NamedData build() {
+        public DidoData build() {
             ArrayDataSchemaFactory schemaBuilder = new ArrayDataSchemaFactory();
             Object[] values = new Object[lastIndex];
             Iterator<Object> valIt = this.values.iterator();

@@ -1,6 +1,9 @@
 package dido.oddjob.bean;
 
-import dido.data.*;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.MapData;
+import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;
@@ -21,7 +24,7 @@ class SpecialCharsTransformerTest {
                 .addNamed("_Qty_", int.class)
                 .build();
 
-        Function<DidoData, NamedData> test = new SpecialCharsTransformer().toValue();
+        Function<DidoData, DidoData> test = new SpecialCharsTransformer().toValue();
 
         DidoData data = MapData.builderForSchema(schema)
                 .withString("Fruit", "Apple")
@@ -31,13 +34,13 @@ class SpecialCharsTransformerTest {
                 .withInt("_Qty_", 3)
                 .build();
 
-        NamedData bean = test.apply(data);
+        DidoData bean = test.apply(data);
 
-        assertThat(bean.getString("Fruit"), is("Apple"));
-        assertThat(bean.getString("Flavour _taste_"), is("Yummy"));
-        assertThat(bean.getDouble("Weight _lbs__"), is(22.2));
-        assertThat(bean.getInt("_Qty_"), is(2));
-        assertThat(bean.getInt("_Qty__"), is(3));
+        assertThat(bean.getStringNamed("Fruit"), is("Apple"));
+        assertThat(bean.getStringNamed("Flavour _taste_"), is("Yummy"));
+        assertThat(bean.getDoubleNamed("Weight _lbs__"), is(22.2));
+        assertThat(bean.getIntNamed("_Qty_"), is(2));
+        assertThat(bean.getIntNamed("_Qty__"), is(3));
     }
 
 }

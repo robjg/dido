@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Provide an {@link GenericData} structure backed by a Map.
  */
-public class MapData extends AbstractNamedData implements NamedData {
+public class MapData extends AbstractData implements DidoData {
 
     private final MapDataSchema schema;
 
@@ -26,63 +26,63 @@ public class MapData extends AbstractNamedData implements NamedData {
         return new MapData(schemaFromMap(map), new HashMap<>(map));
     }
 
-    public static NamedData of() {
+    public static DidoData of() {
         return fromInputs();
     }
 
-    public static NamedData of(String f1, Object v1) {
+    public static DidoData of(String f1, Object v1) {
         return fromInputs(f1, v1);
     }
 
-    public static NamedData of(String f1, Object v1, String f2, Object v2) {
+    public static DidoData of(String f1, Object v1, String f2, Object v2) {
         return fromInputs(f1, v1, f2, v2);
     }
 
-    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3) {
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3) {
         return fromInputs(f1, v1, f2, v2, f3, v3);
     }
 
-    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                String f4, Object v4) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4);
     }
 
-    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                String f4, Object v4, String f5, Object v5) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5);
     }
 
-    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                String f4, Object v4, String f5, Object v5, String f6, Object v6) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6);
     }
 
-    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                String f4, Object v4, String f5, Object v5, String f6, Object v6,
                                String f7, Object v7) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7);
     }
 
-    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                String f4, Object v4, String f5, Object v5, String f6, Object v6,
                                String f7, Object v7, String f8, Object v8) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8);
     }
 
-    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
                                String f4, Object v4, String f5, Object v5, String f6, Object v6,
                                String f7, Object v7, String f8, Object v8, String f9, Object v9) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8, f9, v9);
     }
 
-    public static NamedData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
-                               String f4, Object v4, String f5, Object v5, String f6, Object v6,
-                               String f7, Object v7, String f8, Object v8, String f9, Object v9,
-                               String f10, Object v10) {
+    public static DidoData of(String f1, Object v1, String f2, Object v2, String f3, Object v3,
+                          String f4, Object v4, String f5, Object v5, String f6, Object v6,
+                          String f7, Object v7, String f8, Object v8, String f9, Object v9,
+                          String f10, Object v10) {
         return fromInputs(f1, v1, f2, v2, f3, v3, f4, v4, f5, v5, f6, v6, f7, v7, f8, v8, f9, v9, f10, v10);
     }
 
-    private static NamedData fromInputs(Object... args) {
+    private static DidoData fromInputs(Object... args) {
 
         BuilderNoSchema builder = new BuilderNoSchema();
         for (int i = 0; i < args.length; i = i + 2) {
@@ -150,21 +150,21 @@ public class MapData extends AbstractNamedData implements NamedData {
 
     @Override
     public Object getAt(int index) {
-        return get(schema.getFieldNameAt(index));
+        return this.getNamed(schema.getFieldNameAt(index));
     }
 
     @Override
     public boolean hasIndex(int index) {
-        return has(schema.getFieldNameAt(index));
+        return this.hasNamed(schema.getFieldNameAt(index));
     }
 
     @Override
-    public Object get(String name) {
+    public Object getNamed(String name) {
         return map.get(name);
     }
 
     @Override
-    public boolean has(String name) {
+    public boolean hasNamed(String name) {
         return map.containsKey(name);
     }
 
@@ -185,8 +185,8 @@ public class MapData extends AbstractNamedData implements NamedData {
 
         private SchemaBuilder schemaBuilder = SchemaBuilder.builderFor(new MapDataSchemaFactory());
 
-        public NamedData build() {
-            NamedData data = new MapData((MapDataSchema) schemaBuilder.build(), map);
+        public DidoData build() {
+            DidoData data = new MapData((MapDataSchema) schemaBuilder.build(), map);
             this.map = new LinkedHashMap<>();
             this.schemaBuilder = SchemaBuilder.builderFor(new MapDataSchemaFactory());
             return data;

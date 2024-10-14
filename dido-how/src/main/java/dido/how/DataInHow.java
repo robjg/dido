@@ -24,5 +24,4 @@ public interface DataInHow<I, D extends DidoData> {
 	 * 
 	 */
 	DataIn<D> inFrom(I dataIn) throws Exception;
-	
 }

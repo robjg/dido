@@ -2,8 +2,8 @@ package dido.csv;
 
 import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractFieldGetter;
-import dido.data.useful.AbstractNamedData;
 import dido.data.useful.DataSchemaImpl;
 import dido.how.conversion.DidoConversionProvider;
 import org.apache.commons.csv.CSVRecord;
@@ -17,7 +17,7 @@ import java.util.function.ToLongFunction;
 /**
  * Wraps a CsvRecord.
  */
-public class CsvData extends AbstractNamedData {
+public class CsvData extends AbstractData {
 
     private final Schema schema;
 

@@ -54,7 +54,7 @@ public class StreamInJsonLines<D extends DidoData> implements DataInHow<InputStr
             return this;
         }
 
-        public DataInHow<InputStream, NamedData> make() {
+        public DataInHow<InputStream, DidoData> make() {
 
             return new StreamInJsonLines<>(this.wrapperSettings.make());
         }

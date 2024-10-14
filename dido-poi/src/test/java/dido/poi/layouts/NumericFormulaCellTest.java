@@ -1,7 +1,7 @@
 package dido.poi.layouts;
 
 import dido.data.ArrayData;
-import dido.data.NamedData;
+import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;
@@ -44,9 +44,9 @@ public class NumericFormulaCellTest {
 		
 		// read side.
 		
-		DataIn<NamedData> reader = rows.inFrom(workbook);
+		DataIn<DidoData> reader = rows.inFrom(workbook);
 		
-		NamedData result = reader.get();
+		DidoData result = reader.get();
 		
 		assertThat(result.getDoubleAt(1), is(4.0));
 

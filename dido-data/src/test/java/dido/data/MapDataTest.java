@@ -17,16 +17,16 @@ class MapDataTest {
 
         MapData.BuilderNoSchema builder = MapData.newBuilderNoSchema();
 
-        NamedData data1 = builder
+        DidoData data1 = builder
                 .withString("type", "apple")
                 .withInt("qty", 2)
                 .withDouble("price", 26.3)
                 .with("date", new SimpleDateFormat("yyyy-MM-dd").parse("2021-09-22"))
                 .build();
 
-        assertThat(data1.getString("type"), is("apple"));
-        assertThat(data1.getInt("qty"), is(2));
-        assertThat(data1.getDouble("price"), is(26.3));
+        assertThat(data1.getStringNamed("type"), is("apple"));
+        assertThat(data1.getIntNamed("qty"), is(2));
+        assertThat(data1.getDoubleNamed("price"), is(26.3));
 
         DataSchema schema1 = data1.getSchema();
 
@@ -35,17 +35,17 @@ class MapDataTest {
         assertThat(schema1.getTypeNamed("price"), is(double.class));
         assertThat(schema1.getTypeNamed("date"), is(Date.class));
 
-        NamedData data2 = builder
+        DidoData data2 = builder
                 .withString("type", "apple")
                 .withLong("qty", 2)
                 .withFloat("price", 26.3F)
                 .withBoolean("offer", true)
                 .build();
 
-        assertThat(data2.getString("type"), is("apple"));
-        assertThat(data2.getLong("qty"), is(2L));
-        assertThat((double) data2.getFloat("price"), closeTo(26.3, 0.01));
-        assertThat(data2.getBoolean("offer"), is(true));
+        assertThat(data2.getStringNamed("type"), is("apple"));
+        assertThat(data2.getLongNamed("qty"), is(2L));
+        assertThat((double) data2.getFloatNamed("price"), closeTo(26.3, 0.01));
+        assertThat(data2.getBooleanNamed("offer"), is(true));
 
         DataSchema schema2 = data2.getSchema();
 
@@ -58,16 +58,16 @@ class MapDataTest {
     @Test
     void testCreateWithOf() {
 
-        NamedData data = MapData.of(
+        DidoData data = MapData.of(
                 "type", "apple",
                 "qty", 2,
                 "price", 26.3F,
                 "offer", true);
 
-        assertThat(data.getString("type"), is("apple"));
-        assertThat(data.getInt("qty"), is(2));
-        assertThat((double) data.getFloat("price"), closeTo(26.3, 0.01));
-        assertThat(data.getBoolean("offer"), is(true));
+        assertThat(data.getStringNamed("type"), is("apple"));
+        assertThat(data.getIntNamed("qty"), is(2));
+        assertThat((double) data.getFloatNamed("price"), closeTo(26.3, 0.01));
+        assertThat(data.getBooleanNamed("offer"), is(true));
 
         DataSchema schema = data.getSchema();
 

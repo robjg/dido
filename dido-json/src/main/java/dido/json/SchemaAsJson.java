@@ -1,6 +1,9 @@
 package dido.json;
 
-import dido.data.*;
+import dido.data.ArrayDataDataFactoryProvider;
+import dido.data.DataSchema;
+import dido.data.DataSchemaSchema;
+import dido.data.DidoData;
 import dido.how.*;
 import dido.how.util.ClassUtils;
 
@@ -57,11 +60,11 @@ public class SchemaAsJson {
 
     public static CloseableSupplier<DataSchema> fromJsonStream(InputStream input) throws Exception {
 
-        DataInHow<InputStream, NamedData> inHow = StreamInJsonLines.asWrapper()
+        DataInHow<InputStream, DidoData> inHow = StreamInJsonLines.asWrapper()
                 .setSchema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
                 .make();
 
-        DataIn<NamedData> in = inHow.inFrom(input);
+        DataIn<DidoData> in = inHow.inFrom(input);
 
         return new CloseableSupplier<>() {
 

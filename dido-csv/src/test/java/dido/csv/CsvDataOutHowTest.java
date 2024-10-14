@@ -54,7 +54,7 @@ class CsvDataOutHowTest {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         DataOut dataOut =
-                CsvDataOutHow.withOptions()
+                CsvDataOutHow.with()
                         .schema(schema)
                         .withHeader(true)
                         .make()

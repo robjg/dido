@@ -2,7 +2,7 @@ package dido.poi.layouts;
 
 import dido.data.ArrayData;
 import dido.data.DataSchema;
-import dido.data.NamedData;
+import dido.data.DidoData;
 import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataOut;
@@ -59,9 +59,9 @@ public class NumericCellTest {
 		
 		// Read side.
 		
-		DataIn<NamedData> reader = rows.inFrom(workbook);
+		DataIn<DidoData> reader = rows.inFrom(workbook);
 
-		NamedData result = reader.get();
+		DidoData result = reader.get();
 		
 		assertThat(result.getDoubleAt(1), is(12.3));
 		
@@ -89,9 +89,9 @@ public class NumericCellTest {
 
 		// Read side.
 
-		DataIn<NamedData> reader = rows.inFrom(workbook);
+		DataIn<DidoData> reader = rows.inFrom(workbook);
 
-		NamedData result = reader.get();
+		DidoData result = reader.get();
 
 		assertThat(result.getAt(1), is(12));
 
@@ -121,9 +121,9 @@ public class NumericCellTest {
 
 		// Read side.
 
-		DataIn<NamedData> reader = rows.inFrom(workbook);
+		DataIn<DidoData> reader = rows.inFrom(workbook);
 
-		NamedData result = reader.get();
+		DidoData result = reader.get();
 
 		assertThat(result.getAt(1), is(0.0));
 		assertThat(result.hasIndex(1), is(true));

@@ -43,22 +43,22 @@ class FromBeanArooaTest {
         fruit1.setType("Apple");
         fruit1.setQuantity(5);
 
-        Function<Object, NamedData> transform = new FromBeanArooa(new BeanUtilsPropertyAccessor())
+        Function<Object, DidoData> transform = new FromBeanArooa(new BeanUtilsPropertyAccessor())
                 .ofUnknownClass();
 
-        NamedData data1 = transform.apply(fruit1);
+        DidoData data1 = transform.apply(fruit1);
 
-        assertThat(data1.getString("type"), is("Apple"));
-        assertThat(data1.getInt("quantity"), is(5));
+        assertThat(data1.getStringNamed("type"), is("Apple"));
+        assertThat(data1.getIntNamed("quantity"), is(5));
 
         Fruit fruit2 = new Fruit();
         fruit2.setType("Orange");
         fruit2.setQuantity(2);
 
-        NamedData data2 = transform.apply(fruit2);
+        DidoData data2 = transform.apply(fruit2);
 
-        assertThat(data2.getString("type"), is("Orange"));
-        assertThat(data2.getInt("quantity"), is(2));
+        assertThat(data2.getStringNamed("type"), is("Orange"));
+        assertThat(data2.getIntNamed("quantity"), is(2));
 
         assertThat(data1.getSchema(), sameInstance(data2.getSchema()));
     }
@@ -77,7 +77,7 @@ class FromBeanArooaTest {
                 .addRepeatingNamed("orderLines", nestedSchema)
                 .build();
 
-        Function<Order, NamedData> fromBean =
+        Function<Order, DidoData> fromBean =
                 fromBeanArooa.with()
                         .schema(partialIn).partial(true)
                         .ofClass(Order.class);
@@ -94,7 +94,7 @@ class FromBeanArooaTest {
         order.setOrderId("A123");
         order.setOrderLines(List.of(orderLine1, orderLine2));
 
-        NamedData result = fromBean.apply(order);
+        DidoData result = fromBean.apply(order);
 
         RepeatingData repeatingData =
                 RepeatingData.of(ArrayData.valuesForSchema(nestedSchema)
@@ -102,8 +102,8 @@ class FromBeanArooaTest {
                                 ArrayData.valuesForSchema(nestedSchema)
                                         .of("Pear", 4));
 
-        assertThat(result.getString("orderId"), is("A123"));
-        assertThat(result.get("orderLines"), is(repeatingData));
+        assertThat(result.getStringNamed("orderId"), is("A123"));
+        assertThat(result.getNamed("orderLines"), is(repeatingData));
 
     }
 
@@ -122,7 +122,7 @@ class FromBeanArooaTest {
                 .addRepeatingNamed("orderLines", nestedSchema)
                 .build();
 
-        Function<Order, NamedData> fromBean =
+        Function<Order, DidoData> fromBean =
                 fromBeanArooa.with()
                         .schema(schema)
                         .ofUnknownClass();

@@ -1,7 +1,7 @@
 package dido.poi.layouts;
 
 import dido.data.ArrayData;
-import dido.data.NamedData;
+import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;
@@ -44,7 +44,7 @@ public class TextCellTest {
 
 		out.close();
 
-		DataIn<NamedData> in = rows.inFrom(workbook);
+		DataIn<DidoData> in = rows.inFrom(workbook);
 
 		MatcherAssert.assertThat(in.get().getStringAt(2), Matchers.is("Apple"));
 		MatcherAssert.assertThat(in.get().getStringAt(2), Matchers.is("Orange"));

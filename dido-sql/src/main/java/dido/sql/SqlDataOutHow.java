@@ -25,14 +25,21 @@ public class SqlDataOutHow implements DataOutHow<Connection> {
 
     public static class Options {
 
-        private final String sql;
+        private String sql;
 
         private int batchSize;
 
         private ClassLoader classLoader;
 
-        public Options(String sql) {
+        Options(String sql) {
             this.sql = sql;
+        }
+
+        Options() {}
+
+        public Options sql(String sql) {
+            this.sql = sql;
+            return this;
         }
 
         public Options batchSize(int batchSize) {
@@ -45,13 +52,25 @@ public class SqlDataOutHow implements DataOutHow<Connection> {
             return this;
         }
 
+        public DataOut to(Connection connection) throws SQLException, ClassNotFoundException {
+            return make_().outTo(connection);
+        }
+
         public DataOutHow<Connection> make() {
+            return make_();
+        }
+
+        public SqlDataOutHow make_() {
             return new SqlDataOutHow(this);
         }
     }
 
     public static Options fromSql(String sql) {
         return new Options(sql);
+    }
+
+    public static Options with() {
+        return new Options();
     }
 
     private SqlDataOutHow(Options options) {
@@ -66,7 +85,7 @@ public class SqlDataOutHow implements DataOutHow<Connection> {
     }
 
     @Override
-    public DataOut outTo(Connection connection) throws Exception {
+    public DataOut outTo(Connection connection) throws SQLException, ClassNotFoundException {
 
 
         PreparedStatement stmt = connection.prepareStatement(sql);

@@ -5,14 +5,13 @@ import com.google.gson.GsonBuilder;
 import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.NamedData;
 
 import java.lang.reflect.Type;
 import java.util.function.Function;
 
 public class JsonStringToData {
 
-    public static Function<String, NamedData> asWrapperWithSchema(DataSchema schema) {
+    public static Function<String, DidoData> asWrapperWithSchema(DataSchema schema) {
 
         return new Known<>(JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                 .create(),
@@ -45,12 +44,12 @@ public class JsonStringToData {
             return this;
         }
 
-        public Function<String, NamedData> make() {
+        public Function<String, DidoData> make() {
 
             if (schema == null || partial) {
 
                 return new UnknownWrapper<>(schema == null ? DataSchema.emptySchema() : schema,
-                        NamedData.class);
+                        DidoData.class);
             } else {
 
                 return new Known<>(JsonDataWrapper.registerSchema(new GsonBuilder(), schema)

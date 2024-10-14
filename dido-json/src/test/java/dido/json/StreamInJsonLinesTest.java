@@ -1,6 +1,9 @@
 package dido.json;
 
-import dido.data.*;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.MapData;
+import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import org.junit.jupiter.api.Test;
 import org.oddjob.io.BufferType;
@@ -22,17 +25,17 @@ class StreamInJsonLinesTest {
         });
         bufferType.configured();
 
-        DataIn<NamedData> in = StreamInJsonLines.asWrapper()
+        DataIn<DidoData> in = StreamInJsonLines.asWrapper()
                 .make()
                 .inFrom(bufferType.toInputStream());
 
-        NamedData data1 = in.get();
+        DidoData data1 = in.get();
 
-        assertThat(data1.getString("Fruit"), is("Apple"));
-        assertThat(data1.getDouble("Qty"), is(5.0));
-        assertThat(data1.getDouble("Price"), is(27.2));
+        assertThat(data1.getStringNamed("Fruit"), is("Apple"));
+        assertThat(data1.getDoubleNamed("Qty"), is(5.0));
+        assertThat(data1.getDoubleNamed("Price"), is(27.2));
 
-        NamedData data2 = in.get();
+        DidoData data2 = in.get();
 
         assertThat(data2.getStringAt(1), is("Orange"));
         assertThat(data2.getDoubleAt(2), is(10.0));
@@ -64,15 +67,15 @@ class StreamInJsonLinesTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        DataIn<NamedData> in = StreamInJsonLines.asWrapper()
+        DataIn<DidoData> in = StreamInJsonLines.asWrapper()
                 .setSchema(schema)
                 .setPartial(true)
                 .make()
                 .inFrom(bufferType.toInputStream());
 
-        NamedData data1 = in.get();
+        DidoData data1 = in.get();
 
-        NamedData expected1 = MapData.of(
+        DidoData expected1 = MapData.of(
                 "Fruit", "Apple", "Qty", 5, "Price", 27.2);
 
         assertThat(data1.getSchema(), is(expected1.getSchema()));
@@ -110,25 +113,25 @@ class StreamInJsonLinesTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        DataIn<NamedData> in = StreamInJsonLines.asWrapper()
+        DataIn<DidoData> in = StreamInJsonLines.asWrapper()
                 .setSchema(schema)
                 .make()
                 .inFrom(bufferType.toInputStream());
 
-        NamedData data1 = in.get();
+        DidoData data1 = in.get();
 
-        NamedData expected1 = MapData.of(
+        DidoData expected1 = MapData.of(
                 "Fruit", "Apple", "Qty", 5, "Price", 27.2);
 
         assertThat(data1.getSchema(), is(expected1.getSchema()));
         assertThat(data1, is(expected1));
 
-        NamedData data2 = in.get();
+        DidoData data2 = in.get();
 
         assertThat(data2, is(MapData.of(
                 "Fruit", "Orange", "Qty", 10, "Price", Double.NaN)));
 
-        NamedData data3 = in.get();
+        DidoData data3 = in.get();
 
         assertThat(data3, is(MapData.of(
                 "Fruit", "Pear", "Qty", 7, "Price", 22.1)));

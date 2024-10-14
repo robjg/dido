@@ -2,7 +2,6 @@ package dido.csv;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.NamedData;
 import dido.data.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -23,13 +22,13 @@ class CsvDataInHowTest {
     @Test
     void testWithDefaults() throws Exception {
 
-        DataInHow<InputStream, NamedData> test = CsvDataInHow.withDefaultOptions();
+        DataInHow<InputStream, DidoData> test = CsvDataInHow.withDefaultOptions();
 
         String records =
                 "Apple,5,19.50" + System.lineSeparator() +
                 "Orange,2,35.24" + System.lineSeparator();
 
-        DataIn<NamedData> supplier = test.inFrom(
+        DataIn<DidoData> supplier = test.inFrom(
                 new ByteArrayInputStream(records.getBytes()));
 
         {
@@ -67,22 +66,22 @@ class CsvDataInHowTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        DataInHow<InputStream, NamedData> test = CsvDataInHow.withOptions()
+        DataInHow<InputStream, DidoData> test = CsvDataInHow.with()
                 .schema(schema)
                 .make();
 
-        DataIn<NamedData> supplier = test.inFrom(
+        DataIn<DidoData> supplier = test.inFrom(
                 new ByteArrayInputStream("Apple,5,27.2".getBytes()));
 
         {
-            NamedData data = supplier.get();
+            DidoData data = supplier.get();
 
-            assertThat(data.getString("Type"), is("Apple"));
-            assertThat(data.getInt("Quantity"), is(5));
-            assertThat(data.getDouble("Price"), is(27.2));
+            assertThat(data.getStringNamed("Type"), is("Apple"));
+            assertThat(data.getIntNamed("Quantity"), is(5));
+            assertThat(data.getDoubleNamed("Price"), is(27.2));
 
-            assertThat(data.get("Quantity"), is(5));
-            assertThat(data.get("Price"), is(27.2));
+            assertThat(data.getNamed("Quantity"), is(5));
+            assertThat(data.getNamed("Price"), is(27.2));
         }
 
         assertThat(supplier.get(), nullValue());
@@ -100,16 +99,16 @@ class CsvDataInHowTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        DataInHow<InputStream, NamedData> test = CsvDataInHow.withOptions()
+        DataInHow<InputStream, DidoData> test = CsvDataInHow.with()
                 .schema(someSchema)
                 .partialSchema(true)
                 .make();
 
-        DataIn<NamedData> supplier = test.inFrom(
+        DataIn<DidoData> supplier = test.inFrom(
                 new ByteArrayInputStream(records.getBytes()));
 
         {
-            NamedData data = supplier.get();
+            DidoData data = supplier.get();
 
             DataSchema schema = data.getSchema();
 
@@ -119,9 +118,9 @@ class CsvDataInHowTest {
             assertThat(schema.getTypeAt(2), is(int.class));
             assertThat(schema.getTypeAt(3), is(double.class));
 
-            assertThat(data.getString("Fruit"), is("Apple"));
-            assertThat(data.getInt("Quantity"), is(5));
-            assertThat(data.getDouble("Price"), is(19.50));
+            assertThat(data.getStringNamed("Fruit"), is("Apple"));
+            assertThat(data.getIntNamed("Quantity"), is(5));
+            assertThat(data.getDoubleNamed("Price"), is(19.50));
         }
 
         {
@@ -138,7 +137,7 @@ class CsvDataInHowTest {
     @Test
     void testEmptyValues() throws Exception {
 
-        DataIn<NamedData> dataIn = CsvDataInHow.withDefaultOptions()
+        DataIn<DidoData> dataIn = CsvDataInHow.withDefaultOptions()
                 .inFrom(new ByteArrayInputStream(",,".getBytes(StandardCharsets.UTF_8)));
 
         DidoData data = dataIn.get();

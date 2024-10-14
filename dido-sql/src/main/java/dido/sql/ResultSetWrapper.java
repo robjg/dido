@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-public class ResultSetWrapper extends AbstractData implements NamedData {
+public class ResultSetWrapper extends AbstractData implements DidoData {
 
     private final ResultSet resultSet;
 
@@ -25,7 +25,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
         this.schema = schema;
     }
 
-    public static NamedData from(ResultSet resultSet,
+    public static DidoData from(ResultSet resultSet,
                                  ClassLoader classLoader)
             throws SQLException, ClassNotFoundException {
 
@@ -33,7 +33,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
                 classLoader);
     }
 
-    public static NamedData from(ResultSet resultSet,
+    public static DidoData from(ResultSet resultSet,
                                  DataSchema schema,
                                  ClassLoader classLoader)
             throws SQLException, ClassNotFoundException {
@@ -51,12 +51,12 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
     }
 
     @Override
-    public Object get(String field) {
+    public Object getNamed(String field) {
         return schema.getFieldGetterNamed(field).get(this);
     }
 
     @Override
-    public boolean has(String field) {
+    public boolean hasNamed(String field) {
         try {
             resultSet.getObject(field);
             return !resultSet.wasNull();
@@ -66,7 +66,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
     }
 
     @Override
-    public boolean getBoolean(String field) {
+    public boolean getBooleanNamed(String field) {
         try {
             return resultSet.getBoolean(field);
         } catch (SQLException e) {
@@ -75,7 +75,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
     }
 
     @Override
-    public byte getByte(String field) {
+    public byte getByteNamed(String field) {
         try {
             return resultSet.getByte(field);
         } catch (SQLException e) {
@@ -84,7 +84,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
     }
 
     @Override
-    public char getChar(String field) {
+    public char getCharNamed(String field) {
         try {
             return (char) resultSet.getInt(field);
         } catch (SQLException e) {
@@ -93,7 +93,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
     }
 
     @Override
-    public short getShort(String field) {
+    public short getShortNamed(String field) {
         try {
             return resultSet.getShort(field);
         } catch (SQLException e) {
@@ -102,7 +102,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
     }
 
     @Override
-    public int getInt(String field) {
+    public int getIntNamed(String field) {
         try {
             return resultSet.getInt(field);
         } catch (SQLException e) {
@@ -111,7 +111,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
     }
 
     @Override
-    public long getLong(String field) {
+    public long getLongNamed(String field) {
         try {
             return resultSet.getLong(field);
         } catch (SQLException e) {
@@ -120,7 +120,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
     }
 
     @Override
-    public float getFloat(String field) {
+    public float getFloatNamed(String field) {
         try {
             return resultSet.getFloat(field);
         } catch (SQLException e) {
@@ -129,7 +129,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
     }
 
     @Override
-    public double getDouble(String field) {
+    public double getDoubleNamed(String field) {
         try {
             return resultSet.getDouble(field);
         } catch (SQLException e) {
@@ -138,7 +138,7 @@ public class ResultSetWrapper extends AbstractData implements NamedData {
     }
 
     @Override
-    public String getString(String field) {
+    public String getStringNamed(String field) {
         try {
             return resultSet.getString(field);
         } catch (SQLException e) {

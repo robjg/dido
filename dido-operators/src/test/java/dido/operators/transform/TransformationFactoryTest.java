@@ -23,7 +23,7 @@ class TransformationFactoryTest {
 
         Function<DidoData, DidoData> func = transformationFactory.get();
 
-        NamedData data = MapData.of("fruit", "apple", "quantity", 12);
+        DidoData data = MapData.of("fruit", "apple", "quantity", 12);
 
         DidoData result = func.apply(data);
 

@@ -1,7 +1,6 @@
 package dido.oddjob.bean;
 
 import dido.data.DidoData;
-import dido.data.NamedData;
 import org.oddjob.arooa.types.ValueFactory;
 
 import java.util.Arrays;
@@ -9,23 +8,23 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-public class SpecialCharsTransformer implements ValueFactory<Function<DidoData, NamedData>> {
+public class SpecialCharsTransformer implements ValueFactory<Function<DidoData, DidoData>> {
 
     /** The characters in a field name that need to be replace. */
     private final static Set<Character> special =
             new HashSet<>(Arrays.asList('[', ']', '(', ')', '.'));
 
     @Override
-    public Function<DidoData, NamedData> toValue() {
+    public Function<DidoData, DidoData> toValue() {
         return new Impl();
     }
 
-    static class Impl implements Function<DidoData, NamedData> {
+    static class Impl implements Function<DidoData, DidoData> {
 
-        private Function<? super DidoData, ? extends NamedData> renamedData;
+        private Function<? super DidoData, ? extends DidoData> renamedData;
 
         @Override
-        public NamedData apply(DidoData data) {
+        public DidoData apply(DidoData data) {
 
             if (renamedData == null) {
 

@@ -3,19 +3,19 @@ package dido.json;
 import com.google.gson.*;
 import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractFieldGetter;
-import dido.data.useful.AbstractNamedData;
 import dido.data.useful.DataSchemaImpl;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
- * Provide a wrapper around a {@link JsonObject} so that it can be accessed as an {@link NamedData}.
+ * Provide a wrapper around a {@link JsonObject} so that it can be accessed as an {@link DidoData}.
  */
 public class JsonDataWrapper {
 
-    public static final Class<NamedData> DATA_TYPE = NamedData.class;
+    public static final Class<DidoData> DATA_TYPE = DidoData.class;
 
     public static final Class<?> REPEATING_DATA_TYPE = SchemaField.NESTED_REPEATING_TYPE;
 
@@ -38,7 +38,7 @@ public class JsonDataWrapper {
                 .registerTypeAdapter(REPEATING_DATA_TYPE, new RepeatingDeserializer(DATA_TYPE));
     }
 
-    class DataDeserializer implements JsonDeserializer<NamedData> {
+    class DataDeserializer implements JsonDeserializer<DidoData> {
 
         private Schema schema;
 
@@ -53,19 +53,19 @@ public class JsonDataWrapper {
         }
 
         @Override
-        public NamedData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public DidoData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
             return wrap((JsonObject) json, context);
         }
     }
 
-    public NamedData wrap(JsonObject jsonObject, JsonDeserializationContext context) {
+    public DidoData wrap(JsonObject jsonObject, JsonDeserializationContext context) {
 
         final Schema schema = deserializer.schema;
 
         final Object[] values = new Object[schema.lastIndex()];
 
-        return new AbstractNamedData() {
+        return new AbstractData() {
 
             @Override
             public ReadSchema getSchema() {

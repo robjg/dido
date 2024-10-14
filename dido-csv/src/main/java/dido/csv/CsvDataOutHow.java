@@ -62,7 +62,7 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
         this.withHeader = options.withHeader;
     }
 
-    public static Options withOptions() {
+    public static Options with() {
         return new Options();
     }
 

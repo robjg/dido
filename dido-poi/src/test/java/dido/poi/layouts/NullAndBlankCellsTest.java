@@ -1,7 +1,6 @@
 package dido.poi.layouts;
 
 import dido.data.DidoData;
-import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.poi.data.PoiWorkbook;
 import dido.test.OurDirs;
@@ -72,7 +71,7 @@ public class NullAndBlankCellsTest {
 		PoiWorkbook workbook = new PoiWorkbook();
 		workbook.provideBookOut().getOrCreateSheet(null);
 
-		DataIn<NamedData> reader = rows.inFrom(workbook);
+		DataIn<DidoData> reader = rows.inFrom(workbook);
 		
 		DidoData result = reader.get();
 

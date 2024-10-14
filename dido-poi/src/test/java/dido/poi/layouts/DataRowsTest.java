@@ -2,7 +2,6 @@ package dido.poi.layouts;
 
 import dido.data.DidoData;
 import dido.data.MapData;
-import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;
@@ -77,19 +76,19 @@ public class DataRowsTest {
 //		assertEquals(0, test.getLastRow());
 //		assertEquals(0, test.getLastColumn());
 
-		DataIn<NamedData> reader = test.inFrom(workbook);
+		DataIn<DidoData> reader = test.inFrom(workbook);
 
-		NamedData result = reader.get();
+		DidoData result = reader.get();
 		
 		assertEquals(3, test.getLastRow());
 
-		assertEquals("Apples", result.getString("Fruit"));
+		assertEquals("Apples", result.getStringNamed("Fruit"));
 
 		result = reader.get();
 
 		assertEquals(4, test.getLastRow());
 
-		assertEquals("Oranges", result.getString("Fruit"));
+		assertEquals("Oranges", result.getStringNamed("Fruit"));
 
 		assertNull(reader.get());
 		

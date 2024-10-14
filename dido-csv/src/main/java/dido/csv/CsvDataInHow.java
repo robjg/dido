@@ -12,6 +12,8 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Function;
@@ -19,7 +21,7 @@ import java.util.function.Function;
 /**
  * How to read CSV Data In.
  */
-public class CsvDataInHow implements DataInHow<InputStream, NamedData> {
+public class CsvDataInHow implements DataInHow<InputStream, DidoData> {
 
     private final CSVFormat csvFormat;
 
@@ -58,6 +60,11 @@ public class CsvDataInHow implements DataInHow<InputStream, NamedData> {
             return this;
         }
 
+        public Options header() {
+            this.withHeader = true;
+            return this;
+        }
+
         public Options partialSchema(boolean partialSchema) {
             this.partialSchema = partialSchema;
             return this;
@@ -68,7 +75,19 @@ public class CsvDataInHow implements DataInHow<InputStream, NamedData> {
             return this;
         }
 
-        public DataInHow<InputStream, NamedData> make() {
+        public DataIn<DidoData> fromFile(Path path) throws IOException {
+            return make_().inFrom(Files.newInputStream(path));
+        }
+
+        public DataIn<DidoData> from(InputStream inputStream) throws IOException {
+            return make_().inFrom(inputStream);
+        }
+
+        public DataInHow<InputStream, DidoData> make() {
+            return make_();
+        }
+
+        CsvDataInHow make_() {
             return new CsvDataInHow(this);
         }
     }
@@ -82,11 +101,11 @@ public class CsvDataInHow implements DataInHow<InputStream, NamedData> {
                 DefaultConversionProvider.defaultInstance());
     }
 
-    public static Options withOptions() {
+    public static Options with() {
         return new Options();
     }
 
-    public static DataInHow<InputStream, NamedData> withDefaultOptions() {
+    public static DataInHow<InputStream, DidoData> withDefaultOptions() {
         return new Options().make();
     }
 
@@ -95,8 +114,10 @@ public class CsvDataInHow implements DataInHow<InputStream, NamedData> {
         return InputStream.class;
     }
 
+
+
     @Override
-    public DataIn<NamedData> inFrom(InputStream inputStream) throws IOException {
+    public DataIn<DidoData> inFrom(InputStream inputStream) throws IOException {
 
         CSVFormat csvFormat = this.csvFormat;
 
@@ -141,7 +162,7 @@ public class CsvDataInHow implements DataInHow<InputStream, NamedData> {
         return new DataIn<>() {
 
             @Override
-            public NamedData get() {
+            public DidoData get() {
                 if (finalIterator.hasNext()) {
                     return wrapperFunction.apply(finalIterator.next());
                 } else {

@@ -82,7 +82,7 @@ class AnonymousDatasTest {
     @Test
     void partialIndices() {
 
-        NamedData data1 = MapData.of(
+        DidoData data1 = MapData.of(
                 "Name","Alice", "Number", 1234, "Colour", "Green");
 
         AnonymousData copy1 = AnonymousDatas.partialCopy(data1,1, 3);
@@ -96,7 +96,7 @@ class AnonymousDatasTest {
         assertThat(copy2, is(copy1));
         assertThat(copy2.hashCode(), is(copy1.hashCode()));
 
-        NamedData data2 = MapData.of(
+        DidoData data2 = MapData.of(
                 "Name","Alice", "Number", 4567, "Colour", "Green");
 
         AnonymousData copy2_1 = AnonymousDatas.partialWrap(data2, 1, 3);

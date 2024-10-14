@@ -37,7 +37,7 @@ public class StreamInJson<D extends DidoData> implements DataInHow<InputStream, 
     }
 
     /**
-     * Stream JSON by wrapping the underlying data. Only {@link NamedData} is supported.
+     * Stream JSON by wrapping the underlying data. Only {@link DidoData} is supported.
      *
      * @param schema  the full schema of the resultant data.
      * @return Settings.
@@ -72,13 +72,13 @@ public class StreamInJson<D extends DidoData> implements DataInHow<InputStream, 
             return this;
         }
 
-        public DataInHow<InputStream, NamedData> make() {
+        public DataInHow<InputStream, DidoData> make() {
 
             return new StreamInJson<>(
                     JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                             .create(),
                     isArray,
-                    NamedData.class);
+                    DidoData.class);
         }
     }
 

@@ -1,7 +1,7 @@
 package dido.oddjob.bean;
 
 import dido.data.DataSchema;
-import dido.data.NamedData;
+import dido.data.DidoData;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;
@@ -47,7 +47,7 @@ public class FromBeanTransformer implements ArooaSessionAware, ArooaValue {
         this.session = session;
     }
 
-    public <T> Function<T, NamedData> toBeanTransformer() throws ClassNotFoundException {
+    public <T> Function<T, DidoData> toBeanTransformer() throws ClassNotFoundException {
 
         PropertyAccessor accessor = session.getTools().getPropertyAccessor();
 

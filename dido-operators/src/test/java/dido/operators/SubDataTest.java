@@ -2,7 +2,6 @@ package dido.operators;
 
 import dido.data.DidoData;
 import dido.data.MapData;
-import dido.data.NamedData;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,7 +13,7 @@ class SubDataTest {
     @Test
     void testEqualsHashCodeAndToString() {
 
-        NamedData data1 = MapData.of(
+        DidoData data1 = MapData.of(
                 "Name","Alice", "Number", 1234, "Colour", "Green");
 
         DidoData subData1 = SubData.ofIndices(1, 3).apply(data1);
@@ -22,7 +21,7 @@ class SubDataTest {
         assertThat(subData1.getSchema().toString(), is("{[1:Name]=java.lang.String, [2:Colour]=java.lang.String}"));
         assertThat(subData1.toString(), is("{[1:Name]=Alice, [2:Colour]=Green}"));
 
-        NamedData data2 = MapData.of(
+        DidoData data2 = MapData.of(
                         "Name","Alice", "Number", 4567, "Colour", "Green");
 
         DidoData subData2 = SubData.ofIndices(1, 3).apply(data2);
@@ -35,7 +34,7 @@ class SubDataTest {
     @Test
     void testWithOneSubField() {
 
-        NamedData data1 = MapData.of(
+        DidoData data1 = MapData.of(
                 "Name","Alice", "Number", 1234, "Colour", "Green");
 
         DidoData subData1 = SubData.ofIndices(1).apply(data1);
@@ -56,7 +55,7 @@ class SubDataTest {
     @Test
     void testWithDifferentFieldNames() {
 
-        NamedData data1 = MapData.of(
+        DidoData data1 = MapData.of(
                 "Name", "Alice",  "Id", 1234, "Colour", "Green");
 
         DidoData subData1 = SubData.ofIndices(1).apply(data1);
@@ -64,7 +63,7 @@ class SubDataTest {
         assertThat(subData1.getSchema().toString(), is("{[1:Name]=java.lang.String}"));
         assertThat(subData1.toString(), is("{[1:Name]=Alice}"));
 
-        NamedData data2 = MapData.of(
+        DidoData data2 = MapData.of(
                 "Occupation", "Programmer", "Age", 47, "Called", "Alice");
 
         DidoData subData2 = SubData.ofIndices(3).apply(data2);
@@ -79,7 +78,7 @@ class SubDataTest {
     @Test
     void testSubDataWithFieldNames() {
 
-        NamedData data1 = MapData.of(
+        DidoData data1 = MapData.of(
                 "Name", "Alice",  "Id", 1234, "Colour", "Green");
 
         DidoData subData1 = SubData.ofFields("Name").apply(data1);

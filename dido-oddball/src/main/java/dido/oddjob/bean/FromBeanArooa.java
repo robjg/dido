@@ -2,7 +2,7 @@ package dido.oddjob.bean;
 
 import dido.data.NoSuchFieldException;
 import dido.data.*;
-import dido.data.useful.AbstractNamedData;
+import dido.data.useful.AbstractData;
 import dido.data.useful.DataSchemaImpl;
 import dido.data.useful.SchemaFactoryImpl;
 import org.oddjob.arooa.ArooaSession;
@@ -58,7 +58,7 @@ public class FromBeanArooa {
             return this;
         }
 
-        public <T> Function<T, NamedData> ofUnknownClass() {
+        public <T> Function<T, DidoData> ofUnknownClass() {
 
             DataSchema schema = this.schema;
             boolean partial = this.partial;
@@ -71,23 +71,23 @@ public class FromBeanArooa {
             }
         }
 
-        public <T> Function<T, NamedData> ofClass(Class<T> aClass) {
+        public <T> Function<T, DidoData> ofClass(Class<T> aClass) {
 
             return ofArooaClass(new SimpleArooaClass(aClass));
         }
 
-        public <T> Function<T, NamedData> ofArooaClass(ArooaClass arooaClass) {
+        public <T> Function<T, DidoData> ofArooaClass(ArooaClass arooaClass) {
 
             return FromBeanArooa.this.ofArooaClassWithSchema(arooaClass, schema, partial);
         }
     }
 
-    public <T> Function<T, NamedData> ofUnknownClass() {
+    public <T> Function<T, DidoData> ofUnknownClass() {
 
         return new Unknown<>(DataSchema.emptySchema());
     }
 
-    public <T> Function<T, NamedData> ofClass(Class<T> aClass) {
+    public <T> Function<T, DidoData> ofClass(Class<T> aClass) {
 
         Schema schema = schemaFrom(new SimpleArooaClass(aClass));
 
@@ -101,7 +101,7 @@ public class FromBeanArooa {
         return bean -> new Impl(schema, bean);
     }
 
-    protected <T> Function<T, NamedData> ofArooaClassWithSchema(ArooaClass arooaClass,
+    protected <T> Function<T, DidoData> ofArooaClassWithSchema(ArooaClass arooaClass,
                                                                 DataSchema schema,
                                                                 boolean partial) {
 
@@ -111,7 +111,7 @@ public class FromBeanArooa {
         return new Known<>(outSchema);
     }
 
-    class Unknown<T> implements Function<T, NamedData> {
+    class Unknown<T> implements Function<T, DidoData> {
 
         private final DataSchema schema;
 
@@ -122,7 +122,7 @@ public class FromBeanArooa {
         }
 
         @Override
-        public NamedData apply(T bean) {
+        public DidoData apply(T bean) {
 
             if (outSchema == null) {
                 outSchema = schemaFrom(accessor.getClassName(bean), schema, true);
@@ -137,7 +137,7 @@ public class FromBeanArooa {
         }
     }
 
-    class Known<T> implements Function<T, NamedData> {
+    class Known<T> implements Function<T, DidoData> {
 
         private final Schema schema;
 
@@ -146,7 +146,7 @@ public class FromBeanArooa {
         }
 
         @Override
-        public NamedData apply(T t) {
+        public DidoData apply(T t) {
             if (t == null) {
                 return null;
             } else {
@@ -160,7 +160,7 @@ public class FromBeanArooa {
         }
     }
 
-    class Impl extends AbstractNamedData {
+    class Impl extends AbstractData {
 
         private final Schema schema;
 

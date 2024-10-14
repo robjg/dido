@@ -2,7 +2,6 @@ package dido.poi.layouts;
 
 import dido.data.DidoData;
 import dido.data.MapData;
-import dido.data.NamedData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.oddjob.beanbus.DataInDriver;
@@ -127,13 +126,13 @@ public class QuickRowsTest {
         assertEquals("25-Mar-1970", sheet.getRow(1).getCell(1).toString());
         assertEquals("45000.0", sheet.getRow(1).getCell(2).toString());
 
-        DataIn<NamedData> reader = test.inFrom(workbook);
+        DataIn<DidoData> reader = test.inFrom(workbook);
 
-        NamedData result = reader.get();
+        DidoData result = reader.get();
 
-        assertEquals("John", result.getString("name"));
-        assertThat(result.get("dateOfBirth"), is(DateHelper.parseDate("1970-03-25")));
-        assertEquals(45000.0, result.getDouble("salary"));
+        assertEquals("John", result.getStringNamed("name"));
+        assertThat(result.getNamed("dateOfBirth"), is(DateHelper.parseDate("1970-03-25")));
+        assertEquals(45000.0, result.getDoubleNamed("salary"));
     }
 
     @Test
@@ -191,34 +190,34 @@ public class QuickRowsTest {
         // Read Side
         ////
 
-        List<NamedData> results = new ArrayList<>(3);
+        List<DidoData> results = new ArrayList<>(3);
 
         DataInDriver<BookInProvider> read = new DataInDriver<>();
         read.setArooaSession(session);
         read.setFrom(new ArooaObject(workbook));
         read.setHow(layout);
-        read.setTo(data ->  results.add((NamedData) data));
+        read.setTo(results::add);
         read.run();
 
         read.close();
 
-        NamedData person1 = results.get(0);
-        assertEquals("John", person1.getString("name"));
+        DidoData person1 = results.get(0);
+        assertEquals("John", person1.getStringNamed("name"));
         assertEquals(DateHelper.parseDate("1970-03-25"),
-                person1.get("dateOfBirth"));
-        assertEquals(45000.0, person1.getDouble("salary"));
+                person1.getNamed("dateOfBirth"));
+        assertEquals(45000.0, person1.getDoubleNamed("salary"));
 
-        NamedData person2 = results.get(1);
-        assertEquals("Jane", person2.getString("name"));
+        DidoData person2 = results.get(1);
+        assertEquals("Jane", person2.getStringNamed("name"));
         assertEquals(DateHelper.parseDate("1982-11-14"),
-                person2.get("dateOfBirth"));
-        assertEquals(28000.0, person2.getDouble("salary"));
+                person2.getNamed("dateOfBirth"));
+        assertEquals(28000.0, person2.getDoubleNamed("salary"));
 
-        NamedData person3 = results.get(2);
-        assertEquals("Fred", person3.getString("name"));
+        DidoData person3 = results.get(2);
+        assertEquals("Fred", person3.getStringNamed("name"));
         assertEquals(DateHelper.parseDate("1986-08-07"),
-                person3.get("dateOfBirth"));
-        assertEquals(22500.0, person3.getDouble("salary"));
+                person3.getNamed("dateOfBirth"));
+        assertEquals(22500.0, person3.getDoubleNamed("salary"));
 
         assertEquals(3, results.size());
     }
