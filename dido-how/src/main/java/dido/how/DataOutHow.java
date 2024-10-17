@@ -21,6 +21,6 @@ public interface DataOutHow<O> {
 	 * @return A writer. Never null.
 	 * 
 	 */
-	DataOut outTo(O dataOut) throws Exception;
+	DataOut outTo(O dataOut);
 
 }

@@ -5,6 +5,7 @@ import dido.data.DidoData;
 import dido.data.IndexedData;
 import dido.data.IndexedSchema;
 import dido.how.CloseableConsumer;
+import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
 import org.apache.commons.csv.CSVFormat;
@@ -76,7 +77,7 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
     }
 
     @Override
-    public DataOut outTo(OutputStream outputStream) throws IOException {
+    public DataOut outTo(OutputStream outputStream) {
 
         if (schema == null) {
             return new UnknownSchemaConsumer(outputStream);
@@ -86,14 +87,19 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
     }
 
     protected DataOut consumerWhenSchemaKnown(OutputStream outputStream,
-                                                      DataSchema schema) throws IOException {
+                                                      DataSchema schema) {
         CSVFormat csvFormat = this.csvFormat;
         if (this.withHeader) {
             csvFormat = csvFormat.withHeader(headerFrom(schema));
         }
 
         Writer writer = new OutputStreamWriter(outputStream);
-        final CSVPrinter printer = csvFormat.print(writer);
+        final CSVPrinter printer;
+        try {
+            printer = csvFormat.print(writer);
+        } catch (IOException e) {
+            throw DataException.of(e);
+        }
 
         return new KnownSchemaConsumer(printer);
     }
@@ -111,13 +117,17 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
             try {
                 printer.printRecord(toValues(data));
             } catch (IOException e) {
-                throw new IllegalArgumentException("Failed on " + data, e);
+                throw DataException.of("Failed on " + data, e);
             }
         }
 
         @Override
-        public void close() throws IOException {
-            printer.close();
+        public void close() {
+            try {
+                printer.close();
+            } catch (IOException e) {
+                throw DataException.of(e);
+            }
         }
     }
 
@@ -134,17 +144,13 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
         @Override
         public void accept(DidoData data) {
             if (schemaKnownConsumer == null) {
-                try {
                     schemaKnownConsumer = consumerWhenSchemaKnown(outputStream, data.getSchema());
-                } catch (IOException e) {
-                    throw new IllegalArgumentException("Failed on " + data, e);
-                }
             }
             schemaKnownConsumer.accept(data);
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
             if (schemaKnownConsumer != null) {
                 schemaKnownConsumer.close();
             }

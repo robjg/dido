@@ -116,7 +116,7 @@ public class TextTableOut implements DataOutHow<OutputStream> {
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
             if (delegate != null) {
                 this.delegate.close();
             }

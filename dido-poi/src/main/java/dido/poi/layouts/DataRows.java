@@ -236,14 +236,14 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
 
         private final Collection<CellOut<?>> cellOuts;
 
-        private final AutoCloseable closeable;
+        private final Runnable closeHandler;
 
         public MainWriter(RowsOut rowsOut,
                           Collection<CellOut<?>> cellOuts,
-                          AutoCloseable closeable) {
+                          Runnable closeHandler) {
             this.rowsOut = rowsOut;
             this.cellOuts = cellOuts;
-            this.closeable = closeable;
+            this.closeHandler = closeHandler;
         }
 
         @Override
@@ -269,7 +269,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
 
             if (autoFilter) {
                 rowsOut.autoFilter();
@@ -279,7 +279,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
                 rowsOut.autoWidth();
             }
 
-            closeable.close();
+            closeHandler.run();
 
             logger.debug("[" + DataRows.this +
                     "] closed writer at row [" + lastRow +
@@ -288,7 +288,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
     }
 
     @Override
-    public DataOut outTo(BookOutProvider bookOutProvider) throws Exception {
+    public DataOut outTo(BookOutProvider bookOutProvider)  {
 
         BookOut bookOut = bookOutProvider.provideBookOut();
 
@@ -303,7 +303,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
 
         SchemaAndCells schemaAndCells = SchemaAndCells.fromSchemaOrCells(this.schema, this.of);
 
-        WriterFactory writerFactory = new WriterFactory(rowsOut, bookOut);
+        WriterFactory writerFactory = new WriterFactory(rowsOut, bookOut::close);
 
         if (schemaAndCells == null) {
             return new UnknownWriter(writerFactory);
@@ -334,7 +334,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
             if (delegate != null) {
                 delegate.close();
             }
@@ -344,11 +344,11 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
     class WriterFactory {
 
         private final RowsOut rowsOut;
-        private final AutoCloseable closeable;
+        private final Runnable closeHandler;
 
-        WriterFactory(RowsOut rowsOut, AutoCloseable closeable) {
+        WriterFactory(RowsOut rowsOut, Runnable closeHandler) {
             this.rowsOut = rowsOut;
-            this.closeable = closeable;
+            this.closeHandler = closeHandler;
         }
 
         DataOut create(SchemaAndCells schemaAndCells) {
@@ -376,7 +376,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
             logger.debug("[" + this + "] initialised at [" +
                     firstRow + ", " + firstColumn + "]");
 
-            return new MainWriter(rowsOut, cellOuts, closeable);
+            return new MainWriter(rowsOut, cellOuts, closeHandler);
         }
     }
 

@@ -78,7 +78,7 @@ public class PoiWorkbook implements BookInProvider, BookOutProvider {
     }
 
     @Override
-    public BookOut provideBookOut() throws IOException {
+    public BookOut provideBookOut() {
 
         return new RootPoiBookOut();
     }
@@ -92,7 +92,7 @@ public class PoiWorkbook implements BookInProvider, BookOutProvider {
             if (input != null) {
 
                     workbook = WorkbookFactory.create(input);
-                    logger.info("Read workbook from [" + input + "]");
+                    logger.info("Read workbook from [{}]",  input);
                     input.close();
             }
 
@@ -123,12 +123,16 @@ public class PoiWorkbook implements BookInProvider, BookOutProvider {
 
     class RootPoiBookOut implements BookOut {
 
-        public RootPoiBookOut() throws IOException {
+        public RootPoiBookOut() {
 
             if (input != null) {
-
-                    workbook = WorkbookFactory.create(input);
-                    input.close();
+                InputStream in = input;
+                try (in) {
+                    workbook = WorkbookFactory.create(in);
+                }
+                catch (IOException e) {
+                    throw DataException.of(e);
+                }
                 logger.info("Read workbook from [" + input + "]");
             } else {
                 logger.info("Created empty workbook.");
@@ -169,15 +173,17 @@ public class PoiWorkbook implements BookInProvider, BookOutProvider {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
 
             if (output != null) {
-
-                    workbook.write(output);
-                    output.close();
-
-                logger.info("Wrote workbook of " + workbook.getNumberOfSheets() +
-                        " sheet(s)");
+                OutputStream out = output;
+                try (out) {
+                    workbook.write(out);
+                }
+                catch (IOException e) {
+                    throw DataException.of(e);
+                }
+                logger.info("Wrote workbook of {} sheet(s)", workbook.getNumberOfSheets());
             }
         }
 

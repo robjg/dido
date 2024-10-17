@@ -55,4 +55,6 @@ public interface DataOut extends CloseableConsumer<DidoData> {
         };
     }
 
+    @Override
+    void close();
 }

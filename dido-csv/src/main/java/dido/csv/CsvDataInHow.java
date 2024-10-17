@@ -80,7 +80,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
             return make_().inFrom(Files.newInputStream(path));
         }
 
-        public DataIn from(InputStream inputStream) throws IOException {
+        public DataIn from(InputStream inputStream) {
             return make_().inFrom(inputStream);
         }
 
@@ -134,7 +134,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
                     if (iterator.hasNext()) {
                         schema = schemaFromHeader(iterator.next(), this.partialSchema ? this.schema : null);
                     } else {
-                        throw new DataException("No Header Record.");
+                        throw DataException.of("No Header Record.");
                     }
                 } else {
                     if (iterator.hasNext()) {
@@ -166,7 +166,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
 
             @Override
             public Iterator<DidoData> iterator() {
-                return new Iterator<DidoData>() {
+                return new Iterator<>() {
                     @Override
                     public boolean hasNext() {
                         return finalIterator.hasNext();

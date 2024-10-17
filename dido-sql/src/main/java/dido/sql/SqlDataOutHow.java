@@ -52,7 +52,7 @@ public class SqlDataOutHow implements DataOutHow<Connection> {
             return this;
         }
 
-        public DataOut to(Connection connection) throws SQLException, ClassNotFoundException {
+        public DataOut to(Connection connection) {
             return make_().outTo(connection);
         }
 
@@ -85,8 +85,16 @@ public class SqlDataOutHow implements DataOutHow<Connection> {
     }
 
     @Override
-    public DataOut outTo(Connection connection) throws SQLException, ClassNotFoundException {
+    public DataOut outTo(Connection connection) {
 
+        try {
+            return outToWithExceptions(connection);
+        } catch (SQLException | ClassNotFoundException e) {
+            throw DataException.of(e);
+        }
+    }
+
+    protected DataOut outToWithExceptions(Connection connection) throws SQLException, ClassNotFoundException {
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
@@ -127,7 +135,7 @@ public class SqlDataOutHow implements DataOutHow<Connection> {
                                 stmt.setObject(index, item);
                             }
                         } catch (SQLException e) {
-                            throw new DataException("Failed setting column " + index + " with ["
+                            throw DataException.of("Failed setting column " + index + " with ["
                                     + item + "]", e);
                         }
                     }
@@ -142,14 +150,18 @@ public class SqlDataOutHow implements DataOutHow<Connection> {
                         stmt.executeUpdate();
                     }
                 } catch (SQLException e) {
-                    throw new DataException(e);
+                    throw DataException.of(e);
                 }
             }
 
             @Override
-            public void close() throws SQLException {
-                stmt.close();
-                connection.close();
+            public void close()  {
+                try (connection) {
+                    stmt.close();
+                }
+                catch (SQLException e) {
+                    throw DataException.of(e);
+                }
             }
         };
     }

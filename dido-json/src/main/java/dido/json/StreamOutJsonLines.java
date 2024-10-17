@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import dido.data.DidoData;
 import dido.data.IndexedData;
 import dido.data.RepeatingData;
+import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
 
@@ -35,8 +36,12 @@ public class StreamOutJsonLines implements DataOutHow<OutputStream> {
 
         return new DataOut() {
             @Override
-            public void close() throws IOException {
-                appendable.close();
+            public void close()  {
+                try {
+                    appendable.close();
+                } catch (IOException e) {
+                    throw DataException.of(e);
+                }
             }
 
             @Override

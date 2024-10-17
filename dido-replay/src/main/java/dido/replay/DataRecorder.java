@@ -3,6 +3,7 @@ package dido.replay;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.how.CloseableConsumer;
+import dido.how.DataException;
 import dido.json.SchemaAsJson;
 import dido.json.StreamOutJsonLines;
 import org.slf4j.Logger;
@@ -38,8 +39,12 @@ public class DataRecorder implements CloseableConsumer<DidoData> {
 
         timeConsumer = new CloseableConsumer<>() {
             @Override
-            public void close() throws Exception {
-                outputs.timeOut.close();
+            public void close()  {
+                try {
+                    outputs.timeOut.close();
+                } catch (IOException e) {
+                    throw DataException.of(e);
+                }
             }
 
             @Override
@@ -147,10 +152,12 @@ public class DataRecorder implements CloseableConsumer<DidoData> {
     }
 
     @Override
-    public void close() throws Exception {
-        dataConsumer.close();
-        schemaConsumer.close();
-        timeConsumer.close();
+    public void close() {
+        try (timeConsumer) {
+            try (schemaConsumer) {
+                dataConsumer.close();
+            }
+        }
     }
 
     @Override

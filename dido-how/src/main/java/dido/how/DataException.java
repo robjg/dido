@@ -9,19 +9,23 @@ package dido.how;
 public class DataException extends RuntimeException {
 	private static final long serialVersionUID = 2021102000L;
 	
-	public DataException() {
+	protected DataException() {
 	}
 
-	public DataException(String message) {
+	protected DataException(String message) {
 		super(message);
 	}
 
-	public DataException(Throwable cause) {
+	protected DataException(Throwable cause) {
 		super(cause);
 	}
 
-	public DataException(String message, Throwable cause) {
+	protected DataException(String message, Throwable cause) {
 		super(message, cause);
+	}
+
+	public static DataException of(String message) {
+		return new DataException(message);
 	}
 
 	public static DataException of(String message, Throwable cause) {

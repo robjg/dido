@@ -1,11 +1,10 @@
 package dido.poi;
 
-import org.apache.poi.ss.usermodel.Sheet;
 import dido.poi.style.StyleProvider;
 import dido.poi.style.StyleProviderFactory;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import java.io.Closeable;
-import java.io.IOException;
 
 /**
  * Something that can write data to a spreadsheet workbook.
@@ -30,7 +29,7 @@ public interface BookOut extends Closeable {
 	 * 
 	 */
 	@Override
-	void close() throws IOException;
+	void close();
 	
 	/**
 	 * Add a style factory to this Style Provider.

@@ -84,7 +84,7 @@ public class SchemaAsJson {
         return new CloseableConsumer<>() {
 
             @Override
-            public void close() throws Exception {
+            public void close() {
                 out.close();
             }
 

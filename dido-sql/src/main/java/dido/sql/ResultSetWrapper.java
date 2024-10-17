@@ -347,7 +347,7 @@ public class ResultSetWrapper extends AbstractData implements DidoData {
             try {
                 return wrapper.resultSet.getDouble(column);
             } catch (SQLException e) {
-                throw new DataException(e);
+                throw DataException.of(e);
             }
         }
 

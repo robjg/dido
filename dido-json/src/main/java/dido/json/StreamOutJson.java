@@ -6,6 +6,7 @@ import com.google.gson.stream.JsonWriter;
 import dido.data.DidoData;
 import dido.data.IndexedData;
 import dido.data.RepeatingData;
+import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
 
@@ -45,21 +46,28 @@ public class StreamOutJson implements DataOutHow<OutputStream> {
     }
 
     @Override
-    public DataOut outTo(OutputStream outputStream) throws IOException {
+    public DataOut outTo(OutputStream outputStream) {
 
         JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
         writer.setIndent("  ");
         if (array) {
-            writer.beginArray();
+            try {
+                writer.beginArray();
+            } catch (IOException e) {
+                throw DataException.of(e);
+            }
         }
 
         return new DataOut() {
             @Override
-            public void close() throws IOException {
-                if (array) {
-                    writer.endArray();
+            public void close() {
+                try (writer) {
+                    if (array) {
+                        writer.endArray();
+                    }
+                } catch (IOException e) {
+                    throw DataException.of(e);
                 }
-                writer.close();
             }
 
             @Override

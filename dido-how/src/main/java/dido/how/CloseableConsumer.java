@@ -9,4 +9,6 @@ import java.util.function.Consumer;
  */
 public interface CloseableConsumer<T> extends Consumer<T>, AutoCloseable {
 
+    @Override
+    void close();
 }
