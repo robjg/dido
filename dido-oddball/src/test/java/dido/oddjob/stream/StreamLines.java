@@ -7,6 +7,7 @@ import dido.how.DataOut;
 import dido.how.DataOutHow;
 
 import java.io.*;
+import java.util.Iterator;
 
 /**
  * Streams a lines of text in and out, creating a {@link DidoData} record with the
@@ -20,7 +21,7 @@ public class StreamLines {
             .addNamed(LINE, String.class)
             .build();
 
-    public static class In implements DataInHow<InputStream, DidoData> {
+    public static class In implements DataInHow<InputStream> {
 
         DataBuilder<MapData> dataBuilder = MapData.builderForSchema(schema);
 
@@ -30,12 +31,13 @@ public class StreamLines {
         }
 
         @Override
-        public DataIn<DidoData> inFrom(InputStream inputStream) {
+        public DataIn inFrom(InputStream inputStream) {
 
             LineNumberReader reader = new LineNumberReader(
                     new InputStreamReader(inputStream));
 
-            return new DataIn<>() {
+            return new DataIn() {
+
                 @Override
                 public void close() {
                     try {
@@ -46,17 +48,20 @@ public class StreamLines {
                 }
 
                 @Override
-                public DidoData get() {
-                    try {
-                        String line = reader.readLine();
-                        if (line == null) {
-                            return null;
-                        } else {
-                            return dataBuilder.with(LINE, line).build();
+                public Iterator<DidoData> iterator() {
+                    Iterator<String> iterator = reader.lines().iterator();
+
+                    return new Iterator<>() {
+                        @Override
+                        public boolean hasNext() {
+                            return iterator.hasNext();
                         }
-                    } catch (IOException e) {
-                        throw new IllegalStateException(e);
-                    }
+
+                        @Override
+                        public DidoData next() {
+                            return dataBuilder.with(LINE, iterator.next()).build();
+                        }
+                    };
                 }
             };
         }

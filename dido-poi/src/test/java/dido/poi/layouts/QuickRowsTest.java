@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -126,9 +127,14 @@ public class QuickRowsTest {
         assertEquals("25-Mar-1970", sheet.getRow(1).getCell(1).toString());
         assertEquals("45000.0", sheet.getRow(1).getCell(2).toString());
 
-        DataIn<DidoData> reader = test.inFrom(workbook);
+        List<DidoData> results;
+        try (DataIn reader = test.inFrom(workbook)) {
+            results = reader.stream().collect(Collectors.toList());
+        }
 
-        DidoData result = reader.get();
+        assertThat(results.size(), is(1));
+
+        DidoData result = results.get(0);
 
         assertEquals("John", result.getStringNamed("name"));
         assertThat(result.getNamed("dateOfBirth"), is(DateHelper.parseDate("1970-03-25")));

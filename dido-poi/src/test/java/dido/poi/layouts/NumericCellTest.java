@@ -1,9 +1,6 @@
 package dido.poi.layouts;
 
-import dido.data.ArrayData;
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.SchemaBuilder;
+import dido.data.*;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;
@@ -24,11 +21,12 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.contains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NumericCellTest {
 
@@ -58,16 +56,14 @@ public class NumericCellTest {
 		writer.close();
 		
 		// Read side.
-		
-		DataIn<DidoData> reader = rows.inFrom(workbook);
 
-		DidoData result = reader.get();
-		
-		assertThat(result.getDoubleAt(1), is(12.3));
-		
-		assertNull(reader.get());
-		
-		reader.close();
+		try (DataIn reader = rows.inFrom(workbook)) {
+
+			List<DidoData> results = reader.stream()
+					.collect(Collectors.toList());
+
+			assertThat(results, contains(SingleData.type(Double.class).of(12.3)));
+		}
 	}
 
 	@Test
@@ -89,15 +85,14 @@ public class NumericCellTest {
 
 		// Read side.
 
-		DataIn<DidoData> reader = rows.inFrom(workbook);
+		try (DataIn reader = rows.inFrom(workbook)) {
 
-		DidoData result = reader.get();
+			List<DidoData> results = reader.stream()
+					.collect(Collectors.toList());
 
-		assertThat(result.getAt(1), is(12));
+			assertThat(results, contains(SingleData.type(Integer.class).of(12)));
+		}
 
-		assertNull(reader.get());
-
-		reader.close();
 	}
 
 	// Used to be null, but now all fields have names, the cell is created.
@@ -121,16 +116,13 @@ public class NumericCellTest {
 
 		// Read side.
 
-		DataIn<DidoData> reader = rows.inFrom(workbook);
+		try (DataIn reader = rows.inFrom(workbook)) {
 
-		DidoData result = reader.get();
+			List<DidoData> results = reader.stream()
+					.collect(Collectors.toList());
 
-		assertThat(result.getAt(1), is(0.0));
-		assertThat(result.hasIndex(1), is(true));
-
-		assertNull(reader.get());
-
-		reader.close();
+			assertThat(results, contains(SingleData.type(Double.class).of(0.0)));
+		}
 	}
 
 

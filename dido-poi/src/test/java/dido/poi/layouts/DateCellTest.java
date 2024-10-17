@@ -12,9 +12,12 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.utils.DateHelper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 
 @Disabled
 class DateCellTest {
@@ -48,14 +51,12 @@ class DateCellTest {
 
         // Read side.
 
-        DataIn<DidoData> reader = rows.inFrom(workbook);
+        try (DataIn reader = rows.inFrom(workbook)) {
 
-        DidoData result = reader.get();
+            List<DidoData> results = reader.stream()
+                    .collect(Collectors.toList());
 
-        assertThat(result.getAt(1), is(DateHelper.parseDate("2021-09-22")));
-
-        assertThat(reader.get(), nullValue());
-
-        reader.close();
+            assertThat(results, contains(ArrayData.of(DateHelper.parseDate("2021-09-22"))));
+        }
     }
 }

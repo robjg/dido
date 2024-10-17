@@ -13,26 +13,32 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
 
 class CsvDataInHowTest {
 
     @Test
     void testWithDefaults() throws Exception {
 
-        DataInHow<InputStream, DidoData> test = CsvDataInHow.withDefaultOptions();
+        DataInHow<InputStream> test = CsvDataInHow.withDefaultOptions();
 
         String records =
                 "Apple,5,19.50" + System.lineSeparator() +
-                "Orange,2,35.24" + System.lineSeparator();
+                        "Orange,2,35.24" + System.lineSeparator();
 
-        DataIn<DidoData> supplier = test.inFrom(
+        DataIn supplier = test.inFrom(
                 new ByteArrayInputStream(records.getBytes()));
 
+        List<DidoData> results = supplier.stream().collect(Collectors.toList());
+
+        assertThat(results.size(), is(2));
+
         {
-            DidoData data = supplier.get();
+            DidoData data = results.get(0);
 
             DataSchema schema = data.getSchema();
 
@@ -47,14 +53,13 @@ class CsvDataInHowTest {
         }
 
         {
-            DidoData data = supplier.get();
+            DidoData data = results.get(1);
 
             assertThat(data.getStringAt(1), is("Orange"));
             assertThat(data.getStringAt(2), is("2"));
             assertThat(data.getStringAt(3), is("35.24"));
         }
 
-        assertThat(supplier.get(), nullValue());
     }
 
     @Test
@@ -66,15 +71,18 @@ class CsvDataInHowTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        DataInHow<InputStream, DidoData> test = CsvDataInHow.with()
+        DataInHow<InputStream> test = CsvDataInHow.with()
                 .schema(schema)
                 .make();
 
-        DataIn<DidoData> supplier = test.inFrom(
+        DataIn supplier = test.inFrom(
                 new ByteArrayInputStream("Apple,5,27.2".getBytes()));
 
+        Iterator<DidoData> iterator = supplier.iterator();
+
         {
-            DidoData data = supplier.get();
+            assertThat(iterator.hasNext(), is(true));
+            DidoData data = iterator.next();
 
             assertThat(data.getStringNamed("Type"), is("Apple"));
             assertThat(data.getIntNamed("Quantity"), is(5));
@@ -84,7 +92,7 @@ class CsvDataInHowTest {
             assertThat(data.getNamed("Price"), is(27.2));
         }
 
-        assertThat(supplier.get(), nullValue());
+        assertThat(iterator.hasNext(), is(false));
     }
 
     @Test
@@ -99,20 +107,24 @@ class CsvDataInHowTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        DataInHow<InputStream, DidoData> test = CsvDataInHow.with()
+        DataInHow<InputStream> test = CsvDataInHow.with()
                 .schema(someSchema)
                 .partialSchema(true)
                 .make();
 
-        DataIn<DidoData> supplier = test.inFrom(
+        DataIn supplier = test.inFrom(
                 new ByteArrayInputStream(records.getBytes()));
 
+        List<DidoData> results = supplier.stream().collect(Collectors.toList());
+
+        assertThat(results.size(), is(2));
+
         {
-            DidoData data = supplier.get();
+            DidoData data = results.get(0);
 
             DataSchema schema = data.getSchema();
 
-            assertThat(schema.getFieldNames(), Matchers.contains("Fruit","Quantity","Price"));
+            assertThat(schema.getFieldNames(), Matchers.contains("Fruit", "Quantity", "Price"));
             assertThat(schema.lastIndex(), is(3));
             assertThat(schema.getTypeAt(1), is(String.class));
             assertThat(schema.getTypeAt(2), is(int.class));
@@ -124,33 +136,36 @@ class CsvDataInHowTest {
         }
 
         {
-            DidoData data = supplier.get();
+            DidoData data = results.get(1);
 
             assertThat(data.getStringAt(1), is("Orange"));
             assertThat(data.getIntAt(2), is(2));
             assertThat(data.getDoubleAt(3), is(35.24));
         }
-
-        assertThat(supplier.get(), nullValue());
     }
 
     @Test
     void testEmptyValues() throws Exception {
 
-        DataIn<DidoData> dataIn = CsvDataInHow.withDefaultOptions()
-                .inFrom(new ByteArrayInputStream(",,".getBytes(StandardCharsets.UTF_8)));
+        try (DataIn dataIn = CsvDataInHow.withDefaultOptions()
+                        .inFrom(new ByteArrayInputStream(",,".getBytes(StandardCharsets.UTF_8)))) {
 
-        DidoData data = dataIn.get();
+            Iterator<DidoData> iterator = dataIn.iterator();
 
-        DataSchema schema = data.getSchema();
+            assertThat(iterator.hasNext(), is(true));
 
-        assertThat(schema.lastIndex(), is(3));
+            DidoData data = iterator.next();
 
-        assertThat(data.getStringAt(1), is(""));
-        assertThat(data.getStringAt(2), is(""));
-        assertThat(data.getStringAt(3), is(""));
+            DataSchema schema = data.getSchema();
 
-        assertThat(dataIn.get(), nullValue());
+            assertThat(schema.lastIndex(), is(3));
+
+            assertThat(data.getStringAt(1), is(""));
+            assertThat(data.getStringAt(2), is(""));
+            assertThat(data.getStringAt(3), is(""));
+
+            assertThat(iterator.hasNext(), is(false));
+        }
     }
 
     @Test

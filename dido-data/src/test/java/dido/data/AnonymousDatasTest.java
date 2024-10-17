@@ -25,7 +25,7 @@ class AnonymousDatasTest {
         assertThat(schema1.nextIndex(3), is(4));
         assertThat(schema1.nextIndex(4), is(0));
 
-        assertThat(schema1.toString(), is("{[1]=java.lang.Object, [2]=java.lang.Object, [3]=java.lang.Object, [4]=java.lang.Object}"));
+        assertThat(schema1.toString(), is("{[1]=java.lang.String, [2]=void, [3]=java.lang.Integer, [4]=java.lang.Double}"));
         assertThat(copy2.getSchema(),
                 is(schema1));
         assertThat(copy2.getSchema().hashCode(),

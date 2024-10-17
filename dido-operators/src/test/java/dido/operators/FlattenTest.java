@@ -56,18 +56,23 @@ class FlattenTest {
         List<DidoData> results = Flatten.indices(2, 3)
                 .apply(data);
 
-        DidoData expected1 = ArrayData.of("Foo", 1, "X");
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
+                .add(String.class)
+                .add(Object.class)
+                .add(Object.class)
+                .build();
+
         DidoData result1 = results.get(0);
 
-        DataSchema expectedSchema1 = expected1.getSchema();
         DataSchema resultSchema1 = result1.getSchema();
 
-        assertThat(resultSchema1, is(expectedSchema1));
-        assertThat(result1, is(expected1));
+        assertThat(resultSchema1, is(expectedSchema));
+
+        Values<?> values = ArrayData.valuesForSchema(expectedSchema);
 
         assertThat(results, contains(
-                expected1,
-                ArrayData.of("Foo", 2, "Y"),
-                ArrayData.of("Foo", 3, null)));
+                values.of("Foo", 1, "X"),
+                values.of("Foo", 2, "Y"),
+                values.of("Foo", 3, null)));
     }
 }

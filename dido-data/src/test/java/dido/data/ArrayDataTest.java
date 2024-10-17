@@ -38,10 +38,10 @@ class ArrayDataTest {
         assertThat(schema.nextIndex(3), is(4));
         assertThat(schema.nextIndex(4), is(0));
 
-        assertThat(schema.getTypeAt(1), is(Object.class));
-        assertThat(schema.getTypeAt(2), is(Object.class));
-        assertThat(schema.getTypeAt(3), is(Object.class));
-        assertThat(schema.getTypeAt(4), is(Object.class));
+        assertThat(schema.getTypeAt(1), is(String.class));
+        assertThat(schema.getTypeAt(2), is(void.class));
+        assertThat(schema.getTypeAt(3), is(Integer.class));
+        assertThat(schema.getTypeAt(4), is(Double.class));
 
         assertThat(schema.getFieldNameAt(1), is("f_1"));
         assertThat(schema.getFieldNameAt(2), is("f_2"));

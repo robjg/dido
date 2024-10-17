@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 
 class StreamInJsonTest {
 
@@ -32,27 +32,32 @@ class StreamInJsonTest {
 
         Values<ArrayData> values = ArrayData.valuesForSchema(expectedSchema);
 
-        DataInHow<InputStream, ArrayData> test = StreamInJson.asCopy()
+        DataInHow<InputStream> test = StreamInJson.asCopy()
                 .setIsArray(true)
                 .make();
 
-        try (DataIn<? extends DidoData> in = test.inFrom(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
+        try (DataIn in = test.inFrom(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
 
-            DidoData data1 = in.get();
+            Iterator<DidoData> it = in.iterator();
+
+            assertThat("Has next", it.hasNext());
+            DidoData data1 = it.next();
 
             assertThat(data1.getSchema(), is(expectedSchema));
 
             assertThat(data1, is(values.of("Apple", 5.0, 27.2)));
 
-            DidoData data2 = in.get();
+            assertThat("Has next", it.hasNext());
+            DidoData data2 = it.next();
 
             assertThat(data2, is(values.of("Orange", 10.0, 31.6)));
 
-            DidoData data3 = in.get();
+            assertThat("Has next", it.hasNext());
+            DidoData data3 = it.next();
 
             assertThat(data3, is(values.of("Pear", 7.0, 22.1)));
 
-            assertThat(in.get(), nullValue());
+            assertThat("!Has next", !it.hasNext());
         }
     }
 
@@ -72,7 +77,7 @@ class StreamInJsonTest {
                 .addRepeatingNamed("OrderLines", DataSchema.emptySchema())
                 .build();
 
-        DataInHow<InputStream, ArrayData> test = StreamInJson.asCopy()
+        DataInHow<InputStream> test = StreamInJson.asCopy()
                 .setIsArray(true)
                 .setSchema(schema)
                 .setPartial(true)
@@ -88,10 +93,13 @@ class StreamInJsonTest {
                 .addRepeatingNamed("OrderLines", expectedNestedSchema)
                 .build();
 
-        try (DataIn<? extends DidoData> in = test.inFrom(
+        try (DataIn in = test.inFrom(
                 new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
 
-            DidoData data1 = in.get();
+            Iterator<DidoData> it = in.iterator();
+
+            assertThat("Has next", it.hasNext());
+            DidoData data1 = it.next();
 
             assertThat(data1.getSchema(), is(expectedSchema));
 
@@ -102,6 +110,8 @@ class StreamInJsonTest {
             DidoData orderLine1 = repeatingData.get(0);
             assertThat(orderLine1.getAt(1), is("Apple"));
             assertThat(orderLine1.getAt(2), is(4.0));
+
+            assertThat("!Has next", !it.hasNext());
         }
     }
 }

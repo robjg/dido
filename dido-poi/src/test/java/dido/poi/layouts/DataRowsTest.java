@@ -14,9 +14,12 @@ import org.oddjob.arooa.standard.StandardArooaSession;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DataRowsTest {
 
@@ -76,24 +79,16 @@ public class DataRowsTest {
 //		assertEquals(0, test.getLastRow());
 //		assertEquals(0, test.getLastColumn());
 
-		DataIn<DidoData> reader = test.inFrom(workbook);
+		try (DataIn reader = test.inFrom(workbook)) {
 
-		DidoData result = reader.get();
-		
-		assertEquals(3, test.getLastRow());
+			List<DidoData> results = reader.stream()
+					.collect(Collectors.toList());
 
-		assertEquals("Apples", result.getStringNamed("Fruit"));
+			assertThat(results, contains(
+					MapData.of("Fruit", "Apples"),
+					MapData.of("Fruit","Oranges")));
+		}
 
-		result = reader.get();
-
-		assertEquals(4, test.getLastRow());
-
-		assertEquals("Oranges", result.getStringNamed("Fruit"));
-
-		assertNull(reader.get());
-		
-		reader.close();
-		
 		assertEquals(4, test.getLastRow());
 	}
 }

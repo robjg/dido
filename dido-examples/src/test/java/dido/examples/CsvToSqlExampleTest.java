@@ -41,7 +41,7 @@ class CsvToSqlExampleTest {
         connection.createStatement().execute(create);
 
         // #snippet1{
-        try (DataIn<DidoData> in = CsvDataInHow.with()
+        try (DataIn in = CsvDataInHow.with()
                 .header()
                 .from(getClass().getResourceAsStream("/examples/people-100.csv"));
              DataOut out = SqlDataOutHow.with()
@@ -57,7 +57,7 @@ class CsvToSqlExampleTest {
         BufferType bufferType = new BufferType();
         bufferType.configured();
 
-        try (DataIn<DidoData> in = SqlDataInHow.fromSql("select * from people")
+        try (DataIn in = SqlDataInHow.fromSql("select * from people")
                 .make()
                 .inFrom(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""));
              DataOut out = CsvDataOutHow.with()

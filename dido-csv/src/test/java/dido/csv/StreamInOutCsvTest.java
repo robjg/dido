@@ -24,7 +24,7 @@ class StreamInOutCsvTest {
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
-        try (DataIn<DidoData> supplier = CsvDataInHow.with()
+        try (DataIn supplier = CsvDataInHow.with()
                     .withHeader(true)
                     .make()
                     .inFrom(new ByteArrayInputStream(records.getBytes(StandardCharsets.UTF_8)));
@@ -33,11 +33,7 @@ class StreamInOutCsvTest {
                      .make()
                      .outTo(results)) {
 
-            while (true) {
-                DidoData data = supplier.get();
-                if (data == null) {
-                    break;
-                }
+            for (DidoData data : supplier) {
                 consumer.accept(data);
             }
         }

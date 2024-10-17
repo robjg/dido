@@ -1,7 +1,6 @@
 package dido.replay;
 
 import dido.data.DidoData;
-import dido.how.CloseableSupplier;
 
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -58,7 +57,7 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
 
         Consumer<? super DidoData> to = Objects.requireNonNull(this.to, "No to");
 
-        try (CloseableSupplier<DataPlayer.TimedData> supplier =
+        try (DataPlayer player =
                      DataPlayer.withSettings()
                              .dataIn(dataIn)
                              .schemaIn(schemaIn)
@@ -71,10 +70,9 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
 
             currentThread.set(Thread.currentThread());
 
-            while (!Thread.currentThread().isInterrupted()) {
+            for (DataPlayer.TimedData timedData : player) {
 
-                DataPlayer.TimedData timedData = supplier.get();
-                if (timedData == null) {
+                if (Thread.currentThread().isInterrupted()) {
                     break;
                 }
 
@@ -101,6 +99,7 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
                 to.accept(timedData.getData());
 
                 count.incrementAndGet();
+
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed during Playback", e);

@@ -3,15 +3,15 @@ package dido.replay;
 import dido.data.DidoData;
 import dido.data.MapData;
 import dido.how.CloseableConsumer;
-import dido.how.CloseableSupplier;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.contains;
 
 class DataRecordReplayTest {
 
@@ -38,20 +38,18 @@ class DataRecordReplayTest {
         ByteArrayInputStream schemaIn = new ByteArrayInputStream(schemaOut.toByteArray());
         ByteArrayInputStream timeIn = new ByteArrayInputStream(timeOut.toByteArray());
 
-        CloseableSupplier<DataPlayer.TimedData> player = DataPlayer.withSettings()
+        try (DataPlayer player = DataPlayer.withSettings()
                 .dataIn(dataIn)
                 .schemaIn(schemaIn)
                 .timeIn(timeIn)
-                .make();
+                .make()) {
 
-        DataPlayer.TimedData back = player.get();
+            List<DidoData> back = new ArrayList<>();
+            for (DataPlayer.TimedData timedData : player) {
+                back.add(timedData.getData());
+            }
 
-        assertThat(player.get(), nullValue());
-
-        player.close();
-
-        assertThat(back.getData(), is(data));
-
+            assertThat(back, contains(data));
+        }
     }
-
 }

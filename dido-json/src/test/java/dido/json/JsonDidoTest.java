@@ -4,7 +4,6 @@ import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.MapData;
 import dido.data.SchemaBuilder;
-import dido.how.DataIn;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -12,8 +11,8 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -69,20 +68,10 @@ class JsonDidoTest {
                 "[" + JSON_1 + "," + JSON_2 + "]",
                 JSONCompareMode.LENIENT);
 
-
-        List<DidoData> copy = new ArrayList<>();
-
-        try (DataIn<? extends DidoData> supplier = test.toStreamIn().inFrom(
-                new ByteArrayInputStream(results.toByteArray()))) {
-
-            while (true) {
-                DidoData data = supplier.get();
-                if (data == null) {
-                    break;
-                }
-                copy.add(data);
-            }
-        }
+        List<DidoData> copy = test.toStreamIn().inFrom(
+                        new ByteArrayInputStream(results.toByteArray()))
+                .stream()
+                .collect(Collectors.toList());
 
         assertThat(copy, contains(data1, data2));
     }
@@ -117,19 +106,10 @@ class JsonDidoTest {
             consumer.accept(data2);
         }
 
-        List<DidoData> copy = new ArrayList<>();
-
-        try (DataIn<? extends DidoData> supplier = test.toStreamIn().inFrom(
-                new ByteArrayInputStream(results.toByteArray()))) {
-
-            while (true) {
-                DidoData data = supplier.get();
-                if (data == null) {
-                    break;
-                }
-                copy.add(data);
-            }
-        }
+        List<DidoData> copy =  test.toStreamIn().inFrom(
+                new ByteArrayInputStream(results.toByteArray()))
+                .stream()
+                .collect(Collectors.toList());
 
         assertThat(copy.size(), is(2));
 

@@ -2,72 +2,28 @@ package dido.replay;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.how.CloseableSupplier;
 import dido.json.JsonStringToData;
 import dido.json.SchemaAsJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.Iterator;
 import java.util.Objects;
 
-public class DataPlayer implements CloseableSupplier<DataPlayer.TimedData> {
+public class DataPlayer implements Iterable<DataPlayer.TimedData>, Closeable {
 
     private static final Logger logger = LoggerFactory.getLogger(DataPlayer.class);
 
-    private final CloseableSupplier<String> dataSupplier;
-
-    private final CloseableSupplier<DataSchema> schemaSupplier;
-
-    private final CloseableSupplier<Instant> timestampSupplier;
+    private final Inputs inputs;
 
     private DataPlayer(Inputs inputs) throws Exception {
 
-        dataSupplier = new CloseableSupplier<>() {
+        this.inputs = inputs;
 
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(inputs.dataIn));
-
-            @Override
-            public void close() throws Exception {
-                reader.close();
-            }
-
-            @Override
-            public String get() {
-                try {
-                    return reader.readLine();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        };
-
-        schemaSupplier = SchemaAsJson.fromJsonStream(inputs.schemaIn);
-
-        timestampSupplier = new CloseableSupplier<>() {
-
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(inputs.timeIn));
-
-            @Override
-            public void close() throws Exception {
-                inputs.dataIn.close();
-            }
-
-            @Override
-            public Instant get() {
-                try {
-                    return Instant.parse(reader.readLine());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        };
     }
 
     public static class Settings {
@@ -107,7 +63,7 @@ public class DataPlayer implements CloseableSupplier<DataPlayer.TimedData> {
             return this;
         }
 
-        public CloseableSupplier<TimedData> make() throws Exception {
+        public DataPlayer make() throws Exception {
 
             ReplayFileHelper fileHelper = ReplayFileHelper.withSettings()
                     .dir(this.dir)
@@ -138,7 +94,7 @@ public class DataPlayer implements CloseableSupplier<DataPlayer.TimedData> {
         return new Settings();
     }
 
-    static class Inputs {
+    static class Inputs implements Closeable {
 
         private final InputStream dataIn;
 
@@ -151,31 +107,63 @@ public class DataPlayer implements CloseableSupplier<DataPlayer.TimedData> {
             this.schemaIn = Objects.requireNonNull(schemaIn, "No Schema Input");
             this.timeIn = Objects.requireNonNull(timeIn, "No Time Input");
         }
-    }
 
-    @Override
-    public void close() throws Exception {
-        dataSupplier.close();
-        schemaSupplier.close();
-        timestampSupplier.close();
-    }
-
-    @Override
-    public TimedData get() {
-
-        DataSchema schema = schemaSupplier.get();
-        if (schema == null) {
-            return null;
+        @Override
+        public void close() throws IOException {
+            try {
+                this.dataIn.close();
+            }
+            finally {
+                try {
+                    this.schemaIn.close();
+                }
+                finally {
+                    this.timeIn.close();
+                }
+            }
         }
-
-        String jsonString = dataSupplier.get();
-
-        DidoData data = JsonStringToData.asWrapperWithSchema(schema).apply(jsonString);
-
-        Instant timestamp = timestampSupplier.get();
-
-        return new TimedData(data, timestamp);
     }
+
+    @Override
+    public void close() throws IOException {
+        inputs.close();
+    }
+
+    @Override
+    public Iterator<TimedData> iterator() {
+
+        Iterator<String> dataSupplier = new BufferedReader(new InputStreamReader(inputs.dataIn))
+                .lines().iterator();
+
+        Iterator<DataSchema> schemaSupplier = SchemaAsJson.fromJsonStream(inputs.schemaIn).iterator();
+
+        Iterator<Instant> timestampSupplier = new BufferedReader(new InputStreamReader(inputs.timeIn))
+                .lines().map(Instant::parse)
+                .iterator();
+
+
+        return new Iterator<>() {
+
+            @Override
+            public boolean hasNext() {
+                return dataSupplier.hasNext();
+            }
+
+            @Override
+            public TimedData next() {
+                DataSchema schema = schemaSupplier.next();
+
+                String jsonString = dataSupplier.next();
+
+                DidoData data = JsonStringToData.asWrapperWithSchema(schema).apply(jsonString);
+
+                Instant timestamp = timestampSupplier.next();
+
+                return new TimedData(data, timestamp);
+            }
+        };
+    }
+
 
     public static class TimedData {
 

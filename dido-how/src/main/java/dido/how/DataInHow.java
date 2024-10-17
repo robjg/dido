@@ -1,7 +1,5 @@
 package dido.how;
 
-import dido.data.DidoData;
-
 /**
  * Something that can create a {@link DataIn}. This is the starting
  * point for reading data.
@@ -12,7 +10,7 @@ import dido.data.DidoData;
  *
  * @param <I> The Input Type
  */
-public interface DataInHow<I, D extends DidoData> {
+public interface DataInHow<I> {
 
 	Class<I> getInType();
 
@@ -23,5 +21,5 @@ public interface DataInHow<I, D extends DidoData> {
 	 * @return A reader. Never null.
 	 * 
 	 */
-	DataIn<D> inFrom(I dataIn) throws Exception;
+	DataIn inFrom(I dataIn);
 }

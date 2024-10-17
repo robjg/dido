@@ -3,7 +3,6 @@ package dido.json;
 import dido.data.DataSchema;
 import dido.data.SchemaManager;
 import dido.how.CloseableConsumer;
-import dido.how.CloseableSupplier;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +10,12 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 
 class SchemaAsJsonTest {
 
@@ -80,19 +81,10 @@ class SchemaAsJsonTest {
 
         ByteArrayInputStream input = new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
 
-        CloseableSupplier<DataSchema> supplier = SchemaAsJson.fromJsonStream(input);
+        List<DataSchema> back = SchemaAsJson.fromJsonStream(input)
+                .collect(Collectors.toList());
 
-        DataSchema back1 = supplier.get();
-        DataSchema back2 = supplier.get();
-        DataSchema back3 = supplier.get();
-        DataSchema back4 = supplier.get();
-
-        supplier.close();
-
-        assertThat(back1, is(schema));
-        assertThat(back2, is(schema));
-        assertThat(back3, is(schema));
-        assertThat(back4, nullValue());
+        assertThat(back, contains(schema, schema, schema));
     }
 
 }

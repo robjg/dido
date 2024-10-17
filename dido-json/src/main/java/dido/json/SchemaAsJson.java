@@ -4,35 +4,42 @@ import dido.data.ArrayDataDataFactoryProvider;
 import dido.data.DataSchema;
 import dido.data.DataSchemaSchema;
 import dido.data.DidoData;
-import dido.how.*;
+import dido.how.CloseableConsumer;
+import dido.how.DataIn;
+import dido.how.DataInHow;
+import dido.how.DataOut;
 import dido.how.util.ClassUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Stream;
 
 public class SchemaAsJson {
+
+    public static DataSchema schemaFromData(DidoData data) {
+
+        return DataSchemaSchema.schemaFromData(data, className -> {
+            try {
+                return ClassUtils.classFor(className, SchemaAsJson.class.getClassLoader());
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 
 
     public static DataSchema fromJson(InputStream input) throws Exception {
 
-        DataInHow<InputStream, ? extends DidoData> inHow = StreamInJson.asCopy(new ArrayDataDataFactoryProvider())
+        DataInHow<InputStream> inHow = StreamInJson.asCopy(new ArrayDataDataFactoryProvider())
                 .setSchema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
                 .make();
 
-        try (DataIn<? extends DidoData> in = inHow.inFrom(input)) {
+        try (DataIn in = inHow.inFrom(input)) {
 
-            DidoData data = in.get();
+            DidoData data = in.stream()
+                    .findFirst().orElseThrow(() -> new IOException("No Data in Input") );
 
-            return DataSchemaSchema.schemaFromData(data, className -> {
-                try {
-                    return ClassUtils.classFor(className, SchemaAsJson.class.getClassLoader());
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            return schemaFromData(data);
         }
     }
 
@@ -58,45 +65,16 @@ public class SchemaAsJson {
         return output.toString(StandardCharsets.UTF_8);
     }
 
-    public static CloseableSupplier<DataSchema> fromJsonStream(InputStream input) throws Exception {
+    public static Stream<DataSchema> fromJsonStream(InputStream input) {
 
-        DataInHow<InputStream, DidoData> inHow = StreamInJsonLines.asWrapper()
+        DataInHow<InputStream> inHow = StreamInJsonLines.asWrapper()
                 .setSchema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
                 .make();
 
-        DataIn<DidoData> in = inHow.inFrom(input);
+        DataIn in = inHow.inFrom(input);
 
-        return new CloseableSupplier<>() {
-
-            @Override
-            public void close() throws Exception {
-
-                in.close();
-            }
-
-            @Override
-            public DataSchema get() {
-
-                DidoData data = in.get();
-
-                if (data == null) {
-                    return null;
-                }
-
-                return DataSchemaSchema.schemaFromData(data, className -> {
-                    try {
-                        return ClassUtils.classFor(className, SchemaAsJson.class.getClassLoader());
-                    } catch (ClassNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-            }
-
-            @Override
-            public String toString() {
-                return "SchemaFromJsonStream: " + input;
-            }
-        };
+        return in.stream()
+                .map(SchemaAsJson::schemaFromData);
     }
 
     public static CloseableConsumer<DataSchema> toJsonStream(OutputStream output) {

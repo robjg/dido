@@ -28,7 +28,7 @@ import java.util.*;
  *
  * @author rob
  */
-public class DataRows implements DataInHow<BookInProvider, DidoData>, DataOutHow<BookOutProvider> {
+public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutProvider> {
 
     private static final Logger logger = LoggerFactory.getLogger(DataRows.class);
 
@@ -144,7 +144,7 @@ public class DataRows implements DataInHow<BookInProvider, DidoData>, DataOutHow
     }
 
 
-    class MainReader implements DataIn<DidoData> {
+    class MainReader implements DataIn {
 
         private final RowsIn rowsIn;
 
@@ -156,19 +156,32 @@ public class DataRows implements DataInHow<BookInProvider, DidoData>, DataOutHow
         }
 
         @Override
-        public DidoData get() {
+        public Iterator<DidoData> iterator() {
 
-            RowIn rowIn = rowsIn.nextRow();
-            if (rowIn == null) {
-                return null;
-            }
+            return new Iterator<DidoData>() {
 
-            lastRow = rowsIn.getLastRow();
+                RowIn rowIn = rowsIn.nextRow();
 
-            logger.debug("[" + DataRows.this + "] reading row " +
-                    rowsIn.getLastRow());
+                @Override
+                public boolean hasNext() {
+                    return rowIn != null;
+                }
 
-            return dataRowFactory.wrap(rowIn);
+                @Override
+                public DidoData next() {
+                    lastRow = rowsIn.getLastRow();
+
+                    logger.debug("[" + DataRows.this + "] reading row " +
+                            rowsIn.getLastRow());
+
+                    DidoData data = dataRowFactory.wrap(rowIn);
+
+                    rowIn = rowsIn.nextRow();
+
+                    return data;
+                }
+            };
+
         }
 
         @Override
@@ -181,7 +194,7 @@ public class DataRows implements DataInHow<BookInProvider, DidoData>, DataOutHow
     }
 
     @Override
-    public DataIn<DidoData> inFrom(BookInProvider bookInProvider) throws Exception {
+    public DataIn inFrom(BookInProvider bookInProvider) {
 
         BookIn bookIn = bookInProvider.provideBookIn();
 
@@ -209,7 +222,7 @@ public class DataRows implements DataInHow<BookInProvider, DidoData>, DataOutHow
         }
 
         if (schemaAndCells == null) {
-            return DataIn.empty();
+            return DataIn.of();
         }
         else {
             return new MainReader(rowsIn, DataRowFactory.newInstance(

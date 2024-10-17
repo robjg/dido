@@ -24,4 +24,11 @@ public class DataException extends RuntimeException {
 		super(message, cause);
 	}
 
+	public static DataException of(String message, Throwable cause) {
+		return new DataException(message, cause);
+	}
+
+	public static DataException of(Throwable cause) {
+		return new DataException(cause);
+	}
 }

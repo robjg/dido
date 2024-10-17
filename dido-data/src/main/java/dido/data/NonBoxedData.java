@@ -38,6 +38,10 @@ public class NonBoxedData extends AbstractData {
         }
     }
 
+    public static DataFactory<NonBoxedData> factoryForSchema(DataSchema schema) {
+        return new Factory(asNonBoxedDataSchema(schema));
+    }
+
     public static DataBuilder<NonBoxedData> builderForSchema(DataSchema schema) {
 
         return new DataBuilder<>(factoryForSchema(schema));
@@ -48,9 +52,15 @@ public class NonBoxedData extends AbstractData {
         return new DataBuilder<>(factoryForSchema(schema));
     }
 
-    public static DataFactory<NonBoxedData> factoryForSchema(DataSchema schema) {
-        return new Factory(asNonBoxedDataSchema(schema));
+    public static Values<NonBoxedData> valuesForSchema(DataSchema schema) {
+
+        return Values.withDataFactory(factoryForSchema(schema));
     }
+    public static NonBoxedData copy(DidoData from) {
+
+        return new DataBuilder<>(factoryForSchema(from.getSchema())).copy(from).build();
+    }
+
 
     @Override
     public NonBoxedDataSchema getSchema() {

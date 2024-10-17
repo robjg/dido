@@ -1,18 +1,19 @@
 package dido.poi.data;
 
+import dido.how.DataException;
+import dido.poi.BookIn;
 import dido.poi.BookInProvider;
+import dido.poi.BookOut;
 import dido.poi.BookOutProvider;
 import dido.poi.layouts.DataRows;
+import dido.poi.style.StyleProvider;
+import dido.poi.style.StyleProviderFactory;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import dido.poi.BookIn;
-import dido.poi.BookOut;
-import dido.poi.style.StyleProvider;
-import dido.poi.style.StyleProviderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,9 +68,13 @@ public class PoiWorkbook implements BookInProvider, BookOutProvider {
     }
 
     @Override
-    public BookIn provideBookIn() throws IOException {
+    public BookIn provideBookIn() {
 
-        return new PoiBookIn();
+        try {
+            return new PoiBookIn();
+        } catch (IOException e) {
+            throw DataException.of(e);
+        }
     }
 
     @Override

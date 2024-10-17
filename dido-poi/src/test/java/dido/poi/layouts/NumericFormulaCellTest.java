@@ -2,6 +2,7 @@ package dido.poi.layouts;
 
 import dido.data.ArrayData;
 import dido.data.DidoData;
+import dido.data.SingleData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;
@@ -17,11 +18,13 @@ import org.oddjob.arooa.standard.StandardArooaSession;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 
 public class NumericFormulaCellTest {
 
@@ -43,16 +46,17 @@ public class NumericFormulaCellTest {
 		writer.close();
 		
 		// read side.
-		
-		DataIn<DidoData> reader = rows.inFrom(workbook);
-		
-		DidoData result = reader.get();
-		
-		assertThat(result.getDoubleAt(1), is(4.0));
 
-		assertThat(reader.get(), nullValue());
-		
-		reader.close();
+		try (DataIn reader = rows.inFrom(workbook)) {
+
+			List<DidoData> results = reader.stream()
+					.collect(Collectors.toList());
+
+			DidoData expected = SingleData.type(Double.class).of(4.0);
+			assertThat(results.get(0).getSchema(), is(expected.getSchema()));
+
+			assertThat(results, contains(expected));
+		}
 	}
 	
 	/**

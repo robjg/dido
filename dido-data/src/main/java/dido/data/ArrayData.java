@@ -23,8 +23,9 @@ public class ArrayData extends AbstractData implements DidoData {
         Objects.requireNonNull(data);
 
         ArrayDataSchemaFactory schemaFactory = new ArrayDataSchemaFactory();
-        for (int i = 0; i < data.length; ++i) {
-            schemaFactory.addSchemaField(SchemaField.of(0, null, Object.class));
+        for (Object datum : data) {
+            schemaFactory.addSchemaField(SchemaField.of(0, null,
+                    datum == null ? void.class : datum.getClass()));
         }
 
         return new ArrayData(schemaFactory.toSchema(), data);
@@ -63,13 +64,18 @@ public class ArrayData extends AbstractData implements DidoData {
         return new BuilderUnknown();
     }
 
+    public static DataFactory<ArrayData> factoryForSchema(DataSchema schema) {
+        return new ArrayDataFactory(asArrayDataSchema(schema));
+    }
+
     public static Values<ArrayData> valuesForSchema(DataSchema schema) {
 
         return Values.withDataFactory(factoryForSchema(schema));
     }
 
-    public static DataFactory<ArrayData> factoryForSchema(DataSchema schema) {
-        return new ArrayDataFactory(asArrayDataSchema(schema));
+    public static ArrayData copy(DidoData from) {
+
+        return new DataBuilder<>(factoryForSchema(from.getSchema())).copy(from).build();
     }
 
     @Override

@@ -17,10 +17,14 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
 
 public class SqlDataHowTest {
 
@@ -52,8 +56,8 @@ public class SqlDataHowTest {
                 = SqlDataOutHow.fromSql("insert into fruit (type, quantity) values (?, ?)")
                 .make();
 
-        DataInHow<Connection, DidoData> inHow
-                = SqlDataInHow.fromSql("select type, quantity from fruit order by type")
+        DataInHow<Connection> inHow
+                = SqlDataInHow.fromSql("select type as \"type\", quantity as \"quantity\" from fruit order by type")
                 .make();
 
         logger.info("** Writing **");
@@ -72,25 +76,29 @@ public class SqlDataHowTest {
 
         Connection connectionIn = lookup.lookup("vars.connection", Connection.class);
 
-        DataIn<DidoData> reader = inHow.inFrom(connectionIn);
+        DataIn reader = inHow.inFrom(connectionIn);
+
+        List<DidoData> results = reader.stream()
+                .map(ArrayData::copy)
+                .collect(Collectors.toList());
 
         {
-            DidoData fruit = reader.get();
+            DidoData fruit = results.get(0);
             assertThat(fruit.getStringNamed("type"), is("apple"));
             assertThat(fruit.getIntNamed("quantity"), is(20));
         }
         {
-            DidoData fruit = reader.get();
+            DidoData fruit = results.get(1);
             assertThat(fruit.getStringNamed("type"), is("banana"));
             assertThat(fruit.getIntNamed("quantity"), is(10));
         }
         {
-            DidoData fruit = reader.get();
+            DidoData fruit = results.get(2);
             assertThat(fruit.getStringNamed("type"), is("orange"));
             assertThat(fruit.getIntNamed("quantity"), is(102));
         }
 
-        assertThat(reader.get(), nullValue());
+        assertThat(results.size(), is(3));
 
         reader.close();
     }
@@ -131,17 +139,20 @@ public class SqlDataHowTest {
 
         logger.info("** Reading **");
 
-        DataInHow<Connection, DidoData> inHow
+        DataInHow<Connection> inHow
                 = SqlDataInHow.fromSql("select A_TinyInt, A_SmallInt, A_Integer, A_BigInt, A_Numeric, A_Decimal, A_Real, A_Float, A_Double " +
                         "from Numbers order by Description")
                 .make();
 
         Connection connectionIn = lookup.lookup("vars.connection", Connection.class);
 
-        DataIn<DidoData> reader = inHow.inFrom(connectionIn);
+        DataIn reader = inHow.inFrom(connectionIn);
+
+        Iterator<DidoData> it = reader.iterator();
 
         {
-            DidoData numbers = reader.get();
+            assertThat(it.hasNext(), is(true));
+            DidoData numbers = it.next();
 
             DataSchema schema = numbers.getSchema();
 
@@ -248,7 +259,8 @@ public class SqlDataHowTest {
         }
 
         {
-            DidoData numbers = reader.get();
+            assertThat(it.hasNext(), is(true));
+            DidoData numbers = it.next();
 
             assertThat(numbers.getByteNamed("A_TinyInt"), is((byte) 42));
             assertThat(numbers.getShortNamed("A_SmallInt"), is((short) 42));
@@ -262,7 +274,8 @@ public class SqlDataHowTest {
         }
 
         {
-            DidoData numbers = reader.get();
+            assertThat(it.hasNext(), is(true));
+            DidoData numbers = it.next();
 
             assertThat(numbers.hasNamed("A_TinyInt"), is(false));
             assertThat(numbers.hasNamed("A_SmallInt"), is(false));
@@ -276,7 +289,8 @@ public class SqlDataHowTest {
         }
 
         {
-            DidoData numbers = reader.get();
+            assertThat(it.hasNext(), is(true));
+            DidoData numbers = it.next();
 
             assertThat(numbers.getByteNamed("A_TinyInt"), is((byte) 42));
             assertThat(numbers.getShortNamed("A_SmallInt"), is((short) 42));
@@ -289,7 +303,7 @@ public class SqlDataHowTest {
             assertThat(numbers.getDoubleNamed("A_Double"), is(42.24));
         }
 
-        assertThat(reader.get(), nullValue());
+        assertThat(it.hasNext(), is(false));
 
         reader.close();
     }
@@ -342,7 +356,7 @@ public class SqlDataHowTest {
 
         logger.info("** Reading **");
 
-        DataInHow<Connection, DidoData> inHow
+        DataInHow<Connection> inHow
                 = SqlDataInHow.fromSql("select A_TinyInt, A_SmallInt, A_Integer, A_BigInt, A_Numeric, A_Decimal, A_Real, A_Float, A_Double " +
                         "from Numbers order by Description")
                 .schema(overrideSchema)
@@ -350,10 +364,11 @@ public class SqlDataHowTest {
 
         Connection connectionIn = lookup.lookup("vars.connection", Connection.class);
 
-        DataIn<DidoData> reader = inHow.inFrom(connectionIn);
-
+        DataIn reader = inHow.inFrom(connectionIn);
+        Iterator<DidoData> it = reader.iterator();
         {
-            DidoData numbers = reader.get();
+            assertThat(it.hasNext(), is(true));
+            DidoData numbers = it.next();
 
             DataSchema schema = numbers.getSchema();
 
@@ -406,8 +421,8 @@ public class SqlDataHowTest {
         }
 
         {
-            DidoData numbers = reader.get();
-
+            assertThat(it.hasNext(), is(true));
+            DidoData numbers = it.next();
 
             assertThat(numbers.getNamed("A_TinyInt"), is((short) 42));
             assertThat(numbers.getNamed("A_SmallInt"), is((byte) 42));
@@ -422,7 +437,8 @@ public class SqlDataHowTest {
         }
 
         {
-            DidoData numbers = reader.get();
+            assertThat(it.hasNext(), is(true));
+            DidoData numbers = it.next();
 
             assertThat(numbers.hasNamed("A_TinyInt"), is(false));
             assertThat(numbers.hasNamed("A_SmallInt"), is(false));
@@ -436,7 +452,8 @@ public class SqlDataHowTest {
         }
 
         {
-            DidoData numbers = reader.get();
+            assertThat(it.hasNext(), is(true));
+            DidoData numbers = it.next();
 
             assertThat(numbers.getNamed("A_TinyInt"), is((short) 42));
             assertThat(numbers.getNamed("A_SmallInt"), is((byte) 42));
@@ -449,7 +466,7 @@ public class SqlDataHowTest {
 //            assertThat(numbers.get("A_Double"), is(42.24));
         }
 
-        assertThat(reader.get(), nullValue());
+        assertThat(it.hasNext(), is(false));
 
         reader.close();
     }
@@ -500,17 +517,19 @@ public class SqlDataHowTest {
 
         logger.info("** Reading **");
 
-        DataInHow<Connection, DidoData> inHow
+        DataInHow<Connection> inHow
                 = SqlDataInHow.fromSql("select A_Date, A_Time, A_Zoned_Time, A_TimeStamp, A_Zoned_TimeStamp " +
                         "from Dates order by Description")
                 .make();
 
         Connection connectionIn = lookup.lookup("vars.connection", Connection.class);
 
-        DataIn<DidoData> reader = inHow.inFrom(connectionIn);
+        DataIn reader = inHow.inFrom(connectionIn);
+        Iterator<DidoData> it = reader.iterator();
 
         {
-            DidoData dates = reader.get();
+            assertThat(it.hasNext(), is(true));
+            DidoData dates = it.next();
 
             DataSchema schema = dates.getSchema();
 
@@ -558,7 +577,8 @@ public class SqlDataHowTest {
         }
 
         {
-            DidoData dates = reader.get();
+            assertThat(it.hasNext(), is(true));
+            DidoData dates = it.next();
 
             assertThat(dates.hasNamed("A_Date"), is(false));
             assertThat(dates.hasNamed("A_Time"), is(false));
@@ -568,7 +588,8 @@ public class SqlDataHowTest {
         }
 
         {
-            DidoData dates = reader.get();
+            assertThat(it.hasNext(), is(true));
+            DidoData dates = it.next();
 
             assertThat(Instant.ofEpochMilli(((java.sql.Date)
                             dates.getNamed("A_Date")).getTime()),
@@ -590,11 +611,10 @@ public class SqlDataHowTest {
                     is(offsetDateTime));
         }
 
-        assertThat(reader.get(), nullValue());
+        assertThat(it.hasNext(), is(false));
 
         reader.close();
     }
-
 
     @Test
     void dateAssumptions() {

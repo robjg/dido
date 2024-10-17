@@ -84,7 +84,7 @@ public class JsonDido {
         }
     }
 
-    public DataInHow<InputStream, ?> toStreamIn() {
+    public DataInHow<InputStream> toStreamIn() {
 
         Format format = Objects.requireNonNullElse(this.format, Format.LINES);
         switch (format) {

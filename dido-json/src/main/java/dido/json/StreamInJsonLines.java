@@ -1,6 +1,7 @@
 package dido.json;
 
 import dido.data.*;
+import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 
@@ -8,22 +9,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Read a Stream of newline delimited JSON messages.
  *
- * @param <D> The type of Data that will be produced.
  */
-public class StreamInJsonLines<D extends DidoData> implements DataInHow<InputStream, D> {
+public class StreamInJsonLines implements DataInHow<InputStream> {
 
-    private final Function<? super String, ? extends D> function;
+    private final Function<? super String, ? extends DidoData> function;
 
-    private StreamInJsonLines(Function<? super String, ? extends D> function) {
+    private StreamInJsonLines(Function<? super String, ? extends DidoData> function) {
 
         this.function = function;
     }
-
 
     public static WrapperSettings asWrapper() {
 
@@ -54,9 +55,9 @@ public class StreamInJsonLines<D extends DidoData> implements DataInHow<InputStr
             return this;
         }
 
-        public DataInHow<InputStream, DidoData> make() {
+        public DataInHow<InputStream> make() {
 
-            return new StreamInJsonLines<>(this.wrapperSettings.make());
+            return new StreamInJsonLines(this.wrapperSettings.make());
         }
     }
 
@@ -78,9 +79,9 @@ public class StreamInJsonLines<D extends DidoData> implements DataInHow<InputStr
             return this;
         }
 
-        public DataInHow<InputStream, D> make() {
+        public DataInHow<InputStream> make() {
 
-            return new StreamInJsonLines<>(this.copySettings.make());
+            return new StreamInJsonLines(this.copySettings.make());
         }
     }
 
@@ -90,29 +91,31 @@ public class StreamInJsonLines<D extends DidoData> implements DataInHow<InputStr
     }
 
     @Override
-    public DataIn<D> inFrom(InputStream inputStream) {
+    public DataIn inFrom(InputStream inputStream) {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-        return new DataIn<>() {
+        return new DataIn() {
 
             @Override
-            public D get() {
-                try {
-                    String line = reader.readLine();
-                    if (line == null) {
-                        return null;
-                    } else {
-                        return function.apply(line);
-                    }
-                } catch (IOException e) {
-                    throw new IllegalArgumentException(e);
-                }
+            public Iterator<DidoData> iterator() {
+
+                return stream().iterator();
             }
 
             @Override
-            public void close() throws IOException {
-                reader.close();
+            public Stream<DidoData> stream() {
+                return reader.lines()
+                        .map(function);
+            }
+
+            @Override
+            public void close() {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    throw DataException.of(e);
+                }
             }
         };
     }

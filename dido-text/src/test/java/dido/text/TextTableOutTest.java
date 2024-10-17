@@ -19,10 +19,10 @@ class TextTableOutTest {
     void testSimple() throws Exception {
 
         String expected =
-                "f_1       |f_2|f_3   " + System.lineSeparator() +
+                "f_1       |f_2|   f_3" + System.lineSeparator() +
                         "----------+---+------" + System.lineSeparator() +
-                        "Apple     |5  |22.3  " + System.lineSeparator() +
-                        "Cantaloupe|27 |245.3 " + System.lineSeparator() +
+                        "Apple     |  5|  22.3" + System.lineSeparator() +
+                        "Cantaloupe| 27| 245.3" + System.lineSeparator() +
                         "Pear      |232|11.328" + System.lineSeparator();
 
         DidoData data1 = ArrayData.of("Apple", 5, 22.3);

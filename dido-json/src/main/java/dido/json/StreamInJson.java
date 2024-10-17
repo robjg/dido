@@ -4,14 +4,17 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import dido.data.*;
+import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -20,9 +23,8 @@ import java.util.Objects;
  * A Schema is required if a Wrapper is to be used as we'd need to cache the stream to work out the schema
  * which is just too complicated when a copy is available instead.
  *
- * @param <D> The type of Data that will be produced.
  */
-public class StreamInJson<D extends DidoData> implements DataInHow<InputStream, D> {
+public class StreamInJson implements DataInHow<InputStream> {
 
     private final Gson gson;
 
@@ -72,9 +74,9 @@ public class StreamInJson<D extends DidoData> implements DataInHow<InputStream, 
             return this;
         }
 
-        public DataInHow<InputStream, DidoData> make() {
+        public DataInHow<InputStream> make() {
 
-            return new StreamInJson<>(
+            return new StreamInJson(
                     JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                             .create(),
                     isArray,
@@ -112,18 +114,18 @@ public class StreamInJson<D extends DidoData> implements DataInHow<InputStream, 
         }
 
 
-        public DataInHow<InputStream, D> make() {
+        public DataInHow<InputStream> make() {
 
             if (schema == null || partial) {
 
-                return new StreamInJson<>(
+                return new StreamInJson(
                         JsonDataPartialCopy.registerPartialSchema(new GsonBuilder(), schema, dataFactoryProvider)
                                 .create(),
                         isArray,
                         dataFactoryProvider.getDataType());
             } else {
 
-                return new StreamInJson<>(
+                return new StreamInJson(
                         JsonDataCopy.registerSchema(new GsonBuilder(),
                                         schema, dataFactoryProvider)
                                 .create(),
@@ -140,35 +142,48 @@ public class StreamInJson<D extends DidoData> implements DataInHow<InputStream, 
     }
 
     @Override
-    public DataIn<D> inFrom(InputStream inputStream) throws IOException {
+    public DataIn inFrom(InputStream inputStream)  {
 
         final JsonReader reader = new JsonReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
         if (isArray) {
-            reader.beginArray();
+            try {
+                reader.beginArray();
+            } catch (IOException e) {
+                throw DataException.of(e);
+            }
         }
 
-        return new DataIn<>() {
+        return new DataIn() {
 
             @Override
-            public D get() {
-                try {
-                    if (reader.hasNext()) {
-                        return gson.fromJson(reader, dataType);
-                    } else {
-                        return null;
+            public Iterator<DidoData> iterator() {
+                return new Iterator<>() {
+                    @Override
+                    public boolean hasNext() {
+                        try {
+                            return reader.hasNext();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
                     }
-                } catch (IOException e) {
-                    throw new IllegalArgumentException(e);
-                }
+
+                    @Override
+                    public DidoData next() {
+                        return gson.fromJson(reader, dataType);
+                    }
+                };
             }
 
             @Override
-            public void close() throws IOException {
-                if (isArray) {
-                    reader.endArray();
+            public void close() throws DataException {
+                try (reader) {
+                    if (isArray) {
+                        reader.endArray();
+                    }
+                } catch (IOException e) {
+                    throw DataException.of(e);
                 }
-                reader.close();
             }
         };
     }

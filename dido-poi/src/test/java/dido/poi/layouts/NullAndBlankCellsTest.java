@@ -18,9 +18,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NullAndBlankCellsTest {
 	
@@ -71,13 +73,14 @@ public class NullAndBlankCellsTest {
 		PoiWorkbook workbook = new PoiWorkbook();
 		workbook.provideBookOut().getOrCreateSheet(null);
 
-		DataIn<DidoData> reader = rows.inFrom(workbook);
-		
-		DidoData result = reader.get();
+		try (DataIn reader = rows.inFrom(workbook)) {
 
-		assertNull(result);
+			List<DidoData> results = reader.stream()
+					.collect(Collectors.toList());
 
-		reader.close();
+			assertThat(results, empty());
+		}
+
 	}
 
 	@Disabled

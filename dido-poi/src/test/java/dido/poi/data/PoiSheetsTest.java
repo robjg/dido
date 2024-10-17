@@ -2,15 +2,18 @@ package dido.poi.data;
 
 import dido.data.DidoData;
 import dido.data.MapData;
+import dido.data.SingleData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.layouts.DataRows;
 import dido.poi.layouts.TextCell;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.contains;
 
 public class PoiSheetsTest  {
 
@@ -40,15 +43,13 @@ public class PoiSheetsTest  {
 		////////////
 		// Read Part
 
-		DataIn<DidoData> reader = rows.inFrom(workbook);
-		
-		DidoData result = reader.get();
-		
-		assertThat(result.getStringAt(1), is("Apples"));
+		try (DataIn reader = rows.inFrom(workbook)) {
 
-		assertThat(reader.get(), nullValue());
+			List<DidoData> results = reader.stream()
+					.collect(Collectors.toList());
 
-		reader.close();
+			assertThat(results, contains(SingleData.type(String.class).of("Apples")));
+		}
 	}
 
 	@Test
@@ -75,13 +76,12 @@ public class PoiSheetsTest  {
 		////////////
 		// Read Part
 
-		DataIn<DidoData> reader = rows.inFrom(workbook);
+		try (DataIn reader = rows.inFrom(workbook)) {
 
-		DidoData result = reader.get();
+			List<DidoData> results = reader.stream()
+					.collect(Collectors.toList());
 
-		assertThat(result.getStringAt(1), is("Apples"));
-		assertThat(reader.get(), nullValue());
-		
-		reader.close();
+			assertThat(results, contains(SingleData.type(String.class).of("Apples")));
+		}
 	}
 }                                                       

@@ -1,6 +1,7 @@
 package dido.csv;
 
 import dido.data.*;
+import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import dido.how.conversion.DefaultConversionProvider;
@@ -21,7 +22,7 @@ import java.util.function.Function;
 /**
  * How to read CSV Data In.
  */
-public class CsvDataInHow implements DataInHow<InputStream, DidoData> {
+public class CsvDataInHow implements DataInHow<InputStream> {
 
     private final CSVFormat csvFormat;
 
@@ -75,15 +76,15 @@ public class CsvDataInHow implements DataInHow<InputStream, DidoData> {
             return this;
         }
 
-        public DataIn<DidoData> fromFile(Path path) throws IOException {
+        public DataIn fromFile(Path path) throws IOException {
             return make_().inFrom(Files.newInputStream(path));
         }
 
-        public DataIn<DidoData> from(InputStream inputStream) throws IOException {
+        public DataIn from(InputStream inputStream) throws IOException {
             return make_().inFrom(inputStream);
         }
 
-        public DataInHow<InputStream, DidoData> make() {
+        public DataInHow<InputStream> make() {
             return make_();
         }
 
@@ -105,7 +106,7 @@ public class CsvDataInHow implements DataInHow<InputStream, DidoData> {
         return new Options();
     }
 
-    public static DataInHow<InputStream, DidoData> withDefaultOptions() {
+    public static DataInHow<InputStream> withDefaultOptions() {
         return new Options().make();
     }
 
@@ -114,10 +115,8 @@ public class CsvDataInHow implements DataInHow<InputStream, DidoData> {
         return InputStream.class;
     }
 
-
-
     @Override
-    public DataIn<DidoData> inFrom(InputStream inputStream) throws IOException {
+    public DataIn inFrom(InputStream inputStream) {
 
         CSVFormat csvFormat = this.csvFormat;
 
@@ -125,33 +124,37 @@ public class CsvDataInHow implements DataInHow<InputStream, DidoData> {
         CSVParser csvParser;
         Iterator<CSVRecord> iterator;
 
-        if (this.schema == null || this.partialSchema) {
+        try {
+            if (this.schema == null || this.partialSchema) {
 
-            csvParser = csvFormat.parse(new InputStreamReader(inputStream));
-            iterator = csvParser.iterator();
+                csvParser = csvFormat.parse(new InputStreamReader(inputStream));
+                iterator = csvParser.iterator();
 
-            if (this.withHeader || this.partialSchema) {
-                if (iterator.hasNext()) {
-                    schema = schemaFromHeader(iterator.next(), this.partialSchema ? this.schema : null);
+                if (this.withHeader || this.partialSchema) {
+                    if (iterator.hasNext()) {
+                        schema = schemaFromHeader(iterator.next(), this.partialSchema ? this.schema : null);
+                    } else {
+                        throw new DataException("No Header Record.");
+                    }
                 } else {
-                    throw new IOException("No Header Record.");
+                    if (iterator.hasNext()) {
+                        CSVRecord record = iterator.next();
+                        schema = schemaNoHeader(record);
+                        iterator = new OneAheadIterator<>(iterator, record);
+                    } else {
+                        schema = DataSchema.emptySchema();
+                    }
                 }
             } else {
-                if (iterator.hasNext()) {
-                    CSVRecord record = iterator.next();
-                    schema = schemaNoHeader(record);
-                    iterator = new OneAheadIterator<>(iterator, record);
-                } else {
-                    schema = DataSchema.emptySchema();
+                schema = this.schema;
+                if (this.withHeader) {
+                    csvFormat = csvFormat.withFirstRecordAsHeader();
                 }
+                csvParser = csvFormat.parse(new InputStreamReader(inputStream));
+                iterator = csvParser.iterator();
             }
-        } else {
-            schema = this.schema;
-            if (this.withHeader) {
-                csvFormat = csvFormat.withFirstRecordAsHeader();
-            }
-            csvParser = csvFormat.parse(new InputStreamReader(inputStream));
-            iterator = csvParser.iterator();
+        } catch (IOException e) {
+            throw DataException.of(e);
         }
 
         final Iterator<CSVRecord> finalIterator = iterator;
@@ -159,20 +162,30 @@ public class CsvDataInHow implements DataInHow<InputStream, DidoData> {
         Function<CSVRecord, CsvData> wrapperFunction =
                 CsvData.wrapperFunctionFor(schema, converter);
 
-        return new DataIn<>() {
+        return new DataIn() {
 
             @Override
-            public DidoData get() {
-                if (finalIterator.hasNext()) {
-                    return wrapperFunction.apply(finalIterator.next());
-                } else {
-                    return null;
-                }
+            public Iterator<DidoData> iterator() {
+                return new Iterator<DidoData>() {
+                    @Override
+                    public boolean hasNext() {
+                        return finalIterator.hasNext();
+                    }
+
+                    @Override
+                    public DidoData next() {
+                        return wrapperFunction.apply(finalIterator.next());
+                    }
+                };
             }
 
             @Override
-            public void close() throws IOException {
-                csvParser.close();
+            public void close() {
+                try {
+                    csvParser.close();
+                } catch (IOException e) {
+                    throw DataException.of(e);
+                }
             }
         };
     }

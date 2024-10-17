@@ -5,7 +5,7 @@ import dido.data.SchemaField;
 
 import java.util.Collection;
 
-public class SchemaDelegate implements DataSchema {
+public class SchemaDelegate extends AbstractDataSchema implements DataSchema {
 
     private final DataSchema delegate;
 

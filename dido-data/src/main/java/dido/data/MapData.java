@@ -134,18 +134,18 @@ public class MapData extends AbstractData implements DidoData {
         return new BuilderNoSchema();
     }
 
+    public static DataFactory<MapData> factoryForSchema(DataSchema schema) {
+        return new MapDataFactory(asMapDataSchema(schema));
+    }
+
     public static Values<MapData> valuesForSchema(DataSchema schema) {
 
         return Values.withDataFactory(factoryForSchema(schema));
     }
 
-    public static DataBuilder<MapData> copy(DidoData from) {
+    public static MapData copy(DidoData from) {
 
-        return new DataBuilder<>(factoryForSchema(from.getSchema())).copy(from);
-    }
-
-    public static DataFactory<MapData> factoryForSchema(DataSchema schema) {
-        return new MapDataFactory(asMapDataSchema(schema));
+        return new DataBuilder<>(factoryForSchema(from.getSchema())).copy(from).build();
     }
 
     @Override
