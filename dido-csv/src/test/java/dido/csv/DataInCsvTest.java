@@ -19,21 +19,21 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
-class CsvDataInHowTest {
+class DataInCsvTest {
 
     @Test
-    void testWithDefaults() throws Exception {
+    void testWithDefaults() {
 
-        DataInHow<InputStream> test = CsvDataInHow.withDefaultOptions();
+        DataInHow<InputStream> test = DataInCsv.withDefaults();
 
         String records =
                 "Apple,5,19.50" + System.lineSeparator() +
                         "Orange,2,35.24" + System.lineSeparator();
 
-        DataIn supplier = test.inFrom(
+        DataIn dataIn = test.inFrom(
                 new ByteArrayInputStream(records.getBytes()));
 
-        List<DidoData> results = supplier.stream().collect(Collectors.toList());
+        List<DidoData> results = dataIn.stream().collect(Collectors.toList());
 
         assertThat(results.size(), is(2));
 
@@ -63,7 +63,7 @@ class CsvDataInHowTest {
     }
 
     @Test
-    void testWithSchema() throws Exception {
+    void testWithSchema() {
 
         DataSchema schema = SchemaBuilder.newInstance()
                 .addNamed("Type", String.class)
@@ -71,7 +71,7 @@ class CsvDataInHowTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        DataInHow<InputStream> test = CsvDataInHow.with()
+        DataInHow<InputStream> test = DataInCsv.with()
                 .schema(schema)
                 .make();
 
@@ -96,7 +96,7 @@ class CsvDataInHowTest {
     }
 
     @Test
-    void testWithPartialSchema() throws Exception {
+    void testWithPartialSchema() {
 
         String records = "Fruit,Quantity,Price" + System.lineSeparator() +
                 "Apple,5,19.50" + System.lineSeparator() +
@@ -107,7 +107,7 @@ class CsvDataInHowTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        DataInHow<InputStream> test = CsvDataInHow.with()
+        DataInHow<InputStream> test = DataInCsv.with()
                 .schema(someSchema)
                 .partialSchema(true)
                 .make();
@@ -145,9 +145,9 @@ class CsvDataInHowTest {
     }
 
     @Test
-    void testEmptyValues() throws Exception {
+    void testEmptyValues() {
 
-        try (DataIn dataIn = CsvDataInHow.withDefaultOptions()
+        try (DataIn dataIn = DataInCsv.withDefaults()
                         .inFrom(new ByteArrayInputStream(",,".getBytes(StandardCharsets.UTF_8)))) {
 
             Iterator<DidoData> iterator = dataIn.iterator();
@@ -178,7 +178,7 @@ class CsvDataInHowTest {
         String first = original.next();
         assertThat(first, is("one"));
 
-        Iterator<String> test = new CsvDataInHow.OneAheadIterator<>(original, first);
+        Iterator<String> test = new DataInCsv.OneAheadIterator<>(original, first);
 
         assertThat(test.hasNext(), is(true));
         assertThat(test.next(), is("one"));

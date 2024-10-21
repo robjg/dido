@@ -24,7 +24,7 @@ public class StreamOutJsonLines implements DataOutHow<OutputStream> {
     }
 
     @Override
-    public DataOut outTo(OutputStream outputStream) {
+    public DataOut outTo(OutputStream outTo) {
 
         Gson gson = new GsonBuilder()
                 .registerTypeHierarchyAdapter(IndexedData.class, new DataSerializer())
@@ -32,7 +32,7 @@ public class StreamOutJsonLines implements DataOutHow<OutputStream> {
                 .serializeSpecialFloatingPointValues()
                 .create();
 
-        OutputStreamWriter appendable = new OutputStreamWriter(outputStream);
+        OutputStreamWriter appendable = new OutputStreamWriter(outTo);
 
         return new DataOut() {
             @Override

@@ -46,9 +46,9 @@ public class StreamOutJson implements DataOutHow<OutputStream> {
     }
 
     @Override
-    public DataOut outTo(OutputStream outputStream) {
+    public DataOut outTo(OutputStream outTo) {
 
-        JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+        JsonWriter writer = new JsonWriter(new OutputStreamWriter(outTo, StandardCharsets.UTF_8));
         writer.setIndent("  ");
         if (array) {
             try {

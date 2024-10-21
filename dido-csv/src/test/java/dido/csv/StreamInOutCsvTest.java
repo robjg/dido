@@ -24,12 +24,11 @@ class StreamInOutCsvTest {
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
-        try (DataIn supplier = CsvDataInHow.with()
-                    .withHeader(true)
-                    .make()
-                    .inFrom(new ByteArrayInputStream(records.getBytes(StandardCharsets.UTF_8)));
-             DataOut consumer = CsvDataOutHow.with()
-                     .withHeader(true)
+        try (DataIn supplier = DataInCsv.with()
+                    .header(true)
+                    .from(new ByteArrayInputStream(records.getBytes(StandardCharsets.UTF_8)));
+             DataOut consumer = DataOutCsv.with()
+                     .header(true)
                      .make()
                      .outTo(results)) {
 

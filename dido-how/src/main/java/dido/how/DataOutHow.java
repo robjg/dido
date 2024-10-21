@@ -17,10 +17,10 @@ public interface DataOutHow<O> {
 	/**
 	 * Create a writer.
 	 * 
-	 * @param dataOut The place that data will be written to.
+	 * @param outTo The place that data will be written to.
 	 * @return A writer. Never null.
 	 * 
 	 */
-	DataOut outTo(O dataOut);
+	DataOut outTo(O outTo);
 
 }

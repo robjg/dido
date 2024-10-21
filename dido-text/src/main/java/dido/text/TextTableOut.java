@@ -47,11 +47,11 @@ public class TextTableOut implements DataOutHow<OutputStream> {
     }
 
     @Override
-    public DataOut outTo(OutputStream dataOut) {
+    public DataOut outTo(OutputStream outTo) {
 
         return Optional.ofNullable(this.schema)
-                .<DataOut>map(s -> new WithSchema(s, dataOut))
-                .orElseGet(() -> new UnknownSchema(dataOut));
+                .<DataOut>map(s -> new WithSchema(s, outTo))
+                .orElseGet(() -> new UnknownSchema(outTo));
     }
 
     static class WithSchema implements DataOut {

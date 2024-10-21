@@ -1,7 +1,7 @@
 package dido.examples;
 
-import dido.csv.CsvDataInHow;
-import dido.csv.CsvDataOutHow;
+import dido.csv.DataInCsv;
+import dido.csv.DataOutCsv;
 import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.how.DataOut;
@@ -41,8 +41,8 @@ class CsvToSqlExampleTest {
         connection.createStatement().execute(create);
 
         // #snippet1{
-        try (DataIn in = CsvDataInHow.with()
-                .header()
+        try (DataIn in = DataInCsv.with()
+                .header(true)
                 .from(getClass().getResourceAsStream("/examples/people-100.csv"));
              DataOut out = SqlDataOutHow.with()
                      .sql("insert into PEOPLE " +
@@ -60,8 +60,8 @@ class CsvToSqlExampleTest {
         try (DataIn in = SqlDataInHow.fromSql("select * from people")
                 .make()
                 .inFrom(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""));
-             DataOut out = CsvDataOutHow.with()
-                     .withHeader(true)
+             DataOut out = DataOutCsv.with()
+                     .header(true)
                      .make()
                      .outTo(bufferType.toOutputStream())) {
 

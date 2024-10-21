@@ -288,9 +288,9 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
     }
 
     @Override
-    public DataOut outTo(BookOutProvider bookOutProvider)  {
+    public DataOut outTo(BookOutProvider outTo)  {
 
-        BookOut bookOut = bookOutProvider.provideBookOut();
+        BookOut bookOut = outTo.provideBookOut();
 
         Sheet sheet = bookOut.getOrCreateSheet(this.sheetName);
 

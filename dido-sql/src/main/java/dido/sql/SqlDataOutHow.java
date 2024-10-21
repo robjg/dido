@@ -85,10 +85,10 @@ public class SqlDataOutHow implements DataOutHow<Connection> {
     }
 
     @Override
-    public DataOut outTo(Connection connection) {
+    public DataOut outTo(Connection outTo) {
 
         try {
-            return outToWithExceptions(connection);
+            return outToWithExceptions(outTo);
         } catch (SQLException | ClassNotFoundException e) {
             throw DataException.of(e);
         }

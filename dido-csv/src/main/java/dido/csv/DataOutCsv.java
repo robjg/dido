@@ -15,13 +15,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * How to write CSV Data Out.
  */
-public class CsvDataOutHow implements DataOutHow<OutputStream> {
+public class DataOutCsv implements DataOutHow<OutputStream> {
 
     private final CSVFormat csvFormat;
 
@@ -29,7 +31,7 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
 
     private final boolean withHeader;
 
-    public static class Options {
+    public static class Settings {
 
         private CSVFormat csvFormat;
 
@@ -37,38 +39,52 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
 
         private boolean withHeader;
 
-        public Options csvFormat(CSVFormat csvFormat) {
+        public Settings csvFormat(CSVFormat csvFormat) {
             this.csvFormat = csvFormat;
             return this;
         }
 
-        public Options schema(DataSchema schema) {
+        public Settings schema(DataSchema schema) {
             this.schema = schema;
             return this;
         }
 
-        public Options withHeader(boolean withHeader) {
+        public Settings header(boolean withHeader) {
             this.withHeader = withHeader;
             return this;
         }
 
         public DataOutHow<OutputStream> make() {
-            return new CsvDataOutHow(this);
+            return new DataOutCsv(this);
         }
     }
 
-    private CsvDataOutHow(Options options) {
-        this.csvFormat = Objects.requireNonNullElse(options.csvFormat, CSVFormat.DEFAULT);
-        this.schema = options.schema;
-        this.withHeader = options.withHeader;
+    private DataOutCsv(Settings settings) {
+        this.csvFormat = Objects.requireNonNullElse(settings.csvFormat, CSVFormat.DEFAULT);
+        this.schema = settings.schema;
+        this.withHeader = settings.withHeader;
     }
 
-    public static Options with() {
-        return new Options();
+    public static DataOut toOutputStream(OutputStream outputStream) {
+
+        return withDefaults().outTo(outputStream);
     }
 
-    public static DataOutHow<OutputStream> withDefaultOptions() {
-        return new Options().make();
+    public static DataOut toPath(Path path) {
+
+        try {
+            return toOutputStream(Files.newOutputStream(path));
+        } catch (IOException e) {
+            throw DataException.of(e);
+        }
+    }
+
+    public static Settings with() {
+        return new Settings();
+    }
+
+    public static DataOutHow<OutputStream> withDefaults() {
+        return new Settings().make();
     }
 
     @Override
@@ -77,12 +93,12 @@ public class CsvDataOutHow implements DataOutHow<OutputStream> {
     }
 
     @Override
-    public DataOut outTo(OutputStream outputStream) {
+    public DataOut outTo(OutputStream outTo) {
 
         if (schema == null) {
-            return new UnknownSchemaConsumer(outputStream);
+            return new UnknownSchemaConsumer(outTo);
         } else {
-            return consumerWhenSchemaKnown(outputStream, schema);
+            return consumerWhenSchemaKnown(outTo, schema);
         }
     }
 

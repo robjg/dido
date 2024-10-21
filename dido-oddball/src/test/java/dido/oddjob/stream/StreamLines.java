@@ -1,13 +1,15 @@
 package dido.oddjob.stream;
 
-import dido.data.*;
+import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
+import dido.how.lines.DataInLines;
+import dido.how.lines.DataOutLines;
 
-import java.io.*;
-import java.util.Iterator;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Streams a lines of text in and out, creating a {@link DidoData} record with the
@@ -15,15 +17,7 @@ import java.util.Iterator;
  */
 public class StreamLines {
 
-    private static final String LINE = "Line";
-
-    private static final DataSchema schema = SchemaBuilder.newInstance()
-            .addNamed(LINE, String.class)
-            .build();
-
     public static class In implements DataInHow<InputStream> {
-
-        DataBuilder<MapData> dataBuilder = MapData.builderForSchema(schema);
 
         @Override
         public Class<InputStream> getInType() {
@@ -33,37 +27,7 @@ public class StreamLines {
         @Override
         public DataIn inFrom(InputStream inputStream) {
 
-            LineNumberReader reader = new LineNumberReader(
-                    new InputStreamReader(inputStream));
-
-            return new DataIn() {
-
-                @Override
-                public void close() {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        throw new IllegalStateException(e);
-                    }
-                }
-
-                @Override
-                public Iterator<DidoData> iterator() {
-                    Iterator<String> iterator = reader.lines().iterator();
-
-                    return new Iterator<>() {
-                        @Override
-                        public boolean hasNext() {
-                            return iterator.hasNext();
-                        }
-
-                        @Override
-                        public DidoData next() {
-                            return dataBuilder.with(LINE, iterator.next()).build();
-                        }
-                    };
-                }
-            };
+            return DataInLines.fromInputStream(inputStream);
         }
     }
 
@@ -75,22 +39,9 @@ public class StreamLines {
         }
 
         @Override
-        public DataOut outTo(OutputStream outputStream) {
+        public DataOut outTo(OutputStream outTo) {
 
-            return new DataOut() {
-
-                final PrintStream out = new PrintStream(outputStream);
-
-                @Override
-                public void close() {
-                    out.close();
-                }
-
-                @Override
-                public void accept(DidoData data) {
-                    out.println(data.getStringNamed(LINE));
-                }
-            };
+            return DataOutLines.toOutputStream(outTo);
         }
     }
 }

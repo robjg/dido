@@ -22,7 +22,7 @@ import java.util.function.Function;
 /**
  * How to read CSV Data In.
  */
-public class CsvDataInHow implements DataInHow<InputStream> {
+public class DataInCsv implements DataInHow<InputStream> {
 
     private final CSVFormat csvFormat;
 
@@ -34,7 +34,7 @@ public class CsvDataInHow implements DataInHow<InputStream> {
 
     private final DidoConversionProvider converter;
 
-    public static class Options {
+    public static class Settings {
 
         private CSVFormat csvFormat;
 
@@ -46,68 +46,75 @@ public class CsvDataInHow implements DataInHow<InputStream> {
 
         private DidoConversionProvider converter;
 
-        public Options csvFormat(CSVFormat csvFormat) {
+        public Settings csvFormat(CSVFormat csvFormat) {
             this.csvFormat = csvFormat;
             return this;
         }
 
-        public Options schema(DataSchema schema) {
+        public Settings schema(DataSchema schema) {
             this.schema = schema;
             return this;
         }
 
-        public Options withHeader(boolean withHeader) {
+        public Settings header(boolean withHeader) {
             this.withHeader = withHeader;
             return this;
         }
 
-        public Options header() {
-            this.withHeader = true;
-            return this;
-        }
-
-        public Options partialSchema(boolean partialSchema) {
+        public Settings partialSchema(boolean partialSchema) {
             this.partialSchema = partialSchema;
             return this;
         }
 
-        public Options converter(DidoConversionProvider converter) {
+        public Settings converter(DidoConversionProvider converter) {
             this.converter = converter;
             return this;
         }
 
         public DataIn fromFile(Path path) throws IOException {
-            return make_().inFrom(Files.newInputStream(path));
+            return make().inFrom(Files.newInputStream(path));
         }
 
         public DataIn from(InputStream inputStream) {
-            return make_().inFrom(inputStream);
+            return make().inFrom(inputStream);
         }
 
-        public DataInHow<InputStream> make() {
-            return make_();
+        public DataInCsv make() {
+            return new DataInCsv(this);
         }
 
-        CsvDataInHow make_() {
-            return new CsvDataInHow(this);
-        }
     }
 
-    private CsvDataInHow(Options options) {
-        this.csvFormat = Objects.requireNonNullElse(options.csvFormat, CSVFormat.DEFAULT);
-        this.schema = options.schema;
-        this.withHeader = options.withHeader;
-        this.partialSchema = options.partialSchema;
-        this.converter = Objects.requireNonNullElse(options.converter,
+    private DataInCsv(Settings settings) {
+        this.csvFormat = Objects.requireNonNullElse(settings.csvFormat, CSVFormat.DEFAULT);
+        this.schema = settings.schema;
+        this.withHeader = settings.withHeader;
+        this.partialSchema = settings.partialSchema;
+        this.converter = Objects.requireNonNullElse(settings.converter,
                 DefaultConversionProvider.defaultInstance());
     }
 
-    public static Options with() {
-        return new Options();
+    public static DataIn fromInputStream(InputStream inputStream) {
+
+        return DataInCsv.withDefaults()
+                .inFrom(inputStream);
     }
 
-    public static DataInHow<InputStream> withDefaultOptions() {
-        return new Options().make();
+    public static DataIn fromPath(Path path) {
+
+        try {
+            return fromInputStream(Files.newInputStream(path));
+        } catch (IOException e) {
+            throw DataException.of(e);
+        }
+    }
+
+    public static Settings with() {
+        return new Settings();
+    }
+
+    public static DataInHow<InputStream> withDefaults() {
+        return new Settings().make();
     }
 
     @Override

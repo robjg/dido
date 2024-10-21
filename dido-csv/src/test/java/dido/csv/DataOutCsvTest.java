@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class CsvDataOutHowTest {
+class DataOutCsvTest {
 
     @Test
     void testHeaderFromSimpleSchema() {
@@ -20,7 +20,7 @@ class CsvDataOutHowTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        String[] headings = CsvDataOutHow.headerFrom(schema);
+        String[] headings = DataOutCsv.headerFrom(schema);
 
         assertThat(headings, is(new String[]{"Apple", "Qty", "Price"}));
     }
@@ -34,7 +34,7 @@ class CsvDataOutHowTest {
                 .withDouble("Price", 23.5)
                 .build();
 
-        Object[] values = CsvDataOutHow.toValues(data);
+        Object[] values = DataOutCsv.toValues(data);
 
         assertThat(values, is(new Object[] {"Apple", 5, 23.5}));
     }
@@ -54,9 +54,9 @@ class CsvDataOutHowTest {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         DataOut dataOut =
-                CsvDataOutHow.with()
+                DataOutCsv.with()
                         .schema(schema)
-                        .withHeader(true)
+                        .header(true)
                         .make()
                         .outTo(output);
 

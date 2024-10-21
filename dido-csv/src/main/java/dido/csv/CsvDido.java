@@ -55,19 +55,19 @@ public class CsvDido {
 
     public DataOutHow<OutputStream> toStreamOut() {
 
-        return CsvDataOutHow.with()
+        return DataOutCsv.with()
                 .csvFormat(csvFormat)
                 .schema(schema)
-                .withHeader(withHeader)
+                .header(withHeader)
                 .make();
     }
 
     public DataInHow<InputStream> toStreamIn() {
 
-        return CsvDataInHow.with()
+        return DataInCsv.with()
                 .csvFormat(csvFormat)
                 .schema(schema)
-                .withHeader(withHeader)
+                .header(withHeader)
                 .partialSchema(partialSchema)
                 .converter(converter)
                 .make();
