@@ -4,6 +4,7 @@ import dido.data.NoSuchFieldException;
 import dido.data.*;
 import dido.data.useful.AbstractFieldGetter;
 import dido.data.useful.AbstractFieldSetter;
+import dido.data.util.FieldValuesIn;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -154,9 +155,9 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
             return new Builder<>(factoryForSchema(schema));
         }
 
-        public Values<GenericMapData<F>> valuesFor(DataSchema schema) {
+        public FieldValuesIn<GenericMapData<F>> valuesFor(DataSchema schema) {
 
-            return Values.withDataFactory(factoryForSchema(schema));
+            return FieldValuesIn.withDataFactory(factoryForSchema(schema));
         }
 
         public GenericDataFactory<F, GenericMapData<F>> factoryForSchema(DataSchema schema) {

@@ -2,28 +2,24 @@ package dido.csv;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.IndexedData;
-import dido.data.IndexedSchema;
-import dido.how.CloseableConsumer;
-import dido.how.DataException;
-import dido.how.DataOut;
-import dido.how.DataOutHow;
+import dido.data.util.FieldValuesOut;
+import dido.how.*;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * How to write CSV Data Out.
  */
-public class DataOutCsv implements DataOutHow<OutputStream> {
+public class DataOutCsv implements DataOutHow<CloseableAppendable> {
 
     private final CSVFormat csvFormat;
 
@@ -54,8 +50,49 @@ public class DataOutCsv implements DataOutHow<OutputStream> {
             return this;
         }
 
-        public DataOutHow<OutputStream> make() {
+        public DataOut toAppendable(Appendable appendable) {
+            return make().outTo(CloseableAppendable.fromAppendable(appendable));
+        }
+
+        public DataOut toWriter(Writer writer) {
+            return make().outTo(CloseableAppendable.fromWriter(writer));
+        }
+
+        public DataOut toPath(Path path) {
+            try {
+                return make().outTo(CloseableAppendable.fromWriter(Files.newBufferedWriter(path)));
+            } catch (IOException e) {
+                throw DataException.of(e);
+            }
+        }
+
+        public DataOut toOutputStream(OutputStream outputStream) {
+
+            return make().outTo(CloseableAppendable.fromOutputStream(outputStream));
+        }
+
+        public DataOutCsv make() {
             return new DataOutCsv(this);
+        }
+
+        public Function<DidoData, String> asMapperToString() {
+
+            DataOutCsv dataOutCsv =
+                    csvFormat(Objects.requireNonNullElse(csvFormat, CSVFormat.DEFAULT)
+                            .builder()
+                            .setRecordSeparator("")
+                            .build())
+                            .make();
+
+            return data -> {
+                StringBuilder result = new StringBuilder();
+
+                try (DataOut out = dataOutCsv.outTo(CloseableAppendable.fromAppendable(result))) {
+                    out.accept(data);
+                }
+
+                return result.toString();
+            };
         }
     }
 
@@ -65,35 +102,42 @@ public class DataOutCsv implements DataOutHow<OutputStream> {
         this.withHeader = settings.withHeader;
     }
 
-    public static DataOut toOutputStream(OutputStream outputStream) {
+    public static DataOut toAppendable(Appendable appendable) {
+        return with().toAppendable(appendable);
+    }
 
-        return withDefaults().outTo(outputStream);
+    public static DataOut toWriter(Writer writer) {
+        return with().toWriter(writer);
     }
 
     public static DataOut toPath(Path path) {
+        return with().toPath(path);
+    }
 
-        try {
-            return toOutputStream(Files.newOutputStream(path));
-        } catch (IOException e) {
-            throw DataException.of(e);
-        }
+    public static DataOut toOutputStream(OutputStream outputStream) {
+
+        return with().toOutputStream(outputStream);
+    }
+
+    public static Function<DidoData, String> asMapperToString() {
+        return with().asMapperToString();
     }
 
     public static Settings with() {
         return new Settings();
     }
 
-    public static DataOutHow<OutputStream> withDefaults() {
+    public static DataOutHow<CloseableAppendable> withDefaults() {
         return new Settings().make();
     }
 
     @Override
-    public Class<OutputStream> getOutType() {
-        return OutputStream.class;
+    public Class<CloseableAppendable> getOutType() {
+        return CloseableAppendable.class;
     }
 
     @Override
-    public DataOut outTo(OutputStream outTo) {
+    public DataOut outTo(CloseableAppendable outTo) {
 
         if (schema == null) {
             return new UnknownSchemaConsumer(outTo);
@@ -102,36 +146,42 @@ public class DataOutCsv implements DataOutHow<OutputStream> {
         }
     }
 
-    protected DataOut consumerWhenSchemaKnown(OutputStream outputStream,
-                                                      DataSchema schema) {
+    protected DataOut consumerWhenSchemaKnown(CloseableAppendable appendable,
+                                              DataSchema schema) {
         CSVFormat csvFormat = this.csvFormat;
         if (this.withHeader) {
-            csvFormat = csvFormat.withHeader(headerFrom(schema));
+            csvFormat = csvFormat.builder()
+                    .setHeader(headerFrom(schema))
+                    .build();
         }
 
-        Writer writer = new OutputStreamWriter(outputStream);
         final CSVPrinter printer;
         try {
-            printer = csvFormat.print(writer);
+            printer = csvFormat.print(appendable);
         } catch (IOException e) {
             throw DataException.of(e);
         }
 
-        return new KnownSchemaConsumer(printer);
+        return new KnownSchemaConsumer(printer,
+                FieldValuesOut.forSchema(schema));
     }
 
     static class KnownSchemaConsumer implements DataOut {
 
         private final CSVPrinter printer;
 
-        KnownSchemaConsumer(CSVPrinter printer) {
+        private final FieldValuesOut values;
+
+        KnownSchemaConsumer(CSVPrinter printer,
+                            FieldValuesOut values) {
             this.printer = printer;
+            this.values = values;
         }
 
         @Override
         public void accept(DidoData data) {
             try {
-                printer.printRecord(toValues(data));
+                printer.printRecord(values.toCollection(data));
             } catch (IOException e) {
                 throw DataException.of("Failed on " + data, e);
             }
@@ -149,18 +199,18 @@ public class DataOutCsv implements DataOutHow<OutputStream> {
 
     class UnknownSchemaConsumer implements DataOut {
 
-        private final OutputStream outputStream;
+        private final CloseableAppendable outputStream;
 
         private CloseableConsumer<DidoData> schemaKnownConsumer;
 
-        UnknownSchemaConsumer(OutputStream outputStream) {
+        UnknownSchemaConsumer(CloseableAppendable outputStream) {
             this.outputStream = outputStream;
         }
 
         @Override
         public void accept(DidoData data) {
             if (schemaKnownConsumer == null) {
-                    schemaKnownConsumer = consumerWhenSchemaKnown(outputStream, data.getSchema());
+                schemaKnownConsumer = consumerWhenSchemaKnown(outputStream, data.getSchema());
             }
             schemaKnownConsumer.accept(data);
         }
@@ -190,17 +240,6 @@ public class DataOutCsv implements DataOutHow<OutputStream> {
         return headers;
     }
 
-    public static Object[] toValues(IndexedData data) {
-        IndexedSchema schema = data.getSchema();
-        if (schema.lastIndex() < 1) {
-            return new Object[0];
-        }
-        Object[] values = new Object[schema.lastIndex()];
-        for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
-            values[i - 1] = data.getAt(i);
-        }
-        return values;
-    }
 
     @Override
     public String toString() {

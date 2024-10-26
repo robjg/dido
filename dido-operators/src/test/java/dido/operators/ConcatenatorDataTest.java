@@ -1,9 +1,6 @@
 package dido.operators;
 
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.MapData;
-import dido.data.ReadSchema;
+import dido.data.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -210,6 +207,33 @@ class ConcatenatorDataTest {
                         .of(data1, data2),
                 is(expected));
 
+    }
+
+    @Test
+    void getterWork() {
+
+        DidoData data1 = MapData.of(
+                "Type", "Apples",
+                "Variety", "Cox");
+
+        DidoData data2 = ArrayData.newBuilderNoSchema()
+                .withInt("Quantity", 5)
+                .withDouble("Price", 27.2)
+                .build();
+
+        DidoData result = Concatenator.of(data1, data2);
+
+        ReadStrategy readStrategy = ReadStrategy.fromSchema(result.getSchema());
+
+        FieldGetter typeGetter = readStrategy.getFieldGetterNamed("Type");
+        FieldGetter varietyGetter = readStrategy.getFieldGetterNamed("Variety");
+        FieldGetter quantityGetter = readStrategy.getFieldGetterNamed("Quantity");
+        FieldGetter priceGetter = readStrategy.getFieldGetterNamed("Price");
+
+        assertThat(typeGetter.getString(result), is("Apples"));
+        assertThat(varietyGetter.get(result), is("Cox"));
+        assertThat(quantityGetter.getInt(result), is(5));
+        assertThat(priceGetter.getDouble(result), is(27.2));
     }
 
 

@@ -2,6 +2,7 @@ package dido.json;
 
 import com.google.gson.*;
 import dido.data.*;
+import dido.data.util.FieldValuesIn;
 
 import java.lang.reflect.Type;
 import java.util.HashSet;
@@ -123,7 +124,7 @@ public class JsonDataPartialCopy<D extends DidoData> {
 
             DataSchema schema = schemaFactory.toSchema();
 
-            return Values.withDataFactory(dataFactoryProvider.provideFactory(schema))
+            return FieldValuesIn.withDataFactory(dataFactoryProvider.provideFactory(schema))
                     .of(values);
         }
     }

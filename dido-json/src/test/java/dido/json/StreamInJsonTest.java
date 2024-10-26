@@ -1,6 +1,7 @@
 package dido.json;
 
 import dido.data.*;
+import dido.data.util.FieldValuesIn;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ class StreamInJsonTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        Values<ArrayData> values = ArrayData.valuesForSchema(expectedSchema);
+        FieldValuesIn<ArrayData> values = ArrayData.valuesForSchema(expectedSchema);
 
         DataInHow<InputStream> test = StreamInJson.asCopy()
                 .setIsArray(true)

@@ -1,4 +1,6 @@
-package dido.data;
+package dido.data.util;
+
+import dido.data.*;
 
 import java.util.List;
 import java.util.Set;
@@ -7,17 +9,19 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * For A fluent way of providing data for a known schema
  */
-public class Values<D extends DidoData> {
+public class FieldValuesIn<D extends DidoData> {
 
     private final DataFactory<D> dataFactory;
 
     private final FieldSetter[] setters;
 
-    private Values(DataFactory<D> dataFactory) {
+    private FieldValuesIn(DataFactory<D> dataFactory) {
         this.dataFactory = dataFactory;
         DataSchema schema = dataFactory.getSchema();
         WriteStrategy writeStrategy = WriteStrategy.fromSchema(schema);
@@ -27,8 +31,8 @@ public class Values<D extends DidoData> {
         }
     }
 
-    public static <D extends DidoData> Values<D> withDataFactory(DataFactory<D> dataFactory) {
-        return new Values<>(dataFactory);
+    public static <D extends DidoData> FieldValuesIn<D> withDataFactory(DataFactory<D> dataFactory) {
+        return new FieldValuesIn<>(dataFactory);
     }
 
     public DataSchema getSchema() {
@@ -57,6 +61,11 @@ public class Values<D extends DidoData> {
         return dataFactory.toData();
     }
 
+    /**
+     * Allows a stream of values to be collected into an item of data. Not sure how useful this is.
+     *
+     * @return A collector.
+     */
     public Collector<Object, WritableData, D> toCollector() {
         return new Collector<>() {
             int i = 1;
@@ -89,4 +98,28 @@ public class Values<D extends DidoData> {
             }
         };
     }
+
+    public Many many() {
+        return new Many();
+    }
+
+    public class Many {
+
+        private final Stream.Builder<DidoData> stream = Stream.builder();
+
+        public Many of(Object... values) {
+            stream.accept(FieldValuesIn.this.of(values));
+            return this;
+        }
+
+        public Stream<DidoData> toStream() {
+            return stream.build();
+        }
+
+        public List<DidoData> toList() {
+
+            return toStream().collect(Collectors.toList());
+        }
+    }
+
 }

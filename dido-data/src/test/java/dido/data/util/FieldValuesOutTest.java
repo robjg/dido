@@ -1,6 +1,9 @@
 package dido.data.util;
 
-import dido.data.*;
+import dido.data.ArrayData;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.MapData;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -8,7 +11,7 @@ import java.util.Collection;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class ValuesOutTest {
+public class FieldValuesOutTest {
 
 
     @Test
@@ -20,11 +23,11 @@ public class ValuesOutTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        Values<ArrayData> values = Values.withDataFactory(ArrayData.factoryForSchema(dataSchema));
+        FieldValuesIn<ArrayData> values = FieldValuesIn.withDataFactory(ArrayData.factoryForSchema(dataSchema));
 
         ArrayData data = values.of("Apple", 5, 27.2);
 
-        ValuesOut valuesOut = new ValuesOut(dataSchema);
+        FieldValuesOut valuesOut = new FieldValuesOut(dataSchema);
 
         Collection<Object> collection = valuesOut.toCollection(data);
 
@@ -49,7 +52,7 @@ public class ValuesOutTest {
                 .map(Object::toString)
                 .collect(values.toCollector());
 
-        Collection<Object> stringCollection = ValuesOut.collectionOf(strings);
+        Collection<Object> stringCollection = FieldValuesOut.collectionOf(strings);
 
         String[] aStrings = stringCollection.toArray(new String[0]);
 
@@ -59,7 +62,7 @@ public class ValuesOutTest {
     @Test
     void empty() {
 
-        ValuesOut valuesOut = new ValuesOut(DataSchema.emptySchema());
+        FieldValuesOut valuesOut = new FieldValuesOut(DataSchema.emptySchema());
 
         Collection<Object> collection = valuesOut.toCollection(ArrayData.of());
 
@@ -75,7 +78,7 @@ public class ValuesOutTest {
 
         @SuppressWarnings("RedundantOperationOnEmptyContainer")
         DidoData copy = collection.stream()
-                .collect(Values.withDataFactory(
+                .collect(FieldValuesIn.withDataFactory(
                         ArrayData.factoryForSchema(DataSchema.emptySchema()))
                         .toCollector());
 

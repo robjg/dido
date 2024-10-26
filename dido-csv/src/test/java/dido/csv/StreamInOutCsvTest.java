@@ -6,7 +6,6 @@ import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,15 +21,14 @@ class StreamInOutCsvTest {
                 "Orange,2,35.24" + System.lineSeparator() +
                 "Banana,3,17.65" + System.lineSeparator();
 
-        ByteArrayOutputStream results = new ByteArrayOutputStream();
+        StringBuilder results = new StringBuilder();
 
         try (DataIn supplier = DataInCsv.with()
                     .header(true)
-                    .from(new ByteArrayInputStream(records.getBytes(StandardCharsets.UTF_8)));
+                    .fromInputStream(new ByteArrayInputStream(records.getBytes(StandardCharsets.UTF_8)));
              DataOut consumer = DataOutCsv.with()
                      .header(true)
-                     .make()
-                     .outTo(results)) {
+                     .toAppendable(results)) {
 
             for (DidoData data : supplier) {
                 consumer.accept(data);

@@ -101,7 +101,8 @@ public class Concatenator {
             for (DataSchema schema : schemas) {
                 ReadStrategy readStrategy = ReadStrategy.fromSchema(schema);
                 for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
-                    Location location = new Location(dataIndex, i, readStrategy.getFieldGetterAt(i));
+                    Location location = new Location(dataIndex, i,
+                            new DelegateGetter(dataIndex, readStrategy.getFieldGetterAt(i)));
                     SchemaField schemaField = schema.getSchemaFieldAt(i);
                     String name = schemaField.getName();
                     if (excludeFields.contains(name)) {
@@ -135,6 +136,75 @@ public class Concatenator {
         }
     }
 
+    static class DelegateGetter implements FieldGetter {
+
+        private final int dataIndex;
+
+        private final FieldGetter getter;
+
+        DelegateGetter(int dataIndex, FieldGetter getter) {
+            this.dataIndex = dataIndex;
+            this.getter = getter;
+        }
+
+        @Override
+        public boolean has(DidoData data) {
+            return getter.has(((ConcatenatedData) data).data[dataIndex]);
+        }
+
+        @Override
+        public Object get(DidoData data) {
+
+            return getter.get(((ConcatenatedData) data).data[dataIndex]);
+        }
+
+        @Override
+        public boolean getBoolean(DidoData data) {
+            return getter.getBoolean(((ConcatenatedData) data).data[dataIndex]);
+        }
+
+        @Override
+        public char getChar(DidoData data) {
+            return getter.getChar(((ConcatenatedData) data).data[dataIndex]);
+        }
+
+        @Override
+        public byte getByte(DidoData data) {
+            return getter.getByte(((ConcatenatedData) data).data[dataIndex]);
+        }
+
+        @Override
+        public short getShort(DidoData data) {
+            return getter.getShort(((ConcatenatedData) data).data[dataIndex]);
+        }
+
+        @Override
+        public int getInt(DidoData data) {
+            return getter.getInt(((ConcatenatedData) data).data[dataIndex]);
+        }
+
+        @Override
+        public long getLong(DidoData data) {
+            return getter.getLong(((ConcatenatedData) data).data[dataIndex]);
+        }
+
+        @Override
+        public float getFloat(DidoData data) {
+            return getter.getFloat(((ConcatenatedData) data).data[dataIndex]);
+        }
+
+        @Override
+        public double getDouble(DidoData data) {
+            return getter.getDouble(((ConcatenatedData) data).data[dataIndex]);
+        }
+
+        @Override
+        public String getString(DidoData data) {
+            return getter.getString(((ConcatenatedData) data).data[dataIndex]);
+        }
+    }
+
+
     /**
      * Create a new {@code Concatenator}.
      *
@@ -159,7 +229,7 @@ public class Concatenator {
         return new Factory(new Settings());
     }
 
-    public DidoData concat(IndexedData... data) {
+    public DidoData concat(DidoData... data) {
 
         return new ConcatenatedData(data);
     }
@@ -214,9 +284,9 @@ public class Concatenator {
      */
     class ConcatenatedData extends AbstractData implements DidoData {
 
-        private final IndexedData[] data;
+        private final DidoData[] data;
 
-        ConcatenatedData(IndexedData[] data) {
+        ConcatenatedData(DidoData[] data) {
             this.data = data;
         }
 

@@ -36,7 +36,7 @@
     </scm>
 
     <properties>
-        <poi.version>4.1.2</poi.version>
+        <poi.version>5.3.0</poi.version>
 
         <junit.version>4.13.1</junit.version>
     </properties>
@@ -53,7 +53,6 @@
             <version>${poi.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>

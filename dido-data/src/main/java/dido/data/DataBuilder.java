@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.util.FieldValuesIn;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -110,9 +112,9 @@ public class DataBuilder<D extends DidoData> {
     public static class ValuesTo<D extends DidoData> {
 
         private final Consumer<? super D> consumer;
-        private final Values<D> owner;
+        private final FieldValuesIn<D> owner;
 
-        ValuesTo(Consumer<? super D> consumer, Values<D> owner) {
+        ValuesTo(Consumer<? super D> consumer, FieldValuesIn<D> owner) {
             this.consumer = consumer;
             this.owner = owner;
         }

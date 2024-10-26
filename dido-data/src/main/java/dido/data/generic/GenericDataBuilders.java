@@ -2,6 +2,7 @@ package dido.data.generic;
 
 import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.util.FieldValuesIn;
 
 import java.util.*;
 import java.util.function.Function;
@@ -145,7 +146,7 @@ abstract public class GenericDataBuilders {
 
             DataFactory<D> dataFactory = factoryProvider.provideFactory(schema);
 
-            return Values.withDataFactory(dataFactory).ofList(values);
+            return FieldValuesIn.withDataFactory(dataFactory).ofList(values);
         }
 
         @Override

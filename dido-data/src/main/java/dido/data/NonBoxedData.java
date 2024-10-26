@@ -1,6 +1,7 @@
 package dido.data;
 
 import dido.data.useful.*;
+import dido.data.util.FieldValuesIn;
 
 import java.util.Collection;
 
@@ -52,9 +53,9 @@ public class NonBoxedData extends AbstractData {
         return new DataBuilder<>(factoryForSchema(schema));
     }
 
-    public static Values<NonBoxedData> valuesForSchema(DataSchema schema) {
+    public static FieldValuesIn<NonBoxedData> valuesForSchema(DataSchema schema) {
 
-        return Values.withDataFactory(factoryForSchema(schema));
+        return FieldValuesIn.withDataFactory(factoryForSchema(schema));
     }
     public static NonBoxedData copy(DidoData from) {
 

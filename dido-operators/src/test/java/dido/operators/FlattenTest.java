@@ -1,6 +1,7 @@
 package dido.operators;
 
 import dido.data.*;
+import dido.data.util.FieldValuesIn;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -40,12 +41,13 @@ class FlattenTest {
                 .addNamed("Qty", int.class)
                 .build();
 
-        DidoData expected1 = ArrayData.valuesForSchema(expectedSchema)
-                .of("A123", "Apple", 4);
-        DidoData expected2 = ArrayData.valuesForSchema(expectedSchema)
-                .of("A123", "Pear", 5);
+        List<DidoData> expected = ArrayData.valuesForSchema(expectedSchema)
+                .many()
+                .of("A123", "Apple", 4)
+                .of("A123", "Pear", 5)
+                .toList();
 
-        assertThat(results, contains(expected1, expected2));
+        assertThat(results, is(expected));
     }
 
     @Test
@@ -68,7 +70,7 @@ class FlattenTest {
 
         assertThat(resultSchema1, is(expectedSchema));
 
-        Values<?> values = ArrayData.valuesForSchema(expectedSchema);
+        FieldValuesIn<?> values = ArrayData.valuesForSchema(expectedSchema);
 
         assertThat(results, contains(
                 values.of("Foo", 1, "X"),

@@ -10,9 +10,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
@@ -22,7 +20,7 @@ import java.util.function.Function;
 /**
  * How to read CSV Data In.
  */
-public class DataInCsv implements DataInHow<InputStream> {
+public class DataInCsv implements DataInHow<Reader> {
 
     private final CSVFormat csvFormat;
 
@@ -71,16 +69,35 @@ public class DataInCsv implements DataInHow<InputStream> {
             return this;
         }
 
-        public DataIn fromFile(Path path) throws IOException {
-            return make().inFrom(Files.newInputStream(path));
+        public DataIn fromPath(Path path) {
+            try {
+                return make().inFrom(Files.newBufferedReader(path));
+            } catch (IOException e) {
+                throw DataException.of(e);
+            }
         }
 
-        public DataIn from(InputStream inputStream) {
-            return make().inFrom(inputStream);
+        public DataIn fromInputStream(InputStream inputStream) {
+            return make().inFrom(new BufferedReader(new InputStreamReader(inputStream)));
+        }
+
+        public DataIn fromReader(Reader reader) {
+            return make().inFrom(reader);
         }
 
         public DataInCsv make() {
             return new DataInCsv(this);
+        }
+
+        public Function<String, DidoData> asMapperFromString() {
+
+            DataInCsv dataInCsv = make();
+
+            return s -> {
+                try (DataIn in = dataInCsv.inFrom(new StringReader(s))) {
+                    return in.stream().findFirst().orElse(null);
+                }
+            };
         }
 
     }
@@ -94,36 +111,37 @@ public class DataInCsv implements DataInHow<InputStream> {
                 DefaultConversionProvider.defaultInstance());
     }
 
-    public static DataIn fromInputStream(InputStream inputStream) {
-
-        return DataInCsv.withDefaults()
-                .inFrom(inputStream);
-    }
-
     public static DataIn fromPath(Path path) {
 
-        try {
-            return fromInputStream(Files.newInputStream(path));
-        } catch (IOException e) {
-            throw DataException.of(e);
-        }
+        return with().fromPath(path);
+    }
+
+    public static DataIn fromReader(Reader reader) {
+
+        return with().fromReader(reader);
+    }
+
+    public static DataIn fromInputStream(InputStream inputStream) {
+
+        return with().fromInputStream(inputStream);
+    }
+
+    public static Function<String, DidoData> asMapperFromString() {
+
+        return with().asMapperFromString();
     }
 
     public static Settings with() {
         return new Settings();
     }
 
-    public static DataInHow<InputStream> withDefaults() {
-        return new Settings().make();
+    @Override
+    public Class<Reader> getInType() {
+        return Reader.class;
     }
 
     @Override
-    public Class<InputStream> getInType() {
-        return InputStream.class;
-    }
-
-    @Override
-    public DataIn inFrom(InputStream inputStream) {
+    public DataIn inFrom(Reader reader) {
 
         CSVFormat csvFormat = this.csvFormat;
 
@@ -134,7 +152,7 @@ public class DataInCsv implements DataInHow<InputStream> {
         try {
             if (this.schema == null || this.partialSchema) {
 
-                csvParser = csvFormat.parse(new InputStreamReader(inputStream));
+                csvParser = csvFormat.parse(reader);
                 iterator = csvParser.iterator();
 
                 if (this.withHeader || this.partialSchema) {
@@ -155,9 +173,12 @@ public class DataInCsv implements DataInHow<InputStream> {
             } else {
                 schema = this.schema;
                 if (this.withHeader) {
-                    csvFormat = csvFormat.withFirstRecordAsHeader();
+                    csvFormat = csvFormat.builder()
+                            .setHeader()
+                            .setSkipHeaderRecord(true)
+                            .build();
                 }
-                csvParser = csvFormat.parse(new InputStreamReader(inputStream));
+                csvParser = csvFormat.parse(reader);
                 iterator = csvParser.iterator();
             }
         } catch (IOException e) {

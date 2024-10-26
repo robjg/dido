@@ -7,15 +7,15 @@ import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.sql.SqlDataInHow;
 import dido.sql.SqlDataOutHow;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.oddjob.io.BufferType;
 
 import java.io.BufferedInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Objects;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 class CsvToSqlExampleTest {
 
@@ -43,7 +43,7 @@ class CsvToSqlExampleTest {
         // #snippet1{
         try (DataIn in = DataInCsv.with()
                 .header(true)
-                .from(getClass().getResourceAsStream("/examples/people-100.csv"));
+                .fromInputStream(getClass().getResourceAsStream("/examples/people-100.csv"));
              DataOut out = SqlDataOutHow.with()
                      .sql("insert into PEOPLE " +
                              "(\"Index\",\"User Id\",\"First Name\",\"Last Name\",\"Sex\",\"Email\",\"Phone\",\"Date of birth\",\"Job Title\")" +
@@ -54,16 +54,14 @@ class CsvToSqlExampleTest {
         }
         // }#snippet1
 
-        BufferType bufferType = new BufferType();
-        bufferType.configured();
+        StringBuilder stringBuilder = new StringBuilder();
 
         try (DataIn in = SqlDataInHow.fromSql("select * from people")
                 .make()
                 .inFrom(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""));
              DataOut out = DataOutCsv.with()
                      .header(true)
-                     .make()
-                     .outTo(bufferType.toOutputStream())) {
+                     .toAppendable(stringBuilder)) {
 
             for (DidoData data : in) {
                 out.accept(data);
@@ -72,12 +70,10 @@ class CsvToSqlExampleTest {
 
         connection.close();
 
-        System.out.println(bufferType.getText());
-
         String expected = new String(new BufferedInputStream(
                 Objects.requireNonNull(getClass().getResourceAsStream("/examples/people-100.csv")))
                 .readAllBytes());
 
-        MatcherAssert.assertThat(bufferType.getText(), Matchers.is(expected));
+        assertThat(stringBuilder.toString(), is(expected));
     }
 }

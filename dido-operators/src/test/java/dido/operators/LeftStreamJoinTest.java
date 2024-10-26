@@ -1,6 +1,10 @@
 package dido.operators;
 
-import dido.data.*;
+import dido.data.ArrayData;
+import dido.data.DidoData;
+import dido.data.MapData;
+import dido.data.SchemaBuilder;
+import dido.data.util.FieldValuesIn;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +21,7 @@ class LeftStreamJoinTest {
     @Test
     void testSimpleExample() {
 
-        Values<ArrayData> farmBuilder = ArrayData.valuesForSchema(
+        FieldValuesIn<ArrayData> farmBuilder = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Id", int.class)
                         .addNamed("Farmer", String.class)
@@ -26,7 +30,7 @@ class LeftStreamJoinTest {
         DidoData farm1 = farmBuilder.of(1, "Brown");
         DidoData farm2 = farmBuilder.of(2, "Giles");
 
-        Values<ArrayData> produceBuilder = ArrayData.valuesForSchema(
+        FieldValuesIn<ArrayData> produceBuilder = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -37,7 +41,7 @@ class LeftStreamJoinTest {
         DidoData produce2 = produceBuilder.of("Pears", 7, 1);
         DidoData produce3 = produceBuilder.of("Carrots", 15, 2);
 
-        Values<ArrayData> expectedBuilder = ArrayData.valuesForSchema(
+        FieldValuesIn<ArrayData> expectedBuilder = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -49,6 +53,7 @@ class LeftStreamJoinTest {
         DidoData expected1 = expectedBuilder.of("Apples", 12, 2, 2, "Giles");
         DidoData expected2 = expectedBuilder.of("Pears", 7, 1, 1, "Brown");
         DidoData expected3 = expectedBuilder.of("Carrots", 15, 2, 2, "Giles");
+        DidoData expected4 = expectedBuilder.of("Apples", 3, 2, 2, "Giles");
 
         List<DidoData> results = new ArrayList<>(3);
 
@@ -85,8 +90,10 @@ class LeftStreamJoinTest {
         assertThat(expected2.getSchema(), Matchers.is(expected3.getSchema()));
 
         MapData.builderForSchema(produce1.getSchema())
-                .copy(produce1).withInt("Quantity", 7)
+                .copy(produce1).withInt("Quantity", 3)
                 .to(primary);
+
+        assertThat(results, contains(expected1, expected2, expected3, expected4));
 
     }
 }

@@ -50,20 +50,24 @@ public class DataOutLines implements DataOutHow<CloseableAppendable> {
         }
 
         public DataOut toAppendable(Appendable appendable) {
-            return make().outToAppendable(appendable);
+            return make().outTo(CloseableAppendable.fromAppendable(appendable));
         }
 
         public DataOut toWriter(Writer writer) {
-            return make().outToWriter(writer);
+            return make().outTo(CloseableAppendable.fromWriter(writer));
         }
 
         public DataOut toPath(Path path) {
-            return make().outToPath(path);
+            try {
+                return make().outTo(CloseableAppendable.fromWriter(Files.newBufferedWriter(path)));
+            } catch (IOException e) {
+                throw DataException.of(e);
+            }
         }
 
         public DataOut toOutputStream(OutputStream outputStream) {
 
-            return make().outToOutputStream(outputStream);
+            return make().outTo(CloseableAppendable.fromOutputStream(outputStream));
         }
 
         public DataOutLines make() {
@@ -99,26 +103,6 @@ public class DataOutLines implements DataOutHow<CloseableAppendable> {
     @Override
     public Class<CloseableAppendable> getOutType() {
         return CloseableAppendable.class;
-    }
-
-    public DataOut outToAppendable(Appendable appendable) {
-        return outTo(CloseableAppendable.fromAppendable(appendable));
-    }
-
-    public DataOut outToPath(Path path) {
-        try {
-            return outTo(CloseableAppendable.fromWriter(Files.newBufferedWriter(path)));
-        } catch (IOException e) {
-            throw DataException.of(e);
-        }
-    }
-
-    public DataOut outToOutputStream(OutputStream outputStream) {
-        return outTo(CloseableAppendable.fromOutputStream(outputStream));
-    }
-
-    public DataOut outToWriter(Writer writer) {
-        return outTo(CloseableAppendable.fromWriter(writer));
     }
 
     @Override

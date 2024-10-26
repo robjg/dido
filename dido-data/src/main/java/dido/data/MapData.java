@@ -2,6 +2,7 @@ package dido.data;
 
 import dido.data.generic.GenericData;
 import dido.data.useful.*;
+import dido.data.util.FieldValuesIn;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -138,9 +139,9 @@ public class MapData extends AbstractData implements DidoData {
         return new MapDataFactory(asMapDataSchema(schema));
     }
 
-    public static Values<MapData> valuesForSchema(DataSchema schema) {
+    public static FieldValuesIn<MapData> valuesForSchema(DataSchema schema) {
 
-        return Values.withDataFactory(factoryForSchema(schema));
+        return FieldValuesIn.withDataFactory(factoryForSchema(schema));
     }
 
     public static MapData copy(DidoData from) {

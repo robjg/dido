@@ -2,6 +2,7 @@ package dido.data;
 
 import dido.data.generic.GenericData;
 import dido.data.useful.*;
+import dido.data.util.FieldValuesIn;
 
 import java.util.*;
 
@@ -68,9 +69,9 @@ public class ArrayData extends AbstractData implements DidoData {
         return new ArrayDataFactory(asArrayDataSchema(schema));
     }
 
-    public static Values<ArrayData> valuesForSchema(DataSchema schema) {
+    public static FieldValuesIn<ArrayData> valuesForSchema(DataSchema schema) {
 
-        return Values.withDataFactory(factoryForSchema(schema));
+        return FieldValuesIn.withDataFactory(factoryForSchema(schema));
     }
 
     public static ArrayData copy(DidoData from) {

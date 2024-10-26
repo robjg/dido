@@ -1,7 +1,12 @@
 package dido.csv;
 
-import dido.data.*;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.MapData;
+import dido.data.SchemaBuilder;
+import dido.data.util.FieldValuesIn;
 import dido.how.DataOut;
+import org.apache.commons.csv.CSVFormat;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -26,7 +31,7 @@ class DataOutCsvTest {
     }
 
     @Test
-    void testDataOut() {
+    void dataOutNoSchema() {
 
         DidoData data = MapData.newBuilderNoSchema()
                 .withString("Fruit", "Apple")
@@ -34,13 +39,22 @@ class DataOutCsvTest {
                 .withDouble("Price", 23.5)
                 .build();
 
-        Object[] values = DataOutCsv.toValues(data);
+        StringBuilder result = new StringBuilder();
 
-        assertThat(values, is(new Object[] {"Apple", 5, 23.5}));
+        try (DataOut out = DataOutCsv.with()
+                .csvFormat(CSVFormat.DEFAULT.builder()
+                        .setRecordSeparator("")
+                        .build())
+                .toAppendable(result)) {
+
+            out.accept(data);
+        }
+
+        assertThat(result.toString(), is("Apple,5,23.5"));
     }
 
     @Test
-    void testDataWithHeadings() throws Exception {
+    void testDataWithHeadings() {
 
         DataSchema schema = SchemaBuilder.newInstance()
                 .addNamed("Fruit", String.class)
@@ -49,7 +63,7 @@ class DataOutCsvTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        Values<MapData> values = MapData.valuesForSchema(schema);
+        FieldValuesIn<MapData> values = MapData.valuesForSchema(schema);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
@@ -57,8 +71,7 @@ class DataOutCsvTest {
                 DataOutCsv.with()
                         .schema(schema)
                         .header(true)
-                        .make()
-                        .outTo(output);
+                        .toOutputStream(output);
 
         dataOut.accept(values.of("Apple", null, 5, 19.50));
         dataOut.accept(values.of("Orange", null, 2, 35.24));
@@ -72,4 +85,20 @@ class DataOutCsvTest {
         assertThat(output.toString(), is(expected));
     }
 
+    @Test
+    void asMapperToString() {
+
+        DidoData data = MapData.newBuilderNoSchema()
+                .withString("Fruit", "Apple")
+                .withInt("Qty", 5)
+                .withDouble("Price", 23.5)
+                .build();
+
+        String result = DataOutCsv
+                .asMapperToString()
+                .apply(data);
+
+        assertThat(result, is("Apple,5,23.5"));
+
+    }
 }

@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * Reads In Lines of text, creating a {@link DidoData} record with a
  * single field that defaults to 'Line'.
  */
-public class DataInLines implements DataInHow<InputStream> {
+public class DataInLines implements DataInHow<Reader> {
 
     private static final String LINE = "Line";
 
@@ -39,16 +39,21 @@ public class DataInLines implements DataInHow<InputStream> {
         }
 
         public DataIn fromReader(Reader reader) {
-            return make().inFromReader(reader);
+            return make().inFrom(reader);
         }
 
         public DataIn fromPath(Path path) {
-            return make().inFromPath(path);
+            try {
+                return make().inFrom(Files.newBufferedReader(path));
+            } catch (IOException e) {
+                throw DataException.of(e);
+            }
         }
 
         public DataIn fromInputStream(InputStream inputStream) {
 
-            return make().inFrom(inputStream);
+            return make().inFrom(new BufferedReader(
+                    new InputStreamReader(inputStream)));
         }
 
         public DataInLines make() {
@@ -79,32 +84,19 @@ public class DataInLines implements DataInHow<InputStream> {
 
 
     @Override
-    public Class<InputStream> getInType() {
-        return InputStream.class;
+    public Class<Reader> getInType() {
+        return Reader.class;
     }
 
-    public DataIn inFromReader(Reader reader) {
+    @Override
+    public DataIn inFrom(Reader reader) {
+
         if (reader instanceof BufferedReader) {
             return new In((BufferedReader) reader);
         }
         else {
             return new In(new BufferedReader(reader));
         }
-    }
-
-    public DataIn inFromPath(Path path) {
-        try {
-            return inFrom(Files.newInputStream(path));
-        } catch (IOException e) {
-            throw DataException.of(e);
-        }
-    }
-
-    @Override
-    public DataIn inFrom(InputStream inputStream) {
-
-        return new In(new BufferedReader(
-                new InputStreamReader(inputStream)));
     }
 
     class In implements DataIn {

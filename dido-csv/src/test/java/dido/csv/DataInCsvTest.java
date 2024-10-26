@@ -1,16 +1,11 @@
 package dido.csv;
 
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.SchemaBuilder;
+import dido.data.*;
 import dido.how.DataIn;
-import dido.how.DataInHow;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.StringReader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,14 +19,11 @@ class DataInCsvTest {
     @Test
     void testWithDefaults() {
 
-        DataInHow<InputStream> test = DataInCsv.withDefaults();
-
         String records =
                 "Apple,5,19.50" + System.lineSeparator() +
                         "Orange,2,35.24" + System.lineSeparator();
 
-        DataIn dataIn = test.inFrom(
-                new ByteArrayInputStream(records.getBytes()));
+        DataIn dataIn = DataInCsv.fromReader(new StringReader(records));
 
         List<DidoData> results = dataIn.stream().collect(Collectors.toList());
 
@@ -65,34 +57,30 @@ class DataInCsvTest {
     @Test
     void testWithSchema() {
 
+        String records =
+                "Apple,5,19.50" + System.lineSeparator() +
+                        "Orange,2,35.24" + System.lineSeparator();
+
         DataSchema schema = SchemaBuilder.newInstance()
                 .addNamed("Type", String.class)
                 .addNamed("Quantity", int.class)
                 .addNamed("Price", double.class)
                 .build();
 
-        DataInHow<InputStream> test = DataInCsv.with()
+        List<DidoData> expected = ArrayData.valuesForSchema(schema)
+                .many()
+                .of("Apple", 5, 19.5)
+                .of( "Orange", 2, 35.24)
+                .toList();
+
+        try (DataIn in = DataInCsv.with()
                 .schema(schema)
-                .make();
+                .fromReader(new StringReader(records))) {
 
-        DataIn supplier = test.inFrom(
-                new ByteArrayInputStream("Apple,5,27.2".getBytes()));
+            List<DidoData> results = in.stream().collect(Collectors.toList());
 
-        Iterator<DidoData> iterator = supplier.iterator();
-
-        {
-            assertThat(iterator.hasNext(), is(true));
-            DidoData data = iterator.next();
-
-            assertThat(data.getStringNamed("Type"), is("Apple"));
-            assertThat(data.getIntNamed("Quantity"), is(5));
-            assertThat(data.getDoubleNamed("Price"), is(27.2));
-
-            assertThat(data.getNamed("Quantity"), is(5));
-            assertThat(data.getNamed("Price"), is(27.2));
+            assertThat(results, is(expected));
         }
-
-        assertThat(iterator.hasNext(), is(false));
     }
 
     @Test
@@ -107,16 +95,14 @@ class DataInCsvTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        DataInHow<InputStream> test = DataInCsv.with()
+        List<DidoData> results;
+
+        try (DataIn in = DataInCsv.with()
                 .schema(someSchema)
                 .partialSchema(true)
-                .make();
-
-        DataIn supplier = test.inFrom(
-                new ByteArrayInputStream(records.getBytes()));
-
-        List<DidoData> results = supplier.stream().collect(Collectors.toList());
-
+                .fromReader(new StringReader(records))) {
+            results = in.stream().collect(Collectors.toList());
+        }
         assertThat(results.size(), is(2));
 
         {
@@ -147,8 +133,7 @@ class DataInCsvTest {
     @Test
     void testEmptyValues() {
 
-        try (DataIn dataIn = DataInCsv.withDefaults()
-                        .inFrom(new ByteArrayInputStream(",,".getBytes(StandardCharsets.UTF_8)))) {
+        try (DataIn dataIn = DataInCsv.fromReader(new StringReader(",,"))) {
 
             Iterator<DidoData> iterator = dataIn.iterator();
 
@@ -166,6 +151,43 @@ class DataInCsvTest {
 
             assertThat(iterator.hasNext(), is(false));
         }
+    }
+
+    @Test
+    void asMapperFromString() {
+
+        DidoData data = DataInCsv.asMapperFromString()
+                .apply("Apple,5,27.2");
+
+        DidoData expected = MapData.newBuilderNoSchema()
+                .withString("f_1", "Apple")
+                .withString("f_2", "5")
+                .withString("f_3", "27.2")
+                .build();
+
+        assertThat(data, is(expected));
+    }
+
+    @Test
+    void asMapperFromStringWithSchema() {
+
+        DataSchema schema = SchemaBuilder.newInstance()
+                .addNamed("Type", String.class)
+                .addNamed("Quantity", int.class)
+                .addNamed("Price", double.class)
+                .build();
+
+        DidoData data = DataInCsv.with()
+                .schema(schema).asMapperFromString()
+                .apply("Apple,5,27.2");
+
+        DidoData expected = MapData.newBuilderNoSchema()
+                .withString("Type", "Apple")
+                .withInt("Quantity", 5)
+                .withDouble("Price", 27.2)
+                .build();
+
+        assertThat(data, is(expected));
     }
 
     @Test

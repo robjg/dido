@@ -1,23 +1,25 @@
-package dido.data;
+package dido.data.util;
 
+import dido.data.ArrayData;
+import dido.data.MapData;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class ValuesTest {
+class FieldValuesInTest {
 
     @Test
     void values() {
 
-        Values<MapData> mapValues = MapData.valuesForSchema(
+        FieldValuesIn<MapData> mapValues = MapData.valuesForSchema(
                 MapData.schemaBuilder()
                         .addNamed("Fruit", String.class)
                         .addNamed("Qty", int.class)
                         .addNamed("Price", double.class)
                         .build());
 
-        Values<ArrayData> arrayValues = ArrayData.valuesForSchema(
+        FieldValuesIn<ArrayData> arrayValues = ArrayData.valuesForSchema(
                 MapData.schemaBuilder()
                         .addNamed("Fruit", String.class)
                         .addNamed("Qty", int.class)

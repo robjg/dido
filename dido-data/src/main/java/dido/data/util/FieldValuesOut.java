@@ -7,11 +7,11 @@ import dido.data.ReadStrategy;
 
 import java.util.*;
 
-public class ValuesOut {
+public class FieldValuesOut {
 
     private final List<FieldGetter> fieldGetters;
 
-    protected ValuesOut(DataSchema dataSchema) {
+    protected FieldValuesOut(DataSchema dataSchema) {
 
         ReadStrategy readStrategy = ReadStrategy.fromSchema(dataSchema);
 
@@ -23,12 +23,12 @@ public class ValuesOut {
         }
     }
 
-    public static ValuesOut forSchema(DataSchema schema) {
-        return new ValuesOut(schema);
+    public static FieldValuesOut forSchema(DataSchema schema) {
+        return new FieldValuesOut(schema);
     }
 
     public static Collection<Object> collectionOf(DidoData data) {
-        return new ValuesOut(data.getSchema()).toCollection(data);
+        return new FieldValuesOut(data.getSchema()).toCollection(data);
     }
 
     public Collection<Object> toCollection(DidoData data) {

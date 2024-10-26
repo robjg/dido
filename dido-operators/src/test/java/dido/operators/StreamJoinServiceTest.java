@@ -3,7 +3,7 @@ package dido.operators;
 import dido.data.ArrayData;
 import dido.data.DidoData;
 import dido.data.SchemaBuilder;
-import dido.data.Values;
+import dido.data.util.FieldValuesIn;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
@@ -40,7 +40,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        Values<ArrayData> expectedValues = ArrayData.valuesForSchema(
+        FieldValuesIn<ArrayData> expectedValues = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -76,7 +76,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        Values<ArrayData> values = ArrayData.valuesForSchema(
+        FieldValuesIn<ArrayData> values = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -112,7 +112,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        Values<ArrayData> values = ArrayData.valuesForSchema(
+        FieldValuesIn<ArrayData> values = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Variety", String.class)

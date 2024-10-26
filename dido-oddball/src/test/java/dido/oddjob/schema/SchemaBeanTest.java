@@ -33,7 +33,6 @@ class SchemaBeanTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        @SuppressWarnings("unchecked")
         DataSchema schema = lookup.lookup("vars.schema", DataSchema.class);
 
         assertThat(schema, notNullValue());
@@ -55,7 +54,6 @@ class SchemaBeanTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        @SuppressWarnings("unchecked")
         DataSchema schema = lookup.lookup("vars.schema", DataSchema.class);
 
         assertThat(schema, notNullValue());
@@ -86,7 +84,6 @@ class SchemaBeanTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        @SuppressWarnings("unchecked")
         DataSchema schema = lookup.lookup("vars.schema", DataSchema.class);
 
         assertThat(schema, notNullValue());

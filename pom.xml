@@ -46,6 +46,7 @@
 
         <slf4j.version>2.0.12</slf4j.version>
         <logback.version>1.5.3</logback.version>
+        <commons-io.version>2.17.0</commons-io.version>
 
         <junit5.version>5.7.0</junit5.version>
         <hamcrest.version>2.2</hamcrest.version>
@@ -172,6 +173,14 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- force the version as apache csv uses a later version than other projects and fails
+             if previous version are picked up. -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
             </dependency>
 
             <dependency>
