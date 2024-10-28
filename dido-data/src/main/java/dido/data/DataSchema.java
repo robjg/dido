@@ -7,15 +7,16 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Define a Schema for Data. A schema is always defined by index but
- * may also be defined by field. The index is always greater than 0
- * and index may be not be sequential. The intention is to support reading
+ * Define a Schema for Data. A field in a schema is always defined by and index and a name .
+ * The index is always greater than 0 and the index may be not be sequential. The intention is to support reading
  * or writing column data (such as a csv file) where only some of the
  * columns are of interest.
  * <p>
  * Instance of this type will be effectively immutable. Calling the same method repeatedly
  * with the same argument will always return the same value.
  * </p>
+ * A Schema may be extended to support fields of different types however two schemas should always be equal if
+ * they have the same field types at the same index of the same name.
  *
  */
 public interface DataSchema extends IndexedSchema {

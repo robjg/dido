@@ -4,6 +4,8 @@ import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractDataSchema;
 import dido.data.useful.AbstractFieldGetter;
 
+import java.util.Objects;
+
 public abstract class SingleData extends AbstractData implements DidoData {
 
     private final Schema schema;
@@ -222,6 +224,25 @@ public abstract class SingleData extends AbstractData implements DidoData {
             return schema.getter.getString(this);
         } else {
             throw new NoSuchFieldException(index, schema);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        Object value = schema.getter.get(this);
+        return value == null ? 0 : value.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof SingleData) {
+            SingleData other = (SingleData) obj;
+            return other.schema.schemaField.equals(this.schema.schemaField)
+                && Objects.equals(other.schema.getter.get(other),
+                    this.schema.getter.get(this));
+        }
+        else {
+            return super.equals(obj);
         }
     }
 

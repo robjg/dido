@@ -5,6 +5,10 @@ import java.util.Objects;
 
 /**
  * The basic definition of a Data item within Dido.
+ * <p>
+ * All instances of {@code DidoData} should be equal if they have the same {@link DataSchema} and their data items
+ * are equal.
+ * <p>The hashcode of an instance of {@code DidoData} must only be the hash of its data items.
  */
 public interface DidoData extends IndexedData {
 
@@ -33,9 +37,14 @@ public interface DidoData extends IndexedData {
 
     String getStringNamed(String name);
 
+    /**
+     * Provide a standard way
+     * @param data
+     * @return
+     */
     static int hashCode(DidoData data) {
         DataSchema schema = data.getSchema();
-        int hash = schema.hashCode();
+        int hash = 0;
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
             if (!data.hasIndex(index)) {
                 continue;

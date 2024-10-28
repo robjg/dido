@@ -8,6 +8,20 @@ import static org.hamcrest.Matchers.is;
 class SingleDataTest {
 
     @Test
+    void voidType() {
+
+        DidoData data1 = SingleData.of(null);
+
+        assertThat(data1, is(ArrayData.of(new Object[]{null})));
+        assertThat(data1.hashCode(), is(0));
+
+        DidoData data2 = SingleData.named("Void").of(null);
+
+        assertThat(data2, is(MapData.of("Void", null)));
+        assertThat(data2.hashCode(), is(0));
+    }
+
+    @Test
     void stingType() {
 
         DidoData data1 = SingleData.of("Apple");
@@ -18,6 +32,10 @@ class SingleDataTest {
                         .build()));
 
         assertThat(data1.getStringAt(1), is("Apple"));
+
+        DidoData expected = ArrayData.of("Apple");
+        assertThat(data1, is(expected));
+        assertThat(data1.hashCode(), is(expected.hashCode()));
 
         DidoData data2 = SingleData.named("Fruit").of("Apple");
 
@@ -161,6 +179,8 @@ class SingleDataTest {
 
         assertThat(data1.getIntAt(1), is(42));
 
+        assertThat(data1, is(SingleData.type(int.class).of(42)));
+
         DidoData data2 = SingleData.named("Quantity")
                 .of(42);
 
@@ -175,6 +195,11 @@ class SingleDataTest {
                 .of(42);
 
         assertThat(data3, is(data2));
+
+        assertThat(data1,
+                is(ArrayData.valuesForSchema(
+                        ArrayData.schemaBuilder().add(int.class).build()).of(42)));
+
     }
 
     @Test
@@ -217,6 +242,10 @@ class SingleDataTest {
 
         assertThat(data1.getFloatAt(1), is(42.24F));
 
+        assertThat(data1,
+                is(ArrayData.valuesForSchema(
+                        ArrayData.schemaBuilder().add(float.class).build()).of(42.24F)));
+
         DidoData data2 = SingleData.named("Float")
                 .of(42.24F);
 
@@ -245,6 +274,10 @@ class SingleDataTest {
 
         assertThat(data1.getDoubleAt(1), is(42.24));
 
+        assertThat(data1,
+                is(ArrayData.valuesForSchema(
+                        ArrayData.schemaBuilder().add(double.class).build()).of(42.24)));
+
         DidoData data2 = SingleData.named("Double")
                 .of(42.24);
 
@@ -261,28 +294,4 @@ class SingleDataTest {
         assertThat(data3, is(data2));
     }
 
-    @Test
-    void equals() {
-
-        assertThat(SingleData.of("Apple"), is(ArrayData.of("Apple")));
-
-        assertThat(SingleData.of(null), is(ArrayData.of(new Object[]{null})));
-
-        assertThat(SingleData.of(42),
-                is(ArrayData.valuesForSchema(
-                        ArrayData.schemaBuilder().add(int.class).build()).of(42)));
-
-        assertThat(SingleData.of(42.24),
-                is(ArrayData.valuesForSchema(
-                        ArrayData.schemaBuilder().add(double.class).build()).of(42.24)));
-
-        assertThat(SingleData.of(42.24F),
-                is(ArrayData.valuesForSchema(
-                        ArrayData.schemaBuilder().add(float.class).build()).of(42.24F)));
-
-        assertThat(SingleData.type(int.class).of(42),
-                is(SingleData.of(42)));
-
-
-    }
 }
