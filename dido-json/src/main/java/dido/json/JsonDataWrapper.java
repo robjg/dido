@@ -123,11 +123,6 @@ public class JsonDataWrapper {
                     return value != NONE;
                 }
             }
-
-            @Override
-            public String toString() {
-                return DidoData.toStringFieldsOnly(this);
-            }
         };
     }
 

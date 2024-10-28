@@ -32,7 +32,7 @@ public class PoiSheetsTest  {
 
 		DataOut writer = rows.outTo(workbook);
 
-		DidoData data = MapData.newBuilderNoSchema()
+		DidoData data = MapData.builderNoSchema()
 				.withString("Fruit", "Apples")
 				.build();
 
@@ -65,7 +65,7 @@ public class PoiSheetsTest  {
 
 		DataOut writer = rows.outTo(workbook);
 
-		DidoData data = MapData.newBuilderNoSchema()
+		DidoData data = MapData.builderNoSchema()
 				.withString("Fruit", "Apples")
 				.build();
 

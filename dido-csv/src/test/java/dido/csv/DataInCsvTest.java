@@ -159,7 +159,7 @@ class DataInCsvTest {
         DidoData data = DataInCsv.asMapperFromString()
                 .apply("Apple,5,27.2");
 
-        DidoData expected = MapData.newBuilderNoSchema()
+        DidoData expected = MapData.builderNoSchema()
                 .withString("f_1", "Apple")
                 .withString("f_2", "5")
                 .withString("f_3", "27.2")
@@ -181,7 +181,7 @@ class DataInCsvTest {
                 .schema(schema).asMapperFromString()
                 .apply("Apple,5,27.2");
 
-        DidoData expected = MapData.newBuilderNoSchema()
+        DidoData expected = MapData.builderNoSchema()
                 .withString("Type", "Apple")
                 .withInt("Quantity", 5)
                 .withDouble("Price", 27.2)

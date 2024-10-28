@@ -103,7 +103,7 @@ public class QuickRowsTest {
 
         PoiWorkbook workbook = new PoiWorkbook();
 
-        DidoData person = MapData.newBuilderNoSchema()
+        DidoData person = MapData.builderNoSchema()
                 .withString("name", "John")
                 .with("dateOfBirth", DateHelper.parseDate("1970-03-25"))
                 .withDouble("salary", 45000.0)
@@ -154,17 +154,17 @@ public class QuickRowsTest {
                 ).createDescriptor(getClass().getClassLoader()));
 
         List<DidoData> beans = new ArrayList<>();
-        beans.add(MapData.newBuilderNoSchema()
+        beans.add(MapData.builderNoSchema()
                 .withString("name", "John")
                 .with("dateOfBirth", DateHelper.parseDate("1970-03-25"))
                 .withDouble("salary", 45000.0)
                 .build());
-        beans.add(MapData.newBuilderNoSchema()
+        beans.add(MapData.builderNoSchema()
                 .withString("name", "Jane")
                 .with("dateOfBirth", DateHelper.parseDate("1982-11-14"))
                 .withDouble("salary", 28000.0)
                 .build());
-        beans.add(MapData.newBuilderNoSchema()
+        beans.add(MapData.builderNoSchema()
                 .withString("name", "Fred")
                 .with("dateOfBirth", DateHelper.parseDate("1986-08-07"))
                 .withDouble("salary", 22500.0)

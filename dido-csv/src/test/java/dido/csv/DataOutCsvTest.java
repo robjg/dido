@@ -33,7 +33,7 @@ class DataOutCsvTest {
     @Test
     void dataOutNoSchema() {
 
-        DidoData data = MapData.newBuilderNoSchema()
+        DidoData data = MapData.builderNoSchema()
                 .withString("Fruit", "Apple")
                 .withInt("Qty", 5)
                 .withDouble("Price", 23.5)
@@ -88,7 +88,7 @@ class DataOutCsvTest {
     @Test
     void asMapperToString() {
 
-        DidoData data = MapData.newBuilderNoSchema()
+        DidoData data = MapData.builderNoSchema()
                 .withString("Fruit", "Apple")
                 .withInt("Qty", 5)
                 .withDouble("Price", 23.5)

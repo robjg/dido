@@ -1,6 +1,7 @@
 package dido.operators;
 
 import dido.data.*;
+import dido.data.util.DataBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -76,7 +77,7 @@ class ConcatenatorDataTest {
     @Test
     void testConcatData() {
 
-        MapData.BuilderNoSchema builder = MapData.newBuilderNoSchema();
+        DataBuilder<MapData> builder = MapData.builderNoSchema();
 
         DidoData data1 = builder
                 .withString("type", "apple")
@@ -114,7 +115,7 @@ class ConcatenatorDataTest {
     @Test
     void testOtherTypes() {
 
-        MapData.BuilderNoSchema builder = MapData.newBuilderNoSchema();
+        DataBuilder<MapData> builder = MapData.builderNoSchema();
 
         builder.withString("first", "Ignored" );
         DidoData data1 = builder.build();
@@ -216,7 +217,7 @@ class ConcatenatorDataTest {
                 "Type", "Apples",
                 "Variety", "Cox");
 
-        DidoData data2 = ArrayData.newBuilderNoSchema()
+        DidoData data2 = ArrayData.builderNoSchema()
                 .withInt("Quantity", 5)
                 .withDouble("Price", 27.2)
                 .build();

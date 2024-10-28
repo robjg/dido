@@ -2,6 +2,7 @@ package dido.data.util;
 
 import dido.data.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -50,15 +51,22 @@ public class FieldValuesIn<D extends DidoData> {
         return dataFactory.toData();
     }
 
-    public D ofList(List<?> values) {
+    public D ofCollection(Collection<?> values) {
         WritableData writableData = dataFactory.getWritableData();
         int i = 0;
         for (Object value : values) {
-            if (value != null) {
+            if (value == null) {
+                setters[i++].clear(writableData);
+            }
+            else {
                 setters[i++].set(writableData, value);
             }
         }
         return dataFactory.toData();
+    }
+
+    public D copy(DidoData from) {
+        return ofCollection(FieldValuesOut.collectionOf(from));
     }
 
     /**

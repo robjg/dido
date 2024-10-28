@@ -2,9 +2,11 @@ package dido.data;
 
 import dido.data.generic.GenericData;
 import dido.data.useful.*;
+import dido.data.util.DataBuilder;
 import dido.data.util.FieldValuesIn;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Objects;
 
 /**
  * {@link GenericData} stored in an Array.
@@ -57,12 +59,12 @@ public class ArrayData extends AbstractData implements DidoData {
 
     public static DataBuilder<ArrayData> builderForSchema(ArrayDataSchema schema) {
 
-        return new DataBuilder<>(schema.newDataFactory());
+        return DataBuilder.forFactory(schema.newDataFactory());
     }
 
-    public static BuilderUnknown newBuilderNoSchema() {
+    public static DataBuilder<ArrayData> builderNoSchema() {
 
-        return new BuilderUnknown();
+        return DataBuilder.forProvider(new ArrayDataDataFactoryProvider());
     }
 
     public static DataFactory<ArrayData> factoryForSchema(DataSchema schema) {
@@ -76,7 +78,7 @@ public class ArrayData extends AbstractData implements DidoData {
 
     public static ArrayData copy(DidoData from) {
 
-        return new DataBuilder<>(factoryForSchema(from.getSchema())).copy(from).build();
+        return valuesForSchema(from.getSchema()).copy(from);
     }
 
     @Override
@@ -92,73 +94,6 @@ public class ArrayData extends AbstractData implements DidoData {
     @Override
     public boolean hasIndex(int index) {
         return data[index - 1] != null;
-    }
-
-    public static class BuilderUnknown {
-
-        private final List<SchemaField> schemaFields = new LinkedList<>();
-
-        private final List<Object> values = new LinkedList<>();
-
-        private int lastIndex = 0;
-
-
-        public BuilderUnknown with(String field, Object value) {
-            return setField(field, value, Object.class);
-        }
-
-        public BuilderUnknown withBoolean(String field, boolean value) {
-            return setField(field, value, boolean.class);
-        }
-
-        public BuilderUnknown withByte(String field, byte value) {
-            return setField(field, value, byte.class);
-        }
-
-        public BuilderUnknown withChar(String field, char value) {
-            return setField(field, value, char.class);
-        }
-
-        public BuilderUnknown withShort(String field, short value) {
-            return setField(field, value, short.class);
-        }
-
-        public BuilderUnknown withInt(String field, int value) {
-            return setField(field, value, int.class);
-        }
-
-        public BuilderUnknown withLong(String field, long value) {
-            return setField(field, value, long.class);
-        }
-
-        public BuilderUnknown withFloat(String field, float value) {
-            return setField(field, value, float.class);
-        }
-
-        public BuilderUnknown withDouble(String field, double value) {
-            return setField(field, value, double.class);
-        }
-
-        public BuilderUnknown withString(String field, String value) {
-            return setField(field, value, String.class);
-        }
-
-        private BuilderUnknown setField(String field, Object value, Class<?> type) {
-            values.add(value);
-            schemaFields.add(SchemaField.of(++lastIndex, field, type));
-            return this;
-        }
-
-        public DidoData build() {
-            ArrayDataSchemaFactory schemaBuilder = new ArrayDataSchemaFactory();
-            Object[] values = new Object[lastIndex];
-            Iterator<Object> valIt = this.values.iterator();
-            for (SchemaField schemaField : this.schemaFields) {
-                schemaBuilder.addSchemaField(schemaField);
-                values[schemaField.getIndex() - 1] = valIt.next();
-            }
-            return new ArrayData(schemaBuilder.toSchema(), values);
-        }
     }
 
     static class ArrayDataFactory extends AbstractWritableData implements DataFactory<ArrayData> {

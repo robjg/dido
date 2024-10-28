@@ -21,24 +21,24 @@ public abstract class SingleData extends AbstractData implements DidoData {
         return new ObjectType<>(type);
     }
 
-    public static IntType intType() {
-        return new IntType();
-    }
-
-    public static LongType longType() {
-        return new LongType();
-    }
-
-    public static DoubleType doubleType() {
-        return new DoubleType();
-    }
-
-    public static FloatType floatType() {
-        return new FloatType();
-    }
-
     public static DidoData of(Object value) {
         return new ObjectType<>(value == null ? void.class : value.getClass()).of(value);
+    }
+
+    public static DidoData of(boolean value) {
+        return new BooleanType().of(value);
+    }
+
+    public static DidoData of(byte value) {
+        return new ByteType().of(value);
+    }
+
+    public static DidoData of(char value) {
+        return new CharType().of(value);
+    }
+
+    public static DidoData of(short value) {
+        return new ShortType().of(value);
     }
 
     public static DidoData of(int value) {
@@ -237,40 +237,42 @@ public abstract class SingleData extends AbstractData implements DidoData {
             return new ObjectType<>(type, name);
         }
 
-        public IntType intType() {
-            return new IntType(name);
-        }
-
-        public LongType longType() {
-            return new LongType(name);
-        }
-
-        public DoubleType doubleType() {
-            return new DoubleType(name);
-        }
-
-        public FloatType floatType() {
-            return new FloatType(name);
-        }
-
         public DidoData of(Object value) {
-            return new ObjectType<>(value == null ? void.class : value.getClass()).of(value);
+            return new ObjectType<>(value == null ? void.class : value.getClass(),
+                    name)
+                    .of(value);
+        }
+
+        public DidoData of(boolean value) {
+            return new BooleanType(name).of(value);
+        }
+
+        public DidoData of(byte value) {
+            return new ByteType(name).of(value);
+        }
+
+        public DidoData of(char value) {
+            return new CharType(name).of(value);
+        }
+
+        public DidoData of(short value) {
+            return new ShortType(name).of(value);
         }
 
         public DidoData of(int value) {
-            return intType().of(value);
+            return new IntType(name).of(value);
         }
 
         public DidoData of(long value) {
-            return longType().of(value);
+            return new LongType(name).of(value);
         }
 
         public DidoData of(double value) {
-            return doubleType().of(value);
+            return new DoubleType(name).of(value);
         }
 
         public DidoData of(float value) {
-            return floatType().of(value);
+            return new FloatType(name).of(value);
         }
 
     }
@@ -318,6 +320,208 @@ public abstract class SingleData extends AbstractData implements DidoData {
             return ((ObjectData) data).value;
         }
     }
+
+    // Boolean
+
+    public static class BooleanType {
+
+        private final Schema schema;
+
+        BooleanType() {
+            this(null);
+        }
+
+        BooleanType(String name) {
+            this.schema = new Schema(SchemaField.of(1,
+                    name == null ? DataSchema.nameForIndex(1) : name,
+                    boolean.class),
+                    new BooleanGetter());
+        }
+
+        public SingleData of(boolean value) {
+            return new BooleanData(schema, value);
+        }
+    }
+
+    static class BooleanData extends SingleData {
+
+        private final boolean value;
+
+        BooleanData(Schema schema, boolean value) {
+            super(schema);
+            this.value = value;
+        }
+    }
+
+    static class BooleanGetter extends AbstractFieldGetter {
+
+        @Override
+        public boolean has(DidoData data) {
+            return true;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return ((BooleanData) data).value;
+        }
+
+        @Override
+        public boolean getBoolean(DidoData data) {
+            return ((BooleanData) data).value;
+        }
+    }
+
+    // Byte
+
+    public static class ByteType {
+
+        private final Schema schema;
+
+        ByteType() {
+            this(null);
+        }
+
+        ByteType(String name) {
+            this.schema = new Schema(SchemaField.of(1,
+                    name == null ? DataSchema.nameForIndex(1) : name,
+                    byte.class),
+                    new ByteGetter());
+        }
+
+        public SingleData of(byte value) {
+            return new ByteData(schema, value);
+        }
+    }
+
+    static class ByteData extends SingleData {
+
+        private final byte value;
+
+        ByteData(Schema schema, byte value) {
+            super(schema);
+            this.value = value;
+        }
+    }
+
+    static class ByteGetter extends AbstractFieldGetter {
+
+        @Override
+        public boolean has(DidoData data) {
+            return true;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return ((ByteData) data).value;
+        }
+
+        @Override
+        public byte getByte(DidoData data) {
+            return ((ByteData) data).value;
+        }
+    }
+
+    // Char
+
+    public static class CharType {
+
+        private final Schema schema;
+
+        CharType() {
+            this(null);
+        }
+
+        CharType(String name) {
+            this.schema = new Schema(SchemaField.of(1,
+                    name == null ? DataSchema.nameForIndex(1) : name,
+                    char.class),
+                    new CharGetter());
+        }
+
+        public SingleData of(char value) {
+            return new CharData(schema, value);
+        }
+    }
+
+    static class CharData extends SingleData {
+
+        private final char value;
+
+        CharData(Schema schema, char value) {
+            super(schema);
+            this.value = value;
+        }
+    }
+
+    static class CharGetter extends AbstractFieldGetter {
+
+        @Override
+        public boolean has(DidoData data) {
+            return true;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return ((CharData) data).value;
+        }
+
+        @Override
+        public char getChar(DidoData data) {
+            return ((CharData) data).value;
+        }
+    }
+
+    // Short
+
+    public static class ShortType {
+
+        private final Schema schema;
+
+        ShortType() {
+            this(null);
+        }
+
+        ShortType(String name) {
+            this.schema = new Schema(SchemaField.of(1,
+                    name == null ? DataSchema.nameForIndex(1) : name,
+                    short.class),
+                    new ShortGetter());
+        }
+
+        public SingleData of(short value) {
+            return new ShortData(schema, value);
+        }
+    }
+
+    static class ShortData extends SingleData {
+
+        private final short value;
+
+        ShortData(Schema schema, short value) {
+            super(schema);
+            this.value = value;
+        }
+    }
+
+    static class ShortGetter extends AbstractFieldGetter {
+
+        @Override
+        public boolean has(DidoData data) {
+            return true;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return ((ShortData) data).value;
+        }
+
+        @Override
+        public short getShort(DidoData data) {
+            return ((ShortData) data).value;
+        }
+    }
+
+    // Integer
 
     public static class IntType {
 
@@ -367,6 +571,8 @@ public abstract class SingleData extends AbstractData implements DidoData {
         }
     }
 
+    // Long
+
     public static class LongType {
 
         private final Schema schema;
@@ -414,6 +620,8 @@ public abstract class SingleData extends AbstractData implements DidoData {
             return ((LongData) data).value;
         }
     }
+
+    // Double
 
     public static class DoubleType {
 

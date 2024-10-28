@@ -89,9 +89,10 @@ class LeftStreamJoinTest {
         assertThat(results, contains(expected1, expected2, expected3));
         assertThat(expected2.getSchema(), Matchers.is(expected3.getSchema()));
 
-        MapData.builderForSchema(produce1.getSchema())
-                .copy(produce1).withInt("Quantity", 3)
-                .to(primary);
+        primary.accept(MapData.builderForSchema(produce1.getSchema())
+                .copy(produce1)
+                .withInt("Quantity", 3)
+                .build());
 
         assertThat(results, contains(expected1, expected2, expected3, expected4));
 

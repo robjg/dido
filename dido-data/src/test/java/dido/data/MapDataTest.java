@@ -1,5 +1,6 @@
 package dido.data;
 
+import dido.data.util.DataBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
@@ -15,7 +16,7 @@ class MapDataTest {
     @Test
     void testBuilderNoSchema() throws ParseException {
 
-        MapData.BuilderNoSchema builder = MapData.newBuilderNoSchema();
+        DataBuilder<MapData> builder = MapData.builderNoSchema();
 
         DidoData data1 = builder
                 .withString("type", "apple")
@@ -92,19 +93,19 @@ class MapDataTest {
                 .withDouble("price", 26.3)
                 .build();
 
-        assertThat(data1.toString(), is("{[type]=apple, [qty]=2, [price]=26.3}"));
+        assertThat(data1.toString(), is("{[1:type]=apple, [2:qty]=2, [3:price]=26.3}"));
     }
 
     @Test
     void testEqualsAndHashCode() {
 
-        DidoData data1 = MapData.newBuilderNoSchema()
+        DidoData data1 = MapData.builderNoSchema()
                 .withString("type", "apple")
                 .withInt("qty", 2)
                 .withDouble("price", 26.3)
                 .build();
 
-        DidoData data2 = MapData.newBuilderNoSchema()
+        DidoData data2 = MapData.builderNoSchema()
                 .withString("type", "apple")
                 .withInt("qty", 2)
                 .withDouble("price", 26.3)

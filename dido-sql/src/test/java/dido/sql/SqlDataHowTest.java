@@ -553,12 +553,8 @@ public class SqlDataHowTest {
             java.sql.Time aTime = (java.sql.Time) dates.getNamed("A_Time");
             assertThat(aTime.getTime(),
                     is(20 * HOUR + 8 * MINUTE + 8 * SECOND));
-            // HSQLDB stores time with zone. This will depend on your default time zone.
+            // java.sql.Time uses Default Time Zone when converting back to a string... so we can't do this...
 //            assertThat(aTime.toString(), is("20:08:08"));
-            ZonedDateTime utcDateTime = localTime.truncatedTo(ChronoUnit.SECONDS)
-                    .atDate(LocalDate.now()).atZone(ZoneId.of("UTC"));
-            assertThat(dates.getStringNamed("A_Time"),
-                    is(utcDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalTime().toString()));
 
             assertThat(dates.getNamed("A_Zoned_Time").getClass(), is(java.time.OffsetTime.class));
             assertThat(dates.getNamed("A_Zoned_Time"),
@@ -619,10 +615,35 @@ public class SqlDataHowTest {
     @Test
     void dateAssumptions() {
 
+        // Understand how ZonedDataTime.withZoneSameInstant works.
+
         LocalTime localTime = LocalTime.parse("20:09:37");
 
-        ZonedDateTime zonedDateTime = localTime.atDate(LocalDate.now()).atZone(ZoneId.of("UTC"));
+        ZonedDateTime zonedDateTime = localTime.atDate(LocalDate.parse("2024-08-10"))
+                .atZone(ZoneOffset.UTC);
 
-        assertThat(zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalTime().toString(), is("21:09:37"));
+        assertThat(zonedDateTime.withZoneSameInstant(ZoneId.of("Europe/Paris"))
+                        .toLocalTime().toString(),
+                is("22:09:37"));
+
+    }
+
+    @Test
+    void sqlTimeAssumptions() {
+
+        // Trying to work out why Sql Time toString is one hour ahead - default time zone was Europe/London
+        // which was in BST in 1970...
+        // https://www.rmg.co.uk/stories/topics/uk-time-british-summer-time-bst-daylight-saving#:~:text=With%20the%20war%20over%2C%20Britain,disadvantages%20of%20British%20Summer%20Time.
+
+        java.sql.Time time = new java.sql.Time(
+                8 * HOUR + 9 * MINUTE + 10 * SECOND);
+
+        assertThat(LocalDateTime.ofInstant(Instant.ofEpochMilli(time.getTime()),
+                ZoneId.of("Europe/London")).toLocalTime().toString(),
+                is("09:09:10"));
+
+        assertThat(LocalDateTime.ofInstant(Instant.ofEpochMilli(time.getTime()),
+                        ZoneOffset.UTC).toLocalTime().toString(),
+                is("08:09:10"));
     }
 }

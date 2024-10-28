@@ -8,6 +8,7 @@ import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 class NonBoxedDataTest {
 
@@ -39,5 +40,99 @@ class NonBoxedDataTest {
         assertThat(schema1.getTypeNamed("Price"), is(double.class));
         assertThat(schema1.getTypeNamed("Date"), is(Date.class));
 
+        DidoData data2 = NonBoxedData.copy(data1);
+
+        assertThat(data2, is(data1));
+    }
+
+    @Test
+    void builderNoSchema() throws ParseException {
+
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse("2021-09-22");
+
+        DidoData data = NonBoxedData.builderNoSchema()
+                .with("Fruit", "Apple")
+                .withInt("Quantity", 2)
+                .withDouble("Price", 26.3)
+                .with("Date", date)
+                .build();
+
+        DataSchema schema = NonBoxedData.schemaBuilder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Quantity", int.class)
+                .addNamed("Price", double.class)
+                .addNamed("Date", Date.class)
+                .build();
+
+        assertThat(data.getSchema(), is(schema));
+
+        assertThat(data, is(ArrayData.valuesForSchema(schema)
+                .of("Apple", 2, 26.3, date)));
+    }
+
+    @Test
+    void builderNoSchemaCopy() throws ParseException {
+
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse("2021-09-22");
+
+        DataSchema schema = DataSchema.newBuilder()
+                .addNamed("String", String.class)
+                .addNamed("Boolean", boolean.class)
+                .addNamed("Byte", byte.class)
+                .addNamed("Char", char.class)
+                .addNamed("Short", short.class)
+                .addNamed("Int", int.class)
+                .addNamed("Long", long.class)
+                .addNamed("Float", float.class)
+                .addNamed("Double", double.class)
+                .addNamed("Date", Date.class)
+                .build();
+
+        DidoData data = NonBoxedData.builderNoSchema()
+                .copy(SingleData.named("String").of("Apple"))
+                .copy(SingleData.named("Boolean").of(true))
+                .copy(SingleData.named("Byte").of((byte) 128))
+                .copy(SingleData.named("Char").of('A'))
+                .copy(SingleData.named("Short").of((short) 4))
+                .copy(SingleData.named("Int").of(42))
+                .copy(SingleData.named("Long").of(84L))
+                .copy(SingleData.named("Float").of(4.2f))
+                .copy(SingleData.named("Double").of(8.4))
+                .copy(SingleData.named("Date").of(date))
+                .build();
+
+        assertThat(data.getSchema(), is(schema));
+
+        assertThat(data, is(ArrayData.valuesForSchema(schema)
+                .of("Apple", true, (byte) 128, 'A', (short) 4, 42, 84L, 4.2F, 8.4, date)));
+    }
+
+    @Test
+    void builderNoSchemaCopyNoData() throws ParseException {
+
+        DataSchema schema = DataSchema.newBuilder()
+                .addNamed("String", String.class)
+                .addNamed("Boolean", boolean.class)
+                .addNamed("Byte", byte.class)
+                .addNamed("Char", char.class)
+                .addNamed("Short", short.class)
+                .addNamed("Int", int.class)
+                .addNamed("Long", long.class)
+                .addNamed("Float", float.class)
+                .addNamed("Double", double.class)
+                .addNamed("Date", Date.class)
+                .build();
+
+        MapData original = MapData.builderForSchema(schema)
+                .build();
+
+        NonBoxedData copy = NonBoxedData.builderNoSchema()
+                .copy(original)
+                .build();
+
+        assertThat(copy.getSchema(), is(original.getSchema()));
+
+        // This won't work until we support nullable in schemas.
+        assertThat(copy, not(is(original)));
     }
 }

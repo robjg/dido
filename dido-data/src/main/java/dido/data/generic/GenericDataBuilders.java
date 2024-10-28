@@ -146,7 +146,7 @@ abstract public class GenericDataBuilders {
 
             DataFactory<D> dataFactory = factoryProvider.provideFactory(schema);
 
-            return FieldValuesIn.withDataFactory(dataFactory).ofList(values);
+            return FieldValuesIn.withDataFactory(dataFactory).ofCollection(values);
         }
 
         @Override

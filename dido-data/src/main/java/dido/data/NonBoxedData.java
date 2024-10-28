@@ -1,6 +1,7 @@
 package dido.data;
 
 import dido.data.useful.*;
+import dido.data.util.DataBuilder;
 import dido.data.util.FieldValuesIn;
 
 import java.util.Collection;
@@ -45,23 +46,23 @@ public class NonBoxedData extends AbstractData {
 
     public static DataBuilder<NonBoxedData> builderForSchema(DataSchema schema) {
 
-        return new DataBuilder<>(factoryForSchema(schema));
+        return DataBuilder.forFactory(factoryForSchema(schema));
     }
 
-    public static DataBuilder<NonBoxedData> builderForSchema(NonBoxedDataSchema schema) {
+    public static DataBuilder<NonBoxedData> builderNoSchema() {
 
-        return new DataBuilder<>(factoryForSchema(schema));
+        return DataBuilder.forProvider(new NonBoxedDataFactoryProvider());
     }
 
     public static FieldValuesIn<NonBoxedData> valuesForSchema(DataSchema schema) {
 
         return FieldValuesIn.withDataFactory(factoryForSchema(schema));
     }
+
     public static NonBoxedData copy(DidoData from) {
 
-        return new DataBuilder<>(factoryForSchema(from.getSchema())).copy(from).build();
+        return valuesForSchema(from.getSchema()).copy(from);
     }
-
 
     @Override
     public NonBoxedDataSchema getSchema() {
@@ -314,7 +315,7 @@ public class NonBoxedData extends AbstractData {
 
         @Override
         public void clear(WritableData writeable) {
-            throw new UnsupportedOperationException("Can not clear a primitive field");
+            setInt(writeable, 0);
         }
 
         @Override
@@ -338,7 +339,7 @@ public class NonBoxedData extends AbstractData {
 
         @Override
         public void clear(WritableData writeable) {
-            throw new UnsupportedOperationException("Can not clear a primitive field");
+            setDouble(writeable, 0.0);
         }
 
         @Override

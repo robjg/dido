@@ -27,7 +27,7 @@ class EnumDataTest {
     @Test
     void testFromStringFieldsAndBack() {
 
-        DidoData stringData = MapData.newBuilderNoSchema()
+        DidoData stringData = MapData.builderNoSchema()
                 .with("Object", Collections.singletonList("Foo"))
                 .withString("String", "Hello")
                 .withBoolean("Boolean", true)
