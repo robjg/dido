@@ -6,9 +6,12 @@ import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
+import dido.how.StreamHows;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Objects;
 
 /**
@@ -25,12 +28,6 @@ import java.util.Objects;
  * {@oddjob.xml.resource dido/json/FromToJsonArrayExample.xml}
  */
 public class JsonDido {
-
-    public enum Format {
-        SINGLE,
-        ARRAY,
-        LINES,
-    }
 
     /**
      * @oddjob.description The schema to use. When reading in, if one is not provided a simple schema will be
@@ -51,7 +48,7 @@ public class JsonDido {
      * @oddjob.description The format of the data. LINES, ARRAY, SINGLE.
      * @oddjob.required No, defaults to LINES.
      */
-    private Format format;
+    private JsonDidoFormat format;
 
     /**
      * @oddjob.description When reading data the JSON is copied or wrapped. The idea is that wrapping
@@ -68,39 +65,41 @@ public class JsonDido {
      */
     private DataFactoryProvider<?> dataFactoryProvider;
 
-
     public DataOutHow<OutputStream> toStreamOut() {
 
-        Format format = Objects.requireNonNullElse(this.format, Format.LINES);
-        switch (format) {
-            case SINGLE:
-                return StreamOutJson.streamOutSingle();
-            case ARRAY:
-                return StreamOutJson.streamOutArray();
-            case LINES:
-                return new StreamOutJsonLines();
-            default:
-                throw new IllegalArgumentException("Unknown " + format);
-        }
+        return StreamHows.fromWriterHow(toWriterOut());
+    }
+
+    public DataOutHow<Writer> toWriterOut() {
+
+        JsonDidoFormat format = Objects.requireNonNullElse(this.format, JsonDidoFormat.LINES);
+        return DataOutJson.with()
+                .schema(schema)
+                .outFormat(format)
+                .make();
     }
 
     public DataInHow<InputStream> toStreamIn() {
+        return StreamHows.fromReaderHow(toReaderIn());
+    }
 
-        Format format = Objects.requireNonNullElse(this.format, Format.LINES);
+    public DataInHow<Reader> toReaderIn() {
+
+        JsonDidoFormat format = Objects.requireNonNullElse(this.format, JsonDidoFormat.LINES);
         switch (format) {
-            case SINGLE:
+            case DEFAULT:
             case ARRAY:
-                boolean array = format == Format.ARRAY;
+                boolean array = format == JsonDidoFormat.ARRAY;
                 if (copy || schema == null || partialSchema || dataFactoryProvider != null) {
 
-                    return StreamInJson.asCopy(dataFactoryProvider())
+                    return DataInJsonReader.asCopy(dataFactoryProvider())
                             .setSchema(schema)
                             .setPartial(partialSchema)
                             .setIsArray(array)
                             .make();
                 }
                 else {
-                    return StreamInJson.asWrapper(schema)
+                    return DataInJsonReader.asWrapper(schema)
                             .setIsArray(array)
                             .make();
                 }
@@ -145,11 +144,11 @@ public class JsonDido {
         this.partialSchema = partialSchema;
     }
 
-    public Format getFormat() {
+    public JsonDidoFormat getFormat() {
         return format;
     }
 
-    public void setFormat(Format format) {
+    public void setFormat(JsonDidoFormat format) {
         this.format = format;
     }
 

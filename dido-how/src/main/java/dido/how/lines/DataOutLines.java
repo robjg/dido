@@ -4,14 +4,11 @@ import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.FieldGetter;
 import dido.data.ReadStrategy;
-import dido.how.CloseableAppendable;
 import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -19,7 +16,7 @@ import java.util.Objects;
 /**
  * Streams  out from Dido data of a single field defaulting to the name of 'Line'.
  */
-public class DataOutLines implements DataOutHow<CloseableAppendable> {
+public class DataOutLines implements DataOutHow<Appendable> {
 
     private static final String LINE = "Line";
 
@@ -50,16 +47,16 @@ public class DataOutLines implements DataOutHow<CloseableAppendable> {
         }
 
         public DataOut toAppendable(Appendable appendable) {
-            return make().outTo(CloseableAppendable.fromAppendable(appendable));
+            return make().outTo(appendable);
         }
 
         public DataOut toWriter(Writer writer) {
-            return make().outTo(CloseableAppendable.fromWriter(writer));
+            return make().outTo((writer));
         }
 
         public DataOut toPath(Path path) {
             try {
-                return make().outTo(CloseableAppendable.fromWriter(Files.newBufferedWriter(path)));
+                return make().outTo(Files.newBufferedWriter(path));
             } catch (IOException e) {
                 throw DataException.of(e);
             }
@@ -67,7 +64,7 @@ public class DataOutLines implements DataOutHow<CloseableAppendable> {
 
         public DataOut toOutputStream(OutputStream outputStream) {
 
-            return make().outTo(CloseableAppendable.fromOutputStream(outputStream));
+            return make().outTo(new OutputStreamWriter(outputStream));
         }
 
         public DataOutLines make() {
@@ -101,12 +98,12 @@ public class DataOutLines implements DataOutHow<CloseableAppendable> {
     }
 
     @Override
-    public Class<CloseableAppendable> getOutType() {
-        return CloseableAppendable.class;
+    public Class<Appendable> getOutType() {
+        return Appendable.class;
     }
 
     @Override
-    public DataOut outTo(CloseableAppendable outTo) {
+    public DataOut outTo(Appendable outTo) {
 
         return fieldGetter == null ?
                 new UnKnownOut(fieldName, outTo) :
@@ -123,10 +120,10 @@ public class DataOutLines implements DataOutHow<CloseableAppendable> {
 
         private final FieldGetter fieldGetter;
 
-        private final CloseableAppendable out;
+        private final Appendable out;
 
         KnownOut(FieldGetter fieldGetter,
-                 CloseableAppendable outputStream) {
+                 Appendable outputStream) {
 
             this.fieldGetter = fieldGetter;
             this.out = outputStream;
@@ -134,10 +131,12 @@ public class DataOutLines implements DataOutHow<CloseableAppendable> {
 
         @Override
         public void close() {
-            try {
-                out.close();
-            } catch (IOException e) {
-                throw DataException.of(e);
+            if (out instanceof Closeable) {
+                try {
+                    ((Closeable) out).close();
+                } catch (IOException e) {
+                    throw DataException.of(e);
+                }
             }
         }
 
@@ -159,24 +158,26 @@ public class DataOutLines implements DataOutHow<CloseableAppendable> {
 
         private final String fieldName;
 
-        private final CloseableAppendable out;
+        private final Appendable out;
 
         private DataSchema lastSchema;
 
         private DataOut known;
 
         UnKnownOut(String fieldName,
-                   CloseableAppendable out) {
+                   Appendable out) {
             this.fieldName = fieldName;
             this.out = out;
         }
 
         @Override
         public void close() {
-            try {
-                out.close();
-            } catch (IOException e) {
-                throw DataException.of(e);
+            if (out instanceof Closeable) {
+                try {
+                    ((Closeable) out).close();
+                } catch (IOException e) {
+                    throw DataException.of(e);
+                }
             }
         }
 

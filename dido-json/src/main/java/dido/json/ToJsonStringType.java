@@ -1,10 +1,6 @@
 package dido.json;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import dido.data.DidoData;
-import dido.data.IndexedData;
-import dido.data.RepeatingData;
 
 import java.util.function.Function;
 
@@ -19,15 +15,14 @@ import java.util.function.Function;
  */
 public class ToJsonStringType implements Function<DidoData, String> {
 
-    private final Gson gson = new GsonBuilder()
-            .registerTypeHierarchyAdapter(IndexedData.class, new DataSerializer())
-            .registerTypeHierarchyAdapter(RepeatingData.class, new RepeatingSerializer())
-            .create();
+
+    private final Function<DidoData, String> delegate =
+            DataOutJson.asMapperToString();
 
     @Override
-    public String apply(DidoData stringIndexedData) {
+    public String apply(DidoData data) {
 
-        return gson.toJson(stringIndexedData);
+        return delegate.apply(data);
     }
 
     @Override

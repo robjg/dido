@@ -7,8 +7,7 @@ import dido.how.DataInHow;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -17,7 +16,7 @@ import java.util.stream.Stream;
  * Read a Stream of newline delimited JSON messages.
  *
  */
-public class StreamInJsonLines implements DataInHow<InputStream> {
+public class StreamInJsonLines implements DataInHow<Reader> {
 
     private final Function<? super String, ? extends DidoData> function;
 
@@ -55,7 +54,7 @@ public class StreamInJsonLines implements DataInHow<InputStream> {
             return this;
         }
 
-        public DataInHow<InputStream> make() {
+        public DataInHow<Reader> make() {
 
             return new StreamInJsonLines(this.wrapperSettings.make());
         }
@@ -79,21 +78,27 @@ public class StreamInJsonLines implements DataInHow<InputStream> {
             return this;
         }
 
-        public DataInHow<InputStream> make() {
+        public DataInHow<Reader> make() {
 
             return new StreamInJsonLines(this.copySettings.make());
         }
     }
 
     @Override
-    public Class<InputStream> getInType() {
-        return InputStream.class;
+    public Class<Reader> getInType() {
+        return Reader.class;
     }
 
     @Override
-    public DataIn inFrom(InputStream inputStream) {
+    public DataIn inFrom(Reader dataIn) {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        BufferedReader reader;
+        if (dataIn instanceof BufferedReader) {
+            reader = ((BufferedReader) dataIn);
+        }
+        else {
+            reader = new BufferedReader(dataIn);
+        }
 
         return new DataIn() {
 

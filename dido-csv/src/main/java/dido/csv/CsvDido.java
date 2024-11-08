@@ -1,12 +1,13 @@
 package dido.csv;
 
 import dido.data.DataSchema;
-import dido.how.*;
+import dido.how.DataInHow;
+import dido.how.DataOutHow;
+import dido.how.StreamHows;
 import dido.how.conversion.DidoConversionProvider;
 import org.apache.commons.csv.CSVFormat;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 /**
@@ -61,23 +62,7 @@ public class CsvDido {
                 .header(withHeader)
                 .make();
 
-        return new DataOutHow<OutputStream>() {
-            @Override
-            public Class<OutputStream> getOutType() {
-                return OutputStream.class;
-            }
-
-            @Override
-            public DataOut outTo(OutputStream outTo) {
-                return dataOutCsv.outTo(CloseableAppendable.fromOutputStream(outTo));
-            }
-
-            @Override
-            public String toString() {
-                return dataOutCsv.toString();
-            }
-        };
-
+        return StreamHows.fromWriterHow(dataOutCsv);
     }
 
     public DataInHow<InputStream> toStreamIn() {
@@ -90,22 +75,7 @@ public class CsvDido {
                 .converter(converter)
                 .make();
 
-        return new DataInHow<InputStream>() {
-            @Override
-            public Class<InputStream> getInType() {
-                return InputStream.class;
-            }
-
-            @Override
-            public DataIn inFrom(InputStream dataIn) {
-                return dataInCsv.inFrom(new InputStreamReader(dataIn));
-            }
-
-            @Override
-            public String toString() {
-                return dataInCsv.toString();
-            }
-        };
+        return StreamHows.fromReaderHow(dataInCsv);
     }
 
     public CSVFormat getCsvFormat() {

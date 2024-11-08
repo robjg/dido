@@ -81,7 +81,7 @@ class SchemaAsJsonTest {
 
         ByteArrayInputStream input = new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
 
-        List<DataSchema> back = SchemaAsJson.fromJsonStream(input)
+        List<DataSchema> back = SchemaAsJson.fromJsonLines(input)
                 .collect(Collectors.toList());
 
         assertThat(back, contains(schema, schema, schema));

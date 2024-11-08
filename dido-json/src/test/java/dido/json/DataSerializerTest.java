@@ -3,6 +3,7 @@ package dido.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dido.data.*;
+import dido.data.util.FieldValuesIn;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -25,7 +26,8 @@ class DataSerializerTest {
                 .of("Apple", null, 15, 26.5);
 
         Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(IndexedData.class, new DataSerializer())
+                .registerTypeHierarchyAdapter(IndexedData.class,
+                        DataSerializer.forSchema(schema))
                 .create();
 
         String json = gson.toJson(data, IndexedData.class);
@@ -60,7 +62,8 @@ class DataSerializerTest {
                                 .of(1.2, 3.4));
 
         Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(IndexedData.class, new DataSerializer())
+                .registerTypeHierarchyAdapter(IndexedData.class,
+                        DataSerializer.forSchema(schema))
                 .create();
 
         String json = gson.toJson(data, IndexedData.class);
@@ -80,7 +83,7 @@ class DataSerializerTest {
 
         DataSchema schema = SchemaBuilder.newInstance()
                 .addNamed("foo", String.class)
-                .addNestedNamed("positions", posSchema)
+                .addRepeatingNamed("positions", posSchema)
                 .build();
 
         RepeatingData positions = RepeatingData.of(
@@ -93,8 +96,8 @@ class DataSerializerTest {
                 .of("Foo", positions);
 
         Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(IndexedData.class, new DataSerializer())
-                .registerTypeHierarchyAdapter(RepeatingData.class, new RepeatingSerializer())
+                .registerTypeHierarchyAdapter(IndexedData.class,
+                        DataSerializer.forSchema(schema))
                 .create();
 
         String json = gson.toJson(data, IndexedData.class);
@@ -104,5 +107,78 @@ class DataSerializerTest {
         JSONAssert.assertEquals(expected, json, JSONCompareMode.LENIENT);
     }
 
+    @Test
+    void whenNestedRefThenCorrectJsonProduced() throws JSONException {
 
+        SchemaReference schemaReference = SchemaReference.named("Person");
+
+        DataSchema childrenSchema = SchemaBuilder.newInstance()
+                .addRepeatingNamed("People", schemaReference)
+                .build();
+
+        DataSchema personSchema = SchemaBuilder.newInstance()
+                .addNamed("Name", String.class)
+                .addNestedNamed("Children", childrenSchema)
+                .build();
+
+        schemaReference.set(personSchema);
+
+        FieldValuesIn<MapData> personValue = MapData.valuesForSchema(personSchema);
+        FieldValuesIn<MapData> childrenValue = MapData.valuesForSchema(childrenSchema);
+
+        DidoData data = personValue.of("Alice", childrenValue.of(RepeatingData.of(
+                        personValue.of("Bob", childrenValue.of(
+                                RepeatingData.of(
+                                        personValue.of("Cathrine", null),
+                                        personValue.of("Diana", null)))),
+                        personValue.of("Eric", null),
+                        personValue.of("Fred", childrenValue.of(
+                                RepeatingData.of(
+                                        personValue.of("Greg", null))))
+                )));
+
+        Gson gson = new GsonBuilder()
+                .registerTypeHierarchyAdapter(IndexedData.class,
+                        DataSerializer.forSchema(personSchema))
+                .setPrettyPrinting()
+                .create();
+
+        String json = gson.toJson(data, IndexedData.class);
+
+        String expected = "{\n" +
+                "  \"Name\": \"Alice\",\n" +
+                "  \"Children\": {\n" +
+                "    \"People\": [\n" +
+                "      {\n" +
+                "        \"Name\": \"Bob\",\n" +
+                "        \"Children\": {\n" +
+                "          \"People\": [\n" +
+                "            {\n" +
+                "              \"Name\": \"Cathrine\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "              \"Name\": \"Diana\"\n" +
+                "            }\n" +
+                "          ]\n" +
+                "        }\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"Name\": \"Eric\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"Name\": \"Fred\",\n" +
+                "        \"Children\": {\n" +
+                "          \"People\": [\n" +
+                "            {\n" +
+                "              \"Name\": \"Greg\"\n" +
+                "            }\n" +
+                "          ]\n" +
+                "        }\n" +
+                "      }\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}\n";
+
+        JSONAssert.assertEquals(expected, json, JSONCompareMode.LENIENT);
+    }
 }

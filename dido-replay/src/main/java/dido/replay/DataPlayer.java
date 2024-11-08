@@ -135,7 +135,7 @@ public class DataPlayer implements Iterable<DataPlayer.TimedData>, Closeable {
         Iterator<String> dataSupplier = new BufferedReader(new InputStreamReader(inputs.dataIn))
                 .lines().iterator();
 
-        Iterator<DataSchema> schemaSupplier = SchemaAsJson.fromJsonStream(inputs.schemaIn).iterator();
+        Iterator<DataSchema> schemaSupplier = SchemaAsJson.fromJsonLines(inputs.schemaIn).iterator();
 
         Iterator<Instant> timestampSupplier = new BufferedReader(new InputStreamReader(inputs.timeIn))
                 .lines().map(Instant::parse)

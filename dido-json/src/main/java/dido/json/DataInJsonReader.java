@@ -2,6 +2,7 @@ package dido.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.Strictness;
 import com.google.gson.stream.JsonReader;
 import dido.data.*;
 import dido.how.DataException;
@@ -9,11 +10,9 @@ import dido.how.DataIn;
 import dido.how.DataInHow;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -24,7 +23,7 @@ import java.util.Objects;
  * which is just too complicated when a copy is available instead.
  *
  */
-public class StreamInJson implements DataInHow<InputStream> {
+public class DataInJsonReader implements DataInHow<Reader> {
 
     private final Gson gson;
 
@@ -32,7 +31,7 @@ public class StreamInJson implements DataInHow<InputStream> {
 
     private final Type dataType;
 
-    private StreamInJson(Gson gson, boolean isArray, Type dataType) {
+    private DataInJsonReader(Gson gson, boolean isArray, Type dataType) {
         this.gson = gson;
         this.isArray = isArray;
         this.dataType = dataType;
@@ -74,9 +73,9 @@ public class StreamInJson implements DataInHow<InputStream> {
             return this;
         }
 
-        public DataInHow<InputStream> make() {
+        public DataInHow<Reader> make() {
 
-            return new StreamInJson(
+            return new DataInJsonReader(
                     JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                             .create(),
                     isArray,
@@ -114,18 +113,18 @@ public class StreamInJson implements DataInHow<InputStream> {
         }
 
 
-        public DataInHow<InputStream> make() {
+        public DataInHow<Reader> make() {
 
             if (schema == null || partial) {
 
-                return new StreamInJson(
+                return new DataInJsonReader(
                         JsonDataPartialCopy.registerPartialSchema(new GsonBuilder(), schema, dataFactoryProvider)
                                 .create(),
                         isArray,
                         dataFactoryProvider.getDataType());
             } else {
 
-                return new StreamInJson(
+                return new DataInJsonReader(
                         JsonDataCopy.registerSchema(new GsonBuilder(),
                                         schema, dataFactoryProvider)
                                 .create(),
@@ -137,14 +136,15 @@ public class StreamInJson implements DataInHow<InputStream> {
 
 
     @Override
-    public Class<InputStream> getInType() {
-        return InputStream.class;
+    public Class<Reader> getInType() {
+        return Reader.class;
     }
 
     @Override
-    public DataIn inFrom(InputStream inputStream)  {
+    public DataIn inFrom(Reader inFrom)  {
 
-        final JsonReader reader = new JsonReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        final JsonReader reader = new JsonReader(inFrom);
+        reader.setStrictness(Strictness.LENIENT);
 
         if (isArray) {
             try {

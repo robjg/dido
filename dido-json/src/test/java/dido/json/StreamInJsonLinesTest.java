@@ -5,8 +5,8 @@ import dido.data.DidoData;
 import dido.data.MapData;
 import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
-import org.oddjob.io.BufferType;
 
+import java.io.StringReader;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,19 +16,16 @@ import static org.hamcrest.Matchers.is;
 class StreamInJsonLinesTest {
 
     @Test
-    void testSimpleIn() throws Exception {
+    void testSimpleIn() {
 
-        BufferType bufferType = new BufferType();
-        bufferType.setLines(new String[]{
+        String lines = String.join("\n",
                 "{\"Fruit\":\"Apple\",\"Qty\":5,\"Price\":27.2}",
                 "{\"Fruit\":\"Orange\",\"Qty\":10,\"Price\":31.6}",
-                "{\"Fruit\":\"Pear\",\"Qty\":7,\"Price\":22.1}"
-        });
-        bufferType.configured();
+                "{\"Fruit\":\"Pear\",\"Qty\":7,\"Price\":22.1}");
 
         List<DidoData> in = StreamInJsonLines.asWrapper()
                 .make()
-                .inFrom(bufferType.toInputStream())
+                .inFrom(new StringReader(lines))
                 .stream()
                 .collect(Collectors.toList());
 
@@ -53,15 +50,12 @@ class StreamInJsonLinesTest {
     }
 
     @Test
-    void testSimpleInWithSchema() throws Exception {
+    void testSimpleInWithSchema() {
 
-        BufferType bufferType = new BufferType();
-        bufferType.setLines(new String[]{
+        String lines = String.join("\n",
                 "{\"Fruit\":\"Apple\",\"Qty\":5,\"Price\":27.2}",
                 "{\"Fruit\":\"Orange\",\"Qty\":10,\"Price\":31.6}",
-                "{\"Fruit\":\"Pear\",\"Qty\":7,\"Price\":22.1}"
-        });
-        bufferType.configured();
+                "{\"Fruit\":\"Pear\",\"Qty\":7,\"Price\":22.1}");
 
         DataSchema schema = SchemaBuilder.newInstance()
                 .addNamed("Qty", Integer.class)
@@ -72,7 +66,7 @@ class StreamInJsonLinesTest {
                 .setSchema(schema)
                 .setPartial(true)
                 .make()
-                .inFrom(bufferType.toInputStream())
+                .inFrom(new StringReader(lines))
                 .stream().collect(Collectors.toList());
 
         assertThat(in.size(), is(3));
@@ -97,15 +91,12 @@ class StreamInJsonLinesTest {
     }
 
     @Test
-    void whenSimpleInWithFullSchema() throws Exception {
+    void whenSimpleInWithFullSchema() {
 
-        BufferType bufferType = new BufferType();
-        bufferType.setLines(new String[]{
+        String lines = String.join("\n",
                 "{\"Fruit\":\"Apple\",\"Qty\":5,\"Price\":27.2}",
                 "{\"Fruit\":\"Orange\",\"Qty\":10,\"Price\":NaN}",
-                "{\"Fruit\":\"Pear\",\"Qty\":7,\"Price\":22.1}"
-        });
-        bufferType.configured();
+                "{\"Fruit\":\"Pear\",\"Qty\":7,\"Price\":22.1}");
 
         DataSchema schema = SchemaBuilder.newInstance()
                 .addNamed("Fruit", String.class)
@@ -116,7 +107,7 @@ class StreamInJsonLinesTest {
         List<DidoData> in = StreamInJsonLines.asWrapper()
                 .setSchema(schema)
                 .make()
-                .inFrom(bufferType.toInputStream())
+                .inFrom(new StringReader(lines))
                 .stream()
                 .collect(Collectors.toList());
 

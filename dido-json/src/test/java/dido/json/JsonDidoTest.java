@@ -53,7 +53,7 @@ class JsonDidoTest {
 
         JsonDido test = new JsonDido();
         test.setSchema(schema);
-        test.setFormat(JsonDido.Format.ARRAY);
+        test.setFormat(JsonDidoFormat.ARRAY);
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
@@ -77,7 +77,7 @@ class JsonDidoTest {
     }
 
     @Test
-    void testToJsonOverrideSchema() throws Exception {
+    void testToJsonOverrideSchema() {
 
         DidoData data1 = MapData.builderNoSchema()
                 .withString("type", "apple")
@@ -95,8 +95,6 @@ class JsonDidoTest {
                 .build();
 
         JsonDido test = new JsonDido();
-        test.setSchema(schema);
-        test.setPartialSchema(true);
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
@@ -106,15 +104,23 @@ class JsonDidoTest {
             consumer.accept(data2);
         }
 
-        List<DidoData> copy =  test.toStreamIn().inFrom(
+        test.setSchema(schema);
+        test.setPartialSchema(true);
+
+        List<DidoData> copy =
+                test.toStreamIn().inFrom(
                 new ByteArrayInputStream(results.toByteArray()))
                 .stream()
                 .collect(Collectors.toList());
 
         assertThat(copy.size(), is(2));
 
+
+
         DidoData copy1 = copy.get(0);
         DidoData copy2 = copy.get(1);
+
+
 
         assertThat(copy1.getStringNamed("type"), is("apple"));
         assertThat(copy1.getIntNamed("qty"), is(2));

@@ -4,8 +4,9 @@ import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.how.CloseableConsumer;
 import dido.how.DataException;
+import dido.json.DataOutJson;
+import dido.json.JsonDidoFormat;
 import dido.json.SchemaAsJson;
-import dido.json.StreamOutJsonLines;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,9 @@ public class DataRecorder implements CloseableConsumer<DidoData> {
 
         this.clock = Objects.requireNonNullElse(clock, Clock.systemUTC());
 
-        dataConsumer =  new StreamOutJsonLines().outTo(outputs.dataOut);
+        dataConsumer = DataOutJson.with()
+                .outFormat(JsonDidoFormat.LINES)
+                .toOutputStream(outputs.dataOut);
 
         schemaConsumer = SchemaAsJson.toJsonStream(outputs.schemaOut);
 

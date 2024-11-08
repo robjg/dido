@@ -4,15 +4,14 @@ import dido.data.DidoData;
 import dido.data.MapData;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
-import org.oddjob.io.BufferType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class StreamOutJsonLinesTest {
+class DataOutJsonLinesTest {
 
     @Test
-    void testSimpleOut() throws Exception {
+    void testSimpleOut() {
 
         DidoData data1 = MapData.of(
                 "Fruit", "Apple", "Qty", 5, "Price", 27.2);
@@ -21,18 +20,18 @@ class StreamOutJsonLinesTest {
         DidoData data3 = MapData.of(
                 "Fruit", "Pear", "Qty", 7, "Price", 22.1);
 
-        BufferType bufferType = new BufferType();
-        bufferType.configured();
+        StringBuilder stringBuilder = new StringBuilder();
 
-        DataOut dataOut = new StreamOutJsonLines().outTo(bufferType.toOutputStream());
+        try (DataOut dataOut = DataOutJson.with()
+                .outFormat(JsonDidoFormat.LINES)
+                .toAppendable(stringBuilder)) {
 
-        dataOut.accept(data1);
-        dataOut.accept(data2);
-        dataOut.accept(data3);
+            dataOut.accept(data1);
+            dataOut.accept(data2);
+            dataOut.accept(data3);
+        }
 
-        dataOut.close();
-
-        String[] lines = bufferType.getLines();
+        String[] lines = stringBuilder.toString().split("\n");
 
         assertThat(lines.length, is(3));
         assertThat(lines[0], is("{\"Fruit\":\"Apple\",\"Qty\":5,\"Price\":27.2}"));

@@ -6,18 +6,20 @@ import dido.how.DataIn;
 import dido.how.DataInHow;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
-class StreamInJsonTest {
+class DataInJsonReaderTest {
 
     @Test
-    void readsArrayOk() throws Exception {
+    void readsArrayOk() {
 
         String json = "[\n" +
                 "    { \"Fruit\"=\"Apple\", \"Qty\"=5, \"Price\"=27.2 },\n" +
@@ -33,11 +35,11 @@ class StreamInJsonTest {
 
         FieldValuesIn<ArrayData> values = ArrayData.valuesForSchema(expectedSchema);
 
-        DataInHow<InputStream> test = StreamInJson.asCopy()
+        DataInHow<Reader> test = DataInJsonReader.asCopy()
                 .setIsArray(true)
                 .make();
 
-        try (DataIn in = test.inFrom(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
+        try (DataIn in = test.inFrom(new StringReader(json))) {
 
             Iterator<DidoData> it = in.iterator();
 
@@ -78,7 +80,7 @@ class StreamInJsonTest {
                 .addRepeatingNamed("OrderLines", DataSchema.emptySchema())
                 .build();
 
-        DataInHow<InputStream> test = StreamInJson.asCopy()
+        DataInHow<Reader> test = DataInJsonReader.asCopy()
                 .setIsArray(true)
                 .setSchema(schema)
                 .setPartial(true)
@@ -94,8 +96,7 @@ class StreamInJsonTest {
                 .addRepeatingNamed("OrderLines", expectedNestedSchema)
                 .build();
 
-        try (DataIn in = test.inFrom(
-                new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)))) {
+        try (DataIn in = test.inFrom(new StringReader(json))) {
 
             Iterator<DidoData> it = in.iterator();
 
@@ -115,4 +116,36 @@ class StreamInJsonTest {
             assertThat("!Has next", !it.hasNext());
         }
     }
+
+    @Test
+    void readsObjects() {
+
+        String json =
+                "{ \"Fruit\"=\"Apple\", \"Qty\"=5, \"Price\"=27.2 }" +
+                        "{ \"Fruit\"=\"Orange\", \"Qty\"=10, \"Price\"=31.6 }" +
+                        "{ \"Fruit\"=\"Pear\", \"Qty\"=7, \"Price\"=22.1 }";
+
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", Double.class)
+                .addNamed("Price", Double.class)
+                .build();
+
+        FieldValuesIn<ArrayData> values = ArrayData.valuesForSchema(expectedSchema);
+
+        DataInHow<Reader> test = DataInJsonReader.asCopy()
+                .make();
+
+        try (DataIn in = test.inFrom(new StringReader(json))) {
+
+            List<DidoData> results = in.stream()
+                    .collect(Collectors.toList());
+
+            assertThat(results, contains(
+                    values.of("Apple", 5.0, 27.2),
+                    values.of("Orange", 10.0, 31.6),
+                    values.of("Pear", 7.0, 22.1)));
+        }
+    }
+
 }

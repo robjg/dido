@@ -27,10 +27,14 @@ public class SchemaAsJson {
         });
     }
 
-
     public static DataSchema fromJson(InputStream input) throws Exception {
 
-        DataInHow<InputStream> inHow = StreamInJson.asCopy(new ArrayDataDataFactoryProvider())
+        return fromJson(new InputStreamReader(input));
+    }
+
+    public static DataSchema fromJson(Reader input) throws Exception {
+
+        DataInHow<Reader> inHow = DataInJsonReader.asCopy(new ArrayDataDataFactoryProvider())
                 .setSchema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
                 .make();
 
@@ -48,9 +52,14 @@ public class SchemaAsJson {
         return fromJson(new ByteArrayInputStream(string.getBytes(StandardCharsets.UTF_8)));
     }
 
-    public static void toJson(DataSchema schema, OutputStream output) throws Exception {
+    public static void toJson(DataSchema schema, OutputStream output) {
 
-        try (DataOut out = StreamOutJson.streamOutSingle().outTo(output)) {
+        toJson(schema, new OutputStreamWriter(output));
+    }
+
+    public static void toJson(DataSchema schema, Writer output) {
+
+        try (DataOut out = DataOutJsonWriter.streamOutSingle().outTo(output)) {
 
             DidoData data = DataSchemaSchema.schemaToData(schema);
 
@@ -58,16 +67,20 @@ public class SchemaAsJson {
         }
     }
 
-    public static String toJson(DataSchema schema) throws Exception {
+    public static String toJson(DataSchema schema) {
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        StringWriter output = new StringWriter();
         toJson(schema, output);
-        return output.toString(StandardCharsets.UTF_8);
+        return output.toString();
     }
 
-    public static Stream<DataSchema> fromJsonStream(InputStream input) {
+    public static Stream<DataSchema> fromJsonLines(InputStream input) {
+        return fromJsonLines(new InputStreamReader(input));
+    }
 
-        DataInHow<InputStream> inHow = StreamInJsonLines.asWrapper()
+    public static Stream<DataSchema> fromJsonLines(Reader input) {
+
+        DataInHow<Reader> inHow = StreamInJsonLines.asWrapper()
                 .setSchema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
                 .make();
 
@@ -79,7 +92,14 @@ public class SchemaAsJson {
 
     public static CloseableConsumer<DataSchema> toJsonStream(OutputStream output) {
 
-        DataOut out = new StreamOutJsonLines().outTo(output);
+        return toJsonWriter(new OutputStreamWriter(output));
+    }
+
+    public static CloseableConsumer<DataSchema> toJsonWriter(Writer output) {
+
+        DataOut out = DataOutJson.with()
+                .outFormat(JsonDidoFormat.LINES)
+                .toWriter(output);
 
         return new CloseableConsumer<>() {
 

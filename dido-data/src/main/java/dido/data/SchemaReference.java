@@ -4,6 +4,10 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
+/**
+ * Provide a reference to a schema that is yet to be defined. Required for nested tree like
+ * schemas. The reference may be named for identification.
+ */
 public class SchemaReference implements Supplier<DataSchema> {
 
     private final AtomicReference<DataSchema> schemaRef = new AtomicReference<>();
