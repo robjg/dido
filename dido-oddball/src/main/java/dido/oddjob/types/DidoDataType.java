@@ -29,11 +29,11 @@ public class DidoDataType implements ValueFactory<DidoData>, ArooaSessionAware {
     public DidoData toValue() throws ArooaConversionException {
 
         if (schema == null) {
-            return ArrayData.of(values.toArray());
+            return DidoData.of(values.toArray());
         }
         else {
             ArooaConverter converter = session.getTools().getArooaConverter();
-            DataFactory<ArrayData> dataFactory = ArrayData.factoryForSchema(schema);
+            DataFactory dataFactory = DataFactoryProvider.newInstance().factoryFor(schema);
             WritableData writableData = dataFactory.getWritableData();
             for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
                 Object value;

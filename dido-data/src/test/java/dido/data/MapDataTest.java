@@ -16,7 +16,7 @@ class MapDataTest {
     @Test
     void testBuilderNoSchema() throws ParseException {
 
-        DataBuilder<MapData> builder = MapData.builderNoSchema();
+        DataBuilder builder = MapData.builderNoSchema();
 
         DidoData data1 = builder
                 .withString("type", "apple")

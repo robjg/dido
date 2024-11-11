@@ -199,7 +199,7 @@ public class Flatten {
 
             List<DidoData> flattened = new ArrayList<>(maxSize);
 
-            DataFactory<ArrayData> dataFactory = ArrayData.factoryForSchema(newSchema);
+            DataFactory dataFactory = DataFactoryProvider.newInstance().factoryFor(newSchema);
             WritableData writableData = dataFactory.getWritableData();
 
             for (int l = 0; l < maxSize; ++l) {

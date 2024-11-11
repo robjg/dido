@@ -23,9 +23,9 @@ public class JsonStringToData {
         return new WrapperSettings();
     }
 
-    public static <D extends DidoData> CopySettings<D> asCopy(DataFactoryProvider<D> dataFactoryProvider) {
+    public static CopySettings asCopy(DataFactoryProvider dataFactoryProvider) {
 
-        return new CopySettings<>(dataFactoryProvider);
+        return new CopySettings(dataFactoryProvider);
     }
 
     public static class WrapperSettings {
@@ -60,29 +60,29 @@ public class JsonStringToData {
         }
     }
 
-    public static class CopySettings<D extends DidoData> {
+    public static class CopySettings {
 
-        private final DataFactoryProvider<D> dataFactoryProvider;
+        private final DataFactoryProvider dataFactoryProvider;
 
         private DataSchema schema;
 
         private boolean partial;
 
-        public CopySettings(DataFactoryProvider<D> dataFactoryProvider) {
+        public CopySettings(DataFactoryProvider dataFactoryProvider) {
             this.dataFactoryProvider = dataFactoryProvider;
         }
 
-        public CopySettings<D> setSchema(DataSchema schema) {
+        public CopySettings setSchema(DataSchema schema) {
             this.schema = schema;
             return this;
         }
 
-        public CopySettings<D> setPartial(boolean partial) {
+        public CopySettings setPartial(boolean partial) {
             this.partial = partial;
             return this;
         }
 
-        public Function<String, D> make() {
+        public Function<String, DidoData> make() {
 
             if (schema == null || partial) {
                 DataSchema partialSchema = schema == null ? DataSchema.emptySchema() : schema;
@@ -91,14 +91,14 @@ public class JsonStringToData {
                         JsonDataPartialCopy.registerPartialSchema(
                                         new GsonBuilder(), partialSchema, dataFactoryProvider)
                                 .create(),
-                        dataFactoryProvider.getDataType(),
+                        DidoData.class,
                         "toCopy, partialSchema=" + partialSchema);
             } else {
 
                 return new Known<>(JsonDataCopy.registerSchema(new GsonBuilder(), schema,
                                 dataFactoryProvider)
                         .create(),
-                        dataFactoryProvider.getDataType(),
+                        DidoData.class,
                         "ToCopy, schema=" + schema);
             }
         }

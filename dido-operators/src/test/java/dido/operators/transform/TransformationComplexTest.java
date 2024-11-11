@@ -66,14 +66,14 @@ public class TransformationComplexTest {
     @Test
     void complicated() {
 
-        Transformation<ArrayData> transformation = FieldTransformationBuilder
+        Transformation transformation = FieldTransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(schema)
                 .addFieldOperation(FieldOperations.removeNamed("Qty"))
                 .addFieldOperation(new MarkupOperation())
                 .build();
 
-        ArrayData result = transformation.apply(data);
+        DidoData result = transformation.apply(data);
 
         DataSchema expectedSchema = DataSchema.newBuilder()
                 .addNamed("Fruit", String.class)
@@ -94,9 +94,9 @@ public class TransformationComplexTest {
     /**
      * Is it thread safe.
      */
-    static class MarkupTransformationFactory<D extends DidoData> {
+    static class MarkupTransformationFactory {
 
-        public Transformation<D> define(DataSchema incomingSchema, DataFactoryProvider<D> factoryProvider) {
+        public Transformation define(DataSchema incomingSchema, DataFactoryProvider factoryProvider) {
 
             SchemaFactory schemaFactory = factoryProvider.getSchemaFactory();
 
@@ -113,7 +113,7 @@ public class TransformationComplexTest {
             FieldGetter fruitGetter = readStrategy.getFieldGetterNamed("Fruit");
             FieldGetter priceGetter = readStrategy.getFieldGetterNamed("Price");
 
-            DataFactory<D> dataFactory = factoryProvider.provideFactory(outSchema);
+            DataFactory dataFactory = factoryProvider.factoryFor(outSchema);
 
             WriteStrategy writeStrategy = WriteStrategy.fromSchema(outSchema);
 
@@ -123,7 +123,7 @@ public class TransformationComplexTest {
             FieldSetter amountSetter = writeStrategy.getFieldSetterNamed("MarkupAmount");
             FieldSetter finalSetter = writeStrategy.getFieldSetterNamed("FinalPrice");
 
-            return new Transformation<>() {
+            return new Transformation() {
 
                 @Override
                 public DataSchema getResultantSchema() {
@@ -131,7 +131,7 @@ public class TransformationComplexTest {
                 }
 
                 @Override
-                public D apply(DidoData data) {
+                public DidoData apply(DidoData data) {
 
                     double markup;
                     double markupAmount;
@@ -162,10 +162,10 @@ public class TransformationComplexTest {
     @Test
     void complicatedWithTransformation() {
 
-        Transformation<ArrayData> transformation = new MarkupTransformationFactory<ArrayData>()
+        Transformation transformation = new MarkupTransformationFactory()
                 .define(schema, new ArrayDataDataFactoryProvider());
 
-        ArrayData result = transformation.apply(data);
+        DidoData result = transformation.apply(data);
 
         DataSchema expectedSchema = DataSchema.newBuilder()
                 .addNamed("Fruit", String.class)

@@ -8,9 +8,8 @@ import java.util.function.Function;
 /**
  * Transform DidoData into another form of DidoData.
  *
- * @param <D>
  */
-public interface Transformation<D extends DidoData> extends Function<DidoData, D> {
+public interface Transformation extends Function<DidoData, DidoData> {
 
     DataSchema getResultantSchema();
 

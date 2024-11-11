@@ -10,51 +10,58 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * A Fluent builder for creating data from an {@link WriteSchema}.
- *
- * @param <D> The data type.
+ * A Fluent builder for creating {@link DidoData} data ofr a Known schema from a {@link DataFactory} or
+ * from an Unknown schema from an {@link DataFactoryProvider}.
  */
-abstract public class DataBuilder<D extends DidoData> {
+abstract public class DataBuilder {
 
-    abstract public DataBuilder<D> with(String field, Object value);
+    abstract public DataBuilder with(String field, Object value);
 
-    abstract public DataBuilder<D> withBoolean(String field, boolean value);
+    abstract public DataBuilder withBoolean(String field, boolean value);
 
-    abstract public DataBuilder<D> withByte(String field, byte value);
+    abstract public DataBuilder withByte(String field, byte value);
 
-    abstract public DataBuilder<D> withChar(String field, char value);
+    abstract public DataBuilder withChar(String field, char value);
 
-    abstract public DataBuilder<D> withShort(String field, short value);
+    abstract public DataBuilder withShort(String field, short value);
 
-    abstract public DataBuilder<D> withInt(String field, int value);
+    abstract public DataBuilder withInt(String field, int value);
 
-    abstract public DataBuilder<D> withLong(String field, long value);
+    abstract public DataBuilder withLong(String field, long value);
 
-    abstract public DataBuilder<D> withFloat(String field, float value);
+    abstract public DataBuilder withFloat(String field, float value);
 
-    abstract public DataBuilder<D> withDouble(String field, double value);
+    abstract public DataBuilder withDouble(String field, double value);
 
-    abstract public DataBuilder<D> withString(String field, String value);
+    abstract public DataBuilder withString(String field, String value);
 
     abstract  protected void setUnsetType(String name, Class<?> type);
 
-    abstract public D build();
+    abstract public DidoData build();
 
-    public static <D extends DidoData> DataBuilder<D> forFactory(DataFactory<D> dataFactory) {
-        return new Known<>(dataFactory);
+    public static DataBuilder forSchema(DataSchema schema) {
+        return new Known(DataFactoryProvider.newInstance().factoryFor(schema));
     }
 
-    public static <D extends DidoData> DataBuilder<D> forProvider(DataFactoryProvider<D> dataFactoryProvider) {
-        return new Unknown<>(dataFactoryProvider);
+    public static DataBuilder newInstance() {
+        return new Unknown(DataFactoryProvider.newInstance());
     }
 
-    static class Known<D extends DidoData> extends DataBuilder<D> {
+    public static DataBuilder forFactory(DataFactory dataFactory) {
+        return new Known(dataFactory);
+    }
 
-        private final DataFactory<D> dataFactory;
+    public static DataBuilder forProvider(DataFactoryProvider dataFactoryProvider) {
+        return new Unknown(dataFactoryProvider);
+    }
+
+    static class Known extends DataBuilder {
+
+        private final DataFactory dataFactory;
 
         private final Map<String, FieldSetter> setters;
 
-        private Known(DataFactory<D> dataFactory) {
+        private Known(DataFactory dataFactory) {
             this.dataFactory = dataFactory;
             DataSchema schema = dataFactory.getSchema();
             WriteStrategy writeStrategy = WriteStrategy.fromSchema(schema);
@@ -66,7 +73,7 @@ abstract public class DataBuilder<D extends DidoData> {
             this.setters = setters;
         }
 
-        public DataBuilder<D> to(Consumer<? super DidoData> consumer) {
+        public DataBuilder to(Consumer<? super DidoData> consumer) {
             consumer.accept(this.build());
             return this;
         }
@@ -83,52 +90,52 @@ abstract public class DataBuilder<D extends DidoData> {
             return setter;
         }
 
-        public DataBuilder<D> with(String field, Object value) {
+        public DataBuilder with(String field, Object value) {
             getSetterWithNameCheck(field).set(dataFactory.getWritableData(), value);
             return this;
         }
 
-        public DataBuilder<D> withBoolean(String field, boolean value) {
+        public DataBuilder withBoolean(String field, boolean value) {
             getSetterWithNameCheck(field).setBoolean(dataFactory.getWritableData(), value);
             return this;
         }
 
-        public DataBuilder<D> withByte(String field, byte value) {
+        public DataBuilder withByte(String field, byte value) {
             getSetterWithNameCheck(field).setByte(dataFactory.getWritableData(), value);
             return this;
         }
 
-        public DataBuilder<D> withChar(String field, char value) {
+        public DataBuilder withChar(String field, char value) {
             getSetterWithNameCheck(field).setChar(dataFactory.getWritableData(), value);
             return this;
         }
 
-        public DataBuilder<D> withShort(String field, short value) {
+        public DataBuilder withShort(String field, short value) {
             getSetterWithNameCheck(field).setShort(dataFactory.getWritableData(), value);
             return this;
         }
 
-        public DataBuilder<D> withInt(String field, int value) {
+        public DataBuilder withInt(String field, int value) {
             getSetterWithNameCheck(field).setInt(dataFactory.getWritableData(), value);
             return this;
         }
 
-        public DataBuilder<D> withLong(String field, long value) {
+        public DataBuilder withLong(String field, long value) {
             getSetterWithNameCheck(field).setLong(dataFactory.getWritableData(), value);
             return this;
         }
 
-        public DataBuilder<D> withFloat(String field, float value) {
+        public DataBuilder withFloat(String field, float value) {
             getSetterWithNameCheck(field).setFloat(dataFactory.getWritableData(), value);
             return this;
         }
 
-        public DataBuilder<D> withDouble(String field, double value) {
+        public DataBuilder withDouble(String field, double value) {
             getSetterWithNameCheck(field).setDouble(dataFactory.getWritableData(), value);
             return this;
         }
 
-        public DataBuilder<D> withString(String field, String value) {
+        public DataBuilder withString(String field, String value) {
             getSetterWithNameCheck(field).setString(dataFactory.getWritableData(), value);
             return this;
         }
@@ -137,60 +144,60 @@ abstract public class DataBuilder<D extends DidoData> {
             getSetterWithNameCheck(name).clear(dataFactory.getWritableData());
         }
 
-        public D build() {
+        public DidoData build() {
             return dataFactory.toData();
         }
     }
 
-    public static class Unknown<D extends DidoData> extends DataBuilder<D> {
+    public static class Unknown extends DataBuilder {
 
-        private final DataFactoryProvider<D> dataFactoryProvider;
+        private final DataFactoryProvider dataFactoryProvider;
 
         private final List<SchemaField> schemaFields = new LinkedList<>();
 
         private final List<Object> values = new LinkedList<>();
 
-        public Unknown(DataFactoryProvider<D> dataFactoryProvider) {
+        public Unknown(DataFactoryProvider dataFactoryProvider) {
             this.dataFactoryProvider = dataFactoryProvider;
         }
 
-        public Unknown<D> with(String field, Object value) {
+        public Unknown with(String field, Object value) {
             return setField(field, value, value == null ? void.class : value.getClass());
         }
 
-        public Unknown<D> withBoolean(String field, boolean value) {
+        public Unknown withBoolean(String field, boolean value) {
             return setField(field, value, boolean.class);
         }
 
-        public Unknown<D> withByte(String field, byte value) {
+        public Unknown withByte(String field, byte value) {
             return setField(field, value, byte.class);
         }
 
-        public Unknown<D> withChar(String field, char value) {
+        public Unknown withChar(String field, char value) {
             return setField(field, value, char.class);
         }
 
-        public Unknown<D> withShort(String field, short value) {
+        public Unknown withShort(String field, short value) {
             return setField(field, value, short.class);
         }
 
-        public Unknown<D> withInt(String field, int value) {
+        public Unknown withInt(String field, int value) {
             return setField(field, value, int.class);
         }
 
-        public Unknown<D> withLong(String field, long value) {
+        public Unknown withLong(String field, long value) {
             return setField(field, value, long.class);
         }
 
-        public Unknown<D> withFloat(String field, float value) {
+        public Unknown withFloat(String field, float value) {
             return setField(field, value, float.class);
         }
 
-        public Unknown<D> withDouble(String field, double value) {
+        public Unknown withDouble(String field, double value) {
             return setField(field, value, double.class);
         }
 
-        public Unknown<D> withString(String field, String value) {
+        public Unknown withString(String field, String value) {
             return setField(field, value, String.class);
         }
 
@@ -198,13 +205,13 @@ abstract public class DataBuilder<D extends DidoData> {
             setField(name, null, type);
         }
 
-        private Unknown<D> setField(String field, Object value, Class<?> type) {
+        private Unknown setField(String field, Object value, Class<?> type) {
             values.add(value);
             schemaFields.add(SchemaField.of(schemaFields.size() + 1, field, type));
             return this;
         }
 
-        public D build() {
+        public DidoData build() {
 
             SchemaFactory schemaFactory = dataFactoryProvider.getSchemaFactory();
 
@@ -214,8 +221,8 @@ abstract public class DataBuilder<D extends DidoData> {
 
             DataSchema schema = schemaFactory.toSchema();
 
-            D data = FieldValuesIn.withDataFactory(
-                            dataFactoryProvider.provideFactory(schema))
+            DidoData data = FieldValuesIn.withDataFactory(
+                            dataFactoryProvider.factoryFor(schema))
                     .ofCollection(values);
 
             schemaFields.clear();
@@ -225,7 +232,7 @@ abstract public class DataBuilder<D extends DidoData> {
         }
     }
 
-    public DataBuilder<D> copy(DidoData from) {
+    public DataBuilder copy(DidoData from) {
 
         DataSchema schema = from.getSchema();
         for (SchemaField schemaField : schema.getSchemaFields()) {

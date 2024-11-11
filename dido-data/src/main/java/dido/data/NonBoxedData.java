@@ -40,26 +40,26 @@ public class NonBoxedData extends AbstractData {
         }
     }
 
-    public static DataFactory<NonBoxedData> factoryForSchema(DataSchema schema) {
+    public static DataFactory factoryForSchema(DataSchema schema) {
         return new Factory(asNonBoxedDataSchema(schema));
     }
 
-    public static DataBuilder<NonBoxedData> builderForSchema(DataSchema schema) {
+    public static DataBuilder builderForSchema(DataSchema schema) {
 
         return DataBuilder.forFactory(factoryForSchema(schema));
     }
 
-    public static DataBuilder<NonBoxedData> builderNoSchema() {
+    public static DataBuilder builderNoSchema() {
 
         return DataBuilder.forProvider(new NonBoxedDataFactoryProvider());
     }
 
-    public static FieldValuesIn<NonBoxedData> valuesForSchema(DataSchema schema) {
+    public static FieldValuesIn valuesForSchema(DataSchema schema) {
 
         return FieldValuesIn.withDataFactory(factoryForSchema(schema));
     }
 
-    public static NonBoxedData copy(DidoData from) {
+    public static DidoData copy(DidoData from) {
 
         return valuesForSchema(from.getSchema()).copy(from);
     }
@@ -137,7 +137,7 @@ public class NonBoxedData extends AbstractData {
         }
     }
 
-    static class Factory implements DataFactory<NonBoxedData>, WritableData {
+    static class Factory implements DataFactory, WritableData {
 
         private final NonBoxedDataSchema schema;
 
@@ -157,11 +157,6 @@ public class NonBoxedData extends AbstractData {
         @Override
         public NonBoxedDataSchema getSchema() {
             return schema;
-        }
-
-        @Override
-        public Class<NonBoxedData> getDataType() {
-            return NonBoxedData.class;
         }
 
         @Override

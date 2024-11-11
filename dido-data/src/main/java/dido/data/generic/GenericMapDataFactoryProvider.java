@@ -1,13 +1,10 @@
 package dido.data.generic;
 
-import dido.data.DataFactory;
-import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
-import dido.data.SchemaFactory;
 
 import java.util.function.Function;
 
-public class GenericMapDataFactoryProvider<F> implements DataFactoryProvider<GenericMapData<F>> {
+public class GenericMapDataFactoryProvider<F> implements GenericDataFactoryProvider<F> {
 
     private final GenericMapData.Of<F> of;
 
@@ -21,17 +18,12 @@ public class GenericMapDataFactoryProvider<F> implements DataFactoryProvider<Gen
     }
 
     @Override
-    public Class<?> getDataType() {
-        return GenericMapData.class;
-    }
-
-    @Override
-    public SchemaFactory getSchemaFactory() {
+    public GenericSchemaFactory<F> getSchemaFactory() {
         return of.schemaFactory();
     }
 
     @Override
-    public DataFactory<GenericMapData<F>> provideFactory(DataSchema schema) {
+    public GenericDataFactory<F> factoryFor(DataSchema schema) {
         return of.factoryForSchema(schema);
     }
 }

@@ -6,7 +6,8 @@ import dido.data.generic.*;
 import dido.data.useful.AbstractFieldGetter;
 import dido.data.useful.AbstractFieldSetter;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumMap;
 import java.util.function.Function;
 
 public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> implements EnumData<E> {
@@ -60,11 +61,22 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
             return factory;
         }
 
-        public GenericDataFactory<E, EnumMapData<E>> factoryForSchema(DataSchema schema) {
+        public GenericDataFactory<E> factoryForSchema(DataSchema schema) {
             return new Factory<>(asEnumMapDataSchema(schema));
         }
-    }
 
+        public GenericDataBuilder<E> builderForSchema(DataSchema schema) {
+
+            return GenericDataBuilder.forFactory(factoryForSchema(
+                    asEnumMapDataSchema(schema)));
+        }
+
+        public GenericDataBuilder<E> builderNoSchema() {
+
+            return GenericDataBuilder.forProvider(EnumMapDataFactoryProvider.of(this),
+                    fieldNameMapping);
+        }
+    }
 
     public static <E extends Enum<E>> GenericData<E> from(EnumSchema<E> schema, EnumMap<E, ?> map) {
 
@@ -108,18 +120,18 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
         return GenericData.toStringFieldsOnly(this);
     }
 
-    public static <E extends Enum<E>> EnumDataBuilder<E> newBuilder(EnumSchema<E> schema) {
+    public static <E extends Enum<E>> GenericDataBuilder<E> newBuilder(EnumSchema<E> schema) {
 
-        return new BuilderWithSchema<>(ofEnumClass(schema.getFieldType()).factoryForSchema(schema));
+        return ofEnumClass(schema.getFieldType()).builderForSchema(schema);
     }
 
-    public static <E extends Enum<E>> EnumDataBuilder<E> builderForEnum(Class<E> enumClass) {
+    public static <E extends Enum<E>> GenericDataBuilder<E> builderForEnum(Class<E> enumClass) {
 
-        return new BuilderNoSchema<>(enumClass);
+        return ofEnumClass(enumClass).builderNoSchema();
     }
 
     static class Factory<E extends Enum<E>> extends AbstractGenericWritableData<E>
-            implements GenericDataFactory<E, EnumMapData<E>>, GenericWritableData<E> {
+            implements GenericDataFactory<E>, GenericWritableData<E> {
 
         private final EnumMapDataSchema<E> schema;
 
@@ -133,11 +145,6 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
         @Override
         public EnumMapDataSchema<E> getSchema() {
             return schema;
-        }
-
-        @Override
-        public Class<E> getDataType() {
-            return schema.getFieldType();
         }
 
         @Override
@@ -275,112 +282,5 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
         }
     }
 
-
-    static class BuilderWithSchema<E extends Enum<E>>
-            extends GenericDataBuilders.KnownSchema<E, EnumMapData<E>, BuilderWithSchema<E>>
-            implements EnumDataBuilder<E> {
-
-        BuilderWithSchema(GenericDataFactory<E, EnumMapData<E>> dataFactory) {
-            super(dataFactory);
-        }
-
-    }
-
-
-    static class BuilderNoSchema<E extends Enum<E>> implements EnumDataBuilder<E> {
-
-        private final Class<E> enumClass;
-
-        private EnumMap<E, Object> map;
-
-        private Map<E, Class<?>> typeMap;
-
-        BuilderNoSchema(Class<E> enumClass) {
-            this.enumClass = enumClass;
-            this.typeMap = new HashMap<>();
-            this.map = new EnumMap<>(enumClass);
-        }
-
-        @Override
-        public EnumData<E> build() {
-            @SuppressWarnings({"unchecked", "rawtypes"}) EnumSchema<E> schema = EnumSchema.schemaFor(enumClass, e ->
-                    Optional.ofNullable(typeMap.get(e)).orElse((Class) void.class));
-            EnumData<E> data = new EnumMapData<>(
-                    new EnumMapDataSchema<>(schema.getFieldType(), schema), map);
-            this.typeMap = new HashMap<>();
-            this.map = new EnumMap<>(enumClass);
-            return data;
-        }
-
-        @Override
-        public BuilderNoSchema<E> with(E field, Object value) {
-            map.put(field, value);
-            typeMap.put(field, value == null ? void.class : value.getClass());
-            return this;
-        }
-
-        @Override
-        public EnumDataBuilder<E> withBoolean(E field, boolean value) {
-            map.put(field, value);
-            typeMap.put(field, boolean.class);
-            return this;
-        }
-
-        @Override
-        public EnumDataBuilder<E> withByte(E field, byte value) {
-            map.put(field, value);
-            typeMap.put(field, byte.class);
-            return this;
-        }
-
-        @Override
-        public EnumDataBuilder<E> withChar(E field, char value) {
-            map.put(field, value);
-            typeMap.put(field, char.class);
-            return this;
-        }
-
-        @Override
-        public EnumDataBuilder<E> withShort(E field, short value) {
-            map.put(field, value);
-            typeMap.put(field, short.class);
-            return this;
-        }
-
-        @Override
-        public EnumDataBuilder<E> withInt(E field, int value) {
-            map.put(field, value);
-            typeMap.put(field, int.class);
-            return this;
-        }
-
-        @Override
-        public EnumDataBuilder<E> withLong(E field, long value) {
-            map.put(field, value);
-            typeMap.put(field, long.class);
-            return this;
-        }
-
-        @Override
-        public EnumDataBuilder<E> withFloat(E field, float value) {
-            map.put(field, value);
-            typeMap.put(field, float.class);
-            return this;
-        }
-
-        @Override
-        public EnumDataBuilder<E> withDouble(E field, double value) {
-            map.put(field, value);
-            typeMap.put(field, double.class);
-            return this;
-        }
-
-        @Override
-        public EnumDataBuilder<E> withString(E field, String value) {
-            map.put(field, value);
-            typeMap.put(field, String.class);
-            return this;
-        }
-    }
 
 }

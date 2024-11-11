@@ -123,8 +123,8 @@ class DataSerializerTest {
 
         schemaReference.set(personSchema);
 
-        FieldValuesIn<MapData> personValue = MapData.valuesForSchema(personSchema);
-        FieldValuesIn<MapData> childrenValue = MapData.valuesForSchema(childrenSchema);
+        FieldValuesIn personValue = MapData.valuesForSchema(personSchema);
+        FieldValuesIn childrenValue = MapData.valuesForSchema(childrenSchema);
 
         DidoData data = personValue.of("Alice", childrenValue.of(RepeatingData.of(
                         personValue.of("Bob", childrenValue.of(

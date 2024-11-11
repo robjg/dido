@@ -1,15 +1,10 @@
 package dido.data;
 
-import java.lang.reflect.Type;
-
 /**
  * Provides the ability to create Dido Data.
  *
- * @param <D> The type of Dido Data.
  */
-public interface DataFactory<D extends DidoData> {
-
-    Type getDataType();
+public interface DataFactory {
 
     DataSchema getSchema();
 
@@ -21,6 +16,6 @@ public interface DataFactory<D extends DidoData> {
      */
     WritableData getWritableData();
 
-    D toData();
+    DidoData toData();
 
 }

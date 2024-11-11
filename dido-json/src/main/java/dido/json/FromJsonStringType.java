@@ -44,13 +44,13 @@ public class FromJsonStringType {
      * than wrapping is assumed.
      * @oddjob.required No, defaults to ArrayData, if copy is true.
      */
-    private DataFactoryProvider<?> dataFactoryProvider;
+    private DataFactoryProvider dataFactoryProvider;
 
-    public Function<String, ? extends DidoData> toFunction() {
+    public Function<String, DidoData> toFunction() {
 
         if (copy) {
 
-            DataFactoryProvider<?> dataFactoryProvider =
+            DataFactoryProvider dataFactoryProvider =
                     this.dataFactoryProvider == null ? new ArrayDataDataFactoryProvider() : this.dataFactoryProvider;
 
             return JsonStringToData.asCopy(dataFactoryProvider)

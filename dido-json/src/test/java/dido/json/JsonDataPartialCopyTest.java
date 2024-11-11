@@ -20,7 +20,7 @@ class JsonDataPartialCopyTest {
                 "\t]\n" +
                 "\t}\n";
 
-        DataFactoryProvider<ArrayData> dataFactoryProvider = new ArrayDataDataFactoryProvider();
+        DataFactoryProvider dataFactoryProvider = new ArrayDataDataFactoryProvider();
 
         Gson gson = JsonDataPartialCopy.registerPartialSchema(
                         new GsonBuilder(),
@@ -29,7 +29,7 @@ class JsonDataPartialCopyTest {
                                 .build(), dataFactoryProvider)
                 .create();
 
-        DidoData result = gson.fromJson(json, dataFactoryProvider.getDataType());
+        DidoData result = gson.fromJson(json, DidoData.class);
 
         DataSchema nestedSchema = SchemaBuilder.newInstance()
                 .addNamed("Fruit", String.class)

@@ -11,7 +11,7 @@ class SchemaStrategyTest {
     @Test
     void testNewFields() {
 
-        FieldTransformationBuilder<?> transformationBuilder = FieldTransformationBuilder
+        FieldTransformationBuilder transformationBuilder = FieldTransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchema(ReadSchema.emptySchema());
 
@@ -28,7 +28,7 @@ class SchemaStrategyTest {
                     };
                 });
 
-        Transformation<?> transformation = transformationBuilder.build();
+        Transformation transformation = transformationBuilder.build();
 
         DataSchema result = transformation.getResultantSchema();
 
@@ -43,7 +43,7 @@ class SchemaStrategyTest {
     @Test
     void testMergeNewFieldsIntoEmptySchema() {
 
-        FieldTransformationBuilder<?> transformationBuilder = FieldTransformationBuilder
+        FieldTransformationBuilder transformationBuilder = FieldTransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(ReadSchema.emptySchema());
 
@@ -60,7 +60,7 @@ class SchemaStrategyTest {
                     };
                 });
 
-        Transformation<?> transformation = transformationBuilder.build();
+        Transformation transformation = transformationBuilder.build();
 
         DataSchema result = transformation.getResultantSchema();
 
@@ -79,7 +79,7 @@ class SchemaStrategyTest {
                 .addNamedAt(10, "Here", int.class)
                 .build();
 
-        FieldTransformationBuilder<?> transformationBuilder = FieldTransformationBuilder
+        FieldTransformationBuilder transformationBuilder = FieldTransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(existing);
 
@@ -96,7 +96,7 @@ class SchemaStrategyTest {
                     };
                 });
 
-        Transformation<?> transformation = transformationBuilder.build();
+        Transformation transformation = transformationBuilder.build();
 
         DataSchema result = transformation.getResultantSchema();
 
@@ -118,7 +118,7 @@ class SchemaStrategyTest {
                 .addNamedAt(30, "Three", double.class)
                 .build();
 
-        FieldTransformationBuilder<?> transformationBuilder = FieldTransformationBuilder
+        FieldTransformationBuilder transformationBuilder = FieldTransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(existing);
 
@@ -142,7 +142,7 @@ class SchemaStrategyTest {
                 });
 
 
-        Transformation<?> transformation = transformationBuilder.build();
+        Transformation transformation = transformationBuilder.build();
 
         DataSchema result = transformation.getResultantSchema();
 

@@ -8,12 +8,6 @@ import java.lang.reflect.Type;
 
 class RepeatingDeserializer implements JsonDeserializer<RepeatingData> {
 
-    private final Type dataType;
-
-    RepeatingDeserializer(Type dataType) {
-        this.dataType = dataType;
-    }
-
     @Override
     public RepeatingData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
@@ -26,7 +20,7 @@ class RepeatingDeserializer implements JsonDeserializer<RepeatingData> {
 
         DidoData[] result = new DidoData[jsonArray.size()];
         for (int i = 0; i < result.length; ++i) {
-            result[i] = context.deserialize(jsonArray.get(i), dataType);
+            result[i] = context.deserialize(jsonArray.get(i), DidoData.class);
         }
 
         return RepeatingData.of(result);

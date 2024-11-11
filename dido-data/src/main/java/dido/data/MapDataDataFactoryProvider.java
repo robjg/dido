@@ -3,12 +3,7 @@ package dido.data;
 /**
  * Provide an {@link DataFactory} based on {@link MapData}.
  */
-public class MapDataDataFactoryProvider implements DataFactoryProvider<MapData> {
-
-    @Override
-    public Class<MapData> getDataType() {
-        return MapData.class;
-    }
+public class MapDataDataFactoryProvider implements DataFactoryProvider {
 
     @Override
     public SchemaFactory getSchemaFactory() {
@@ -16,7 +11,7 @@ public class MapDataDataFactoryProvider implements DataFactoryProvider<MapData> 
     }
 
     @Override
-    public DataFactory<MapData> provideFactory(DataSchema schema) {
+    public DataFactory factoryFor(DataSchema schema) {
         return MapData.factoryForSchema(schema);
     }
 }

@@ -99,8 +99,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
 
         private GenericData<F> fromInputs(Object... args) {
 
-            BuilderNoSchema<F> builder =
-                    new BuilderNoSchema<>(new GenericMapDataFactoryProvider<>(this), fieldNameMapping);
+            GenericDataBuilder<F> builder = builderNoSchema();
             for (int i = 0; i < args.length; i = i + 2) {
                 //noinspection unchecked
                 builder.with((F) args[i], args[i + 1]);
@@ -130,12 +129,6 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
             }
         }
 
-        public BuilderNoSchema<F> newBuilderNoSchema() {
-
-            return new BuilderNoSchema<>(
-                    new GenericMapDataFactoryProvider<>(this), fieldNameMapping);
-        }
-
         public GenericSchemaFactory<F> schemaFactory() {
 
             return new GenericMapDataSchemaFactory<>(this);
@@ -150,36 +143,27 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
             return factory;
         }
 
-        public Builder<F> newBuilder(DataSchema schema) {
-
-            return new Builder<>(factoryForSchema(schema));
-        }
-
-        public FieldValuesIn<GenericMapData<F>> valuesFor(DataSchema schema) {
+        public FieldValuesIn valuesFor(DataSchema schema) {
 
             return FieldValuesIn.withDataFactory(factoryForSchema(schema));
         }
 
-        public GenericDataFactory<F, GenericMapData<F>> factoryForSchema(DataSchema schema) {
+        public GenericDataFactory<F> factoryForSchema(DataSchema schema) {
             return new Factory<>(asGenericMapDataSchema(schema));
         }
 
-    }
+        public GenericDataBuilder<F> builderForSchema(DataSchema schema) {
 
-    public static class Builder<F> extends GenericDataBuilders.KnownSchema<F, GenericMapData<F>, Builder<F>> {
+            return GenericDataBuilder.forFactory(factoryForSchema(
+                    asGenericMapDataSchema(schema)));
+        }
 
-        Builder(GenericDataFactory<F, GenericMapData<F>> dataFactory) {
-            super(dataFactory);
+        public GenericDataBuilder<F> builderNoSchema() {
+
+            return GenericDataBuilder.forProvider(new GenericMapDataFactoryProvider<>(this), fieldNameMapping);
         }
     }
 
-    public static class BuilderNoSchema<F> extends GenericDataBuilders.BuilderNoSchema<F, GenericMapData<F>, BuilderNoSchema<F>> {
-
-        BuilderNoSchema(DataFactoryProvider<GenericMapData<F>> dataFactory,
-                        Function<? super String, ? extends F> fieldNameMapping) {
-            super(dataFactory, fieldNameMapping);
-        }
-    }
 
     @Override
     public Object getAt(int index) {
@@ -212,7 +196,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
     }
 
     static class Factory<F> extends AbstractGenericWritableData<F>
-            implements GenericDataFactory<F, GenericMapData<F>> {
+            implements GenericDataFactory<F> {
 
         private final GenericMapDataSchema<F> schema;
 
@@ -225,26 +209,6 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
         @Override
         public GenericMapDataSchema<F> getSchema() {
             return schema;
-        }
-
-        @Override
-        public Class<?> getDataType() {
-            return GenericMapData.class;
-        }
-
-        @Override
-        public FieldSetter getSetter(F field) {
-            return new AbstractFieldSetter() {
-                @Override
-                public void clear(WritableData writableData) {
-                    data.remove(field);
-                }
-
-                @Override
-                public void set(WritableData writableData, Object value) {
-                    data.put(field, value);
-                }
-            };
         }
 
         @Override
@@ -295,6 +259,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
                 throw new NoSuchFieldException(field.toString(), GenericMapDataSchema.this);
             }
             return new AbstractFieldGetter() {
+                @SuppressWarnings("unchecked")
                 @Override
                 public Object get(DidoData data) {
                     return ((GenericMapData<F>) data).get(field);
@@ -345,11 +310,13 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
             }
 
             return new AbstractFieldSetter() {
+                @SuppressWarnings("unchecked")
                 @Override
                 public void clear(WritableData writable) {
                     ((Factory<F>) writable).data.remove(field);
                 }
 
+                @SuppressWarnings("unchecked")
                 @Override
                 public void set(WritableData writable, Object value) {
                     ((Factory<F>) writable).data.put(field, value);

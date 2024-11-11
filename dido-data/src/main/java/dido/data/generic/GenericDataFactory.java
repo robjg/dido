@@ -3,7 +3,7 @@ package dido.data.generic;
 import dido.data.DataFactory;
 import dido.data.FieldSetter;
 
-public interface GenericDataFactory<F, D extends GenericData<F>> extends DataFactory<D> {
+public interface GenericDataFactory<F> extends DataFactory {
 
     @Override
     GenericWriteSchema<F> getSchema();
@@ -15,4 +15,7 @@ public interface GenericDataFactory<F, D extends GenericData<F>> extends DataFac
 
     @Override
     GenericWritableData<F> getWritableData();
+
+    @Override
+    GenericData<F> toData();
 }

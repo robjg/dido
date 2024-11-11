@@ -2,6 +2,7 @@ package dido.data.enums;
 
 import dido.data.SchemaReference;
 import dido.data.generic.GenericData;
+import dido.data.generic.GenericDataBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -64,7 +65,7 @@ class EnumMapDataTest {
     @Test
     void builderWithNoSchema() {
 
-        EnumDataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
+        GenericDataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
 
         GenericData<Fields> data3 = builderNoSchema
                 .withString(Fields.Fruit, "Apple")
@@ -84,7 +85,7 @@ class EnumMapDataTest {
 
         EnumSchema<Fields> schema = EnumSchema.schemaFor(Fields.class, Fields::getType);
 
-        EnumDataBuilder<Fields> builder = EnumMapData.newBuilder(schema);
+        GenericDataBuilder<Fields> builder = EnumMapData.newBuilder(schema);
 
         GenericData<Fields> data1 = builder
                 .with(Fields.Fruit, "Apple")
@@ -111,7 +112,7 @@ class EnumMapDataTest {
         assertThat(data2.getString(Fields.Fruit), is("Orange"));
         assertThat(data2.getStringAt(1), is("Orange"));
 
-        EnumDataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
+        GenericDataBuilder<Fields> builderNoSchema = EnumMapData.builderForEnum(Fields.class);
 
         GenericData<Fields> data3 = builderNoSchema
                 .withString(Fields.Fruit, "Apple")
@@ -160,7 +161,7 @@ class EnumMapDataTest {
                 .addRepeatingField(Family.CHILDREN, personSchema)
                 .build();
 
-        EnumData<Family> family = EnumMapData.newBuilder(familySchema)
+        GenericData<Family> family = EnumMapData.newBuilder(familySchema)
                 .with(Family.MUM, EnumMapData.newBuilder(personSchema)
                         .with(Person.NAME, "Kate")
                         .with(Person.SEX, Sex.FEMALE)
@@ -217,17 +218,17 @@ class EnumMapDataTest {
 
         assertThat(nodeSchema.toString(), is("{[1:NAME]=java.lang.String, [2:CHILDREN]=[SchemaReference]}"));
 
-        EnumData<Node> george = EnumMapData.newBuilder(nodeSchema)
+        GenericData<Node> george = EnumMapData.newBuilder(nodeSchema)
                 .with(Node.NAME, "George")
                 .build();
-        EnumData<Node> charlotte = EnumMapData.newBuilder(nodeSchema)
+        GenericData<Node> charlotte = EnumMapData.newBuilder(nodeSchema)
                 .with(Node.NAME, "Charlot")
                 .build();
-        EnumData<Node> louis = EnumMapData.newBuilder(nodeSchema)
+        GenericData<Node> louis = EnumMapData.newBuilder(nodeSchema)
                 .with(Node.NAME, "Louis")
                 .build();
 
-        EnumData<Node> william = EnumMapData.newBuilder(nodeSchema)
+        GenericData<Node> william = EnumMapData.newBuilder(nodeSchema)
                 .with(Node.NAME, "William")
                 .with(Node.CHILDREN, Arrays.asList(george, charlotte, louis))
                 .build();

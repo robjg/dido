@@ -3,12 +3,7 @@ package dido.data;
 /**
  * Provide an {@link DataFactory} based on {@link NonBoxedData}.
  */
-public class NonBoxedDataFactoryProvider implements DataFactoryProvider<NonBoxedData> {
-
-    @Override
-    public Class<NonBoxedData> getDataType() {
-        return NonBoxedData.class;
-    }
+public class NonBoxedDataFactoryProvider implements DataFactoryProvider {
 
     @Override
     public SchemaFactory getSchemaFactory() {
@@ -16,7 +11,7 @@ public class NonBoxedDataFactoryProvider implements DataFactoryProvider<NonBoxed
     }
 
     @Override
-    public DataFactory<NonBoxedData> provideFactory(DataSchema schema) {
+    public DataFactory factoryFor(DataSchema schema) {
         return NonBoxedData.factoryForSchema(schema);
     }
 }

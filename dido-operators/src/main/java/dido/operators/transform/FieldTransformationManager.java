@@ -10,7 +10,7 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class FieldTransformationManager<D extends DidoData> {
+public class FieldTransformationManager {
 
     private final NavigableMap<Integer, SchemaField> indexFields = new TreeMap<>();
 
@@ -76,15 +76,15 @@ public class FieldTransformationManager<D extends DidoData> {
     }
 
     public static <D extends DidoData>
-    FieldTransformationManager<D> forSchema(DataSchema incomingSchema) {
-        return new FieldTransformationManager<>(incomingSchema);
+    FieldTransformationManager forSchema(DataSchema incomingSchema) {
+        return new FieldTransformationManager(incomingSchema);
     }
 
     public static <D extends DidoData>
-    FieldTransformationManager<D> forSchemaWithCopy(DataSchema incomingSchema) {
+    FieldTransformationManager forSchemaWithCopy(DataSchema incomingSchema) {
 
-        FieldTransformationManager<D> transformationManager =
-                new FieldTransformationManager<>(incomingSchema);
+        FieldTransformationManager transformationManager =
+                new FieldTransformationManager(incomingSchema);
 
         for (SchemaField field : incomingSchema.getSchemaFields()) {
 
@@ -100,7 +100,7 @@ public class FieldTransformationManager<D extends DidoData> {
         factoryConsumer.accept(factory);
     }
 
-    public Transformation<D> createTransformation(DataFactoryProvider<D> dataFactoryProvider) {
+    public Transformation createTransformation(DataFactoryProvider dataFactoryProvider) {
 
         SchemaFactory schemaFactory = dataFactoryProvider.getSchemaFactory();
 
@@ -115,7 +115,7 @@ public class FieldTransformationManager<D extends DidoData> {
 
         WriteSchema newSchema = WriteSchema.from(schemaFactory.toSchema());
 
-        DataFactory<D> dataFactory = dataFactoryProvider.provideFactory(newSchema);
+        DataFactory dataFactory = dataFactoryProvider.factoryFor(newSchema);
 
         List<BiConsumer<DidoData, WritableData>> fieldOperations = new ArrayList<>(newSchema.lastIndex());
         for (TransformerFactory operationFactory : indexFactories.values()) {
@@ -128,17 +128,17 @@ public class FieldTransformationManager<D extends DidoData> {
         return new TransformImpl(fieldOperations, newSchema, dataFactory);
     }
 
-    class TransformImpl implements Transformation<D> {
+    static class TransformImpl implements Transformation {
 
         private final List<BiConsumer<DidoData, WritableData>> operationList;
 
         private final WriteSchema schema;
 
-        private final DataFactory<D> dataFactory;
+        private final DataFactory dataFactory;
 
         TransformImpl(List<BiConsumer<DidoData, WritableData>> operationList,
                       WriteSchema schema,
-                      DataFactory<D> dataFactory) {
+                      DataFactory dataFactory) {
             this.operationList = operationList;
             this.schema = schema;
             this.dataFactory = dataFactory;
@@ -150,7 +150,7 @@ public class FieldTransformationManager<D extends DidoData> {
         }
 
         @Override
-        public D apply(DidoData data) {
+        public DidoData apply(DidoData data) {
 
             WritableData writableData = dataFactory.getWritableData();
 

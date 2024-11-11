@@ -33,7 +33,7 @@ class DataReaderTest {
         doTest(new NonBoxedDataFactoryProvider());
     }
 
-    void doTest(DataFactoryProvider<?> dataFactoryProvider) {
+    void doTest(DataFactoryProvider dataFactoryProvider) {
 
         DataSchema schema = SchemaBuilder.builderFor(dataFactoryProvider.getSchemaFactory())
                 .addNamed("Fruit", String.class)
@@ -41,7 +41,7 @@ class DataReaderTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        DataFactory<?> dataFactory = dataFactoryProvider.provideFactory(schema);
+        DataFactory dataFactory = dataFactoryProvider.factoryFor(schema);
 
         List<DidoData> data = writeWithFieldSetters(dataFactory);
 
@@ -55,7 +55,7 @@ class DataReaderTest {
                 ReadStrategy.fromSchema(dataFactory.getSchema()), data));
     }
 
-    static List<DidoData> writeWithFieldSetters(DataFactory<?> dataFactory) {
+    static List<DidoData> writeWithFieldSetters(DataFactory dataFactory) {
 
         WriteStrategy schema = WriteStrategy.fromSchema(dataFactory.getSchema());
 

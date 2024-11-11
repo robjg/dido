@@ -70,7 +70,7 @@ class FlattenTest {
 
         assertThat(resultSchema1, is(expectedSchema));
 
-        FieldValuesIn<?> values = ArrayData.valuesForSchema(expectedSchema);
+        FieldValuesIn values = ArrayData.valuesForSchema(expectedSchema);
 
         assertThat(results, contains(
                 values.of("Foo", 1, "X"),

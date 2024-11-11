@@ -16,13 +16,13 @@ import java.util.stream.Stream;
 /**
  * For A fluent way of providing data for a known schema
  */
-public class FieldValuesIn<D extends DidoData> {
+public class FieldValuesIn {
 
-    private final DataFactory<D> dataFactory;
+    private final DataFactory dataFactory;
 
     private final FieldSetter[] setters;
 
-    private FieldValuesIn(DataFactory<D> dataFactory) {
+    private FieldValuesIn(DataFactory dataFactory) {
         this.dataFactory = dataFactory;
         DataSchema schema = dataFactory.getSchema();
         WriteStrategy writeStrategy = WriteStrategy.fromSchema(schema);
@@ -32,15 +32,15 @@ public class FieldValuesIn<D extends DidoData> {
         }
     }
 
-    public static <D extends DidoData> FieldValuesIn<D> withDataFactory(DataFactory<D> dataFactory) {
-        return new FieldValuesIn<>(dataFactory);
+    public static FieldValuesIn withDataFactory(DataFactory dataFactory) {
+        return new FieldValuesIn(dataFactory);
     }
 
     public DataSchema getSchema() {
         return dataFactory.getSchema();
     }
 
-    public D of(Object... values) {
+    public DidoData of(Object... values) {
         WritableData writableData = dataFactory.getWritableData();
         for (int i = 0; i < values.length; ++i) {
             Object value = values[i];
@@ -51,7 +51,7 @@ public class FieldValuesIn<D extends DidoData> {
         return dataFactory.toData();
     }
 
-    public D ofCollection(Collection<?> values) {
+    public DidoData ofCollection(Collection<?> values) {
         WritableData writableData = dataFactory.getWritableData();
         int i = 0;
         for (Object value : values) {
@@ -65,7 +65,7 @@ public class FieldValuesIn<D extends DidoData> {
         return dataFactory.toData();
     }
 
-    public D copy(DidoData from) {
+    public DidoData copy(DidoData from) {
         return ofCollection(FieldValuesOut.collectionOf(from));
     }
 
@@ -74,7 +74,7 @@ public class FieldValuesIn<D extends DidoData> {
      *
      * @return A collector.
      */
-    public Collector<Object, WritableData, D> toCollector() {
+    public Collector<Object, WritableData, DidoData> toCollector() {
         return new Collector<>() {
             int i = 1;
 
@@ -96,7 +96,7 @@ public class FieldValuesIn<D extends DidoData> {
             }
 
             @Override
-            public Function<WritableData, D> finisher() {
+            public Function<WritableData, DidoData> finisher() {
                 return writableData -> dataFactory.toData();
             }
 

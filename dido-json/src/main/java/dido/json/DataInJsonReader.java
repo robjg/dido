@@ -4,7 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
 import com.google.gson.stream.JsonReader;
-import dido.data.*;
+import dido.data.ArrayDataDataFactoryProvider;
+import dido.data.DataFactoryProvider;
+import dido.data.DataSchema;
+import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -12,7 +15,6 @@ import dido.how.DataInHow;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UncheckedIOException;
-import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -29,12 +31,9 @@ public class DataInJsonReader implements DataInHow<Reader> {
 
     private final boolean isArray;
 
-    private final Type dataType;
-
-    private DataInJsonReader(Gson gson, boolean isArray, Type dataType) {
+    private DataInJsonReader(Gson gson, boolean isArray) {
         this.gson = gson;
         this.isArray = isArray;
-        this.dataType = dataType;
     }
 
     /**
@@ -48,14 +47,14 @@ public class DataInJsonReader implements DataInHow<Reader> {
         return new WrapperSettings(schema);
     }
 
-    public static CopySettings<ArrayData> asCopy() {
+    public static CopySettings asCopy() {
 
-        return new CopySettings<>(new ArrayDataDataFactoryProvider());
+        return new CopySettings(new ArrayDataDataFactoryProvider());
     }
 
-    public static <D extends DidoData> CopySettings<D> asCopy(DataFactoryProvider<D> dataFactoryProvider) {
+    public static CopySettings asCopy(DataFactoryProvider dataFactoryProvider) {
 
-        return new CopySettings<>(dataFactoryProvider);
+        return new CopySettings(dataFactoryProvider);
     }
 
     public static class WrapperSettings {
@@ -78,14 +77,13 @@ public class DataInJsonReader implements DataInHow<Reader> {
             return new DataInJsonReader(
                     JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                             .create(),
-                    isArray,
-                    DidoData.class);
+                    isArray);
         }
     }
 
-    public static class CopySettings<D extends DidoData> {
+    public static class CopySettings {
 
-        private final DataFactoryProvider<D> dataFactoryProvider;
+        private final DataFactoryProvider dataFactoryProvider;
 
         private DataSchema schema;
 
@@ -93,21 +91,21 @@ public class DataInJsonReader implements DataInHow<Reader> {
 
         private boolean isArray;
 
-        CopySettings(DataFactoryProvider<D> dataFactoryProvider) {
+        CopySettings(DataFactoryProvider dataFactoryProvider) {
             this.dataFactoryProvider = Objects.requireNonNull(dataFactoryProvider);
         }
 
-        public CopySettings<D> setSchema(DataSchema schema) {
+        public CopySettings setSchema(DataSchema schema) {
             this.schema = schema;
             return this;
         }
 
-        public CopySettings<D> setPartial(boolean partial) {
+        public CopySettings setPartial(boolean partial) {
             this.partial = partial;
             return this;
         }
 
-        public CopySettings<D> setIsArray(boolean isArray) {
+        public CopySettings setIsArray(boolean isArray) {
             this.isArray = isArray;
             return this;
         }
@@ -120,16 +118,14 @@ public class DataInJsonReader implements DataInHow<Reader> {
                 return new DataInJsonReader(
                         JsonDataPartialCopy.registerPartialSchema(new GsonBuilder(), schema, dataFactoryProvider)
                                 .create(),
-                        isArray,
-                        dataFactoryProvider.getDataType());
+                        isArray);
             } else {
 
                 return new DataInJsonReader(
                         JsonDataCopy.registerSchema(new GsonBuilder(),
                                         schema, dataFactoryProvider)
                                 .create(),
-                        isArray,
-                        dataFactoryProvider.getDataType());
+                        isArray);
             }
         }
     }
@@ -170,7 +166,7 @@ public class DataInJsonReader implements DataInHow<Reader> {
 
                     @Override
                     public DidoData next() {
-                        return gson.fromJson(reader, dataType);
+                        return gson.fromJson(reader, DidoData.class);
                     }
                 };
             }

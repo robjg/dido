@@ -12,6 +12,10 @@ import java.util.Objects;
  */
 public interface DidoData extends IndexedData {
 
+    static ArrayData of(Object... data) {
+        return ArrayData.of(data);
+    }
+
     @Override
     DataSchema getSchema();
 

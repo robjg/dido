@@ -63,7 +63,7 @@ class DataOutCsvTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        FieldValuesIn<MapData> values = MapData.valuesForSchema(schema);
+        FieldValuesIn values = MapData.valuesForSchema(schema);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 

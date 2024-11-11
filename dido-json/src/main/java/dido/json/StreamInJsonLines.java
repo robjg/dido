@@ -1,6 +1,9 @@
 package dido.json;
 
-import dido.data.*;
+import dido.data.ArrayDataDataFactoryProvider;
+import dido.data.DataFactoryProvider;
+import dido.data.DataSchema;
+import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -30,14 +33,14 @@ public class StreamInJsonLines implements DataInHow<Reader> {
         return new WrapperSettings();
     }
 
-    public static  CopySettings<ArrayData> asCopy() {
+    public static  CopySettings asCopy() {
 
         return asCopy(new ArrayDataDataFactoryProvider());
     }
 
-    public static <D extends DidoData> CopySettings<D> asCopy(DataFactoryProvider<D> dataFactoryProvider) {
+    public static CopySettings asCopy(DataFactoryProvider dataFactoryProvider) {
 
-        return new CopySettings<>(dataFactoryProvider);
+        return new CopySettings(dataFactoryProvider);
     }
 
     public static class WrapperSettings {
@@ -60,20 +63,20 @@ public class StreamInJsonLines implements DataInHow<Reader> {
         }
     }
 
-    public static class CopySettings<D extends DidoData> {
+    public static class CopySettings {
 
-        private final JsonStringToData.CopySettings<D> copySettings;
+        private final JsonStringToData.CopySettings copySettings;
 
-        CopySettings(DataFactoryProvider<D> dataFactoryProvider) {
+        CopySettings(DataFactoryProvider dataFactoryProvider) {
             this.copySettings = JsonStringToData.asCopy(dataFactoryProvider);
         }
 
-        public CopySettings<D> setSchema(DataSchema schema) {
+        public CopySettings setSchema(DataSchema schema) {
             this.copySettings.setSchema(schema);
             return this;
         }
 
-        public CopySettings<D> setPartial(boolean partial) {
+        public CopySettings setPartial(boolean partial) {
             this.copySettings.setPartial(partial);
             return this;
         }

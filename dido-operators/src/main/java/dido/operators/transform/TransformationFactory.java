@@ -24,7 +24,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
      */
     private boolean withCopy;
 
-    private DataFactoryProvider<?> dataFactoryProvider;
+    private DataFactoryProvider dataFactoryProvider;
 
     @Override
     public Function<DidoData, DidoData> get() {
@@ -49,11 +49,11 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         this.withCopy = withCopy;
     }
 
-    public DataFactoryProvider<?> getDataFactoryProvider() {
+    public DataFactoryProvider getDataFactoryProvider() {
         return dataFactoryProvider;
     }
 
-    public void setDataFactoryProvider(DataFactoryProvider<?> dataFactoryProvider) {
+    public void setDataFactoryProvider(DataFactoryProvider dataFactoryProvider) {
         this.dataFactoryProvider = dataFactoryProvider;
     }
 
@@ -63,7 +63,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
 
         private final boolean withCopy;
 
-        private final DataFactoryProvider<?> dataFactoryProvider;
+        private final DataFactoryProvider dataFactoryProvider;
 
         private Function<? super DidoData, ? extends DidoData> delegate;
 
@@ -88,12 +88,12 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         }
     }
 
-    static <D extends DidoData> Transformation<D> functionFor(List<TransformerDefinition> definitions,
+    static Transformation functionFor(List<TransformerDefinition> definitions,
                                                 DataSchema schemaFrom,
                                                 boolean withCopy,
-                                                DataFactoryProvider<D> dataFactoryProvider) {
+                                                DataFactoryProvider dataFactoryProvider) {
 
-        FieldTransformationManager<D> transformationManager = withCopy ?
+        FieldTransformationManager transformationManager = withCopy ?
                 FieldTransformationManager.forSchemaWithCopy(schemaFrom) :
                 FieldTransformationManager.forSchema(schemaFrom);
 

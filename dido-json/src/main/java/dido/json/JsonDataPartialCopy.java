@@ -12,45 +12,44 @@ import java.util.Set;
 
 /**
  *
- * @param <D>
  */
-public class JsonDataPartialCopy<D extends DidoData> {
+public class JsonDataPartialCopy {
 
-    private final DataFactoryProvider<D> dataFactoryProvider;
+    private final DataFactoryProvider dataFactoryProvider;
 
     private final LinkedList<DataSchema> stack = new LinkedList<>();
 
     private JsonDataPartialCopy(DataSchema partialSchema,
-                                DataFactoryProvider<D> dataFactoryProvider) {
+                                DataFactoryProvider dataFactoryProvider) {
         this.stack.addFirst(partialSchema);
         this.dataFactoryProvider = dataFactoryProvider;
     }
 
-    public static <D extends DidoData> GsonBuilder registerNoSchema(GsonBuilder gsonBuilder,
-                                                                    DataFactoryProvider<D> dataFactory) {
-        return new JsonDataPartialCopy<>(DataSchema.emptySchema(), dataFactory).init(gsonBuilder);
+    public static GsonBuilder registerNoSchema(GsonBuilder gsonBuilder,
+                                                                    DataFactoryProvider dataFactory) {
+        return new JsonDataPartialCopy(DataSchema.emptySchema(), dataFactory).init(gsonBuilder);
     }
 
-    public static <D extends DidoData> GsonBuilder registerPartialSchema(GsonBuilder gsonBuilder,
+    public static GsonBuilder registerPartialSchema(GsonBuilder gsonBuilder,
                                                                          DataSchema partialSchema,
-                                                                         DataFactoryProvider<D> dataFactory) {
-        return new JsonDataPartialCopy<>(partialSchema == null ? DataSchema.emptySchema() : partialSchema,
+                                                                         DataFactoryProvider dataFactory) {
+        return new JsonDataPartialCopy(partialSchema == null ? DataSchema.emptySchema() : partialSchema,
                 dataFactory).init(gsonBuilder);
     }
 
     private GsonBuilder init(GsonBuilder gsonBuilder) {
         return gsonBuilder
-                .registerTypeAdapter(dataFactoryProvider.getDataType(),
+                .registerTypeAdapter(DidoData.class,
                         new DataDeserializer())
                 .registerTypeAdapter(SchemaField.NESTED_REPEATING_TYPE,
-                        new RepeatingDeserializer(dataFactoryProvider.getDataType()));
+                        new RepeatingDeserializer());
     }
 
-    class DataDeserializer implements JsonDeserializer<D> {
+    class DataDeserializer implements JsonDeserializer<DidoData> {
 
 
         @Override
-        public D deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public DidoData deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
             if (!json.isJsonObject()) {
                 throw new JsonParseException("JsonObject expected, received: " + json +
@@ -84,7 +83,7 @@ public class JsonDataPartialCopy<D extends DidoData> {
                             fieldType = SchemaField.NESTED_REPEATING_TYPE;
                         }
                         else {
-                            fieldType = dataFactoryProvider.getDataType();
+                            fieldType = SchemaField.NESTED_TYPE;
                         }
                     }
 
@@ -124,7 +123,7 @@ public class JsonDataPartialCopy<D extends DidoData> {
 
             DataSchema schema = schemaFactory.toSchema();
 
-            return FieldValuesIn.withDataFactory(dataFactoryProvider.provideFactory(schema))
+            return FieldValuesIn.withDataFactory(dataFactoryProvider.factoryFor(schema))
                     .of(values);
         }
     }

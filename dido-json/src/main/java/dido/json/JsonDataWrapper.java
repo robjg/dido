@@ -35,7 +35,7 @@ public class JsonDataWrapper {
     private GsonBuilder init(GsonBuilder gsonBuilder) {
         return gsonBuilder
                 .registerTypeAdapter(DATA_TYPE, deserializer)
-                .registerTypeAdapter(REPEATING_DATA_TYPE, new RepeatingDeserializer(DATA_TYPE));
+                .registerTypeAdapter(REPEATING_DATA_TYPE, new RepeatingDeserializer());
     }
 
     class DataDeserializer implements JsonDeserializer<DidoData> {

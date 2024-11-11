@@ -123,10 +123,10 @@ class NonBoxedDataTest {
                 .addNamed("Date", Date.class)
                 .build();
 
-        MapData original = MapData.builderForSchema(schema)
+        DidoData original = MapData.builderForSchema(schema)
                 .build();
 
-        NonBoxedData copy = NonBoxedData.builderNoSchema()
+        DidoData copy = NonBoxedData.builderNoSchema()
                 .copy(original)
                 .build();
 

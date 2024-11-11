@@ -23,9 +23,9 @@ public class FieldValuesOutTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        FieldValuesIn<ArrayData> values = FieldValuesIn.withDataFactory(ArrayData.factoryForSchema(dataSchema));
+        FieldValuesIn values = FieldValuesIn.withDataFactory(ArrayData.factoryForSchema(dataSchema));
 
-        ArrayData data = values.of("Apple", 5, 27.2);
+        DidoData data = values.of("Apple", 5, 27.2);
 
         FieldValuesOut valuesOut = new FieldValuesOut(dataSchema);
 

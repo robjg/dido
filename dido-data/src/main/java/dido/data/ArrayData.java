@@ -22,16 +22,18 @@ public class ArrayData extends AbstractData implements DidoData {
         this.data = data;
     }
 
-    public static DidoData of(Object... data) {
-        Objects.requireNonNull(data);
+    public static ArrayData of(Object... data) {
+        Object[] copy = new Object[Objects.requireNonNull(data).length];
 
         ArrayDataSchemaFactory schemaFactory = new ArrayDataSchemaFactory();
-        for (Object datum : data) {
-            schemaFactory.addSchemaField(SchemaField.of(0, null,
+        for (int i = 0; i < data.length; i++) {
+            Object datum = data[i];
+            schemaFactory.addSchemaField(SchemaField.of(i + 1, null,
                     datum == null ? void.class : datum.getClass()));
+            copy[i] = datum;
         }
 
-        return new ArrayData(schemaFactory.toSchema(), data);
+        return new ArrayData(schemaFactory.toSchema(), copy);
     }
 
     public static SchemaFactory schemaFactory() {
@@ -52,33 +54,33 @@ public class ArrayData extends AbstractData implements DidoData {
         }
     }
 
-    public static DataBuilder<ArrayData> builderForSchema(DataSchema schema) {
+    public static DataBuilder builderForSchema(DataSchema schema) {
 
         return builderForSchema(asArrayDataSchema(schema));
     }
 
-    public static DataBuilder<ArrayData> builderForSchema(ArrayDataSchema schema) {
+    public static DataBuilder builderForSchema(ArrayDataSchema schema) {
 
         return DataBuilder.forFactory(schema.newDataFactory());
     }
 
-    public static DataBuilder<ArrayData> builderNoSchema() {
+    public static DataBuilder builderNoSchema() {
 
         return DataBuilder.forProvider(new ArrayDataDataFactoryProvider());
     }
 
-    public static DataFactory<ArrayData> factoryForSchema(DataSchema schema) {
+    public static DataFactory factoryForSchema(DataSchema schema) {
         return new ArrayDataFactory(asArrayDataSchema(schema));
     }
 
-    public static FieldValuesIn<ArrayData> valuesForSchema(DataSchema schema) {
+    public static FieldValuesIn valuesForSchema(DataSchema schema) {
 
         return FieldValuesIn.withDataFactory(factoryForSchema(schema));
     }
 
     public static ArrayData copy(DidoData from) {
 
-        return valuesForSchema(from.getSchema()).copy(from);
+        return (ArrayData) valuesForSchema(from.getSchema()).copy(from);
     }
 
     @Override
@@ -96,7 +98,7 @@ public class ArrayData extends AbstractData implements DidoData {
         return data[index - 1] != null;
     }
 
-    static class ArrayDataFactory extends AbstractWritableData implements DataFactory<ArrayData> {
+    static class ArrayDataFactory extends AbstractWritableData implements DataFactory {
 
         private final ArrayDataSchema schema;
 
@@ -110,11 +112,6 @@ public class ArrayData extends AbstractData implements DidoData {
         @Override
         public ArrayDataSchema getSchema() {
             return schema;
-        }
-
-        @Override
-        public Class<ArrayData> getDataType() {
-            return ArrayData.class;
         }
 
         @Override
@@ -202,7 +199,7 @@ public class ArrayData extends AbstractData implements DidoData {
             return getFieldGetterAt(index);
         }
 
-        public DataFactory<ArrayData> newDataFactory() {
+        public DataFactory newDataFactory() {
             return new ArrayDataFactory(this);
         }
 

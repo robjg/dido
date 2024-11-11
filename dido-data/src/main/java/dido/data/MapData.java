@@ -85,11 +85,11 @@ public class MapData extends AbstractData implements DidoData {
 
     private static MapData fromInputs(Object... args) {
 
-        DataBuilder<MapData> builder = builderNoSchema();
+        DataBuilder builder = builderNoSchema();
         for (int i = 0; i < args.length; i = i + 2) {
             builder.with((String) args[i], args[i + 1]);
         }
-        return builder.build();
+        return (MapData) builder.build();
     }
 
     public static MapDataSchemaFactory schemaFactory() {
@@ -119,32 +119,32 @@ public class MapData extends AbstractData implements DidoData {
         return schemaFactory.toSchema();
     }
 
-    public static DataBuilder<MapData> builderForSchema(DataSchema schema) {
+    public static DataBuilder builderForSchema(DataSchema schema) {
 
         return builderForSchema(asMapDataSchema(schema));
     }
 
-    public static DataBuilder<MapData> builderForSchema(MapDataSchema schema) {
+    public static DataBuilder builderForSchema(MapDataSchema schema) {
 
         return DataBuilder.forFactory(factoryForSchema(schema));
     }
 
 
-    public static DataBuilder<MapData> builderNoSchema() {
+    public static DataBuilder builderNoSchema() {
 
         return DataBuilder.forProvider(new MapDataDataFactoryProvider());
     }
 
-    public static DataFactory<MapData> factoryForSchema(DataSchema schema) {
+    public static DataFactory factoryForSchema(DataSchema schema) {
         return new MapDataFactory(asMapDataSchema(schema));
     }
 
-    public static FieldValuesIn<MapData> valuesForSchema(DataSchema schema) {
+    public static FieldValuesIn valuesForSchema(DataSchema schema) {
 
         return FieldValuesIn.withDataFactory(factoryForSchema(schema));
     }
 
-    public static MapData copy(DidoData from) {
+    public static DidoData copy(DidoData from) {
 
         return valuesForSchema(from.getSchema()).copy(from);
     }
@@ -176,7 +176,7 @@ public class MapData extends AbstractData implements DidoData {
 
 
 
-    private static class MapDataFactory extends AbstractWritableData implements DataFactory<MapData> {
+    private static class MapDataFactory extends AbstractWritableData implements DataFactory {
 
         private final MapDataSchema schema;
 
@@ -210,11 +210,6 @@ public class MapData extends AbstractData implements DidoData {
         @Override
         public void setNamed(String name, Object value) {
             map.put(name, value);
-        }
-
-        @Override
-        public Class<MapData> getDataType() {
-            return MapData.class;
         }
 
         @Override

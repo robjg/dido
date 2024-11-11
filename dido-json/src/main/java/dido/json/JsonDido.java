@@ -3,7 +3,6 @@ package dido.json;
 import dido.data.ArrayDataDataFactoryProvider;
 import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
-import dido.data.DidoData;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
 import dido.how.StreamHows;
@@ -63,7 +62,7 @@ public class JsonDido {
      * than wrapping is assumed.
      * @oddjob.required No, defaults to ArrayData, if copy is true.
      */
-    private DataFactoryProvider<?> dataFactoryProvider;
+    private DataFactoryProvider dataFactoryProvider;
 
     public DataOutHow<OutputStream> toStreamOut() {
 
@@ -123,7 +122,7 @@ public class JsonDido {
         }
     }
 
-    private DataFactoryProvider<? extends DidoData> dataFactoryProvider() {
+    private DataFactoryProvider dataFactoryProvider() {
         return this.dataFactoryProvider == null ? new ArrayDataDataFactoryProvider() : this.dataFactoryProvider;
     }
 

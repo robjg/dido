@@ -33,7 +33,7 @@ class DataInJsonReaderTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        FieldValuesIn<ArrayData> values = ArrayData.valuesForSchema(expectedSchema);
+        FieldValuesIn values = ArrayData.valuesForSchema(expectedSchema);
 
         DataInHow<Reader> test = DataInJsonReader.asCopy()
                 .setIsArray(true)
@@ -65,7 +65,7 @@ class DataInJsonReaderTest {
     }
 
     @Test
-    void readsNestedArray() throws Exception {
+    void readsNestedArray() {
 
         String json = "[\n" +
                 "  { \"OrderId\": \"A123\", \n" +
@@ -131,7 +131,7 @@ class DataInJsonReaderTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        FieldValuesIn<ArrayData> values = ArrayData.valuesForSchema(expectedSchema);
+        FieldValuesIn values = ArrayData.valuesForSchema(expectedSchema);
 
         DataInHow<Reader> test = DataInJsonReader.asCopy()
                 .make();

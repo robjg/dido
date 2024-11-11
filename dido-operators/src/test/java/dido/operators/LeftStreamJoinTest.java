@@ -21,7 +21,7 @@ class LeftStreamJoinTest {
     @Test
     void testSimpleExample() {
 
-        FieldValuesIn<ArrayData> farmBuilder = ArrayData.valuesForSchema(
+        FieldValuesIn farmBuilder = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Id", int.class)
                         .addNamed("Farmer", String.class)
@@ -30,7 +30,7 @@ class LeftStreamJoinTest {
         DidoData farm1 = farmBuilder.of(1, "Brown");
         DidoData farm2 = farmBuilder.of(2, "Giles");
 
-        FieldValuesIn<ArrayData> produceBuilder = ArrayData.valuesForSchema(
+        FieldValuesIn produceBuilder = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -41,7 +41,7 @@ class LeftStreamJoinTest {
         DidoData produce2 = produceBuilder.of("Pears", 7, 1);
         DidoData produce3 = produceBuilder.of("Carrots", 15, 2);
 
-        FieldValuesIn<ArrayData> expectedBuilder = ArrayData.valuesForSchema(
+        FieldValuesIn expectedBuilder = ArrayData.valuesForSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
