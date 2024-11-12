@@ -63,7 +63,7 @@ class TextTableOutTest {
     }
 
     @Test
-    void testWithFields() throws Exception {
+    void testWithFields() {
 
         String expected =
                 "Fruit     |Quantity| Price" + System.lineSeparator() +

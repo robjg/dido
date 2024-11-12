@@ -6,16 +6,14 @@ import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 
-import java.lang.reflect.Type;
 import java.util.function.Function;
 
 public class JsonStringToData {
 
     public static Function<String, DidoData> asWrapperWithSchema(DataSchema schema) {
 
-        return new Known<>(JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+        return new Known(JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
                 .create(),
-                JsonDataWrapper.DATA_TYPE,
                 "ToWrapper, schema=" + schema);
     }
 
@@ -44,17 +42,15 @@ public class JsonStringToData {
             return this;
         }
 
-        public Function<String, DidoData> make() {
+        public Function<String, DidoData> make(GsonBuilder gsonBuilder) {
 
             if (schema == null || partial) {
 
-                return new UnknownWrapper<>(schema == null ? DataSchema.emptySchema() : schema,
-                        DidoData.class);
+                return new UnknownWrapper(schema == null ? DataSchema.emptySchema() : schema);
             } else {
 
-                return new Known<>(JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+                return new Known(JsonDataWrapper.registerSchema(gsonBuilder, schema)
                         .create(),
-                        JsonDataWrapper.DATA_TYPE,
                         "ToWrapper, schema=" + schema);
             }
         }
@@ -82,51 +78,45 @@ public class JsonStringToData {
             return this;
         }
 
-        public Function<String, DidoData> make() {
+        public Function<String, DidoData> make(GsonBuilder gsonBuilder) {
 
             if (schema == null || partial) {
                 DataSchema partialSchema = schema == null ? DataSchema.emptySchema() : schema;
 
-                return new Known<>(
+                return new Known(
                         JsonDataPartialCopy.registerPartialSchema(
-                                        new GsonBuilder(), partialSchema, dataFactoryProvider)
+                                        gsonBuilder, partialSchema, dataFactoryProvider)
                                 .create(),
-                        DidoData.class,
                         "toCopy, partialSchema=" + partialSchema);
             } else {
 
-                return new Known<>(JsonDataCopy.registerSchema(new GsonBuilder(), schema,
+                return new Known(JsonDataCopy.registerSchema(gsonBuilder, schema,
                                 dataFactoryProvider)
                         .create(),
-                        DidoData.class,
                         "ToCopy, schema=" + schema);
             }
         }
     }
 
-    static class UnknownWrapper<D extends DidoData> implements Function<String, D> {
+    static class UnknownWrapper implements Function<String, DidoData> {
 
         private final DataSchema partialSchema;
 
-        private final Class<D> dataType;
+        private volatile Known known;
 
-        private volatile Known<D> known;
-
-        UnknownWrapper(DataSchema partialSchema,
-                       Class<D> dataType) {
+        UnknownWrapper(DataSchema partialSchema) {
             this.partialSchema = partialSchema;
-            this.dataType = dataType;
         }
 
         @Override
-        public D apply(String s) {
+        public DidoData apply(String s) {
             if (known == null) {
                 DataSchema schema = JsonSchemaExtractor
                         .registerPartialSchema(new GsonBuilder(), partialSchema)
                         .create()
                         .fromJson(s, DataSchema.class);
                 Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema).create();
-                known = new Known<>(gson, dataType, toString());
+                known = new Known(gson, toString());
             }
             return known.apply(s);
         }
@@ -137,23 +127,20 @@ public class JsonStringToData {
         }
     }
 
-    static class Known<D extends DidoData> implements Function<String, D> {
+    static class Known implements Function<String, DidoData> {
 
         private final Gson gson;
 
-        private final Type dataType;
-
         private final String toString;
 
-        Known(Gson gson, Type dataType, String toString) {
+        Known(Gson gson, String toString) {
             this.gson = gson;
-            this.dataType = dataType;
             this.toString = toString;
         }
 
         @Override
-        public D apply(String s) {
-            return gson.fromJson(s, dataType);
+        public DidoData apply(String s) {
+            return gson.fromJson(s, DidoData.class);
         }
 
         @Override

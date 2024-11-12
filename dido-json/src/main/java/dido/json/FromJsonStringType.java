@@ -1,6 +1,5 @@
 package dido.json;
 
-import dido.data.ArrayDataDataFactoryProvider;
 import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
 import dido.data.DidoData;
@@ -48,22 +47,14 @@ public class FromJsonStringType {
 
     public Function<String, DidoData> toFunction() {
 
-        if (copy) {
+        DataFactoryProvider dataFactoryProvider =
+                this.dataFactoryProvider == null && copy ? DataFactoryProvider.newInstance() : this.dataFactoryProvider;
 
-            DataFactoryProvider dataFactoryProvider =
-                    this.dataFactoryProvider == null ? new ArrayDataDataFactoryProvider() : this.dataFactoryProvider;
-
-            return JsonStringToData.asCopy(dataFactoryProvider)
-                    .setSchema(schema)
-                    .setPartial(partialSchema)
-                    .make();
-        }
-        else {
-            return JsonStringToData.asWrapper()
-                    .setSchema(schema)
-                    .setPartial(partialSchema)
-                    .make();
-        }
+        return DataInJson.with()
+                .schema(schema)
+                .partialSchema(partialSchema)
+                .factoryProvider(dataFactoryProvider)
+                .asMapperFromString();
     }
 
     public DataSchema getSchema() {

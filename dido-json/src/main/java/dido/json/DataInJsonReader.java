@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
 import com.google.gson.stream.JsonReader;
-import dido.data.ArrayDataDataFactoryProvider;
 import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
 import dido.data.DidoData;
@@ -49,7 +48,7 @@ public class DataInJsonReader implements DataInHow<Reader> {
 
     public static CopySettings asCopy() {
 
-        return new CopySettings(new ArrayDataDataFactoryProvider());
+        return new CopySettings(DataFactoryProvider.newInstance());
     }
 
     public static CopySettings asCopy(DataFactoryProvider dataFactoryProvider) {
@@ -72,10 +71,10 @@ public class DataInJsonReader implements DataInHow<Reader> {
             return this;
         }
 
-        public DataInHow<Reader> make() {
+        public DataInHow<Reader> make(GsonBuilder gsonBuilder) {
 
             return new DataInJsonReader(
-                    JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+                    JsonDataWrapper.registerSchema(gsonBuilder, schema)
                             .create(),
                     isArray);
         }
@@ -110,19 +109,19 @@ public class DataInJsonReader implements DataInHow<Reader> {
             return this;
         }
 
-
-        public DataInHow<Reader> make() {
+        public DataInHow<Reader> make(GsonBuilder gsonBuilder) {
 
             if (schema == null || partial) {
 
                 return new DataInJsonReader(
-                        JsonDataPartialCopy.registerPartialSchema(new GsonBuilder(), schema, dataFactoryProvider)
+                        JsonDataPartialCopy.registerPartialSchema(gsonBuilder,
+                                        schema, dataFactoryProvider)
                                 .create(),
                         isArray);
             } else {
 
                 return new DataInJsonReader(
-                        JsonDataCopy.registerSchema(new GsonBuilder(),
+                        JsonDataCopy.registerSchema(gsonBuilder,
                                         schema, dataFactoryProvider)
                                 .create(),
                         isArray);

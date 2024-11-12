@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class StreamInJsonLinesTest {
+class DataInJsonLinesTest {
 
     @Test
     void testSimpleIn() {
@@ -23,9 +23,9 @@ class StreamInJsonLinesTest {
                 "{\"Fruit\":\"Orange\",\"Qty\":10,\"Price\":31.6}",
                 "{\"Fruit\":\"Pear\",\"Qty\":7,\"Price\":22.1}");
 
-        List<DidoData> in = StreamInJsonLines.asWrapper()
-                .make()
-                .inFrom(new StringReader(lines))
+        List<DidoData> in = DataInJson.with()
+                .inFormat(JsonDidoFormat.LINES)
+                .fromReader(new StringReader(lines))
                 .stream()
                 .collect(Collectors.toList());
 
@@ -62,11 +62,11 @@ class StreamInJsonLinesTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        List<DidoData> in = StreamInJsonLines.asWrapper()
-                .setSchema(schema)
-                .setPartial(true)
-                .make()
-                .inFrom(new StringReader(lines))
+        List<DidoData> in = DataInJson.with()
+                .inFormat(JsonDidoFormat.LINES)
+                .schema(schema)
+                .partialSchema(true)
+                .fromReader(new StringReader(lines))
                 .stream().collect(Collectors.toList());
 
         assertThat(in.size(), is(3));
@@ -104,10 +104,10 @@ class StreamInJsonLinesTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        List<DidoData> in = StreamInJsonLines.asWrapper()
-                .setSchema(schema)
-                .make()
-                .inFrom(new StringReader(lines))
+        List<DidoData> in = DataInJson.with()
+                .inFormat(JsonDidoFormat.LINES)
+                .schema(schema)
+                .fromReader(new StringReader(lines))
                 .stream()
                 .collect(Collectors.toList());
 

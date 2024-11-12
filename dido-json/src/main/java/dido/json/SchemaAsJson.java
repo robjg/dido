@@ -1,6 +1,5 @@
 package dido.json;
 
-import dido.data.ArrayDataDataFactoryProvider;
 import dido.data.DataSchema;
 import dido.data.DataSchemaSchema;
 import dido.data.DidoData;
@@ -34,8 +33,8 @@ public class SchemaAsJson {
 
     public static DataSchema fromJson(Reader input) throws Exception {
 
-        DataInHow<Reader> inHow = DataInJsonReader.asCopy(new ArrayDataDataFactoryProvider())
-                .setSchema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
+        DataInHow<Reader> inHow = DataInJson.with()
+                .schema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
                 .make();
 
         try (DataIn in = inHow.inFrom(input)) {
@@ -80,8 +79,9 @@ public class SchemaAsJson {
 
     public static Stream<DataSchema> fromJsonLines(Reader input) {
 
-        DataInHow<Reader> inHow = StreamInJsonLines.asWrapper()
-                .setSchema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
+        DataInHow<Reader> inHow = DataInJson.with()
+                .inFormat(JsonDidoFormat.LINES)
+                .schema(DataSchemaSchema.DATA_SCHEMA_SCHEMA)
                 .make();
 
         DataIn in = inHow.inFrom(input);

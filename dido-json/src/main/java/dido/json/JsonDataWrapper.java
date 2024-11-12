@@ -15,10 +15,6 @@ import java.util.Objects;
  */
 public class JsonDataWrapper {
 
-    public static final Class<DidoData> DATA_TYPE = DidoData.class;
-
-    public static final Class<?> REPEATING_DATA_TYPE = SchemaField.NESTED_REPEATING_TYPE;
-
     private static final Object NONE = new Object();
 
     private final DataDeserializer deserializer;
@@ -34,8 +30,8 @@ public class JsonDataWrapper {
 
     private GsonBuilder init(GsonBuilder gsonBuilder) {
         return gsonBuilder
-                .registerTypeAdapter(DATA_TYPE, deserializer)
-                .registerTypeAdapter(REPEATING_DATA_TYPE, new RepeatingDeserializer());
+                .registerTypeAdapter(SchemaField.NESTED_TYPE, deserializer)
+                .registerTypeAdapter(SchemaField.NESTED_REPEATING_TYPE, new RepeatingDeserializer());
     }
 
     class DataDeserializer implements JsonDeserializer<DidoData> {
@@ -98,9 +94,9 @@ public class JsonDataWrapper {
                     restore = deserializer.schema;
                     deserializer.setSchema(schemaField.getNestedSchema());
                     if (schemaField.isRepeating()) {
-                        fieldType = REPEATING_DATA_TYPE;
+                        fieldType = SchemaField.NESTED_REPEATING_TYPE;
                     } else {
-                        fieldType = DATA_TYPE;
+                        fieldType = SchemaField.NESTED_TYPE;
                     }
                 }
 

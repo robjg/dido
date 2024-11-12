@@ -85,41 +85,16 @@ public class JsonDido {
     public DataInHow<Reader> toReaderIn() {
 
         JsonDidoFormat format = Objects.requireNonNullElse(this.format, JsonDidoFormat.LINES);
-        switch (format) {
-            case DEFAULT:
-            case ARRAY:
-                boolean array = format == JsonDidoFormat.ARRAY;
-                if (copy || schema == null || partialSchema || dataFactoryProvider != null) {
 
-                    return DataInJsonReader.asCopy(dataFactoryProvider())
-                            .setSchema(schema)
-                            .setPartial(partialSchema)
-                            .setIsArray(array)
-                            .make();
-                }
-                else {
-                    return DataInJsonReader.asWrapper(schema)
-                            .setIsArray(array)
-                            .make();
-                }
-            case LINES:
-                if (copy) {
+        DataFactoryProvider dataFactoryProvider = this.dataFactoryProvider == null && copy ?
+                DataFactoryProvider.newInstance() : this.dataFactoryProvider;
 
-                    return StreamInJsonLines.asCopy(dataFactoryProvider())
-                            .setSchema(schema)
-                            .setPartial(partialSchema)
-                            .make();
-                }
-                else {
-
-                    return StreamInJsonLines.asWrapper()
-                            .setSchema(schema)
-                            .setPartial(partialSchema)
-                            .make();
-                }
-            default:
-                throw new IllegalArgumentException("Unknown " + format);
-        }
+        return DataInJson.with()
+                .inFormat(format)
+                .factoryProvider(dataFactoryProvider)
+                .schema(schema)
+                .partialSchema(partialSchema)
+                .make();
     }
 
     private DataFactoryProvider dataFactoryProvider() {

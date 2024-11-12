@@ -1,5 +1,6 @@
 package dido.json;
 
+import com.google.gson.GsonBuilder;
 import dido.data.*;
 import dido.data.util.FieldValuesIn;
 import dido.how.DataIn;
@@ -37,7 +38,7 @@ class DataInJsonReaderTest {
 
         DataInHow<Reader> test = DataInJsonReader.asCopy()
                 .setIsArray(true)
-                .make();
+                .make(new GsonBuilder());
 
         try (DataIn in = test.inFrom(new StringReader(json))) {
 
@@ -84,7 +85,7 @@ class DataInJsonReaderTest {
                 .setIsArray(true)
                 .setSchema(schema)
                 .setPartial(true)
-                .make();
+                .make(new GsonBuilder());
 
         DataSchema expectedNestedSchema = SchemaBuilder.newInstance()
                 .addNamed("Fruit", String.class)
@@ -134,7 +135,7 @@ class DataInJsonReaderTest {
         FieldValuesIn values = ArrayData.valuesForSchema(expectedSchema);
 
         DataInHow<Reader> test = DataInJsonReader.asCopy()
-                .make();
+                .make(new GsonBuilder());
 
         try (DataIn in = test.inFrom(new StringReader(json))) {
 
