@@ -56,12 +56,7 @@ public class ArrayData extends AbstractData implements DidoData {
 
     public static DataBuilder builderForSchema(DataSchema schema) {
 
-        return builderForSchema(asArrayDataSchema(schema));
-    }
-
-    public static DataBuilder builderForSchema(ArrayDataSchema schema) {
-
-        return DataBuilder.forFactory(schema.newDataFactory());
+        return DataBuilder.forFactory(factoryForSchema(schema));
     }
 
     public static DataBuilder builderNoSchema() {

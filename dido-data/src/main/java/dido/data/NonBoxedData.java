@@ -59,9 +59,9 @@ public class NonBoxedData extends AbstractData {
         return FieldValuesIn.withDataFactory(factoryForSchema(schema));
     }
 
-    public static DidoData copy(DidoData from) {
+    public static NonBoxedData copy(DidoData from) {
 
-        return valuesForSchema(from.getSchema()).copy(from);
+        return (NonBoxedData) valuesForSchema(from.getSchema()).copy(from);
     }
 
     @Override

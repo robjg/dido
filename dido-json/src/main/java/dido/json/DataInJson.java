@@ -77,7 +77,7 @@ public class DataInJson implements DataInHow<Reader> {
         public DataInJson make() {
             if (didoFormat == JsonDidoFormat.LINES) {
                 return new DataInJson(
-                        DataInJsonLines.withFunction(asMapperFromString()));
+                        DataInJsonLines.withFunction(mapFromString()));
             }
             else {
                 if (schema == null || partialSchema) {
@@ -102,7 +102,7 @@ public class DataInJson implements DataInHow<Reader> {
             }
         }
 
-        public Function<String, DidoData> asMapperFromString() {
+        public Function<String, DidoData> mapFromString() {
 
             if (factoryProvider == null) {
                 return JsonStringToData.asWrapper()
@@ -138,9 +138,9 @@ public class DataInJson implements DataInHow<Reader> {
         return with().fromInputStream(inputStream);
     }
 
-    public static Function<String, DidoData> asMapperFromString() {
+    public static Function<String, DidoData> mapFromString() {
 
-        return with().asMapperFromString();
+        return with().mapFromString();
     }
 
     public static Settings with() {

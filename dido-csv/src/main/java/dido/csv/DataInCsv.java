@@ -89,7 +89,7 @@ public class DataInCsv implements DataInHow<Reader> {
             return new DataInCsv(this);
         }
 
-        public Function<String, DidoData> asMapperFromString() {
+        public Function<String, DidoData> mapFromString() {
 
             DataInCsv dataInCsv = make();
 
@@ -126,9 +126,9 @@ public class DataInCsv implements DataInHow<Reader> {
         return with().fromInputStream(inputStream);
     }
 
-    public static Function<String, DidoData> asMapperFromString() {
+    public static Function<String, DidoData> mapFromString() {
 
-        return with().asMapperFromString();
+        return with().mapFromString();
     }
 
     public static Settings with() {

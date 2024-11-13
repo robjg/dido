@@ -17,7 +17,7 @@ public class ToJsonStringType implements Function<DidoData, String> {
 
 
     private final Function<DidoData, String> delegate =
-            DataOutJson.asMapperToString();
+            DataOutJson.mapToString();
 
     @Override
     public String apply(DidoData data) {

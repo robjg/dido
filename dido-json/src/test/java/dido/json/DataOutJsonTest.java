@@ -75,7 +75,7 @@ class DataOutJsonTest {
         List<String> results =
                 Stream.of(MapData.of("Fruit", "Apple", "Qty", 5),
                         MapData.of("Fruit", "Orange", "Qty", 3))
-                        .map(DataOutJson.asMapperToString())
+                        .map(DataOutJson.mapToString())
                         .collect(Collectors.toList());
 
         String expected1 = "{\"Fruit\": \"Apple\", \"Qty\": 5}";

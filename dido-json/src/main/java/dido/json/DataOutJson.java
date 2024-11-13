@@ -129,7 +129,7 @@ public class DataOutJson implements DataOutHow<Writer> {
             }
         }
 
-        public Function<DidoData, String> asMapperToString() {
+        public Function<DidoData, String> mapToString() {
 
             registerGsonBuilderDefaults();
 
@@ -158,8 +158,8 @@ public class DataOutJson implements DataOutHow<Writer> {
         return with().toOutputStream(outputStream);
     }
 
-    public static Function<DidoData, String> asMapperToString() {
-        return with().asMapperToString();
+    public static Function<DidoData, String> mapToString() {
+        return with().mapToString();
     }
 
     public static Settings with() {

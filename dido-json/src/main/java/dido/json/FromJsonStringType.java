@@ -54,7 +54,7 @@ public class FromJsonStringType {
                 .schema(schema)
                 .partialSchema(partialSchema)
                 .factoryProvider(dataFactoryProvider)
-                .asMapperFromString();
+                .mapFromString();
     }
 
     public DataSchema getSchema() {

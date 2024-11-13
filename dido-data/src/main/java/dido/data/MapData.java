@@ -121,14 +121,8 @@ public class MapData extends AbstractData implements DidoData {
 
     public static DataBuilder builderForSchema(DataSchema schema) {
 
-        return builderForSchema(asMapDataSchema(schema));
-    }
-
-    public static DataBuilder builderForSchema(MapDataSchema schema) {
-
         return DataBuilder.forFactory(factoryForSchema(schema));
     }
-
 
     public static DataBuilder builderNoSchema() {
 
@@ -144,9 +138,9 @@ public class MapData extends AbstractData implements DidoData {
         return FieldValuesIn.withDataFactory(factoryForSchema(schema));
     }
 
-    public static DidoData copy(DidoData from) {
+    public static MapData copy(DidoData from) {
 
-        return valuesForSchema(from.getSchema()).copy(from);
+        return (MapData) valuesForSchema(from.getSchema()).copy(from);
     }
 
     @Override

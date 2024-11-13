@@ -86,7 +86,7 @@ class DataOutCsvTest {
     }
 
     @Test
-    void asMapperToString() {
+    void mapToString() {
 
         DidoData data = MapData.builderNoSchema()
                 .withString("Fruit", "Apple")
@@ -95,7 +95,7 @@ class DataOutCsvTest {
                 .build();
 
         String result = DataOutCsv
-                .asMapperToString()
+                .mapToString()
                 .apply(data);
 
         assertThat(result, is("Apple,5,23.5"));

@@ -79,7 +79,7 @@ public class DataOutCsv implements DataOutHow<Appendable> {
             return new DataOutCsv(this);
         }
 
-        public Function<DidoData, String> asMapperToString() {
+        public Function<DidoData, String> mapToString() {
 
             DataOutCsv dataOutCsv =
                     csvFormat(Objects.requireNonNullElse(csvFormat, CSVFormat.DEFAULT)
@@ -123,8 +123,8 @@ public class DataOutCsv implements DataOutHow<Appendable> {
         return with().toOutputStream(outputStream);
     }
 
-    public static Function<DidoData, String> asMapperToString() {
-        return with().asMapperToString();
+    public static Function<DidoData, String> mapToString() {
+        return with().mapToString();
     }
 
     public static Settings with() {
