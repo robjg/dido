@@ -15,7 +15,7 @@
         <dependency>
             <groupId>uk.co.rgordon</groupId>
             <artifactId>dido-all</artifactId>
-            <version>1.0.0</version>
+            <version>${project.version}</version>
             <type>pom</type>
         </dependency>
 

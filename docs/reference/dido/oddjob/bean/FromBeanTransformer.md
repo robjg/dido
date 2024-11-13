@@ -1,7 +1,7 @@
 [HOME](../../../README.md)
 # dido:from-bean
 
-Transform a Bean to Generic Data.
+Transform a Bean to Dido Data.
 
 ### Property Summary
 

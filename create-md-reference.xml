@@ -19,6 +19,7 @@
                                 <value value="file:${oddjob.dir}/dido-sql/src/main/resources/META-INF/arooa.xml"/>
                                 <value value="file:${oddjob.dir}/dido-text/src/main/resources/META-INF/arooa.xml"/>
                                 <value value="file:${oddjob.dir}/dido-poi/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="file:${oddjob.dir}/dido-operators/src/main/resources/META-INF/arooa.xml"/>
                                 <value value="file:${oddjob.dir}/dido-oddball/src/main/resources/META-INF/arooa.xml"/>
                             </values>
                         </list>
@@ -33,6 +34,7 @@
                                 <file file="${oddjob.dir}/dido-sql/src/main/java"/>
                                 <file file="${oddjob.dir}/dido-text/src/main/java"/>
                                 <file file="${oddjob.dir}/dido-poi/src/main/java"/>
+                                <file file="${oddjob.dir}/dido-operators/src/main/java"/>
                                 <file file="${oddjob.dir}/dido-oddball/src/main/java"/>
                             </list>
                         </files>
@@ -50,6 +52,8 @@
                                 <file file="${oddjob.dir}/dido-text/src/test/java"/>
                                 <file file="${oddjob.dir}/dido-poi/src/test/resources"/>
                                 <file file="${oddjob.dir}/dido-poi/src/test/java"/>
+                                <file file="${oddjob.dir}/dido-operators/src/test/resources"/>
+                                <file file="${oddjob.dir}/dido-operators/src/test/java"/>
                                 <file file="${oddjob.dir}/dido-oddball/src/test/resources"/>
                                 <file file="${oddjob.dir}/dido-oddball/src/test/java"/>
                             </list>

@@ -8,7 +8,7 @@ of a single JSON Object per line. An array of JSON Objects, or A single JSON Obj
 
 | Property | Description |
 | -------- | ----------- |
-| [copy](#propertycopy) | When reading data is the data copied or wrapped. | 
+| [copy](#propertycopy) | When reading data the JSON is copied or wrapped. | 
 | [format](#propertyformat) | The format of the data. | 
 | [partialSchema](#propertypartialSchema) | When reading data in, indicates that the provided Schema is partial. | 
 | [schema](#propertyschema) | The schema to use. | 
@@ -31,8 +31,9 @@ of a single JSON Object per line. An array of JSON Objects, or A single JSON Obj
       <tr><td><i>Required</i></td><td>No, defaults to false.</td></tr>
 </table>
 
-When reading data is the data copied or wrapped. The idea is that wrapping
+When reading data the JSON is copied or wrapped. The idea is that wrapping
 data will be more performant for limited amounts of Data but tests really need to be done.
+If no dataFactoryProvider is specified a default is used.
 
 #### format <a name="propertyformat"></a>
 

@@ -1,8 +1,8 @@
 [HOME](../../../README.md)
 # dido:data-out
 
-A Bean Bus Destination that accepts `dido.data.GenericData` and writes it out to the given
-[dido:data-out](../../../dido/oddjob/beanbus/DataOutDestination.md) according to the given [dido:data-out](../../../dido/oddjob/beanbus/DataOutDestination.md).
+A Bean Bus Destination that accepts `dido.data.DidoData` and writes it out to the given
+'to' according to the given 'how'.
 See any of the formatters for examples of how to use.
 
 ### Property Summary

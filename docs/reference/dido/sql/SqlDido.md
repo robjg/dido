@@ -9,6 +9,7 @@ Export and Import with SQL.
 | -------- | ----------- |
 | [batchSize](#propertybatchSize) | Batch size. | 
 | [classLoader](#propertyclassLoader) | The classloader used to derive the schema from a query. | 
+| [schema](#propertyschema) | An override schema that supplies a desired type to the underlying [java.sql.ResultSet](https://docs.oracle.com/en/java/javase/11/docs/api/java.sql/java/sql/ResultSet.html) method. | 
 | [sql](#propertysql) | The SQL that will extract or insert the data. | 
 
 
@@ -40,6 +41,18 @@ Batch size. This is passed directly to JDBC.
 
 The classloader used to derive the schema from a query. Only required if the
 table include custom data types.
+
+#### schema <a name="propertyschema"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
+</table>
+
+An override schema that supplies a desired type to the underlying
+[java.sql.ResultSet](https://docs.oracle.com/en/java/javase/11/docs/api/java.sql/java/sql/ResultSet.html) method. Weather this is honoured is
+dependent on the JDBC implementation.
 
 #### sql <a name="propertysql"></a>
 
@@ -130,7 +143,7 @@ Grape,55]]>
                         </dido:data-in>
                         <bus:map>
                             <function>
-                                <dido:transform xmlns:dido="oddjob:dido"/>
+                                <dido:transform withCopy="true" xmlns:dido="oddjob:dido"/>
                             </function>
                         </bus:map>
                         <bus:collect id="results"/>

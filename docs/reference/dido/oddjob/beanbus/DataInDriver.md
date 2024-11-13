@@ -1,8 +1,8 @@
 [HOME](../../../README.md)
 # dido:data-in
 
-A Bean Bus Driver that reads data from [dido:data-in](../../../dido/oddjob/beanbus/DataInDriver.md) according to the
-given [dido:data-in](../../../dido/oddjob/beanbus/DataInDriver.md) and forward the `dido.data.GenericData` to the next component.
+A Bean Bus Driver that reads data from the 'from' according to the
+given 'how'. The produced `dido.data.DidoData` is forwarded to the next component.
 See any of the formatters for examples of how to use.
 
 ### Property Summary
