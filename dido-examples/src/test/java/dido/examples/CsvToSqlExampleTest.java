@@ -5,8 +5,8 @@ import dido.csv.DataOutCsv;
 import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.how.DataOut;
-import dido.sql.SqlDataInHow;
-import dido.sql.SqlDataOutHow;
+import dido.sql.DataInSql;
+import dido.sql.DataOutSql;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedInputStream;
@@ -44,11 +44,11 @@ class CsvToSqlExampleTest {
         try (DataIn in = DataInCsv.with()
                 .header(true)
                 .fromInputStream(getClass().getResourceAsStream("/examples/people-100.csv"));
-             DataOut out = SqlDataOutHow.with()
+             DataOut out = DataOutSql.with()
                      .sql("insert into PEOPLE " +
                              "(\"Index\",\"User Id\",\"First Name\",\"Last Name\",\"Sex\",\"Email\",\"Phone\",\"Date of birth\",\"Job Title\")" +
                              " values (?, ?, ?, ?, ?, ?, ?, ?, ?)")
-                     .to(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""))) {
+                     .toConnection(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""))) {
 
             in.stream().forEach(out);
         }
@@ -56,9 +56,9 @@ class CsvToSqlExampleTest {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        try (DataIn in = SqlDataInHow.fromSql("select * from people")
-                .make()
-                .inFrom(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""));
+        try (DataIn in = DataInSql.with()
+                .sql("select * from people")
+                .fromConnection(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""));
              DataOut out = DataOutCsv.with()
                      .header(true)
                      .toAppendable(stringBuilder)) {

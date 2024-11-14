@@ -16,7 +16,7 @@ import java.util.Objects;
 /**
  * @author rob
  */
-public class SqlDataInHow implements DataInHow<Connection> {
+public class DataInSql implements DataInHow<Connection> {
 
     private final String sql;
 
@@ -26,9 +26,9 @@ public class SqlDataInHow implements DataInHow<Connection> {
 
     private final DataSchema schema;
 
-    public static class Options {
+    public static class Settings {
 
-        private final String sql;
+        private String sql;
 
         private int batchSize;
 
@@ -36,39 +36,44 @@ public class SqlDataInHow implements DataInHow<Connection> {
 
         private ClassLoader classLoader;
 
-        public Options(String sql) {
+        public Settings sql(String sql) {
             this.sql = sql;
+            return this;
         }
 
-        public Options batchSize(int batchSize) {
+        public Settings batchSize(int batchSize) {
             this.batchSize = batchSize;
             return this;
         }
 
-        public Options classLoader(ClassLoader classLoader) {
+        public Settings classLoader(ClassLoader classLoader) {
             this.classLoader = classLoader;
             return this;
         }
 
-        public Options schema(DataSchema schema) {
+        public Settings schema(DataSchema schema) {
             this.schema = schema;
             return this;
         }
 
-        public DataInHow<Connection> make() {
-            return new SqlDataInHow(this);
+        public DataIn fromConnection(Connection connection) {
+            return make().inFrom(connection);
+        }
+
+        public DataInSql make() {
+            return new DataInSql(this);
         }
     }
 
-    public static Options fromSql(String sql) {
-        return new Options(sql);
+    public static Settings with() {
+        return new Settings();
     }
 
-    private SqlDataInHow(Options options) {
-        this.sql = Objects.requireNonNull(options.sql);
-        this.batchSize = options.batchSize;
-        this.schema = options.schema;
-        this.classLoader = Objects.requireNonNullElse(options.classLoader, getClass().getClassLoader());
+    private DataInSql(Settings settings) {
+        this.sql = Objects.requireNonNull(settings.sql);
+        this.batchSize = settings.batchSize;
+        this.schema = settings.schema;
+        this.classLoader = Objects.requireNonNullElse(settings.classLoader, getClass().getClassLoader());
     }
 
     @Override

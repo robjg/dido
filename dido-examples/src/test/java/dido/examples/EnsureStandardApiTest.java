@@ -9,6 +9,8 @@ import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.json.DataInJson;
 import dido.json.DataOutJson;
+import dido.sql.DataInSql;
+import dido.sql.DataOutSql;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -21,8 +23,27 @@ import java.util.function.Function;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class EnsureStandardApiTest {
+
+    @ParameterizedTest
+    @ValueSource(classes = {
+            DataInCsv.class, DataOutCsv.class,
+            DataInJson.class, DataOutJson.class,
+            DataInSql.class, DataOutSql.class
+            })
+    void ensureHowsStandardWith(Class<?> howClass) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Object settings = howClass.getMethod("with")
+                .invoke(null);
+
+        assertThat(settings.getClass().getSimpleName(), is("Settings"));
+
+        assertThat(settings.getClass().getMethod("make"),
+                notNullValue());
+    }
+
 
     @ParameterizedTest
     @ValueSource(classes = {DataInCsv.class, DataInJson.class})

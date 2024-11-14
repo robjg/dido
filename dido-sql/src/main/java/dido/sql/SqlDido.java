@@ -47,7 +47,8 @@ public class SqlDido {
     private DataSchema schema;
 
     public DataInHow<Connection> toIn()  {
-        return SqlDataInHow.fromSql(sql)
+        return DataInSql.with()
+                .sql(sql)
                 .classLoader(classLoader)
                 .batchSize(batchSize)
                 .schema(schema)
@@ -55,7 +56,8 @@ public class SqlDido {
     }
 
     public DataOutHow<Connection> toOut() {
-        return SqlDataOutHow.fromSql(sql)
+        return DataOutSql.with()
+                .sql(sql)
                 .classLoader(classLoader)
                 .batchSize(batchSize)
                 .make();

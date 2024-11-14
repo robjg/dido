@@ -15,7 +15,7 @@ import java.util.Objects;
 /**
  * @author rob
  */
-public class SqlDataOutHow implements DataOutHow<Connection> {
+public class DataOutSql implements DataOutHow<Connection> {
 
     private final String sql;
 
@@ -23,7 +23,7 @@ public class SqlDataOutHow implements DataOutHow<Connection> {
 
     private final ClassLoader classLoader;
 
-    public static class Options {
+    public static class Settings {
 
         private String sql;
 
@@ -31,52 +31,44 @@ public class SqlDataOutHow implements DataOutHow<Connection> {
 
         private ClassLoader classLoader;
 
-        Options(String sql) {
+        Settings(String sql) {
             this.sql = sql;
         }
 
-        Options() {}
+        Settings() {}
 
-        public Options sql(String sql) {
+        public Settings sql(String sql) {
             this.sql = sql;
             return this;
         }
 
-        public Options batchSize(int batchSize) {
+        public Settings batchSize(int batchSize) {
             this.batchSize = batchSize;
             return this;
         }
 
-        public Options classLoader(ClassLoader classLoader) {
+        public Settings classLoader(ClassLoader classLoader) {
             this.classLoader = classLoader;
             return this;
         }
 
-        public DataOut to(Connection connection) {
-            return make_().outTo(connection);
+        public DataOut toConnection(Connection connection) {
+            return make().outTo(connection);
         }
 
-        public DataOutHow<Connection> make() {
-            return make_();
-        }
-
-        public SqlDataOutHow make_() {
-            return new SqlDataOutHow(this);
+        public DataOutSql make() {
+            return new DataOutSql(this);
         }
     }
 
-    public static Options fromSql(String sql) {
-        return new Options(sql);
+    public static Settings with() {
+        return new Settings();
     }
 
-    public static Options with() {
-        return new Options();
-    }
-
-    private SqlDataOutHow(Options options) {
-        this.sql = Objects.requireNonNull(options.sql);
-        this.batchSize = options.batchSize;
-        this.classLoader = Objects.requireNonNullElse(options.classLoader, getClass().getClassLoader());
+    private DataOutSql(Settings settings) {
+        this.sql = Objects.requireNonNull(settings.sql);
+        this.batchSize = settings.batchSize;
+        this.classLoader = Objects.requireNonNullElse(settings.classLoader, getClass().getClassLoader());
     }
 
     @Override

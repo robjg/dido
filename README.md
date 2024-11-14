@@ -16,21 +16,16 @@ Formatters: [dido-csv](dido-csv), [dido-json](dido-json), [dido-sql](dido-sql).
 Example
 
 ```java
-        try (DataIn<String> in = CsvDataInHow.withOptions()
-                .withHeader(true)
-                .make()
-                .inFrom(getClass().getResourceAsStream("/examples/people-100.csv"));
+        try (DataIn in = DataInCsv.with()
+                .header(true)
+                .fromInputStream(getClass().getResourceAsStream("/examples/people-100.csv"));
+             DataOut out = DataOutSql.with()
+                     .sql("insert into PEOPLE " +
+                             "(\"Index\",\"User Id\",\"First Name\",\"Last Name\",\"Sex\",\"Email\",\"Phone\",\"Date of birth\",\"Job Title\")" +
+                             " values (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+                     .toConnection(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""))) {
 
-             DataOut<String> out = SqlDataOutHow.fromSql(
-                             "insert into PEOPLE " +
-                                     "(\"Index\",\"User Id\",\"First Name\",\"Last Name\",\"Sex\",\"Email\",\"Phone\",\"Date of birth\",\"Job Title\")" +
-                                     " values (?, ?, ?, ?, ?, ?, ?, ?, ?)")
-                     .make()
-                     .outTo(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""))) {
-
-            for (GenericData<String> data : in) {
-                out.accept(data);
-            }
+            in.stream().forEach(out);
         }
 ```
 

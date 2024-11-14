@@ -53,11 +53,13 @@ public class SqlDataHowTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         DataOutHow<Connection> outHow
-                = SqlDataOutHow.fromSql("insert into fruit (type, quantity) values (?, ?)")
+                = DataOutSql.with()
+                .sql("insert into fruit (type, quantity) values (?, ?)")
                 .make();
 
         DataInHow<Connection> inHow
-                = SqlDataInHow.fromSql("select type as \"type\", quantity as \"quantity\" from fruit order by type")
+                = DataInSql.with()
+                .sql("select type as \"type\", quantity as \"quantity\" from fruit order by type")
                 .make();
 
         logger.info("** Writing **");
@@ -119,7 +121,8 @@ public class SqlDataHowTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         DataOutHow<Connection> outHow
-                = SqlDataOutHow.fromSql("insert into Numbers " +
+                = DataOutSql.with()
+                .sql("insert into Numbers " +
                         "(Description, A_TinyInt, A_SmallInt, A_Integer, A_BigInt, A_Numeric, A_Decimal, A_Real, A_Float, A_Double)" +
                         " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
                 .make();
@@ -140,7 +143,8 @@ public class SqlDataHowTest {
         logger.info("** Reading **");
 
         DataInHow<Connection> inHow
-                = SqlDataInHow.fromSql("select A_TinyInt, A_SmallInt, A_Integer, A_BigInt, A_Numeric, A_Decimal, A_Real, A_Float, A_Double " +
+                = DataInSql.with()
+                .sql("select A_TinyInt, A_SmallInt, A_Integer, A_BigInt, A_Numeric, A_Decimal, A_Real, A_Float, A_Double " +
                         "from Numbers order by Description")
                 .make();
 
@@ -336,7 +340,8 @@ public class SqlDataHowTest {
                 .build();
 
         DataOutHow<Connection> outHow
-                = SqlDataOutHow.fromSql("insert into Numbers " +
+                = DataOutSql.with()
+                .sql("insert into Numbers " +
                         "(Description, A_TinyInt, A_SmallInt, A_Integer, A_BigInt, A_Numeric, A_Decimal, A_Real, A_Float, A_Double)" +
                         " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
                 .make();
@@ -357,7 +362,8 @@ public class SqlDataHowTest {
         logger.info("** Reading **");
 
         DataInHow<Connection> inHow
-                = SqlDataInHow.fromSql("select A_TinyInt, A_SmallInt, A_Integer, A_BigInt, A_Numeric, A_Decimal, A_Real, A_Float, A_Double " +
+                = DataInSql.with()
+                .sql("select A_TinyInt, A_SmallInt, A_Integer, A_BigInt, A_Numeric, A_Decimal, A_Real, A_Float, A_Double " +
                         "from Numbers order by Description")
                 .schema(overrideSchema)
                 .make();
@@ -396,8 +402,7 @@ public class SqlDataHowTest {
             try {
                 assertThat(numbers.getNamed("A_Real"), is(42.24F));
                 assertThat("Expected to fail", false);
-            }
-            catch(FieldAccessException e) {
+            } catch (FieldAccessException e) {
                 // incompatible data type in conversion
             }
 
@@ -405,8 +410,7 @@ public class SqlDataHowTest {
                 // This is wierd - HSQL can't convert a float column to a float.
                 assertThat(numbers.getNamed("A_Float"), is(42.24F));
                 assertThat("Expected to fail", false);
-            }
-            catch(FieldAccessException e) {
+            } catch (FieldAccessException e) {
                 // incompatible data type in conversion.
             }
 
@@ -414,8 +418,7 @@ public class SqlDataHowTest {
                 // ditto a double column to a float.
                 assertThat(numbers.getNamed("A_Double"), is(42.24F));
                 assertThat("Expected to fail", false);
-            }
-            catch(FieldAccessException e) {
+            } catch (FieldAccessException e) {
                 // incompatible data type in conversion.
             }
         }
@@ -488,7 +491,8 @@ public class SqlDataHowTest {
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
         DataOutHow<Connection> outHow
-                = SqlDataOutHow.fromSql("insert into Dates " +
+                = DataOutSql.with()
+                .sql("insert into Dates " +
                         "(Description, A_Date, A_Time, A_Zoned_Time, A_TimeStamp, A_Zoned_TimeStamp)" +
                         " values (?, ?, ?, ?, ?, ?)")
                 .make();
@@ -518,7 +522,8 @@ public class SqlDataHowTest {
         logger.info("** Reading **");
 
         DataInHow<Connection> inHow
-                = SqlDataInHow.fromSql("select A_Date, A_Time, A_Zoned_Time, A_TimeStamp, A_Zoned_TimeStamp " +
+                = DataInSql.with()
+                .sql("select A_Date, A_Time, A_Zoned_Time, A_TimeStamp, A_Zoned_TimeStamp " +
                         "from Dates order by Description")
                 .make();
 
@@ -639,7 +644,7 @@ public class SqlDataHowTest {
                 8 * HOUR + 9 * MINUTE + 10 * SECOND);
 
         assertThat(LocalDateTime.ofInstant(Instant.ofEpochMilli(time.getTime()),
-                ZoneId.of("Europe/London")).toLocalTime().toString(),
+                        ZoneId.of("Europe/London")).toLocalTime().toString(),
                 is("09:09:10"));
 
         assertThat(LocalDateTime.ofInstant(Instant.ofEpochMilli(time.getTime()),
