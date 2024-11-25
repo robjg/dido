@@ -6,24 +6,24 @@ import dido.how.DataIn;
 import dido.how.DataInHow;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
-import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 import dido.poi.*;
 import dido.poi.data.DataCell;
-import dido.poi.data.PoiRowsIn;
 import dido.poi.data.PoiRowsOut;
 import dido.poi.style.CompositeStyleFactory;
 import dido.poi.style.DefaultStyleProivderFactory;
 import dido.poi.style.StyleBean;
 import dido.poi.style.StyleFactoryRegistry;
-import dido.poi.utils.DataRowFactory;
 import dido.poi.utils.SchemaAndCells;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @oddjob.description Define an area in a spreadsheet sheet for reading
@@ -162,88 +162,21 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
         this.conversionProvider = conversionProvider;
     }
 
-    class MainReader implements DataIn {
-
-        private final RowsIn rowsIn;
-
-        private final DataRowFactory dataRowFactory;
-
-        public MainReader(RowsIn rowsIn, DataRowFactory dataRowFactory) {
-            this.rowsIn = rowsIn;
-            this.dataRowFactory = dataRowFactory;
-        }
-
-        @Override
-        public Iterator<DidoData> iterator() {
-
-            return new Iterator<>() {
-
-                RowIn rowIn = rowsIn.nextRow();
-
-                @Override
-                public boolean hasNext() {
-                    return rowIn != null;
-                }
-
-                @Override
-                public DidoData next() {
-                    lastRow = rowsIn.getLastRow();
-
-                    logger.debug("[{}] reading row {}", DataRows.this, rowsIn.getLastRow());
-
-                    DidoData data = dataRowFactory.wrap(rowIn);
-
-                    rowIn = rowsIn.nextRow();
-
-                    return data;
-                }
-            };
-
-        }
-
-        @Override
-        public void close() {
-
-            logger.debug("[{}] closed reader at row [{}]", DataRows.this, lastRow);
-        }
-    }
-
     @Override
     public DataIn inFrom(BookInProvider bookInProvider) {
 
-        BookIn bookIn = bookInProvider.provideBookIn();
+        return DataInPoi.with()
+                .sheetName(this.sheetName)
+                .firstRow(this.firstRow)
+                .firstColumn(this.firstColumn)
+                .schema(this.schema)
+                .cells(this.of)
+                .schemaListener(schema -> this.headings = schema.getFieldNames().toArray(new String[0]))
+                .header(this.withHeader)
+                .converter(this.conversionProvider)
+                .make()
+                .inFrom(bookInProvider);
 
-        Sheet sheet = bookIn.getSheet(this.sheetName);
-
-        RowsIn rowsIn = new PoiRowsIn(sheet, firstRow, firstColumn);
-
-        if (withHeader) {
-
-            this.headings = rowsIn.headerRow();
-            if (headings == null) {
-                throw new IllegalStateException("[" + this + "] No rows to provide reader from.");
-            } else {
-                logger.info("[{}] Read headings {}", this, Arrays.toString(this.headings));
-            }
-        } else {
-            logger.debug("[{}] Providing reader with no headings.", this);
-        }
-
-        SchemaAndCells schemaAndCells = SchemaAndCells.fromSchemaOrCells(this.schema, this.of);
-
-        if (schemaAndCells == null) {
-            schemaAndCells = SchemaAndCells.fromRowAndHeadings(rowsIn.peekRow(), headings);
-        }
-
-        if (schemaAndCells == null) {
-            return DataIn.of();
-        }
-        else {
-            return new MainReader(rowsIn, DataRowFactory.newInstance(
-                    schemaAndCells.getSchema(), schemaAndCells.getDataCells(),
-                    Objects.requireNonNullElseGet(conversionProvider,
-                            DefaultConversionProvider::defaultInstance)));
-        }
     }
 
     class MainWriter implements DataOut {

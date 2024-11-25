@@ -7,8 +7,10 @@ import dido.data.util.DataBuilder;
 import dido.data.util.FieldValuesIn;
 import dido.how.DataIn;
 import dido.how.DataOut;
+import dido.how.conversion.DidoConversionProvider;
 import dido.json.DataInJson;
 import dido.json.DataOutJson;
+import dido.poi.DataInPoi;
 import dido.sql.DataInSql;
 import dido.sql.DataOutSql;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,7 +33,8 @@ public class EnsureStandardApiTest {
     @ValueSource(classes = {
             DataInCsv.class, DataOutCsv.class,
             DataInJson.class, DataOutJson.class,
-            DataInSql.class, DataOutSql.class
+            DataInSql.class, DataOutSql.class,
+            DataInPoi.class
             })
     void ensureHowsStandardWith(Class<?> howClass) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
@@ -46,7 +49,7 @@ public class EnsureStandardApiTest {
 
 
     @ParameterizedTest
-    @ValueSource(classes = {DataInCsv.class, DataInJson.class})
+    @ValueSource(classes = {DataInCsv.class, DataInJson.class, DataInPoi.class})
     void ensureIoStaticDataInsAreConsistent(Class<?> howClass) throws NoSuchMethodException {
 
         assertThat(DataIn.class.isAssignableFrom(
@@ -64,8 +67,48 @@ public class EnsureStandardApiTest {
                                 .getReturnType()),
                 is(true));
 
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {DataInCsv.class, DataInJson.class})
+    void ensureMapFromStringAreConsistent(Class<?> howClass) throws NoSuchMethodException {
+
         assertThat(Function.class.isAssignableFrom(
                         howClass.getMethod("mapFromString")
+                                .getReturnType()),
+                is(true));
+
+        Class<?> settingsClass  = howClass.getMethod("with")
+                .getReturnType();
+
+        assertThat(Function.class.isAssignableFrom(
+                        settingsClass.getMethod("mapFromString")
+                                .getReturnType()),
+                is(true));
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {DataInCsv.class, DataInPoi.class})
+    void ensureHeaderMethodConsistent(Class<?> howClass) throws NoSuchMethodException {
+
+        Class<?> settingsClass  = howClass.getMethod("with")
+                .getReturnType();
+
+        assertThat(settingsClass.isAssignableFrom(
+                        settingsClass.getMethod("header", boolean.class)
+                                .getReturnType()),
+                is(true));
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {DataInCsv.class, DataInPoi.class})
+    void ensureConverterMethodConsistent(Class<?> howClass) throws NoSuchMethodException {
+
+        Class<?> settingsClass  = howClass.getMethod("with")
+                .getReturnType();
+
+        assertThat(settingsClass.isAssignableFrom(
+                        settingsClass.getMethod("converter", DidoConversionProvider.class)
                                 .getReturnType()),
                 is(true));
     }
@@ -96,7 +139,7 @@ public class EnsureStandardApiTest {
     }
 
     @ParameterizedTest
-    @ValueSource(classes = {DataInCsv.class, DataInJson.class})
+    @ValueSource(classes = {DataInCsv.class, DataInJson.class, DataInPoi.class})
     void ensureIoWithDataInsAreConsistent(Class<?> howClass) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         Object settings = howClass.getMethod("with")
@@ -118,11 +161,6 @@ public class EnsureStandardApiTest {
 
         assertThat(DataIn.class.isAssignableFrom(
                         settingsClass.getMethod("fromPath", Path.class)
-                                .getReturnType()),
-                is(true));
-
-        assertThat(Function.class.isAssignableFrom(
-                        settingsClass.getMethod("mapFromString")
                                 .getReturnType()),
                 is(true));
     }
@@ -160,7 +198,7 @@ public class EnsureStandardApiTest {
     }
 
     @ParameterizedTest
-    @ValueSource(classes = {DataInCsv.class, DataInJson.class})
+    @ValueSource(classes = {DataInCsv.class, DataInJson.class, DataInPoi.class})
     void ensureInSettingsAreConsistent(Class<?> howClass) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         Object settings = howClass.getMethod("with")

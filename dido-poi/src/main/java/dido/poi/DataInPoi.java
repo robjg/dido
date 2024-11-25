@@ -5,6 +5,7 @@ import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
+import dido.how.SchemaListener;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 import dido.poi.data.DataCell;
@@ -64,6 +65,8 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
     private final List<DataCell<?>> of;
 
+    private final SchemaListener schemaListener;
+
     public static class Settings {
 
 
@@ -88,7 +91,6 @@ public class DataInPoi implements DataInHow<BookInProvider> {
          */
         private String sheetName;
 
-
         private DataSchema schema;
 
         private boolean partialSchema;
@@ -96,6 +98,13 @@ public class DataInPoi implements DataInHow<BookInProvider> {
         private DidoConversionProvider converter;
 
         private Collection<? extends DataCell<?>> cells;
+
+        private SchemaListener schemaListener;
+
+        public Settings sheetName(String sheetName) {
+            this.sheetName = sheetName;
+            return this;
+        }
 
         public Settings firstRow(int firstRow) {
             this.firstRow = firstRow;
@@ -129,6 +138,11 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
         public Settings cells(Collection<? extends DataCell<?>> cells) {
             this.cells = cells;
+            return this;
+        }
+
+        public Settings schemaListener(SchemaListener schemaListener) {
+            this.schemaListener = schemaListener;
             return this;
         }
 
@@ -170,7 +184,8 @@ public class DataInPoi implements DataInHow<BookInProvider> {
         this.partialSchema = settings.partialSchema;
         this.withHeader = settings.withHeader;
         this.conversionProvider = settings.converter;
-        this.of = settings.cells == null ? null : new ArrayList<>(settings.cells);
+        this.of = settings.cells == null || settings.cells.isEmpty() ? null : new ArrayList<>(settings.cells);
+        this.schemaListener = settings.schemaListener;
     }
 
     public static DataIn fromPath(Path path) {
@@ -282,6 +297,9 @@ public class DataInPoi implements DataInHow<BookInProvider> {
             return DataIn.of();
         }
         else {
+            if (schemaListener != null) {
+                schemaListener.schemaAvailable(schemaAndCells.getSchema());
+            }
             return new MainReader(rowsIn, DataRowFactory.newInstance(
                     schemaAndCells.getSchema(), schemaAndCells.getDataCells(),
                     Objects.requireNonNullElseGet(conversionProvider,
