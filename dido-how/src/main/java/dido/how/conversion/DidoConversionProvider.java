@@ -1,9 +1,6 @@
 package dido.how.conversion;
 
-import java.util.function.Function;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
+import java.util.function.*;
 
 /**
  * Provide a conversion function between to classes.
@@ -17,4 +14,10 @@ public interface DidoConversionProvider {
     <F> ToDoubleFunction<F> toDoubleFrom(Class<F> from);
 
     <F> ToLongFunction<F> toLongFrom(Class<F> from);
+
+    <T> IntFunction<T> fromIntTo(Class<T> to);
+
+    <T> DoubleFunction<T> fromDoubleTo(Class<T> to);
+
+    <T> LongFunction<T> fromLongTo(Class<T> to);
 }

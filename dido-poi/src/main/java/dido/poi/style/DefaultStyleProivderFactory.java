@@ -1,5 +1,6 @@
 package dido.poi.style;
 
+import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -18,7 +19,7 @@ public class DefaultStyleProivderFactory implements StyleProviderFactory {
 	/** The name of the style used for dates. */
 	public static String DATE_STYLE = "date";
 
-	public static String DATE_FORMAT = "d/m/yyyy";
+	public static String DATE_FORMAT = BuiltinFormats.getBuiltinFormat(0xe); // "d/m/yy"
 
 	/** The name of the style used for a beancmpr difference. */
 	public static String BEANCMPR_DIFF_STYLE = "beancmpr-difference";

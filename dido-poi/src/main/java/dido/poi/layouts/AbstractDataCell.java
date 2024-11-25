@@ -1,7 +1,6 @@
 package dido.poi.layouts;
 
 import dido.data.DidoData;
-import dido.poi.CellIn;
 import dido.poi.CellOut;
 import dido.poi.HeaderRowOut;
 import dido.poi.RowOut;
@@ -58,16 +57,6 @@ abstract public class AbstractDataCell<T> implements DataCell<T> {
 	 */
 	private String reference;
 
-	@Override
-	public CellIn<T> provideCellIn(int index) {
-
-		return rowIn -> {
-
-			Cell cell = rowIn.getCell(index);
-
-			return extractCellValue(cell);
-		};
-	}
 
 	@Override
 	public CellOut<T> provideCellOut(int index) {
@@ -103,14 +92,6 @@ abstract public class AbstractDataCell<T> implements DataCell<T> {
 			}
 		};
 	}
-
-	/**
-	 * Extract the value from the cell.
-	 *
-	 * @param cell The Excel Cell
-	 * @return The extracted value. May be null.
-	 */
-	abstract T extractCellValue(Cell cell);
 
 	/**
 	 * Write a value into the cell.
@@ -182,14 +163,14 @@ abstract public class AbstractDataCell<T> implements DataCell<T> {
 
 	public void setStyle(String style) {
 		this.style = style;
-	}	
-	
+	}
+
 	public String toString() {
 		if (name == null) {
-			return super.toString();
+			return getClass().getSimpleName();
 		}
 		else {
-			return super.toString() + ", name=" + name;
+			return getClass().getSimpleName() + ", name=" + name;
 		}
 	}
 

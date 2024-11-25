@@ -11,6 +11,6 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 public interface StyleFactory {
 
-	public CellStyle createStyle(Workbook workbook);
+	CellStyle createStyle(Workbook workbook);
 	
 }

@@ -6,6 +6,8 @@ import dido.how.DataIn;
 import dido.how.DataInHow;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
+import dido.how.conversion.DefaultConversionProvider;
+import dido.how.conversion.DidoConversionProvider;
 import dido.poi.*;
 import dido.poi.data.DataCell;
 import dido.poi.data.PoiRowsIn;
@@ -20,6 +22,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.util.*;
 
 /**
@@ -112,6 +115,13 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
 
     private final List<DataCell<?>> of = new LinkedList<>();
 
+    /**
+     * @oddjob.property
+     * @oddjob.description Provides conversions.
+     * @oddjob.required Set by Oddjob.
+     */
+    private DidoConversionProvider conversionProvider;
+
     private DataSchema schema;
 
     @Override
@@ -143,6 +153,14 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
         }
     }
 
+    public DidoConversionProvider getConversionProvider() {
+        return conversionProvider;
+    }
+
+    @Inject
+    public void setConversionProvider(DidoConversionProvider conversionProvider) {
+        this.conversionProvider = conversionProvider;
+    }
 
     class MainReader implements DataIn {
 
@@ -158,7 +176,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
         @Override
         public Iterator<DidoData> iterator() {
 
-            return new Iterator<DidoData>() {
+            return new Iterator<>() {
 
                 RowIn rowIn = rowsIn.nextRow();
 
@@ -171,8 +189,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
                 public DidoData next() {
                     lastRow = rowsIn.getLastRow();
 
-                    logger.debug("[" + DataRows.this + "] reading row " +
-                            rowsIn.getLastRow());
+                    logger.debug("[{}] reading row {}", DataRows.this, rowsIn.getLastRow());
 
                     DidoData data = dataRowFactory.wrap(rowIn);
 
@@ -187,9 +204,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
         @Override
         public void close() {
 
-            logger.debug("[" + DataRows.this +
-                    "] closed reader at row [" + lastRow +
-                    "]");
+            logger.debug("[{}] closed reader at row [{}]", DataRows.this, lastRow);
         }
     }
 
@@ -208,11 +223,10 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
             if (headings == null) {
                 throw new IllegalStateException("[" + this + "] No rows to provide reader from.");
             } else {
-                logger.info("[" + this + "] Read headings " +
-                        Arrays.toString(this.headings));
+                logger.info("[{}] Read headings {}", this, Arrays.toString(this.headings));
             }
         } else {
-            logger.debug("[" + this + "] Providing reader with no headings.");
+            logger.debug("[{}] Providing reader with no headings.", this);
         }
 
         SchemaAndCells schemaAndCells = SchemaAndCells.fromSchemaOrCells(this.schema, this.of);
@@ -226,7 +240,9 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
         }
         else {
             return new MainReader(rowsIn, DataRowFactory.newInstance(
-                    schemaAndCells.getSchema(), schemaAndCells.getDataCells()));
+                    schemaAndCells.getSchema(), schemaAndCells.getDataCells(),
+                    Objects.requireNonNullElseGet(conversionProvider,
+                            DefaultConversionProvider::defaultInstance)));
         }
     }
 
@@ -251,8 +267,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
 
             rowsOut.nextRow();
 
-            logger.trace("[" + DataRows.this + "] writing row " +
-                    rowsOut.getLastRow());
+            logger.trace("[{}] writing row {}", DataRows.this, rowsOut.getLastRow());
 
             for (CellOut<?> dataCell : cellOuts) {
                 writeCell(dataCell, data);
@@ -281,9 +296,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
 
             closeHandler.run();
 
-            logger.debug("[" + DataRows.this +
-                    "] closed writer at row [" + lastRow +
-                    "]");
+            logger.debug("[{}] closed writer at row [{}]", DataRows.this, lastRow);
         }
     }
 
@@ -299,7 +312,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
                 firstRow,
                 firstColumn);
 
-        logger.debug("Creating writer for [" + rowsOut + "]");
+        logger.debug("Creating writer for [{}]", rowsOut);
 
         SchemaAndCells schemaAndCells = SchemaAndCells.fromSchemaOrCells(this.schema, this.of);
 
@@ -373,8 +386,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
 
             }
 
-            logger.debug("[" + this + "] initialised at [" +
-                    firstRow + ", " + firstColumn + "]");
+            logger.debug("[{}] initialised at [{}, {}]", this, firstRow, firstColumn);
 
             return new MainWriter(rowsOut, cellOuts, closeHandler);
         }
@@ -440,7 +452,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
     /**
      * Getter for sheet name.
      *
-     * @return
+     * @return The sheet name.
      */
     public String getSheetName() {
         return sheetName;
@@ -449,7 +461,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
     /**
      * Setter for sheet name.
      *
-     * @param sheetName
+     * @param sheetName The sheet name.
      */
     public void setSheetName(String sheetName) {
         this.sheetName = sheetName;

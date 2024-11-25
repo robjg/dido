@@ -1,6 +1,8 @@
 package dido.poi.layouts;
 
 import dido.data.DidoData;
+import dido.how.conversion.DidoConversionProvider;
+import dido.poi.CellIn;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
@@ -26,15 +28,15 @@ public class TextCell extends AbstractDataCell<String> {
     }
 
     @Override
-    public String extractCellValue(Cell cell) {
+    public CellIn<String> provideCellIn(int index,
+                                        DidoConversionProvider conversionProvider) {
 
-        // We need this because even if the cell is a formatted cell
-        // but contains a number we get a can't read from numeric cell
-        // exception.
-//		if (cell.getCellType() != CellType.STRING) {
-//			cell.setCellType(CellType.STRING);
-//		}
-        return cell.getStringCellValue();
+        return rowIn -> {
+
+            Cell cell = rowIn.getCell(index);
+
+            return cell.getStringCellValue();
+        };
     }
 
     @Override

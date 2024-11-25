@@ -1,5 +1,7 @@
 package dido.poi.layouts;
 
+import dido.how.conversion.DidoConversionProvider;
+import dido.poi.CellIn;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -17,13 +19,19 @@ public class TextFormulaCell extends FormulaCell<String> {
 	}
 
 	@Override
-	public String extractCellValue(Cell cell) {
-		
-		FormulaEvaluator evaluator = cell.getRow().getSheet(
-		).getWorkbook().getCreationHelper().createFormulaEvaluator();
+	public CellIn<String> provideCellIn(int index,
+										DidoConversionProvider conversionProvider) {
 
-		CellValue cellValue = evaluator.evaluate(cell);
-		
-		return cellValue.getStringValue();
+		return rowIn -> {
+
+			Cell cell = rowIn.getCell(index);
+
+			FormulaEvaluator evaluator = cell.getRow().getSheet(
+			).getWorkbook().getCreationHelper().createFormulaEvaluator();
+
+			CellValue cellValue = evaluator.evaluate(cell);
+
+			return cellValue.getStringValue();
+		};
 	}
 }

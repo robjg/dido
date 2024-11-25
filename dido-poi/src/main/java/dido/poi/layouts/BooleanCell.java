@@ -1,15 +1,16 @@
 package dido.poi.layouts;
 
 import dido.data.DidoData;
+import dido.how.conversion.DidoConversionProvider;
+import dido.poi.CellIn;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
 import java.util.Optional;
 
 /**
- * @oddjob.description Define a column of Boolean cells.
- *
  * @author rob
+ * @oddjob.description Define a column of Boolean cells.
  */
 public class BooleanCell extends AbstractDataCell<Boolean> {
 
@@ -26,8 +27,15 @@ public class BooleanCell extends AbstractDataCell<Boolean> {
     }
 
     @Override
-    public Boolean extractCellValue(Cell cell) {
-        return cell.getBooleanCellValue();
+    public CellIn<Boolean> provideCellIn(int index,
+                                         DidoConversionProvider conversionProvider) {
+
+        return rowIn -> {
+
+            Cell cell = rowIn.getCell(index);
+
+            return cell.getBooleanCellValue();
+        };
     }
 
     @Override

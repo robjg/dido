@@ -21,23 +21,19 @@ import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.utils.DateHelper;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 
 class SchemaAndCellsTest {
 
     @Test
     void testWithSingleCell() {
 
-        TextCell cell =  new TextCell();
+        TextCell cell = new TextCell();
 
-        SchemaAndCells test = SchemaAndCells.fromSchemaOrCells(null, Collections.singletonList(cell));
+        SchemaAndCells test = SchemaAndCells.fromCells(Collections.singletonList(cell));
 
         DataSchema schema = test.getSchema();
 
@@ -50,7 +46,7 @@ class SchemaAndCellsTest {
 
 
     @Test
-    void testSchemaWithDisparateIndexes() {
+    void testFromCellsWithDisparateIndexes() {
 
         TextCell fruitCell = new TextCell();
         fruitCell.setIndex(3);
@@ -60,17 +56,14 @@ class SchemaAndCellsTest {
         qtyCell.setIndex(7);
         qtyCell.setName("Qty");
 
-        SchemaAndCells test = SchemaAndCells.fromSchemaOrCells(null, Arrays.asList(fruitCell, qtyCell));
+        SchemaAndCells test = SchemaAndCells.fromCells(Arrays.asList(fruitCell, qtyCell));
 
-        DataSchema schema = test.getSchema();
+        DataSchema expectedSchema = DataSchema.newBuilder()
+                .addNamedAt(3, "Fruit", String.class)
+                .addNamedAt(7, "Qty", Double.class)
+                .build();
 
-        assertThat(schema.firstIndex(), is(3));
-        assertThat(schema.lastIndex(), is(7));
-        assertThat(schema.nextIndex(3), is(7));
-        assertThat(schema.getFieldNameAt(3), is("Fruit"));
-        assertThat(schema.getFieldNameAt(7), is("Qty"));
-        assertThat(schema.getTypeAt(3), is(String.class));
-        assertThat(schema.getTypeAt(7), is(Double.class));
+        assertThat(test.getSchema(), is(expectedSchema));
     }
 
     @Test
@@ -121,6 +114,29 @@ class SchemaAndCellsTest {
 
         next = cells.get(8);
         assertThat(next instanceof DateCell, is(true));
+    }
+
+    @Test
+    void testFromSchemaWithDisparateIndexes() {
+
+        DataSchema schema = DataSchema.newBuilder()
+                .addNamedAt(3, "Fruit", String.class)
+                .addNamedAt(7, "Qty", Double.class)
+                .build();
+
+        SchemaAndCells test = SchemaAndCells.fromSchema(schema);
+
+        List<? extends DataCell<?>> cells = new ArrayList<>(test.getDataCells());
+
+        DataCell<?> fruitCell = cells.get(0);
+        assertThat(fruitCell, Matchers.instanceOf(TextCell.class));
+        assertThat(fruitCell.getIndex(), is(3));
+        assertThat(fruitCell.getName(), is("Fruit"));
+
+        DataCell<?> qtyCell = cells.get(1);
+        assertThat(qtyCell, instanceOf(NumericCell.class));
+        assertThat(qtyCell.getIndex(), is(7));
+        assertThat(qtyCell.getName(), is("Qty"));
     }
 
     @Test

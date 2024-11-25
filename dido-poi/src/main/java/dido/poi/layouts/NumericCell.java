@@ -1,13 +1,16 @@
 package dido.poi.layouts;
 
 import dido.data.DidoData;
+import dido.how.DataException;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 import dido.how.util.Primitives;
+import dido.poi.CellIn;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
 import java.util.Optional;
+import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
 /**
@@ -48,36 +51,27 @@ public class NumericCell<T extends Number> extends AbstractDataCell<T> {
     }
 
     @Override
-    public T extractCellValue(Cell cell) {
+    public CellIn<T> provideCellIn(int index,
+                                   DidoConversionProvider conversionProvider) {
+
         Class<T> type = getType();
 
-        double value = cell.getNumericCellValue();
-        if (type == Double.class) {
-            //noinspection unchecked
-            return (T) Double.valueOf(value);
-        }
-        if (type == Integer.class) {
-            //noinspection unchecked
-            return (T) Integer.valueOf((int) value);
-        }
-        if (type == Long.class) {
-            //noinspection unchecked
-            return (T) Long.valueOf((long) value);
-        }
-        if (type == Float.class) {
-            //noinspection unchecked
-            return (T) Float.valueOf((float) value);
-        }
-        if (type == Short.class) {
-            //noinspection unchecked
-            return (T) Short.valueOf((short) value);
-        }
-        if (type == Byte.class) {
-            //noinspection unchecked
-            return (T) Byte.valueOf((byte) value);
-        }
-        throw new IllegalArgumentException("Not Numeric type " + type);
+        DoubleFunction<T> conversion = conversionProvider.fromDoubleTo(type);
+
+        return rowIn -> {
+
+            Cell cell = rowIn.getCell(index);
+
+            try {
+                return conversion.apply(cell.getNumericCellValue());
+            }
+            catch (RuntimeException e) {
+                throw DataException.of(String.format("Failed to get number from cell [%d]:%s=%s"
+                        ,getIndex(), getName(), cell.getStringCellValue()), e);
+            }
+        };
     }
+
 
     @Override
     void insertValueInto(Cell cell, int index, DidoData data) {

@@ -18,6 +18,12 @@ class SchemaBuilderTest {
                 .add(double.class)
                 .build();
 
+        assertThat(schema.hasIndex(0), is(false));
+        assertThat(schema.hasIndex(1), is(true));
+        assertThat(schema.hasIndex(2), is(true));
+        assertThat(schema.hasIndex(3), is(true));
+        assertThat(schema.hasIndex(4), is(false));
+
         assertThat(schema.firstIndex(), is(1));
         assertThat(schema.lastIndex(), is(3));
         assertThat(schema.getTypeAt(1), is(String.class));
@@ -39,6 +45,14 @@ class SchemaBuilderTest {
                 .addAt(20, double.class)
                 .addAt(6, int.class)
                 .build();
+
+        assertThat(schema.hasIndex(0), is(false));
+        assertThat(schema.hasIndex(1), is(false));
+        assertThat(schema.hasIndex(5), is(true));
+        assertThat(schema.hasIndex(15), is(false));
+        assertThat(schema.hasIndex(20), is(true));
+        assertThat(schema.hasIndex(6), is(true));
+        assertThat(schema.hasIndex(21), is(false));
 
         assertThat(schema.firstIndex(), is(5));
         assertThat(schema.lastIndex(), is(20));

@@ -2,6 +2,8 @@ package dido.poi.layouts;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.how.conversion.DidoConversionProvider;
+import dido.poi.CellIn;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
@@ -30,10 +32,17 @@ public class DateCell extends AbstractDataCell<Date> {
 	public CellType getCellType() {
 		return CellType.NUMERIC;
 	}
-	
+
 	@Override
-	public Date extractCellValue(Cell cell) {
-		return cell.getDateCellValue();
+	public CellIn<Date> provideCellIn(int index,
+									  DidoConversionProvider conversionProvider) {
+
+		return rowIn -> {
+
+			Cell cell = rowIn.getCell(index);
+
+			return cell.getDateCellValue();
+		};
 	}
 
 	@Override

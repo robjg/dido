@@ -3,6 +3,7 @@ package dido.poi.style;
 import dido.data.ArrayData;
 import dido.data.DidoData;
 import dido.how.DataOut;
+import dido.how.conversion.DidoConversionProvider;
 import dido.poi.CellIn;
 import dido.poi.CellOut;
 import dido.poi.HeaderRowOut;
@@ -41,7 +42,8 @@ public class AllStylesTest {
 		}
 
 		@Override
-		public CellIn<String> provideCellIn(int columnIndex) {
+		public CellIn<String> provideCellIn(int columnIndex,
+											DidoConversionProvider conversionProvider) {
 			return null;
 		}
 

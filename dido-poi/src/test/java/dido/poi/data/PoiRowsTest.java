@@ -2,6 +2,7 @@ package dido.poi.data;
 
 import dido.data.ArrayData;
 import dido.data.DidoData;
+import dido.how.conversion.DefaultConversionProvider;
 import dido.poi.*;
 import dido.poi.layouts.*;
 import dido.poi.style.StyleBean;
@@ -10,7 +11,6 @@ import dido.poi.style.StyleProvider;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.oddjob.arooa.utils.DateHelper;
@@ -66,7 +66,8 @@ public class PoiRowsTest {
 		RowIn rowIn = test2.nextRow();
 		assertThat(rowIn, notNullValue());
 
-		CellIn<String> cellIn = text.provideCellIn(1);
+		CellIn<String> cellIn = text.provideCellIn(1,
+				DefaultConversionProvider.defaultInstance());
 
 		assertEquals("apples", cellIn.getValue(rowIn));
 		
@@ -190,8 +191,10 @@ public class PoiRowsTest {
 
 		assertThat(headings, is(new String[] { "Name", "Age"}));
 
-		CellIn<String> cellIn1 = cell1.provideCellIn(1);
-		CellIn<Double> cellIn2 = cell2.provideCellIn(2);
+		CellIn<String> cellIn1 = cell1.provideCellIn(1,
+				DefaultConversionProvider.defaultInstance());
+		CellIn<Double> cellIn2 = cell2.provideCellIn(2,
+				DefaultConversionProvider.defaultInstance());
 		
 		RowIn rowIn = testIn.nextRow();
 		assertThat(rowIn, notNullValue());
@@ -207,12 +210,8 @@ public class PoiRowsTest {
 	 * what it proves any more.
 	 * 
 	 */
-	@Disabled
-	public void testDateCellTypes() throws ParseException, IOException {
+	void testDateCellTypes() throws ParseException, IOException {
 
-		if (true) {
-			return;
-		}
 
 		PoiWorkbook workbook = new PoiWorkbook();
 		

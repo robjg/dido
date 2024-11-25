@@ -2,16 +2,35 @@ package dido.poi.utils;
 
 import dido.data.DataSchema;
 import dido.data.SchemaBuilder;
+import dido.data.SchemaField;
 import dido.how.util.Primitives;
 import dido.poi.RowIn;
 import dido.poi.data.DataCell;
 import dido.poi.layouts.*;
-import dido.poi.style.DefaultStyleProivderFactory;
 import org.apache.poi.ss.usermodel.Cell;
 
 import java.util.*;
 
+/**
+ * Provides a mapping between {@link DataCell}s and a {@link DataSchema}. It creates one from the other
+ * and so either may be provided in the factory method {@link #fromSchemaOrCells(DataSchema, Collection)}.
+ */
 public class SchemaAndCells {
+
+    /**
+     * Taken from {@link org.apache.poi.ss.usermodel.BuiltinFormats}
+     */
+    private static final Set<Short> DATE_FORMATS = Set.of(
+            (short) 0xe, // "m/ d/ yy"
+            (short) 0xf, // "d-mmm-yy"
+            (short) 0x10, // "d-mmm"
+            (short) 0x11, // "mmm-yy"
+            (short) 0x12, // "h:mm AM/ PM"
+            (short) 0x13, // "h:mm:ss AM/ PM"
+            (short) 0x14, // "h:mm"
+            (short) 0x15, // "h:mm:ss",
+            (short) 0x16 // "m/ d/ yy h:mm"
+    );
 
     private final DataSchema schema;
 
@@ -22,69 +41,101 @@ public class SchemaAndCells {
         this.dataCells = dataCells;
     }
 
+    public static SchemaAndCells fromCells(Collection<? extends DataCell<?>> dataCells) {
+        return new SchemaAndCells(morphOf(dataCells), dataCells);
+    }
+
+    public static SchemaAndCells fromSchema(DataSchema schema) {
+        return new SchemaAndCells(schema, morphInto(schema));
+    }
+
     public static SchemaAndCells fromSchemaOrCells(DataSchema schema, Collection<? extends DataCell<?>> dataCells) {
 
         if (schema == null) {
             if (dataCells == null || dataCells.isEmpty()) {
                 return null;
+            } else {
+                return fromCells(dataCells);
             }
-            else {
-                return new SchemaAndCells(morphOf(dataCells), dataCells);
-            }
-        }
-        else {
+        } else {
             if (dataCells == null || dataCells.isEmpty()) {
-                return new SchemaAndCells(schema, morphInto(schema));
-            }
-            else {
+                return fromSchema(schema);
+            } else {
                 throw new IllegalStateException("Only Schema or Cells should be provided");
             }
         }
     }
 
     public static SchemaAndCells fromRowAndHeadings(RowIn rowIn, String[] headings) {
+        return fromRowAndHeadings(rowIn, headings, null);
+    }
+
+    public static SchemaAndCells fromRowAndHeadings(RowIn rowIn,
+                                                    String[] headings,
+                                                    DataSchema partialSchema) {
 
         if (rowIn == null) {
             return null;
         }
 
+        if (partialSchema == null) {
+            partialSchema = DataSchema.emptySchema();
+        }
+
         List<AbstractDataCell<?>> cells = new LinkedList<>();
 
-        for (int i = 0; headings == null || i < headings.length; ++i) {
+        for (int index = 1; headings == null || index <= headings.length; ++index) {
 
-            Cell cell = rowIn.getCell(i + 1);
+            String heading = headings == null ? null : headings[index - 1];
+
+            Cell cell = rowIn.getCell(index);
             if (cell == null) {
                 break;
             }
             AbstractDataCell<?> dataCell;
 
-            switch (cell.getCellType()) {
-                case STRING:
-                case ERROR:
-                    dataCell = new TextCell();
-                    break;
-                case BOOLEAN:
-                    dataCell = new BooleanCell();
-                    break;
-                case NUMERIC:
-                    if (DefaultStyleProivderFactory.DATE_FORMAT.equals(
-                            cell.getCellStyle().getDataFormatString())) {
-                        dataCell = new DateCell();
-                    }
-                    else {
-                        dataCell = new NumericCell<>();
-                    }
-                    break;
-                case FORMULA:
-                    dataCell = new NumericFormulaCell();
-                    break;
-                case BLANK:
-                default:
-                    dataCell = new BlankCell();
-                    break;
+            // See if our partial schema has a definition for this column either by
+            // column name or index.
+            SchemaField schemaField = null;
+            if (heading != null) {
+                schemaField = partialSchema.getSchemaFieldNamed(heading);
             }
-            if (headings != null) {
-                dataCell.setName(headings[i]);
+            if (schemaField == null) {
+                schemaField = partialSchema.getSchemaFieldAt(index);
+            } else {
+                schemaField = schemaField.mapToIndex(index);
+            }
+
+            if (schemaField == null) {
+
+                switch (cell.getCellType()) {
+                    case STRING:
+                    case ERROR:
+                        dataCell = new TextCell();
+                        break;
+                    case BOOLEAN:
+                        dataCell = new BooleanCell();
+                        break;
+                    case NUMERIC:
+                        if (DATE_FORMATS.contains(cell.getCellStyle().getDataFormat())) {
+                            dataCell = new DateCell();
+                        } else {
+                            dataCell = new NumericCell<>();
+                        }
+                        break;
+                    case FORMULA:
+                        dataCell = new NumericFormulaCell();
+                        break;
+                    case BLANK:
+                    default:
+                        dataCell = new BlankCell();
+                        break;
+                }
+
+                dataCell.setName(heading);
+            } else {
+
+                dataCell = createCell(schemaField);
             }
 
             cells.add(dataCell);
@@ -97,14 +148,9 @@ public class SchemaAndCells {
 
         List<DataCell<?>> cells = new ArrayList<>(schema.lastIndex());
 
-        int i = 0;
-        for (String property : schema.getFieldNames()) {
+        for (SchemaField schemaField : schema.getSchemaFields()) {
 
-            Class<?> propertyType = Primitives.wrap(schema.getTypeNamed(property));
-
-            AbstractDataCell<?> cell = createCell(propertyType);
-
-            cell.setName(property);
+            AbstractDataCell<?> cell = createCell(schemaField);
 
             cells.add(cell);
         }
@@ -113,27 +159,32 @@ public class SchemaAndCells {
     }
 
     @SuppressWarnings("unchecked")
-    static <T> AbstractDataCell<T> createCell(Class<T> type) {
+    static <T> AbstractDataCell<T> createCell(SchemaField schemaField) {
+
+        Class<?> type = Primitives.wrap(schemaField.getType());
+
+        AbstractDataCell<?> cell;
 
         if (Number.class.isAssignableFrom(type)) {
-            return (AbstractDataCell<T>) createNumericCell((Class<Number>) type);
-        }
-        else if (Boolean.class == type) {
-            return (AbstractDataCell<T>) new BooleanCell();
-        }
-        else if (Date.class.isAssignableFrom(type)) {
-            return (AbstractDataCell<T>) new DateCell();
-        }
-        else {
-            return (AbstractDataCell<T>) new TextCell();
+            cell = createNumericCell((Class<? extends Number>) type);
+        } else if (Boolean.class == type) {
+            cell = new BooleanCell();
+        } else if (Date.class.isAssignableFrom(type)) {
+            cell = new DateCell();
+        } else {
+            cell = new TextCell();
         }
 
+        cell.setName(schemaField.getName());
+        cell.setIndex(schemaField.getIndex());
+
+        return (AbstractDataCell<T>) cell;
     }
 
     static <T extends Number> AbstractDataCell<T> createNumericCell(Class<T> type) {
         NumericCell<T> numericCell = new NumericCell<>();
         numericCell.setType(type);
-        return new NumericCell<>();
+        return numericCell;
     }
 
 

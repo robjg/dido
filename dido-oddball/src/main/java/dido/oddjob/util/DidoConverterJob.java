@@ -16,10 +16,7 @@ import org.oddjob.framework.adapt.SoftReset;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
+import java.util.function.*;
 
 /**
  * @oddjob.description Provides a {@link DidoConverter} using Oddjob's conversions.
@@ -170,6 +167,24 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
                 Function<F, Long> otherwise = conversionFor(from, long.class);
                 return otherwise::apply;
             }
+        }
+
+        @Override
+        public <T> IntFunction<T> fromIntTo(Class<T> to) {
+            Function<Integer, T> conversion = conversionFor(Integer.class, to);
+            return conversion::apply;
+        }
+
+        @Override
+        public <T> DoubleFunction<T> fromDoubleTo(Class<T> to) {
+            Function<Double, T> conversion = conversionFor(Double.class, to);
+            return conversion::apply;
+        }
+
+        @Override
+        public <T> LongFunction<T> fromLongTo(Class<T> to) {
+            Function<Long, T> conversion = conversionFor(Long.class, to);
+            return conversion::apply;
         }
     }
 

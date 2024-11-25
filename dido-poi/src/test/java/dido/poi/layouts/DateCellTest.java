@@ -5,10 +5,10 @@ import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;
+import dido.poi.style.DefaultStyleProivderFactory;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.utils.DateHelper;
 
@@ -19,10 +19,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
-@Disabled
 class DateCellTest {
 
-    @Disabled
     @Test
     void testWriteAndRead() throws Exception {
 
@@ -45,7 +43,7 @@ class DateCellTest {
         assertThat(dobCell.getCellType(), is(CellType.NUMERIC));
 
         CellStyle cellStyle = dobCell.getCellStyle();
-        assertThat(cellStyle.getDataFormatString(), is("d/m/yyyy"));
+        assertThat(cellStyle.getDataFormatString(), is(DefaultStyleProivderFactory.DATE_FORMAT));
 
         assertThat(dobCell.toString(), is("22-Sep-2021"));
 
