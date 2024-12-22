@@ -8,7 +8,7 @@ import dido.data.DidoData;
  * @author rob
  *
  */
-public interface CellOut<T> {
+public interface CellOut {
 
 	void writeHeader(HeaderRowOut headerRowOut);
 

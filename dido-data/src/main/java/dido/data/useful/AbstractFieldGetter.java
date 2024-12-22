@@ -3,6 +3,8 @@ package dido.data.useful;
 import dido.data.DidoData;
 import dido.data.FieldGetter;
 
+import java.util.Objects;
+
 /**
  * Base class for {@link FieldGetter}s that don't mind autoboxing. Implementations must override
  * {@link FieldGetter#get(DidoData)}.
@@ -25,7 +27,7 @@ abstract public class AbstractFieldGetter implements FieldGetter {
 
     @Override
     public byte getByte(DidoData data) {
-        return (byte) get(data);
+        return ((Number) get(data)).byteValue();
     }
 
     @Override
@@ -35,32 +37,32 @@ abstract public class AbstractFieldGetter implements FieldGetter {
 
     @Override
     public short getShort(DidoData data) {
-        return (short) get(data);
+        return ((Number) get(data)).shortValue();
     }
 
     @Override
     public int getInt(DidoData data) {
-        return (int) get(data);
+        return ((Number) get(data)).intValue();
     }
 
     @Override
     public long getLong(DidoData data) {
-        return (long) get(data);
+        return ((Number) get(data)).longValue();
     }
 
     @Override
     public float getFloat(DidoData data) {
-        return (float) get(data);
+        return ((Number) get(data)).floatValue();
     }
 
     @Override
     public double getDouble(DidoData data) {
-        return (double) get(data);
+        return ((Number) get(data)).doubleValue();
     }
 
     @Override
     public String getString(DidoData data) {
-        return (String) get(data);
+        return Objects.toString(get(data));
     }
 
 }

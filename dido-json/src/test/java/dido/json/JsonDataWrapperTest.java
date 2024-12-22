@@ -91,7 +91,7 @@ class JsonDataWrapperTest {
 
         DidoData result = gson.fromJson(json, DidoData.class);
 
-        assertThat(result.getStringAt(1), nullValue());
+        assertThat(result.getStringAt(1), is("null"));
         assertThat(Float.isNaN(result.getFloatNamed("aFloat")), is(true));
         assertThat(Double.isNaN(result.getDoubleNamed("aDouble")), is(true));
     }
@@ -178,7 +178,8 @@ class JsonDataWrapperTest {
 
         IndexedData result = gson.fromJson(json, DidoData.class);
 
-        assertThat(result.getStringAt(1), nullValue());
+        assertThat(result.getAt(1), nullValue());
+        assertThat(result.getStringAt(1), is("null"));
         assertThat(result.hasIndex(2), is(false));
         assertThat(result.hasIndex(3), is(false));
         assertThat(result.hasIndex(4), is(false));

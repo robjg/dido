@@ -1,21 +1,21 @@
 package dido.poi.layouts;
 
 import dido.data.DidoData;
+import dido.data.FieldGetter;
+import dido.data.SchemaField;
+import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
-import dido.poi.CellIn;
+import dido.how.conversion.RequiringConversion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
-import java.util.Optional;
+import java.util.function.Function;
 
 /**
- * @oddjob.description Define a text column. Nests within a {@link DataRows}.
- *
  * @author rob
+ * @oddjob.description Define a text column. Nests within a {@link DataRows}.
  */
-public class TextCell extends AbstractDataCell<String> {
-
-    private volatile String value;
+public class TextCell extends AbstractDataCell {
 
     @Override
     public Class<String> getType() {
@@ -28,30 +28,88 @@ public class TextCell extends AbstractDataCell<String> {
     }
 
     @Override
-    public CellIn<String> provideCellIn(int index,
-                                        DidoConversionProvider conversionProvider) {
+    protected FieldGetter getterFor(SchemaField schemaField, DidoConversionProvider conversionProvider) {
 
-        return rowIn -> {
+        Class<?> type = schemaField.getType();
 
-            Cell cell = rowIn.getCell(index);
+        if (type.isAssignableFrom(String.class)) {
+            return new TextCellGetter(schemaField);
+        } else {
+            return new TextCellGetterWithConversion<>(
+                    schemaField,
+                    RequiringConversion.with(conversionProvider).from(String.class).to(type));
+        }
+    }
 
-            return cell.getStringCellValue();
-        };
+    static class TextCellGetter extends AbstractCellGetter {
+
+        TextCellGetter(SchemaField schemaField) {
+            super(schemaField);
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return getString(data);
+        }
+
+        @Override
+        public String getString(DidoData data) {
+            return getCell(data).getStringCellValue();
+        }
+    }
+
+    static class TextCellGetterWithConversion<R> extends TextCellGetter {
+
+        private final Function<String, R> conversion;
+
+        TextCellGetterWithConversion(SchemaField schemaField,
+                                     Function<String, R> conversion) {
+            super(schemaField);
+            this.conversion = conversion;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            try {
+                return conversion.apply(super.getString(data));
+            } catch (RuntimeException e) {
+                throw DataException.of(String.format("Failed to get value for %s", this), e);
+            }
+        }
     }
 
     @Override
-    void insertValueInto(Cell cell, int index, DidoData data) {
-        String value = Optional.ofNullable(this.value)
-                .orElseGet(() -> data.getStringAt(index));
+    protected Injector injectorFor(SchemaField schemaField, FieldGetter getter, DidoConversionProvider conversionProvider) {
 
-        cell.setCellValue(value);
-    }
+        Class<?> fromType = schemaField.getType();
 
-    public String getValue() {
-        return value;
-    }
+        Function<Object, String> conversion;
 
-    public void setValue(String value) {
-        this.value = value;
+        if (String.class.isAssignableFrom(fromType)) {
+            conversion = null;
+        } else {
+            //noinspection unchecked
+            conversion = (Function<Object, String>) conversionProvider.conversionFor(fromType, String.class);
+        }
+
+        return new Injector() {
+            @Override
+            public void insertValueInto(Cell cell, DidoData data) {
+
+                if (!getter.has(data)) {
+                    cell.setBlank();
+                    return;
+                }
+
+                String value;
+                if (conversion == null) {
+                    value = (getter.getString(data));
+                } else {
+                    value = conversion.apply(getter.get(data));
+                }
+
+                cell.setCellValue(value);
+            }
+        };
     }
 }

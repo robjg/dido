@@ -2,12 +2,9 @@ package dido.how.conversion;
 
 
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,14 +28,10 @@ class DefaultConversionProviderTest {
     @Test
     void augmentedConversions() {
 
-        Map<Class<?>, Function<? super String, ?>> fromString = new HashMap<>();
-        fromString.put(Instant.class, Instant::parse);
-
-        Map<Class<?>, Function<Object, String>> toString = new HashMap<>();
-        toString.put(Instant.class, instant -> "Whenever");
-
-        DidoConversionProvider conversionProvider = DefaultConversionProvider.augmentDefaults(
-                fromString, toString);
+        DidoConversionProvider conversionProvider = DefaultConversionProvider.with()
+                .conversion(String.class, Instant.class, Instant::parse)
+                .conversion(Instant.class, String.class, instant -> "Whenever")
+                .make();
 
         assertThat(conversionProvider.conversionFor(String.class, Instant.class).apply("2023-01-25T19:05:00Z"),
                 is(Instant.parse("2023-01-25T19:05:00Z")));
@@ -60,12 +53,6 @@ class DefaultConversionProviderTest {
         Function<Double, Number> conversion2 = conversionProvider.conversionFor(Double.class, Number.class);
 
         assertThat(conversion2.apply(12.4), Matchers.is((12.4)));
-
-        assertThat(Assertions.assertThrows(IllegalArgumentException.class,
-                        () -> conversionProvider.conversionFor(Object.class, Double.class))
-                .getMessage(), Matchers.containsString("No Conversion"));
-
-
     }
 
 }

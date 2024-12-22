@@ -13,6 +13,22 @@
                         <dido:from-bean xmlns:dido="oddjob:dido"/>
                     </function>
                 </bus:map>
+                <bus:map xmlns:bus="oddjob:beanbus">
+                    <function>
+                        <dido:transform xmlns:dido="oddjob:dido" withCopy="true">
+                            <of>
+                                <dido:set field="percentage">
+                                    <value>
+                                        <value value="0.1"/>
+                                    </value>
+                                    <type>
+                                        <class name="double"/>
+                                    </type>
+                                </dido:set>
+                            </of>
+                        </dido:transform>
+                    </function>
+                </bus:map>
                 <dido:data-out xmlns:dido="oddjob:dido">
                     <to>
                         <dido-poi:workbook xmlns:dido-poi="oddjob:dido:poi">

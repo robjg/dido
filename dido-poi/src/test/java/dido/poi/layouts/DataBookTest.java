@@ -5,6 +5,8 @@ import dido.oddjob.bean.FromBeanArooa;
 import dido.oddjob.bean.ToBeanArooa;
 import dido.oddjob.beanbus.DataInDriver;
 import dido.oddjob.beanbus.DataOutDestination;
+import dido.operators.transform.FieldOperations;
+import dido.operators.transform.TransformationFactory;
 import dido.poi.BookInProvider;
 import dido.poi.BookOutProvider;
 import dido.poi.data.PoiWorkbook;
@@ -53,7 +55,7 @@ public class DataBookTest {
 	@BeforeEach
 	protected void setUp(TestInfo testInfo) throws Exception {
 
-		logger.info("-------------------   " + testInfo.getDisplayName() + "   --------------");
+        logger.info("-------------------   {}   --------------", testInfo.getDisplayName());
 		
 		workDir = OurDirs.workPathDir(DataBookTest.class).toFile();
 	}
@@ -102,7 +104,14 @@ public class DataBookTest {
 				FromBeanArooa.fromSession(session)
 				.ofClass(Person.class);
 
-		beans.stream().map(transformerFromBean).forEach(write);
+		TransformationFactory transformationFactory = new TransformationFactory();
+		transformationFactory.setWithCopy(true);
+		transformationFactory.setOf(0, FieldOperations.setNamed("percentage", 0.1));
+
+		beans.stream()
+				.map(transformerFromBean)
+				.map(transformationFactory.get())
+				.forEach(write);
 
 		write.close();
 
@@ -213,7 +222,7 @@ public class DataBookTest {
 	}
 
 	@Test
-	public void testSimpleWriteReadExample() throws ArooaPropertyException, ArooaConversionException, ParseException, IOException {
+	public void testSimpleWriteReadExample() throws ArooaPropertyException, ArooaConversionException, IOException, ParseException {
 		
 		Properties properties = new Properties();
 		properties.setProperty("work.dir", OurDirs.workPathDir(DataBookTest.class).toString());

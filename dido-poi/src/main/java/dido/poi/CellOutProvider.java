@@ -1,8 +1,11 @@
 package dido.poi;
 
-public interface CellOutProvider<T> {
+import dido.data.ReadSchema;
+import dido.how.conversion.DidoConversionProvider;
 
-    int getIndex();
+public interface CellOutProvider extends CellProvider {
 
-    CellOut<T> provideCellOut(int columnIndex);
+    CellOut provideCellOut(ReadSchema schema,
+                           int index,
+                           DidoConversionProvider conversionProvider);
 }

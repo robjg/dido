@@ -96,7 +96,25 @@ class SingleDataTest {
                         .add(byte.class)
                         .build()));
 
+        assertThat(data1.getAt(1), is((byte) 8));
         assertThat(data1.getByteAt(1), is((byte) 8));
+        assertThat(data1.getShortAt(1), is((short) 8));
+        assertThat(data1.getIntAt(1), is(8));
+        assertThat(data1.getLongAt(1), is( 8L));
+        assertThat(data1.getFloatAt(1), is( 8.0F));
+        assertThat(data1.getDoubleAt(1), is( 8.0));
+        assertThat(data1.getStringAt(1), is( "8"));
+
+        FieldGetter g = ReadSchema.from(data1.getSchema()).getFieldGetterAt(1);
+
+        assertThat(g.get(data1), is((byte) 8));
+        assertThat(g.getByte(data1), is((byte) 8));
+        assertThat(g.getShort(data1), is((short) 8));
+        assertThat(g.getInt(data1), is(8));
+        assertThat(g.getLong(data1), is( 8L));
+        assertThat(g.getFloat(data1), is( 8.0F));
+        assertThat(g.getDouble(data1), is( 8.0));
+        assertThat(g.getString(data1), is( "8"));
 
         DidoData data2 = SingleData.named("Byte").of((byte) 8);
 
@@ -105,7 +123,25 @@ class SingleDataTest {
                         .addNamed("Byte", byte.class)
                         .build()));
 
+        assertThat(data2.getNamed("Byte"), is((byte) 8));
         assertThat(data2.getByteNamed("Byte"), is((byte) 8));
+        assertThat(data2.getShortNamed("Byte"), is((short) 8));
+        assertThat(data2.getIntNamed("Byte"), is(8));
+        assertThat(data2.getLongNamed("Byte"), is( 8L));
+        assertThat(data2.getFloatNamed("Byte"), is( 8.0F));
+        assertThat(data2.getDoubleNamed("Byte"), is( 8.0));
+        assertThat(data2.getStringNamed("Byte"), is( "8"));
+
+        FieldGetter gf = ReadSchema.from(data2.getSchema()).getFieldGetterNamed("Byte");
+
+        assertThat(gf.get(data2), is((byte) 8));
+        assertThat(gf.getByte(data2), is((byte) 8));
+        assertThat(gf.getShort(data2), is((short) 8));
+        assertThat(gf.getInt(data2), is(8));
+        assertThat(gf.getLong(data2), is( 8L));
+        assertThat(gf.getFloat(data2), is( 8.0F));
+        assertThat(gf.getDouble(data2), is( 8.0));
+        assertThat(gf.getString(data2), is( "8"));
 
         DidoData data3 = SingleData.named("Byte").type(byte.class)
                 .of((byte) 8);

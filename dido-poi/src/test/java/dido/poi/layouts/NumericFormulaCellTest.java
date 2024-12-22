@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.is;
 public class NumericFormulaCellTest {
 
 	@Test
-	public void testReadWrite() throws Exception {
+	public void testReadWrite() {
 		
 		PoiWorkbook workbook = new PoiWorkbook();
 		

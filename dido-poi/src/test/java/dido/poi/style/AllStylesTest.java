@@ -1,7 +1,9 @@
 package dido.poi.style;
 
 import dido.data.ArrayData;
+import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.ReadSchema;
 import dido.how.DataOut;
 import dido.how.conversion.DidoConversionProvider;
 import dido.poi.CellIn;
@@ -33,8 +35,7 @@ public class AllStylesTest {
 		workDir = OurDirs.workPathDir(AllStylesTest.class).toFile();
 	}
 
-
-	static class OurCell implements DataCell<String> {
+	static class OurCell implements DataCell {
 
 		@Override
 		public int getIndex() {
@@ -42,14 +43,16 @@ public class AllStylesTest {
 		}
 
 		@Override
-		public CellIn<String> provideCellIn(int columnIndex,
-											DidoConversionProvider conversionProvider) {
-			return null;
+		public CellIn provideCellIn(int columnIndex, DataSchema schema, DidoConversionProvider conversionProvider) {
+			throw new RuntimeException("Unexpected");
 		}
 
 		@Override
-		public CellOut<String> provideCellOut(int columnIndex) {
-			return new CellOut<>() {
+		public CellOut provideCellOut(ReadSchema schema,
+									  int index,
+									  DidoConversionProvider conversionProvider) {
+
+			return new CellOut() {
 				@Override
 				public void writeHeader(HeaderRowOut headerRowOut) {
 
@@ -57,8 +60,8 @@ public class AllStylesTest {
 
 				@Override
 				public void setValue(RowOut rowOut, DidoData data) {
-					Cell cell = rowOut.getCell(columnIndex, CellType.STRING);
-					String value = data.getStringAt(1);
+					Cell cell = rowOut.getCell(index, CellType.STRING);
+					String value = data.getStringAt(index);
 					cell.setCellStyle(rowOut.styleFor(value));
 					cell.setCellValue(value);
 				}

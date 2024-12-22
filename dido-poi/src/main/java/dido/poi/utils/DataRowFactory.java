@@ -3,10 +3,11 @@ package dido.poi.utils;
 import dido.data.NoSuchFieldException;
 import dido.data.*;
 import dido.data.useful.AbstractData;
-import dido.data.useful.AbstractFieldGetter;
+import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
 import dido.poi.CellIn;
 import dido.poi.CellInProvider;
+import dido.poi.DataRow;
 import dido.poi.RowIn;
 
 import java.util.Collection;
@@ -28,39 +29,46 @@ public class DataRowFactory {
     }
 
     public static DataRowFactory newInstance(DataSchema schema,
-                                             Collection<? extends CellInProvider<?>> cellList,
+                                             Collection<? extends CellInProvider> cellList,
                                              DidoConversionProvider conversionProvider) {
 
-        FieldGetter[] cells = new FieldGetter[schema.lastIndex()];
+        FieldGetter[] getters = new FieldGetter[schema.lastIndex()];
+
+        CellIn.Capture capture = new CellIn.Capture() {
+            @Override
+            public void accept(SchemaField schemaField, FieldGetter getter) {
+                getters[schemaField.getIndex() - 1] = getter;
+            }
+        };
 
         int lastIndex = 0;
-        for (CellInProvider<?> cellProvider : cellList) {
+        for (CellInProvider cellProvider : cellList) {
             if (cellProvider.getIndex() == 0) {
                 ++lastIndex;
             } else {
                 lastIndex = cellProvider.getIndex();
             }
 
-            cells[lastIndex - 1] = new CellGetter(
-                    cellProvider.provideCellIn(lastIndex, conversionProvider));
+            SchemaField schemaField = Objects.requireNonNull(schema.getSchemaFieldAt(lastIndex),
+                    "Programmer error: Schema does not match cells at index [" + lastIndex + "]" +
+                            ", schema is: " + schema);
+
+            try {
+                CellIn cellIn = cellProvider.provideCellIn(lastIndex,
+                        schema,
+                        conversionProvider);
+
+                cellIn.capture(capture);
+            }
+            catch (RuntimeException e) {
+                throw DataException.of(String.format("Failed to find getter for cell [%d]:%s"
+                        ,lastIndex, cellProvider.getName()), e);
+            }
         }
 
-        return new DataRowFactory(schema, cells);
+        return new DataRowFactory(schema, getters);
     }
 
-    static class CellGetter extends AbstractFieldGetter {
-
-        private final CellIn<?> cellIn;
-
-        CellGetter(CellIn<?> cellIn) {
-            this.cellIn = cellIn;
-        }
-
-        @Override
-        public Object get(DidoData data) {
-            return cellIn.getValue(((RowDataWrapper) data).row);
-        }
-    }
 
     class CellReadStrategy implements ReadStrategy {
 
@@ -91,12 +99,17 @@ public class DataRowFactory {
         return new RowDataWrapper(row);
     }
 
-    class RowDataWrapper extends AbstractData {
+    class RowDataWrapper extends AbstractData implements DataRow {
 
         private final RowIn row;
 
         RowDataWrapper(RowIn row) {
             this.row = row;
+        }
+
+        @Override
+        public RowIn getRowIn() {
+            return row;
         }
 
         @Override

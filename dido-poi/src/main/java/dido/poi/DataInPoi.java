@@ -11,6 +11,7 @@ import dido.how.conversion.DidoConversionProvider;
 import dido.poi.data.DataCell;
 import dido.poi.data.PoiRowsIn;
 import dido.poi.data.PoiWorkbook;
+import dido.poi.layouts.DataCellFactory;
 import dido.poi.layouts.DataRows;
 import dido.poi.utils.DataRowFactory;
 import dido.poi.utils.SchemaAndCells;
@@ -63,7 +64,7 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
     private final boolean partialSchema;
 
-    private final List<DataCell<?>> of;
+    private final List<DataCell> of;
 
     private final SchemaListener schemaListener;
 
@@ -97,7 +98,7 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
         private DidoConversionProvider converter;
 
-        private Collection<? extends DataCell<?>> cells;
+        private Collection<? extends DataCell> cells;
 
         private SchemaListener schemaListener;
 
@@ -136,7 +137,7 @@ public class DataInPoi implements DataInHow<BookInProvider> {
             return this;
         }
 
-        public Settings cells(Collection<? extends DataCell<?>> cells) {
+        public Settings cells(Collection<? extends DataCell> cells) {
             this.cells = cells;
             return this;
         }
@@ -283,20 +284,31 @@ public class DataInPoi implements DataInHow<BookInProvider> {
             logger.debug("[{}] Providing reader with no headings.", this);
         }
 
-        SchemaAndCells schemaAndCells;
+        SchemaAndCells<DataCell> schemaAndCells;
 
-        if (this.partialSchema || this.schema == null && this.of == null ) {
-            schemaAndCells = SchemaAndCells.fromRowAndHeadings(rowsIn.peekRow(), headings,
-                    this.schema);
-        }
-        else {
-            schemaAndCells = SchemaAndCells.fromSchemaOrCells(this.schema, this.of);
+        CellProviderFactory<DataCell> cellProviderFactory = new DataCellFactory();
+
+        if (this.partialSchema || this.schema == null && this.of == null) {
+            schemaAndCells = SchemaAndCells.withCellFactory(cellProviderFactory)
+                    .fromRowAndHeadings(rowsIn.peekRow(), headings,
+                            this.schema);
+        } else {
+            if (this.schema == null) {
+                schemaAndCells = SchemaAndCells.fromCells(this.of);
+            }
+            else if (this.of == null) {
+                schemaAndCells = SchemaAndCells.withCellFactory(cellProviderFactory)
+                        .fromSchema(this.schema);
+            }
+            else {
+                schemaAndCells = SchemaAndCells.withCells(this.of)
+                        .fromSchema(this.schema);
+            }
         }
 
         if (schemaAndCells == null) {
             return DataIn.of();
-        }
-        else {
+        } else {
             if (schemaListener != null) {
                 schemaListener.schemaAvailable(schemaAndCells.getSchema());
             }

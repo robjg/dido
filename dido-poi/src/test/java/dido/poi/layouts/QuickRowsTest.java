@@ -4,6 +4,7 @@ import dido.data.DidoData;
 import dido.data.MapData;
 import dido.how.DataIn;
 import dido.how.DataOut;
+import dido.how.conversion.DefaultConversionProvider;
 import dido.oddjob.beanbus.DataInDriver;
 import dido.oddjob.beanbus.DataOutDestination;
 import dido.poi.BookInProvider;
@@ -19,14 +20,13 @@ import org.oddjob.arooa.deploy.ClassPathDescriptorFactory;
 import org.oddjob.arooa.standard.StandardArooaSession;
 import org.oddjob.arooa.types.ArooaObject;
 import org.oddjob.arooa.types.ImportType;
-import org.oddjob.arooa.utils.DateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,10 +52,10 @@ public class QuickRowsTest {
     public static class Person {
 
         private String name;
-        private Date dateOfBirth;
+        private LocalDateTime dateOfBirth;
         private Double salary;
 
-        public Person(String name, Date dateOfBirth, Double salery) {
+        public Person(String name, LocalDateTime dateOfBirth, Double salery) {
             this.name = name;
             this.dateOfBirth = dateOfBirth;
             this.salary = salery;
@@ -72,11 +72,11 @@ public class QuickRowsTest {
             this.name = name;
         }
 
-        public Date getDateOfBirth() {
+        public LocalDateTime getDateOfBirth() {
             return dateOfBirth;
         }
 
-        public void setDateOfBirth(Date dateOfBirth) {
+        public void setDateOfBirth(LocalDateTime dateOfBirth) {
             this.dateOfBirth = dateOfBirth;
         }
 
@@ -96,24 +96,25 @@ public class QuickRowsTest {
     }
 
     @Test
-    public void testIdea() throws Exception {
+    public void testIdea() {
 
         DataRows test = new DataRows();
         test.setWithHeader(true);
+        test.setConversionProvider(DefaultConversionProvider.defaultInstance());
 
         PoiWorkbook workbook = new PoiWorkbook();
 
         DidoData person = MapData.builderNoSchema()
                 .withString("name", "John")
-                .with("dateOfBirth", DateHelper.parseDate("1970-03-25"))
+                .with("dateOfBirth", LocalDateTime.parse("1970-03-25T00:00:00"))
                 .withDouble("salary", 45000.0)
                 .build();
 
-        DataOut writer = test.outTo(workbook);
+        try (DataOut writer = test.outTo(workbook)) {
 
-        writer.accept(person);
+            writer.accept(person);
 
-        writer.close();
+        }
 
         Sheet sheet = workbook.getWorkbook().getSheetAt(0);
 
@@ -137,7 +138,7 @@ public class QuickRowsTest {
         DidoData result = results.get(0);
 
         assertEquals("John", result.getStringNamed("name"));
-        assertThat(result.getNamed("dateOfBirth"), is(DateHelper.parseDate("1970-03-25")));
+        assertThat(result.getNamed("dateOfBirth"), is(LocalDateTime.parse("1970-03-25T00:00:00")));
         assertEquals(45000.0, result.getDoubleNamed("salary"));
     }
 
@@ -156,17 +157,17 @@ public class QuickRowsTest {
         List<DidoData> beans = new ArrayList<>();
         beans.add(MapData.builderNoSchema()
                 .withString("name", "John")
-                .with("dateOfBirth", DateHelper.parseDate("1970-03-25"))
+                .with("dateOfBirth", LocalDateTime.parse("1970-03-25T00:00:00"))
                 .withDouble("salary", 45000.0)
                 .build());
         beans.add(MapData.builderNoSchema()
                 .withString("name", "Jane")
-                .with("dateOfBirth", DateHelper.parseDate("1982-11-14"))
+                .with("dateOfBirth", LocalDateTime.parse("1982-11-14T00:00:00"))
                 .withDouble("salary", 28000.0)
                 .build());
         beans.add(MapData.builderNoSchema()
                 .withString("name", "Fred")
-                .with("dateOfBirth", DateHelper.parseDate("1986-08-07"))
+                .with("dateOfBirth", LocalDateTime.parse("1986-08-07T00:00:00"))
                 .withDouble("salary", 22500.0)
                 .build());
 
@@ -209,19 +210,19 @@ public class QuickRowsTest {
 
         DidoData person1 = results.get(0);
         assertEquals("John", person1.getStringNamed("name"));
-        assertEquals(DateHelper.parseDate("1970-03-25"),
+        assertEquals(LocalDateTime.parse("1970-03-25T00:00:00"),
                 person1.getNamed("dateOfBirth"));
         assertEquals(45000.0, person1.getDoubleNamed("salary"));
 
         DidoData person2 = results.get(1);
         assertEquals("Jane", person2.getStringNamed("name"));
-        assertEquals(DateHelper.parseDate("1982-11-14"),
+        assertEquals(LocalDateTime.parse("1982-11-14T00:00:00"),
                 person2.getNamed("dateOfBirth"));
         assertEquals(28000.0, person2.getDoubleNamed("salary"));
 
         DidoData person3 = results.get(2);
         assertEquals("Fred", person3.getStringNamed("name"));
-        assertEquals(DateHelper.parseDate("1986-08-07"),
+        assertEquals(LocalDateTime.parse("1986-08-07T00:00:00"),
                 person3.getNamed("dateOfBirth"));
         assertEquals(22500.0, person3.getDoubleNamed("salary"));
 

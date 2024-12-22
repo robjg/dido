@@ -2,32 +2,36 @@ package dido.poi.data;
 
 import dido.data.ArrayData;
 import dido.data.DidoData;
+import dido.data.ReadSchema;
 import dido.how.conversion.DefaultConversionProvider;
+import dido.how.conversion.DidoConversionProvider;
 import dido.poi.*;
 import dido.poi.layouts.*;
 import dido.poi.style.StyleBean;
 import dido.poi.style.StyleFactoryRegistry;
 import dido.poi.style.StyleProvider;
+import dido.poi.utils.DataRowFactory;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.oddjob.arooa.utils.DateHelper;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
 
 public class PoiRowsTest {
 
 	@Test
-	public void testWriteNextAndGetNext() throws IOException {
+	public void testWriteNextAndGetNext() {
 		
 		TextCell text = new TextCell();
 
@@ -35,14 +39,18 @@ public class PoiRowsTest {
 
 		BookOut bookOut = workbook.provideBookOut();
 
-		StyleProvider styleProvider = Mockito.mock(StyleProvider.class);
+		StyleProvider styleProvider = mock(StyleProvider.class);
 		RowsOut test1 = new PoiRowsOut(bookOut.getOrCreateSheet(null), styleProvider, 0, 0);
 		
 		test1.nextRow();
-		
-		CellOut<String> cellOut = text.provideCellOut(1);
 
-		cellOut.setValue(test1.getRowOut(), ArrayData.of("apples"));
+		DidoData data = ArrayData.of("apples");
+		ReadSchema readSchema = ReadSchema.from(data.getSchema());
+
+		CellOut cellOut = text.provideCellOut(readSchema, 1,
+				mock(DidoConversionProvider.class));
+
+		cellOut.setValue(test1.getRowOut(), data);
 
 		Cell cell1 = workbook.getWorkbook().getSheetAt(0).getRow(0).getCell(0);
 		assertEquals(CellType.STRING, cell1.getCellType());
@@ -61,32 +69,35 @@ public class PoiRowsTest {
 		BookIn bookIn = workbook.provideBookIn();
 
 		RowsIn test2 = new PoiRowsIn(bookIn.getSheet(null), 0, 0);
-		
+
+		DataRowFactory rowFactory = DataRowFactory.newInstance(readSchema,
+				List.of(text), DefaultConversionProvider.defaultInstance());
 
 		RowIn rowIn = test2.nextRow();
 		assertThat(rowIn, notNullValue());
 
-		CellIn<String> cellIn = text.provideCellIn(1,
-				DefaultConversionProvider.defaultInstance());
+		DidoData data1 = rowFactory.wrap(rowIn);
 
-		assertEquals("apples", cellIn.getValue(rowIn));
+		assertEquals("apples", data1.getAt(1));
 		
 		rowIn = test2.nextRow();
 		assertThat(rowIn, notNullValue());
 
-		assertEquals("oranges", cellIn.getValue(rowIn));
+		DidoData data2 = rowFactory.wrap(rowIn);
+
+		assertEquals("oranges", data2.getAt(1));
 
 		assertThat(test2.nextRow(), nullValue());
 	}
 
 	@Test
-	public void testDifferentCellTypes() throws IOException {
+	public void testDifferentCellTypes() {
 		
 		PoiWorkbook workbook = new PoiWorkbook();
 		
 		BookOut bookOut = workbook.provideBookOut();
 
-		StyleProvider styleProvider = Mockito.mock(StyleProvider.class);
+		StyleProvider styleProvider = mock(StyleProvider.class);
 		RowsOut test1 = new PoiRowsOut(bookOut.getOrCreateSheet(null), styleProvider,
 				0, 0);
 
@@ -94,8 +105,11 @@ public class PoiRowsTest {
 		
 		BlankCell blank = new BlankCell();
 
-		CellOut<Void> cellOut1 = blank.provideCellOut(1);
-		cellOut1.setValue(test1.getRowOut(), ArrayData.of((Object) null));
+		DidoData data1 = ArrayData.of((Object) null);
+
+		CellOut cellOut1 = firstCellFor(blank, data1);
+
+		cellOut1.setValue(test1.getRowOut(), data1);
 
 		Cell cell1 = workbook.getWorkbook()
 				.getSheetAt(0)
@@ -105,8 +119,11 @@ public class PoiRowsTest {
 		
 		TextCell text = new TextCell();
 
-		CellOut<String> cellOut2 = text.provideCellOut(1);
-		cellOut2.setValue(test1.getRowOut(), ArrayData.of("apples"));
+		DidoData data2 = ArrayData.of("apples");
+
+		CellOut cellOut2 = firstCellFor(text,data2);
+
+		cellOut2.setValue(test1.getRowOut(), data2);
 
 		assertEquals(CellType.STRING, cell1.getCellType());
 
@@ -126,10 +143,12 @@ public class PoiRowsTest {
 			// expected
 		}
 		
-		NumericCell<Double> numeric = new NumericCell<>();
+		NumericCell numeric = new NumericCell();
 
-		CellOut<Double> cellOut3 = numeric.provideCellOut(1);
-		cellOut3.setValue(test1.getRowOut(), ArrayData.of(12.2));
+		DidoData data3 = ArrayData.of(12.2);
+
+		CellOut cellOut3 = firstCellFor(numeric, data3);
+		cellOut3.setValue(test1.getRowOut(), data3);
 
 		assertEquals(CellType.NUMERIC, cell1.getCellType());
 		
@@ -137,14 +156,24 @@ public class PoiRowsTest {
 		formula.setIndex(1);
 		formula.setFormula("6/2");
 
-		CellOut<Double> cellOut4 = formula.provideCellOut(1);
-		cellOut4.setValue(test1.getRowOut(), ArrayData.of(12.2));
+		DidoData data4 = ArrayData.of(12.2);
+
+		CellOut cellOut4 = firstCellFor(formula, data4);
+		cellOut4.setValue(test1.getRowOut(), data4);
 		
 		assertEquals(CellType.FORMULA, cell1.getCellType());
 		
 		bookOut.close();
 	}
-	
+
+	CellOut firstCellFor(CellOutProvider outProvider, DidoData data) {
+
+		ReadSchema readSchema = ReadSchema.from(data.getSchema());
+
+		return outProvider.provideCellOut(readSchema,1, mock(DidoConversionProvider.class));
+	}
+
+
 	public void testHeadings() throws IOException {
 		
 		PoiWorkbook workbook = new PoiWorkbook();
@@ -153,26 +182,29 @@ public class PoiRowsTest {
 
 		TextCell cell1 = new TextCell();
 		cell1.setName("Name");
-		NumericCell<Double> cell2 = new NumericCell<>();
+		NumericCell cell2 = new NumericCell();
 		cell2.setName("Age");
 
-		StyleProvider styleProvider = Mockito.mock(StyleProvider.class);
+		StyleProvider styleProvider = mock(StyleProvider.class);
 		RowsOut testOut = new PoiRowsOut(bookOut.getOrCreateSheet(null),
 				styleProvider, 8, 4);
 
 		HeaderRowOut headerRowOut = testOut.headerRow(null);
 
 		RowOut rowOut = testOut.getRowOut();
-		
-		CellOut<String> cellOut1 = cell1.provideCellOut(1);
-		CellOut<Double> cellOut2 = cell2.provideCellOut(2);
+
+		DidoData data = ArrayData.of("John", 25.0);
+		ReadSchema readSchema = ReadSchema.from(data.getSchema());
+
+		CellOut cellOut1 = cell1.provideCellOut(readSchema, 1,
+				mock(DidoConversionProvider.class));
+		CellOut cellOut2 = cell2.provideCellOut(readSchema, 2,
+				mock(DidoConversionProvider.class));
 
 		cellOut1.writeHeader(headerRowOut);
 		cellOut2.writeHeader(headerRowOut);
 
 		testOut.nextRow();
-
-		DidoData data = ArrayData.of("John", 25.0);
 
 		cellOut1.setValue(rowOut, data);
 		cellOut2.setValue(rowOut, data);
@@ -191,16 +223,17 @@ public class PoiRowsTest {
 
 		assertThat(headings, is(new String[] { "Name", "Age"}));
 
-		CellIn<String> cellIn1 = cell1.provideCellIn(1,
+		DataRowFactory rowFactory = DataRowFactory.newInstance(readSchema,
+				List.of(cell1, cell2),
 				DefaultConversionProvider.defaultInstance());
-		CellIn<Double> cellIn2 = cell2.provideCellIn(2,
-				DefaultConversionProvider.defaultInstance());
-		
+
 		RowIn rowIn = testIn.nextRow();
 		assertThat(rowIn, notNullValue());
 
-		assertThat(cellIn1.getValue(rowIn), is("John"));
-		assertThat(cellIn2.getValue(rowIn), is(25.0));
+		DidoData data1 = rowFactory.wrap(rowIn);
+
+		assertThat(data1.getAt(1), is("John"));
+		assertThat(data1.getAt(2), is(25.0));
 		
 		assertThat(testIn.nextRow(), nullValue());
 	}
@@ -210,7 +243,7 @@ public class PoiRowsTest {
 	 * what it proves any more.
 	 * 
 	 */
-	void testDateCellTypes() throws ParseException, IOException {
+	void testDateCellTypes() throws ParseException {
 
 
 		PoiWorkbook workbook = new PoiWorkbook();
@@ -238,8 +271,10 @@ public class PoiRowsTest {
 		
 		BlankCell blank = new BlankCell();
 
-		CellOut<Void> cellOut1 = blank.provideCellOut(1);
-		cellOut1.setValue(rowOut, ArrayData.of((Object) null));
+		DidoData data1 = ArrayData.of((Object) null);
+
+		CellOut cellOut1 = firstCellFor(blank, data1);
+		cellOut1.setValue(rowOut, data1);
 		
 		Cell cell1 = sheet.getRow(0).getCell(0);
 		
@@ -248,8 +283,10 @@ public class PoiRowsTest {
 		DateCell dateColumn = new DateCell();
 		dateColumn.setStyle("my-date-format");
 
-		CellOut<Date> cellOut2 = dateColumn.provideCellOut(1);
-		cellOut2.setValue(rowOut, ArrayData.of(theDate));
+		DidoData data2 = ArrayData.of(theDate);
+
+		CellOut cellOut2 = firstCellFor(dateColumn, data2);
+		cellOut2.setValue(rowOut, data2);
 		
 		assertEquals(CellType.NUMERIC, cell1.getCellType());
 

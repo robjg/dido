@@ -1,6 +1,5 @@
 package dido.data;
 
-import dido.data.generic.GenericDataSchema;
 import dido.data.useful.AbstractIndexedData;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +17,8 @@ class IndexedDataTest {
         }
 
         @Override
-        public GenericDataSchema<Void> getSchema() {
-            throw new UnsupportedOperationException();
+        public IndexedSchema getSchema() {
+            throw new UnsupportedOperationException("No being tested here");
         }
 
         @Override
@@ -34,23 +33,35 @@ class IndexedDataTest {
     }
 
     @Test
-    void testIntTypeCastAssumptions() {
+    void testIntAsOtherNumericTypes() {
 
         MyData data = new MyData(42);
 
+        assertThat(data.getAt(1), is( 42));
+        assertThat(data.getByteAt(1), is((byte) 42));
+        assertThat(data.getShortAt(1), is((short) 42));
         assertThat(data.getIntAt(1), is(42));
+        assertThat(data.getIntAt(1), is(42));
+        assertThat(data.getLongAt(1), is(42L));
+        assertThat(data.getFloatAt(1), is(42.0F));
+        assertThat(data.getDoubleAt(1), is(42.0));
+        assertThat(data.getStringAt(1), is("42"));
+    }
 
-        // This isn't allowed.
-        try {
-            data.getLongAt(1);
-            assertThat("Integer can't be cast to Long.", false);
-        }
-        catch (ClassCastException e) {
-            // expected.
-        }
+    @Test
+    void testDoubleAsOtherNumericTypes() {
 
-        // This is allowed though
-        assertThat((long) data.getIntAt(1), is(42L));
+        MyData data = new MyData(42.0);
+
+        assertThat(data.getAt(1), is( 42.0));
+        assertThat(data.getByteAt(1), is((byte) 42));
+        assertThat(data.getShortAt(1), is((short) 42));
+        assertThat(data.getIntAt(1), is(42));
+        assertThat(data.getIntAt(1), is(42));
+        assertThat(data.getLongAt(1), is(42L));
+        assertThat(data.getFloatAt(1), is(42.0F));
+        assertThat(data.getDoubleAt(1), is(42.0));
+        assertThat(data.getStringAt(1), is("42.0"));
     }
 
     @Test

@@ -23,6 +23,18 @@ public class NonBoxedData extends AbstractData {
         this.doubles = factory.doubles;
     }
 
+    public static NonBoxedData of(Object... data) {
+
+        SchemaFactory schemaFactory = schemaFactory();
+        for (int i = 0; i < data.length; i++) {
+            Object datum = data[i];
+            schemaFactory.addSchemaField(SchemaField.of(i + 1, null,
+                    datum == null ? void.class : datum.getClass()));
+        }
+
+        return (NonBoxedData) valuesForSchema(schemaFactory.toSchema()).of(data);
+    }
+
     public static SchemaFactory schemaFactory() {
         return new NonBoxedDataSchemaFactory();
     }

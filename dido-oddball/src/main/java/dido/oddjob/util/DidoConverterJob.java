@@ -128,7 +128,7 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
         public <F, T> Function<F, T> conversionFor(Class<F> from, Class<T> to) {
             ConversionPath<F, T> conversionPath = arooaConverter.findConversion(from, to);
             if (conversionPath == null) {
-                throw new IllegalArgumentException("No Conversion from " + from + " to " + to);
+                return null;
             }
             return f -> {
                 try {

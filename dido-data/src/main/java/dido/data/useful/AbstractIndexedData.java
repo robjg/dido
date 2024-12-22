@@ -2,6 +2,8 @@ package dido.data.useful;
 
 import dido.data.IndexedData;
 
+import java.util.Objects;
+
 /**
  * Base class for {@link IndexedData}. Note that this is preferable to the default methods on
  * the interface because reflection won't recognise the getters as properties, and it's not possible to
@@ -22,7 +24,7 @@ abstract public class AbstractIndexedData implements IndexedData {
 
     @Override
     public byte getByteAt(int index) {
-        return (byte) getAt(index);
+        return ((Number) getAt(index)).byteValue();
     }
 
     @Override
@@ -32,32 +34,32 @@ abstract public class AbstractIndexedData implements IndexedData {
 
     @Override
     public short getShortAt(int index) {
-        return (short) getAt(index);
+        return ((Number) getAt(index)).shortValue();
     }
 
     @Override
     public int getIntAt(int index) {
-        return (int) getAt(index);
+        return ((Number) getAt(index)).intValue();
     }
 
     @Override
     public long getLongAt(int index) {
-        return (long) getAt(index);
+        return ((Number) getAt(index)).longValue();
     }
 
     @Override
     public float getFloatAt(int index) {
-        return (float) getAt(index);
+        return ((Number) getAt(index)).floatValue();
     }
 
     @Override
     public double getDoubleAt(int index) {
-        return (double) getAt(index);
+        return ((Number) getAt(index)).doubleValue();
     }
 
     @Override
     public String getStringAt(int index) {
-        return (String) getAt(index);
+        return Objects.toString(getAt(index));
     }
 
     @Override

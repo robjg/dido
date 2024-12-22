@@ -1,5 +1,7 @@
 package dido.data;
 
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -47,6 +49,41 @@ class ArrayDataTest {
         assertThat(schema.getFieldNameAt(2), is("f_2"));
         assertThat(schema.getFieldNameAt(3), is("f_3"));
         assertThat(schema.getFieldNameAt(4), is("f_4"));
+    }
+
+    @Test
+    void testFieldGetters() {
+
+        DidoData data = ArrayData.of("Apple", null, 15, 26.5);
+
+        ReadSchema readSchema = ReadSchema.from(data.getSchema());
+
+        FieldGetter getter1 = readSchema.getFieldGetterAt(1);
+        assertThat(getter1.get(data), is("Apple"));
+        assertThat(getter1.getString(data), is("Apple"));
+
+        FieldGetter getter2 = readSchema.getFieldGetterNamed("f_2");
+        assertThat(getter2.get(data), Matchers.nullValue());
+        assertThat(getter2.getString(data), is("null"));
+
+        FieldGetter getter3 = readSchema.getFieldGetterAt(3);
+        assertThat(getter3.get(data), is(15));
+        assertThat(getter3.getInt(data), is(15));
+        assertThat(getter3.getDouble(data), is(15.0));
+        assertThat(getter3.getString(data), is("15"));
+
+        FieldGetter getter4 = readSchema.getFieldGetterAt(4);
+        assertThat(getter4.get(data), is(26.5));
+        assertThat(getter4.getInt(data), is(26));
+        assertThat(getter4.getDouble(data), is(26.5));
+        assertThat(getter4.getString(data), is("26.5"));
+
+        Assertions.assertThrows(NoSuchFieldException.class,
+                () -> readSchema.getFieldGetterAt(5));
+        Assertions.assertThrows(NoSuchFieldException.class,
+                () -> readSchema.getFieldGetterAt(0));
+        Assertions.assertThrows(NoSuchFieldException.class,
+                () -> readSchema.getFieldGetterNamed("Wrong"));
     }
 
     @Test

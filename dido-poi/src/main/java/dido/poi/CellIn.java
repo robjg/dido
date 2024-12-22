@@ -1,19 +1,21 @@
 package dido.poi;
 
+import dido.data.FieldGetter;
+import dido.data.SchemaField;
+
 /**
  * Represents a spreadsheet cell for reading data from.
  * 
  * @author rob
  *
- * @param <T>
  */
-public interface CellIn<T> {
+public interface CellIn {
 
-	/**
-	 * Extract the value from the cell.
-	 *
-	 * @param rowIn The row
-	 * @return The extracted value. May be null.
-	 */
-	T getValue(RowIn rowIn);
+	interface Capture {
+
+		void accept(SchemaField schemaField, FieldGetter getter);
+	}
+
+	void capture(Capture capture);
+
 }

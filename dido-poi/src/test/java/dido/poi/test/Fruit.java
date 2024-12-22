@@ -2,8 +2,6 @@ package dido.poi.test;
 
 import java.util.Date;
 
-import org.oddjob.arooa.utils.DateHelper;
-
 public class Fruit {
 
 	private String fruit;
@@ -59,7 +57,7 @@ public class Fruit {
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + ": fruit=" + fruit +
-				", bestBefore" + DateHelper.formatDate(bestBefore) +
+				", bestBefore" + bestBefore +
 				", colour=" + colour + ", quantity=" + quantity + 
 				", price=" + price;
 	}

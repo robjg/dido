@@ -368,11 +368,12 @@ public class FromBeanArooa {
 
         @Override
         public FieldGetter getFieldGetterNamed(String name) {
-            if (hasNamed(name)) {
-                return getFieldGetterNamed(name);
-            } else {
-                throw new NoSuchFieldException(name, Schema.this);
+            int index = getIndexNamed(name);
+            if (index == 0) {
+                throw new NoSuchFieldException(name, this);
             }
+
+            return getFieldGetterAt(index);
         }
     }
 

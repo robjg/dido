@@ -2,6 +2,8 @@ package dido.how.conversion;
 
 import dido.how.util.Primitives;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -12,135 +14,140 @@ import java.util.function.*;
  */
 public class DefaultConversionProvider implements DidoConversionProvider {
 
-    private static final Map<Class<?>, Function<? super String, ?>> stringConversions = new HashMap<>();
+    private static final Map<Class<?>, Function<? super String, ?>> defaultStringConversions = new HashMap<>();
 
-    private static final Map<Class<?>, IntFunction<?>> fromIntConversions = new HashMap<>();
+    private static final Map<Class<?>, IntFunction<?>> defaultFromIntConversions = new HashMap<>();
 
-    private static final Map<Class<?>, DoubleFunction<?>> fromDoubleConversions = new HashMap<>();
+    private static final Map<Class<?>, DoubleFunction<?>> defaultFromDoubleConversions = new HashMap<>();
 
-    private static final Map<Class<?>, LongFunction<?>> fromLongConversions = new HashMap<>();
+    private static final Map<Class<?>, LongFunction<?>> defaultFromLongConversions = new HashMap<>();
 
     static {
-        stringConversions.put(Boolean.class, Boolean::valueOf);
-        stringConversions.put(Byte.class, Byte::valueOf);
-        stringConversions.put(Character.class, s -> s.isEmpty() ? null : s.charAt(0));
-        stringConversions.put(Short.class, Short::valueOf);
-        stringConversions.put(Integer.class, Integer::valueOf);
-        stringConversions.put(Long.class, Long::valueOf);
-        stringConversions.put(Float.class, Float::valueOf);
-        stringConversions.put(Double.class, Double::valueOf);
-        stringConversions.put(Number.class, Double::valueOf);
+        defaultStringConversions.put(Boolean.class, Boolean::valueOf);
+        defaultStringConversions.put(Byte.class, Byte::valueOf);
+        defaultStringConversions.put(Character.class, s -> s.isEmpty() ? null : s.charAt(0));
+        defaultStringConversions.put(Short.class, Short::valueOf);
+        defaultStringConversions.put(Integer.class, Integer::valueOf);
+        defaultStringConversions.put(Long.class, Long::valueOf);
+        defaultStringConversions.put(Float.class, Float::valueOf);
+        defaultStringConversions.put(Double.class, Double::valueOf);
+        defaultStringConversions.put(Number.class, Double::valueOf);
 
-        fromIntConversions.put(Byte.class, i -> (byte) i);
-        fromIntConversions.put(Short.class, i -> (short) i);
-        fromIntConversions.put(Integer.class, i -> i);
-        fromIntConversions.put(Long.class, i -> (long) i);
-        fromIntConversions.put(Float.class, i -> (float) i);
-        fromIntConversions.put(Double.class, i -> (double) i);
-        fromIntConversions.put(Number.class, i -> i);
-        fromIntConversions.put(String.class, Objects::toString);
+        defaultFromIntConversions.put(Byte.class, i -> (byte) i);
+        defaultFromIntConversions.put(Short.class, i -> (short) i);
+        defaultFromIntConversions.put(Integer.class, i -> i);
+        defaultFromIntConversions.put(Long.class, i -> (long) i);
+        defaultFromIntConversions.put(Float.class, i -> (float) i);
+        defaultFromIntConversions.put(Double.class, i -> (double) i);
+        defaultFromIntConversions.put(Number.class, i -> i);
+        defaultFromIntConversions.put(String.class, Objects::toString);
 
-        fromDoubleConversions.put(Byte.class, d -> (byte) d);
-        fromDoubleConversions.put(Short.class, d -> (short) d);
-        fromDoubleConversions.put(Integer.class, d -> (int) d);
-        fromDoubleConversions.put(Long.class, d -> (long) d);
-        fromDoubleConversions.put(Float.class, d -> (float) d);
-        fromDoubleConversions.put(Double.class, d -> d);
-        fromDoubleConversions.put(Number.class, d -> d);
-        fromDoubleConversions.put(String.class, Objects::toString);
+        defaultFromDoubleConversions.put(Byte.class, d -> (byte) d);
+        defaultFromDoubleConversions.put(Short.class, d -> (short) d);
+        defaultFromDoubleConversions.put(Integer.class, d -> (int) d);
+        defaultFromDoubleConversions.put(Long.class, d -> (long) d);
+        defaultFromDoubleConversions.put(Float.class, d -> (float) d);
+        defaultFromDoubleConversions.put(Double.class, d -> d);
+        defaultFromDoubleConversions.put(Number.class, d -> d);
+        defaultFromDoubleConversions.put(String.class, Objects::toString);
 
-        fromLongConversions.put(Byte.class, l -> (byte) l);
-        fromLongConversions.put(Short.class, l -> (short) l);
-        fromLongConversions.put(Integer.class, l -> (int) l);
-        fromLongConversions.put(Long.class, l -> l);
-        fromLongConversions.put(Float.class, l -> (float) l);
-        fromLongConversions.put(Double.class, l -> (double) l);
-        fromLongConversions.put(Number.class, l -> l);
-        fromLongConversions.put(String.class, Objects::toString);
+        defaultFromLongConversions.put(Byte.class, l -> (byte) l);
+        defaultFromLongConversions.put(Short.class, l -> (short) l);
+        defaultFromLongConversions.put(Integer.class, l -> (int) l);
+        defaultFromLongConversions.put(Long.class, l -> l);
+        defaultFromLongConversions.put(Float.class, l -> (float) l);
+        defaultFromLongConversions.put(Double.class, l -> (double) l);
+        defaultFromLongConversions.put(Number.class, l -> l);
+        defaultFromLongConversions.put(String.class, Objects::toString);
     }
 
-    static <T> void registerFromDoubleConversion(Class<T> type, DoubleFunction<T> conversion) {
-        fromDoubleConversions.put(type, conversion);
+    private final Map<Type, From<?>> conversions;
+
+    private final Map<Type, IntFunction<?>> fromIntConversions;
+
+    private final Map<Type, DoubleFunction<?>> fromDoubleConversions;
+
+    private final Map<Type, LongFunction<?>> fromLongConversions;
+
+    private DefaultConversionProvider(Builder builder) {
+        this.conversions = new HashMap<>(builder.conversions);
+        this.fromIntConversions = new HashMap<>(builder.fromIntConversions);
+        this.fromDoubleConversions = new HashMap<>(builder.fromDoubleConversions);
+        this.fromLongConversions = new HashMap<>(builder.fromLongConversions);
     }
 
+    public static class Builder {
 
-    private final Map<Class<?>, Function<? super String, ?>> fromString;
+        private final Map<Type,  From<?>> conversions = new HashMap<>();
 
-    private final Map<Class<?>, Function<Object, String>> toString;
+        private final Map<Type, IntFunction<?>> fromIntConversions = new HashMap<>();
 
-    private DefaultConversionProvider(Map<Class<?>, Function<? super String, ?>> fromString,
-                                      Map<Class<?>, Function<Object, String>> toString) {
-        this.fromString = fromString;
-        this.toString = toString;
+        private final Map<Type, DoubleFunction<?>> fromDoubleConversions = new HashMap<>();
+
+        private final Map<Type, LongFunction<?>> fromLongConversions = new HashMap<>();
+
+
+        public <F, T> Builder conversion(Type from, Type to, Function<? super F, ? extends T> conversion) {
+            ((From<T>)conversions.computeIfAbsent(to, k -> new From<>()))
+                    .add(from, conversion);
+            return this;
+        }
+
+        public <T> Builder doubleConversion(Type to, DoubleFunction<? extends T> conversion) {
+            fromDoubleConversions.put(to, conversion);
+            return conversion(Double.class, to, (Function<Double, T>) d -> conversion.apply(d));
+        }
+
+        public <T> Builder intConversion(Type to, IntFunction<? extends T> conversion) {
+            fromIntConversions.put(to, conversion);
+            return conversion(Integer.class, to, (Function<Integer, T>) i -> conversion.apply(i));
+        }
+
+        public <T> Builder longConversion(Type to, LongFunction<? extends T> conversion) {
+            fromLongConversions.put(to, conversion);
+            return conversion(Long.class, to, (Function<Long, T>) l -> conversion.apply(l));
+        }
+
+        public DidoConversionProvider make() {
+            return new DefaultConversionProvider(this);
+        }
+    }
+
+    public static Builder with() {
+        Builder builder = new Builder();
+        builder.conversion(Object.class, String.class, Objects::toString);
+        defaultStringConversions.entrySet().forEach(entry -> builder.conversion(String.class, entry.getKey(), entry.getValue()));
+        defaultFromIntConversions.forEach((key, value) -> builder.intConversion(key, (IntFunction) value));
+        defaultFromDoubleConversions.forEach((key, value)-> builder.doubleConversion(key, (DoubleFunction) value));
+        defaultFromLongConversions.forEach((key, value) -> builder.longConversion(key, (LongFunction) value));
+        return builder;
     }
 
     public static DidoConversionProvider defaultInstance() {
-        return new DefaultConversionProvider(stringConversions, new HashMap<>());
+        return with().make();
     }
 
-    public static DidoConversionProvider augmentDefaults(Map<Class<?>, Function<? super String, ?>> fromString,
-                                                         Map<Class<?>, Function<Object, String>> toString) {
-
-        Map<Class<?>, Function<? super String, ?>> allFromString = new HashMap<>(stringConversions);
-        allFromString.putAll(fromString);
-
-        Map<Class<?>, Function<Object, String>> allToString = new HashMap<>(toString);
-
-        return new DefaultConversionProvider(allFromString, allToString);
-    }
 
     @SuppressWarnings("unchecked")
     @Override
     public <F, T> Function<F, T> conversionFor(Class<F> from, Class<T> to) {
 
-        if (to == String.class) {
-            return (Function<F, T>) convertToString(from);
-        }
+        Class<?> from_ = Primitives.wrap(from);
+        Class<?> to_ = Primitives.wrap(to);
 
-        if (from == String.class) {
-            return (Function<F, T>) convertFromString(to);
-        }
-
-        if (to.isAssignableFrom(from)) {
+        if (to_.isAssignableFrom(from_)) {
             return value -> (T) value;
         }
 
-        throw new IllegalArgumentException("No Conversion of {" + from + "} to " + to);
-    }
+        From<T> froms = (From<T>) conversions.get(to_);
 
-    @SuppressWarnings("unchecked")
-    public <T> Function<String, T> convertFromString(Class<T> to) {
+        Function<F, T> conversion = null;
 
-        if (to == String.class) {
-            return string -> (T) string;
+        if (froms != null) {
+            conversion = froms.findConversion(from_);
         }
 
-        if (to.isPrimitive()) {
-            to = Primitives.wrap(to);
-        }
-
-        Function<String, T> func = (Function<String, T>) fromString.get(to);
-
-        if (func == null) {
-            throw new IllegalArgumentException("No Conversion of String to " + to);
-        }
-
-        return string -> {
-            if (string == null) {
-                return null;
-            }
-            else {
-                return func.apply(string);
-            }
-        };
-    }
-
-    public <F> Function<F, String> convertToString(Class<F> from) {
-
-        @SuppressWarnings("unchecked")
-        Function<F, String> func = (Function<F, String>) toString.get(from);
-
-        return Objects.requireNonNullElseGet(func, () -> Object::toString);
+        return conversion;
     }
 
     @Override
@@ -177,7 +184,7 @@ public class DefaultConversionProvider implements DidoConversionProvider {
     public <T> IntFunction<T> fromIntTo(Class<T> to) {
 
         @SuppressWarnings("unchecked")
-        IntFunction<T> func = (IntFunction<T>) fromIntConversions.get(to);
+        IntFunction<T> func = (IntFunction<T>) defaultFromIntConversions.get(to);
 
         if (func == null) {
             throw new IllegalArgumentException("No Conversion of Int to " + to);
@@ -191,7 +198,7 @@ public class DefaultConversionProvider implements DidoConversionProvider {
     public <T> DoubleFunction<T> fromDoubleTo(Class<T> to) {
 
         @SuppressWarnings("unchecked")
-        DoubleFunction<T> func = (DoubleFunction<T>) fromDoubleConversions.get(to);
+        DoubleFunction<T> func = (DoubleFunction<T>) defaultFromDoubleConversions.get(to);
 
         if (func == null) {
             throw new IllegalArgumentException("No Conversion of Double to " + to);
@@ -205,13 +212,75 @@ public class DefaultConversionProvider implements DidoConversionProvider {
     public <T> LongFunction<T> fromLongTo(Class<T> to) {
 
         @SuppressWarnings("unchecked")
-        LongFunction<T> func = (LongFunction<T>) fromLongConversions.get(to);
+        LongFunction<T> func = (LongFunction<T>) defaultFromLongConversions.get(to);
 
         if (func == null) {
             throw new IllegalArgumentException("No Conversion of Long to " + to);
         }
         else {
             return func;
+        }
+    }
+
+    static class From<T> {
+
+        private final Map<Type, Function<?, ? extends T>> conversions = new HashMap<>();
+
+        <F> void add(Type from, Function<? super F, ? extends T> conversion) {
+            conversions.put(from, conversion);
+        }
+
+        <F> Function<F, T> findConversion(Type from) {
+
+            if (from == null) {
+                return  null;
+            }
+
+            Function<?, ? extends T> conversion = conversions.get(from);
+            if (conversion == null) {
+                conversion = findConversion(superClass(from));
+            }
+            if (conversion == null) {
+                for (Class<?> inter : interfaces(from)) {
+                    conversion = findConversion(superClass(inter));
+                    if (conversion != null) {
+                        break;
+                    }
+                }
+            }
+
+            if (conversion == null) {
+                return null;
+            }
+
+            //noinspection unchecked
+            return (Function<F, T>) conversion;
+        }
+    }
+
+    static Class<?> superClass(Type type) {
+
+        if (type instanceof Class) {
+            return ((Class<?>) type).getSuperclass();
+        }
+        else if (type instanceof ParameterizedType){
+            return superClass(((ParameterizedType) type).getRawType());
+        }
+        else {
+            return null;
+        }
+    }
+
+    static Class<?>[] interfaces(Type type) {
+
+        if (type instanceof Class) {
+            return ((Class<?>) type).getInterfaces();
+        }
+        else if (type instanceof ParameterizedType){
+            return interfaces(((ParameterizedType) type).getRawType());
+        }
+        else {
+            return null;
         }
     }
 }

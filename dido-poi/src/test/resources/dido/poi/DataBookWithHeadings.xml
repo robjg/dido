@@ -8,10 +8,15 @@
     </styles>
     <of>
         <dido-poi:text name="name"/>
-        <dido-poi:date name="dateOfBirth" style="date"/>
+        <dido-poi:date name="dateOfBirth" style="date">
+                <type>
+                    <class name="java.util.Date"/>
+
+                </type>
+        </dido-poi:date>
         <dido-poi:numeric name="salary"/>
         <dido-poi:numeric-formula name="bonus" formula='INDIRECT("C"&amp;ROW()) * INDIRECT("E"&amp;ROW())'/>
         <dido-poi:numeric name="percentage"
-                          style="percentage" value='0.1'/>
+                          style="percentage"/>
     </of>
 </dido-poi:rows>

@@ -1,8 +1,12 @@
 package dido.poi.utils;
 
+import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.SchemaField;
+import dido.data.useful.AbstractFieldGetter;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
+import dido.poi.CellIn;
 import dido.poi.RowIn;
 import dido.poi.data.DataCell;
 import org.junit.jupiter.api.Test;
@@ -15,20 +19,56 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class DataRowFactoryTest {
+
+    static DataCell textCell(int index) {
+
+        DataCell cell = Mockito.mock(DataCell.class);
+        when(cell.getType()).then(invocation -> String.class);
+        when(cell.getIndex()).thenReturn(index);
+        doAnswer(invocation -> (CellIn) capture -> {
+            SchemaField schemaField = ((DataSchema) invocation.getArgument(1))
+                    .getSchemaFieldAt(invocation.getArgument(0));
+            capture.accept(schemaField,
+                    new AbstractFieldGetter() {
+                        @Override
+                        public Object get(DidoData data) {
+                            return "Foo";
+                        }
+                    });
+        })
+                .when(cell).provideCellIn(eq(index), any(DataSchema.class), any(DidoConversionProvider.class));
+        return cell;
+    }
+
+    static DataCell numberCell(int index) {
+
+        DataCell cell = Mockito.mock(DataCell.class);
+        when(cell.getType()).then(invocation -> Double.class);
+        when(cell.getIndex()).thenReturn(index);
+        doAnswer(invocation -> (CellIn) capture -> {
+            SchemaField schemaField = ((DataSchema) invocation.getArgument(1))
+                    .getSchemaFieldAt(invocation.getArgument(0));
+            capture.accept(schemaField,
+                    new AbstractFieldGetter() {
+                        @Override
+                        public Object get(DidoData data) {
+                            return 42.0;
+                        }
+                    });
+        })
+                .when(cell).provideCellIn(eq(index), any(DataSchema.class), any(DidoConversionProvider.class));
+        return cell;
+    }
 
     @Test
     void testWithSingleCell() {
 
-        DataCell<String> cell = Mockito.mock(DataCell.class);
-        when(cell.getType()).then(invocation -> String.class);
-        when(cell.provideCellIn(eq(1), any(DidoConversionProvider.class)))
-                .thenReturn(row -> "Foo");
+        DataCell cell = textCell(1);
 
-        SchemaAndCells schemaAndCells = SchemaAndCells.fromSchemaOrCells(null, Collections.singletonList(cell));
+        SchemaAndCells<DataCell> schemaAndCells = SchemaAndCells.fromCells(Collections.singletonList(cell));
 
         DataRowFactory test = DataRowFactory.newInstance(
                 schemaAndCells.getSchema(), schemaAndCells.getDataCells(),
@@ -44,17 +84,10 @@ class DataRowFactoryTest {
     @Test
     void testWithTwoCellsNoIndexes() {
 
-        DataCell<String> cell1 = Mockito.mock(DataCell.class);
-        when(cell1.getType()).then(invocation -> String.class);
-        when(cell1.provideCellIn(eq(1), any(DidoConversionProvider.class)))
-                .thenReturn(row -> "Foo");
+        DataCell cell1 = textCell(1);
+        DataCell cell2 = numberCell(2);
 
-        DataCell<Double> cell2 = Mockito.mock(DataCell.class);
-        when(cell2.getType()).then(invocation -> Double.class);
-        when(cell2.provideCellIn(eq(2), any(DidoConversionProvider.class)))
-                .thenReturn(row -> 42.0);
-
-        SchemaAndCells schemaAndCells = SchemaAndCells.fromSchemaOrCells(null, Arrays.asList(cell1, cell2));
+        SchemaAndCells<DataCell> schemaAndCells = SchemaAndCells.fromCells(Arrays.asList(cell1, cell2));
 
         DataRowFactory test = DataRowFactory.newInstance(
                 schemaAndCells.getSchema(), schemaAndCells.getDataCells(),
@@ -71,19 +104,11 @@ class DataRowFactoryTest {
     @Test
     void testWithDisparateIndexes() {
 
-        DataCell<String> cell3 = Mockito.mock(DataCell.class);
-        when(cell3.getType()).then(invocation -> String.class);
-        when(cell3.getIndex()).thenReturn(3);
-        when(cell3.provideCellIn(eq(3), any(DidoConversionProvider.class)))
-                .thenReturn(row -> "Foo");
+        DataCell cell3 = textCell(3);
 
-        DataCell<Double> cell7 = Mockito.mock(DataCell.class);
-        when(cell7.getType()).then(invocation -> Double.class);
-        when(cell7.getIndex()).thenReturn(7);
-        when(cell7.provideCellIn(eq(7), any(DidoConversionProvider.class)))
-                .thenReturn(row -> 42.0);
+        DataCell cell7 = numberCell(7);
 
-        SchemaAndCells schemaAndCells = SchemaAndCells.fromSchemaOrCells(null, Arrays.asList(cell3, cell7));
+        SchemaAndCells<DataCell> schemaAndCells = SchemaAndCells.fromCells(Arrays.asList(cell3, cell7));
 
         DataRowFactory test = DataRowFactory.newInstance(
                 schemaAndCells.getSchema(), schemaAndCells.getDataCells(),

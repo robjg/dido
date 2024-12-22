@@ -64,7 +64,7 @@ public class NullAndBlankCellsTest {
 
 		TextCell column1 = new TextCell();
 		
-		NumericCell<Double> column2 = new NumericCell<>();
+		NumericCell column2 = new NumericCell();
 		
 		DataRows rows = new DataRows();
 		rows.setOf(0, column1);

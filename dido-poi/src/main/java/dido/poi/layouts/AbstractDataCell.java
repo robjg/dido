@@ -1,9 +1,10 @@
 package dido.poi.layouts;
 
-import dido.data.DidoData;
-import dido.poi.CellOut;
-import dido.poi.HeaderRowOut;
-import dido.poi.RowOut;
+import dido.data.*;
+import dido.data.useful.AbstractFieldGetter;
+import dido.how.DataException;
+import dido.how.conversion.DidoConversionProvider;
+import dido.poi.*;
 import dido.poi.data.DataCell;
 import dido.poi.data.PoiWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -12,166 +13,255 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Shared implementation base class for cells.
- * 
- * @author rob
  *
- * @param <T> The type of the cell.
+ * @author rob
  */
-abstract public class AbstractDataCell<T> implements DataCell<T> {
-	
-	private static final Logger logger = LoggerFactory.getLogger(AbstractDataCell.class);
+abstract public class AbstractDataCell implements DataCell {
 
-	/**
-	 * @oddjob.property
-	 * @oddjob.description The name of this layout. The name is the main
-	 * identification of a layout node. It is commonly used by bindings to
-	 * associate with the property name of a Java Object.
-	 * @oddjob.required No.
-	 */
-	private String name;
+    private static final Logger logger = LoggerFactory.getLogger(AbstractDataCell.class);
 
-	/**
-	 * @oddjob.property
-	 * @oddjob.description The name of the style to use. The style will have
-	 * been defined with the {@link PoiWorkbook} definition.
-	 * @oddjob.required No.
-	 */
-	private String style;
-		
-	/**
-	 * @oddjob.property
-	 * @oddjob.description The 1 based column index of this layout.
-	 * @oddjob.required Read only.
-	 */
-	private int index;
+    /**
+     * @oddjob.property
+     * @oddjob.description The name of this layout. The name is the main
+     * identification of a layout node. It is commonly used by bindings to
+     * associate with the property name of a Java Object.
+     * @oddjob.required No.
+     */
+    private String name;
 
-	/**
-	 * @oddjob.property
-	 * @oddjob.description The Excel reference of the last row of this
-	 * column that has been written.
-	 * @oddjob.required Read only.
-	 */
-	private String reference;
+    /**
+     * @oddjob.property
+     * @oddjob.description The name of the style to use. The style will have
+     * been defined with the {@link PoiWorkbook} definition.
+     * @oddjob.required No.
+     */
+    private String style;
+
+    /**
+     * @oddjob.property
+     * @oddjob.description The 1 based column index of this layout.
+     * @oddjob.required Read only.
+     */
+    private int index;
+
+    /**
+     * @oddjob.property
+     * @oddjob.description The Excel reference of the last row of this
+     * column that has been written.
+     * @oddjob.required Read only.
+     */
+    private String reference;
+
+    @Override
+    public CellIn provideCellIn(int columnIndex,
+                                DataSchema schema,
+                                DidoConversionProvider conversionProvider) {
+
+        SchemaField schemaField = Objects.requireNonNull(schema.getSchemaFieldAt(columnIndex),
+                "Programmer error: Schema does not match cells at index [" + columnIndex + "]" +
+                        ", schema is: " + schema);
+
+        FieldGetter fieldGetter = getterFor(schemaField, conversionProvider);
+
+        return capture -> capture.accept(schemaField, fieldGetter);
+    }
+
+    abstract protected FieldGetter getterFor(SchemaField schemaField,
+                                             DidoConversionProvider conversionProvider);
+
+    protected abstract static class AbstractCellGetter extends AbstractFieldGetter {
+
+        protected final SchemaField schemaField;
+
+        protected final int index;
+
+        AbstractCellGetter(SchemaField schemaField) {
+            this.schemaField = schemaField;
+            this.index = schemaField.getIndex();
+        }
+
+        protected Cell getCell(DidoData data) {
+            return ((DataRow) data).getRowIn().getCell(index);
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + " for " + schemaField;
+        }
+    }
+
+    static class CellGetterWithConversion<T, R>  extends AbstractFieldGetter {
+
+        private final AbstractCellGetter getter;
+
+        private final Function<T, R> conversion;
+
+        CellGetterWithConversion(AbstractCellGetter getter,
+                                 Function<T, R> conversion) {
+            this.getter = getter;
+            this.conversion = conversion;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            try {
+                //noinspection unchecked
+                return conversion.apply((T) getter.get(data));
+            }
+            catch (RuntimeException e) {
+                throw DataException.of(String.format("Failed to get value for %s", this), e);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return getter.toString() + " with conversion";
+        }
+    }
 
 
-	@Override
-	public CellOut<T> provideCellOut(int index) {
+    @Override
+    public CellOut provideCellOut(ReadSchema schema,
+                                  int index,
+                                  DidoConversionProvider conversionProvider) {
 
-		String header = Optional.ofNullable(getName()).orElse("Unnamed");
+        String header = Objects.requireNonNullElse(getName(), "Unnamed");
+        String cellName = getName();
 
-		return new CellOut<>() {
+        SchemaField schemaField;
+        FieldGetter fieldGetter;
+        if (getCellType() == CellType.FORMULA) {
+            schemaField = null;
+            fieldGetter = null;
+        } else if (cellName != null && schema.hasNamed(cellName)) {
+            schemaField = schema.getSchemaFieldNamed(cellName);
+            fieldGetter = schema.getFieldGetterNamed(cellName);
+        } else {
+            schemaField = schema.getSchemaFieldAt(index);
+            fieldGetter = schema.getFieldGetterAt(index);
+        }
 
-			@Override
-			public void writeHeader(HeaderRowOut headerRowOut) {
-				headerRowOut.setHeader(index, header);
-			}
+        Injector injector = injectorFor(schemaField, fieldGetter, conversionProvider);
 
-			@Override
-			public void setValue(RowOut rowOut, DidoData data) {
+        return new CellOut() {
 
-				Cell cell = rowOut.getCell(index, getCellType());
+            @Override
+            public void writeHeader(HeaderRowOut headerRowOut) {
+                headerRowOut.setHeader(index, header);
+            }
 
-				String style = Optional.ofNullable(getStyle()).orElse(getDefaultStyle());
+            @Override
+            public void setValue(RowOut rowOut, DidoData data) {
 
-				if (style != null) {
-					CellStyle cellStyle = rowOut.styleFor(style);
+                Cell cell = rowOut.getCell(index, getCellType());
 
-					if (cellStyle == null) {
-						throw new IllegalArgumentException("No style available of name [" +
-								style + "] from cell [" + this + "]");
-					}
+                String style = Optional.ofNullable(getStyle()).orElse(getDefaultStyle());
 
-					cell.setCellStyle(cellStyle);
-				}
+                if (style != null) {
+                    CellStyle cellStyle = rowOut.styleFor(style);
 
-				insertValueInto(cell, index, data);
-			}
-		};
-	}
+                    if (cellStyle == null) {
+                        throw new IllegalArgumentException("No style available of name [" +
+                                style + "] from cell [" + this + "]");
+                    }
 
-	/**
-	 * Write a value into the cell.
-	 *
-	 * @param cell The Excel Cell.
-	 * @param index The cell index.
-	 * @param data   The data. May be null.
-	 *
-	 */
-	abstract void insertValueInto(Cell cell, int index,  DidoData data);
+                    cell.setCellStyle(cellStyle);
+                }
 
-	/**
-	 * @oddjob.property cellType
-	 * @oddjob.description The Excel type of this column.
-	 * @oddjob.required Read only.
-	 */
-	abstract public CellType getCellType();
+                injector.insertValueInto(cell, data);
+
+                reference = cell.getAddress().formatAsR1C1String();
+            }
+        };
+    }
+
+    protected abstract Injector injectorFor(SchemaField schemaField,
+                                            FieldGetter getter,
+                                            DidoConversionProvider conversionProvider);
+
+    protected interface Injector {
+
+        /**
+         * Write a value into the cell.
+         *
+         * @param cell The Excel Cell.
+         * @param data The data. May be null.
+         */
+        void insertValueInto(Cell cell, DidoData data);
+    }
 
 
-	/**
-	 * Setter for name.
-	 *
-	 * @param name The optional name which will be the field name.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * @oddjob.property cellType
+     * @oddjob.description The Excel type of this column.
+     * @oddjob.required Read only.
+     */
+    abstract public CellType getCellType();
 
-	public String getName() {
-		return name;
-	}
 
-	/**
-	 * @oddjob.property defaultStyle
-	 * @oddjob.description The default style for the cell. This
-	 * maybe overridden at the {@link PoiWorkbook} level.
-	 * @oddjob.required Read only.
-	 * 
-	 * @return The default style.
-	 */
-	public String getDefaultStyle() {
-		return null;
-	}
+    /**
+     * Setter for name.
+     *
+     * @param name The optional name which will be the field name.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @oddjob.property type
-	 * @oddjob.description The Java type of the column.
-	 * @oddjob.required Read only.
-	 *
-	 * @return The type that must be of Class&lt;T&gt;
-	 */
-	abstract public Class<T> getType();
+    public String getName() {
+        return name;
+    }
 
-	public String getReference() {
-		return reference;
-	}
+    /**
+     * @return The default style.
+     * @oddjob.property defaultStyle
+     * @oddjob.description The default style for the cell. This
+     * maybe overridden at the {@link PoiWorkbook} level.
+     * @oddjob.required Read only.
+     */
+    public String getDefaultStyle() {
+        return null;
+    }
 
-	public int getIndex() {
-		return index;
-	}
+    /**
+     * @return The type that must be of Class&lt;T&gt;
+     * @oddjob.property type
+     * @oddjob.description The Java type of the column.
+     * @oddjob.required Read only.
+     */
+    abstract public Class<?> getType();
 
-	public void setIndex(int column) {
-		this.index = column;
-	}	
-	
-	public String getStyle() {
-		return style;
-	}
+    public String getReference() {
+        return reference;
+    }
 
-	public void setStyle(String style) {
-		this.style = style;
-	}
+    public int getIndex() {
+        return index;
+    }
 
-	public String toString() {
-		if (name == null) {
-			return getClass().getSimpleName();
-		}
-		else {
-			return getClass().getSimpleName() + ", name=" + name;
-		}
-	}
+    public void setIndex(int column) {
+        this.index = column;
+    }
 
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public String toString() {
+        if (name == null) {
+            return getClass().getSimpleName();
+        } else {
+            return getClass().getSimpleName() + ", name=" + name;
+        }
+    }
 }

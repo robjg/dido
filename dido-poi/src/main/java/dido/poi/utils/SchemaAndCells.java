@@ -3,196 +3,190 @@ package dido.poi.utils;
 import dido.data.DataSchema;
 import dido.data.SchemaBuilder;
 import dido.data.SchemaField;
-import dido.how.util.Primitives;
+import dido.poi.CellProvider;
+import dido.poi.CellProviderFactory;
 import dido.poi.RowIn;
 import dido.poi.data.DataCell;
-import dido.poi.layouts.*;
 import org.apache.poi.ss.usermodel.Cell;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
- * Provides a mapping between {@link DataCell}s and a {@link DataSchema}. It creates one from the other
- * and so either may be provided in the factory method {@link #fromSchemaOrCells(DataSchema, Collection)}.
+ * Provides a mapping between {@link DataCell}s and a {@link DataSchema}. It creates one from the other.
+ * Mechanics are slightly different for reading and writing.
+ * For reading a schema can be derived from the cell definition or the data.
+ * For writing the schema either defines the cells or is used only to provide types for the cells.
  */
-public class SchemaAndCells {
+public class SchemaAndCells<P extends CellProvider> {
 
-    /**
-     * Taken from {@link org.apache.poi.ss.usermodel.BuiltinFormats}
-     */
-    private static final Set<Short> DATE_FORMATS = Set.of(
-            (short) 0xe, // "m/ d/ yy"
-            (short) 0xf, // "d-mmm-yy"
-            (short) 0x10, // "d-mmm"
-            (short) 0x11, // "mmm-yy"
-            (short) 0x12, // "h:mm AM/ PM"
-            (short) 0x13, // "h:mm:ss AM/ PM"
-            (short) 0x14, // "h:mm"
-            (short) 0x15, // "h:mm:ss",
-            (short) 0x16 // "m/ d/ yy h:mm"
-    );
 
     private final DataSchema schema;
 
-    private final Collection<? extends DataCell<?>> dataCells;
+    private final Collection<P> dataCells;
 
-    private SchemaAndCells(DataSchema schema, Collection<? extends DataCell<?>> dataCells) {
+    private SchemaAndCells(DataSchema schema, Collection<P> dataCells) {
         this.schema = schema;
         this.dataCells = dataCells;
     }
 
-    public static SchemaAndCells fromCells(Collection<? extends DataCell<?>> dataCells) {
-        return new SchemaAndCells(morphOf(dataCells), dataCells);
+    /**
+     * For writing we need be driven by the schema of the data.
+     * So we use this until we know the schema.
+     */
+    public interface Factory<P extends CellProvider> {
+
+        SchemaAndCells<P> fromSchema(DataSchema schema);
+
+        SchemaAndCells<P> noData();
     }
 
-    public static SchemaAndCells fromSchema(DataSchema schema) {
-        return new SchemaAndCells(schema, morphInto(schema));
-    }
+    /**
+     * For when we don't have any cell definitions. They are derived from the schema.
+     *
+     * @param <P> The type of CellProvider.
+     */
+    public static class WithCellFactory<P extends CellProvider> implements Factory<P> {
 
-    public static SchemaAndCells fromSchemaOrCells(DataSchema schema, Collection<? extends DataCell<?>> dataCells) {
+        private final CellProviderFactory<P> cellProviderFactory;
 
-        if (schema == null) {
-            if (dataCells == null || dataCells.isEmpty()) {
+        WithCellFactory(CellProviderFactory<P> cellProviderFactory) {
+            this.cellProviderFactory = cellProviderFactory;
+        }
+
+        @Override
+        public SchemaAndCells<P> fromSchema(DataSchema schema) {
+            return new SchemaAndCells<>(schema, morphInto(schema));
+        }
+
+        @Override
+        public SchemaAndCells<P> noData() {
+            return new SchemaAndCells<>(DataSchema.emptySchema(), List.of());
+        }
+
+        public SchemaAndCells<P> fromRowAndHeadings(RowIn rowIn, String[] headings) {
+            return fromRowAndHeadings(rowIn, headings, null);
+        }
+
+        public SchemaAndCells<P> fromRowAndHeadings(RowIn rowIn,
+                                                        String[] headings,
+                                                        DataSchema partialSchema) {
+
+            if (rowIn == null) {
                 return null;
-            } else {
-                return fromCells(dataCells);
-            }
-        } else {
-            if (dataCells == null || dataCells.isEmpty()) {
-                return fromSchema(schema);
-            } else {
-                throw new IllegalStateException("Only Schema or Cells should be provided");
-            }
-        }
-    }
-
-    public static SchemaAndCells fromRowAndHeadings(RowIn rowIn, String[] headings) {
-        return fromRowAndHeadings(rowIn, headings, null);
-    }
-
-    public static SchemaAndCells fromRowAndHeadings(RowIn rowIn,
-                                                    String[] headings,
-                                                    DataSchema partialSchema) {
-
-        if (rowIn == null) {
-            return null;
-        }
-
-        if (partialSchema == null) {
-            partialSchema = DataSchema.emptySchema();
-        }
-
-        List<AbstractDataCell<?>> cells = new LinkedList<>();
-
-        for (int index = 1; headings == null || index <= headings.length; ++index) {
-
-            String heading = headings == null ? null : headings[index - 1];
-
-            Cell cell = rowIn.getCell(index);
-            if (cell == null) {
-                break;
-            }
-            AbstractDataCell<?> dataCell;
-
-            // See if our partial schema has a definition for this column either by
-            // column name or index.
-            SchemaField schemaField = null;
-            if (heading != null) {
-                schemaField = partialSchema.getSchemaFieldNamed(heading);
-            }
-            if (schemaField == null) {
-                schemaField = partialSchema.getSchemaFieldAt(index);
-            } else {
-                schemaField = schemaField.mapToIndex(index);
             }
 
-            if (schemaField == null) {
+            if (partialSchema == null) {
+                partialSchema = DataSchema.emptySchema();
+            }
 
-                switch (cell.getCellType()) {
-                    case STRING:
-                    case ERROR:
-                        dataCell = new TextCell();
-                        break;
-                    case BOOLEAN:
-                        dataCell = new BooleanCell();
-                        break;
-                    case NUMERIC:
-                        if (DATE_FORMATS.contains(cell.getCellStyle().getDataFormat())) {
-                            dataCell = new DateCell();
-                        } else {
-                            dataCell = new NumericCell<>();
-                        }
-                        break;
-                    case FORMULA:
-                        dataCell = new NumericFormulaCell();
-                        break;
-                    case BLANK:
-                    default:
-                        dataCell = new BlankCell();
-                        break;
+            List<P> cells = new LinkedList<>();
+
+            for (int index = 1; headings == null || index <= headings.length; ++index) {
+
+                String heading = headings == null ? null : headings[index - 1];
+
+                Cell cell = rowIn.getCell(index);
+                if (cell == null) {
+                    break;
                 }
 
-                dataCell.setName(heading);
-            } else {
+                // See if our partial schema has a definition for this column either by
+                // column name or index.
+                SchemaField schemaField = null;
+                if (heading != null) {
+                    schemaField = partialSchema.getSchemaFieldNamed(heading);
+                }
+                if (schemaField == null) {
+                    schemaField = partialSchema.getSchemaFieldAt(index);
+                } else {
+                    schemaField = schemaField.mapToIndex(index);
+                }
 
-                dataCell = createCell(schemaField);
+                P dataCell;
+
+                if (schemaField == null) {
+
+                    dataCell = cellProviderFactory.cellProviderFor(index, heading, cell);
+                } else {
+
+                    dataCell = createCell(schemaField);
+                }
+
+                cells.add(dataCell);
             }
 
-            cells.add(dataCell);
+            return fromCells(cells);
         }
 
-        return SchemaAndCells.fromSchemaOrCells(null, cells);
-    }
+        protected List<P> morphInto(DataSchema schema) {
 
-    static protected List<DataCell<?>> morphInto(DataSchema schema) {
+            List<P> cells = new ArrayList<>(schema.lastIndex());
 
-        List<DataCell<?>> cells = new ArrayList<>(schema.lastIndex());
+            for (SchemaField schemaField : schema.getSchemaFields()) {
 
-        for (SchemaField schemaField : schema.getSchemaFields()) {
+                cells.add(createCell(schemaField));
+            }
 
-            AbstractDataCell<?> cell = createCell(schemaField);
-
-            cells.add(cell);
+            return cells;
         }
 
-        return cells;
+        protected P createCell(SchemaField schemaField) {
+
+            int index = schemaField.getIndex();
+            String name = schemaField.getName();
+            Class<?> type = schemaField.getType();
+
+            return cellProviderFactory.cellProviderFor(index, name, type);
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    static <T> AbstractDataCell<T> createCell(SchemaField schemaField) {
+    public static class WithCells<P extends CellProvider> implements Factory<P> {
 
-        Class<?> type = Primitives.wrap(schemaField.getType());
+        private final Collection<P> cellProviders;
 
-        AbstractDataCell<?> cell;
-
-        if (Number.class.isAssignableFrom(type)) {
-            cell = createNumericCell((Class<? extends Number>) type);
-        } else if (Boolean.class == type) {
-            cell = new BooleanCell();
-        } else if (Date.class.isAssignableFrom(type)) {
-            cell = new DateCell();
-        } else {
-            cell = new TextCell();
+        public WithCells(Collection<P> cellProviders) {
+            this.cellProviders = cellProviders;
         }
 
-        cell.setName(schemaField.getName());
-        cell.setIndex(schemaField.getIndex());
+        @Override
+        public SchemaAndCells<P> fromSchema(DataSchema schema) {
+            return new SchemaAndCells<>(schema, cellProviders);
+        }
 
-        return (AbstractDataCell<T>) cell;
+        @Override
+        public SchemaAndCells<P> noData() {
+            return new SchemaAndCells<>(morphOf(cellProviders), cellProviders);
+        }
     }
 
-    static <T extends Number> AbstractDataCell<T> createNumericCell(Class<T> type) {
-        NumericCell<T> numericCell = new NumericCell<>();
-        numericCell.setType(type);
-        return numericCell;
+    public static <P extends CellProvider> WithCellFactory<P>
+    withCellFactory(CellProviderFactory<P>  cellProviderFactory) {
+        return new WithCellFactory<>(cellProviderFactory);
     }
 
+    public static <P extends CellProvider> Factory<P> withCells(Collection<P> cellProviders) {
+        return new WithCells<>(cellProviders);
+    }
 
-    static protected DataSchema morphOf(Collection<? extends DataCell<?>> cells) {
+    /**
+     * Finds the schema based just on the cells. Used Data in only, for data out we must take into
+     * account the schema.
+     * @param dataCells The cell provider.
+     * @return Schema and Cells.
+     * @param <P> The type of provider.
+     */
+    public static <P extends CellProvider> SchemaAndCells<P> fromCells(Collection<? extends P> dataCells) {
+        return new SchemaAndCells<>(morphOf(dataCells), new ArrayList<>(dataCells));
+    }
+
+    static protected DataSchema morphOf(Collection<? extends CellProvider> cells) {
 
         SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
-        for (DataCell<?> child : cells) {
+        for (CellProvider child : cells) {
 
             String name = child.getName();
 
@@ -208,7 +202,7 @@ public class SchemaAndCells {
         return schema;
     }
 
-    public Collection<? extends DataCell<?>> getDataCells() {
+    public Collection<P> getDataCells() {
         return dataCells;
     }
 }

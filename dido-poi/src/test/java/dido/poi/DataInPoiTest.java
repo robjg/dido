@@ -7,9 +7,7 @@ import dido.data.MapData;
 import dido.how.DataIn;
 import org.junit.jupiter.api.Test;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +40,7 @@ class DataInPoiTest {
                 .addNamed("Fruit", String.class)
                 .addNamed("Qty", int.class)
                 .addNamed("Price", double.class)
-                .addNamed("SellBy", Date.class)
+                .addNamed("SellBy", LocalDateTime.class)
                 .build();
 
         List<DidoData> expected = ArrayData.valuesForSchema(schema)
@@ -74,7 +72,7 @@ class DataInPoiTest {
                 .addNamed("f_1", String.class)
                 .addNamed("Qty", Integer.class)
                 .addNamed("f_3", Double.class)
-                .addNamed("f_4", Date.class)
+                .addNamed("f_4", LocalDateTime.class)
                 .build();
 
         List<DidoData> expected = ArrayData.valuesForSchema(expectedSchema)
@@ -98,11 +96,7 @@ class DataInPoiTest {
         }
     }
 
-    static Date date(String date) {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(date);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+    static LocalDateTime date(String date) {
+        return LocalDateTime.parse(date + "T00:00:00");
     }
 }

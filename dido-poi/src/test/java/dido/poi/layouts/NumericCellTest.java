@@ -33,28 +33,27 @@ public class NumericCellTest {
 	private static final Logger logger = LoggerFactory.getLogger(NumericCellTest.class);
 	
 	@BeforeEach
-	protected void setUp(TestInfo testInfo) throws Exception {
+	protected void setUp(TestInfo testInfo) {
 
 		logger.info("-------------------------   " + testInfo.getDisplayName()  +
 				"   ----------------------");
 	}
 
 	@Test
-	public void testWriteAndRead() throws Exception {
+	public void testWriteAndRead() {
 		
 		PoiWorkbook workbook = new PoiWorkbook();
 		
-		NumericCell<Double> test = new NumericCell<>();
+		NumericCell test = new NumericCell();
 
 		DataRows rows = new DataRows();
 		rows.setOf(0, test);
 
-		DataOut writer = rows.outTo(workbook);
-		
-		writer.accept(ArrayData.of(12.3));
-		
-		writer.close();
-		
+		try (DataOut writer = rows.outTo(workbook)) {
+
+			writer.accept(ArrayData.of(12.3));
+		}
+
 		// Read side.
 
 		try (DataIn reader = rows.inFrom(workbook)) {
@@ -67,21 +66,23 @@ public class NumericCellTest {
 	}
 
 	@Test
-	public void testWriteAndReadOtherNumericTypes() throws Exception {
+	public void testWriteAndReadOtherNumericTypes() {
 
 		PoiWorkbook workbook = new PoiWorkbook();
 
-		NumericCell<Integer> test = new NumericCell<>();
+		NumericCell test = new NumericCell();
 		test.setType(int.class);
 
 		DataRows rows = new DataRows();
 		rows.setOf(0, test);
 
-		DataOut writer = rows.outTo(workbook);
+		// Write
 
-		writer.accept(ArrayData.of(12));
+		try (DataOut writer = rows.outTo(workbook)) {
 
-		writer.close();
+			writer.accept(ArrayData.of(12));
+
+		}
 
 		// Read side.
 
@@ -97,7 +98,7 @@ public class NumericCellTest {
 
 	// Used to be null, but now all fields have names, the cell is created.
 	@Test
-	public void testWriteAndReadNull() throws Exception {
+	public void testWriteAndReadNull() {
 
 		PoiWorkbook workbook = new PoiWorkbook();
 

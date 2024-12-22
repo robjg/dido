@@ -2,14 +2,13 @@ package dido.poi.utils;
 
 import dido.data.DataSchema;
 import dido.data.SchemaBuilder;
+import dido.poi.CellInProvider;
+import dido.poi.CellProvider;
 import dido.poi.RowIn;
 import dido.poi.RowsIn;
 import dido.poi.data.DataCell;
 import dido.poi.data.PoiRowsIn;
-import dido.poi.layouts.BooleanCell;
-import dido.poi.layouts.DateCell;
-import dido.poi.layouts.NumericCell;
-import dido.poi.layouts.TextCell;
+import dido.poi.layouts.*;
 import dido.poi.style.DefaultStyleProivderFactory;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,10 +20,16 @@ import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.utils.DateHelper;
 
 import java.text.ParseException;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class SchemaAndCellsTest {
 
@@ -33,7 +38,7 @@ class SchemaAndCellsTest {
 
         TextCell cell = new TextCell();
 
-        SchemaAndCells test = SchemaAndCells.fromCells(Collections.singletonList(cell));
+        SchemaAndCells<CellProvider> test = SchemaAndCells.fromCells(Collections.singletonList(cell));
 
         DataSchema schema = test.getSchema();
 
@@ -52,11 +57,11 @@ class SchemaAndCellsTest {
         fruitCell.setIndex(3);
         fruitCell.setName("Fruit");
 
-        NumericCell<Double> qtyCell = new NumericCell<>();
+        NumericCell qtyCell = new NumericCell();
         qtyCell.setIndex(7);
         qtyCell.setName("Qty");
 
-        SchemaAndCells test = SchemaAndCells.fromCells(Arrays.asList(fruitCell, qtyCell));
+        SchemaAndCells<CellProvider> test = SchemaAndCells.fromCells(Arrays.asList(fruitCell, qtyCell));
 
         DataSchema expectedSchema = DataSchema.newBuilder()
                 .addNamedAt(3, "Fruit", String.class)
@@ -78,15 +83,15 @@ class SchemaAndCellsTest {
                 .addNamed("Long", long.class)
                 .addNamed("Float", float.class)
                 .addNamed("Double", double.class)
-                .addNamed("Date", Date.class)
+                .addNamed("Date", LocalDateTime.class)
                 .build();
 
-        SchemaAndCells test = SchemaAndCells.fromSchemaOrCells(schema, null);
+        SchemaAndCells<DataCell> test = SchemaAndCells.withCellFactory(new DataCellFactory())
+                .fromSchema(schema);
 
-        //noinspection unchecked
-        List<DataCell<?>> cells = (List<DataCell<?>>) test.getDataCells();
+        List<DataCell> cells = (List<DataCell>) test.getDataCells();
 
-        DataCell<?> next;
+        DataCell next;
 
         next = cells.get(0);
         assertThat(next instanceof TextCell, is(true));
@@ -124,16 +129,17 @@ class SchemaAndCellsTest {
                 .addNamedAt(7, "Qty", Double.class)
                 .build();
 
-        SchemaAndCells test = SchemaAndCells.fromSchema(schema);
+        SchemaAndCells<DataCell> test = SchemaAndCells.withCellFactory(new DataCellFactory())
+                .fromSchema(schema);
 
-        List<? extends DataCell<?>> cells = new ArrayList<>(test.getDataCells());
+        List<? extends DataCell> cells = new ArrayList<>(test.getDataCells());
 
-        DataCell<?> fruitCell = cells.get(0);
+        DataCell fruitCell = cells.get(0);
         assertThat(fruitCell, Matchers.instanceOf(TextCell.class));
         assertThat(fruitCell.getIndex(), is(3));
         assertThat(fruitCell.getName(), is("Fruit"));
 
-        DataCell<?> qtyCell = cells.get(1);
+        DataCell qtyCell = cells.get(1);
         assertThat(qtyCell, instanceOf(NumericCell.class));
         assertThat(qtyCell.getIndex(), is(7));
         assertThat(qtyCell.getName(), is("Qty"));
@@ -142,8 +148,10 @@ class SchemaAndCellsTest {
     @Test
     void testNullWhenNoSchemaOrCells() {
 
-        assertThat(SchemaAndCells.fromSchemaOrCells(null, null), nullValue());
-        assertThat(SchemaAndCells.fromSchemaOrCells(null, Collections.emptyList()), nullValue());
+        assertThat(SchemaAndCells.withCellFactory(new DataCellFactory())
+                .fromRowAndHeadings(null, null), nullValue());
+        assertThat(SchemaAndCells.withCellFactory(new DataCellFactory())
+                .fromRowAndHeadings(null, new String[0]), nullValue());
     }
 
     @Test
@@ -171,7 +179,8 @@ class SchemaAndCellsTest {
         String[] headings = rowsIn.headerRow();
         RowIn rowIn = rowsIn.peekRow();
 
-        SchemaAndCells schemaAndCells = SchemaAndCells.fromRowAndHeadings(rowIn, headings);
+        SchemaAndCells<DataCell> schemaAndCells = SchemaAndCells.withCellFactory(new DataCellFactory())
+                .fromRowAndHeadings(rowIn, headings);
 
         DataSchema schema = schemaAndCells.getSchema();
 
@@ -183,12 +192,30 @@ class SchemaAndCellsTest {
         assertThat(schema.getTypeNamed("Qty"), is(Double.class));
         assertThat(schema.getTypeAt(3), is(Double.class));
         assertThat(schema.getTypeNamed("Price"), is(Double.class));
-        assertThat(schema.getTypeAt(4), is(Date.class));
-        assertThat(schema.getTypeNamed("BestBefore"), is(Date.class));
+        assertThat(schema.getTypeAt(4), is(LocalDateTime.class));
+        assertThat(schema.getTypeNamed("BestBefore"), is(LocalDateTime.class));
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));
         assertThat(schema.nextIndex(3), is(4));
         assertThat(schema.nextIndex(4), is(0));
         assertThat(schema.getFieldNames(), Matchers.contains("Fruit", "Qty", "Price", "BestBefore"));
     }
+
+    @Test
+    void withCellsAndSchemaByName() {
+
+        DataSchema schema = DataSchema.newBuilder()
+                .addNamedAt(20, "Fruit", String.class)
+                .build();
+
+        CellInProvider cell1 = mock(CellInProvider.class);
+        when(cell1.getName()).thenReturn("Fruit");
+
+        SchemaAndCells<CellInProvider> test = SchemaAndCells.withCells(List.of(cell1))
+                .fromSchema(schema);
+
+        assertThat(test.getDataCells(), contains(cell1));
+        assertThat(test.getSchema(), is(schema));
+    }
+
 }

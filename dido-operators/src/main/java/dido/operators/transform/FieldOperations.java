@@ -106,7 +106,8 @@ public class FieldOperations {
 
             SchemaField field = incomingSchema.getSchemaFieldNamed(to);
             if (field == null) {
-                throw new NoSuchFieldException(to, incomingSchema);
+
+                field = SchemaField.of(0, to, value == null ? Void.class : value.getClass());
             }
 
             schemaSetter.addField(field);
