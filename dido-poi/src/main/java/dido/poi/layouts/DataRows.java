@@ -1,28 +1,24 @@
 package dido.poi.layouts;
 
 import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.ReadSchema;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
-import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
-import dido.poi.*;
+import dido.poi.BookInProvider;
+import dido.poi.BookOutProvider;
+import dido.poi.DataInPoi;
+import dido.poi.DataOutPoi;
 import dido.poi.data.DataCell;
-import dido.poi.data.PoiRowsOut;
-import dido.poi.style.CompositeStyleFactory;
-import dido.poi.style.DefaultStyleProivderFactory;
 import dido.poi.style.StyleBean;
 import dido.poi.style.StyleFactoryRegistry;
-import dido.poi.utils.SchemaAndCells;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author rob
@@ -168,7 +164,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
                 .firstRow(this.firstRow)
                 .firstColumn(this.firstColumn)
                 .schema(this.schema)
-                .cells(this.of)
+                .columns(this.of)
                 .schemaListener(schema -> this.headings = schema.getFieldNames().toArray(new String[0]))
                 .header(this.withHeader)
                 .converter(this.conversionProvider)
@@ -177,174 +173,25 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
 
     }
 
-    class MainWriter implements DataOut {
-
-        private final RowsOut rowsOut;
-
-        private final Collection<CellOut> cellOuts;
-
-        private final Runnable closeHandler;
-
-        public MainWriter(RowsOut rowsOut,
-                          Collection<CellOut> cellOuts,
-                          Runnable closeHandler) {
-            this.rowsOut = rowsOut;
-            this.cellOuts = cellOuts;
-            this.closeHandler = closeHandler;
-        }
-
-        @Override
-        public void accept(DidoData data) {
-
-            rowsOut.nextRow();
-
-            logger.trace("[{}] writing row {}", DataRows.this, rowsOut.getLastRow());
-
-            for (CellOut dataCell : cellOuts) {
-                writeCell(dataCell, data);
-            }
-
-            lastRow = rowsOut.getLastRow();
-        }
-
-        <T> void writeCell(CellOut cellOut, DidoData data) {
-
-            RowOut rowOut = rowsOut.getRowOut();
-
-            cellOut.setValue(rowOut, data);
-        }
-
-        @Override
-        public void close() {
-
-            if (autoFilter) {
-                rowsOut.autoFilter();
-            }
-
-            if (autoWidth) {
-                rowsOut.autoWidth();
-            }
-
-            closeHandler.run();
-
-            logger.debug("[{}] closed writer at row [{}]", DataRows.this, lastRow);
-        }
-    }
-
     @Override
     public DataOut outTo(BookOutProvider outTo) {
 
-        BookOut bookOut = outTo.provideBookOut();
-
-        Sheet sheet = bookOut.getOrCreateSheet(this.sheetName);
-
-        PoiRowsOut rowsOut = new PoiRowsOut(sheet,
-                bookOut.createStyles(new CompositeStyleFactory(new DefaultStyleProivderFactory(), styles)),
-                firstRow,
-                firstColumn);
-
-        logger.debug("Creating writer for [{}]", rowsOut);
-
-        WriterFactory writerFactory = new WriterFactory(rowsOut, bookOut::close);
-
-        if (this.schema == null) {
-            if (this.of.isEmpty()) {
-                return new UnknownWriter(writerFactory,
-                        SchemaAndCells.withCellFactory(new DataCellFactory()));
-            } else {
-                return new UnknownWriter(writerFactory,
-                        SchemaAndCells.withCells(this.of));
-            }
-        } else {
-            if (this.of.isEmpty()) {
-                return writerFactory.create(SchemaAndCells.withCellFactory(
-                        new DataCellFactory()).fromSchema(this.schema));
-            } else {
-                return writerFactory.create(SchemaAndCells.withCells(
-                        this.of).fromSchema(this.schema));
-            }
-        }
+        return DataOutPoi.with()
+                .sheetName(this.sheetName)
+                .firstRow(this.firstRow)
+                .firstColumn(this.firstColumn)
+                .schema(this.schema)
+                .columns(this.of)
+                .header(this.withHeader)
+                .headerStyle(this.headingsStyle)
+                .autoFilter(this.autoFilter)
+                .autoWidth(this.autoWidth)
+                .styles(this.styles)
+                .converter(this.conversionProvider)
+                .lastRow(rowNum -> lastRow = rowNum)
+                .make()
+                .outTo(outTo);
     }
-
-    class UnknownWriter implements DataOut {
-
-        private final WriterFactory writerFactory;
-
-        private final SchemaAndCells.Factory<DataCell> cellFactory;
-
-        private DataOut delegate;
-
-        UnknownWriter(WriterFactory writerFactory,
-                      SchemaAndCells.Factory<DataCell> cellFactory) {
-            this.writerFactory = writerFactory;
-            this.cellFactory = cellFactory;
-        }
-
-        @Override
-        public void accept(DidoData data) {
-
-            if (delegate == null) {
-                SchemaAndCells<DataCell> schemaAndCells = cellFactory.fromSchema(data.getSchema());
-                delegate = writerFactory.create(schemaAndCells);
-            }
-            delegate.accept(data);
-        }
-
-        @Override
-        public void close() {
-            if (delegate == null)  {
-                delegate = writerFactory.create(cellFactory.noData());
-            }
-
-            delegate.close();
-        }
-    }
-
-    class WriterFactory {
-
-        private final RowsOut rowsOut;
-        private final Runnable closeHandler;
-
-        WriterFactory(RowsOut rowsOut, Runnable closeHandler) {
-            this.rowsOut = rowsOut;
-            this.closeHandler = closeHandler;
-        }
-
-        DataOut create(SchemaAndCells<? extends CellOutProvider> schemaAndCells) {
-
-            DidoConversionProvider conversionProvider = Objects.requireNonNullElseGet(
-                    DataRows.this.conversionProvider, DefaultConversionProvider::defaultInstance);
-
-            ReadSchema schema = ReadSchema.from(schemaAndCells.getSchema());
-            List<CellOut> cellOuts = new ArrayList<>(schemaAndCells.getDataCells().size());
-            int lastIndex = 0;
-            for (CellOutProvider cellProvider : schemaAndCells.getDataCells()) {
-
-                if (cellProvider.getIndex() == 0) {
-                    ++lastIndex;
-                } else {
-                    lastIndex = cellProvider.getIndex();
-                }
-
-
-                cellOuts.add(cellProvider.provideCellOut(
-                        schema,
-                        lastIndex,
-                        conversionProvider));
-            }
-
-            if (withHeader) {
-                HeaderRowOut headerRowOut = rowsOut.headerRow(headingsStyle);
-
-                cellOuts.forEach(cs -> cs.writeHeader(headerRowOut));
-            }
-
-            logger.debug("[{}] initialised at [{}, {}]", this, firstRow, firstColumn);
-
-            return new MainWriter(rowsOut, cellOuts, closeHandler);
-        }
-    }
-
 
     public boolean isWithHeader() {
         return withHeader;

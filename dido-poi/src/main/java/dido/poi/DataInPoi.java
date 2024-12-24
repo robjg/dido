@@ -12,7 +12,6 @@ import dido.poi.data.DataCell;
 import dido.poi.data.PoiRowsIn;
 import dido.poi.data.PoiWorkbook;
 import dido.poi.layouts.DataCellFactory;
-import dido.poi.layouts.DataRows;
 import dido.poi.utils.DataRowFactory;
 import dido.poi.utils.SchemaAndCells;
 import org.apache.commons.io.input.ReaderInputStream;
@@ -32,7 +31,7 @@ import java.util.*;
  */
 public class DataInPoi implements DataInHow<BookInProvider> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataRows.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataInPoi.class);
 
     /**
      * The starting row in the sheet. Defaults to 1.
@@ -64,12 +63,24 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
     private final boolean partialSchema;
 
-    private final List<DataCell> of;
+    private final List<DataCell> columns;
 
     private final SchemaListener schemaListener;
 
-    public static class Settings {
+    private DataInPoi(Settings settings) {
+        this.firstRow = Math.max(settings.firstRow, 1);
+        this.firstColumn = Math.max(settings.firstColumn, 1);
+        this.sheetName = settings.sheetName;
+        this.schema = settings.schema;
+        this.partialSchema = settings.partialSchema;
+        this.withHeader = settings.withHeader;
+        this.conversionProvider = settings.converter;
+        this.columns = settings.columns == null || settings.columns.isEmpty()
+                ? null : new ArrayList<>(settings.columns);
+        this.schemaListener = settings.schemaListener;
+    }
 
+    public static class Settings {
 
         /**
          * The starting row in the sheet. Defaults to 1.
@@ -98,7 +109,7 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
         private DidoConversionProvider converter;
 
-        private Collection<? extends DataCell> cells;
+        private Collection<? extends DataCell> columns;
 
         private SchemaListener schemaListener;
 
@@ -137,8 +148,8 @@ public class DataInPoi implements DataInHow<BookInProvider> {
             return this;
         }
 
-        public Settings cells(Collection<? extends DataCell> cells) {
-            this.cells = cells;
+        public Settings columns(Collection<? extends DataCell> columns) {
+            this.columns = columns;
             return this;
         }
 
@@ -174,19 +185,6 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
             return new DataInPoi(this);
         }
-
-    }
-
-    private DataInPoi(Settings settings) {
-        this.firstRow = Math.max(settings.firstRow, 1);
-        this.firstColumn = Math.max(settings.firstColumn, 1);
-        this.sheetName = settings.sheetName;
-        this.schema = settings.schema;
-        this.partialSchema = settings.partialSchema;
-        this.withHeader = settings.withHeader;
-        this.conversionProvider = settings.converter;
-        this.of = settings.cells == null || settings.cells.isEmpty() ? null : new ArrayList<>(settings.cells);
-        this.schemaListener = settings.schemaListener;
     }
 
     public static DataIn fromPath(Path path) {
@@ -288,20 +286,20 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
         CellProviderFactory<DataCell> cellProviderFactory = new DataCellFactory();
 
-        if (this.partialSchema || this.schema == null && this.of == null) {
+        if (this.partialSchema || this.schema == null && this.columns == null) {
             schemaAndCells = SchemaAndCells.withCellFactory(cellProviderFactory)
                     .fromRowAndHeadings(rowsIn.peekRow(), headings,
                             this.schema);
         } else {
             if (this.schema == null) {
-                schemaAndCells = SchemaAndCells.fromCells(this.of);
+                schemaAndCells = SchemaAndCells.fromCells(this.columns);
             }
-            else if (this.of == null) {
+            else if (this.columns == null) {
                 schemaAndCells = SchemaAndCells.withCellFactory(cellProviderFactory)
                         .fromSchema(this.schema);
             }
             else {
-                schemaAndCells = SchemaAndCells.withCells(this.of)
+                schemaAndCells = SchemaAndCells.withCells(this.columns)
                         .fromSchema(this.schema);
             }
         }

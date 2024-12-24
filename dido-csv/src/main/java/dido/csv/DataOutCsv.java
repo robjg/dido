@@ -31,6 +31,12 @@ public class DataOutCsv implements DataOutHow<Appendable> {
 
     private final boolean withHeader;
 
+    private DataOutCsv(Settings settings) {
+        this.csvFormat = Objects.requireNonNullElse(settings.csvFormat, CSVFormat.DEFAULT);
+        this.schema = settings.schema;
+        this.withHeader = settings.withHeader;
+    }
+
     public static class Settings {
 
         private CSVFormat csvFormat;
@@ -98,12 +104,6 @@ public class DataOutCsv implements DataOutHow<Appendable> {
                 return result.toString();
             };
         }
-    }
-
-    private DataOutCsv(Settings settings) {
-        this.csvFormat = Objects.requireNonNullElse(settings.csvFormat, CSVFormat.DEFAULT);
-        this.schema = settings.schema;
-        this.withHeader = settings.withHeader;
     }
 
     public static DataOut toAppendable(Appendable appendable) {

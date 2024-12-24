@@ -22,7 +22,6 @@ import java.util.List;
  */
 public class SchemaAndCells<P extends CellProvider> {
 
-
     private final DataSchema schema;
 
     private final Collection<P> dataCells;

@@ -32,6 +32,15 @@ public class DataInCsv implements DataInHow<Reader> {
 
     private final DidoConversionProvider converter;
 
+    private DataInCsv(Settings settings) {
+        this.csvFormat = Objects.requireNonNullElse(settings.csvFormat, CSVFormat.DEFAULT);
+        this.schema = settings.schema;
+        this.withHeader = settings.withHeader;
+        this.partialSchema = settings.partialSchema;
+        this.converter = Objects.requireNonNullElse(settings.converter,
+                DefaultConversionProvider.defaultInstance());
+    }
+
     public static class Settings {
 
         private CSVFormat csvFormat;
@@ -100,15 +109,6 @@ public class DataInCsv implements DataInHow<Reader> {
             };
         }
 
-    }
-
-    private DataInCsv(Settings settings) {
-        this.csvFormat = Objects.requireNonNullElse(settings.csvFormat, CSVFormat.DEFAULT);
-        this.schema = settings.schema;
-        this.withHeader = settings.withHeader;
-        this.partialSchema = settings.partialSchema;
-        this.converter = Objects.requireNonNullElse(settings.converter,
-                DefaultConversionProvider.defaultInstance());
     }
 
     public static DataIn fromPath(Path path) {

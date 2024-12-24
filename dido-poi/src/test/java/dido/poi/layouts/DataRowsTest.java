@@ -53,16 +53,12 @@ public class DataRowsTest {
 				.build();
 
 		writer.accept(data1);
-		
-		assertEquals(3, test.getLastRow());
-
-		// second row
 		writer.accept(data2);
 		
+		writer.close();
+
 		assertEquals(4, test.getLastRow());
 
-		writer.close();
-		
 		// Check
 		
 		Workbook poibook = WorkbookFactory.create(new ByteArrayInputStream(

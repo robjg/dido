@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,17 +35,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class QuickRowsTest {
+class QuickRowsTest {
 
     File workDir;
 
     private static final Logger logger = LoggerFactory.getLogger(QuickRowsTest.class);
 
     @BeforeEach
-    protected void setUp(TestInfo testInfo) throws Exception {
+    protected void setUp(TestInfo testInfo) throws IOException {
 
-        logger.info("----------------------------    " + testInfo.getDisplayName() +
-                "   -------------------------");
+        logger.info("----------------------------    {}   -------------------------", testInfo.getDisplayName());
 
         workDir = OurDirs.workPathDir(QuickRowsTest.class).toFile();
     }
@@ -96,7 +96,7 @@ public class QuickRowsTest {
     }
 
     @Test
-    public void testIdea() {
+    void testIdea() {
 
         DataRows test = new DataRows();
         test.setWithHeader(true);
@@ -143,7 +143,7 @@ public class QuickRowsTest {
     }
 
     @Test
-    public void testWriteReadWithHeadings() throws Exception {
+    void testWriteReadWithHeadings() throws Exception {
 
         doWriteRead("dido/poi/QuickRowsWithHeadings.xml");
     }
