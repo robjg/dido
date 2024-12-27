@@ -24,6 +24,10 @@ public abstract class FormulaColumn extends AbstractColumn {
 			this.formula= formula;
 			return self();
 		}
+
+		public String formula() {
+			return formula;
+		}
 	}
 
 	@Override

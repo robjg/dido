@@ -10,7 +10,6 @@ import dido.how.util.Primitives;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.function.DoubleFunction;
 import java.util.function.Function;
@@ -27,7 +26,7 @@ public class NumericColumn extends AbstractColumn {
 
     protected NumericColumn(Settings settings) {
         super(settings);
-        this.type = Objects.requireNonNullElse(settings.type, LocalDateTime.class);
+        this.type = settings.type();
     }
 
     public static class Settings extends AbstractColumn.BaseSettings<Settings> {
@@ -51,6 +50,10 @@ public class NumericColumn extends AbstractColumn {
                 }
             }
             return this;
+        }
+
+        public Class<?> type() {
+            return Objects.requireNonNullElse(this.type, Double.class);
         }
 
         public NumericColumn make() {
@@ -224,7 +227,6 @@ public class NumericColumn extends AbstractColumn {
             }
         }
     }
-
 
     @Override
     protected Injector injectorFor(SchemaField schemaField,

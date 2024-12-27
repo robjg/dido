@@ -9,10 +9,7 @@ import dido.poi.RowIn;
 import dido.poi.data.DataCell;
 import org.apache.poi.ss.usermodel.Cell;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Provides a mapping between {@link DataCell}s and a {@link DataSchema}. It creates one from the other.
@@ -24,9 +21,10 @@ public class SchemaAndCells<P extends CellProvider> {
 
     private final DataSchema schema;
 
-    private final Collection<P> dataCells;
+    private final Collection<? extends P> dataCells;
 
-    private SchemaAndCells(DataSchema schema, Collection<P> dataCells) {
+    private SchemaAndCells(DataSchema schema,
+                           Collection<? extends P> dataCells) {
         this.schema = schema;
         this.dataCells = dataCells;
     }
@@ -52,7 +50,7 @@ public class SchemaAndCells<P extends CellProvider> {
         private final CellProviderFactory<P> cellProviderFactory;
 
         WithCellFactory(CellProviderFactory<P> cellProviderFactory) {
-            this.cellProviderFactory = cellProviderFactory;
+            this.cellProviderFactory = Objects.requireNonNull(cellProviderFactory);
         }
 
         @Override
@@ -147,7 +145,8 @@ public class SchemaAndCells<P extends CellProvider> {
         private final Collection<P> cellProviders;
 
         public WithCells(Collection<P> cellProviders) {
-            this.cellProviders = cellProviders;
+            this.cellProviders = cellProviders == null
+                    ? List.of() : cellProviders;
         }
 
         @Override
@@ -173,12 +172,14 @@ public class SchemaAndCells<P extends CellProvider> {
     /**
      * Finds the schema based just on the cells. Used Data in only, for data out we must take into
      * account the schema.
+     *
      * @param dataCells The cell provider.
      * @return Schema and Cells.
      * @param <P> The type of provider.
      */
     public static <P extends CellProvider> SchemaAndCells<P> fromCells(Collection<? extends P> dataCells) {
-        return new SchemaAndCells<>(morphOf(dataCells), new ArrayList<>(dataCells));
+        dataCells = dataCells == null ? List.of() : dataCells;
+        return new SchemaAndCells<>(morphOf(dataCells), dataCells);
     }
 
     static protected DataSchema morphOf(Collection<? extends CellProvider> cells) {
@@ -202,6 +203,6 @@ public class SchemaAndCells<P extends CellProvider> {
     }
 
     public Collection<P> getDataCells() {
-        return dataCells;
+        return List.copyOf(dataCells);
     }
 }

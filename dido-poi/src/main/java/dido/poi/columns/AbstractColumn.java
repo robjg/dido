@@ -63,9 +63,18 @@ abstract public class AbstractColumn implements DataCell {
             return self();
         }
 
+
+        public String name() {
+            return name;
+        }
+
         public B style(String style) {
             this.style = style;
             return self();
+        }
+
+        public String style() {
+            return style;
         }
 
         public B index(int index) {
@@ -73,7 +82,13 @@ abstract public class AbstractColumn implements DataCell {
             return self();
         }
 
+        public int index() {
+            return index;
+        }
+
         protected abstract B self();
+
+        public abstract AbstractColumn make();
     }
 
     @Override

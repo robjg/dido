@@ -6,7 +6,6 @@ import dido.data.SchemaField;
 import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
 import dido.how.conversion.RequiringConversion;
-import dido.poi.layouts.DataRows;
 import org.apache.poi.ss.usermodel.CellType;
 
 import java.time.LocalDate;
@@ -18,8 +17,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * @author rob
- * @oddjob.description Define a date column. Nests within a {@link DataRows}.
+ * Define a date column.
  */
 public class DateColumn extends AbstractColumn {
 
@@ -31,7 +29,7 @@ public class DateColumn extends AbstractColumn {
 
     protected DateColumn(Settings settings) {
         super(settings);
-        this.type = Objects.requireNonNullElse(settings.type, LocalDateTime.class);
+        this.type = settings.type();
     }
 
     public static class Settings extends AbstractColumn.BaseSettings<Settings> {
@@ -50,6 +48,10 @@ public class DateColumn extends AbstractColumn {
                 throw new IllegalArgumentException("For a Date Cell only supported types are" + SUPPORTED_TYPES);
             }
             return this;
+        }
+
+        public Class<?> type() {
+            return  Objects.requireNonNullElse(this.type, LocalDateTime.class);
         }
 
         public DateColumn make() {

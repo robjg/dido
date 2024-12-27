@@ -41,7 +41,7 @@ public class TextFormulaColumn extends FormulaColumn {
 
 	@Override
 	public Class<String> getType() {
-		return String.class;
+		return TextColumn.TYPE;
 	}
 
 	@Override

@@ -13,6 +13,8 @@ import org.apache.poi.ss.usermodel.CellType;
  */
 public class BlankColumn extends AbstractColumn {
 
+    public static final Class<Void> TYPE = Void.class;
+
     protected BlankColumn(Settings settings) {
         super(settings);
     }
@@ -35,7 +37,7 @@ public class BlankColumn extends AbstractColumn {
 
     @Override
     public Class<Void> getType() {
-        return Void.class;
+        return TYPE;
     }
 
     @Override

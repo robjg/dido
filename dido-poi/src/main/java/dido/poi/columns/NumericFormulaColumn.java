@@ -11,7 +11,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.function.DoubleFunction;
 
@@ -29,7 +28,7 @@ public class NumericFormulaColumn extends FormulaColumn {
 
 	protected NumericFormulaColumn(Settings settings) {
 		super(settings);
-		this.type = Objects.requireNonNullElse(settings.type, LocalDateTime.class);
+		this.type = settings.type();
 	}
 
 	public static class Settings extends FormulaColumn.FormulaSettings<Settings> {
@@ -53,6 +52,10 @@ public class NumericFormulaColumn extends FormulaColumn {
 				}
 			}
 			return this;
+		}
+
+		public Class<?> type() {
+			return Objects.requireNonNullElse(this.type, Double.class);
 		}
 
 		public NumericFormulaColumn make() {

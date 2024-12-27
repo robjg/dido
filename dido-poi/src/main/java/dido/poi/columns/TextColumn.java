@@ -18,6 +18,8 @@ import java.util.function.Function;
  */
 public class TextColumn extends AbstractColumn {
 
+    public static final Class<String> TYPE = String.class;
+
     protected TextColumn(Settings settings) {
         super(settings);
     }
@@ -40,7 +42,7 @@ public class TextColumn extends AbstractColumn {
 
     @Override
     public Class<String> getType() {
-        return String.class;
+        return TYPE;
     }
 
     @Override

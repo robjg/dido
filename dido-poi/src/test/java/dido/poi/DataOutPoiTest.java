@@ -11,22 +11,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 class DataOutPoiTest {
 
-    File workDir;
-
     private static final Logger logger = LoggerFactory.getLogger(DataOutPoiTest.class);
+
+    Path workDir;
 
     @BeforeEach
     protected void setUp(TestInfo testInfo) throws IOException {
 
         logger.info("----------------------------    {}   -------------------------", testInfo.getDisplayName());
 
-        workDir = OurDirs.workPathDir(DataOutPoiTest.class).toFile();
+        workDir = OurDirs.workPathDir(DataOutPoiTest.class);
     }
 
     @Test

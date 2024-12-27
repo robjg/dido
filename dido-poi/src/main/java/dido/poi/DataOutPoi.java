@@ -416,7 +416,6 @@ public class DataOutPoi implements DataOutHow<BookOutProvider> {
                     lastIndex = cellProvider.getIndex();
                 }
 
-
                 cellOuts.add(cellProvider.provideCellOut(
                         schema,
                         lastIndex,

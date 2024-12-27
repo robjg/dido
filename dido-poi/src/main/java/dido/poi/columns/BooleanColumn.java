@@ -17,6 +17,8 @@ import java.util.function.Function;
  */
 public class BooleanColumn extends AbstractColumn {
 
+    public static final Class<Boolean> TYPE = Boolean.class;
+
     protected BooleanColumn(Settings settings) {
         super(settings);
     }
@@ -39,7 +41,7 @@ public class BooleanColumn extends AbstractColumn {
 
     @Override
     public Class<Boolean> getType() {
-        return Boolean.class;
+        return TYPE;
     }
 
     @Override
