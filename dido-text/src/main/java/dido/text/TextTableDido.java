@@ -2,6 +2,7 @@ package dido.text;
 
 import dido.data.generic.GenericDataSchema;
 import dido.how.DataOutHow;
+import dido.how.StreamHows;
 
 import java.io.OutputStream;
 
@@ -22,9 +23,11 @@ public class TextTableDido {
     private volatile GenericDataSchema<String> schema;
 
     public DataOutHow<OutputStream> toOut() {
-        return TextTableOut.ofOptions()
+        DataOutTextTable dataOut = DataOutTextTable.with()
                 .schema(this.schema)
-                .create();
+                .make();
+
+        return StreamHows.fromWriterHow(dataOut);
     }
 
     public GenericDataSchema<String> getSchema() {

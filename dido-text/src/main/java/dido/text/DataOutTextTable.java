@@ -2,67 +2,121 @@ package dido.text;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
+import dido.how.util.IoUtil;
 import dido.how.util.Primitives;
 import org.nocrala.tools.texttablefmt.BorderStyle;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.ShownBorders;
 import org.nocrala.tools.texttablefmt.Table;
 
+import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Arrays;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
 
-public class TextTableOut implements DataOutHow<OutputStream> {
+public class DataOutTextTable implements DataOutHow<Appendable> {
 
     private final DataSchema schema;
 
-    private TextTableOut(Options options) {
-        this.schema = options.schema;
+    private final String lineSeparator;
+
+    private DataOutTextTable(Settings settings) {
+        this.schema = settings.schema;
+        this.lineSeparator = Objects.requireNonNullElse(settings.lineSeparator, System.lineSeparator());
     }
 
-    @Override
-    public Class<OutputStream> getOutType() {
-        return OutputStream.class;
-    }
-
-    public static Options ofOptions() {
-        return new Options();
-    }
-
-    public static class Options {
+    public static class Settings {
 
         private DataSchema schema;
 
-        public Options schema(DataSchema schema) {
+        private String lineSeparator;
+
+        public Settings schema(DataSchema schema) {
             this.schema = schema;
             return this;
         }
 
-        public DataOutHow<OutputStream> create() {
-            return new TextTableOut(this);
+        public Settings lineSeparator(String lineSeparator) {
+            this.lineSeparator = lineSeparator;
+            return this;
+        }
+
+        public DataOut toAppendable(Appendable appendable) {
+            return make().outTo(appendable);
+        }
+
+        public DataOut toWriter(Writer writer) {
+            return make().outTo(writer);
+        }
+
+        public DataOut toPath(Path path) {
+            try {
+                return make().outTo(Files.newBufferedWriter(path));
+            } catch (IOException e) {
+                throw DataException.of(e);
+            }
+        }
+
+        public DataOut toOutputStream(OutputStream outputStream) {
+
+            return make().outTo(new OutputStreamWriter(outputStream));
+        }
+
+        public DataOutTextTable make() {
+            return new DataOutTextTable(this);
         }
     }
 
+    public static DataOut toAppendable(Appendable appendable) {
+        return with().toAppendable(appendable);
+    }
+
+    public static DataOut toWriter(Writer writer) {
+        return with().toWriter(writer);
+    }
+
+    public static DataOut toPath(Path path) {
+        return with().toPath(path);
+    }
+
+    public static DataOut toOutputStream(OutputStream outputStream) {
+
+        return with().toOutputStream(outputStream);
+    }
+
+    public static Settings with() {
+        return new Settings();
+    }
+
     @Override
-    public DataOut outTo(OutputStream outTo) {
+    public Class<Appendable> getOutType() {
+        return Appendable.class;
+    }
+
+    @Override
+    public DataOut outTo(Appendable outTo) {
 
         return Optional.ofNullable(this.schema)
                 .<DataOut>map(s -> new WithSchema(s, outTo))
                 .orElseGet(() -> new UnknownSchema(outTo));
     }
 
-    static class WithSchema implements DataOut {
+    class WithSchema implements DataOut {
 
         private final DataSchema schema;
 
         private final Table table;
 
-        private final OutputStream output;
+        private final Appendable output;
 
-        WithSchema(DataSchema schema, OutputStream output) {
+        WithSchema(DataSchema schema, Appendable output) {
             this.schema = schema;
             this.output = output;
 
@@ -87,9 +141,15 @@ public class TextTableOut implements DataOutHow<OutputStream> {
         @Override
         public void close() {
             String[] rows = table.renderAsStringArray();
-            PrintWriter writer = new PrintWriter(output);
-            Arrays.stream(rows).forEach(writer::println);
-            writer.close();
+            try (AutoCloseable ignore = IoUtil.closeableOf(output)) {
+                for (String row : rows) {
+                    output.append(row)
+                            .append(lineSeparator);
+                }
+            }
+            catch (Exception e) {
+                throw DataException.of(e);
+            }
         }
 
         @Override
@@ -105,14 +165,14 @@ public class TextTableOut implements DataOutHow<OutputStream> {
         }
     }
 
-    static class UnknownSchema implements DataOut {
+    class UnknownSchema implements DataOut {
 
-        private final OutputStream outputStream;
+        private final Appendable appendable;
 
         private DataOut delegate;
 
-        UnknownSchema(OutputStream outputStream) {
-            this.outputStream = outputStream;
+        UnknownSchema(Appendable appendable) {
+            this.appendable = appendable;
         }
 
         @Override
@@ -125,7 +185,7 @@ public class TextTableOut implements DataOutHow<OutputStream> {
         @Override
         public void accept(DidoData data) {
             if (delegate == null) {
-                delegate = new WithSchema(data.getSchema(), outputStream);
+                delegate = new WithSchema(data.getSchema(), appendable);
             }
             delegate.accept(data);
         }

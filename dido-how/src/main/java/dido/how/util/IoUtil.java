@@ -57,5 +57,15 @@ public class IoUtil {
         }
     }
 
+    public static AutoCloseable closeableOf(Object maybeClosable) {
+
+        if (maybeClosable instanceof AutoCloseable) {
+            return () -> ((AutoCloseable) maybeClosable).close();
+        }
+        else {
+            return () -> {};
+        }
+
+    }
 
 }

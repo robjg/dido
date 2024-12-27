@@ -7,13 +7,10 @@ import dido.data.generic.GenericDataBuilder;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class TextTableOutTest {
+class DataOutTextTableTest {
 
     @Test
     void testSimple() throws Exception {
@@ -29,11 +26,11 @@ class TextTableOutTest {
         DidoData data2 = ArrayData.of("Cantaloupe", 27, 245.3);
         DidoData data3 = ArrayData.of("Pear", 232, 11.328);
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        StringBuilder output = new StringBuilder();
 
-        DataOut out = TextTableOut.ofOptions()
+        DataOut out = DataOutTextTable.with()
                 .schema(data1.getSchema())
-                .create()
+                .make()
                 .outTo(output);
 
         out.accept(data1);
@@ -42,18 +39,7 @@ class TextTableOutTest {
 
         out.close();
 
-        byte[] a = expected.getBytes(StandardCharsets.UTF_8);
-        byte[] b = output.toByteArray();
-
-        for (int i = 0; i < a.length; i++) {
-            if (a[i] != b[i]) {
-                System.out.println(i + ": " + a[i] + " " + b[i]);
-            }
-        }
-
-        assertThat(output.toString(StandardCharsets.UTF_8), is(expected));
-
-        assertThat(output.toByteArray(), is(expected.getBytes(StandardCharsets.UTF_8)));
+        assertThat(output.toString(), is(expected));
     }
 
     enum Fruit {
@@ -83,11 +69,11 @@ class TextTableOutTest {
         DidoData data2 = ArrayData.of("Cantaloupe", 27, 245.3);
         DidoData data3 = ArrayData.of("Pear", 232, 11.328);
 
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        StringBuilder output = new StringBuilder();
 
-        DataOut out = TextTableOut.ofOptions()
+        DataOut out = DataOutTextTable.with()
                 .schema(data1.getSchema())
-                .create()
+                .make()
                 .outTo(output);
 
         out.accept(data1);

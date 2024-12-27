@@ -254,7 +254,23 @@ public class DataOutPoi implements DataOutHow<BookOutProvider> {
         public DataOutPoi make() {
             return new DataOutPoi(this);
         }
+    }
 
+    public static DataOut toAppendable(Appendable appendable) {
+        return with().toAppendable(appendable);
+    }
+
+    public static DataOut toWriter(Writer writer) {
+        return with().toWriter(writer);
+    }
+
+    public static DataOut toPath(Path path) {
+        return with().toPath(path);
+    }
+
+    public static DataOut toOutputStream(OutputStream outputStream) {
+
+        return with().toOutputStream(outputStream);
     }
 
     public static Settings with() {
