@@ -27,9 +27,15 @@ public class DataOutTextTable implements DataOutHow<Appendable> {
 
     private final String lineSeparator;
 
+    private final ShownBorders shownBorders;
+
+    private final BorderStyle borderStyle;
+
     private DataOutTextTable(Settings settings) {
         this.schema = settings.schema;
         this.lineSeparator = Objects.requireNonNullElse(settings.lineSeparator, System.lineSeparator());
+        this.shownBorders = Objects.requireNonNullElse(settings.shownBorders, ShownBorders.HEADER_AND_COLUMNS);
+        this.borderStyle = Objects.requireNonNullElse(settings.borderStyle, BorderStyle.CLASSIC);
     }
 
     public static class Settings {
@@ -38,6 +44,10 @@ public class DataOutTextTable implements DataOutHow<Appendable> {
 
         private String lineSeparator;
 
+        private ShownBorders shownBorders;
+
+        private BorderStyle borderStyle;
+
         public Settings schema(DataSchema schema) {
             this.schema = schema;
             return this;
@@ -45,6 +55,16 @@ public class DataOutTextTable implements DataOutHow<Appendable> {
 
         public Settings lineSeparator(String lineSeparator) {
             this.lineSeparator = lineSeparator;
+            return this;
+        }
+
+        public Settings shownBorders(ShownBorders shownBorders) {
+            this.shownBorders = shownBorders;
+            return this;
+        }
+
+        public Settings borderStyle(BorderStyle borderStyle) {
+            this.borderStyle = borderStyle;
             return this;
         }
 
@@ -121,8 +141,8 @@ public class DataOutTextTable implements DataOutHow<Appendable> {
             this.output = output;
 
             this.table = new Table(schema.lastIndex(),
-                    BorderStyle.CLASSIC,
-                    ShownBorders.HEADER_AND_COLUMNS);
+                    borderStyle,
+                    shownBorders);
 
             for (int i = 1; i > 0; i = schema.nextIndex(i)) {
                 String value = schema.getFieldNameAt(i);
