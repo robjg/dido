@@ -1,33 +1,88 @@
 Dido
 ====
 
-Dido stands for Data-In/Data-Out.  and is a framework for reading and
-writing data. It is designed to be used within Oddjob but most modules can be used in code
-without Oddjob.
+Dido stands for Data-In/Data-Out. It is a framework for making data from different sources
+look the same so that it can be copied, processed and compared.
 
-Notable modules:
+### Some Examples
 
-[dido-data](dido-data) The definition of Generic Data on which the rest of Dido is based.
+Given this CSV:
+```
+Apple,5,19.50
+Orange,2,35.24
+Pear,3,26.84
+```
 
-[dido-oddball](dido-oddball) For using Dido in Oddjob.
+We can read it in:
+```java
+        List<DidoData> didoData;
 
-Formatters: [dido-csv](dido-csv), [dido-json](dido-json), [dido-sql](dido-sql).
+        try (DataIn in = DataInCsv.fromPath(Path.of("Fruit.csv"))) {
 
-Example
+            didoData = in.stream().collect(Collectors.toList());
+        }
 
+        assertThat(didoData, contains(
+                DidoData.of("Apple","5","19.50"),
+                DidoData.of("Orange","2","35.24"),
+                DidoData.of("Pear","3","26.84")));
+```
+
+And we can write it out as Json
+```java
+        try (DataOut out = DataOutJson.toOutputStream(System.out)) {
+
+            didoData.forEach(out);
+        }
+```
+
+Giving us:
+```
+{"f_1":"Apple","f_2":"5","f_3":"19.50"}{"f_1":"Orange","f_2":"2","f_3":"35.24"}{"f_1":"Pear","f_2":"3","f_3":"26.84"}
+```
+
+We can give our data a schema:
+```java
+        DataSchema schema = DataSchema.newBuilder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", int.class)
+                .addNamed("Price", double.class)
+                .build();
+```
+
+And then copy
 ```java
         try (DataIn in = DataInCsv.with()
-                .header(true)
-                .fromInputStream(getClass().getResourceAsStream("/examples/people-100.csv"));
-             DataOut out = DataOutSql.with()
-                     .sql("insert into PEOPLE " +
-                             "(\"Index\",\"User Id\",\"First Name\",\"Last Name\",\"Sex\",\"Email\",\"Phone\",\"Date of birth\",\"Job Title\")" +
-                             " values (?, ?, ?, ?, ?, ?, ?, ?, ?)")
-                     .toConnection(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""))) {
+                .schema(schema)
+                .fromPath(Path.of("Fruit.csv"));
+             DataOut out = DataOutJson.with()
+                     .outFormat(JsonDidoFormat.LINES)
+                     .toOutputStream(System.out)) {
 
             in.stream().forEach(out);
         }
 ```
 
+Now giving us:
+```
+{"Fruit":"Apple","Qty":5,"Price":19.5}
+{"Fruit":"Orange","Qty":2,"Price":35.24}
+{"Fruit":"Pear","Qty":3,"Price":26.84}
+```
+
+
+
+### More Info
+
+[dido-data](dido-data) The definition of Data on which the rest of Dido is based.
+
+Formatters: 
+ - [dido-csv](dido-csv) - For reading and writing CSV data.  
+ - [dido-json](dido-json) - For reading and writing JSON. 
+ - [dido-sql](dido-sql) - For reading and writing to Databases.
+ - [dido-poi](dido-poi) - For reading and writing to Excel sheets.
+ - [dido-text](dido-text) - For writing to Ascii Formatted Text Tables.
+
+[dido-oddball](dido-oddball) For using Dido in Oddjob.
 
 

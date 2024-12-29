@@ -52,6 +52,8 @@
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>3.6.0</mockito.version>
         <hsql.version>2.7.2</hsql.version>
+
+        <jsonassert.version>1.5.0</jsonassert.version>
     </properties>
 
     <distributionManagement>
@@ -223,6 +225,13 @@
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>${hsql.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <version>${jsonassert.version}</version>
                 <scope>test</scope>
             </dependency>
 
