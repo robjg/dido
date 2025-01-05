@@ -50,7 +50,7 @@ We can give our data a schema:
                 .build();
 ```
 
-And then copy
+And now when we copy from CSV to JSON
 ```java
         try (DataIn in = DataInCsv.with()
                 .schema(schema)
@@ -63,7 +63,7 @@ And then copy
         }
 ```
 
-Now giving us:
+We get:
 ```
 {"Fruit":"Apple","Qty":5,"Price":19.5}
 {"Fruit":"Orange","Qty":2,"Price":35.24}
@@ -74,7 +74,7 @@ Now giving us:
 
 ### More Info
 
-[dido-data](dido-data) The definition of Data on which the rest of Dido is based.
+[dido-data](DIDO-DATA.md) The definition of Data on which the rest of Dido is based.
 
 Formatters: 
  - [dido-csv](dido-csv) - For reading and writing CSV data.  

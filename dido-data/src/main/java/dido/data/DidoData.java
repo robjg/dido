@@ -1,5 +1,8 @@
 package dido.data;
 
+import dido.data.util.DataBuilder;
+import dido.data.util.FieldValuesIn;
+
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -11,10 +14,6 @@ import java.util.Objects;
  * <p>The hashcode of an instance of {@code DidoData} must only be the hash of its data items.
  */
 public interface DidoData extends IndexedData {
-
-    static ArrayData of(Object... data) {
-        return ArrayData.of(data);
-    }
 
     @Override
     DataSchema getSchema();
@@ -40,6 +39,22 @@ public interface DidoData extends IndexedData {
     double getDoubleNamed(String name);
 
     String getStringNamed(String name);
+
+    static DidoData of(Object... data) {
+        return ArrayData.of(data);
+    }
+
+    static FieldValuesIn valuesWithSchema(DataSchema schema) {
+        return ArrayData.valuesForSchema(schema);
+    }
+
+    static DataBuilder builder() {
+        return ArrayData.builderNoSchema();
+    }
+
+    static DataBuilder builderWithSchema(DataSchema schema) {
+        return ArrayData.builderForSchema(schema);
+    }
 
     /**
      * Provide a standard way

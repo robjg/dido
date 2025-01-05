@@ -16,15 +16,15 @@ Giving us:
 {@oddjob.text.file src/test/resources/data/FruitAllText.json}
 We can give our data a schema:
 {@oddjob.java.file src/test/java/dido/examples/ReadmeExamplesTest.java#snippet3}
-And then copy
+And now when we copy from CSV to JSON
 {@oddjob.java.file src/test/java/dido/examples/ReadmeExamplesTest.java#snippet4}
-Now giving us:
+We get:
 {@oddjob.text.file src/test/resources/data/FruitLines.json}
 
 
 ### More Info
 
-[dido-data](dido-data) The definition of Data on which the rest of Dido is based.
+[dido-data](DIDO-DATA.md) The definition of Data on which the rest of Dido is based.
 
 Formatters: 
  - [dido-csv](dido-csv) - For reading and writing CSV data.  

@@ -1,5 +1,5 @@
 /**
- * Implementations of {@link org.oddjob.dido.Layout}s for Poi.
+ * Oddjob friendly implementations of Columns.
  * 
  */
 package dido.poi.layouts;

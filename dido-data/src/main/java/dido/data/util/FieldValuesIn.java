@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * For A fluent way of providing data for a known schema
+ * A fluent way of creating {@link DidoData} from field values for a known schema.
  */
 public class FieldValuesIn {
 

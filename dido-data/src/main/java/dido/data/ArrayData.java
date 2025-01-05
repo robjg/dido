@@ -11,7 +11,7 @@ import java.util.Objects;
 /**
  * {@link GenericData} stored in an Array.
  */
-public class ArrayData extends AbstractData implements DidoData {
+public final class ArrayData extends AbstractData implements DidoData {
 
     private final ArrayDataSchema schema;
 
@@ -75,7 +75,12 @@ public class ArrayData extends AbstractData implements DidoData {
 
     public static ArrayData copy(DidoData from) {
 
-        return (ArrayData) valuesForSchema(from.getSchema()).copy(from);
+        if (from instanceof ArrayData) {
+            return (ArrayData) from;
+        }
+        else {
+            return (ArrayData) valuesForSchema(from.getSchema()).copy(from);
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
 /**
- * Implementations of {@link org.oddjob.dido.DataIn} and 
- * {@link org.oddjob.dido.DataOut} for Poi.
+ * Implementations of {@link dido.how.DataInHow} and
+ * {@link dido.how.DataOutHow} for Poi.
  * 
  */
 package dido.poi.data;

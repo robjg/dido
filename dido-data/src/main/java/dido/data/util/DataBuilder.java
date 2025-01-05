@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * A Fluent builder for creating {@link DidoData} data ofr a Known schema from a {@link DataFactory} or
+ * A Fluent builder for creating {@link DidoData} data for a Known schema from a {@link DataFactory} or
  * from an Unknown schema from an {@link DataFactoryProvider}.
  */
 abstract public class DataBuilder {

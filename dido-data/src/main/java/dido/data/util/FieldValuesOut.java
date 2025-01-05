@@ -7,6 +7,9 @@ import dido.data.ReadStrategy;
 
 import java.util.*;
 
+/**
+ * Provides the field values of {@link DidoData} as a collection of objects.
+ */
 public class FieldValuesOut {
 
     private final List<FieldGetter> fieldGetters;
@@ -46,7 +49,7 @@ public class FieldValuesOut {
         @Override
         public Iterator<Object> iterator() {
             Iterator<FieldGetter> iterator = fieldGetters.iterator();
-            return new Iterator<Object>() {
+            return new Iterator<>() {
                 @Override
                 public boolean hasNext() {
                     return iterator.hasNext();
