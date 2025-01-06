@@ -45,10 +45,10 @@ public class DataRowsTest {
 
 		DataOut writer = test.outTo(workbook);
 
-		DidoData data1 = MapData.builderNoSchema()
+		DidoData data1 = MapData.builder()
 						.withString("Fruit", "Apples")
 								.build();
-		DidoData data2 = MapData.builderNoSchema()
+		DidoData data2 = MapData.builder()
 				.withString("Fruit", "Oranges")
 				.build();
 

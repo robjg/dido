@@ -97,9 +97,9 @@ class FromBeanArooaTest {
         DidoData result = fromBean.apply(order);
 
         RepeatingData repeatingData =
-                RepeatingData.of(ArrayData.valuesForSchema(nestedSchema)
+                RepeatingData.of(ArrayData.valuesWithSchema(nestedSchema)
                                         .of("Apple", 5),
-                                ArrayData.valuesForSchema(nestedSchema)
+                                ArrayData.valuesWithSchema(nestedSchema)
                                         .of("Pear", 4));
 
         assertThat(result.getStringNamed("orderId"), is("A123"));
@@ -143,11 +143,11 @@ class FromBeanArooaTest {
 
         assertThat(result.getSchema(), is(schema));
 
-        DidoData expectedData = ArrayData.valuesForSchema(schema)
+        DidoData expectedData = ArrayData.valuesWithSchema(schema)
                 .of("A123",
-                        RepeatingData.of(ArrayData.valuesForSchema(nestedSchema)
+                        RepeatingData.of(ArrayData.valuesWithSchema(nestedSchema)
                                         .of("Apple", 5),
-                                ArrayData.valuesForSchema(nestedSchema)
+                                ArrayData.valuesWithSchema(nestedSchema)
                                         .of("Pear", 4)));
 
         assertThat(result, is(expectedData));

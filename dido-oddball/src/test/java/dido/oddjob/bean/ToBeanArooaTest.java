@@ -19,7 +19,7 @@ class ToBeanArooaTest {
     @Test
     void testToBean() {
 
-        DidoData data = MapData.builderNoSchema()
+        DidoData data = MapData.builder()
                 .withString("type", "Apple")
                 .withInt("quantity", 5)
                 .withDouble("price", 27.3)

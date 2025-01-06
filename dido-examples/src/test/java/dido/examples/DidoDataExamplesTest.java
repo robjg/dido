@@ -15,7 +15,7 @@ class DidoDataExamplesTest {
 
         // #snippet6{
         DidoData data = DataInJson.with()
-                .schema(DataSchema.newBuilder()
+                .schema(DataSchema.builder()
                         .addNamed("Qty", int.class)
                         .build())
                 .partialSchema(true)
@@ -87,7 +87,7 @@ class DidoDataExamplesTest {
     void dataCreationWithSchema() {
 
         // #snippet3{
-        DataSchema schema = DataSchema.newBuilder()
+        DataSchema schema = DataSchema.builder()
                 .addNamed("Fruit", String.class)
                 .addNamed("Qty", int.class)
                 .addNamed("Price", double.class)
@@ -107,14 +107,14 @@ class DidoDataExamplesTest {
     @Test
     void dataCreationWithSchemaFromBuilder() {
 
-        DataSchema schema = DataSchema.newBuilder()
+        DataSchema schema = DataSchema.builder()
                 .addNamed("Fruit", String.class)
                 .addNamed("Qty", int.class)
                 .addNamed("Price", double.class)
                 .build();
 
         // #snippet5{
-        DidoData data = DidoData.builderWithSchema(schema)
+        DidoData data = DidoData.builderForSchema(schema)
                 .with("Fruit", "Apple")
                 .withInt("Qty", 5)
                 .withDouble("Price", 15.6)

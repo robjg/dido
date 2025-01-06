@@ -1,7 +1,6 @@
 package dido.data;
 
 import dido.data.generic.GenericDataSchema;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -80,7 +79,7 @@ class SchemaBuilderTest {
         assertThat(schema.getTypeNamed("fruit"), is(String.class));
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));
-        assertThat(schema.getFieldNames(), Matchers.contains("fruit", "qty", "price"));
+        assertThat(schema.getFieldNames(), contains("fruit", "qty", "price"));
     }
 
     @Test
@@ -100,7 +99,7 @@ class SchemaBuilderTest {
         assertThat(schema.getTypeNamed("a__"), is(double.class));
         assertThat(schema.nextIndex(1), is(2));
         assertThat(schema.nextIndex(2), is(3));
-        assertThat(schema.getFieldNames(), Matchers.contains("a", "a_", "a__"));
+        assertThat(schema.getFieldNames(), contains("a", "a_", "a__"));
     }
 
     @Test
@@ -117,7 +116,7 @@ class SchemaBuilderTest {
         assertThat(schema.getTypeAt(5), is(double.class));
         assertThat(schema.getTypeNamed("a"), is(double.class));
         assertThat(schema.nextIndex(5), is(0));
-        assertThat(schema.getFieldNames(), Matchers.contains("a"));
+        assertThat(schema.getFieldNames(), contains("a"));
     }
 
     @Test
@@ -155,7 +154,7 @@ class SchemaBuilderTest {
         assertThat(schema.getTypeNamed("fruit"), is(String.class));
         assertThat(schema.nextIndex(1), is(3));
         assertThat(schema.nextIndex(3), is(0));
-        assertThat(schema.getFieldNames(), Matchers.contains("fruit", "price"));
+        assertThat(schema.getFieldNames(), contains("fruit", "price"));
     }
 
     @Test

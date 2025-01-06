@@ -31,7 +31,7 @@ class DataInJsonTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        FieldValuesIn values = ArrayData.valuesForSchema(expectedSchema);
+        FieldValuesIn values = ArrayData.valuesWithSchema(expectedSchema);
 
         try (DataIn in = DataInJson.fromReader(new StringReader(json))) {
 

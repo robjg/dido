@@ -34,7 +34,7 @@ class DataInJsonReaderTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        FieldValuesIn values = ArrayData.valuesForSchema(expectedSchema);
+        FieldValuesIn values = ArrayData.valuesWithSchema(expectedSchema);
 
         DataInHow<Reader> test = DataInJsonReader.asCopy()
                 .setIsArray(true)
@@ -132,7 +132,7 @@ class DataInJsonReaderTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        FieldValuesIn values = ArrayData.valuesForSchema(expectedSchema);
+        FieldValuesIn values = ArrayData.valuesWithSchema(expectedSchema);
 
         DataInHow<Reader> test = DataInJsonReader.asCopy()
                 .make(new GsonBuilder());

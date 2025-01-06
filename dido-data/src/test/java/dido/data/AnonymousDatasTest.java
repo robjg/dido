@@ -58,18 +58,18 @@ class AnonymousDatasTest {
                 .addRepeatingNamed("OrderLines", nestedSchema)
                 .build();
 
-        IndexedData data1 = ArrayData.valuesForSchema(schema)
+        IndexedData data1 = ArrayData.valuesWithSchema(schema)
                 .of("A123",
-                        List.of(ArrayData.valuesForSchema(nestedSchema)
+                        List.of(ArrayData.valuesWithSchema(nestedSchema)
                                         .of("Apple", 4),
-                                ArrayData.valuesForSchema(nestedSchema)
+                                ArrayData.valuesWithSchema(nestedSchema)
                                         .of("Pear", 5)));
 
-        IndexedData data2 = ArrayData.valuesForSchema(schema)
+        IndexedData data2 = ArrayData.valuesWithSchema(schema)
                 .of("A123",
-                        List.of(ArrayData.valuesForSchema(nestedSchema)
+                        List.of(ArrayData.valuesWithSchema(nestedSchema)
                                         .of("Apple", 4),
-                                ArrayData.valuesForSchema(nestedSchema)
+                                ArrayData.valuesWithSchema(nestedSchema)
                                         .of("Pear", 5)));
 
         AnonymousData copy1 = AnonymousDatas.wrap(data1);

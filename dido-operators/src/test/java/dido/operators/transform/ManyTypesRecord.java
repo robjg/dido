@@ -18,6 +18,6 @@ public class ManyTypesRecord implements ValueFactory<DidoData> {
                 .addNamed("ABooleanString", String.class)
                 .build();
 
-        return ArrayData.valuesForSchema(schema).of("65", "456.57", "true");
+        return ArrayData.valuesWithSchema(schema).of("65", "456.57", "true");
     }
 }

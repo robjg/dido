@@ -87,7 +87,7 @@ class DateCellTest {
                         (Function<LocalDateTime, String>) dataTime -> dataTime.toLocalDate().toString())
                 .make();
 
-        DataSchema schema = DataSchema.newBuilder()
+        DataSchema schema = DataSchema.builder()
                 .add(String.class)
                 .build();
 

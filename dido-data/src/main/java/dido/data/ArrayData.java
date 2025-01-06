@@ -59,7 +59,7 @@ public final class ArrayData extends AbstractData implements DidoData {
         return DataBuilder.forFactory(factoryForSchema(schema));
     }
 
-    public static DataBuilder builderNoSchema() {
+    public static DataBuilder builder() {
 
         return DataBuilder.forProvider(new ArrayDataDataFactoryProvider());
     }
@@ -68,7 +68,7 @@ public final class ArrayData extends AbstractData implements DidoData {
         return new ArrayDataFactory(asArrayDataSchema(schema));
     }
 
-    public static FieldValuesIn valuesForSchema(DataSchema schema) {
+    public static FieldValuesIn valuesWithSchema(DataSchema schema) {
 
         return FieldValuesIn.withDataFactory(factoryForSchema(schema));
     }
@@ -79,7 +79,7 @@ public final class ArrayData extends AbstractData implements DidoData {
             return (ArrayData) from;
         }
         else {
-            return (ArrayData) valuesForSchema(from.getSchema()).copy(from);
+            return (ArrayData) valuesWithSchema(from.getSchema()).copy(from);
         }
     }
 

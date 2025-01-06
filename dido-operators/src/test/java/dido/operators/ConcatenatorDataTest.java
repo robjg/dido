@@ -77,7 +77,7 @@ class ConcatenatorDataTest {
     @Test
     void testConcatData() {
 
-        DataBuilder builder = MapData.builderNoSchema();
+        DataBuilder builder = MapData.builder();
 
         DidoData data1 = builder
                 .withString("type", "apple")
@@ -115,7 +115,7 @@ class ConcatenatorDataTest {
     @Test
     void testOtherTypes() {
 
-        DataBuilder builder = MapData.builderNoSchema();
+        DataBuilder builder = MapData.builder();
 
         builder.withString("first", "Ignored" );
         DidoData data1 = builder.build();
@@ -217,7 +217,7 @@ class ConcatenatorDataTest {
                 "Type", "Apples",
                 "Variety", "Cox");
 
-        DidoData data2 = ArrayData.builderNoSchema()
+        DidoData data2 = ArrayData.builder()
                 .withInt("Quantity", 5)
                 .withDouble("Price", 27.2)
                 .build();

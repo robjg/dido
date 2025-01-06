@@ -63,7 +63,7 @@ class SchemaAndCellsTest {
 
         SchemaAndCells<CellProvider> test = SchemaAndCells.fromCells(Arrays.asList(fruitCell, qtyCell));
 
-        DataSchema expectedSchema = DataSchema.newBuilder()
+        DataSchema expectedSchema = DataSchema.builder()
                 .addNamedAt(3, "Fruit", String.class)
                 .addNamedAt(7, "Qty", Double.class)
                 .build();
@@ -124,7 +124,7 @@ class SchemaAndCellsTest {
     @Test
     void testFromSchemaWithDisparateIndexes() {
 
-        DataSchema schema = DataSchema.newBuilder()
+        DataSchema schema = DataSchema.builder()
                 .addNamedAt(3, "Fruit", String.class)
                 .addNamedAt(7, "Qty", Double.class)
                 .build();
@@ -204,7 +204,7 @@ class SchemaAndCellsTest {
     @Test
     void withCellsAndSchemaByName() {
 
-        DataSchema schema = DataSchema.newBuilder()
+        DataSchema schema = DataSchema.builder()
                 .addNamedAt(20, "Fruit", String.class)
                 .build();
 

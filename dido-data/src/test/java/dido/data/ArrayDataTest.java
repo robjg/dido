@@ -110,7 +110,7 @@ class ArrayDataTest {
 
         DidoData data1 = ArrayData.of("Apple", null, 15, 26.5);
 
-        DidoData data2 = ArrayData.valuesForSchema(data1.getSchema())
+        DidoData data2 = ArrayData.valuesWithSchema(data1.getSchema())
                 .of("Apple", null, 15, 26.5);
 
         assertThat(data1, is(data2));
@@ -119,7 +119,7 @@ class ArrayDataTest {
     @Test
     void whenUsingBuilderThenSchemaDerived() {
 
-        DidoData data1 = ArrayData.builderNoSchema()
+        DidoData data1 = ArrayData.builder()
                 .withString("Fruit", "Apple")
                 .withString("Flavour", null)
                 .withInt("Qty", 15)
@@ -136,7 +136,7 @@ class ArrayDataTest {
         assertThat(IndexedData.equalsIgnoringSchema(data1, ArrayData.of("Apple", null, 15, 26.5)),
                 is(true));
 
-        DidoData data2 = ArrayData.builderNoSchema()
+        DidoData data2 = ArrayData.builder()
                 .copy(data1)
                 .build();
 

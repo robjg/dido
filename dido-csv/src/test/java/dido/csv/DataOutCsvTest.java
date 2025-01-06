@@ -33,7 +33,7 @@ class DataOutCsvTest {
     @Test
     void dataOutNoSchema() {
 
-        DidoData data = MapData.builderNoSchema()
+        DidoData data = MapData.builder()
                 .withString("Fruit", "Apple")
                 .withInt("Qty", 5)
                 .withDouble("Price", 23.5)
@@ -63,7 +63,7 @@ class DataOutCsvTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        FieldValuesIn values = MapData.valuesForSchema(schema);
+        FieldValuesIn values = MapData.valuesWithSchema(schema);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
@@ -88,7 +88,7 @@ class DataOutCsvTest {
     @Test
     void mapToString() {
 
-        DidoData data = MapData.builderNoSchema()
+        DidoData data = MapData.builder()
                 .withString("Fruit", "Apple")
                 .withInt("Qty", 5)
                 .withDouble("Price", 23.5)

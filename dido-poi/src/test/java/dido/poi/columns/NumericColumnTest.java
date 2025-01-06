@@ -29,7 +29,7 @@ class NumericColumnTest {
     Path workDir;
 
 
-    DataSchema schema = DataSchema.newBuilder()
+    DataSchema schema = DataSchema.builder()
             .add(Byte.class)
             .add(Short.class)
             .add(Integer.class)
@@ -136,7 +136,7 @@ class NumericColumnTest {
 
         // Then
 
-        List<DidoData> expected = ArrayData.valuesForSchema(schema)
+        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
                 .many()
                 .of((byte) 42, (short) 42, 42, 42L, 42.0f, 42.0)
                 .of((byte) 42, (short) 42, 42, 42L, 42.24f, 42.24)

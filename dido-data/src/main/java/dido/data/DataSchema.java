@@ -21,14 +21,6 @@ import java.util.Objects;
  */
 public interface DataSchema extends IndexedSchema {
 
-    static SchemaBuilder newBuilder() {
-        return SchemaBuilder.newInstance();
-    }
-
-    static String nameForIndex(int index) {
-        return "f_" + index;
-    }
-
     boolean hasNamed(String name);
 
     /**
@@ -179,6 +171,19 @@ public interface DataSchema extends IndexedSchema {
         }
         sb.append("}");
         return sb.toString();
+    }
+
+    /**
+     * Create a builder for a schema.
+     *
+     * @return A builder.
+     */
+    static SchemaBuilder builder() {
+        return SchemaBuilder.newInstance();
+    }
+
+    static String nameForIndex(int index) {
+        return "f_" + index;
     }
 
     static DataSchema emptySchema() {

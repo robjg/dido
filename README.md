@@ -43,7 +43,7 @@ Giving us:
 
 We can give our data a schema:
 ```java
-        DataSchema schema = DataSchema.newBuilder()
+        DataSchema schema = DataSchema.builder()
                 .addNamed("Fruit", String.class)
                 .addNamed("Qty", int.class)
                 .addNamed("Price", double.class)

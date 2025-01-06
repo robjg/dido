@@ -34,12 +34,12 @@ class JsonDidoTest {
     @Test
     void testToJsonAndBackFixedSchema() throws Exception {
 
-        DidoData data1 = MapData.builderNoSchema()
+        DidoData data1 = MapData.builder()
                 .withString("type", "apple")
                 .withInt("qty", 2)
                 .withDouble("price", 26.3)
                 .build();
-        DidoData data2 = MapData.builderNoSchema()
+        DidoData data2 = MapData.builder()
                 .withString("type", "orange")
                 .withInt("qty", 3)
                 .withDouble("price", 31.4)
@@ -79,12 +79,12 @@ class JsonDidoTest {
     @Test
     void testToJsonOverrideSchema() {
 
-        DidoData data1 = MapData.builderNoSchema()
+        DidoData data1 = MapData.builder()
                 .withString("type", "apple")
                 .withInt("qty", 2)
                 .withDouble("price", 26.3)
                 .build();
-        DidoData data2 = MapData.builderNoSchema()
+        DidoData data2 = MapData.builder()
                 .withString("type", "orange")
                 .withInt("qty", 3)
                 .withDouble("price", 31.4)

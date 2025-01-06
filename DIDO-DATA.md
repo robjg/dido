@@ -6,7 +6,7 @@ defines the data format common to all sources of data. Data is accessible via an
 index or a field name. Here's an example of `DidoData` read from JSON:
 ```java
         DidoData data = DataInJson.with()
-                .schema(DataSchema.newBuilder()
+                .schema(DataSchema.builder()
                         .addNamed("Qty", int.class)
                         .build())
                 .partialSchema(true)
@@ -91,7 +91,7 @@ Or using a builder:
 
 A `DataSchema` can also be created with a builder:
 ```java
-        DataSchema schema = DataSchema.newBuilder()
+        DataSchema schema = DataSchema.builder()
                 .addNamed("Fruit", String.class)
                 .addNamed("Qty", int.class)
                 .addNamed("Price", double.class)
@@ -110,7 +110,7 @@ And now we can create data matching the schema from field values:
 
 Or a builder:
 ```java
-        DidoData data = DidoData.builderWithSchema(schema)
+        DidoData data = DidoData.builderForSchema(schema)
                 .with("Fruit", "Apple")
                 .withInt("Qty", 5)
                 .withDouble("Price", 15.6)

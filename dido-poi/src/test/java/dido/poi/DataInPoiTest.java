@@ -43,7 +43,7 @@ class DataInPoiTest {
                 .addNamed("SellBy", LocalDateTime.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesForSchema(schema)
+        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
                 .many()
                 .of("Apple", 5, 23.5, date("2024-11-19"))
                 .of("Orange", 3, 47.2, date("2024-12-05"))
@@ -75,7 +75,7 @@ class DataInPoiTest {
                 .addNamed("f_4", LocalDateTime.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesForSchema(expectedSchema)
+        List<DidoData> expected = ArrayData.valuesWithSchema(expectedSchema)
                 .many()
                 .of("Apple", 5, 23.5, date("2024-11-19"))
                 .of("Orange", 3, 47.2, date("2024-12-05"))

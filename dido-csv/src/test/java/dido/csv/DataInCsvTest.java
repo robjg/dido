@@ -67,7 +67,7 @@ class DataInCsvTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesForSchema(schema)
+        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
                 .many()
                 .of("Apple", 5, 19.5)
                 .of( "Orange", 2, 35.24)
@@ -159,7 +159,7 @@ class DataInCsvTest {
         DidoData data = DataInCsv.mapFromString()
                 .apply("Apple,5,27.2");
 
-        DidoData expected = MapData.builderNoSchema()
+        DidoData expected = MapData.builder()
                 .withString("f_1", "Apple")
                 .withString("f_2", "5")
                 .withString("f_3", "27.2")
@@ -182,7 +182,7 @@ class DataInCsvTest {
                 .mapFromString()
                 .apply("Apple,5,27.2");
 
-        DidoData expected = MapData.builderNoSchema()
+        DidoData expected = MapData.builder()
                 .withString("Type", "Apple")
                 .withInt("Quantity", 5)
                 .withDouble("Price", 27.2)

@@ -44,22 +44,34 @@ public interface DidoData extends IndexedData {
         return ArrayData.of(data);
     }
 
+    /**
+     * Create from field values with the given schema.
+     *
+     * @param schema The schema. Must not be null.
+     * @return A Fluent Builder for specifying the filed values.
+     */
     static FieldValuesIn valuesWithSchema(DataSchema schema) {
-        return ArrayData.valuesForSchema(schema);
+        return ArrayData.valuesWithSchema(schema);
     }
 
     static DataBuilder builder() {
-        return ArrayData.builderNoSchema();
+        return ArrayData.builder();
     }
 
-    static DataBuilder builderWithSchema(DataSchema schema) {
+    static DataBuilder builderForSchema(DataSchema schema) {
         return ArrayData.builderForSchema(schema);
     }
 
+    static DidoData copy(DidoData from) {
+
+        return ArrayData.copy(from);
+    }
+
     /**
-     * Provide a standard way
-     * @param data
-     * @return
+     * Provide a standard way of calculating the hash code.
+     *
+     * @param data The data.
+     * @return The hash code.
      */
     static int hashCode(DidoData data) {
         DataSchema schema = data.getSchema();

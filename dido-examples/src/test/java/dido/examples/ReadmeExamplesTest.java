@@ -70,7 +70,7 @@ public class ReadmeExamplesTest {
         System.out.println();
 
         // #snippet3{
-        DataSchema schema = DataSchema.newBuilder()
+        DataSchema schema = DataSchema.builder()
                 .addNamed("Fruit", String.class)
                 .addNamed("Qty", int.class)
                 .addNamed("Price", double.class)

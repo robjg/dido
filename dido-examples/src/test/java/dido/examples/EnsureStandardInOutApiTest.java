@@ -2,9 +2,7 @@ package dido.examples;
 
 import dido.csv.DataInCsv;
 import dido.csv.DataOutCsv;
-import dido.data.*;
-import dido.data.util.DataBuilder;
-import dido.data.util.FieldValuesIn;
+import dido.data.DataSchema;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.how.conversion.DidoConversionProvider;
@@ -29,7 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class EnsureStandardApiTest {
+public class EnsureStandardInOutApiTest {
 
     @ParameterizedTest
     @ValueSource(classes = {
@@ -285,49 +283,4 @@ public class EnsureStandardApiTest {
                 is(settingsClass));
     }
 
-    @ParameterizedTest
-    @ValueSource(classes = {ArrayData.class, MapData.class, NonBoxedData.class})
-    void ensureDataStaticMethodsAreConsistent(Class<?> dataClass) throws NoSuchMethodException {
-
-        assertThat(SchemaFactory.class.isAssignableFrom(
-                        dataClass.getMethod("schemaFactory")
-                                .getReturnType()),
-                is(true));
-
-        assertThat(SchemaBuilder.class.isAssignableFrom(
-                        dataClass.getMethod("schemaBuilder")
-                                .getReturnType()),
-                is(true));
-
-        String dataName = dataClass.getSimpleName();
-
-        assertThat(DataSchema.class.isAssignableFrom(
-                        dataClass.getMethod("as" + dataName + "Schema", DataSchema.class)
-                                .getReturnType()),
-                is(true));
-
-        assertThat(DataBuilder.class.isAssignableFrom(
-                        dataClass.getMethod("builderForSchema", DataSchema.class)
-                                .getReturnType()),
-                is(true));
-
-        assertThat(DataBuilder.class.isAssignableFrom(
-                        dataClass.getMethod("builderNoSchema")
-                                .getReturnType()),
-                is(true));
-
-        assertThat(DataFactory.class.isAssignableFrom(
-                        dataClass.getMethod("factoryForSchema", DataSchema.class)
-                                .getReturnType()),
-                is(true));
-
-        assertThat(FieldValuesIn.class.isAssignableFrom(
-                        dataClass.getMethod("valuesForSchema", DataSchema.class)
-                                .getReturnType()),
-                is(true));
-
-        assertThat(dataClass.getMethod("copy", DidoData.class)
-                        .getReturnType(),
-                is(dataClass));
-    }
 }

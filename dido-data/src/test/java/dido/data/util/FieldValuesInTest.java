@@ -18,14 +18,14 @@ class FieldValuesInTest {
     @Test
     void values() {
 
-        FieldValuesIn mapValues = MapData.valuesForSchema(
+        FieldValuesIn mapValues = MapData.valuesWithSchema(
                 MapData.schemaBuilder()
                         .addNamed("Fruit", String.class)
                         .addNamed("Qty", int.class)
                         .addNamed("Price", double.class)
                         .build());
 
-        FieldValuesIn arrayValues = ArrayData.valuesForSchema(
+        FieldValuesIn arrayValues = ArrayData.valuesWithSchema(
                 MapData.schemaBuilder()
                         .addNamed("Fruit", String.class)
                         .addNamed("Qty", int.class)
@@ -45,7 +45,7 @@ class FieldValuesInTest {
     @Test
     void copy() {
 
-        FieldValuesIn arrayValues = ArrayData.valuesForSchema(
+        FieldValuesIn arrayValues = ArrayData.valuesWithSchema(
                 MapData.schemaBuilder()
                         .addNamed("Fruit", String.class)
                         .addNamed("Qty", int.class)
@@ -61,7 +61,7 @@ class FieldValuesInTest {
     @Test
     void collectionWithNulls() {
 
-        FieldValuesIn arrayValues = ArrayData.valuesForSchema(
+        FieldValuesIn arrayValues = ArrayData.valuesWithSchema(
                 MapData.schemaBuilder()
                         .addNamed("Fruit", String.class)
                         .addNamed("Colour", String.class)

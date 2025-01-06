@@ -46,11 +46,11 @@ class NonBoxedDataTest {
     }
 
     @Test
-    void builderNoSchema() throws ParseException {
+    void builder() throws ParseException {
 
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse("2021-09-22");
 
-        DidoData data = NonBoxedData.builderNoSchema()
+        DidoData data = NonBoxedData.builder()
                 .with("Fruit", "Apple")
                 .withInt("Quantity", 2)
                 .withDouble("Price", 26.3)
@@ -66,16 +66,16 @@ class NonBoxedDataTest {
 
         assertThat(data.getSchema(), is(schema));
 
-        assertThat(data, is(ArrayData.valuesForSchema(schema)
+        assertThat(data, is(ArrayData.valuesWithSchema(schema)
                 .of("Apple", 2, 26.3, date)));
     }
 
     @Test
-    void builderNoSchemaCopy() throws ParseException {
+    void builderCopy() throws ParseException {
 
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse("2021-09-22");
 
-        DataSchema schema = DataSchema.newBuilder()
+        DataSchema schema = DataSchema.builder()
                 .addNamed("String", String.class)
                 .addNamed("Boolean", boolean.class)
                 .addNamed("Byte", byte.class)
@@ -88,7 +88,7 @@ class NonBoxedDataTest {
                 .addNamed("Date", Date.class)
                 .build();
 
-        DidoData data = NonBoxedData.builderNoSchema()
+        DidoData data = NonBoxedData.builder()
                 .copy(SingleData.named("String").of("Apple"))
                 .copy(SingleData.named("Boolean").of(true))
                 .copy(SingleData.named("Byte").of((byte) 128))
@@ -103,14 +103,14 @@ class NonBoxedDataTest {
 
         assertThat(data.getSchema(), is(schema));
 
-        assertThat(data, is(ArrayData.valuesForSchema(schema)
+        assertThat(data, is(ArrayData.valuesWithSchema(schema)
                 .of("Apple", true, (byte) 128, 'A', (short) 4, 42, 84L, 4.2F, 8.4, date)));
     }
 
     @Test
     void builderNoSchemaCopyNoData() throws ParseException {
 
-        DataSchema schema = DataSchema.newBuilder()
+        DataSchema schema = DataSchema.builder()
                 .addNamed("String", String.class)
                 .addNamed("Boolean", boolean.class)
                 .addNamed("Byte", byte.class)
@@ -126,7 +126,7 @@ class NonBoxedDataTest {
         DidoData original = MapData.builderForSchema(schema)
                 .build();
 
-        DidoData copy = NonBoxedData.builderNoSchema()
+        DidoData copy = NonBoxedData.builder()
                 .copy(original)
                 .build();
 

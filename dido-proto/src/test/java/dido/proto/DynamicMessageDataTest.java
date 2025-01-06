@@ -16,7 +16,7 @@ class DynamicMessageDataTest {
     @Test
     void fromProto() throws InvalidProtocolBufferException {
 
-        DataSchema schema = DataSchema.newBuilder()
+        DataSchema schema = DataSchema.builder()
                 .addNamed("name", String.class)
                 .addNamed("id", int.class)
                 .addNamed("email", String.class)

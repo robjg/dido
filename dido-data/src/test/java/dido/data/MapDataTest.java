@@ -14,9 +14,9 @@ import static org.hamcrest.Matchers.is;
 class MapDataTest {
 
     @Test
-    void testBuilderNoSchema() throws ParseException {
+    void testBuilder() throws ParseException {
 
-        DataBuilder builder = MapData.builderNoSchema();
+        DataBuilder builder = MapData.builder();
 
         DidoData data1 = builder
                 .withString("type", "apple")
@@ -99,13 +99,13 @@ class MapDataTest {
     @Test
     void testEqualsAndHashCode() {
 
-        DidoData data1 = MapData.builderNoSchema()
+        DidoData data1 = MapData.builder()
                 .withString("type", "apple")
                 .withInt("qty", 2)
                 .withDouble("price", 26.3)
                 .build();
 
-        DidoData data2 = MapData.builderNoSchema()
+        DidoData data2 = MapData.builder()
                 .withString("type", "apple")
                 .withInt("qty", 2)
                 .withDouble("price", 26.3)
@@ -125,10 +125,10 @@ class MapDataTest {
                 .addNamed("price", double.class)
                 .build();
 
-        DidoData data1 = ArrayData.valuesForSchema(schema)
+        DidoData data1 = ArrayData.valuesWithSchema(schema)
                 .of("Apple", null, 15, 26.5);
 
-        DidoData data2 = MapData.valuesForSchema(schema)
+        DidoData data2 = MapData.valuesWithSchema(schema)
                 .of("Apple", null, 15, 26.5);
 
         assertThat(data1, is(data2));

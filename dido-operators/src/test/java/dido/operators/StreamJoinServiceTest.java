@@ -40,7 +40,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        FieldValuesIn expectedValues = ArrayData.valuesForSchema(
+        FieldValuesIn expectedValues = ArrayData.valuesWithSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -76,7 +76,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        FieldValuesIn values = ArrayData.valuesForSchema(
+        FieldValuesIn values = ArrayData.valuesWithSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -112,7 +112,7 @@ class StreamJoinServiceTest {
         @SuppressWarnings("unchecked")
         List<DidoData> results = lookup.lookup("results.beans", List.class);
 
-        FieldValuesIn values = ArrayData.valuesForSchema(
+        FieldValuesIn values = ArrayData.valuesWithSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Variety", String.class)

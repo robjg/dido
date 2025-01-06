@@ -115,7 +115,7 @@ class ValueCopyFactoryTest {
 
         assertThat(schema, is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesForSchema(schema)
+        DidoData expectedData = ArrayData.valuesWithSchema(schema)
                 .of((byte) 65, (short) 65, '6', 65, 65L, 456.57, 456.57f, true);
 
         assertThat(result1, is(expectedData));
@@ -156,7 +156,7 @@ class ValueCopyFactoryTest {
 
         assertThat(schema, is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesForSchema(schema)
+        DidoData expectedData = ArrayData.valuesWithSchema(schema)
                 .of(1, 2, 3, 4, 5, 6, 7, 6, 3, 1);
 
         assertThat(result1, is(expectedData));

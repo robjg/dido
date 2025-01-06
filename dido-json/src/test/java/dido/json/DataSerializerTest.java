@@ -22,7 +22,7 @@ class DataSerializerTest {
                 .addNamed("price", double.class)
                 .build();
 
-        DidoData data = ArrayData.valuesForSchema(schema)
+        DidoData data = ArrayData.valuesWithSchema(schema)
                 .of("Apple", null, 15, 26.5);
 
         Gson gson = new GsonBuilder()
@@ -55,10 +55,10 @@ class DataSerializerTest {
                 .addNestedNamed("pos", posSchema)
                 .build();
 
-        DidoData data = MapData.valuesForSchema(schema)
-                .of(MapData.valuesForSchema(fooSchema)
+        DidoData data = MapData.valuesWithSchema(schema)
+                .of(MapData.valuesWithSchema(fooSchema)
                                 .of("Stuff", 15),
-                        MapData.valuesForSchema(posSchema)
+                        MapData.valuesWithSchema(posSchema)
                                 .of(1.2, 3.4));
 
         Gson gson = new GsonBuilder()
@@ -87,12 +87,12 @@ class DataSerializerTest {
                 .build();
 
         RepeatingData positions = RepeatingData.of(
-                MapData.valuesForSchema(posSchema).of(1.2, 3.4),
-                MapData.valuesForSchema(posSchema).of(2.0, 3.0),
-                MapData.valuesForSchema(posSchema).of(-7.7, -8.8));
+                MapData.valuesWithSchema(posSchema).of(1.2, 3.4),
+                MapData.valuesWithSchema(posSchema).of(2.0, 3.0),
+                MapData.valuesWithSchema(posSchema).of(-7.7, -8.8));
 
 
-        DidoData data = MapData.valuesForSchema(schema)
+        DidoData data = MapData.valuesWithSchema(schema)
                 .of("Foo", positions);
 
         Gson gson = new GsonBuilder()
@@ -123,8 +123,8 @@ class DataSerializerTest {
 
         schemaReference.set(personSchema);
 
-        FieldValuesIn personValue = MapData.valuesForSchema(personSchema);
-        FieldValuesIn childrenValue = MapData.valuesForSchema(childrenSchema);
+        FieldValuesIn personValue = MapData.valuesWithSchema(personSchema);
+        FieldValuesIn childrenValue = MapData.valuesWithSchema(childrenSchema);
 
         DidoData data = personValue.of("Alice", childrenValue.of(RepeatingData.of(
                         personValue.of("Bob", childrenValue.of(
