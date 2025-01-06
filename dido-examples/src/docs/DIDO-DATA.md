@@ -5,7 +5,7 @@ Dido Data
 defines the data format common to all sources of data. Data is accessible via an
 index or a field name. Here's an example of `DidoData` read from JSON:
 {@oddjob.java.file src/test/java/dido/examples/DidoDataExamplesTest.java#snippet6}
-Non-boxing access is available for all primitive types.
+Non-boxing access is available for all primitive types, and String is added as a convenience.
 {@oddjob.java.file src/test/java/dido/examples/DidoDataExamplesTest.java#snippet7}
 Use of boxed types is implementation specific, so using the primitive accessors may
 not always yield a performance improvement. 
@@ -25,7 +25,7 @@ Various implementations of `DidoData` exist and include
 [ArrayData](http://rgordon.co.uk/projects/dido/current/api/dido/data/ArrayData.html)
 amongst others. These are immutable and thread safe implementations.
 
-Convenience static creation methods exist on `DidoData` which will the implementation 
+Convenience static creation methods exist on `DidoData` which will use the implementation 
 that is considered the most performant for general use in any release.
 
 `DidoData` can be created from field values:

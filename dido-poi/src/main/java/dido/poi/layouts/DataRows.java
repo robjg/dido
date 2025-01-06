@@ -167,7 +167,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
                 .columns(this.of)
                 .schemaListener(schema -> this.headings = schema.getFieldNames().toArray(new String[0]))
                 .header(this.withHeader)
-                .converter(this.conversionProvider)
+                .conversionProvider(this.conversionProvider)
                 .make()
                 .inFrom(bookInProvider);
 
@@ -187,7 +187,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
                 .autoFilter(this.autoFilter)
                 .autoWidth(this.autoWidth)
                 .styles(this.styles)
-                .converter(this.conversionProvider)
+                .conversionProvider(this.conversionProvider)
                 .lastRow(rowNum -> lastRow = rowNum)
                 .make()
                 .outTo(outTo);

@@ -67,6 +67,12 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
                 .orElse(null);
     }
 
+    public DidoConversionProvider getConversionProvider() {
+        return Optional.ofNullable(this.services)
+                .map(s -> s.didoConversionProvider)
+                .orElse(null);
+    }
+
     public String getName() {
         return name;
     }

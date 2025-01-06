@@ -103,7 +103,7 @@ public class DataOutPoi implements DataOutHow<BookOutProvider> {
         this.autoFilter = settings.autoFilter;
         this.autoWidth = settings.autoWidth;
         this.styles = settings.styles;
-        this.conversionProvider = settings.converter;
+        this.conversionProvider = settings.conversionProvider;
         this.columns = settings.columns == null || settings.columns.isEmpty()
                 ? null : new ArrayList<>(settings.columns);
         this.lastRow = Objects.requireNonNullElse(settings.lastRow, ignored -> {});
@@ -151,7 +151,7 @@ public class DataOutPoi implements DataOutHow<BookOutProvider> {
 
         private DataSchema schema;
 
-        private DidoConversionProvider converter;
+        private DidoConversionProvider conversionProvider;
 
         private StyleProviderFactory styles;
 
@@ -199,8 +199,8 @@ public class DataOutPoi implements DataOutHow<BookOutProvider> {
             return this;
         }
 
-        public Settings converter(DidoConversionProvider converter) {
-            this.converter = converter;
+        public Settings conversionProvider(DidoConversionProvider conversionProvider) {
+            this.conversionProvider = conversionProvider;
             return this;
         }
 

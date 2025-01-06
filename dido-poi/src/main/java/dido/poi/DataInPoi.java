@@ -74,7 +74,7 @@ public class DataInPoi implements DataInHow<BookInProvider> {
         this.schema = settings.schema;
         this.partialSchema = settings.partialSchema;
         this.withHeader = settings.withHeader;
-        this.conversionProvider = settings.converter;
+        this.conversionProvider = settings.conversionProvider;
         this.columns = settings.columns == null || settings.columns.isEmpty()
                 ? null : new ArrayList<>(settings.columns);
         this.schemaListener = settings.schemaListener;
@@ -107,7 +107,7 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
         private boolean partialSchema;
 
-        private DidoConversionProvider converter;
+        private DidoConversionProvider conversionProvider;
 
         private Collection<? extends DataCell> columns;
 
@@ -143,8 +143,8 @@ public class DataInPoi implements DataInHow<BookInProvider> {
             return this;
         }
 
-        public Settings converter(DidoConversionProvider converter) {
-            this.converter = converter;
+        public Settings conversionProvider(DidoConversionProvider conversionProvider) {
+            this.conversionProvider = conversionProvider;
             return this;
         }
 

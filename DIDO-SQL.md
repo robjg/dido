@@ -1,53 +1,16 @@
-package dido.examples;
+dido-sql
+========
 
-import dido.csv.DataInCsv;
-import dido.csv.DataOutCsv;
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.how.DataIn;
-import dido.how.DataOut;
-import dido.how.conversion.DefaultConversionProvider;
-import dido.how.conversion.DidoConversionProvider;
-import dido.sql.DataInSql;
-import dido.sql.DataOutSql;
-import org.junit.jupiter.api.Test;
+Provides very limited support for reading and writing to databases with SQL.
+It was created to capture test data to CSV files and reload them.
 
-import java.io.BufferedInputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-import java.time.LocalDate;
-import java.util.Objects;
+The data created is just a wrapper around the JDBC Result Set. The data will change as
+the underlying result set next is called, so it should always be copied if it is to be 
+used outside the streams iterator.
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+Example Reading Loading a Table from a CSV file:
 
-class CsvToSqlExampleTest {
-
-    @Test
-    void example() throws Exception {
-
-        Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", "");
-
-        String create = "drop table PEOPLE if exists;\n" +
-                "\n" +
-                "create table PEOPLE(" +
-                "INDEX integer, " +
-                "USER_ID varchar(50), " +
-                "FIRST_NAME varchar(50), " +
-                "LAST_NAME varchar(50), " +
-                "SEX varchar(10), " +
-                "EMAIL varchar(50), " +
-                "PHONE varchar(50), " +
-                "DOB date," +
-                "JOB_TITLE varchar(100)" +
-                ")";
-
-        try (Statement stmt = connection.createStatement()) {
-            stmt.execute(create);
-        };
-
-        // #snippet1{
+```java
         DataSchema schema = DataSchema.builder()
                 .addNamed("Index", int.class)
                 .addNamed("Date of birth", LocalDate.class)
@@ -71,9 +34,12 @@ class CsvToSqlExampleTest {
 
             in.stream().forEach(out);
         }
-        // }#snippet1
+```
 
-        // #snippet2{
+
+Example Reading a table and creating a CSV that matches the original:
+
+```java
         StringBuilder stringBuilder = new StringBuilder();
 
         try (DataIn in = DataInSql.with()
@@ -102,8 +68,5 @@ class CsvToSqlExampleTest {
                 .readAllBytes());
 
         assertThat(stringBuilder.toString(), is(expected));
-        // }#snippet2
+```
 
-        connection.close();
-    }
-}

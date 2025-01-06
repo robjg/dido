@@ -72,7 +72,7 @@ public class CsvDido {
                 .schema(schema)
                 .header(withHeader)
                 .partialSchema(partialSchema)
-                .converter(converter)
+                .conversionProvider(converter)
                 .make();
 
         return StreamHows.fromReaderHow(dataInCsv);

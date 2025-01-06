@@ -123,7 +123,7 @@ public class EnsureStandardInOutApiTest {
                 .getReturnType();
 
         assertThat(settingsClass.isAssignableFrom(
-                        settingsClass.getMethod("converter", DidoConversionProvider.class)
+                        settingsClass.getMethod("conversionProvider", DidoConversionProvider.class)
                                 .getReturnType()),
                 is(true));
     }

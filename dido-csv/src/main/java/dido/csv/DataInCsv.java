@@ -30,14 +30,14 @@ public class DataInCsv implements DataInHow<Reader> {
 
     private final boolean partialSchema;
 
-    private final DidoConversionProvider converter;
+    private final DidoConversionProvider conversionProvider;
 
     private DataInCsv(Settings settings) {
         this.csvFormat = Objects.requireNonNullElse(settings.csvFormat, CSVFormat.DEFAULT);
         this.schema = settings.schema;
         this.withHeader = settings.withHeader;
         this.partialSchema = settings.partialSchema;
-        this.converter = Objects.requireNonNullElse(settings.converter,
+        this.conversionProvider = Objects.requireNonNullElse(settings.conversionProvider,
                 DefaultConversionProvider.defaultInstance());
     }
 
@@ -51,7 +51,7 @@ public class DataInCsv implements DataInHow<Reader> {
 
         private boolean partialSchema;
 
-        private DidoConversionProvider converter;
+        private DidoConversionProvider conversionProvider;
 
         public Settings csvFormat(CSVFormat csvFormat) {
             this.csvFormat = csvFormat;
@@ -73,8 +73,8 @@ public class DataInCsv implements DataInHow<Reader> {
             return this;
         }
 
-        public Settings converter(DidoConversionProvider converter) {
-            this.converter = converter;
+        public Settings conversionProvider(DidoConversionProvider converter) {
+            this.conversionProvider = converter;
             return this;
         }
 
@@ -188,7 +188,7 @@ public class DataInCsv implements DataInHow<Reader> {
         final Iterator<CSVRecord> finalIterator = iterator;
 
         Function<CSVRecord, CsvData> wrapperFunction =
-                CsvData.wrapperFunctionFor(schema, converter);
+                CsvData.wrapperFunctionFor(schema, conversionProvider);
 
         return new DataIn() {
 

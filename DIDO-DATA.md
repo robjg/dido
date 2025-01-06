@@ -22,7 +22,7 @@ index or a field name. Here's an example of `DidoData` read from JSON:
         assertThat(data.getNamed("Price"), is(27.2));
 ```
 
-Non-boxing access is available for all primitive types.
+Non-boxing access is available for all primitive types, and String is added as a convenience.
 ```java
         assertThat(data.getStringAt(1), is("Apple"));
         assertThat(data.getIntAt(2), is(5));
@@ -62,7 +62,7 @@ Various implementations of `DidoData` exist and include
 [ArrayData](http://rgordon.co.uk/projects/dido/current/api/dido/data/ArrayData.html)
 amongst others. These are immutable and thread safe implementations.
 
-Convenience static creation methods exist on `DidoData` which will the implementation 
+Convenience static creation methods exist on `DidoData` which will use the implementation 
 that is considered the most performant for general use in any release.
 
 `DidoData` can be created from field values:
