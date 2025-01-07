@@ -3,7 +3,6 @@ package dido.examples;
 import dido.csv.DataInCsv;
 import dido.csv.DataOutCsv;
 import dido.data.DataSchema;
-import dido.data.DidoData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.how.conversion.DefaultConversionProvider;
@@ -45,7 +44,7 @@ class CsvToSqlExampleTest {
 
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(create);
-        };
+        }
 
         // #snippet1{
         DataSchema schema = DataSchema.builder()
@@ -59,8 +58,7 @@ class CsvToSqlExampleTest {
 
         try (DataIn in = DataInCsv.with()
                 .header(true)
-                .schema(schema)
-                .partialSchema(true)
+                .partialSchema(schema)
                 .conversionProvider(conversionProvider)
                 .fromInputStream(getClass().getResourceAsStream("/examples/people-100.csv"));
              DataOut out = DataOutSql.with()
@@ -69,7 +67,7 @@ class CsvToSqlExampleTest {
                              " values (?, ?, ?, ?, ?, ?, ?, ?, ?)")
                      .toConnection(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""))) {
 
-            in.stream().forEach(out);
+            in.forEach(out);
         }
         // }#snippet1
 
@@ -92,9 +90,7 @@ class CsvToSqlExampleTest {
                      .header(true)
                      .toAppendable(stringBuilder)) {
 
-            for (DidoData data : in) {
-                out.accept(data);
-            }
+            in.forEach(out);
         }
 
         String expected = new String(new BufferedInputStream(

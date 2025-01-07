@@ -128,18 +128,24 @@ public class DataInPoi implements DataInHow<BookInProvider> {
             return this;
         }
 
-        public Settings schema(DataSchema schema) {
-            this.schema = schema;
-            return this;
-        }
-
         public Settings header(boolean withHeader) {
             this.withHeader = withHeader;
             return this;
         }
 
+        public Settings schema(DataSchema schema) {
+            this.schema = schema;
+            return this;
+        }
+
         public Settings partialSchema(boolean partialSchema) {
             this.partialSchema = partialSchema;
+            return this;
+        }
+
+        public Settings partialSchema(DataSchema schema) {
+            this.schema = schema;
+            this.partialSchema = true;
             return this;
         }
 

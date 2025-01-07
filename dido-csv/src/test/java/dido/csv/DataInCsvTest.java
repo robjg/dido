@@ -98,8 +98,7 @@ class DataInCsvTest {
         List<DidoData> results;
 
         try (DataIn in = DataInCsv.with()
-                .schema(someSchema)
-                .partialSchema(true)
+                .partialSchema(someSchema)
                 .fromReader(new StringReader(records))) {
             results = in.stream().collect(Collectors.toList());
         }

@@ -83,8 +83,7 @@ class DataInPoiTest {
                 .toList();
 
         try (DataIn in = DataInPoi.with()
-                .schema(schema)
-                .partialSchema(true)
+                .partialSchema(schema)
                 .fromInputStream(
                         getClass().getResourceAsStream("/excel/SimpleTableNoHeadings.xlsx"))) {
 

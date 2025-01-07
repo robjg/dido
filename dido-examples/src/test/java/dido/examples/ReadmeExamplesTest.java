@@ -113,7 +113,7 @@ public class ReadmeExamplesTest {
                      .outFormat(JsonDidoFormat.LINES)
                      .toOutputStream(System.out)) {
 
-            in.stream().forEach(out);
+            in.forEach(out);
         }
         // }#snippet4
     }

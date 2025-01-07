@@ -260,6 +260,10 @@ public class EnsureStandardInOutApiTest {
         assertThat(settingsClass.getMethod("partialSchema", boolean.class)
                         .getReturnType(),
                 is(settingsClass));
+
+        assertThat(settingsClass.getMethod("partialSchema", DataSchema.class)
+                        .getReturnType(),
+                is(settingsClass));
     }
 
     @ParameterizedTest

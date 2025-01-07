@@ -116,7 +116,21 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
      */
     private DidoConversionProvider conversionProvider;
 
+    /**
+     * @oddjob.property
+     * @oddjob.description The schema to use when reading and writing data.
+     * If not provided, the schema It will be derived when reading and taken from the data when writing.
+     * @oddjob.required No.
+     */
     private DataSchema schema;
+
+    /**
+     * @oddjob.property
+     * @oddjob.description Is the provided schema only a partial schema.
+     * Only applies when reading. If true, then the rest of the schema is derived from the data.
+     * @oddjob.required No.
+     */
+    private boolean partialSchema;
 
     @Override
     public Class<BookInProvider> getInType() {
@@ -163,14 +177,14 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
                 .sheetName(this.sheetName)
                 .firstRow(this.firstRow)
                 .firstColumn(this.firstColumn)
-                .schema(this.schema)
                 .columns(this.of)
                 .schemaListener(schema -> this.headings = schema.getFieldNames().toArray(new String[0]))
                 .header(this.withHeader)
+                .schema(this.schema)
+                .partialSchema(this.partialSchema)
                 .conversionProvider(this.conversionProvider)
                 .make()
                 .inFrom(bookInProvider);
-
     }
 
     @Override
@@ -288,6 +302,14 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
 
     public void setSchema(DataSchema schema) {
         this.schema = schema;
+    }
+
+    public boolean isPartialSchema() {
+        return partialSchema;
+    }
+
+    public void setPartialSchema(boolean partialSchema) {
+        this.partialSchema = partialSchema;
     }
 
     @Override

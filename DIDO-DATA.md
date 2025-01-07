@@ -6,10 +6,9 @@ defines the data format common to all sources of data. Data is accessible via an
 index or a field name. Here's an example of `DidoData` read from JSON:
 ```java
         DidoData data = DataInJson.with()
-                .schema(DataSchema.builder()
+                .partialSchema(DataSchema.builder()
                         .addNamed("Qty", int.class)
                         .build())
-                .partialSchema(true)
                 .mapFromString()
                 .apply("{ \"Fruit\"=\"Apple\", \"Qty\"=5, \"Price\"=27.2 }");
 

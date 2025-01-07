@@ -15,10 +15,9 @@ class DidoDataExamplesTest {
 
         // #snippet6{
         DidoData data = DataInJson.with()
-                .schema(DataSchema.builder()
+                .partialSchema(DataSchema.builder()
                         .addNamed("Qty", int.class)
                         .build())
-                .partialSchema(true)
                 .mapFromString()
                 .apply("{ \"Fruit\"=\"Apple\", \"Qty\"=5, \"Price\"=27.2 }");
 

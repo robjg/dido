@@ -8,7 +8,7 @@ The data created is just a wrapper around the JDBC Result Set. The data will cha
 the underlying result set next is called, so it should always be copied if it is to be 
 used outside the streams iterator.
 
-Example Reading Loading a Table from a CSV file:
+Here's an example Loading a Table from a CSV file:
 
 ```java
         DataSchema schema = DataSchema.builder()
@@ -22,8 +22,7 @@ Example Reading Loading a Table from a CSV file:
 
         try (DataIn in = DataInCsv.with()
                 .header(true)
-                .schema(schema)
-                .partialSchema(true)
+                .partialSchema(schema)
                 .conversionProvider(conversionProvider)
                 .fromInputStream(getClass().getResourceAsStream("/examples/people-100.csv"));
              DataOut out = DataOutSql.with()
@@ -32,12 +31,12 @@ Example Reading Loading a Table from a CSV file:
                              " values (?, ?, ?, ?, ?, ?, ?, ?, ?)")
                      .toConnection(DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "SA", ""))) {
 
-            in.stream().forEach(out);
+            in.forEach(out);
         }
 ```
 
 
-Example Reading a table and creating a CSV that matches the original:
+And now reading that table and creating a CSV that matches the original:
 
 ```java
         StringBuilder stringBuilder = new StringBuilder();
@@ -58,9 +57,7 @@ Example Reading a table and creating a CSV that matches the original:
                      .header(true)
                      .toAppendable(stringBuilder)) {
 
-            for (DidoData data : in) {
-                out.accept(data);
-            }
+            in.forEach(out);
         }
 
         String expected = new String(new BufferedInputStream(

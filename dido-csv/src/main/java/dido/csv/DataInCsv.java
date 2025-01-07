@@ -73,6 +73,12 @@ public class DataInCsv implements DataInHow<Reader> {
             return this;
         }
 
+        public Settings partialSchema(DataSchema schema) {
+            this.schema = schema;
+            this.partialSchema = true;
+            return this;
+        }
+
         public Settings conversionProvider(DidoConversionProvider converter) {
             this.conversionProvider = converter;
             return this;

@@ -59,7 +59,7 @@ And now when we copy from CSV to JSON
                      .outFormat(JsonDidoFormat.LINES)
                      .toOutputStream(System.out)) {
 
-            in.stream().forEach(out);
+            in.forEach(out);
         }
 ```
 

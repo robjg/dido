@@ -64,8 +64,7 @@ class DataInJsonLinesTest {
 
         List<DidoData> in = DataInJson.with()
                 .inFormat(JsonDidoFormat.LINES)
-                .schema(schema)
-                .partialSchema(true)
+                .partialSchema(schema)
                 .fromReader(new StringReader(lines))
                 .stream().collect(Collectors.toList());
 

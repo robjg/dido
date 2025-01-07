@@ -58,6 +58,12 @@ public class DataInJson implements DataInHow<Reader> {
             return this;
         }
 
+        public Settings partialSchema(DataSchema schema) {
+            this.schema = schema;
+            this.partialSchema = true;
+            return this;
+        }
+
         public DataIn fromPath(Path path) {
             try {
                 return make().inFrom(Files.newBufferedReader(path));
