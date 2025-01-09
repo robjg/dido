@@ -9,8 +9,8 @@ import java.util.Objects;
 /**
  * The basic definition of a Data item within Dido.
  * <p>
- * All instances of {@code DidoData} should be equal if they have the same {@link DataSchema} and their data items
- * are equal.
+ * All instances of {@code DidoData} should be equal if they have the same data items in iteration order
+ * regardless of their {@link DataSchema}s.
  * <p>The hashcode of an instance of {@code DidoData} must only be the hash of its data items.
  */
 public interface DidoData extends IndexedData {
@@ -87,6 +87,25 @@ public interface DidoData extends IndexedData {
     }
 
     static boolean equals(DidoData data1, DidoData data2) {
+        if (data1 == data2) {
+            return true;
+        }
+        if (data1 == null || data2 == null) {
+            return false;
+        }
+        DataSchema schema1 = data1.getSchema();
+        DataSchema schema2 = data1.getSchema();
+
+        int index1 = schema1.firstIndex(), index2 = schema2.firstIndex();
+        for ( ; index1 > 0 && index2 > 0; index1 = schema1.nextIndex(index1), index2 = schema1.nextIndex(index2)) {
+            if (! Objects.equals(data1.getAt(index1), data2.getAt(index2))) {
+                return false;
+            }
+        }
+        return index1 == 0 && index2 == 0;
+    }
+
+    static boolean strictlyEquals(DidoData data1, DidoData data2) {
         if (data1 == data2) {
             return true;
         }

@@ -15,3 +15,8 @@ Here's an example Loading a Table from a CSV file:
 And now reading that table and creating a CSV that matches the original:
 
 {@oddjob.java.file src/test/java/dido/examples/CsvToSqlExampleTest.java#snippet2}
+
+### Oddjob
+
+For examples of using Dido Sql in Oddjob, see [dido:sql](docs/reference/dido/sql/SqlDido.md)
+

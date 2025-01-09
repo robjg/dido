@@ -70,7 +70,8 @@ class SubDataTest {
 
         // Since field names now mandatory, these are not equal
         assertThat(subData2.getSchema(), not(is(subData1.getSchema())));
-        assertThat(subData2, not(is(subData1)));
+        // Equality based on values so data is equal.
+        assertThat(subData2, is(subData1));
         // Hash code currently based on index so these are equal!
         assertThat(subData2.hashCode(), is(subData1.hashCode()));
     }
@@ -93,7 +94,8 @@ class SubDataTest {
 
         // Since field names now mandatory, these are not equal
         assertThat(subData2.getSchema(), not(is(subData1.getSchema())));
-        assertThat(subData2, not(is(subData1)));
+        // Equality based on values so data is equal.
+        assertThat(subData2, is(subData1));
         // Hash code currently based on index so these are equal!
         assertThat(subData2.hashCode(), is(subData1.hashCode()));
     }

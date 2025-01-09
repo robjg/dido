@@ -49,9 +49,9 @@ public class ReadmeExamplesTest {
         }
 
         assertThat(didoData, contains(
-                DidoData.of("Apple","5","19.50"),
-                DidoData.of("Orange","2","35.24"),
-                DidoData.of("Pear","3","26.84")));
+                DidoData.of("Apple", "5", "19.50"),
+                DidoData.of("Orange", "2", "35.24"),
+                DidoData.of("Pear", "3", "26.84")));
         // }#snippet1
 
         ConsoleCapture consoleCapture1 = new ConsoleCapture();

@@ -4,6 +4,9 @@ Dido
 Dido stands for Data-In/Data-Out. It is a framework for making data from different sources
 look the same so that it can be copied, processed and compared.
 
+Dido is available in Maven. To get started simply include [dido-all](https://mvnrepository.com/artifact/uk.co.rgordon/dido-all)
+which will provide all the stable modules in one dependency.
+
 ### Some Examples
 
 Given this CSV:
@@ -23,9 +26,9 @@ We can read it in:
         }
 
         assertThat(didoData, contains(
-                DidoData.of("Apple","5","19.50"),
-                DidoData.of("Orange","2","35.24"),
-                DidoData.of("Pear","3","26.84")));
+                DidoData.of("Apple", "5", "19.50"),
+                DidoData.of("Orange", "2", "35.24"),
+                DidoData.of("Pear", "3", "26.84")));
 ```
 
 And we can write it out as Json

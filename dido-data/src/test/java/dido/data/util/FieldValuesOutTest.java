@@ -6,13 +6,15 @@ import dido.data.DidoData;
 import dido.data.MapData;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class FieldValuesOutTest {
-
 
     @Test
     void valuesOut() {
@@ -85,4 +87,36 @@ public class FieldValuesOutTest {
         assertThat(copy, is(MapData.of()));
         assertThat(copy.hashCode(), is(collection.hashCode()));
     }
+
+    @Test
+    void nullValues() {
+
+        DataSchema schema = ArrayData.schemaBuilder()
+                .add(String.class)
+                .add(int.class)
+                .add(double.class)
+                .build();
+
+        FieldValuesOut valuesOut = new FieldValuesOut(schema);
+
+        DidoData data = ArrayData.of(null, null, null);
+
+        Collection<Object> collection = valuesOut.toCollection(data);
+
+        assertThat(collection.size(), is(3));
+        assertThat(collection.isEmpty(), is(false));
+
+        assertThat(collection.toArray(),
+                is(new Object[] { null, null, null }));
+
+        int i = 1;
+        for (Object value : collection) {
+            assertThat(value, is(data.getAt(i++)));
+        }
+
+        List<Object> copy = new ArrayList<>(collection);
+
+        assertThat(copy, is(Arrays.asList(null, null, null)));
+    }
+
 }

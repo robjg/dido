@@ -67,3 +67,8 @@ And now reading that table and creating a CSV that matches the original:
         assertThat(stringBuilder.toString(), is(expected));
 ```
 
+
+### Oddjob
+
+For examples of using Dido Sql in Oddjob, see [dido:sql](docs/reference/dido/sql/SqlDido.md)
+

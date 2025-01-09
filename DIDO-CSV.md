@@ -12,4 +12,6 @@ the header of the CSV file, and a partial schema applied which only
 overrides the type of specified columns leaving the rest as String.
 We also see an Example of writing a CSV including a header line.
 
-For examples of using Dido CSV in Oddjob, see [dido:csv](docs/reference/csv/CsvDido.md)
+### Oddjob
+
+For examples of using Dido CSV in Oddjob, see [dido:csv](docs/reference/dido/csv/CsvDido.md)
