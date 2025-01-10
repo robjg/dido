@@ -1,8 +1,9 @@
 Dido JSON
 =========
 
-JSON in and out. Provides a wrapper around
-[GSON](https://github.com/google/gson).
+JSON in and out. [DataInJson](http://rgordon.co.uk/projects/dido/current/api/dido/json/DataInJson.html)
+and [DataOutJson](http://rgordon.co.uk/projects/dido/current/api/dido/json/DataOutJson.html)
+in the module [dido-json](dido-json) provide a wrapper around [GSON](https://github.com/google/gson).
 
 We have already seen in the [README](README.md) an example of writing JSON.
 

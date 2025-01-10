@@ -1,7 +1,10 @@
-dido-sql
+Dido SQL
 ========
 
-Provides very limited support for reading and writing to databases with SQL.
+[DataInSql](http://rgordon.co.uk/projects/dido/current/api/dido/sql/DataInSql.html)
+and [DataOutSql](http://rgordon.co.uk/projects/dido/current/api/dido/sql/DataOutSql.html)
+in the module [dido-sql](dido-sql)
+provide very limited support for reading and writing to databases with SQL.
 It was created to capture test data to CSV files and reload them.
 
 The data created is just a wrapper around the JDBC Result Set. The data will change as

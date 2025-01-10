@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 class ArrayDataTest {
 
@@ -103,6 +102,23 @@ class ArrayDataTest {
 
         assertThat(data1, is(data2));
         assertThat(data1.hashCode(), is(data2.hashCode()));
+
+        DidoData data3 = ArrayData.of();
+
+        assertThat(data1, not(is(data3)));
+        assertThat(data3, not(is(data1)));
+
+        DidoData data4 = ArrayData.valuesWithSchema(
+                        DataSchema.builder()
+                                .addAt(3, String.class)
+                                .addAt(8, Void.class)
+                                .addAt(11, int.class)
+                                .addAt(19, double.class)
+                                .build())
+                .of("Apple", null, 15, 26.5);
+
+        assertThat(data1, is(data4));
+        assertThat(data1.hashCode(), is(data4.hashCode()));
     }
 
     @Test

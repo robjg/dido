@@ -43,6 +43,34 @@ class FieldValuesInTest {
     }
 
     @Test
+    void valuesDisparateIndexes() {
+
+        FieldValuesIn mapValues = MapData.valuesWithSchema(
+                MapData.schemaBuilder()
+                        .addNamedAt(3, "Fruit", String.class)
+                        .addNamedAt(7, "Qty", int.class)
+                        .addNamedAt(10, "Price", double.class)
+                        .build());
+
+        FieldValuesIn arrayValues = ArrayData.valuesWithSchema(
+                MapData.schemaBuilder()
+                        .addNamedAt(4, "Fruit", String.class)
+                        .addNamedAt(8, "Qty", int.class)
+                        .addNamedAt(11, "Price", double.class)
+                        .build());
+
+        DidoData mapData1 = mapValues.of("Apple", 5, 22.4);
+        DidoData mapData2 = mapValues.of("Pear", 7, 34.2);
+
+        DidoData arrayData1 = arrayValues.of("Apple", 5, 22.4);
+        DidoData arrayData2 = arrayValues.of("Pear", 7, 34.2);
+
+        assertThat(mapData1, is(arrayData1));
+        assertThat(mapData2, is(arrayData2));
+    }
+
+
+    @Test
     void copy() {
 
         FieldValuesIn arrayValues = ArrayData.valuesWithSchema(

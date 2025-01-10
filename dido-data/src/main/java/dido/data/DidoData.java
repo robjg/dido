@@ -93,11 +93,12 @@ public interface DidoData extends IndexedData {
         if (data1 == null || data2 == null) {
             return false;
         }
+
         DataSchema schema1 = data1.getSchema();
-        DataSchema schema2 = data1.getSchema();
+        DataSchema schema2 = data2.getSchema();
 
         int index1 = schema1.firstIndex(), index2 = schema2.firstIndex();
-        for ( ; index1 > 0 && index2 > 0; index1 = schema1.nextIndex(index1), index2 = schema1.nextIndex(index2)) {
+        for ( ; index1 > 0 && index2 > 0; index1 = schema1.nextIndex(index1), index2 = schema2.nextIndex(index2)) {
             if (! Objects.equals(data1.getAt(index1), data2.getAt(index2))) {
                 return false;
             }

@@ -1,8 +1,6 @@
 package dido.poi.utils;
 
-import dido.data.DataSchema;
-import dido.data.SchemaBuilder;
-import dido.data.SchemaField;
+import dido.data.*;
 import dido.poi.CellProvider;
 import dido.poi.CellProviderFactory;
 import dido.poi.RowIn;
@@ -41,7 +39,8 @@ public class SchemaAndCells<P extends CellProvider> {
     }
 
     /**
-     * For when we don't have any cell definitions. They are derived from the schema.
+     * For when we don't have any cell definitions. They are derived from the schema,
+     * or from the actual spreadsheet data.
      *
      * @param <P> The type of CellProvider.
      */
@@ -79,6 +78,8 @@ public class SchemaAndCells<P extends CellProvider> {
                 partialSchema = DataSchema.emptySchema();
             }
 
+            SchemaFactory schemaFactory = DataSchemaFactory.newInstance();
+
             List<P> cells = new LinkedList<>();
 
             for (int index = 1; headings == null || index <= headings.length; ++index) {
@@ -90,32 +91,30 @@ public class SchemaAndCells<P extends CellProvider> {
                     break;
                 }
 
-                // See if our partial schema has a definition for this column either by
-                // column name or index.
+                // If we have a heading, we look by heading otherwise we use index.
                 SchemaField schemaField = null;
-                if (heading != null) {
-                    schemaField = partialSchema.getSchemaFieldNamed(heading);
-                }
-                if (schemaField == null) {
+                if (heading == null) {
                     schemaField = partialSchema.getSchemaFieldAt(index);
-                } else {
-                    schemaField = schemaField.mapToIndex(index);
+                }
+                else {
+                    schemaField = partialSchema.getSchemaFieldNamed(heading);
+                    if (schemaField != null) {
+                        schemaField = schemaField.mapToIndex(index);
+                    }
                 }
 
-                P dataCell;
+                P dataCell = cellProviderFactory.cellProviderFor(index, heading, cell);
 
                 if (schemaField == null) {
-
-                    dataCell = cellProviderFactory.cellProviderFor(index, heading, cell);
-                } else {
-
-                    dataCell = createCell(schemaField);
+                    schemaField = SchemaField.of(index, dataCell.getName(), dataCell.getType());
                 }
+
+                schemaFactory.addSchemaField(schemaField);
 
                 cells.add(dataCell);
             }
 
-            return fromCells(cells);
+            return new SchemaAndCells<>(schemaFactory.toSchema(), cells);
         }
 
         protected List<P> morphInto(DataSchema schema) {
@@ -165,12 +164,18 @@ public class SchemaAndCells<P extends CellProvider> {
         return new WithCellFactory<>(cellProviderFactory);
     }
 
+    /**
+     * Used when we have Cells but don't know the schema yet.
+     * @param cellProviders The collection of cells.
+     * @return The intermediate step.
+     * @param <P> The type of provider.
+     */
     public static <P extends CellProvider> Factory<P> withCells(Collection<P> cellProviders) {
         return new WithCells<>(cellProviders);
     }
 
     /**
-     * Finds the schema based just on the cells. Used Data in only, for data out we must take into
+     * Finds the schema based just on the cells. Used by data in only, for data out we must take into
      * account the schema.
      *
      * @param dataCells The cell provider.
