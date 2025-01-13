@@ -21,6 +21,9 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Data out to an Ascii Text Table.
+ */
 public class DataOutTextTable implements DataOutHow<Appendable> {
 
     private final DataSchema schema;

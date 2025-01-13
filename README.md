@@ -80,11 +80,11 @@ We get:
 [dido-data](DIDO-DATA.md) The definition of Data on which the rest of Dido is based.
 
 Formatters: 
- - [dido-csv](dido-csv) - For reading and writing CSV data.  
- - [dido-json](dido-json) - For reading and writing JSON. 
- - [dido-sql](dido-sql) - For reading and writing to Databases.
- - [dido-poi](dido-poi) - For reading and writing to Excel sheets.
- - [dido-text](dido-text) - For writing to Ascii Formatted Text Tables.
+ - [dido-csv](DIDO-CSV.md) - For reading and writing CSV data.  
+ - [dido-json](DIDO-JSON.md) - For reading and writing JSON. 
+ - [dido-sql](DIDO-SQL.md) - For reading and writing to Databases.
+ - [dido-poi](DIDO-POI.md) - For reading and writing to Excel sheets.
+ - [dido-text](DIDO-TEXT.md) - For writing to Ascii Formatted Text Tables.
 
 [dido-oddball](dido-oddball) For using Dido in Oddjob.
 
