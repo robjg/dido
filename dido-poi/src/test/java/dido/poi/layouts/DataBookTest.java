@@ -5,7 +5,7 @@ import dido.oddjob.bean.FromBeanArooa;
 import dido.oddjob.bean.ToBeanArooa;
 import dido.oddjob.beanbus.DataInDriver;
 import dido.oddjob.beanbus.DataOutDestination;
-import dido.operators.transform.FieldOperations;
+import dido.operators.transform.FieldOps;
 import dido.operators.transform.TransformationFactory;
 import dido.poi.BookInProvider;
 import dido.poi.BookOutProvider;
@@ -106,7 +106,7 @@ public class DataBookTest {
 
 		TransformationFactory transformationFactory = new TransformationFactory();
 		transformationFactory.setWithCopy(true);
-		transformationFactory.setOf(0, FieldOperations.setNamed("percentage", 0.1));
+		transformationFactory.setOf(0, FieldOps.setNamed("percentage", 0.1));
 
 		beans.stream()
 				.map(transformerFromBean)

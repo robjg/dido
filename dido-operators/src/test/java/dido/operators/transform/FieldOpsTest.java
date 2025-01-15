@@ -1,15 +1,16 @@
 package dido.operators.transform;
 
-import dido.data.ArrayData;
-import dido.data.ArrayDataDataFactoryProvider;
-import dido.data.DataSchema;
-import dido.data.DidoData;
+import dido.data.*;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+
+import java.util.function.BiConsumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class FieldOperationsTest {
+class FieldOpsTest {
 
     static DataSchema schema = ArrayData.schemaBuilder()
             .addNamed("Fruit", String.class)
@@ -23,11 +24,11 @@ class FieldOperationsTest {
     @Test
     void copyAt() {
 
-        Transformation transformation = FieldTransformationBuilder
+        Transformation transformation = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchema(schema)
-                .addFieldOperation(FieldOperations.copyAt(3))
-                .addFieldOperation(FieldOperations.copyAt(2))
+                .addOp(FieldOps.copyAt(3))
+                .addOp(FieldOps.copyAt(2))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -48,11 +49,11 @@ class FieldOperationsTest {
     @Test
     void copyNamed() {
 
-        Transformation transformation = FieldTransformationBuilder
+        Transformation transformation = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchema(schema)
-                .addFieldOperation(FieldOperations.copyNamed("Price"))
-                .addFieldOperation(FieldOperations.copyNamed("Fruit"))
+                .addOp(FieldOps.copyNamed("Price"))
+                .addOp(FieldOps.copyNamed("Fruit"))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -73,11 +74,11 @@ class FieldOperationsTest {
     @Test
     void copyNamedFromTo() {
 
-        Transformation transformation = FieldTransformationBuilder
+        Transformation transformation = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchema(schema)
-                .addFieldOperation(FieldOperations.copyNamed("Fruit", "Type"))
-                .addFieldOperation(FieldOperations.copyNamed("Price", "Price"))
+                .addOp(FieldOps.copyNamed("Fruit", "Type"))
+                .addOp(FieldOps.copyNamed("Price", "Price"))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -98,12 +99,12 @@ class FieldOperationsTest {
     @Test
     void copySameName() {
 
-        Transformation transformation = FieldTransformationBuilder
+        Transformation transformation = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchema(schema)
-                .addFieldOperation(FieldOperations.copyNamed("Qty", "Qty"))
-                .addFieldOperation(FieldOperations.copyNamed("Price", "Price"))
-                .addFieldOperation(FieldOperations.copyNamed("Fruit", "Fruit"))
+                .addOp(FieldOps.copyNamed("Qty", "Qty"))
+                .addOp(FieldOps.copyNamed("Price", "Price"))
+                .addOp(FieldOps.copyNamed("Fruit", "Fruit"))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -125,10 +126,10 @@ class FieldOperationsTest {
     @Test
     void computeInPlace() {
 
-        Transformation transformation = FieldTransformationBuilder
+        Transformation transformation = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(schema)
-                .addFieldOperation(FieldOperations.computeNamed("Qty",
+                .addOp(FieldOps.computeNamed("Qty",
                         data -> data.getIntAt(2) * 2, int.class))
                 .build();
 
@@ -145,10 +146,10 @@ class FieldOperationsTest {
     @Test
     void computeNewField() {
 
-        Transformation transformation = FieldTransformationBuilder
+        Transformation transformation = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(schema)
-                .addFieldOperation(FieldOperations.computeNamed("QtyDoubled",
+                .addOp(FieldOps.computeNamed("QtyDoubled",
                         data -> data.getIntAt(2) * 2, int.class))
                 .build();
 
@@ -170,11 +171,11 @@ class FieldOperationsTest {
     @Test
     void remove() {
 
-        Transformation transformation = FieldTransformationBuilder
+        Transformation transformation = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(schema)
-                .addFieldOperation(FieldOperations.removeNamed("Fruit"))
-                .addFieldOperation(FieldOperations.removeNamed("Price"))
+                .addOp(FieldOps.removeNamed("Fruit"))
+                .addOp(FieldOps.removeNamed("Price"))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -194,12 +195,12 @@ class FieldOperationsTest {
     @Test
     void set() {
 
-        Transformation transformation = FieldTransformationBuilder
+        Transformation transformation = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(schema)
-                .addFieldOperation(FieldOperations.setNamed("Fruit", "Orange"))
-                .addFieldOperation(FieldOperations.setNamed("Qty", 1234L, long.class))
-                .addFieldOperation(FieldOperations.setNamed("InStock", true, boolean.class))
+                .addOp(FieldOps.setNamed("Fruit", "Orange"))
+                .addOp(FieldOps.setNamed("Qty", 1234L, long.class))
+                .addOp(FieldOps.setNamed("InStock", true, boolean.class))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -217,5 +218,28 @@ class FieldOperationsTest {
                 .of("Orange", 1234L, 23.5, true);
 
         assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void setNamed() {
+
+        DataFactoryProvider dataFactoryProvider = DataFactoryProvider.newInstance();
+        SchemaFactory schemaFactory = dataFactoryProvider.getSchemaFactory();
+
+        TransformerDefinition.Prepare prepare = FieldOps.setNamed("Fruit", "Apple")
+                .define(DataSchema.emptySchema(), SchemaSetter.fromSchemaFactory(schemaFactory));
+
+        WriteSchema writeSchema = WriteSchema.from(schemaFactory.toSchema());
+
+        BiConsumer < DidoData, WritableData > action = prepare.create(
+                writeSchema);
+
+        DataFactory dataFactory = dataFactoryProvider.factoryFor(writeSchema);
+
+        action.accept(DidoData.of(), dataFactory.getWritableData());
+
+        DidoData result = dataFactory.toData();
+
+        MatcherAssert.assertThat(result, Matchers.is(DidoData.of("Apple")));
     }
 }

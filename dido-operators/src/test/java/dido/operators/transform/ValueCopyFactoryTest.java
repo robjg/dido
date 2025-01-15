@@ -37,7 +37,7 @@ class ValueCopyFactoryTest {
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
-        TransformerFactory transformerFactory = transformerDefinition.define(data.getSchema(), schemaSetter);
+        TransformerDefinition.Prepare prepare = transformerDefinition.define(data.getSchema(), schemaSetter);
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", Integer.class));
 
@@ -46,7 +46,7 @@ class ValueCopyFactoryTest {
         WritableData writableData = mock(WritableData.class);
         when(writeSchema.getFieldSetterNamed("FooAmount")).thenReturn(fieldSetter);
 
-        BiConsumer<DidoData, WritableData> consumer = transformerFactory.create(writeSchema);
+        BiConsumer<DidoData, WritableData> consumer = prepare.create(writeSchema);
         consumer.accept(data, writableData);
 
         verify(fieldSetter).set(writableData, 423);
@@ -68,7 +68,7 @@ class ValueCopyFactoryTest {
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
-        TransformerFactory transformerFactory = transformerDefinition.define(data.getSchema(), schemaSetter);
+        TransformerDefinition.Prepare prepare = transformerDefinition.define(data.getSchema(), schemaSetter);
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", int.class));
 
@@ -77,7 +77,7 @@ class ValueCopyFactoryTest {
         WritableData writableData = mock(WritableData.class);
         when(writeSchema.getFieldSetterNamed("FooAmount")).thenReturn(fieldSetter);
 
-        BiConsumer<DidoData, WritableData> consumer = transformerFactory.create(writeSchema);
+        BiConsumer<DidoData, WritableData> consumer = prepare.create(writeSchema);
         consumer.accept(data, writableData);
 
         verify(fieldSetter).set(writableData, 423);

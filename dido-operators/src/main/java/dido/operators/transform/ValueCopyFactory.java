@@ -137,8 +137,8 @@ public class ValueCopyFactory implements Supplier<TransformerDefinition> {
         }
 
         @Override
-        public TransformerFactory define(DataSchema fromSchema,
-                                         SchemaSetter schemaSetter) {
+        public Prepare define(DataSchema fromSchema,
+                              SchemaSetter schemaSetter) {
 
             String from;
             int index;
@@ -166,7 +166,7 @@ public class ValueCopyFactory implements Supplier<TransformerDefinition> {
                 to = this.to;
             }
 
-            Function<Function<Object, ?>, TransformerFactory> transformerFn;
+            Function<Function<Object, ?>, Prepare> transformerFn;
             ReadStrategy readStrategy = ReadStrategy.fromSchema(fromSchema);
 
             logger.info("Creating Copy from {} to {}", from, to);

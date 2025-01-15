@@ -1,0 +1,5 @@
+Fruit |Quantity|Price
+------+--------+-----
+Apple |       5| 19.5
+Orange|       2|35.24
+Pear  |       3|26.84

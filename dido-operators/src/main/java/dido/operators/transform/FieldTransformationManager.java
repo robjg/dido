@@ -10,19 +10,20 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+
 public class FieldTransformationManager {
 
     private final NavigableMap<Integer, SchemaField> indexFields = new TreeMap<>();
 
-    private final NavigableMap<Integer, TransformerFactory> indexFactories = new TreeMap<>();
+    private final NavigableMap<Integer, TransformerDefinition.Prepare> indexFactories = new TreeMap<>();
 
     private final List<SchemaField> extraFields = new ArrayList<>();
 
-    private final List<TransformerFactory> extraFactories = new ArrayList<>();
+    private final List<TransformerDefinition.Prepare> extraFactories = new ArrayList<>();
 
     private final DataSchema incomingSchema;
 
-    private Consumer<TransformerFactory> factoryConsumer;
+    private Consumer<TransformerDefinition.Prepare> factoryConsumer;
 
     private final SchemaSetter schemaSetter = new SchemaSetter() {
         @Override
@@ -88,7 +89,7 @@ public class FieldTransformationManager {
 
         for (SchemaField field : incomingSchema.getSchemaFields()) {
 
-            transformationManager.addOperation(FieldOperations.copyAt(field.getIndex()));
+            transformationManager.addOperation(FieldOps.copyAt(field.getIndex()));
         }
 
         return transformationManager;
@@ -96,7 +97,7 @@ public class FieldTransformationManager {
 
     public void addOperation(TransformerDefinition operation) {
 
-        TransformerFactory factory = operation.define(incomingSchema, schemaSetter);
+        TransformerDefinition.Prepare factory = operation.define(incomingSchema, schemaSetter);
         factoryConsumer.accept(factory);
     }
 
@@ -118,10 +119,10 @@ public class FieldTransformationManager {
         DataFactory dataFactory = dataFactoryProvider.factoryFor(newSchema);
 
         List<BiConsumer<DidoData, WritableData>> fieldOperations = new ArrayList<>(newSchema.lastIndex());
-        for (TransformerFactory operationFactory : indexFactories.values()) {
+        for (TransformerDefinition.Prepare operationFactory : indexFactories.values()) {
             fieldOperations.add(operationFactory.create(newSchema));
         }
-        for (TransformerFactory operationFactory : extraFactories) {
+        for (TransformerDefinition.Prepare operationFactory : extraFactories) {
             fieldOperations.add(operationFactory.create(newSchema));
         }
 

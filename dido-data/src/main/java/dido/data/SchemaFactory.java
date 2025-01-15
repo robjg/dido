@@ -24,4 +24,12 @@ public interface SchemaFactory extends DataSchema {
     void merge(DataSchema prioritySchema);
 
     DataSchema toSchema();
+
+    static DataSchemaFactory newInstance() {
+        return DataSchemaFactory.newInstance();
+    }
+
+    static DataSchemaFactory newInstanceFrom(DataSchema originalSchema) {
+        return DataSchemaFactory.newInstanceFrom(originalSchema);
+    }
 }

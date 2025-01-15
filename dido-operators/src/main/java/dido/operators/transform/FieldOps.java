@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class FieldOperations {
+public class FieldOps {
 
     /**
      * Create an operation that copies the field at an index.
@@ -135,7 +135,21 @@ public class FieldOperations {
         };
     }
 
-    static TransformerFactory setterFactoryFor(String to, Object value, Class<?> type) {
+    public static TransformerDefinition setIntNamed(String to,
+                                                 int value) {
+
+        return setNamed(to, value, int.class);
+    }
+
+    /**
+     *
+     * @param to The field name to.
+     * @param value The value to set.
+     * @param type The type.
+     *
+     * @return The prepare step.
+     */
+    static TransformerDefinition.Prepare setterFactoryFor(String to, Object value, Class<?> type) {
 
         return writableSchema -> {
             FieldSetter setter = writableSchema.getFieldSetterNamed(to);

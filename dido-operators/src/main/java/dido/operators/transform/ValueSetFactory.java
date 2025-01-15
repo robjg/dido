@@ -94,8 +94,8 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
         }
 
         @Override
-        public TransformerFactory define(DataSchema fromSchema,
-                                         SchemaSetter schemaSetter) {
+        public Prepare define(DataSchema fromSchema,
+                              SchemaSetter schemaSetter) {
 
             int index = fromSchema.getIndexNamed(
                     Objects.requireNonNull(field, "Field Name must be provided"));
@@ -121,7 +121,7 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
                 value = inferredConversion(this.value, toType);
             }
 
-            return FieldOperations.setNamed(field, value, toType).define(fromSchema, schemaSetter);
+            return FieldOps.setNamed(field, value, toType).define(fromSchema, schemaSetter);
         }
 
         <F, T> T inferredConversion(F from, Class<T> toType) {

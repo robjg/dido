@@ -11,18 +11,18 @@ class SchemaStrategyTest {
     @Test
     void testNewFields() {
 
-        FieldTransformationBuilder transformationBuilder = FieldTransformationBuilder
+        TransformationBuilder transformationBuilder = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchema(ReadSchema.emptySchema());
 
         transformationBuilder
-                .addFieldOperation((s, sf) -> {
+                .addOp((s, sf) -> {
                     sf.addField(SchemaField.of(0, "One", int.class));
                     return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
-                .addFieldOperation((s, sf) -> {
+                .addOp((s, sf) -> {
                     sf.addField(SchemaField.of(0, "Two", long.class));
                     return df -> (d, o) -> {
                     };
@@ -43,18 +43,18 @@ class SchemaStrategyTest {
     @Test
     void testMergeNewFieldsIntoEmptySchema() {
 
-        FieldTransformationBuilder transformationBuilder = FieldTransformationBuilder
+        TransformationBuilder transformationBuilder = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(ReadSchema.emptySchema());
 
         transformationBuilder
-                .addFieldOperation((s, sf) -> {
+                .addOp((s, sf) -> {
                     sf.addField(SchemaField.of(0, "One", int.class));
                     return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
-                .addFieldOperation((s, sf) -> {
+                .addOp((s, sf) -> {
                     sf.addField(SchemaField.of(0, "Two", long.class));
                     return df -> (d, o) -> {
                     };
@@ -79,18 +79,18 @@ class SchemaStrategyTest {
                 .addNamedAt(10, "Here", int.class)
                 .build();
 
-        FieldTransformationBuilder transformationBuilder = FieldTransformationBuilder
+        TransformationBuilder transformationBuilder = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(existing);
 
         transformationBuilder
-                .addFieldOperation((s, sf) -> {
+                .addOp((s, sf) -> {
                     sf.addField(SchemaField.of(0, "One", int.class));
                     return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
-                .addFieldOperation((s, sf) -> {
+                .addOp((s, sf) -> {
                     sf.addField(SchemaField.of(0, "Two", long.class));
                     return df -> (d, o) -> {
                     };
@@ -118,24 +118,24 @@ class SchemaStrategyTest {
                 .addNamedAt(30, "Three", double.class)
                 .build();
 
-        FieldTransformationBuilder transformationBuilder = FieldTransformationBuilder
+        TransformationBuilder transformationBuilder = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(existing);
 
         transformationBuilder
-                .addFieldOperation((s, sf) -> {
+                .addOp((s, sf) -> {
                     sf.addField(SchemaField.of(30, "One", Integer.class));
                     return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
-                .addFieldOperation((s, sf) -> {
+                .addOp((s, sf) -> {
                     sf.addField(SchemaField.of(20, "Two", Long.class));
                     return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
-                .addFieldOperation((s, sf) -> {
+                .addOp((s, sf) -> {
                     sf.addField(SchemaField.of(10, "Three", Double.class));
                     return df -> (d, o) -> {
                     };

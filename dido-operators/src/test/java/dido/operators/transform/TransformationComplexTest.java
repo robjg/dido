@@ -23,7 +23,7 @@ public class TransformationComplexTest {
     static class MarkupOperation implements TransformerDefinition {
 
         @Override
-        public TransformerFactory define(DataSchema incomingSchema, SchemaSetter schemaSetter) {
+        public Prepare define(DataSchema incomingSchema, SchemaSetter schemaSetter) {
 
             ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
 
@@ -66,11 +66,11 @@ public class TransformationComplexTest {
     @Test
     void complicated() {
 
-        Transformation transformation = FieldTransformationBuilder
+        Transformation transformation = TransformationBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(schema)
-                .addFieldOperation(FieldOperations.removeNamed("Qty"))
-                .addFieldOperation(new MarkupOperation())
+                .addOp(FieldOps.removeNamed("Qty"))
+                .addOp(new MarkupOperation())
                 .build();
 
         DidoData result = transformation.apply(data);

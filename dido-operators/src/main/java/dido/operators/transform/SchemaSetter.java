@@ -1,7 +1,11 @@
 package dido.operators.transform;
 
+import dido.data.SchemaFactory;
 import dido.data.SchemaField;
 
+/**
+ * A simplified view of an {@link dido.data.SchemaFactory} making it easier to build Transformations.
+ */
 public interface SchemaSetter {
 
     /**
@@ -15,4 +19,18 @@ public interface SchemaSetter {
 
     void removeField(SchemaField schemaField);
 
+    static SchemaSetter fromSchemaFactory(SchemaFactory schemaFactory ) {
+
+        return new SchemaSetter() {
+            @Override
+            public void addField(SchemaField schemaField) {
+                schemaFactory.addSchemaField(schemaField);
+            }
+
+            @Override
+            public void removeField(SchemaField schemaField) {
+                schemaFactory.removeNamed(schemaField.getName());
+            }
+        };
+    }
 }
