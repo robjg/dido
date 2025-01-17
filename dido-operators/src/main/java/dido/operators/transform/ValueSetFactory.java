@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * @oddjob.example Set a value.
  * {@oddjob.xml.resource dido/oddjob/transform/DataSetExample.xml}
  */
-public class ValueSetFactory implements Supplier<TransformerDefinition> {
+public class ValueSetFactory implements Supplier<OpDef> {
 
     /**
      * @oddjob.description The field name.
@@ -47,7 +47,7 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
     }
 
     @Override
-    public TransformerDefinition get() {
+    public OpDef get() {
         return new CopyTransformerFactory(this);
     }
 
@@ -75,7 +75,7 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
         this.type = type;
     }
 
-    static class CopyTransformerFactory implements TransformerDefinition {
+    static class CopyTransformerFactory implements OpDef {
 
         private final String field;
 
@@ -94,8 +94,8 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
         }
 
         @Override
-        public Prepare define(DataSchema fromSchema,
-                              SchemaSetter schemaSetter) {
+        public Prepare prepare(DataSchema fromSchema,
+                               SchemaSetter schemaSetter) {
 
             int index = fromSchema.getIndexNamed(
                     Objects.requireNonNull(field, "Field Name must be provided"));
@@ -121,7 +121,7 @@ public class ValueSetFactory implements Supplier<TransformerDefinition> {
                 value = inferredConversion(this.value, toType);
             }
 
-            return FieldOps.setNamed(field, value, toType).define(fromSchema, schemaSetter);
+            return FieldOps.setNamed(field, value, toType).prepare(fromSchema, schemaSetter);
         }
 
         <F, T> T inferredConversion(F from, Class<T> toType) {

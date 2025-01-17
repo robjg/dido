@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class TransformationComplexTest {
+public class DidoTransformComplexTest {
 
     static DataSchema schema = ArrayData.schemaBuilder()
             .addNamed("Fruit", String.class)
@@ -20,10 +20,10 @@ public class TransformationComplexTest {
     /**
      * Demo of a more complicated field definition.
      */
-    static class MarkupOperation implements TransformerDefinition {
+    static class MarkupOperation implements OpDef {
 
         @Override
-        public Prepare define(DataSchema incomingSchema, SchemaSetter schemaSetter) {
+        public Prepare prepare(DataSchema incomingSchema, SchemaSetter schemaSetter) {
 
             ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
 
@@ -66,14 +66,14 @@ public class TransformationComplexTest {
     @Test
     void complicated() {
 
-        Transformation transformation = TransformationBuilder
+        DidoTransform didoTransform = OpTransformBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(schema)
                 .addOp(FieldOps.removeNamed("Qty"))
                 .addOp(new MarkupOperation())
                 .build();
 
-        DidoData result = transformation.apply(data);
+        DidoData result = didoTransform.apply(data);
 
         DataSchema expectedSchema = DataSchema.builder()
                 .addNamed("Fruit", String.class)
@@ -83,7 +83,7 @@ public class TransformationComplexTest {
                 .addNamed("FinalPrice", double.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(didoTransform.getResultantSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
                 .of("Apple", 23.5, 0.5, 11.75, 35.25);
@@ -96,7 +96,7 @@ public class TransformationComplexTest {
      */
     static class MarkupTransformationFactory {
 
-        public Transformation define(DataSchema incomingSchema, DataFactoryProvider factoryProvider) {
+        public DidoTransform define(DataSchema incomingSchema, DataFactoryProvider factoryProvider) {
 
             SchemaFactory schemaFactory = factoryProvider.getSchemaFactory();
 
@@ -123,7 +123,7 @@ public class TransformationComplexTest {
             FieldSetter amountSetter = writeStrategy.getFieldSetterNamed("MarkupAmount");
             FieldSetter finalSetter = writeStrategy.getFieldSetterNamed("FinalPrice");
 
-            return new Transformation() {
+            return new DidoTransform() {
 
                 @Override
                 public DataSchema getResultantSchema() {
@@ -162,10 +162,10 @@ public class TransformationComplexTest {
     @Test
     void complicatedWithTransformation() {
 
-        Transformation transformation = new MarkupTransformationFactory()
+        DidoTransform didoTransform = new MarkupTransformationFactory()
                 .define(schema, new ArrayDataDataFactoryProvider());
 
-        DidoData result = transformation.apply(data);
+        DidoData result = didoTransform.apply(data);
 
         DataSchema expectedSchema = DataSchema.builder()
                 .addNamed("Fruit", String.class)
@@ -175,7 +175,7 @@ public class TransformationComplexTest {
                 .addNamed("FinalPrice", double.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(didoTransform.getResultantSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
                 .of("Apple", 23.5, 0.5, 11.75, 35.25);

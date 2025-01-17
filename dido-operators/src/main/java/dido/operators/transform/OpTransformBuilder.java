@@ -5,14 +5,17 @@ import dido.data.DataSchema;
 
 import java.util.Objects;
 
-public class TransformationBuilder {
+/**
+ * Provides a Builder for creating {@link DidoTransform}s from {@link OpDef}s.
+ */
+public class OpTransformBuilder {
 
     private final FieldTransformationManager fieldOperationTransformation;
 
     private final DataFactoryProvider dataFactoryProvider;
 
-    private TransformationBuilder(FieldTransformationManager fieldTransformationManager,
-                                  DataFactoryProvider dataFactoryProvider) {
+    private OpTransformBuilder(FieldTransformationManager fieldTransformationManager,
+                               DataFactoryProvider dataFactoryProvider) {
         this.fieldOperationTransformation = fieldTransformationManager;
         this.dataFactoryProvider = dataFactoryProvider;
     }
@@ -33,18 +36,18 @@ public class TransformationBuilder {
             return this;
         }
 
-        public TransformationBuilder forSchema(DataSchema incomingSchema) {
+        public OpTransformBuilder forSchema(DataSchema incomingSchema) {
 
             DataFactoryProvider dataFactoryProvider = Objects.requireNonNullElse(
                     this.dataFactoryProvider, DataFactoryProvider.newInstance());
 
             if (copy) {
-                return new TransformationBuilder(
+                return new OpTransformBuilder(
                         FieldTransformationManager.forSchemaWithCopy(incomingSchema),
                         dataFactoryProvider);
             }
             else {
-                return new TransformationBuilder(
+                return new OpTransformBuilder(
                         FieldTransformationManager.forSchema(incomingSchema),
                         dataFactoryProvider);
 
@@ -56,6 +59,10 @@ public class TransformationBuilder {
         return new Settings();
     }
 
+    public static OpTransformBuilder forSchema(DataSchema incomingSchema) {
+        return with().forSchema(incomingSchema);
+    }
+
     public static class WithFactory {
 
         private final DataFactoryProvider dataFactoryProvider;
@@ -64,16 +71,16 @@ public class TransformationBuilder {
             this.dataFactoryProvider = dataFactoryProvider;
         }
 
-        public TransformationBuilder forSchema(DataSchema incomingSchema) {
+        public OpTransformBuilder forSchema(DataSchema incomingSchema) {
 
-            return new TransformationBuilder(
+            return new OpTransformBuilder(
                     FieldTransformationManager.forSchema(incomingSchema),
                     dataFactoryProvider);
         }
 
-        public TransformationBuilder forSchemaWithCopy(DataSchema incomingSchema) {
+        public OpTransformBuilder forSchemaWithCopy(DataSchema incomingSchema) {
 
-            return new TransformationBuilder(FieldTransformationManager
+            return new OpTransformBuilder(FieldTransformationManager
                     .forSchemaWithCopy(incomingSchema), dataFactoryProvider);
         }
     }
@@ -82,18 +89,18 @@ public class TransformationBuilder {
         return new WithFactory(dataFactoryProvider);
     }
 
-    public TransformationBuilder addOp(TransformerDefinition transformerDefinition) {
-        fieldOperationTransformation.addOperation(transformerDefinition);
+    public OpTransformBuilder addOp(OpDef opDef) {
+        fieldOperationTransformation.addOperation(opDef);
         return this;
     }
 
-    public TransformationBuilder setNamed(String name, Object value) {
+    public OpTransformBuilder setNamed(String name, Object value) {
         fieldOperationTransformation.addOperation(FieldOps.setNamed(name, value));
         return this;
     }
 
 
-    public Transformation build() {
+    public DidoTransform build() {
         return fieldOperationTransformation.createTransformation(dataFactoryProvider);
     }
 }

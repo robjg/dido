@@ -6,13 +6,15 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class SchemaStrategyTest {
+/**
+ * Tests that {@link OpTransformBuilder} creates the correct schema.
+ */
+class OpTransformSchemaTest {
 
     @Test
-    void testNewFields() {
+    void whenNewFieldsTheAdded() {
 
-        TransformationBuilder transformationBuilder = TransformationBuilder
-                .withFactory(new ArrayDataDataFactoryProvider())
+        OpTransformBuilder transformationBuilder = OpTransformBuilder
                 .forSchema(ReadSchema.emptySchema());
 
         transformationBuilder
@@ -28,9 +30,9 @@ class SchemaStrategyTest {
                     };
                 });
 
-        Transformation transformation = transformationBuilder.build();
+        DidoTransform didoTransform = transformationBuilder.build();
 
-        DataSchema result = transformation.getResultantSchema();
+        DataSchema result = didoTransform.getResultantSchema();
 
         DataSchema expected = SchemaBuilder.newInstance()
                 .addNamed("One", int.class)
@@ -40,12 +42,15 @@ class SchemaStrategyTest {
         assertThat(result, is(expected));
     }
 
+    /**
+     * As Above but coping the empty schema.
+     */
     @Test
-    void testMergeNewFieldsIntoEmptySchema() {
+    void mergeNewFieldsIntoEmptySchema() {
 
-        TransformationBuilder transformationBuilder = TransformationBuilder
-                .withFactory(new ArrayDataDataFactoryProvider())
-                .forSchemaWithCopy(ReadSchema.emptySchema());
+        OpTransformBuilder transformationBuilder = OpTransformBuilder.with()
+                .copy(true)
+                .forSchema(ReadSchema.emptySchema());
 
         transformationBuilder
                 .addOp((s, sf) -> {
@@ -60,9 +65,9 @@ class SchemaStrategyTest {
                     };
                 });
 
-        Transformation transformation = transformationBuilder.build();
+        DidoTransform didoTransform = transformationBuilder.build();
 
-        DataSchema result = transformation.getResultantSchema();
+        DataSchema result = didoTransform.getResultantSchema();
 
         DataSchema expected = SchemaBuilder.newInstance()
                 .addNamed("One", int.class)
@@ -73,15 +78,15 @@ class SchemaStrategyTest {
     }
 
     @Test
-    void testNewFieldsAddedToExisting() {
+    void newFieldsAddedToExisting() {
 
         DataSchema existing = MapData.schemaBuilder()
                 .addNamedAt(10, "Here", int.class)
                 .build();
 
-        TransformationBuilder transformationBuilder = TransformationBuilder
-                .withFactory(new ArrayDataDataFactoryProvider())
-                .forSchemaWithCopy(existing);
+        OpTransformBuilder transformationBuilder = OpTransformBuilder.with()
+                .copy(true)
+                .forSchema(existing);
 
         transformationBuilder
                 .addOp((s, sf) -> {
@@ -96,9 +101,9 @@ class SchemaStrategyTest {
                     };
                 });
 
-        Transformation transformation = transformationBuilder.build();
+        DidoTransform didoTransform = transformationBuilder.build();
 
-        DataSchema result = transformation.getResultantSchema();
+        DataSchema result = didoTransform.getResultantSchema();
 
         DataSchema expected = SchemaBuilder.newInstance()
                 .addNamedAt(1, "Here", int.class)
@@ -110,7 +115,7 @@ class SchemaStrategyTest {
     }
 
     @Test
-    void testCopyFieldsOutOfOrderExisting() {
+    void copyFieldsOutOfOrderExisting() {
 
         DataSchema existing = MapData.schemaBuilder()
                 .addNamedAt(10, "One", int.class)
@@ -118,9 +123,9 @@ class SchemaStrategyTest {
                 .addNamedAt(30, "Three", double.class)
                 .build();
 
-        TransformationBuilder transformationBuilder = TransformationBuilder
-                .withFactory(new ArrayDataDataFactoryProvider())
-                .forSchemaWithCopy(existing);
+        OpTransformBuilder transformationBuilder = OpTransformBuilder.with()
+                .copy(true)
+                .forSchema(existing);
 
         transformationBuilder
                 .addOp((s, sf) -> {
@@ -142,9 +147,9 @@ class SchemaStrategyTest {
                 });
 
 
-        Transformation transformation = transformationBuilder.build();
+        DidoTransform didoTransform = transformationBuilder.build();
 
-        DataSchema result = transformation.getResultantSchema();
+        DataSchema result = didoTransform.getResultantSchema();
 
         // Note this doesn't quite work because when adding three it
         // removes the operation at the old index of 3, which is now "One".

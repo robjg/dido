@@ -31,13 +31,13 @@ class ValueCopyFactoryTest {
         test.setType(Integer.class);
         test.setTo("FooAmount");
 
-        TransformerDefinition transformerDefinition = test.get();
+        OpDef opDef = test.get();
 
         DidoData data = MapData.of("Foo", "423");
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
-        TransformerDefinition.Prepare prepare = transformerDefinition.define(data.getSchema(), schemaSetter);
+        OpDef.Prepare prepare = opDef.prepare(data.getSchema(), schemaSetter);
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", Integer.class));
 
@@ -62,13 +62,13 @@ class ValueCopyFactoryTest {
         test.setType(int.class);
         test.setTo("FooAmount");
 
-        TransformerDefinition transformerDefinition = test.get();
+        OpDef opDef = test.get();
 
         DidoData data = MapData.of("Foo", "423");
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
-        TransformerDefinition.Prepare prepare = transformerDefinition.define(data.getSchema(), schemaSetter);
+        OpDef.Prepare prepare = opDef.prepare(data.getSchema(), schemaSetter);
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", int.class));
 

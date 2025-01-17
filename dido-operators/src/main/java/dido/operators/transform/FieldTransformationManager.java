@@ -15,15 +15,15 @@ public class FieldTransformationManager {
 
     private final NavigableMap<Integer, SchemaField> indexFields = new TreeMap<>();
 
-    private final NavigableMap<Integer, TransformerDefinition.Prepare> indexFactories = new TreeMap<>();
+    private final NavigableMap<Integer, OpDef.Prepare> indexFactories = new TreeMap<>();
 
     private final List<SchemaField> extraFields = new ArrayList<>();
 
-    private final List<TransformerDefinition.Prepare> extraFactories = new ArrayList<>();
+    private final List<OpDef.Prepare> extraFactories = new ArrayList<>();
 
     private final DataSchema incomingSchema;
 
-    private Consumer<TransformerDefinition.Prepare> factoryConsumer;
+    private Consumer<OpDef.Prepare> factoryConsumer;
 
     private final SchemaSetter schemaSetter = new SchemaSetter() {
         @Override
@@ -95,13 +95,13 @@ public class FieldTransformationManager {
         return transformationManager;
     }
 
-    public void addOperation(TransformerDefinition operation) {
+    public void addOperation(OpDef operation) {
 
-        TransformerDefinition.Prepare factory = operation.define(incomingSchema, schemaSetter);
+        OpDef.Prepare factory = operation.prepare(incomingSchema, schemaSetter);
         factoryConsumer.accept(factory);
     }
 
-    public Transformation createTransformation(DataFactoryProvider dataFactoryProvider) {
+    public DidoTransform createTransformation(DataFactoryProvider dataFactoryProvider) {
 
         SchemaFactory schemaFactory = dataFactoryProvider.getSchemaFactory();
 
@@ -119,17 +119,17 @@ public class FieldTransformationManager {
         DataFactory dataFactory = dataFactoryProvider.factoryFor(newSchema);
 
         List<BiConsumer<DidoData, WritableData>> fieldOperations = new ArrayList<>(newSchema.lastIndex());
-        for (TransformerDefinition.Prepare operationFactory : indexFactories.values()) {
+        for (OpDef.Prepare operationFactory : indexFactories.values()) {
             fieldOperations.add(operationFactory.create(newSchema));
         }
-        for (TransformerDefinition.Prepare operationFactory : extraFactories) {
+        for (OpDef.Prepare operationFactory : extraFactories) {
             fieldOperations.add(operationFactory.create(newSchema));
         }
 
         return new TransformImpl(fieldOperations, newSchema, dataFactory);
     }
 
-    static class TransformImpl implements Transformation {
+    static class TransformImpl implements DidoTransform {
 
         private final List<BiConsumer<DidoData, WritableData>> operationList;
 

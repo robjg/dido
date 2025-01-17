@@ -317,6 +317,11 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- Enable in you setting.xml if you have the protoc toolchain installed. Used in dido-proto -->
+        <profile>
+            <id>protoc</id>
+        </profile>
     </profiles>
 
     <build>

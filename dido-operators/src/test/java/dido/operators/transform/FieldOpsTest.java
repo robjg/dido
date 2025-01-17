@@ -24,7 +24,7 @@ class FieldOpsTest {
     @Test
     void copyAt() {
 
-        Transformation transformation = TransformationBuilder
+        DidoTransform transformation = OpTransformBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchema(schema)
                 .addOp(FieldOps.copyAt(3))
@@ -49,7 +49,7 @@ class FieldOpsTest {
     @Test
     void copyNamed() {
 
-        Transformation transformation = TransformationBuilder
+        DidoTransform transformation = OpTransformBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchema(schema)
                 .addOp(FieldOps.copyNamed("Price"))
@@ -74,7 +74,7 @@ class FieldOpsTest {
     @Test
     void copyNamedFromTo() {
 
-        Transformation transformation = TransformationBuilder
+        DidoTransform transformation = OpTransformBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchema(schema)
                 .addOp(FieldOps.copyNamed("Fruit", "Type"))
@@ -99,7 +99,7 @@ class FieldOpsTest {
     @Test
     void copySameName() {
 
-        Transformation transformation = TransformationBuilder
+        DidoTransform transformation = OpTransformBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchema(schema)
                 .addOp(FieldOps.copyNamed("Qty", "Qty"))
@@ -126,7 +126,7 @@ class FieldOpsTest {
     @Test
     void computeInPlace() {
 
-        Transformation transformation = TransformationBuilder
+        DidoTransform transformation = OpTransformBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(schema)
                 .addOp(FieldOps.computeNamed("Qty",
@@ -146,7 +146,7 @@ class FieldOpsTest {
     @Test
     void computeNewField() {
 
-        Transformation transformation = TransformationBuilder
+        DidoTransform transformation = OpTransformBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(schema)
                 .addOp(FieldOps.computeNamed("QtyDoubled",
@@ -171,7 +171,7 @@ class FieldOpsTest {
     @Test
     void remove() {
 
-        Transformation transformation = TransformationBuilder
+        DidoTransform transformation = OpTransformBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(schema)
                 .addOp(FieldOps.removeNamed("Fruit"))
@@ -195,7 +195,7 @@ class FieldOpsTest {
     @Test
     void set() {
 
-        Transformation transformation = TransformationBuilder
+        DidoTransform transformation = OpTransformBuilder
                 .withFactory(new ArrayDataDataFactoryProvider())
                 .forSchemaWithCopy(schema)
                 .addOp(FieldOps.setNamed("Fruit", "Orange"))
@@ -226,8 +226,8 @@ class FieldOpsTest {
         DataFactoryProvider dataFactoryProvider = DataFactoryProvider.newInstance();
         SchemaFactory schemaFactory = dataFactoryProvider.getSchemaFactory();
 
-        TransformerDefinition.Prepare prepare = FieldOps.setNamed("Fruit", "Apple")
-                .define(DataSchema.emptySchema(), SchemaSetter.fromSchemaFactory(schemaFactory));
+        OpDef.Prepare prepare = FieldOps.setNamed("Fruit", "Apple")
+                .prepare(DataSchema.emptySchema(), SchemaSetter.fromSchemaFactory(schemaFactory));
 
         WriteSchema writeSchema = WriteSchema.from(schemaFactory.toSchema());
 

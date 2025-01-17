@@ -2,9 +2,9 @@ package dido.examples;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.operators.transform.DidoTransform;
 import dido.operators.transform.FieldOps;
-import dido.operators.transform.Transformation;
-import dido.operators.transform.TransformationBuilder;
+import dido.operators.transform.OpTransformBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -35,7 +35,7 @@ class FieldTransformExamplesTest {
 
         LocalDate bestBeforeDate = LocalDate.parse("2025-01-14");
 
-        Transformation transformation = TransformationBuilder.with()
+        DidoTransform transform = OpTransformBuilder.with()
                 .copy(true)
                 .forSchema(schema)
                 .addOp(FieldOps.removeNamed("Quantity"))
@@ -44,7 +44,7 @@ class FieldTransformExamplesTest {
                 .build();
 
         List<DidoData> results = didoData.stream()
-                .map(transformation)
+                .map(transform)
                 .collect(Collectors.toList());
 
         assertThat(results, contains(

@@ -23,7 +23,7 @@ We can add and remove fields:
 
         LocalDate bestBeforeDate = LocalDate.parse("2025-01-14");
 
-        Transformation transformation = TransformationBuilder.with()
+        DidoTransform transform = OpTransformBuilder.with()
                 .copy(true)
                 .forSchema(schema)
                 .addOp(FieldOps.removeNamed("Quantity"))
@@ -32,7 +32,7 @@ We can add and remove fields:
                 .build();
 
         List<DidoData> results = didoData.stream()
-                .map(transformation)
+                .map(transform)
                 .collect(Collectors.toList());
 
         assertThat(results, contains(

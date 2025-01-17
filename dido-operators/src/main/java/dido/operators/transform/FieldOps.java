@@ -15,7 +15,7 @@ public class FieldOps {
      * @param index The index to copy.
      * @return A Copy Operation Definition.
      */
-    public static TransformerDefinition copyAt(int index) {
+    public static OpDef copyAt(int index) {
 
         return (incomingSchema, schemaSetter) -> {
 
@@ -42,7 +42,7 @@ public class FieldOps {
      * @param name The field name to copy.
      * @return A Copy Operation Definition.
      */
-    public static TransformerDefinition copyNamed(String name) {
+    public static OpDef copyNamed(String name) {
 
         return (incomingSchema, schemaSetter) -> {
 
@@ -63,7 +63,7 @@ public class FieldOps {
         };
     }
 
-    public static TransformerDefinition copyNamed(String from, String to) {
+    public static OpDef copyNamed(String from, String to) {
 
         Objects.requireNonNull(from, "From");
         String finalTo = Objects.requireNonNullElse(to, from);
@@ -83,9 +83,9 @@ public class FieldOps {
         };
     }
 
-    public static <T> TransformerDefinition computeNamed(String to,
-                                                         Function<? super DidoData, ? extends T> func,
-                                                         Class<T> type) {
+    public static <T> OpDef computeNamed(String to,
+                                         Function<? super DidoData, ? extends T> func,
+                                         Class<T> type) {
 
         return (incomingSchema, schemaSetter) -> {
 
@@ -99,8 +99,8 @@ public class FieldOps {
         };
     }
 
-    public static TransformerDefinition setNamed(String to,
-                                                 Object value) {
+    public static OpDef setNamed(String to,
+                                 Object value) {
 
         return (incomingSchema, schemaSetter) -> {
 
@@ -116,9 +116,9 @@ public class FieldOps {
         };
     }
 
-    public static TransformerDefinition setNamed(String to,
-                                                 Object value,
-                                                 Class<?> type) {
+    public static OpDef setNamed(String to,
+                                 Object value,
+                                 Class<?> type) {
 
         return (incomingSchema, schemaSetter) -> {
 
@@ -135,8 +135,8 @@ public class FieldOps {
         };
     }
 
-    public static TransformerDefinition setIntNamed(String to,
-                                                 int value) {
+    public static OpDef setIntNamed(String to,
+                                    int value) {
 
         return setNamed(to, value, int.class);
     }
@@ -149,7 +149,7 @@ public class FieldOps {
      *
      * @return The prepare step.
      */
-    static TransformerDefinition.Prepare setterFactoryFor(String to, Object value, Class<?> type) {
+    static OpDef.Prepare setterFactoryFor(String to, Object value, Class<?> type) {
 
         return writableSchema -> {
             FieldSetter setter = writableSchema.getFieldSetterNamed(to);
@@ -186,7 +186,7 @@ public class FieldOps {
     }
 
 
-    public static TransformerDefinition removeNamed(String name) {
+    public static OpDef removeNamed(String name) {
 
         return (incomingSchema, schemaSetter) -> {
             SchemaField field = incomingSchema.getSchemaFieldNamed(name);

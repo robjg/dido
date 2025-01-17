@@ -16,7 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.utils.DateHelper;
 
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -51,7 +53,7 @@ class DateCellTest {
         CellStyle cellStyle = dobCell.getCellStyle();
         assertThat(cellStyle.getDataFormatString(), is(DefaultStyleProivderFactory.DATE_FORMAT));
 
-        assertThat(dobCell.toString(), is("22-Sep-2021"));
+        assertThat(dobCell.toString(), is(formatedExpectedDate()));
 
         // Read side.
 
@@ -112,7 +114,7 @@ class DateCellTest {
         CellStyle cellStyle = dobCell.getCellStyle();
         assertThat(cellStyle.getDataFormatString(), is(DefaultStyleProivderFactory.DATE_FORMAT));
 
-        assertThat(dobCell.toString(), is("22-Sep-2021"));
+        assertThat(dobCell.toString(), is(formatedExpectedDate()));
 
         // Read side.
 
@@ -123,5 +125,9 @@ class DateCellTest {
 
             assertThat(results, contains(ArrayData.of("2021-09-22")));
         }
+    }
+
+    static String formatedExpectedDate() {
+        return LocalDate.parse("2021-09-22").format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"));
     }
 }

@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  */
 public class TransformationFactory implements Supplier<Function<DidoData, DidoData>> {
 
-    private final List<TransformerDefinition> of = new ArrayList<>();
+    private final List<OpDef> of = new ArrayList<>();
 
     /**
      * Strategy for creating the new schema for outgoing data. Defaults to merge.
@@ -32,7 +32,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         return new TransformerFunctionInitial(this);
     }
 
-    public void setOf(int index, TransformerDefinition transformer) {
+    public void setOf(int index, OpDef transformer) {
         if (transformer == null) {
             of.remove(index);
         }
@@ -59,7 +59,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
 
     static class TransformerFunctionInitial implements Function<DidoData, DidoData> {
 
-        private final List<TransformerDefinition> transformerFactories;
+        private final List<OpDef> transformerFactories;
 
         private final boolean withCopy;
 
@@ -88,16 +88,16 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         }
     }
 
-    static Transformation functionFor(List<TransformerDefinition> definitions,
-                                                DataSchema schemaFrom,
-                                                boolean withCopy,
-                                                DataFactoryProvider dataFactoryProvider) {
+    static DidoTransform functionFor(List<OpDef> definitions,
+                                     DataSchema schemaFrom,
+                                     boolean withCopy,
+                                     DataFactoryProvider dataFactoryProvider) {
 
         FieldTransformationManager transformationManager = withCopy ?
                 FieldTransformationManager.forSchemaWithCopy(schemaFrom) :
                 FieldTransformationManager.forSchema(schemaFrom);
 
-        for (TransformerDefinition definition : definitions) {
+        for (OpDef definition : definitions) {
 
             transformationManager.addOperation(definition);
         }

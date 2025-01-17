@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  * Copy a field from one position and/or field and/or type to another.
  * <p>
  */
-public class ValueCopyFactory implements Supplier<TransformerDefinition> {
+public class ValueCopyFactory implements Supplier<OpDef> {
 
     private static final Logger logger = LoggerFactory.getLogger(ValueCopyFactory.class);
 
@@ -57,7 +57,7 @@ public class ValueCopyFactory implements Supplier<TransformerDefinition> {
     }
 
     @Override
-    public TransformerDefinition get() {
+    public OpDef get() {
         return new CopyTransformerFactory(this);
     }
 
@@ -109,7 +109,7 @@ public class ValueCopyFactory implements Supplier<TransformerDefinition> {
         this.function = function;
     }
 
-    static class CopyTransformerFactory implements TransformerDefinition {
+    static class CopyTransformerFactory implements OpDef {
 
         private final String from;
 
@@ -137,8 +137,8 @@ public class ValueCopyFactory implements Supplier<TransformerDefinition> {
         }
 
         @Override
-        public Prepare define(DataSchema fromSchema,
-                              SchemaSetter schemaSetter) {
+        public Prepare prepare(DataSchema fromSchema,
+                               SchemaSetter schemaSetter) {
 
             String from;
             int index;
