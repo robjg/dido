@@ -66,9 +66,11 @@ public class DidoTransformComplexTest {
     @Test
     void complicated() {
 
-        DidoTransform didoTransform = OpTransformBuilder
-                .withFactory(new ArrayDataDataFactoryProvider())
-                .forSchemaWithCopy(schema)
+        DidoTransform didoTransform = OpTransformBuilder.with()
+                .reIndex(true)
+                .copy(true)
+                .dataFactoryProvider(new ArrayDataDataFactoryProvider())
+                .forSchema(schema)
                 .addOp(FieldOps.removeNamed("Qty"))
                 .addOp(new MarkupOperation())
                 .build();

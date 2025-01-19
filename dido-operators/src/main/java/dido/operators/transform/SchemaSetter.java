@@ -15,21 +15,21 @@ public interface SchemaSetter {
      *
      * @param schemaField The schema field. Must not be null.
      */
-    void addField(SchemaField schemaField);
+    SchemaField addField(SchemaField schemaField);
 
-    void removeField(SchemaField schemaField);
+    SchemaField removeField(SchemaField schemaField);
 
     static SchemaSetter fromSchemaFactory(SchemaFactory schemaFactory ) {
 
         return new SchemaSetter() {
             @Override
-            public void addField(SchemaField schemaField) {
-                schemaFactory.addSchemaField(schemaField);
+            public SchemaField addField(SchemaField schemaField) {
+                return schemaFactory.addSchemaField(schemaField);
             }
 
             @Override
-            public void removeField(SchemaField schemaField) {
-                schemaFactory.removeNamed(schemaField.getName());
+            public SchemaField removeField(SchemaField schemaField) {
+                return schemaFactory.removeNamed(schemaField.getName());
             }
         };
     }

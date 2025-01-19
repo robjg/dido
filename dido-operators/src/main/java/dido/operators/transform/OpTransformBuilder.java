@@ -1,23 +1,32 @@
 package dido.operators.transform;
 
-import dido.data.DataFactoryProvider;
-import dido.data.DataSchema;
+import dido.data.*;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.function.BiConsumer;
 
 /**
  * Provides a Builder for creating {@link DidoTransform}s from {@link OpDef}s.
  */
 public class OpTransformBuilder {
 
-    private final FieldTransformationManager fieldOperationTransformation;
-
     private final DataFactoryProvider dataFactoryProvider;
 
-    private OpTransformBuilder(FieldTransformationManager fieldTransformationManager,
-                               DataFactoryProvider dataFactoryProvider) {
-        this.fieldOperationTransformation = fieldTransformationManager;
+    private final DataSchema incomingSchema;
+
+    private final NavigableMap<Integer, OpDef.Prepare> opsByIndex = new TreeMap<>(); ;
+
+    private final SchemaFactory schemaFactory;
+
+    private final boolean reIndex;
+
+    private OpTransformBuilder(DataFactoryProvider dataFactoryProvider,
+                               DataSchema incomingSchema,
+                               boolean reIndex) {
         this.dataFactoryProvider = dataFactoryProvider;
+        this.incomingSchema = incomingSchema;
+        this.schemaFactory = dataFactoryProvider.getSchemaFactory();
+        this.reIndex = reIndex;
     }
 
     public static class Settings {
@@ -25,6 +34,8 @@ public class OpTransformBuilder {
         private DataFactoryProvider dataFactoryProvider;
 
         private boolean copy;
+
+        private boolean reIndex;
 
         public Settings dataFactoryProvider(DataFactoryProvider dataFactoryProvider) {
             this.dataFactoryProvider = dataFactoryProvider;
@@ -36,22 +47,28 @@ public class OpTransformBuilder {
             return this;
         }
 
+        public Settings reIndex(boolean reIndex) {
+            this.reIndex = reIndex;
+            return this;
+        }
+
         public OpTransformBuilder forSchema(DataSchema incomingSchema) {
 
             DataFactoryProvider dataFactoryProvider = Objects.requireNonNullElse(
                     this.dataFactoryProvider, DataFactoryProvider.newInstance());
 
-            if (copy) {
-                return new OpTransformBuilder(
-                        FieldTransformationManager.forSchemaWithCopy(incomingSchema),
-                        dataFactoryProvider);
-            }
-            else {
-                return new OpTransformBuilder(
-                        FieldTransformationManager.forSchema(incomingSchema),
-                        dataFactoryProvider);
+            OpTransformBuilder builder = new OpTransformBuilder(dataFactoryProvider,
+                    incomingSchema,
+                    reIndex);
 
+            if (copy) {
+                for (SchemaField schemaField: incomingSchema.getSchemaFields()) {
+
+                    builder.addOp(FieldOps.copyAt(schemaField.getIndex()));
+                }
             }
+
+            return builder;
         }
     }
 
@@ -63,44 +80,121 @@ public class OpTransformBuilder {
         return with().forSchema(incomingSchema);
     }
 
-    public static class WithFactory {
+    class SchemaSetterImpl implements SchemaSetter {
 
-        private final DataFactoryProvider dataFactoryProvider;
+        SchemaField lastField;
 
-        public WithFactory(DataFactoryProvider dataFactoryProvider) {
-            this.dataFactoryProvider = dataFactoryProvider;
+        @Override
+        public SchemaField addField(SchemaField schemaField) {
+            SchemaField existing = null;
+
+            String newName = schemaField.getName();
+            int newIndex = schemaField.getIndex();
+
+            if (newName != null) {
+                existing = schemaFactory.removeNamed(newName);
+            }
+            if (existing == null && newIndex > 0) {
+                existing = schemaFactory.removeAt(newIndex);
+            }
+            if (existing == null) {
+                lastField = schemaFactory.addSchemaField(schemaField);
+            }
+            else {
+                if (newName == null) {
+                    newName = existing.getName();
+                }
+                if (newIndex == 0) {
+                    newIndex = existing.getIndex();
+                }
+                lastField = schemaFactory.addSchemaField(schemaField
+                        .mapToIndex(newIndex).mapToFieldName(newName));
+            }
+            return lastField;
         }
 
-        public OpTransformBuilder forSchema(DataSchema incomingSchema) {
-
-            return new OpTransformBuilder(
-                    FieldTransformationManager.forSchema(incomingSchema),
-                    dataFactoryProvider);
-        }
-
-        public OpTransformBuilder forSchemaWithCopy(DataSchema incomingSchema) {
-
-            return new OpTransformBuilder(FieldTransformationManager
-                    .forSchemaWithCopy(incomingSchema), dataFactoryProvider);
+        @Override
+        public SchemaField removeField(SchemaField schemaField) {
+            SchemaField removedField = schemaFactory.removeNamed(schemaField.getName());
+            if (removedField != null) {
+                opsByIndex.remove(removedField.getIndex());
+            }
+            return removedField;
         }
     }
 
-    public static WithFactory withFactory(DataFactoryProvider dataFactoryProvider) {
-        return new WithFactory(dataFactoryProvider);
-    }
+
 
     public OpTransformBuilder addOp(OpDef opDef) {
-        fieldOperationTransformation.addOperation(opDef);
+        SchemaSetterImpl schemaSetter = new SchemaSetterImpl();
+        OpDef.Prepare prepare = opDef.prepare(incomingSchema, schemaSetter);
+        if (schemaSetter.lastField != null) {
+            opsByIndex.put(schemaSetter.lastField.getIndex(), prepare);
+        }
         return this;
     }
-
-    public OpTransformBuilder setNamed(String name, Object value) {
-        fieldOperationTransformation.addOperation(FieldOps.setNamed(name, value));
-        return this;
-    }
-
 
     public DidoTransform build() {
-        return fieldOperationTransformation.createTransformation(dataFactoryProvider);
+
+        SchemaFactory schemaFactory ;
+        NavigableMap<Integer, OpDef.Prepare> opsByIndex;
+
+        if (reIndex) {
+            opsByIndex = new TreeMap<>();
+            schemaFactory = dataFactoryProvider.getSchemaFactory();
+            for (SchemaField schemaField : this.schemaFactory.getSchemaFields()) {
+                OpDef.Prepare prepare = this.opsByIndex.get(schemaField.getIndex());
+                schemaField = schemaFactory.addSchemaField(schemaField.mapToIndex(0));
+                // If an Op is registered that creates multiple fields only the last field
+                // will have been linked to the op.
+                if (prepare != null) {
+                    opsByIndex.put(schemaField.getIndex(), prepare);
+                }
+            }
+        } else {
+            schemaFactory = this.schemaFactory;
+            opsByIndex = this.opsByIndex;
+        }
+
+        WriteSchema schema = WriteSchema.from(schemaFactory.toSchema());
+
+        DataFactory dataFactory = dataFactoryProvider.factoryFor(schema);
+
+        List<BiConsumer<DidoData, WritableData>> ops = new ArrayList<>(schema.lastIndex());
+
+        for (OpDef.Prepare prepare : opsByIndex.values()) {
+            ops.add(prepare.create(schema));
+        }
+
+        return new TransformImpl(schema, dataFactory, ops);
+    }
+
+    static class TransformImpl implements DidoTransform {
+
+        private final DataSchema schema;
+
+        private final DataFactory dataFactory;
+
+        private final List<BiConsumer<DidoData, WritableData>> ops;
+
+        TransformImpl(DataSchema schema, DataFactory dataFactory, List<BiConsumer<DidoData, WritableData>> ops) {
+            this.schema = schema;
+            this.dataFactory = dataFactory;
+            this.ops = ops;
+        }
+
+        @Override
+        public DataSchema getResultantSchema() {
+            return schema;
+        }
+
+        @Override
+        public DidoData apply(DidoData data) {
+            WritableData writableData = dataFactory.getWritableData();
+            for (BiConsumer<DidoData, WritableData> op : ops) {
+                op.accept(data, writableData);
+            }
+            return dataFactory.toData();
+        }
     }
 }

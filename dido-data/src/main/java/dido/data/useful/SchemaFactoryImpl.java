@@ -142,13 +142,6 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
         }
     }
 
-    /**
-     * Add a schema field. If the index exists, we replace its field with
-     * the new field.
-     *
-     * @param schemaField The field. Never null.
-     * @return The actual schema field added to the schema.
-     */
     @Override
     public SchemaField addSchemaField(SchemaField schemaField) {
 

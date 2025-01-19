@@ -93,16 +93,17 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
                                      boolean withCopy,
                                      DataFactoryProvider dataFactoryProvider) {
 
-        FieldTransformationManager transformationManager = withCopy ?
-                FieldTransformationManager.forSchemaWithCopy(schemaFrom) :
-                FieldTransformationManager.forSchema(schemaFrom);
+        OpTransformBuilder transformationManager = OpTransformBuilder.with()
+                .copy(withCopy)
+                .dataFactoryProvider(dataFactoryProvider)
+                .forSchema(schemaFrom);
 
         for (OpDef definition : definitions) {
 
-            transformationManager.addOperation(definition);
+            transformationManager.addOp(definition);
         }
 
-        return transformationManager.createTransformation(dataFactoryProvider);
+        return transformationManager.build();
     }
 
 }

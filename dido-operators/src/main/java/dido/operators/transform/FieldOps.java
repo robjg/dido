@@ -7,6 +7,10 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+/**
+ * Operations on a single filed that can be used in an {@link OpTransformBuilder} to create an
+ * {@link DidoTransform}.
+ */
 public class FieldOps {
 
     /**
@@ -16,6 +20,16 @@ public class FieldOps {
      * @return A Copy Operation Definition.
      */
     public static OpDef copyAt(int index) {
+        return copyAt(index, -1);
+    }
+
+    /**
+     * Create an operation that copies the field from an index at the other index.
+     *
+     * @param index The index to copy.
+     * @return A Copy Operation Definition.
+     */
+    public static OpDef copyAt(int index, int at) {
 
         return (incomingSchema, schemaSetter) -> {
 
@@ -23,65 +37,99 @@ public class FieldOps {
 
             FieldGetter getter = readStrategy.getFieldGetterAt(index);
 
-            SchemaField originalField = incomingSchema.getSchemaFieldAt(index);
+            SchemaField schemaField = incomingSchema.getSchemaFieldAt(index);
 
-            if (originalField == null) {
+            if (schemaField == null) {
                 throw new NoSuchFieldException(index, incomingSchema);
             }
+            if (at >= 0) {
+                schemaField = schemaField.mapToIndex(at);
+            }
 
-            schemaSetter.addField(originalField);
+            SchemaField finalField = schemaSetter.addField(schemaField);
 
-                return writableSchema ->
-                    new Copy(getter, writableSchema.getFieldSetterNamed(originalField.getName()));
+            return writableSchema ->
+                    new Copy(getter, writableSchema.getFieldSetterNamed(finalField.getName()));
         };
     }
 
     /**
-     * Create an operation that copies the field at an index.
+     * Create an operation that copies the named field. The field will be copied to the same index
+     * in the resultant schema.
      *
      * @param name The field name to copy.
      * @return A Copy Operation Definition.
      */
     public static OpDef copyNamed(String name) {
 
-        return (incomingSchema, schemaSetter) -> {
-
-            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
-
-            FieldGetter getter = readStrategy.getFieldGetterNamed(name);
-
-            SchemaField originalField = incomingSchema.getSchemaFieldNamed(name);
-
-            if (originalField == null) {
-                throw new NoSuchFieldException(name, incomingSchema);
-            }
-
-            schemaSetter.addField(originalField);
-
-            return writableSchema ->
-                    new Copy(getter, writableSchema.getFieldSetterNamed(originalField.getName()));
-        };
+        return copyNamed(name, name);
     }
 
+    /**
+     * Create an operation that copies the named field to another name. The field will be copied to the same
+     * index in the resultant schema.
+     *
+     * @param from The field name to copy.
+     * @param to   The field name to copy.
+     * @return A Copy Operation Definition.
+     */
     public static OpDef copyNamed(String from, String to) {
 
+        return copyNamedAt(from, -1, to);
+    }
+
+    /**
+     * Create an operation that copies the named field at the index given. If the index is
+     * zero the field will be added to the end of the schema. If the field is negative, the existing
+     * field will be used.
+     *
+     * @param from The field name to copy.
+     * @param at   The index to copy to.
+     * @return A Copy Operation Definition.
+     */
+    public static OpDef copyNamedAt(String from, int at) {
+        return copyNamedAt(from, at, from);
+    }
+
+    /**
+     * Create an operation that copies the named field to another name at the index given. If the index is
+     * zero the field will be added to the end of the schema. If the field is negative, the existing
+     * field will be used.
+     *
+     * @param from The field name to copy.
+     * @param at   The index to copy to.
+     * @param to   The field name to copy.
+     * @return A Copy Operation Definition.
+     */
+    public static OpDef copyNamedAt(String from, int at, String to) {
+
         Objects.requireNonNull(from, "From");
-        String finalTo = Objects.requireNonNullElse(to, from);
 
         return (incomingSchema, schemaSetter) -> {
 
-            SchemaField field = incomingSchema.getSchemaFieldNamed(from)
-                    .mapTo(0, finalTo);
+            SchemaField schemaField = incomingSchema.getSchemaFieldNamed(from);
 
-            schemaSetter.addField(field);
+            if (schemaField == null) {
+                throw new NoSuchFieldException(from, incomingSchema);
+            }
+
+            if (to != null) {
+                schemaField = schemaField.mapToFieldName(to);
+            }
+            if (at >= 0) {
+                schemaField = schemaField.mapToIndex(at);
+            }
+
+            SchemaField finalField = schemaSetter.addField(schemaField);
 
             ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
 
             FieldGetter getter = readStrategy.getFieldGetterNamed(from);
 
-            return dataFactory -> new Copy(getter, dataFactory.getFieldSetterNamed(finalTo));
+            return dataFactory -> new Copy(getter, dataFactory.getFieldSetterNamed(finalField.getName()));
         };
     }
+
 
     public static <T> OpDef computeNamed(String to,
                                          Function<? super DidoData, ? extends T> func,
@@ -142,11 +190,9 @@ public class FieldOps {
     }
 
     /**
-     *
-     * @param to The field name to.
+     * @param to    The field name to.
      * @param value The value to set.
-     * @param type The type.
-     *
+     * @param type  The type.
      * @return The prepare step.
      */
     static OpDef.Prepare setterFactoryFor(String to, Object value, Class<?> type) {
