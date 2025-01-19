@@ -40,7 +40,7 @@ class FieldTransformExamplesTest {
                 .forSchema(schema)
                 .addOp(FieldOps.removeNamed("Quantity"))
                 .addOp(FieldOps.setNamed("BestBefore", bestBeforeDate))
-                .addOp(FieldOps.setIntNamed("Markup", 20))
+                .addOp(FieldOps.setNamed("Markup", 20, int.class))
                 .build();
 
         List<DidoData> results = didoData.stream()

@@ -130,63 +130,130 @@ public class FieldOps {
         };
     }
 
-
-    public static <T> OpDef computeNamed(String to,
-                                         Function<? super DidoData, ? extends T> func,
-                                         Class<T> type) {
-
-        return (incomingSchema, schemaSetter) -> {
-
-            SchemaField field = incomingSchema.getSchemaFieldNamed(to);
-            if (field == null) {
-                field = SchemaField.of(0, to, type);
-            }
-            schemaSetter.addField(field);
-
-            return dataFactory -> new Compute(dataFactory.getFieldSetterNamed(to), func);
-        };
+    /**
+     * Create an operation to set the field at the given index to be the given value. If the index
+     * exists the field name will be preserved.
+     *
+     * @param at    The index to set the value at.
+     * @param value The value to set.
+     * @return The Operation Definition.
+     */
+    public static OpDef setAt(int at,
+                              Object value) {
+        return setNamedAt(at, null, value, null);
     }
 
-    public static OpDef setNamed(String to,
+    /**
+     * Create an operation to set the field at the given index to be the given value, with a schema type
+     * of the given type. If the index exists the field name will be preserved. Specifying a type is useful
+     * when the new field is to be a primitive type, or a super class of the value. No check is made that the
+     * value is assignable to the type.
+     *
+     * @param at    The index to set the value at.
+     * @param value The value to set.
+     * @param type  The type of the field.
+     * @return The Operation Definition.
+     */
+    public static OpDef setAt(int at,
+                              Object value,
+                              Class<?> type) {
+        return setNamedAt(at, null, value, type);
+    }
+
+    /**
+     * Create an operation to set a field with the given name to be the given value. If the field of this name
+     * exists the field index will be preserved.
+     *
+     * @param name  The name of the field.
+     * @param value The value to set.
+     * @return The Operation Definition.
+     */
+    public static OpDef setNamed(String name,
                                  Object value) {
-
-        return (incomingSchema, schemaSetter) -> {
-
-            SchemaField field = incomingSchema.getSchemaFieldNamed(to);
-            if (field == null) {
-
-                field = SchemaField.of(0, to, value == null ? Void.class : value.getClass());
-            }
-
-            schemaSetter.addField(field);
-
-            return setterFactoryFor(to, value, field.getType());
-        };
+        return setNamedAt(-1, name, value, null);
     }
 
-    public static OpDef setNamed(String to,
+    /**
+     * Create an operation to set a field with the given name to be the given value, with a schema type
+     * of the given type. If the field of this name exists the field index will be preserved. Specifying a type
+     * is useful when the new field is to be a primitive type, or a super class of the value. No check is made that the
+     * value is assignable to the type.
+     *
+     * @param name  The name of the field.
+     * @param value The value to set.
+     * @param type  The type of the field.
+     * @return The Operation Definition.
+     */
+    public static OpDef setNamed(String name,
                                  Object value,
                                  Class<?> type) {
+        return setNamedAt(-1, name, value, type);
+    }
+
+    /**
+     * Create an operation to set a field with the given name to be the given value, at the given index.
+     * If the index is 0, the new field will be added to the schema, if it is negative the existing index
+     * is used if it exists.
+     *
+     * @param at    The index to set the value at.
+     * @param name  The name of the field.
+     * @param value The value to set.
+     * @return The Operation Definition.
+     */
+    public static OpDef setNamedAt(int at,
+                                   String name,
+                                   Object value) {
+
+        return setNamedAt(at, name, value, null);
+    }
+
+    /**
+     * Create an operation to set a field with the given name to be the given value, at the given index,
+     * with a schema type of the given type.
+     * If the index is 0, the new field will be added to the schema, if it is negative the existing index
+     * is used if it exists. Specifying a type
+     * is useful when the new field is to be a primitive type, or a super class of the value. No check is made that the
+     * value is assignable to the type.
+     *
+     * @param at    The index to set the value at.
+     * @param name  The name of the field.
+     * @param value The value to set.
+     * @param type  The type of the field.
+     * @return The Operation Definition.
+     */
+    public static OpDef setNamedAt(int at,
+                                   String name,
+                                   Object value,
+                                   Class<?> type) {
+
+        Class<?> type_ = Objects.requireNonNullElseGet(type,
+                () -> value == null ? Void.class : value.getClass());
 
         return (incomingSchema, schemaSetter) -> {
 
-            SchemaField field = incomingSchema.getSchemaFieldNamed(to);
-            if (field == null) {
-                field = SchemaField.of(0, to, type);
+            SchemaField schemaField = null;
+            if (name == null) {
+                if (at > 0) {
+                    schemaField = incomingSchema.getSchemaFieldAt(at);
+                }
             } else {
-                field = SchemaField.of(field.getIndex(), to, type);
+                schemaField = incomingSchema.getSchemaFieldNamed(name);
             }
 
-            schemaSetter.addField(field);
+            if (schemaField == null) {
+                schemaField = SchemaField.of(Math.max(at, 0), name, type_);
+            } else {
+                schemaField = SchemaField.of(schemaField.getIndex(), schemaField.getName(), type_);
+            }
 
-            return setterFactoryFor(to, value, type);
+            if (at >= 0) {
+                schemaField = schemaField.mapToIndex(at);
+            }
+
+            schemaField = schemaSetter.addField(schemaField);
+
+            return setterFactoryFor(schemaField.getName(), value, schemaField.getType());
         };
-    }
-
-    public static OpDef setIntNamed(String to,
-                                    int value) {
-
-        return setNamed(to, value, int.class);
     }
 
     /**
@@ -245,6 +312,24 @@ public class FieldOps {
             };
         };
     }
+
+
+    public static <T> OpDef computeNamed(String to,
+                                         Function<? super DidoData, ? extends T> func,
+                                         Class<T> type) {
+
+        return (incomingSchema, schemaSetter) -> {
+
+            SchemaField field = incomingSchema.getSchemaFieldNamed(to);
+            if (field == null) {
+                field = SchemaField.of(0, to, type);
+            }
+            schemaSetter.addField(field);
+
+            return dataFactory -> new Compute(dataFactory.getFieldSetterNamed(to), func);
+        };
+    }
+
 
     static class Copy implements BiConsumer<DidoData, WritableData> {
 

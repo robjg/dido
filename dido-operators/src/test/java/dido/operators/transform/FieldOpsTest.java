@@ -1,11 +1,9 @@
 package dido.operators.transform;
 
-import dido.data.*;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
+import dido.data.ArrayData;
+import dido.data.DataSchema;
+import dido.data.DidoData;
 import org.junit.jupiter.api.Test;
-
-import java.util.function.BiConsumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -235,32 +233,7 @@ class FieldOpsTest {
     }
 
     @Test
-    void remove() {
-
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
-                .reIndex(true)
-                .forSchema(schema)
-                .addOp(FieldOps.removeNamed("Fruit"))
-                .addOp(FieldOps.removeNamed("Price"))
-                .build();
-
-        DidoData result = transformation.apply(data);
-
-        DataSchema expectedSchema = DataSchema.builder()
-                .addNamed("Qty", int.class)
-                .build();
-
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
-
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
-                .of(10);
-
-        assertThat(result, is(expectedData));
-    }
-
-    @Test
-    void set() {
+    void setNamedWithCopy() {
 
         DidoTransform transformation = OpTransformBuilder.with()
                 .copy(true)
@@ -288,25 +261,56 @@ class FieldOpsTest {
     }
 
     @Test
-    void setNamed() {
+    void setAtWithCopy() {
 
-        DataFactoryProvider dataFactoryProvider = DataFactoryProvider.newInstance();
-        SchemaFactory schemaFactory = dataFactoryProvider.getSchemaFactory();
+        DidoTransform transformation = OpTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.setAt(1, "Orange"))
+                .addOp(FieldOps.setAt(2, 1234L, long.class))
+                .addOp(FieldOps.setNamedAt(4, "InStock", true))
+                .build();
 
-        OpDef.Prepare prepare = FieldOps.setNamed("Fruit", "Apple")
-                .prepare(DataSchema.emptySchema(), SchemaSetter.fromSchemaFactory(schemaFactory));
+        DidoData result = transformation.apply(data);
 
-        WriteSchema writeSchema = WriteSchema.from(schemaFactory.toSchema());
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", long.class)
+                .addNamed("Price", double.class)
+                .addNamed("InStock", java.lang.Boolean.class)
+                .build();
 
-        BiConsumer < DidoData, WritableData > action = prepare.create(
-                writeSchema);
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DataFactory dataFactory = dataFactoryProvider.factoryFor(writeSchema);
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of("Orange", 1234L, 23.5, true);
 
-        action.accept(DidoData.of(), dataFactory.getWritableData());
-
-        DidoData result = dataFactory.toData();
-
-        MatcherAssert.assertThat(result, Matchers.is(DidoData.of("Apple")));
+        assertThat(result, is(expectedData));
     }
+
+    @Test
+    void remove() {
+
+        DidoTransform transformation = OpTransformBuilder.with()
+                .copy(true)
+                .reIndex(true)
+                .forSchema(schema)
+                .addOp(FieldOps.removeNamed("Fruit"))
+                .addOp(FieldOps.removeNamed("Price"))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("Qty", int.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of(10);
+
+        assertThat(result, is(expectedData));
+    }
+
 }
