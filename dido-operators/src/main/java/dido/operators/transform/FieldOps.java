@@ -298,7 +298,12 @@ public class FieldOps {
         };
     }
 
-
+    /**
+     * Remove a field by name.
+     *
+     * @param name The name of the field.
+     * @return The operation definition.
+     */
     public static OpDef removeNamed(String name) {
 
         return (incomingSchema, schemaSetter) -> {
@@ -313,6 +318,79 @@ public class FieldOps {
         };
     }
 
+    /**
+     * Remove a field by index.
+     *
+     * @param index The index of the field.
+     * @return The operation definition.
+     */
+    public static OpDef removeAt(int index) {
+
+        return (incomingSchema, schemaSetter) -> {
+            SchemaField field = incomingSchema.getSchemaFieldAt(index);
+            if (field == null) {
+                throw new NoSuchFieldException(index, incomingSchema);
+            }
+            schemaSetter.removeField(field);
+            return dataFactory -> (dataIn, dataOut) -> {
+                // Nothing to do - the new data is assumed not to have the field.
+            };
+        };
+    }
+
+    public static <T> OpDef computeFieldNamed(String from,
+                                              Function<? super T, ? extends T> func) {
+        return computeFieldNamedAt(from, -1, from, func, null);
+    }
+
+    public static <T> OpDef computeFieldNamed(String from,
+                                                 String to,
+                                                 Function<? super T, ? extends T> func) {
+        return computeFieldNamedAt(from, -1, to, func, null);
+    }
+
+    public static <T, R> OpDef computeFieldNamed(String from,
+                                                   String to,
+                                                   Function<? super T, ? extends R> func,
+                                                   Class<R> type) {
+        return computeFieldNamedAt(from, -1, to, func, type);
+    }
+
+    public static <T, R> OpDef computeFieldNamedAt(String from,
+                                               int at,
+                                               String to,
+                                         Function<? super T, ? extends R> func,
+                                         Class<R> type) {
+
+        return (incomingSchema, schemaSetter) -> {
+
+            SchemaField schemaField = incomingSchema.getSchemaFieldNamed(from);
+
+            if (schemaField == null) {
+                throw new NoSuchFieldException(from, incomingSchema);
+            }
+
+            if (to != null) {
+                schemaField = schemaField.mapToFieldName(to);
+            }
+            if (at >= 0) {
+                schemaField = schemaField.mapToIndex(at);
+            }
+            if (type != null && schemaField.getType() != type) {
+                schemaField = SchemaField.of(schemaField.getIndex(), schemaField.getName(), type);
+            }
+
+            SchemaField finalField = schemaSetter.addField(schemaField);
+
+            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
+
+            FieldGetter getter = readStrategy.getFieldGetterNamed(from);
+
+            //noinspection unchecked
+            return dataFactory -> new Compute(dataFactory.getFieldSetterNamed(finalField.getName()),
+                    data -> func.apply((T) getter.get(data)));
+        };
+    }
 
     public static <T> OpDef computeNamed(String to,
                                          Function<? super DidoData, ? extends T> func,
@@ -324,12 +402,37 @@ public class FieldOps {
             if (field == null) {
                 field = SchemaField.of(0, to, type);
             }
-            schemaSetter.addField(field);
+            else {
+                field = SchemaField.of(field.getIndex(), to, type);
+            }
 
-            return dataFactory -> new Compute(dataFactory.getFieldSetterNamed(to), func);
+            SchemaField finalField = schemaSetter.addField(field);
+
+            return dataFactory -> new Compute(dataFactory.getFieldSetterNamed(finalField.getName()),
+                    func);
         };
     }
 
+    public static <T> OpDef computeNamedGetter(String to,
+                                               Function<? super ReadSchema,
+                                                       Function<? super DidoData, ? extends T>> func,
+                                               Class<T> type) {
+
+        return (incomingSchema, schemaSetter) -> {
+
+            SchemaField field = incomingSchema.getSchemaFieldNamed(to);
+            if (field == null) {
+                field = SchemaField.of(0, to, type);
+            } else {
+                field = SchemaField.of(field.getIndex(), to, type);
+            }
+
+            SchemaField finalField  = schemaSetter.addField(field);
+
+            return dataFactory -> new Compute(dataFactory.getFieldSetterNamed(finalField.getName()),
+                    func.apply(ReadSchema.from(incomingSchema)));
+        };
+    }
 
     static class Copy implements BiConsumer<DidoData, WritableData> {
 

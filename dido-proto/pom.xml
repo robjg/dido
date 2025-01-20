@@ -137,8 +137,8 @@
                         <configuration>
                             <writeDescriptorSet>true</writeDescriptorSet>
                             <descriptorSetFileName>Descriptor.protobin</descriptorSetFileName>
-                            <descriptorSetOutputDirectory>${project.build.testOutputDirectory}</descriptorSetOutputDirectory>
-                            <outputDirectory>src/main/protobuf/java</outputDirectory>
+                            <descriptorSetOutputDirectory>src/test/proto/protobin</descriptorSetOutputDirectory>
+                            <outputDirectory>src/test/proto/java</outputDirectory>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -161,7 +161,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>src/main/protobuf/java</source>
+                                <source>src/test/proto/java</source>
                             </sources>
                         </configuration>
                     </execution>

@@ -3,6 +3,7 @@ package dido.operators.transform;
 import dido.data.ArrayData;
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.FieldGetter;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -168,7 +169,7 @@ class FieldOpsTest {
                 .forSchema(schema)
                 .addOp(FieldOps.copyNamedAt("Qty", 5, "Quantity"))
                 .addOp(FieldOps.copyNamedAt("Price", 3, "ThePrice"))
-                .addOp(FieldOps.copyNamedAt("Fruit", -1, "Type" ))
+                .addOp(FieldOps.copyNamedAt("Fruit", -1, "Type"))
                 .build();
 
         DataSchema expectedSchema = DataSchema.builder()
@@ -183,51 +184,6 @@ class FieldOpsTest {
 
         DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
                 .of("Apple", 23.5, 10);
-
-        assertThat(result, is(expectedData));
-    }
-
-    @Test
-    void computeInPlace() {
-
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
-                .forSchema(schema)
-                .addOp(FieldOps.computeNamed("Qty",
-                        data -> data.getIntAt(2) * 2, int.class))
-                .build();
-
-        DidoData result = transformation.apply(data);
-
-        assertThat(transformation.getResultantSchema(), is(schema));
-
-        DidoData expectedData = ArrayData.valuesWithSchema(schema)
-                .of("Apple", 20, 23.5);
-
-        assertThat(result, is(expectedData));
-    }
-
-    @Test
-    void computeNewField() {
-
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
-                .forSchema(schema)
-                .addOp(FieldOps.computeNamed("QtyDoubled",
-                        data -> data.getIntAt(2) * 2, int.class))
-                .build();
-
-        DidoData result = transformation.apply(data);
-
-        DataSchema expectedSchema = DataSchema.builder()
-                .merge(schema)
-                .addNamed("QtyDoubled", int.class)
-                .build();
-
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
-
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
-                .of("Apple", 10, 23.5, 20);
 
         assertThat(result, is(expectedData));
     }
@@ -289,7 +245,7 @@ class FieldOpsTest {
     }
 
     @Test
-    void remove() {
+    void removeNamed() {
 
         DidoTransform transformation = OpTransformBuilder.with()
                 .copy(true)
@@ -312,5 +268,119 @@ class FieldOpsTest {
 
         assertThat(result, is(expectedData));
     }
+
+    @Test
+    void removeAt() {
+
+        DidoTransform transformation = OpTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.removeAt(1))
+                .addOp(FieldOps.removeAt(3))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamedAt(2, "Qty", int.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of(10);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void computeField() {
+
+        DidoTransform transformation = OpTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.computeFieldNamed("Qty",
+                        qty -> (int) qty * 2))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        assertThat(transformation.getResultantSchema(), is(schema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+                .of("Apple", 20, 23.5);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void computeInPlace() {
+
+        DidoTransform transformation = OpTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.computeNamed("Qty",
+                        data -> data.getIntAt(2) * 2, int.class))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        assertThat(transformation.getResultantSchema(), is(schema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+                .of("Apple", 20, 23.5);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void computeInPlaceWithGetter() {
+
+        DidoTransform transformation = OpTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.computeNamedGetter("Qty",
+                        readSchema -> {
+                            FieldGetter getter = readSchema.getFieldGetterNamed("Qty");
+                            return data -> getter.getInt(data) * 2;
+                        }, int.class))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        assertThat(transformation.getResultantSchema(), is(schema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+                .of("Apple", 20, 23.5);
+
+        assertThat(result, is(expectedData));
+    }
+
+
+    @Test
+    void computeNewField() {
+
+        DidoTransform transformation = OpTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.computeNamed("QtyDoubled",
+                        data -> data.getIntAt(2) * 2, int.class))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .merge(schema)
+                .addNamed("QtyDoubled", int.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of("Apple", 10, 23.5, 20);
+
+        assertThat(result, is(expectedData));
+    }
+
 
 }

@@ -4,11 +4,9 @@ import com.google.protobuf.Descriptors;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -18,12 +16,8 @@ class DescriptorUtilTest {
     @Test
     void descriptorLoadsAndIsAsExpected() throws Descriptors.DescriptorValidationException, IOException {
 
-        InputStream inputStream = Objects.requireNonNull(
-                getClass().getResourceAsStream("/Descriptor.protobin"));
-
-        Path file = Paths.get("/src/test/proto/Person.proto").toAbsolutePath();
-
-        Descriptors.Descriptor descriptor = DescriptorUtil.from(inputStream);
+        Descriptors.Descriptor descriptor = DescriptorUtil.from(
+                Files.newInputStream(Paths.get("src/test/proto/protobin/Descriptor.protobin")));
 
         List<Descriptors.FieldDescriptor> fieldDescriptors = descriptor.getFields();
 
