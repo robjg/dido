@@ -4,14 +4,167 @@ import dido.data.NoSuchFieldException;
 import dido.data.*;
 
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.function.*;
 
 /**
  * Operations on a single filed that can be used in an {@link OpTransformBuilder} to create an
  * {@link DidoTransform}.
  */
 public class FieldOps {
+
+    private interface OpFactory<O> {
+
+        O with(CopyTo<O> to);
+    }
+
+    public static class CopyField<O> {
+
+        private final OpFactory<O> opFactory;
+
+        private String from;
+
+        private int index;
+
+        private CopyField(OpFactory<O> opFactory) {
+            this.opFactory = opFactory;
+        }
+
+        public CopyTo<O> from(String name) {
+            this.from = name;
+            return new CopyTo<>(this);
+        }
+
+        public CopyTo<O> index(int index) {
+            this.index = index;
+            return new CopyTo<>(this);
+        }
+    }
+
+    private static class SchemaFieldAndGetter {
+
+        private final SchemaField schemaField;
+
+        private final FieldGetter fieldGetter;
+
+        SchemaFieldAndGetter(SchemaField schemaField, FieldGetter fieldGetter) {
+            this.schemaField = schemaField;
+            this.fieldGetter = fieldGetter;
+        }
+    }
+
+    public static class CopyTo<O> {
+
+        private final OpFactory<O> opFactory;
+
+        private final  String from;
+
+        private final int index;
+
+        private String to;
+
+        private int at;
+
+        private CopyTo(CopyField<O> copyField) {
+            this.opFactory = copyField.opFactory;
+            this.from = copyField.from;
+            this.index = copyField.index;
+        }
+
+        public CopyTo<O> to(String to) {
+            this.to = to;
+            return this;
+        }
+
+        public CopyTo<O> at(int at) {
+            this.at = at;
+            return this;
+        }
+
+        public CopyTo<O> atSameIndex() {
+            return at(-1);
+        }
+
+        public O with() {
+            return opFactory.with(this);
+        }
+
+        private SchemaFieldAndGetter deriveFrom(DataSchema incomingSchema) {
+
+            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
+
+            FieldGetter getter;
+            SchemaField schemaField = null;
+            if (from == null) {
+                if (index > 0) {
+                    schemaField = incomingSchema.getSchemaFieldAt(index);
+                }
+                if (schemaField == null) {
+                    throw new NoSuchFieldException(index, incomingSchema);
+                }
+                getter = readStrategy.getFieldGetterAt(index);
+            } else {
+                schemaField = incomingSchema.getSchemaFieldNamed(from);
+                if (schemaField == null) {
+                    throw new NoSuchFieldException(from, incomingSchema);
+                }
+                getter = readStrategy.getFieldGetterNamed(from);
+            }
+
+            return new SchemaFieldAndGetter(schemaField, getter);
+        }
+
+        private SchemaField deriveTo(SchemaField fromField) {
+
+            SchemaField schemaField = fromField;
+            if (to != null) {
+                schemaField = schemaField.mapToFieldName(to);
+            }
+            if (at >= 0) {
+                schemaField = schemaField.mapToIndex(at);
+            }
+
+            return schemaField;
+        }
+
+    }
+
+    public static class CopyDef {
+
+        private final CopyTo<?> copyTo;
+
+        public CopyDef(CopyTo<?> copyTo) {
+            this.copyTo = copyTo;
+        }
+
+        public OpDef out() {
+
+            return (incomingSchema, schemaSetter) -> {
+
+                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+                SchemaField schemaField = from.schemaField;
+
+                schemaField = copyTo.deriveTo(schemaField);
+
+                SchemaField finalField = schemaSetter.addField(schemaField);
+
+                return dataFactory -> new Copy(
+                        from.fieldGetter,
+                        dataFactory.getFieldSetterNamed(finalField.getName()));
+            };
+        }
+    }
+
+    public static class CopyDefFactory<T> implements OpFactory<CopyDef> {
+
+        @Override
+        public CopyDef with(CopyTo<CopyDef> to) {
+            return new CopyDef(to);
+        }
+    }
+
+    public static CopyField<CopyDef> copy() {
+        return new CopyField<>(new CopyDefFactory<>());
+    }
 
     /**
      * Create an operation that copies the field at an index.
@@ -338,36 +491,95 @@ public class FieldOps {
         };
     }
 
-    public static <T> OpDef computeFieldNamed(String from,
-                                              Function<? super T, ? extends T> func) {
-        return computeFieldNamedAt(from, -1, from, func, null);
+    public static class UnaryMapDef<T> {
+
+        private final CopyTo<?> copyTo;
+
+        private UnaryOperator<T> func;
+
+        public UnaryMapDef(CopyTo<?> copyTo) {
+            this.copyTo = copyTo;
+        }
+
+        public OpDef unaryOperator(UnaryOperator<T> func) {
+
+            return (incomingSchema, schemaSetter) -> {
+
+                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+                SchemaField schemaField = from.schemaField;
+
+                schemaField = copyTo.deriveTo(schemaField);
+
+                SchemaField finalField = schemaSetter.addField(schemaField);
+
+                //noinspection unchecked
+                return dataFactory -> new Compute(dataFactory.getFieldSetterNamed(finalField.getName()),
+                        data -> func.apply((T) from.fieldGetter.get(data)));
+            };
+        }
     }
 
-    public static <T> OpDef computeFieldNamed(String from,
-                                                 String to,
-                                                 Function<? super T, ? extends T> func) {
-        return computeFieldNamedAt(from, -1, to, func, null);
+    public static class UnaryMapDefFactory<T> implements OpFactory<UnaryMapDef<T>> {
+
+        @Override
+        public UnaryMapDef<T> with(CopyTo<UnaryMapDef<T>> to) {
+            return new UnaryMapDef<>(to);
+        }
     }
 
-    public static <T, R> OpDef computeFieldNamed(String from,
-                                                   String to,
-                                                   Function<? super T, ? extends R> func,
-                                                   Class<R> type) {
-        return computeFieldNamedAt(from, -1, to, func, type);
+    public static <T> CopyField<UnaryMapDef<T>> unaryMap() {
+        return new CopyField<>(new UnaryMapDefFactory<>());
     }
 
-    public static <T, R> OpDef computeFieldNamedAt(String from,
-                                               int at,
-                                               String to,
-                                         Function<? super T, ? extends R> func,
-                                         Class<R> type) {
+    public static <T> OpDef mapAt(int at,
+                                     UnaryOperator<T> func) {
+        return mapNamedAt(null, at, null, func, null);
+    }
+
+    public static <T> OpDef mapNamed(String from,
+                                     UnaryOperator<T> func) {
+        return mapNamedAt(from, -1, from, func, null);
+    }
+
+    public static <T> OpDef mapNamed(String from,
+                                     String to,
+                                     UnaryOperator<T> func) {
+        return mapNamedAt(from, -1, to, func, null);
+    }
+
+    public static <T, R> OpDef mapNamed(String from,
+                                        String to,
+                                        Function<? super T, ? extends R> func,
+                                        Class<R> type) {
+        return mapNamedAt(from, -1, to, func, type);
+    }
+
+    public static <T, R> OpDef mapNamedAt(String from,
+                                          int at,
+                                          String to,
+                                          Function<? super T, ? extends R> func,
+                                          Class<R> type) {
 
         return (incomingSchema, schemaSetter) -> {
 
-            SchemaField schemaField = incomingSchema.getSchemaFieldNamed(from);
+            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
 
-            if (schemaField == null) {
-                throw new NoSuchFieldException(from, incomingSchema);
+            FieldGetter getter;
+            SchemaField schemaField = null;
+            if (from == null) {
+                if (at > 0) {
+                    schemaField = incomingSchema.getSchemaFieldAt(at);
+                }
+                if (schemaField == null) {
+                    throw new NoSuchFieldException(at, incomingSchema);
+                }
+                getter = readStrategy.getFieldGetterAt(at);
+            } else {
+                schemaField = incomingSchema.getSchemaFieldNamed(from);
+                if (schemaField == null) {
+                    throw new NoSuchFieldException(from, incomingSchema);
+                }
+                getter = readStrategy.getFieldGetterNamed(from);
             }
 
             if (to != null) {
@@ -382,19 +594,116 @@ public class FieldOps {
 
             SchemaField finalField = schemaSetter.addField(schemaField);
 
-            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
-
-            FieldGetter getter = readStrategy.getFieldGetterNamed(from);
-
             //noinspection unchecked
             return dataFactory -> new Compute(dataFactory.getFieldSetterNamed(finalField.getName()),
                     data -> func.apply((T) getter.get(data)));
         };
     }
 
-    public static <T> OpDef computeNamed(String to,
-                                         Function<? super DidoData, ? extends T> func,
-                                         Class<T> type) {
+
+
+
+    public static OpDef mapIntToIntAt(int at,
+                                             IntUnaryOperator func) {
+        return mapIntToIntNamedAt(null, at, null, func);
+    }
+
+    public static OpDef mapIntToIntNamed(String from,
+                                     IntUnaryOperator func) {
+        return mapIntToIntNamedAt(from, -1, from, func);
+    }
+
+    public static OpDef mapIntToIntNamed(String from,
+                                     String to,
+                                        IntUnaryOperator func) {
+        return mapIntToIntNamedAt(from, -1, to, func);
+    }
+
+    public static OpDef mapIntToIntNamedAt(String from,
+                                                  int at,
+                                                  String to,
+                                                  IntUnaryOperator func) {
+
+        return (incomingSchema, schemaSetter) -> {
+
+            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
+
+            FieldGetter getter;
+            SchemaField schemaField = null;
+            if (from == null) {
+                if (at > 0) {
+                    schemaField = incomingSchema.getSchemaFieldAt(at);
+                }
+                if (schemaField == null) {
+                    throw new NoSuchFieldException(at, incomingSchema);
+                }
+                getter = readStrategy.getFieldGetterAt(at);
+            } else {
+                schemaField = incomingSchema.getSchemaFieldNamed(from);
+                if (schemaField == null) {
+                    throw new NoSuchFieldException(from, incomingSchema);
+                }
+                getter = readStrategy.getFieldGetterNamed(from);
+            }
+
+            if (to != null) {
+                schemaField = schemaField.mapToFieldName(to);
+            }
+            if (at >= 0) {
+                schemaField = schemaField.mapToIndex(at);
+            }
+
+            SchemaField finalField = schemaSetter.addField(schemaField);
+
+            return dataFactory -> new IntCompute(dataFactory.getFieldSetterNamed(finalField.getName()),
+                    data -> func.applyAsInt(getter.getInt(data)));
+        };
+    }
+
+    public static class DoubleToDoubleMapDef {
+
+        private final CopyTo<?> copyTo;
+
+        private DoubleUnaryOperator func;
+
+        public DoubleToDoubleMapDef(CopyTo<?> copyTo) {
+            this.copyTo = copyTo;
+        }
+
+        public OpDef unaryOperator(DoubleUnaryOperator func) {
+
+            return (incomingSchema, schemaSetter) -> {
+
+                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+                SchemaField schemaField = from.schemaField;
+
+                schemaField = copyTo.deriveTo(schemaField);
+
+                SchemaField finalField = schemaSetter.addField(schemaField);
+
+                return dataFactory -> new DoubleCompute(
+                        dataFactory.getFieldSetterNamed(finalField.getName()),
+                        data -> func.applyAsDouble(from.fieldGetter.getDouble(data)));
+            };
+        }
+    }
+
+    public static class DoubleToDoubleMapDefFactory implements OpFactory<DoubleToDoubleMapDef> {
+
+        @Override
+        public DoubleToDoubleMapDef with(CopyTo<DoubleToDoubleMapDef> to) {
+            return new DoubleToDoubleMapDef(to);
+        }
+    }
+
+
+    public static CopyField<DoubleToDoubleMapDef> mapDoubleToDouble() {
+        return new CopyField<>(new DoubleToDoubleMapDefFactory());
+    }
+
+    public static <T> OpDef computeFromDataNamed(String to,
+                                                 Function<? super DidoData, ? extends T> func,
+                                                 Class<T> type) {
 
         return (incomingSchema, schemaSetter) -> {
 
@@ -474,6 +783,42 @@ public class FieldOps {
             } else {
                 setter.set(out, now);
             }
+        }
+    }
+
+    static class IntCompute implements BiConsumer<DidoData, WritableData> {
+
+        private final FieldSetter setter;
+
+        private final ToIntFunction<? super DidoData> func;
+
+        IntCompute(FieldSetter setter, ToIntFunction<? super DidoData> func) {
+            this.setter = setter;
+            this.func = func;
+        }
+
+        @Override
+        public void accept(DidoData data, WritableData out) {
+            int now = func.applyAsInt(data);
+            setter.setInt(out, now);
+        }
+    }
+
+    static class DoubleCompute implements BiConsumer<DidoData, WritableData> {
+
+        private final FieldSetter setter;
+
+        private final ToDoubleFunction<? super DidoData> func;
+
+        DoubleCompute(FieldSetter setter, ToDoubleFunction<? super DidoData> func) {
+            this.setter = setter;
+            this.func = func;
+        }
+
+        @Override
+        public void accept(DidoData data, WritableData out) {
+            double now = func.applyAsDouble(data);
+            setter.setDouble(out, now);
         }
     }
 }
