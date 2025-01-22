@@ -17,6 +17,11 @@ public class FieldOps {
         O with(CopyTo<O> to);
     }
 
+    /**
+     * Specify the copy from. Either the field name or the field index can be specified.
+     *
+     * @param <O> The Operation Type passed through to the {@link CopyTo#with()}
+     */
     public static class CopyField<O> {
 
         private final OpFactory<O> opFactory;
@@ -30,11 +35,15 @@ public class FieldOps {
         }
 
         public CopyTo<O> from(String name) {
+            Objects.requireNonNull(name, "Field name can not be null");
             this.from = name;
             return new CopyTo<>(this);
         }
 
         public CopyTo<O> index(int index) {
+            if (index < 1) {
+                throw new IllegalArgumentException("Field index must be greater than 0");
+            }
             this.index = index;
             return new CopyTo<>(this);
         }
@@ -56,7 +65,7 @@ public class FieldOps {
 
         private final OpFactory<O> opFactory;
 
-        private final  String from;
+        private final String from;
 
         private final int index;
 
@@ -68,8 +77,15 @@ public class FieldOps {
             this.opFactory = copyField.opFactory;
             this.from = copyField.from;
             this.index = copyField.index;
+            this.at = copyField.index > 0 ? copyField.index : -2;
         }
 
+        /**
+         * The name of the field to copy to. If the name exists the field will be replaced.
+         *
+         * @param to The field name.
+         * @return these fluent options.
+         */
         public CopyTo<O> to(String to) {
             this.to = to;
             return this;
@@ -82,6 +98,10 @@ public class FieldOps {
 
         public CopyTo<O> atSameIndex() {
             return at(-1);
+        }
+
+        public CopyTo<O> atLastIndex() {
+            return at(0);
         }
 
         public O with() {
@@ -113,12 +133,31 @@ public class FieldOps {
             return new SchemaFieldAndGetter(schemaField, getter);
         }
 
-        private SchemaField deriveTo(SchemaField fromField) {
+        private SchemaField deriveTo(DataSchema incomingSchema,
+                                     SchemaField fromField) {
 
-            SchemaField schemaField = fromField;
-            if (to != null) {
-                schemaField = schemaField.mapToFieldName(to);
+            SchemaField schemaField;
+            if (to == null) {
+                schemaField = null;
+                if (at > 0) {
+                    // If a field exists with the index then use it.
+                    schemaField = incomingSchema.getSchemaFieldNamed(fromField.getName());
+                }
+                if (schemaField == null) {
+                    schemaField = fromField;
+                }
+            } else {
+                // If a field exists with the given name then use it.
+                schemaField = incomingSchema.getSchemaFieldNamed(to);
+                if (schemaField == null) {
+                    schemaField = fromField.mapToFieldName(to);
+                    // New field, so by default we want it at the end.
+                    if (at == -2) {
+                        atLastIndex();
+                    }
+                }
             }
+
             if (at >= 0) {
                 schemaField = schemaField.mapToIndex(at);
             }
@@ -143,7 +182,7 @@ public class FieldOps {
                 SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
                 SchemaField schemaField = from.schemaField;
 
-                schemaField = copyTo.deriveTo(schemaField);
+                schemaField = copyTo.deriveTo(incomingSchema, schemaField);
 
                 SchemaField finalField = schemaSetter.addField(schemaField);
 
@@ -162,6 +201,11 @@ public class FieldOps {
         }
     }
 
+    /**
+     * Create a copy operation using fluent field locations.
+     *
+     * @return Fluent fields to define the copy.
+     */
     public static CopyField<CopyDef> copy() {
         return new CopyField<>(new CopyDefFactory<>());
     }
@@ -173,7 +217,8 @@ public class FieldOps {
      * @return A Copy Operation Definition.
      */
     public static OpDef copyAt(int index) {
-        return copyAt(index, -1);
+        return copy().index(index)
+                .with().out();
     }
 
     /**
@@ -184,26 +229,9 @@ public class FieldOps {
      */
     public static OpDef copyAt(int index, int at) {
 
-        return (incomingSchema, schemaSetter) -> {
-
-            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
-
-            FieldGetter getter = readStrategy.getFieldGetterAt(index);
-
-            SchemaField schemaField = incomingSchema.getSchemaFieldAt(index);
-
-            if (schemaField == null) {
-                throw new NoSuchFieldException(index, incomingSchema);
-            }
-            if (at >= 0) {
-                schemaField = schemaField.mapToIndex(at);
-            }
-
-            SchemaField finalField = schemaSetter.addField(schemaField);
-
-            return writableSchema ->
-                    new Copy(getter, writableSchema.getFieldSetterNamed(finalField.getName()));
-        };
+        return copy().index(index)
+                .at(at)
+                .with().out();
     }
 
     /**
@@ -215,7 +243,8 @@ public class FieldOps {
      */
     public static OpDef copyNamed(String name) {
 
-        return copyNamed(name, name);
+        return copy().from(name)
+                .with().out();
     }
 
     /**
@@ -228,7 +257,9 @@ public class FieldOps {
      */
     public static OpDef copyNamed(String from, String to) {
 
-        return copyNamedAt(from, -1, to);
+        return copy().from(from)
+                .to(to)
+                .with().out();
     }
 
     /**
@@ -241,7 +272,9 @@ public class FieldOps {
      * @return A Copy Operation Definition.
      */
     public static OpDef copyNamedAt(String from, int at) {
-        return copyNamedAt(from, at, from);
+        return copy().from(from)
+                .at(at)
+                .with().out();
     }
 
     /**
@@ -256,31 +289,10 @@ public class FieldOps {
      */
     public static OpDef copyNamedAt(String from, int at, String to) {
 
-        Objects.requireNonNull(from, "From");
-
-        return (incomingSchema, schemaSetter) -> {
-
-            SchemaField schemaField = incomingSchema.getSchemaFieldNamed(from);
-
-            if (schemaField == null) {
-                throw new NoSuchFieldException(from, incomingSchema);
-            }
-
-            if (to != null) {
-                schemaField = schemaField.mapToFieldName(to);
-            }
-            if (at >= 0) {
-                schemaField = schemaField.mapToIndex(at);
-            }
-
-            SchemaField finalField = schemaSetter.addField(schemaField);
-
-            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
-
-            FieldGetter getter = readStrategy.getFieldGetterNamed(from);
-
-            return dataFactory -> new Copy(getter, dataFactory.getFieldSetterNamed(finalField.getName()));
-        };
+        return copy().from(from)
+                .to(to)
+                .at(at)
+                .with().out();
     }
 
     /**
@@ -508,7 +520,7 @@ public class FieldOps {
                 SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
                 SchemaField schemaField = from.schemaField;
 
-                schemaField = copyTo.deriveTo(schemaField);
+                schemaField = copyTo.deriveTo(incomingSchema, schemaField);
 
                 SchemaField finalField = schemaSetter.addField(schemaField);
 
@@ -532,7 +544,7 @@ public class FieldOps {
     }
 
     public static <T> OpDef mapAt(int at,
-                                     UnaryOperator<T> func) {
+                                  UnaryOperator<T> func) {
         return mapNamedAt(null, at, null, func, null);
     }
 
@@ -600,71 +612,57 @@ public class FieldOps {
         };
     }
 
+    // Int to Int
 
+    public static class IntToIntMapDef {
 
+        private final CopyTo<?> copyTo;
 
-    public static OpDef mapIntToIntAt(int at,
-                                             IntUnaryOperator func) {
-        return mapIntToIntNamedAt(null, at, null, func);
+        public IntToIntMapDef(CopyTo<?> copyTo) {
+            this.copyTo = copyTo;
+        }
+
+        public OpDef unaryOperator(IntUnaryOperator func) {
+
+            return (incomingSchema, schemaSetter) -> {
+
+                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+                SchemaField schemaField = from.schemaField;
+
+                schemaField = copyTo.deriveTo(incomingSchema, schemaField);
+
+                SchemaField finalField = schemaSetter.addField(schemaField);
+
+                return dataFactory -> new IntCompute(
+                        dataFactory.getFieldSetterNamed(finalField.getName()),
+                        data -> func.applyAsInt(from.fieldGetter.getInt(data)));
+            };
+        }
     }
 
-    public static OpDef mapIntToIntNamed(String from,
-                                     IntUnaryOperator func) {
-        return mapIntToIntNamedAt(from, -1, from, func);
+    public static class IntToIntMapDefFactory implements OpFactory<IntToIntMapDef> {
+
+        @Override
+        public IntToIntMapDef with(CopyTo<IntToIntMapDef> to) {
+            return new IntToIntMapDef(to);
+        }
     }
 
-    public static OpDef mapIntToIntNamed(String from,
-                                     String to,
-                                        IntUnaryOperator func) {
-        return mapIntToIntNamedAt(from, -1, to, func);
+    /**
+     * Create an operation to copy an int field applying a unary operation
+     * using fluent field locations.
+     *
+     * @return fluent fields to define the copy.
+     */
+    public static CopyField<IntToIntMapDef> mapIntToInt() {
+        return new CopyField<>(new IntToIntMapDefFactory());
     }
 
-    public static OpDef mapIntToIntNamedAt(String from,
-                                                  int at,
-                                                  String to,
-                                                  IntUnaryOperator func) {
-
-        return (incomingSchema, schemaSetter) -> {
-
-            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
-
-            FieldGetter getter;
-            SchemaField schemaField = null;
-            if (from == null) {
-                if (at > 0) {
-                    schemaField = incomingSchema.getSchemaFieldAt(at);
-                }
-                if (schemaField == null) {
-                    throw new NoSuchFieldException(at, incomingSchema);
-                }
-                getter = readStrategy.getFieldGetterAt(at);
-            } else {
-                schemaField = incomingSchema.getSchemaFieldNamed(from);
-                if (schemaField == null) {
-                    throw new NoSuchFieldException(from, incomingSchema);
-                }
-                getter = readStrategy.getFieldGetterNamed(from);
-            }
-
-            if (to != null) {
-                schemaField = schemaField.mapToFieldName(to);
-            }
-            if (at >= 0) {
-                schemaField = schemaField.mapToIndex(at);
-            }
-
-            SchemaField finalField = schemaSetter.addField(schemaField);
-
-            return dataFactory -> new IntCompute(dataFactory.getFieldSetterNamed(finalField.getName()),
-                    data -> func.applyAsInt(getter.getInt(data)));
-        };
-    }
+    // Double To Double
 
     public static class DoubleToDoubleMapDef {
 
         private final CopyTo<?> copyTo;
-
-        private DoubleUnaryOperator func;
 
         public DoubleToDoubleMapDef(CopyTo<?> copyTo) {
             this.copyTo = copyTo;
@@ -677,7 +675,7 @@ public class FieldOps {
                 SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
                 SchemaField schemaField = from.schemaField;
 
-                schemaField = copyTo.deriveTo(schemaField);
+                schemaField = copyTo.deriveTo(incomingSchema, schemaField);
 
                 SchemaField finalField = schemaSetter.addField(schemaField);
 
@@ -696,10 +694,17 @@ public class FieldOps {
         }
     }
 
-
+    /**
+     * Create an operation to copy a double field applying a unary operation
+     * using fluent field locations.
+     *
+     * @return fluent fields to define the copy.
+     */
     public static CopyField<DoubleToDoubleMapDef> mapDoubleToDouble() {
         return new CopyField<>(new DoubleToDoubleMapDefFactory());
     }
+
+    // Whole Data Computes - Move to experimental.
 
     public static <T> OpDef computeFromDataNamed(String to,
                                                  Function<? super DidoData, ? extends T> func,
@@ -710,8 +715,7 @@ public class FieldOps {
             SchemaField field = incomingSchema.getSchemaFieldNamed(to);
             if (field == null) {
                 field = SchemaField.of(0, to, type);
-            }
-            else {
+            } else {
                 field = SchemaField.of(field.getIndex(), to, type);
             }
 
@@ -736,7 +740,7 @@ public class FieldOps {
                 field = SchemaField.of(field.getIndex(), to, type);
             }
 
-            SchemaField finalField  = schemaSetter.addField(field);
+            SchemaField finalField = schemaSetter.addField(field);
 
             return dataFactory -> new Compute(dataFactory.getFieldSetterNamed(finalField.getName()),
                     func.apply(ReadSchema.from(incomingSchema)));

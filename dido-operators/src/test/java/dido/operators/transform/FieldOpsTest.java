@@ -18,30 +18,29 @@ class FieldOpsTest {
             .of("Apple", 10, 23.5);
 
     @Test
-    void copyAtBetter() {
+    void copyWithFieldLocBuilder() {
 
         DidoTransform transformation = OpTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
-                .addOp(FieldOps.copy().index(3).with().out())
-                .addOp(FieldOps.copy().from("Qty").with().out())
+                .addOp(FieldOps.copy().index(3).with().out()) // copies index 3 to index 3
+                .addOp(FieldOps.copy().from("Qty").with().out()) // copies Qty to index 2
                 .build();
 
         DidoData result = transformation.apply(data);
 
         DataSchema expectedSchema = DataSchema.builder()
-                .addNamed("Price", double.class)
                 .addNamed("Qty", int.class)
+                .addNamed("Price", double.class)
                 .build();
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
-                .of(23.5, 10);
+                .of(10, 23.5);
 
         assertThat(result, is(expectedData));
     }
-
 
     @Test
     void copyAt() {
@@ -421,8 +420,9 @@ class FieldOpsTest {
         DidoTransform transformation = OpTransformBuilder.with()
                 .copy(true)
                 .forSchema(schema)
-                .addOp(FieldOps.mapIntToIntNamed("Qty",
-                        qty -> qty * 2))
+                .addOp(FieldOps.mapIntToInt()
+                        .from("Qty")
+                        .with().unaryOperator(qty -> qty * 2))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -441,8 +441,9 @@ class FieldOpsTest {
         DidoTransform transformation = OpTransformBuilder.with()
                 .copy(true)
                 .forSchema(schema)
-                .addOp(FieldOps.mapIntToIntAt(2,
-                        qty -> qty * 2))
+                .addOp(FieldOps.mapIntToInt()
+                        .index(2)
+                        .with().unaryOperator(qty -> qty * 2))
                 .build();
 
         DidoData result = transformation.apply(data);
