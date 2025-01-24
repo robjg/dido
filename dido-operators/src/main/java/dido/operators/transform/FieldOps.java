@@ -519,10 +519,22 @@ public class FieldOps {
             this.type = type;
         }
 
+        /**
+         * Define a new type for the resultant field.
+         *
+         * @param type The type.
+         * @return Ongoing mapping definition.
+         */
         public FuncMapDef type(Class<?> type) {
             return new FuncMapDef(copyTo, type);
         }
 
+        /**
+         * Apply a mapping function.
+         *
+         * @param func The function.
+         * @return The op
+         */
         public OpDef func(Function<?, ?> func) {
 
             return (incomingSchema, schemaSetter) -> {
@@ -539,6 +551,65 @@ public class FieldOps {
                 //noinspection unchecked,rawtypes
                 return dataFactory -> new Compute(dataFactory.getFieldSetterNamed(finalField.getName()),
                         data -> ((Function) func).apply(from.fieldGetter.get(data)));
+            };
+        }
+
+        /**
+         * Apply a unary int operation.
+         *
+         * @param func The operation.
+         * @return The op
+         */
+        public OpDef intOp(IntUnaryOperator func) {
+
+            return (incomingSchema, schemaSetter) -> {
+
+                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+
+                SchemaField finalField = schemaSetter.addField(
+                        copyTo.deriveTo(incomingSchema, from.schemaField));
+
+                return dataFactory -> new IntCompute(
+                        dataFactory.getFieldSetterNamed(finalField.getName()),
+                        data -> func.applyAsInt(from.fieldGetter.getInt(data)));
+            };
+        }
+
+        /**
+         * Apply a unary long operation.
+         *
+         * @param func The operation.
+         * @return The op
+         */
+        public OpDef longOp(LongUnaryOperator func) {
+
+            return (incomingSchema, schemaSetter) -> {
+
+                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+
+                SchemaField finalField = schemaSetter.addField(
+                        copyTo.deriveTo(incomingSchema, from.schemaField));
+
+                return dataFactory -> new LongCompute(
+                        dataFactory.getFieldSetterNamed(finalField.getName()),
+                        data -> func.applyAsLong(from.fieldGetter.getInt(data)));
+            };
+        }
+
+        public OpDef doubleOp(DoubleUnaryOperator func) {
+
+            return (incomingSchema, schemaSetter) -> {
+
+                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+                SchemaField schemaField = from.schemaField;
+
+                schemaField = copyTo.deriveTo(incomingSchema, schemaField);
+
+                SchemaField finalField = schemaSetter.addField(schemaField);
+
+                return dataFactory -> new DoubleCompute(
+                        dataFactory.getFieldSetterNamed(finalField.getName()),
+                        data -> func.applyAsDouble(from.fieldGetter.getDouble(data)));
             };
         }
     }
@@ -559,140 +630,6 @@ public class FieldOps {
      */
     public static CopyField<FuncMapDef> map() {
         return new CopyField<>(new FuncMapDefFactory());
-    }
-
-    // Int to Int
-
-    public static class IntToIntMapDef {
-
-        private final CopyTo<?> copyTo;
-
-        public IntToIntMapDef(CopyTo<?> copyTo) {
-            this.copyTo = copyTo;
-        }
-
-        public OpDef func(IntUnaryOperator func) {
-
-            return (incomingSchema, schemaSetter) -> {
-
-                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
-
-                SchemaField finalField = schemaSetter.addField(
-                        copyTo.deriveTo(incomingSchema, from.schemaField));
-
-                return dataFactory -> new IntCompute(
-                        dataFactory.getFieldSetterNamed(finalField.getName()),
-                        data -> func.applyAsInt(from.fieldGetter.getInt(data)));
-            };
-        }
-    }
-
-    public static class IntToIntMapDefFactory implements OpFactory<IntToIntMapDef> {
-
-        @Override
-        public IntToIntMapDef with(CopyTo<IntToIntMapDef> to) {
-            return new IntToIntMapDef(to);
-        }
-    }
-
-    /**
-     * Create an operation to copy an int field applying a unary operation
-     * using fluent field locations.
-     *
-     * @return fluent fields to define the copy.
-     */
-    public static CopyField<IntToIntMapDef> mapIntToInt() {
-        return new CopyField<>(new IntToIntMapDefFactory());
-    }
-
-    // Long to Long
-
-    public static class LongToLongMapDef {
-
-        private final CopyTo<?> copyTo;
-
-        public LongToLongMapDef(CopyTo<?> copyTo) {
-            this.copyTo = copyTo;
-        }
-
-        public OpDef func(LongUnaryOperator func) {
-
-            return (incomingSchema, schemaSetter) -> {
-
-                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
-
-                SchemaField finalField = schemaSetter.addField(
-                        copyTo.deriveTo(incomingSchema, from.schemaField));
-
-                return dataFactory -> new LongCompute(
-                        dataFactory.getFieldSetterNamed(finalField.getName()),
-                        data -> func.applyAsLong(from.fieldGetter.getInt(data)));
-            };
-        }
-    }
-
-    public static class LongToLongMapDefFactory implements OpFactory<LongToLongMapDef> {
-
-        @Override
-        public LongToLongMapDef with(CopyTo<LongToLongMapDef> to) {
-            return new LongToLongMapDef(to);
-        }
-    }
-
-    /**
-     * Create an operation to copy a long field applying a unary operation
-     * using fluent field locations.
-     *
-     * @return fluent fields to define the copy.
-     */
-    public static CopyField<LongToLongMapDef> mapLongToLong() {
-        return new CopyField<>(new LongToLongMapDefFactory());
-    }
-
-    // Double To Double
-
-    public static class DoubleToDoubleMapDef {
-
-        private final CopyTo<?> copyTo;
-
-        public DoubleToDoubleMapDef(CopyTo<?> copyTo) {
-            this.copyTo = copyTo;
-        }
-
-        public OpDef func(DoubleUnaryOperator func) {
-
-            return (incomingSchema, schemaSetter) -> {
-
-                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
-                SchemaField schemaField = from.schemaField;
-
-                schemaField = copyTo.deriveTo(incomingSchema, schemaField);
-
-                SchemaField finalField = schemaSetter.addField(schemaField);
-
-                return dataFactory -> new DoubleCompute(
-                        dataFactory.getFieldSetterNamed(finalField.getName()),
-                        data -> func.applyAsDouble(from.fieldGetter.getDouble(data)));
-            };
-        }
-    }
-
-    public static class DoubleToDoubleMapDefFactory implements OpFactory<DoubleToDoubleMapDef> {
-
-        @Override
-        public DoubleToDoubleMapDef with(CopyTo<DoubleToDoubleMapDef> to) {
-            return new DoubleToDoubleMapDef(to);
-        }
-    }
-
-    /**
-     * Create an operation to copy a double field applying a unary operation
-     * using fluent field locations.
-     *
-     * @return fluent fields to define the copy.
-     */
-    public static CopyField<DoubleToDoubleMapDef> mapDoubleToDouble() {
-        return new CopyField<>(new DoubleToDoubleMapDefFactory());
     }
 
     static class Copy implements BiConsumer<DidoData, WritableData> {

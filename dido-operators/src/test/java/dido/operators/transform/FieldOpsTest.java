@@ -448,9 +448,9 @@ class FieldOpsTest {
         DidoTransform transformation = OpTransformBuilder.with()
                 .copy(true)
                 .forSchema(schema)
-                .addOp(FieldOps.mapIntToInt()
+                .addOp(FieldOps.map()
                         .from("Qty")
-                        .with().func(qty -> qty * 2))
+                        .with().intOp(qty -> qty * 2))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -469,9 +469,9 @@ class FieldOpsTest {
         DidoTransform transformation = OpTransformBuilder.with()
                 .copy(true)
                 .forSchema(schema)
-                .addOp(FieldOps.mapIntToInt()
+                .addOp(FieldOps.map()
                         .index(2)
-                        .with().func(qty -> qty * 2))
+                        .with().intOp(qty -> qty * 2))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -497,14 +497,14 @@ class FieldOpsTest {
         DidoTransform transformation = OpTransformBuilder.with()
                 .copy(true)
                 .forSchema(schema)
-                .addOp(FieldOps.mapLongToLong()
+                .addOp(FieldOps.map()
                         .from("BigNumber")
                         .at(20)
-                        .with().func(qty -> qty * 2))
-                .addOp(FieldOps.mapLongToLong()
+                        .with().longOp(qty -> qty * 2))
+                .addOp(FieldOps.map()
                         .from("BigNumber")
                         .to("AnotherBigNumber").at(15)
-                        .with().func(qty -> qty * 2))
+                        .with().longOp(qty -> qty * 2))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -528,9 +528,9 @@ class FieldOpsTest {
         DidoTransform transformation = OpTransformBuilder.with()
                 .copy(true)
                 .forSchema(schema)
-                .addOp(FieldOps.mapDoubleToDouble()
+                .addOp(FieldOps.map()
                         .index(3)
-                        .with().func(price -> price * 2))
+                        .with().doubleOp(price -> price * 2))
                 .build();
 
         DidoData result = transformation.apply(data);
