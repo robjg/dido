@@ -1,7 +1,13 @@
 package dido.operators.transform;
 
-import dido.data.*;
+import dido.data.ArrayData;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
+
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -319,19 +325,40 @@ class FieldOpsTest {
     @Test
     void mapAt() {
 
+        UnaryOperator<String> fruitOp = String::toUpperCase;
+        Function<Integer, Double> qtyOp = qty -> (double) qty * 2.5;
+        Function<Double, String> priceOp = price -> "£" + price;
+
         DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
                 .forSchema(schema)
-                .addOp(FieldOps.mapAt(2,
-                        qty -> (int) qty * 2))
+                .addOp(FieldOps.map()
+                        .index(1)
+                        .with().func(fruitOp))
+                .addOp(FieldOps.map()
+                        .index(2)
+                        .at(3)
+                        .with().type(double.class)
+                        .func(qtyOp))
+                .addOp(FieldOps.map()
+                        .index(3)
+                        .atLastIndex()
+                        .to("DisplayPrice")
+                        .with().type(String.class)
+                        .func(priceOp))
                 .build();
 
         DidoData result = transformation.apply(data);
 
-        assertThat(transformation.getResultantSchema(), is(schema));
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
+                .addNamed("Fruit", String.class)
+                .addNamedAt(3, "Qty", double.class)
+                .addNamed("DisplayPrice", String.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.valuesWithSchema(schema)
-                .of("Apple", 20, 23.5);
+                .of("APPLE", 25.0, "£23.5");
 
         assertThat(result, is(expectedData));
     }
@@ -342,8 +369,9 @@ class FieldOpsTest {
         DidoTransform transformation = OpTransformBuilder.with()
                 .copy(true)
                 .forSchema(schema)
-                .addOp(FieldOps.mapNamed("Qty",
-                        qty -> (int) qty * 2))
+                .addOp(FieldOps.map()
+                        .from("Qty")
+                                .with().func(qty -> (int) qty * 2))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -362,11 +390,11 @@ class FieldOpsTest {
         DidoTransform transformation = OpTransformBuilder.with()
                 .copy(true)
                 .forSchema(schema)
-                .addOp(FieldOps.unaryMap()
+                .addOp(FieldOps.map()
                         .from("Qty")
                         .to("Extra")
                         .with()
-                        .unaryOperator(qty -> (int) qty * 2))
+                        .func(qty -> (int) qty * 2))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -390,12 +418,12 @@ class FieldOpsTest {
         DidoTransform transformation = OpTransformBuilder.with()
                 .copy(true)
                 .forSchema(schema)
-                .addOp(FieldOps.unaryMap()
+                .addOp(FieldOps.map()
                         .from("Qty")
                         .to("Extra")
                         .atSameIndex()
                         .with()
-                        .unaryOperator(qty -> (int) qty * 2))
+                        .func(qty -> (int) qty * 2))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -422,7 +450,7 @@ class FieldOpsTest {
                 .forSchema(schema)
                 .addOp(FieldOps.mapIntToInt()
                         .from("Qty")
-                        .with().unaryOperator(qty -> qty * 2))
+                        .with().func(qty -> qty * 2))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -443,7 +471,7 @@ class FieldOpsTest {
                 .forSchema(schema)
                 .addOp(FieldOps.mapIntToInt()
                         .index(2)
-                        .with().unaryOperator(qty -> qty * 2))
+                        .with().func(qty -> qty * 2))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -452,6 +480,44 @@ class FieldOpsTest {
 
         DidoData expectedData = ArrayData.valuesWithSchema(schema)
                 .of("Apple", 20, 23.5);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void mapLongToLongNamedAt() {
+
+        DataSchema schema = ArrayData.schemaBuilder()
+                .addNamed("BigNumber", long.class)
+                .build();
+
+        DidoData data = DidoData.valuesWithSchema(schema)
+                .of(1000L);
+
+        DidoTransform transformation = OpTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.mapLongToLong()
+                        .from("BigNumber")
+                        .at(20)
+                        .with().func(qty -> qty * 2))
+                .addOp(FieldOps.mapLongToLong()
+                        .from("BigNumber")
+                        .to("AnotherBigNumber").at(15)
+                        .with().func(qty -> qty * 2))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = ArrayData.schemaBuilder()
+                .addNamedAt(15, "AnotherBigNumber", long.class)
+                .addNamedAt(20, "BigNumber", long.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of(2000L, 2000L);
 
         assertThat(result, is(expectedData));
     }
@@ -464,7 +530,7 @@ class FieldOpsTest {
                 .forSchema(schema)
                 .addOp(FieldOps.mapDoubleToDouble()
                         .index(3)
-                        .with().unaryOperator(price -> price * 2))
+                        .with().func(price -> price * 2))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -476,75 +542,5 @@ class FieldOpsTest {
 
         assertThat(result, is(expectedData));
     }
-
-    @Test
-    void computeInPlace() {
-
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
-                .forSchema(schema)
-                .addOp(FieldOps.computeFromDataNamed("Qty",
-                        data -> data.getIntAt(2) * 2, int.class))
-                .build();
-
-        DidoData result = transformation.apply(data);
-
-        assertThat(transformation.getResultantSchema(), is(schema));
-
-        DidoData expectedData = ArrayData.valuesWithSchema(schema)
-                .of("Apple", 20, 23.5);
-
-        assertThat(result, is(expectedData));
-    }
-
-    @Test
-    void computeInPlaceWithGetter() {
-
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
-                .forSchema(schema)
-                .addOp(FieldOps.computeNamedGetter("Qty",
-                        readSchema -> {
-                            FieldGetter getter = readSchema.getFieldGetterNamed("Qty");
-                            return data -> getter.getInt(data) * 2;
-                        }, int.class))
-                .build();
-
-        DidoData result = transformation.apply(data);
-
-        assertThat(transformation.getResultantSchema(), is(schema));
-
-        DidoData expectedData = ArrayData.valuesWithSchema(schema)
-                .of("Apple", 20, 23.5);
-
-        assertThat(result, is(expectedData));
-    }
-
-
-    @Test
-    void computeNewField() {
-
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
-                .forSchema(schema)
-                .addOp(FieldOps.computeFromDataNamed("QtyDoubled",
-                        data -> data.getIntAt(2) * 2, int.class))
-                .build();
-
-        DidoData result = transformation.apply(data);
-
-        DataSchema expectedSchema = DataSchema.builder()
-                .merge(schema)
-                .addNamed("QtyDoubled", int.class)
-                .build();
-
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
-
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
-                .of("Apple", 10, 23.5, 20);
-
-        assertThat(result, is(expectedData));
-    }
-
 
 }
