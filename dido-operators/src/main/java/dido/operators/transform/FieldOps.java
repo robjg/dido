@@ -295,6 +295,26 @@ public class FieldOps {
                 .with().out();
     }
 
+    public static OpDef rename(String from, String to) {
+        return renameAt(from, -1, to);
+    }
+
+    public static OpDef renameAt(String from, int at, String to) {
+
+        return (incomingSchema, schemaSetter) -> {
+
+            OpDef.Prepare prepare = copy()
+                    .from(Objects.requireNonNull(from, "No From"))
+                    .to(Objects.requireNonNull(to, "No To"))
+                    .at(at)
+                    .with().out().prepare(incomingSchema, schemaSetter);
+
+            schemaSetter.removeField(incomingSchema.getSchemaFieldNamed(from));
+
+            return prepare;
+        };
+    }
+
     /**
      * Create an operation to set the field at the given index to be the given value. If the index
      * exists the field name will be preserved.

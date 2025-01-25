@@ -217,6 +217,34 @@ class FieldOpsTest {
     }
 
     @Test
+    void rename() {
+
+        DidoTransform transformation = OpTransformBuilder
+                .with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.renameAt("Qty", 5, "Quantity"))
+                .addOp(FieldOps.renameAt("Price", 3, "ThePrice"))
+                .addOp(FieldOps.rename("Fruit", "Type"))
+                .build();
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("Type", String.class)
+                .addNamedAt(5, "Quantity", int.class)
+                .addNamedAt(3, "ThePrice", double.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData result = transformation.apply(data);
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of("Apple", 23.5, 10);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
     void setNamedWithCopy() {
 
         DidoTransform transformation = OpTransformBuilder.with()
