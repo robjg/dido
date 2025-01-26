@@ -2,7 +2,6 @@ package dido.operators;
 
 import dido.data.ArrayData;
 import dido.data.DidoData;
-import dido.data.MapData;
 import dido.data.SchemaBuilder;
 import dido.data.util.FieldValuesIn;
 import org.hamcrest.Matchers;
@@ -89,7 +88,7 @@ class LeftStreamJoinTest {
         assertThat(results, contains(expected1, expected2, expected3));
         assertThat(expected2.getSchema(), Matchers.is(expected3.getSchema()));
 
-        primary.accept(MapData.builderForSchema(produce1.getSchema())
+        primary.accept(ArrayData.builderForSchema(produce1.getSchema())
                 .copy(produce1)
                 .withInt("Quantity", 3)
                 .build());

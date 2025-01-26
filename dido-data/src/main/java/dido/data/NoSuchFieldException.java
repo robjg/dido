@@ -5,12 +5,12 @@ package dido.data;
  */
 public class NoSuchFieldException extends RuntimeException {
 
-    public NoSuchFieldException(int index, DataSchema schema) {
-        super("No such field at index [" + index + "], data schema is " + schema);
+    public NoSuchFieldException(int index, IndexedSchema schema) {
+        super("No such field at index [" + index + "], schema is " + schema);
     }
 
-    public NoSuchFieldException(String name, DataSchema schema) {
-        super("No such field named [" + name + "], data schema is " + schema);
+    public NoSuchFieldException(String name, IndexedSchema schema) {
+        super("No such field named [" + name + "], schema is " + schema);
     }
 
 }

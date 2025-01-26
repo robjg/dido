@@ -3,9 +3,9 @@ package dido.data;
 import java.util.Objects;
 
 /**
- * Definition of a schema for {@link AnonymousData}.
+ * Definition of a schema for {@link CompactData}.
  */
-public interface AnonymousSchema extends IndexedSchema {
+public interface CompactSchema extends IndexedSchema {
 
     /**
      * Compare two schemas for equality. Because it's forbidden to provide default Object methods in
@@ -17,7 +17,7 @@ public interface AnonymousSchema extends IndexedSchema {
      * @return True if the fields types, the indexes, the types at each index and the
      * fields at each index are the same.
      */
-    static boolean equals(AnonymousSchema schema1, AnonymousSchema schema2) {
+    static boolean equals(CompactSchema schema1, CompactSchema schema2) {
         if (schema1 == schema2) {
             return true;
         }
@@ -48,7 +48,7 @@ public interface AnonymousSchema extends IndexedSchema {
      * @param schema The schema.
      * @return A hash code value.
      */
-    static int hashCode(AnonymousSchema schema) {
+    static int hashCode(CompactSchema schema) {
         int hash = 0;
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
             hash = hash * 31 + schema.getTypeAt(index).hashCode();
@@ -56,7 +56,7 @@ public interface AnonymousSchema extends IndexedSchema {
         return hash;
     }
 
-    static String toString(AnonymousSchema schema) {
+    static String toString(CompactSchema schema) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
@@ -68,57 +68,6 @@ public interface AnonymousSchema extends IndexedSchema {
         }
         sb.append("}");
         return sb.toString();
-    }
-
-    static AnonymousSchema emptySchema() {
-        return new EmptySchema();
-    }
-
-    class EmptySchema implements AnonymousSchema {
-
-        @Override
-        public boolean hasIndex(int index) {
-            return false;
-        }
-
-        @Override
-        public int firstIndex() {
-            return 0;
-        }
-
-        @Override
-        public int nextIndex(int index) {
-            return 0;
-        }
-
-        @Override
-        public int lastIndex() {
-            return 0;
-        }
-
-        @Override
-        public Class<?> getTypeAt(int index) {
-            return null;
-        }
-
-        @Override
-        public int hashCode() {
-            return 0;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof DataSchema)) {
-                return false;
-            }
-            DataSchema other = (DataSchema) obj;
-            return other.firstIndex() == 0 && other.lastIndex() == 0;
-        }
-
-        @Override
-        public String toString() {
-            return "{}";
-        }
     }
 
 }
