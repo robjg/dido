@@ -302,9 +302,9 @@ public class Concatenator {
         }
 
         @Override
-        public boolean hasIndex(int index) {
+        public boolean hasAt(int index) {
             Location loc = locations[index - 1];
-            return data[loc.dataIndex].hasIndex(loc.index);
+            return data[loc.dataIndex].hasAt(loc.index);
         }
 
         @Override
@@ -370,7 +370,7 @@ public class Concatenator {
         @Override
         public boolean hasNamed(String name) {
             Location loc = fieldLocations.get(name);
-            return data[loc.dataIndex].hasIndex(loc.index);
+            return data[loc.dataIndex].hasAt(loc.index);
         }
 
         @Override

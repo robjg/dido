@@ -171,7 +171,7 @@ public class GenericMapData<F> extends AbstractGenericData<F> {
     }
 
     @Override
-    public boolean hasIndex(int index) {
+    public boolean hasAt(int index) {
         return this.has(schema.getFieldAt(index));
     }
 

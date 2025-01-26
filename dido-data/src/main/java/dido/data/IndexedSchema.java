@@ -9,7 +9,7 @@ public interface IndexedSchema {
 
     /**
      * Get the first index in an {@link IndexedData} structure
-     * at which there may be data. Calling {@link IndexedData#hasIndex(int)} for values
+     * at which there may be data. Calling {@link IndexedData#hasAt(int)} for values
      * below this has undefined behaviour.
      *
      * @return The first index. Or a value of 0 if the schema is empty.
@@ -18,7 +18,7 @@ public interface IndexedSchema {
 
     /**
      * Get the next index {@link IndexedData} structure
-     * at which there may be data. Calling {@link IndexedData#hasIndex(int)} for values
+     * at which there may be data. Calling {@link IndexedData#hasAt(int)} for values
      * between the index argument and the returned value this has undefined behaviour.
      * Calling this method with a value that has not been returned by {@link #firstIndex()}
      * or a previous call to this method has undefined behaviour. Calling this method
@@ -31,7 +31,7 @@ public interface IndexedSchema {
 
     /**
      * Get the first index in an {@link IndexedData} structure
-     * at which there may be data. Calling {@link IndexedData#hasIndex(int)} for values
+     * at which there may be data. Calling {@link IndexedData#hasAt(int)} for values
      * below this has undefined behaviour.
      *
      * @return The first index. Or a value of 0 if the schema is empty.

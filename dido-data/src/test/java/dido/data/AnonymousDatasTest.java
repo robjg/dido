@@ -34,7 +34,7 @@ class AnonymousDatasTest {
                 is(schema1.toString()));
 
         assertThat(copy1.getStringAt(1), is("Apple"));
-        assertThat(copy1.hasIndex(2), is(false));
+        assertThat(copy1.hasAt(2), is(false));
         assertThat(copy1.getIntAt(3), is(15));
         assertThat(copy1.getDoubleAt(4), is(26.5));
 

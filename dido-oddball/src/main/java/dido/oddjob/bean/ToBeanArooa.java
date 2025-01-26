@@ -120,7 +120,7 @@ public class ToBeanArooa {
                 }
 
                 int index = schema.getIndexNamed(propertyName);
-                if (!data.hasIndex(index)) {
+                if (!data.hasAt(index)) {
                     continue;
                 }
 

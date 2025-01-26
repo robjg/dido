@@ -111,7 +111,7 @@ public class JsonDataWrapper {
             }
 
             @Override
-            public boolean hasIndex(int index) {
+            public boolean hasAt(int index) {
                 Object value = values[index - 1];
                 if (value == null) {
                     return getAt(index) != null;

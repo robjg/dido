@@ -39,7 +39,7 @@ public class CsvData extends AbstractData {
     }
 
     @Override
-    public boolean hasIndex(int index) {
+    public boolean hasAt(int index) {
         return record.get(index - 1) != null;
     }
 

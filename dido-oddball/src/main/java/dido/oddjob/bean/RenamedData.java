@@ -96,8 +96,8 @@ public class RenamedData extends AbstractData {
     }
 
     @Override
-    public boolean hasIndex(int index) {
-        return original.hasIndex(index);
+    public boolean hasAt(int index) {
+        return original.hasAt(index);
     }
 
     static Schema renamedSchema(Map<String, String> mapping, DataSchema fromSchema) {

@@ -13,7 +13,7 @@ import java.util.Objects;
 abstract public class AbstractIndexedData implements IndexedData {
 
     @Override
-    public boolean hasIndex(int index) {
+    public boolean hasAt(int index) {
         return getAt(index) != null;
     }
 

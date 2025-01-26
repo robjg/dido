@@ -149,7 +149,7 @@ public class MapData extends AbstractData implements DidoData {
     }
 
     @Override
-    public boolean hasIndex(int index) {
+    public boolean hasAt(int index) {
         return this.hasNamed(schema.getFieldNameAt(index));
     }
 

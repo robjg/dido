@@ -26,7 +26,7 @@ class ArrayDataTest {
         DidoData data = ArrayData.of("Apple", null, 15, 26.5);
 
         assertThat(data.getStringAt(1), is("Apple"));
-        assertThat(data.hasIndex(2), is(false));
+        assertThat(data.hasAt(2), is(false));
         assertThat(data.getIntAt(3), is(15));
         assertThat(data.getDoubleAt(4), is(26.5));
 
@@ -149,7 +149,7 @@ class ArrayDataTest {
         assertThat(schema.getTypeAt(3), is(int.class));
         assertThat(schema.getTypeNamed("Price"), is(double.class));
 
-        assertThat(IndexedData.equalsIgnoringSchema(data1, ArrayData.of("Apple", null, 15, 26.5)),
+        assertThat(DidoData.equals(data1, ArrayData.of("Apple", null, 15, 26.5)),
                 is(true));
 
         DidoData data2 = ArrayData.builder()

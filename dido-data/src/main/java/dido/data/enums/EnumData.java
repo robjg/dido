@@ -64,8 +64,8 @@ public interface EnumData<E extends Enum<E>> extends GenericData<E> {
             }
 
             @Override
-            public boolean hasIndex(int index) {
-                return data.hasIndex(index);
+            public boolean hasAt(int index) {
+                return data.hasAt(index);
             }
 
             @Override

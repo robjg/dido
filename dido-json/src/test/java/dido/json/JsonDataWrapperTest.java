@@ -180,13 +180,13 @@ class JsonDataWrapperTest {
 
         assertThat(result.getAt(1), nullValue());
         assertThat(result.getStringAt(1), is("null"));
-        assertThat(result.hasIndex(2), is(false));
-        assertThat(result.hasIndex(3), is(false));
-        assertThat(result.hasIndex(4), is(false));
-        assertThat(result.hasIndex(5), is(false));
-        assertThat(result.hasIndex(6), is(false));
-        assertThat(result.hasIndex(7), is(false));
-        assertThat(result.hasIndex(8), is(false));
+        assertThat(result.hasAt(2), is(false));
+        assertThat(result.hasAt(3), is(false));
+        assertThat(result.hasAt(4), is(false));
+        assertThat(result.hasAt(5), is(false));
+        assertThat(result.hasAt(6), is(false));
+        assertThat(result.hasAt(7), is(false));
+        assertThat(result.hasAt(8), is(false));
         assertThat(((Number) result.getAt(9)), nullValue());
     }
 

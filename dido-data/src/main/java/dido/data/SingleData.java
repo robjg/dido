@@ -138,7 +138,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
     }
 
     @Override
-    public boolean hasIndex(int index) {
+    public boolean hasAt(int index) {
         if (index == 1) {
             return schema.getter.has(this);
         } else {

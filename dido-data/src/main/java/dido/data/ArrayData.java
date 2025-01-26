@@ -94,7 +94,7 @@ public final class ArrayData extends AbstractData implements DidoData {
     }
 
     @Override
-    public boolean hasIndex(int index) {
+    public boolean hasAt(int index) {
         return data[index - 1] != null;
     }
 

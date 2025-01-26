@@ -190,8 +190,8 @@ public class SubData extends AbstractData implements DidoData {
     }
 
     @Override
-    public boolean hasIndex(int index) {
-        return original.hasIndex(indices[index - 1]);
+    public boolean hasAt(int index) {
+        return original.hasAt(indices[index - 1]);
     }
 
 }

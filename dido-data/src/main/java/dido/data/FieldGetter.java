@@ -39,7 +39,7 @@ public interface FieldGetter {
 
             @Override
             public boolean has(DidoData data) {
-                return data.hasIndex(index);
+                return data.hasAt(index);
             }
 
             @Override

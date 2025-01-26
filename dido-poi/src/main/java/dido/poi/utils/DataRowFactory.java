@@ -124,7 +124,7 @@ public class DataRowFactory {
         }
 
         @Override
-        public boolean hasIndex(int index) {
+        public boolean hasAt(int index) {
             return getters[index - 1] != null;
         }
     }

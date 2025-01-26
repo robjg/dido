@@ -99,7 +99,7 @@ class EnumMapDataTest {
                 .with(Fields.Price, 47.3)
                 .build();
 
-        assertThat(data1.hasIndex(1), is(true));
+        assertThat(data1.hasAt(1), is(true));
         assertThat(data1.has(Fields.Fruit), is(true));
 
         assertThat(data1.getString(Fields.Fruit), is("Apple"));

@@ -222,7 +222,7 @@ public class FromBeanArooa {
         }
 
         @Override
-        public boolean hasIndex(int index) {
+        public boolean hasAt(int index) {
             return getAt(index) != null;
         }
 

@@ -152,7 +152,7 @@ public class ResultSetWrapper extends AbstractData implements DidoData {
     }
 
     @Override
-    public boolean hasIndex(int index) {
+    public boolean hasAt(int index) {
         try {
             resultSet.getObject(index);
             return !resultSet.wasNull();

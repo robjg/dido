@@ -16,8 +16,8 @@ data.
 
 If we know the schema in advance, we can use FieldOps in an OpTransformBuilder to do the same thing:
 {@oddjob.java.file src/test/java/dido/examples/FieldTransformExamplesTest.java#snippet1}
-Because the field ops will find the quickest way of getting and setting the data. 
-Even though we are creating the Transformation with field names, indexes might be
+Because the field ops will find the quickest way of getting and setting the data,
+even though we are creating the Transformation with field names, indexes might be
 used for the underlying data access.
 
 A DidoTransform is a java function that also provides a resultant schema. Providing 

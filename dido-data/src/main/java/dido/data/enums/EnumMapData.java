@@ -91,7 +91,7 @@ public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> imple
     }
 
     @Override
-    public boolean hasIndex(int index) {
+    public boolean hasAt(int index) {
         return has(schema.getFieldAt(index));
     }
 

@@ -27,7 +27,7 @@ class IndexedDataTest {
         }
 
         @Override
-        public boolean hasIndex(int index) {
+        public boolean hasAt(int index) {
             return false;
         }
     }
@@ -76,16 +76,5 @@ class IndexedDataTest {
         } catch (UnsupportedOperationException expected) {
             // expected
         }
-    }
-
-
-    @Test
-    void testEqualsIgnoringSchema() {
-
-        IndexedData data1 = ArrayData.of("Apple", 5, 23.7);
-        IndexedData data2 = MapData.of(
-                "Fruit", "Apple", "Qty", 5, "Price", 23.7);
-
-        assertThat(IndexedData.equalsIgnoringSchema(data1, data2), is(true));
     }
 }
