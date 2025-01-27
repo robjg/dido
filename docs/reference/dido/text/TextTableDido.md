@@ -7,7 +7,9 @@ Creates an Out that write data to a text table.
 
 | Property | Description |
 | -------- | ----------- |
+| [borderStyle](#propertyborderStyle) | A string code for which borders to show. | 
 | [schema](#propertyschema) | The schema to use when writing out the schema will be used to limit the number of fields written. | 
+| [shownBorders](#propertyshownBorders) | A string code for which borders to show. | 
 
 
 ### Example Summary
@@ -18,6 +20,17 @@ Creates an Out that write data to a text table.
 
 
 ### Property Detail
+#### borderStyle <a name="propertyborderStyle"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
+</table>
+
+A string code for which borders to show. Until this is documented here, you'll need
+to look at the source code in Maven to understand the format.
+
 #### schema <a name="propertyschema"></a>
 
 <table style='font-size:smaller'>
@@ -28,6 +41,17 @@ Creates an Out that write data to a text table.
 
 The schema to use when writing out the schema will be used to limit the number
 of fields written.
+
+#### shownBorders <a name="propertyshownBorders"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
+</table>
+
+A string code for which borders to show. Until this is documented here, you'll need
+to look at the source code in Maven to understand the format.
 
 
 ### Examples

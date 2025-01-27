@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Provide an {@link GenericData} structure backed by a Map.
+ * Provide an implementation of {@link GenericData} backed by a Map.
  */
 public class GenericMapData<F> extends AbstractGenericData<F> {
 

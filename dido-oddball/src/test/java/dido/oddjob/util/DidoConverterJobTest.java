@@ -1,6 +1,6 @@
 package dido.oddjob.util;
 
-import dido.how.conversion.DidoConverter;
+import dido.how.conversion.DidoConversionProvider;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
@@ -17,22 +17,22 @@ import static org.hamcrest.Matchers.*;
 
 class DidoConverterJobTest {
 
-    public static class NeedConverter implements Runnable{
+    public static class NeedConverter implements Runnable {
 
-        private DidoConverter converter;
+        private DidoConversionProvider conversionProvider;
 
         @Override
         public void run() {
 
         }
 
-        public DidoConverter getConverter() {
-            return converter;
+        public DidoConversionProvider getConversionProvider() {
+            return conversionProvider;
         }
 
         @Inject
-        public void setConverter(DidoConverter converter) {
-            this.converter = converter;
+        public void setConversionProvider(DidoConversionProvider conversionProvider) {
+            this.conversionProvider = conversionProvider;
         }
     }
 
@@ -51,17 +51,19 @@ class DidoConverterJobTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        DidoConverter converter = lookup.lookup("foo.converter", DidoConverter.class);
+        DidoConversionProvider converter = lookup.lookup("foo.conversionProvider",
+                DidoConversionProvider.class);
 
         assertThat(converter, notNullValue());
 
-        DidoConverter converter2 = lookup.lookup("converter.converter", DidoConverter.class);
+        DidoConversionProvider converter2 = lookup.lookup("converter.conversionProvider",
+                DidoConversionProvider.class);
 
         assertThat(converter2, sameInstance(converter));
 
         lookup.lookup("converter", Resettable.class).hardReset();
 
-        assertThat(lookup.lookup("converter.converter"), nullValue());
+        assertThat(lookup.lookup("converter.conversionProvider"), nullValue());
         assertThat(lookup.lookup("converter.services"), nullValue());
     }
 

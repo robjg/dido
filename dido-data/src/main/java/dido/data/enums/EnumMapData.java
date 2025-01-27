@@ -10,6 +10,11 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.function.Function;
 
+/**
+ * Implementation of {@link EnumData} backed by an {@link EnumMap}.
+ *
+ * @param <E> The type of Enum.
+ */
 public class EnumMapData<E extends Enum<E>> extends AbstractGenericData<E> implements EnumData<E> {
 
     private final EnumMapDataSchema<E> schema;

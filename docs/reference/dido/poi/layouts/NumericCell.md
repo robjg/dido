@@ -14,7 +14,6 @@ Define a number column. Nests within a [dido-poi:rows](../../../dido/poi/layouts
 | [reference](#propertyreference) | The Excel reference of the last row of this column that has been written. | 
 | [style](#propertystyle) | The name of the style to use. | 
 | [type](#propertytype) | The Java type of the column. | 
-| [value](#propertyvalue) |  | 
 
 
 ### Property Detail
@@ -89,15 +88,6 @@ been defined with the [dido-poi:workbook](../../../dido/poi/data/PoiWorkbook.md)
 </table>
 
 The Java type of the column.
-
-#### value <a name="propertyvalue"></a>
-
-<table style='font-size:smaller'>
-      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
-      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
-</table>
-
-
 
 
 -----------------------

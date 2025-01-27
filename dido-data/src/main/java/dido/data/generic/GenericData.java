@@ -5,9 +5,9 @@ import dido.data.DidoData;
 import java.util.Iterator;
 
 /**
- * Provide a generic data structure for moving data in and out.
+ * Provide an abstraction of {@link DidoData} providing field access via some other field type.
  *
- * @param <F> The field type. Generally a String or an enum.
+ * @param <F> The field type.
  */
 public interface GenericData<F> extends DidoData {
 

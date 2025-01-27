@@ -1,19 +1,19 @@
 [HOME](../../../README.md)
 # dido:converter
 
-Provides a `dido.how.conversion.DidoConverter` using Oddjob's conversions.
+Provides a `dido.how.conversion.DidoConversionProvider` using Oddjob's conversions.
 
 ### Property Summary
 
 | Property | Description |
 | -------- | ----------- |
-| [converter](#propertyconverter) |  | 
+| [conversionProvider](#propertyconversionProvider) |  | 
 | [name](#propertyname) |  | 
 | [services](#propertyservices) |  | 
 
 
 ### Property Detail
-#### converter <a name="propertyconverter"></a>
+#### conversionProvider <a name="propertyconversionProvider"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Access</i></td><td>READ_ONLY</td></tr>

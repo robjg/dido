@@ -10,6 +10,7 @@ and writing rows to.
 | -------- | ----------- |
 | [autoFilter](#propertyautoFilter) | If true then automatically set an auto filter on the column. | 
 | [autoWidth](#propertyautoWidth) | If true then automatically set the width of the column to the widest column value when values have finished being written. | 
+| [conversionProvider](#propertyconversionProvider) | Provides conversions. | 
 | [firstColumn](#propertyfirstColumn) | The starting column in the sheet. | 
 | [firstRow](#propertyfirstRow) | The starting row in the sheet. | 
 | [headings](#propertyheadings) | Set when reading if there is a header row to read headings from. | 
@@ -18,7 +19,8 @@ and writing rows to.
 | [lastRow](#propertylastRow) | The last row in the sheet written to by this layout. | 
 | [of](#propertyof) | The child layouts for the rows. | 
 | [outType](#propertyoutType) |  | 
-| [schema](#propertyschema) |  | 
+| [partialSchema](#propertypartialSchema) | Is the provided schema only a partial schema. | 
+| [schema](#propertyschema) | The schema to use when reading and writing data. | 
 | [sheetName](#propertysheetName) | The name of the sheet to read or write. | 
 | [styles](#propertystyles) | Allow a number of named styles to be set for the book. | 
 | [withHeader](#propertywithHeader) | Should a header row be written (true/false). | 
@@ -46,6 +48,16 @@ the column.
 
 If true then automatically set the width of the column to the
 widest column value when values have finished being written.
+
+#### conversionProvider <a name="propertyconversionProvider"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>Set by Oddjob.</td></tr>
+</table>
+
+Provides conversions.
 
 #### firstColumn <a name="propertyfirstColumn"></a>
 
@@ -127,14 +139,27 @@ or [dido-poi:numeric-formula](../../../dido/poi/layouts/NumericFormulaCell.md).
 
 
 
+#### partialSchema <a name="propertypartialSchema"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
+</table>
+
+Is the provided schema only a partial schema.
+Only applies when reading. If true, then the rest of the schema is derived from the data.
+
 #### schema <a name="propertyschema"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
       <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
 </table>
 
-
+The schema to use when reading and writing data.
+If not provided, the schema It will be derived when reading and taken from the data when writing.
 
 #### sheetName <a name="propertysheetName"></a>
 

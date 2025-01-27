@@ -14,7 +14,6 @@ Define a date column. Nests within a [dido-poi:rows](../../../dido/poi/layouts/D
 | [reference](#propertyreference) | The Excel reference of the last row of this column that has been written. | 
 | [style](#propertystyle) | The name of the style to use. | 
 | [type](#propertytype) | The Java type of the column. | 
-| [value](#propertyvalue) |  | 
 
 
 ### Property Detail
@@ -83,20 +82,12 @@ been defined with the [dido-poi:workbook](../../../dido/poi/data/PoiWorkbook.md)
 #### type <a name="propertytype"></a>
 
 <table style='font-size:smaller'>
-      <tr><td><i>Access</i></td><td>READ_ONLY</td></tr>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
       <tr><td><i>Required</i></td><td>Read only.</td></tr>
 </table>
 
 The Java type of the column.
-
-#### value <a name="propertyvalue"></a>
-
-<table style='font-size:smaller'>
-      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
-      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
-</table>
-
-
 
 
 -----------------------
