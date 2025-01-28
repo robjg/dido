@@ -1,6 +1,7 @@
 package dido.operators.transform;
 
 import dido.data.*;
+import dido.data.util.TypeUtil;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 import org.slf4j.Logger;
@@ -177,10 +178,10 @@ public class ValueCopyFactory implements Supplier<OpDef> {
                         return (fromData, toData) -> setter.set(toData, conversion.apply(getter.get(fromData)));
                     };
 
-            Class<?> fromType = fromSchema.getTypeAt(index);
+            Class<?> fromType = TypeUtil.classOf(fromSchema.getTypeAt(index));
             Class<?> toType;
             if (this.type == null) {
-                toType = fromSchema.getTypeAt(index);
+                toType = TypeUtil.classOf(fromSchema.getTypeAt(index));
             } else {
                 toType = type;
             }

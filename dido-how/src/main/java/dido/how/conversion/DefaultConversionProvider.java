@@ -132,8 +132,8 @@ public class DefaultConversionProvider implements DidoConversionProvider {
     @Override
     public <F, T> Function<F, T> conversionFor(Class<F> from, Class<T> to) {
 
-        Class<?> from_ = Primitives.wrap(from);
-        Class<?> to_ = Primitives.wrap(to);
+        Class<?> from_ = (Class<?>) Primitives.wrap(from);
+        Class<?> to_ = (Class<?>) Primitives.wrap(to);
 
         if (to_.isAssignableFrom(from_)) {
             return value -> (T) value;

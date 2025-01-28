@@ -4,6 +4,7 @@ import dido.data.useful.*;
 import dido.data.util.DataBuilder;
 import dido.data.util.FieldValuesIn;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 public class NonBoxedData extends AbstractData {
@@ -403,7 +404,7 @@ public class NonBoxedData extends AbstractData {
             int doubles = 0;
 
             for (SchemaField schemaField : fields) {
-                Class<?> type = schemaField.getType();
+                Type type = schemaField.getType();
                 int index = schemaField.getIndex();
                 int arrayIndex = index - 1;
                 if (type == int.class) {

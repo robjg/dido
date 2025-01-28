@@ -1,6 +1,7 @@
 package dido.operators.transform;
 
 import dido.data.DataSchema;
+import dido.data.util.TypeUtil;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 
@@ -106,7 +107,7 @@ public class ValueSetFactory implements Supplier<OpDef> {
                     toType = Object.class;
                 }
                 else {
-                    toType = fromSchema.getTypeAt(index);
+                    toType = TypeUtil.classOf(fromSchema.getTypeAt(index));
                 }
             }
             else {

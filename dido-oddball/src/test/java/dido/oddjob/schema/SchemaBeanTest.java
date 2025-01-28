@@ -2,6 +2,7 @@ package dido.oddjob.schema;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
+import dido.data.util.TypeUtil;
 import dido.test.OurDirs;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
@@ -157,7 +158,7 @@ class SchemaBeanTest {
         DataSchema schema = lookup.lookup("main/vars.schema", DataSchema.class);
 
         assertThat(schema, notNullValue());
-        assertThat(schema.getTypeNamed("CustomType").getName(), is("foo.stuff.SomeType"));
+        assertThat(TypeUtil.toString(schema.getTypeNamed("CustomType")), is("foo.stuff.SomeType"));
 
         oddjob.destroy();
     }

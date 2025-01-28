@@ -2,6 +2,7 @@ package dido.operators.transform;
 
 import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.util.TypeUtil;
 
 import java.util.Objects;
 import java.util.function.*;
@@ -437,7 +438,7 @@ public class FieldOps {
 
             schemaField = schemaSetter.addField(schemaField);
 
-            return setterFactoryFor(schemaField.getName(), value, schemaField.getType());
+            return setterFactoryFor(schemaField.getName(), value, TypeUtil.classOf(schemaField.getType()));
         };
     }
 

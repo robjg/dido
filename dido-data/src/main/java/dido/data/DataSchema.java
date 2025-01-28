@@ -2,6 +2,7 @@ package dido.data;
 
 import dido.data.generic.GenericSchemaField;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -84,7 +85,7 @@ public interface DataSchema extends IndexedSchema {
      * @param name The field.
      * @return The type.
      */
-    Class<?> getTypeNamed(String name);
+    Type getTypeNamed(String name);
 
     /**
      * Get the nested schema for the given field. If the

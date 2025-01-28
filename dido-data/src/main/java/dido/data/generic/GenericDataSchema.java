@@ -2,6 +2,7 @@ package dido.data.generic;
 
 import dido.data.DataSchema;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 
@@ -100,7 +101,7 @@ public interface GenericDataSchema<F> extends DataSchema {
      * @param field The field.
      * @return The type.
      */
-    Class<?> getTypeOf(F field);
+    Type getTypeOf(F field);
 
     /**
      * Get the nested schema for the given field. If the

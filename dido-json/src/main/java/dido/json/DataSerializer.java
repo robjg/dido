@@ -46,7 +46,7 @@ public class DataSerializer implements JsonSerializer<DidoData> {
             ReadStrategy readStrategy = ReadStrategy.fromSchema(schema);
 
             for (SchemaField schemaField : schema.getSchemaFields()) {
-                Class<?> cl = Primitives.wrap(schemaField.getType());
+                Type cl = Primitives.wrap(schemaField.getType());
                 String name = schemaField.getName();
                 FieldGetter getter = readStrategy.getFieldGetterNamed(name);
                 int arrayIndex = schemaField.getIndex() - 1;

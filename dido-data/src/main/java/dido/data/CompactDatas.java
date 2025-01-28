@@ -3,6 +3,7 @@ package dido.data;
 import dido.data.useful.AbstractCompactData;
 import dido.data.useful.AbstractCompactSchema;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -18,7 +19,7 @@ public class CompactDatas {
         ReadSchema readSchema = ReadSchema.from(original);
 
         if (indices.length == 1) {
-            Class<?> type = readSchema.getTypeAt(indices[0]);
+            Type type = readSchema.getTypeAt(indices[0]);
             FieldGetter getter = readSchema.getFieldGetterAt(indices[0]);
             if (type == int.class) {
                 return new SingleIntExtractor(getter);
@@ -26,7 +27,7 @@ public class CompactDatas {
                 return new SingleValueExtractor(type, getter);
             }
         } else {
-            Class<?>[] types = new Class[indices.length];
+            Type[] types = new Class[indices.length];
             FieldGetter[] getters = new FieldGetter[indices.length];
             for (int i = 0; i < types.length; ++i) {
                 types[i] = readSchema.getTypeAt(indices[i]);
@@ -59,7 +60,7 @@ public class CompactDatas {
 
         private final FieldGetter getter;
 
-        SingleValueExtractor(Class<?> type, FieldGetter getter) {
+        SingleValueExtractor(Type type, FieldGetter getter) {
             this.schema = new SingleSchema(type);
             this.getter = getter;
         }
@@ -126,9 +127,9 @@ public class CompactDatas {
 
     static class MuchDataSchema extends AbstractCompactSchema implements CompactSchema {
 
-        private final Class<?>[] types;
+        private final Type[] types;
 
-        private MuchDataSchema(Class<?>[] types) {
+        private MuchDataSchema(Type[] types) {
             this.types = types;
         }
 
@@ -153,7 +154,7 @@ public class CompactDatas {
         }
 
         @Override
-        public Class<?> getTypeAt(int index) {
+        public Type getTypeAt(int index) {
             return types[index - 1];
         }
     }
@@ -203,9 +204,9 @@ public class CompactDatas {
 
     static class SingleSchema extends AbstractCompactSchema implements CompactSchema {
 
-        private final Class<?> type;
+        private final Type type;
 
-        SingleSchema(Class<?> type) {
+        SingleSchema(Type type) {
             this.type = type;
         }
 
@@ -230,7 +231,7 @@ public class CompactDatas {
         }
 
         @Override
-        public Class<?> getTypeAt(int index) {
+        public Type getTypeAt(int index) {
             if (index == 1) {
                 return type;
             } else {

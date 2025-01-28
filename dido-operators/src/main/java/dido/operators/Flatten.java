@@ -1,7 +1,9 @@
 package dido.operators;
 
 import dido.data.*;
+import dido.data.util.TypeUtil;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -119,7 +121,7 @@ public class Flatten {
 
                 extractorMap.put(index, extractor);
 
-                Class<?> type = schema.getTypeAt(index);
+                Class<?> type = TypeUtil.classOf(schema.getTypeAt(index));
                 Class<?> newType;
                 if (type.isArray()) {
                     newType = Primitives.wrap(type.getComponentType());
@@ -168,7 +170,7 @@ public class Flatten {
                 }
 
                 List<Object> list;
-                Class<?> type = extractor.getType(schema);
+                Class<?> type = TypeUtil.classOf(extractor.getType(schema));
                 if (type.isArray()) {
                     Class<?> component = type.getComponentType();
                     if (component.isPrimitive()) {
@@ -281,7 +283,7 @@ public class Flatten {
 
         Object extract(DidoData data);
 
-        Class<?> getType(DataSchema schema);
+        Type getType(DataSchema schema);
 
         DataSchema getSchema(DataSchema schema);
 
@@ -318,7 +320,7 @@ public class Flatten {
         }
 
         @Override
-        public Class<?> getType(DataSchema schema) {
+        public Type getType(DataSchema schema) {
             return schema.getTypeNamed(field);
         }
 
@@ -358,7 +360,7 @@ public class Flatten {
         }
 
         @Override
-        public Class<?> getType(DataSchema schema) {
+        public Type getType(DataSchema schema) {
             return schema.getTypeAt(index);
         }
 

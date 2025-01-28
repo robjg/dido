@@ -3,13 +3,14 @@ package dido.poi.columns;
 import dido.data.DidoData;
 import dido.data.FieldGetter;
 import dido.data.SchemaField;
+import dido.data.util.TypeUtil;
 import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
 import dido.how.conversion.RequiringConversion;
 import dido.how.util.Primitives;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
+import java.lang.reflect.Type;
 import java.util.function.Function;
 
 /**
@@ -52,13 +53,14 @@ public class BooleanColumn extends AbstractColumn {
     @Override
     protected FieldGetter getterFor(SchemaField schemaField, DidoConversionProvider conversionProvider) {
 
-        Class<?> type = Primitives.wrap(schemaField.getType());
+        Type type = Primitives.wrap(schemaField.getType());
 
-        if (type.isAssignableFrom(Boolean.class)) {
+        if (TypeUtil.isAssignableFrom(type, Boolean.class)) {
             return new BooleanCellGetter(schemaField);
         } else {
             return new BooleanCellGetterWithConversion<>(schemaField,
-                    RequiringConversion.with(conversionProvider).from(Boolean.class).to(type));
+                    RequiringConversion.with(conversionProvider).from(Boolean.class)
+                            .to(TypeUtil.classOf(type)));
         }
     }
 
@@ -102,35 +104,33 @@ public class BooleanColumn extends AbstractColumn {
     @Override
     protected Injector injectorFor(SchemaField schemaField, FieldGetter getter, DidoConversionProvider conversionProvider) {
 
-        Class<?> fromType = schemaField.getType();
+        Type fromType = schemaField.getType();
 
         Function<Object, Boolean> conversion;
 
-        if (Boolean.class.isAssignableFrom(fromType)) {
+        if (TypeUtil.isAssignableFrom(fromType, Boolean.class)) {
             conversion = null;
         } else {
             //noinspection unchecked
-            conversion = (Function<Object, Boolean>) conversionProvider.conversionFor(fromType, Boolean.class);
+            conversion = (Function<Object, Boolean>) conversionProvider.conversionFor(
+                    TypeUtil.classOf(fromType), Boolean.class);
         }
 
-        return new Injector() {
-            @Override
-            public void insertValueInto(Cell cell, DidoData data) {
+        return (cell, data) -> {
 
-                if (!getter.has(data)) {
-                    cell.setBlank();
-                    return;
-                }
-
-                boolean value;
-                if (conversion == null) {
-                    value = (getter.getBoolean(data));
-                } else {
-                    value = conversion.apply(getter.get(data));
-                }
-
-                cell.setCellValue(value);
+            if (!getter.has(data)) {
+                cell.setBlank();
+                return;
             }
+
+            boolean value;
+            if (conversion == null) {
+                value = (getter.getBoolean(data));
+            } else {
+                value = conversion.apply(getter.get(data));
+            }
+
+            cell.setCellValue(value);
         };
     }
 }

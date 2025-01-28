@@ -3,6 +3,7 @@ package dido.data.useful;
 import dido.data.DataSchema;
 import dido.data.SchemaField;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 public class SchemaDelegate extends AbstractDataSchema implements DataSchema {
@@ -48,7 +49,7 @@ public class SchemaDelegate extends AbstractDataSchema implements DataSchema {
     }
 
     @Override
-    public Class<?> getTypeNamed(String name) {
+    public Type getTypeNamed(String name) {
         return delegate.getTypeNamed(name);
     }
 
@@ -88,7 +89,7 @@ public class SchemaDelegate extends AbstractDataSchema implements DataSchema {
     }
 
     @Override
-    public Class<?> getTypeAt(int index) {
+    public Type getTypeAt(int index) {
         return delegate.getTypeAt(index);
     }
 }

@@ -7,6 +7,7 @@ import dido.poi.RowIn;
 import dido.poi.data.DataCell;
 import org.apache.poi.ss.usermodel.Cell;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -133,7 +134,7 @@ public class SchemaAndCells<P extends CellProvider> {
 
             int index = schemaField.getIndex();
             String name = schemaField.getName();
-            Class<?> type = schemaField.getType();
+            Type type = schemaField.getType();
 
             return cellProviderFactory.cellProviderFor(index, name, type);
         }

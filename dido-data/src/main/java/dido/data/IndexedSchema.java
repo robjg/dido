@@ -1,5 +1,7 @@
 package dido.data;
 
+import java.lang.reflect.Type;
+
 /**
  * Schema for {@link IndexedData}. The most basic form of Schema.
  */
@@ -45,7 +47,7 @@ public interface IndexedSchema {
      * @param index The index.
      * @return The type.
      */
-    Class<?> getTypeAt(int index);
+    Type getTypeAt(int index);
 
 
 }

@@ -1,5 +1,7 @@
 package dido.data;
 
+import java.lang.reflect.Type;
+
 /**
  * Builder for an {@link DataSchema}.
  */
@@ -21,15 +23,15 @@ public class SchemaBuilder {
 
     // Add Simple Fields
 
-    public SchemaBuilder add(Class<?> fieldType) {
+    public SchemaBuilder add(Type fieldType) {
         return addAt(0, fieldType);
     }
 
-    public SchemaBuilder addAt(int index, Class<?> fieldType) {
+    public SchemaBuilder addAt(int index, Type fieldType) {
         return addNamedAt(index, null, fieldType);
     }
 
-    public SchemaBuilder addNamed(String name, Class<?> fieldType) {
+    public SchemaBuilder addNamed(String name, Type fieldType) {
         return addNamedAt(0, name, fieldType);
     }
 
@@ -45,7 +47,7 @@ public class SchemaBuilder {
      * @param fieldType The field type. Must not be null.
      * @return This builder
      */
-    public SchemaBuilder addNamedAt(int index, String name, Class<?> fieldType) {
+    public SchemaBuilder addNamedAt(int index, String name, Type fieldType) {
 
         schemaFactory.addSchemaField(SchemaField.of(index, name, fieldType));
         return this;

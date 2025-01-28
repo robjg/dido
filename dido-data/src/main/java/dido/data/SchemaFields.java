@@ -1,12 +1,14 @@
 package dido.data;
 
 import dido.data.generic.GenericSchemaField;
+import dido.data.util.TypeUtil;
 
+import java.lang.reflect.Type;
 import java.util.Objects;
 
 class SchemaFields {
 
-    public static SchemaField of(int index, String field, Class<?> type) {
+    public static SchemaField of(int index, String field, Type type) {
             return new Simple(index, field, type);
     }
 
@@ -36,9 +38,9 @@ class SchemaFields {
 
         private final String name;
 
-        private final Class<?> type;
+        private final Type type;
 
-        private Simple(int index, String name, Class<?> type) {
+        private Simple(int index, String name, Type type) {
             this.index = index;
             this.name = name;
             this.type = Objects.requireNonNull(type);
@@ -50,7 +52,7 @@ class SchemaFields {
         }
 
         @Override
-        public Class<?> getType() {
+        public Type getType() {
             return type;
         }
 
@@ -100,7 +102,7 @@ class SchemaFields {
 
         @Override
         public String toString() {
-            return "[" + index + ':' + name + "]=" + type.getName();
+            return "[" + index + ':' + name + "]=" + TypeUtil.toString(type);
         }
     }
 
@@ -125,7 +127,7 @@ class SchemaFields {
         }
 
         @Override
-        public Class<?> getType() {
+        public Type getType() {
             return simple.getType();
         }
 
@@ -220,7 +222,7 @@ class SchemaFields {
         }
 
         @Override
-        public Class<?> getType() {
+        public Type getType() {
             return simple.getType();
         }
 

@@ -2,6 +2,7 @@ package dido.data.generic;
 
 import dido.data.DataSchema;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -137,7 +138,7 @@ public class GenericSchemaImpl<F> extends AbstractGenericDataSchema<F> {
     }
 
     @Override
-    public Class<?> getTypeAt(int index) {
+    public Type getTypeAt(int index) {
         return indexToSchemaField[index - firstIndex].getType();
     }
 

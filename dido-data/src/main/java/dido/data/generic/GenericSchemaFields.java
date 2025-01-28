@@ -4,6 +4,7 @@ import dido.data.DataSchema;
 import dido.data.SchemaField;
 import dido.data.SchemaReference;
 
+import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -112,7 +113,7 @@ class GenericSchemaFields<F> implements GenericSchemaField.Of<F> {
         }
 
         @Override
-        public Class<?> getType() {
+        public Type getType() {
             return delegate.getType();
         }
 

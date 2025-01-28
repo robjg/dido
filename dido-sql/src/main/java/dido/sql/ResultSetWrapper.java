@@ -4,9 +4,11 @@ import dido.data.NoSuchFieldException;
 import dido.data.*;
 import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractDataSchema;
+import dido.data.util.TypeUtil;
 import dido.how.DataException;
 import dido.how.FieldAccessException;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -423,7 +425,7 @@ public class ResultSetWrapper extends AbstractData implements DidoData {
                 int column = index + 1;
 
                 String name = metaData.getColumnLabel(column);
-                Class<?> type = schemaUtils.getColumnType(column, metaData);
+                Type type = schemaUtils.getColumnType(column, metaData);
 
                 SchemaField override = typeOverrides.getOverride(name);
 
@@ -433,7 +435,8 @@ public class ResultSetWrapper extends AbstractData implements DidoData {
                     name = override.getName();
                     if (override.getType() != type) {
                         type = override.getType();
-                        getters[index] = new TypeOverrideGetter(column, type);
+                        getters[index] = new TypeOverrideGetter(column,
+                                TypeUtil.classOf(type));
                     }
                 }
 

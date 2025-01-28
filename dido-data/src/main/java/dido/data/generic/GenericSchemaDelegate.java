@@ -3,6 +3,7 @@ package dido.data.generic;
 import dido.data.DataSchema;
 import dido.data.useful.SchemaDelegate;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 public class GenericSchemaDelegate<F> extends SchemaDelegate implements GenericDataSchema<F> {
@@ -62,7 +63,7 @@ public class GenericSchemaDelegate<F> extends SchemaDelegate implements GenericD
     }
 
     @Override
-    public Class<?> getTypeOf(F field) {
+    public Type getTypeOf(F field) {
         return delegate.getTypeOf(field);
     }
 

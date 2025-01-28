@@ -1,10 +1,12 @@
 package dido.poi.layouts;
 
+import dido.data.util.TypeUtil;
 import dido.how.util.Primitives;
 import dido.poi.CellProviderFactory;
 import dido.poi.data.DataCell;
 import org.apache.poi.ss.usermodel.Cell;
 
+import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -28,8 +30,8 @@ public class DataCellFactory implements CellProviderFactory<DataCell> {
     );
 
     @Override
-    public DataCell cellProviderFor(int index, String name, Class<?> type) {
-        Class<?> cellType = Primitives.wrap(type);
+    public DataCell cellProviderFor(int index, String name, Type type) {
+        Class<?> cellType = TypeUtil.classOf(Primitives.wrap(type));
 
         AbstractDataCell cell;
 

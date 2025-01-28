@@ -3,6 +3,7 @@ package dido.poi.columns;
 import dido.data.DidoData;
 import dido.data.FieldGetter;
 import dido.data.SchemaField;
+import dido.data.util.TypeUtil;
 import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
 import dido.how.conversion.RequiringConversion;
@@ -42,7 +43,7 @@ public class NumericColumn extends AbstractColumn {
             if (type == null) {
                 this.type = null;
             } else {
-                type = Primitives.wrap(type);
+                type = (Class<?>) Primitives.wrap(type);
                 if (Number.class.isAssignableFrom(type)) {
                     this.type = type;
                 } else {
@@ -80,7 +81,7 @@ public class NumericColumn extends AbstractColumn {
     protected FieldGetter getterFor(SchemaField schemaField,
                                     DidoConversionProvider conversionProvider) {
 
-        Class<?> type = Primitives.wrap(schemaField.getType());
+        Class<?> type = TypeUtil.classOf(Primitives.wrap(schemaField.getType()));
         if (type.isAssignableFrom(Double.class)) {
             return new DoubleGetter(schemaField);
         } else if (type.isAssignableFrom(Integer.class)) {
@@ -233,7 +234,7 @@ public class NumericColumn extends AbstractColumn {
                                    FieldGetter getter,
                                    DidoConversionProvider conversionProvider) {
 
-        Class<?> fromType = schemaField.getType();
+        Class<?> fromType = TypeUtil.classOf(schemaField.getType());
         Class<?> toType = getType();
 
         Function<Object, Number> conversion;

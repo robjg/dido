@@ -1,6 +1,7 @@
 package dido.oddjob.types;
 
 import dido.data.*;
+import dido.data.util.TypeUtil;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.convert.ArooaConverter;
@@ -44,7 +45,7 @@ public class DidoDataType implements ValueFactory<DidoData>, ArooaSessionAware {
                     value = values.get(i - 1);
                 }
 
-                Object v = converter.convert(value, schema.getTypeAt(i));
+                Object v = converter.convert(value, TypeUtil.classOf(schema.getTypeAt(i)));
                 writableData.setAt(i, v);
             }
             return dataFactory.toData();

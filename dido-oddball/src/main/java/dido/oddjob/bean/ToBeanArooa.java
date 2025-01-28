@@ -3,6 +3,7 @@ package dido.oddjob.bean;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.SchemaField;
+import dido.data.util.TypeUtil;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.beanutils.MagicBeanClassCreator;
@@ -54,7 +55,7 @@ public class ToBeanArooa {
 
         for (String field : schema.getFieldNames()) {
 
-            classCreator.addProperty(field, schema.getTypeNamed(field));
+            classCreator.addProperty(field, TypeUtil.classOf(schema.getTypeNamed(field)));
         }
 
         return ofArooaClass(classCreator.create());

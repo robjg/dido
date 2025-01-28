@@ -3,6 +3,7 @@ package dido.poi.columns;
 import dido.data.DidoData;
 import dido.data.FieldGetter;
 import dido.data.SchemaField;
+import dido.data.util.TypeUtil;
 import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
 import dido.how.conversion.RequiringConversion;
@@ -75,7 +76,7 @@ public class DateColumn extends AbstractColumn {
 
     @Override
     protected FieldGetter getterFor(SchemaField schemaField, DidoConversionProvider conversionProvider) {
-        Class<?> type = schemaField.getType();
+        Class<?> type = TypeUtil.classOf(schemaField.getType());
 
         if (type.isAssignableFrom(LocalDateTime.class)) {
             return new LocalDateTimeGetter(schemaField);
@@ -146,7 +147,7 @@ public class DateColumn extends AbstractColumn {
                                    FieldGetter getter,
                                    DidoConversionProvider conversionProvider) {
 
-        Class<?> fromType = schemaField.getType();
+        Class<?> fromType = TypeUtil.classOf(schemaField.getType());
         Class<?> toType = getType();
 
         Function<?, ?> conversion;

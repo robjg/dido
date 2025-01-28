@@ -3,6 +3,7 @@ package dido.data.generic;
 import dido.data.DataSchema;
 import dido.data.useful.AbstractDataSchema;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -58,7 +59,7 @@ public abstract class AbstractGenericDataSchema<F> extends AbstractDataSchema
     }
 
     @Override
-    public Class<?> getTypeOf(F field) {
+    public Type getTypeOf(F field) {
         GenericSchemaField<F> schemaField = getSchemaFieldOf(field);
         return schemaField == null ? null : schemaField.getType();
     }

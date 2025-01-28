@@ -1,5 +1,6 @@
 package dido.data;
 
+import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
@@ -35,7 +36,7 @@ public interface SchemaField {
      *
      * @return The type.
      */
-    Class<?> getType();
+    Type getType();
 
     /**
      * Does this field contain a nested Schema Definition. The {@link #getType()} of a nested definition
@@ -71,7 +72,7 @@ public interface SchemaField {
 
     SchemaField mapTo(int toIndex, String toName);
 
-    static SchemaField of(int index, String name, Class<?> type) {
+    static SchemaField of(int index, String name, Type type) {
         return SchemaFields.of(index, name, type);
     }
 

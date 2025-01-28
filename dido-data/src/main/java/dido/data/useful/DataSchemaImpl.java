@@ -3,6 +3,7 @@ package dido.data.useful;
 import dido.data.DataSchema;
 import dido.data.SchemaField;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -106,7 +107,7 @@ public class DataSchemaImpl extends AbstractDataSchema {
     }
 
     @Override
-    public Class<?> getTypeAt(int index) {
+    public Type getTypeAt(int index) {
         SchemaField schemaField = indexToSchemaField[index - firstIndex];
         return schemaField == null ? null : schemaField.getType();
     }

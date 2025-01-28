@@ -2,6 +2,7 @@ package dido.text;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.util.TypeUtil;
 import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -214,9 +216,9 @@ public class DataOutTextTable implements DataOutHow<Appendable> {
         }
     }
 
-    static protected CellStyle styleFor(Class<?> type) {
+    static protected CellStyle styleFor(Type type) {
 
-        if (Primitives.unwrap(type).isPrimitive()) {
+        if (TypeUtil.isPrimitive(Primitives.unwrap(type))) {
             return new CellStyle(CellStyle.HorizontalAlign.RIGHT,
                     CellStyle.AbbreviationStyle.DOTS, CellStyle.NullStyle.EMPTY_STRING, false);
         }

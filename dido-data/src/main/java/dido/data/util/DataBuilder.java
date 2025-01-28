@@ -3,6 +3,7 @@ package dido.data.util;
 import dido.data.NoSuchFieldException;
 import dido.data.*;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,7 @@ abstract public class DataBuilder {
 
     abstract public DataBuilder withString(String field, String value);
 
-    abstract  protected void setUnsetType(String name, Class<?> type);
+    abstract  protected void setUnsetType(String name, Type type);
 
     abstract public DidoData build();
 
@@ -140,7 +141,7 @@ abstract public class DataBuilder {
             return this;
         }
 
-        protected void setUnsetType(String name, Class<?> type) {
+        protected void setUnsetType(String name, Type type) {
             getSetterWithNameCheck(name).clear(dataFactory.getWritableData());
         }
 
@@ -201,11 +202,11 @@ abstract public class DataBuilder {
             return setField(field, value, String.class);
         }
 
-        protected void setUnsetType(String name, Class<?> type) {
+        protected void setUnsetType(String name, Type type) {
             setField(name, null, type);
         }
 
-        private Unknown setField(String field, Object value, Class<?> type) {
+        private Unknown setField(String field, Object value, Type type) {
             values.add(value);
             schemaFields.add(SchemaField.of(schemaFields.size() + 1, field, type));
             return this;
@@ -237,7 +238,7 @@ abstract public class DataBuilder {
         DataSchema schema = from.getSchema();
         for (SchemaField schemaField : schema.getSchemaFields()) {
             String name = schemaField.getName();
-            Class<?> type = schemaField.getType();
+            Type type = schemaField.getType();
             if (type == boolean.class && from.hasNamed(name)) {
                 withBoolean(name, from.getBooleanNamed(name));
             }

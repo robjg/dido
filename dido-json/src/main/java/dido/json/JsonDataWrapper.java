@@ -87,7 +87,7 @@ public class JsonDataWrapper {
 
                 SchemaField schemaField = schema.getSchemaFieldAt(index);
 
-                Class<?> fieldType = schemaField.getType();
+                Type fieldType = schemaField.getType();
 
                 Schema restore = null;
                 if (schemaField.isNested()) {

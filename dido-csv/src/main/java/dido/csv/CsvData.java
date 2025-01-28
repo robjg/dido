@@ -5,9 +5,11 @@ import dido.data.*;
 import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractFieldGetter;
 import dido.data.useful.DataSchemaImpl;
+import dido.data.util.TypeUtil;
 import dido.how.conversion.DidoConversionProvider;
 import org.apache.commons.csv.CSVRecord;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
@@ -228,7 +230,7 @@ public class CsvData extends AbstractData {
 
         for (SchemaField schemaField : schema.getSchemaFields()) {
 
-            Class<?> type = schemaField.getType();
+            Type type = schemaField.getType();
             int arrayIndex = schemaField.getIndex() - 1;
             if (type == String.class || type == Object.class) {
                 getters[arrayIndex] = new StringGetter(arrayIndex);
@@ -244,7 +246,8 @@ public class CsvData extends AbstractData {
             } else if (type == char.class) {
                 getters[arrayIndex] = new CharGetter(arrayIndex);
             } else {
-                Function<String, ?> conversion = conversionProvider.conversionFor(String.class, type);
+                Function<String, ?> conversion = conversionProvider.conversionFor(
+                        String.class, TypeUtil.classOf(type));
                 getters[arrayIndex] = new ConversionGetter<>(arrayIndex, conversion);
             }
         }

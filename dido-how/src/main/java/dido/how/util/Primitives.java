@@ -1,5 +1,7 @@
 package dido.how.util;
 
+import java.lang.reflect.Type;
+
 /**
  * Copied from Google... as only Json pulls in the dependency.
  */
@@ -14,17 +16,16 @@ public class Primitives {
      *     wrap(String.class) == String.class
      * </pre>
      */
-    @SuppressWarnings("unchecked")
-    public static <T> Class<T> wrap(Class<T> type) {
-        if (type == int.class) return (Class<T>) Integer.class;
-        if (type == float.class) return (Class<T>) Float.class;
-        if (type == byte.class) return (Class<T>) Byte.class;
-        if (type == double.class) return (Class<T>) Double.class;
-        if (type == long.class) return (Class<T>) Long.class;
-        if (type == char.class) return (Class<T>) Character.class;
-        if (type == boolean.class) return (Class<T>) Boolean.class;
-        if (type == short.class) return (Class<T>) Short.class;
-        if (type == void.class) return (Class<T>) Void.class;
+    public static Type wrap(Type type) {
+        if (type == int.class) return Integer.class;
+        if (type == float.class) return Float.class;
+        if (type == byte.class) return  Byte.class;
+        if (type == double.class) return Double.class;
+        if (type == long.class) return Long.class;
+        if (type == char.class) return Character.class;
+        if (type == boolean.class) return Boolean.class;
+        if (type == short.class) return Short.class;
+        if (type == void.class) return Void.class;
         return type;
     }
 
@@ -37,17 +38,16 @@ public class Primitives {
      *     unwrap(String.class) == String.class
      * </pre>
      */
-    @SuppressWarnings("unchecked")
-    public static <T> Class<T> unwrap(Class<T> type) {
-        if (type == Integer.class) return (Class<T>) int.class;
-        if (type == Float.class) return (Class<T>) float.class;
-        if (type == Byte.class) return (Class<T>) byte.class;
-        if (type == Double.class) return (Class<T>) double.class;
-        if (type == Long.class) return (Class<T>) long.class;
-        if (type == Character.class) return (Class<T>) char.class;
-        if (type == Boolean.class) return (Class<T>) boolean.class;
-        if (type == Short.class) return (Class<T>) short.class;
-        if (type == Void.class) return (Class<T>) void.class;
+    public static Type unwrap(Type type) {
+        if (type == Integer.class) return int.class;
+        if (type == Float.class) return float.class;
+        if (type == Byte.class) return byte.class;
+        if (type == Double.class) return double.class;
+        if (type == Long.class) return long.class;
+        if (type == Character.class) return char.class;
+        if (type == Boolean.class) return boolean.class;
+        if (type == Short.class) return short.class;
+        if (type == Void.class) return void.class;
         return type;
     }
 

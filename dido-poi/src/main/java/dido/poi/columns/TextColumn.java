@@ -3,6 +3,7 @@ package dido.poi.columns;
 import dido.data.DidoData;
 import dido.data.FieldGetter;
 import dido.data.SchemaField;
+import dido.data.util.TypeUtil;
 import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
 import dido.how.conversion.RequiringConversion;
@@ -53,7 +54,7 @@ public class TextColumn extends AbstractColumn {
     @Override
     protected FieldGetter getterFor(SchemaField schemaField, DidoConversionProvider conversionProvider) {
 
-        Class<?> type = schemaField.getType();
+        Class<?> type = TypeUtil.classOf(schemaField.getType());
 
         if (type.isAssignableFrom(String.class)) {
             return new TextCellGetter(schemaField);
@@ -104,7 +105,7 @@ public class TextColumn extends AbstractColumn {
     @Override
     protected Injector injectorFor(SchemaField schemaField, FieldGetter getter, DidoConversionProvider conversionProvider) {
 
-        Class<?> fromType = schemaField.getType();
+        Class<?> fromType = TypeUtil.classOf(schemaField.getType());
 
         Function<Object, String> conversion;
 
