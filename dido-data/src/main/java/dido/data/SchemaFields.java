@@ -1,7 +1,6 @@
 package dido.data;
 
 import dido.data.generic.GenericSchemaField;
-import dido.data.util.TypeUtil;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -102,7 +101,7 @@ class SchemaFields {
 
         @Override
         public String toString() {
-            return "[" + index + ':' + name + "]=" + TypeUtil.toString(type);
+            return "[" + index + ':' + name + "]=" + type.getTypeName();
         }
     }
 

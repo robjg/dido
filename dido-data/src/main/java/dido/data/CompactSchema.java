@@ -1,7 +1,5 @@
 package dido.data;
 
-import dido.data.util.TypeUtil;
-
 import java.util.Objects;
 
 /**
@@ -66,7 +64,7 @@ public interface CompactSchema extends IndexedSchema {
                 sb.append(", ");
             }
             sb.append('[').append(i)
-                    .append("]=").append(TypeUtil.toString(schema.getTypeAt(i)));
+                    .append("]=").append(schema.getTypeAt(i).getTypeName());
         }
         sb.append("}");
         return sb.toString();

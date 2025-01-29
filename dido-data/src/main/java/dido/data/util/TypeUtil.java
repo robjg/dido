@@ -3,16 +3,10 @@ package dido.data.util;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+/**
+ * Very simple utilities for working with Types.
+ */
 public class TypeUtil {
-
-    public static String toString(Type type) {
-        if (type instanceof Class) {
-            return ((Class<?>) type).getName();
-        }
-        else {
-            return type.toString();
-        }
-    }
 
     public static Class<?> classOf(Type type) {
         if (type instanceof Class) {

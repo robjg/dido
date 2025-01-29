@@ -1,7 +1,6 @@
 package dido.data;
 
 import dido.data.util.DataBuilder;
-import dido.data.util.TypeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +84,7 @@ public class DataSchemaSchema {
             if (schemaField.isNested()) {
                 fieldBuilder.with(NESTED_FIELD, schemaToData(schemaField.getNestedSchema()));
             } else {
-                fieldBuilder.with(TYPE_FIELD, TypeUtil.toString(schemaField.getType()));
+                fieldBuilder.with(TYPE_FIELD, schemaField.getType().getTypeName());
             }
 
             if (schemaField.isRepeating()) {
