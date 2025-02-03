@@ -82,8 +82,7 @@ been defined with the [dido-poi:workbook](../../../dido/poi/data/PoiWorkbook.md)
 #### type <a name="propertytype"></a>
 
 <table style='font-size:smaller'>
-      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
-      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Access</i></td><td>READ_ONLY</td></tr>
       <tr><td><i>Required</i></td><td>Read only.</td></tr>
 </table>
 

@@ -8,7 +8,8 @@ Provides a `dido.how.conversion.DidoConversionProvider` using Oddjob's conversio
 | Property | Description |
 | -------- | ----------- |
 | [conversionProvider](#propertyconversionProvider) |  | 
-| [name](#propertyname) |  | 
+| [conversions](#propertyconversions) |  | 
+| [name](#propertyname) | A Name for the service. | 
 | [services](#propertyservices) |  | 
 
 
@@ -21,14 +22,24 @@ Provides a `dido.how.conversion.DidoConversionProvider` using Oddjob's conversio
 
 
 
+#### conversions <a name="propertyconversions"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+</table>
+
+
+
 #### name <a name="propertyname"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
       <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No. Defaults to the simple class name.</td></tr>
 </table>
 
-
+A Name for the service.
 
 #### services <a name="propertyservices"></a>
 

@@ -12,9 +12,6 @@ import org.apache.commons.csv.CSVRecord;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.function.Function;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
 
 /**
  * Wraps a CsvRecord.
@@ -158,11 +155,8 @@ public class CsvData extends AbstractData {
 
         private final int arrayIndex;
 
-        private final ToIntFunction<String> conversion;
-
-        IntGetter(int arrayIndex, ToIntFunction<String> conversion) {
+        IntGetter(int arrayIndex) {
             this.arrayIndex = arrayIndex;
-            this.conversion = conversion;
         }
 
         @Override
@@ -173,7 +167,7 @@ public class CsvData extends AbstractData {
         @Override
         public int getInt(DidoData data) {
             String s = ((CsvData) data).record.get(arrayIndex);
-            return s.isEmpty() ? 0 : conversion.applyAsInt(s);
+            return s.isEmpty() ? 0 : Integer.parseInt(s);
         }
     }
 
@@ -181,11 +175,8 @@ public class CsvData extends AbstractData {
 
         private final int arrayIndex;
 
-        private final ToLongFunction<String> conversion;
-
-        LongGetter(int arrayIndex, ToLongFunction<String> conversion) {
+        LongGetter(int arrayIndex) {
             this.arrayIndex = arrayIndex;
-            this.conversion = conversion;
         }
 
         @Override
@@ -196,7 +187,7 @@ public class CsvData extends AbstractData {
         @Override
         public long getLong(DidoData data) {
             String s = ((CsvData) data).record.get(arrayIndex);
-            return s.isEmpty() ? 0L : conversion.applyAsLong(s);
+            return s.isEmpty() ? 0L : Long.parseLong(s);
         }
     }
 
@@ -204,11 +195,8 @@ public class CsvData extends AbstractData {
 
         private final int arrayIndex;
 
-        private final ToDoubleFunction<String> conversion;
-
-        DoubleGetter(int arrayIndex, ToDoubleFunction<String> conversion) {
+        DoubleGetter(int arrayIndex) {
             this.arrayIndex = arrayIndex;
-            this.conversion = conversion;
         }
 
         @Override
@@ -219,7 +207,7 @@ public class CsvData extends AbstractData {
         @Override
         public double getDouble(DidoData data) {
             String s = ((CsvData) data).record.get(arrayIndex);
-            return s.isEmpty() ? 0.0 : conversion.applyAsDouble(s);
+            return s.isEmpty() ? 0.0 : Double.parseDouble(s);
         }
     }
 
@@ -235,14 +223,11 @@ public class CsvData extends AbstractData {
             if (type == String.class || type == Object.class) {
                 getters[arrayIndex] = new StringGetter(arrayIndex);
             } else if (type == int.class) {
-                getters[arrayIndex] = new IntGetter(arrayIndex,
-                        conversionProvider.toIntFrom(String.class));
+                getters[arrayIndex] = new IntGetter(arrayIndex);
             } else if (type == long.class) {
-                getters[arrayIndex] = new LongGetter(arrayIndex,
-                        conversionProvider.toLongFrom(String.class));
+                getters[arrayIndex] = new LongGetter(arrayIndex);
             } else if (type == double.class) {
-                getters[arrayIndex] = new DoubleGetter(arrayIndex,
-                        conversionProvider.toDoubleFrom(String.class));
+                getters[arrayIndex] = new DoubleGetter(arrayIndex);
             } else if (type == char.class) {
                 getters[arrayIndex] = new CharGetter(arrayIndex);
             } else {

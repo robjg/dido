@@ -71,8 +71,8 @@ If we know the schema in advance, we can use FieldOps in an OpTransformBuilder t
                 DidoData.of("Pear", 3, 24.156, bestBeforeDate)));
 ```
 
-Because the field ops will find the quickest way of getting and setting the data. 
-Even though we are creating the Transformation with field names, indexes might be
+Because the field ops will find the quickest way of getting and setting the data,
+even though we are creating the Transformation with field names, indexes might be
 used for the underlying data access.
 
 A DidoTransform is a java function that also provides a resultant schema. Providing 

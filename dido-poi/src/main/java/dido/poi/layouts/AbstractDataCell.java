@@ -12,6 +12,9 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Type;
+import java.util.Optional;
+
 /**
  * Shared implementation base class for cells.
  *
@@ -20,30 +23,6 @@ import org.slf4j.LoggerFactory;
 abstract public class AbstractDataCell implements DataCell {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractDataCell.class);
-
-    /**
-     * @oddjob.property
-     * @oddjob.description The name of this layout. The name is the main
-     * identification of a layout node. It is commonly used by bindings to
-     * associate with the property name of a Java Object.
-     * @oddjob.required No.
-     */
-    private String name;
-
-    /**
-     * @oddjob.property
-     * @oddjob.description The name of the style to use. The style will have
-     * been defined with the {@link PoiWorkbook} definition.
-     * @oddjob.required No.
-     */
-    private String style;
-
-    /**
-     * @oddjob.property
-     * @oddjob.description The 1 based column index of this layout.
-     * @oddjob.required Read only.
-     */
-    private int index;
 
     /**
      * @oddjob.property
@@ -63,7 +42,11 @@ abstract public class AbstractDataCell implements DataCell {
 
 
     /**
-     * Setter for name.
+     * @oddjob.property
+     * @oddjob.description The name of this layout. The name is the main
+     * identification of a layout node. It is commonly used by bindings to
+     * associate with the property name of a Java Object.
+     * @oddjob.required No.
      *
      * @param name The optional name which will be the field name.
      */
@@ -87,12 +70,13 @@ abstract public class AbstractDataCell implements DataCell {
     }
 
     /**
-     * @return The type that must be of Class&lt;T&gt;
+     * @return The type.
+     *
      * @oddjob.property type
      * @oddjob.description The Java type of the column.
      * @oddjob.required Read only.
      */
-    abstract public Class<?> getType();
+    abstract public Type getType();
 
     protected abstract AbstractColumn.BaseSettings<?> settings();
 
@@ -120,6 +104,11 @@ abstract public class AbstractDataCell implements DataCell {
         return settings().index();
     }
 
+    /**
+     * @oddjob.property
+     * @oddjob.description The 1 based column index of this layout.
+     * @oddjob.required Read only.
+     */
     public void setIndex(int column) {
         settings().index(column);
     }
@@ -128,15 +117,18 @@ abstract public class AbstractDataCell implements DataCell {
         return settings().style();
     }
 
+    /**
+     * @oddjob.property
+     * @oddjob.description The name of the style to use. The style will have
+     * been defined with the {@link PoiWorkbook} definition.
+     * @oddjob.required No.
+     */
     public void setStyle(String style) {
         settings().style(style);
     }
 
     public String toString() {
-        if (name == null) {
-            return getClass().getSimpleName();
-        } else {
-            return getClass().getSimpleName() + ", name=" + name;
-        }
+        return getClass().getSimpleName() + Optional.ofNullable(settings().name())
+                .map(n -> ", name=" + n).orElse("");
     }
 }

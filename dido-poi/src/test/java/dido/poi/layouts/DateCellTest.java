@@ -13,13 +13,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.junit.jupiter.api.Test;
-import org.oddjob.arooa.utils.DateHelper;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -66,25 +63,16 @@ class DateCellTest {
         }
     }
 
-    static class StringToDate implements Function<String, Date> {
-        @Override
-        public Date apply(String s) {
-            try {
-                return DateHelper.parseDate(s);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     @Test
-    void writeAndReadWithDateTypeWithStringConversion() throws ParseException {
+    void writeAndReadWithDateTypeWithStringConversion() {
 
         PoiWorkbook workbook = new PoiWorkbook();
 
         DidoConversionProvider conversionProvider = DefaultConversionProvider
                 .with()
-                .conversion(String.class, Date.class, new StringToDate())
+                .conversion(String.class, LocalDateTime.class,
+                        (String s) -> LocalDate.parse(s, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                                .atStartOfDay())
                 .conversion(LocalDateTime.class, String.class,
                         (Function<LocalDateTime, String>) dataTime -> dataTime.toLocalDate().toString())
                 .make();
@@ -94,7 +82,6 @@ class DateCellTest {
                 .build();
 
         DateCell test = new DateCell();
-        test.setType(Date.class);
 
         DataRows rows = new DataRows();
         rows.setConversionProvider(conversionProvider);

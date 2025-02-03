@@ -1,7 +1,7 @@
 package dido.how.conversion;
 
+import java.lang.reflect.Type;
 import java.util.Objects;
-import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
 /**
@@ -18,13 +18,13 @@ public class RequiringConversion {
 
     public class From<F> {
 
-        private final Class<F> from;
+        private final Type from;
 
-        public From(Class<F> from) {
+        public From(Type from) {
             this.from = from;
         }
 
-        public <T> Function<F, T> to(Class<T> to) {
+        public <T> Function<F, T> to(Type to) {
             Function<F, T> conversion = conversionProvider.conversionFor(from, to);
             if (conversion == null) {
                 throw NoConversionException.from(from).to(to);
@@ -39,18 +39,8 @@ public class RequiringConversion {
         return new RequiringConversion(conversionProvider);
     }
 
-    public <F> From<F> from(Class<F> from) {
+    public <F> From<F> from(Type from) {
         return new From<>(from);
-    }
-
-    public <T> DoubleFunction<T> fromDoubleTo(Class<T> to) {
-        DoubleFunction<T> conversion = conversionProvider.fromDoubleTo(to);
-        if (conversion == null) {
-            throw NoConversionException.from(double.class).to(to);
-        }
-        else {
-            return conversion;
-        }
     }
 
 }

@@ -1,23 +1,13 @@
 package dido.how.conversion;
 
-import java.util.function.*;
+import java.lang.reflect.Type;
+import java.util.function.Function;
 
 /**
  * Provide a conversion function between to classes.
  */
 public interface DidoConversionProvider {
 
-    <F, T> Function<F, T> conversionFor(Class<F> from , Class<T> to);
+    <F, T> Function<F, T> conversionFor(Type from , Type to);
 
-    <F> ToIntFunction<F> toIntFrom(Class<F> from);
-
-    <F> ToDoubleFunction<F> toDoubleFrom(Class<F> from);
-
-    <F> ToLongFunction<F> toLongFrom(Class<F> from);
-
-    <T> IntFunction<T> fromIntTo(Class<T> to);
-
-    <T> DoubleFunction<T> fromDoubleTo(Class<T> to);
-
-    <T> LongFunction<T> fromLongTo(Class<T> to);
 }

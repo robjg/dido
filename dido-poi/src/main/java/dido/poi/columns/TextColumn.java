@@ -3,13 +3,12 @@ package dido.poi.columns;
 import dido.data.DidoData;
 import dido.data.FieldGetter;
 import dido.data.SchemaField;
-import dido.data.util.TypeUtil;
 import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
 import dido.how.conversion.RequiringConversion;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
+import java.lang.reflect.Type;
 import java.util.function.Function;
 
 /**
@@ -42,7 +41,7 @@ public class TextColumn extends AbstractColumn {
     }
 
     @Override
-    public Class<String> getType() {
+    public Type getType() {
         return TYPE;
     }
 
@@ -54,14 +53,16 @@ public class TextColumn extends AbstractColumn {
     @Override
     protected FieldGetter getterFor(SchemaField schemaField, DidoConversionProvider conversionProvider) {
 
-        Class<?> type = TypeUtil.classOf(schemaField.getType());
+        Type type = schemaField.getType();
 
-        if (type.isAssignableFrom(String.class)) {
+        if (type == String.class) {
             return new TextCellGetter(schemaField);
         } else {
             return new TextCellGetterWithConversion<>(
                     schemaField,
-                    RequiringConversion.with(conversionProvider).from(String.class).to(type));
+                    RequiringConversion.with(conversionProvider)
+                            .<String>from(String.class)
+                            .to(type));
         }
     }
 
@@ -105,35 +106,33 @@ public class TextColumn extends AbstractColumn {
     @Override
     protected Injector injectorFor(SchemaField schemaField, FieldGetter getter, DidoConversionProvider conversionProvider) {
 
-        Class<?> fromType = TypeUtil.classOf(schemaField.getType());
+        Type fromType = schemaField.getType();
 
         Function<Object, String> conversion;
 
-        if (String.class.isAssignableFrom(fromType)) {
+        if (fromType == String.class) {
             conversion = null;
         } else {
-            //noinspection unchecked
-            conversion = (Function<Object, String>) conversionProvider.conversionFor(fromType, String.class);
+            conversion = RequiringConversion.with(conversionProvider)
+                    .from(fromType)
+                    .to(String.class);
         }
 
-        return new Injector() {
-            @Override
-            public void insertValueInto(Cell cell, DidoData data) {
+        return (cell, data) -> {
 
-                if (!getter.has(data)) {
-                    cell.setBlank();
-                    return;
-                }
-
-                String value;
-                if (conversion == null) {
-                    value = (getter.getString(data));
-                } else {
-                    value = conversion.apply(getter.get(data));
-                }
-
-                cell.setCellValue(value);
+            if (!getter.has(data)) {
+                cell.setBlank();
+                return;
             }
+
+            String value;
+            if (conversion == null) {
+                value = (getter.getString(data));
+            } else {
+                value = conversion.apply(getter.get(data));
+            }
+
+            cell.setCellValue(value);
         };
     }
 }

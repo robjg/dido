@@ -3,6 +3,8 @@ package dido.poi.layouts;
 import dido.poi.columns.FormulaColumn;
 import dido.poi.columns.NumericFormulaColumn;
 
+import java.lang.reflect.Type;
+
 /**
  * @oddjob.description Define a Numeric Formula column.
  *
@@ -18,16 +20,8 @@ public class NumericFormulaCell extends FormulaCell {
 	}
 
 	@Override
-	public Class<?> getType() {
-		return settings.type();
-	}
-
-	/**
-	 * @oddjob.description The type of Number.
-	 * @oddjob.required No. Defaults to Double.
-	 */
-	public void setType(Class<?> type) {
-		this.settings.type(type);
+	public Type getType() {
+		return NumericFormulaColumn.TYPE;
 	}
 
 }

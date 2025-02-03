@@ -1,19 +1,21 @@
 <dido-poi:rows xmlns:dido-poi="oddjob:dido:poi"
                withHeader="true" headingsStyle="heading"
-               autoWidth="true" autoFilter="true">
+               autoWidth="true" autoFilter="true" partialSchema="true">
     <styles>
         <dido-poi:style key="heading" bold="true" colour="RED"/>
         <dido-poi:style key="date" format="m/d/yy hh:mm"/>
         <dido-poi:style key="percentage" format="#0.00%"/>
     </styles>
+    <schema>
+        <dido:schema xmlns:dido="oddjob:dido">
+            <of>
+                <dido:field type="java.util.Date" name="dateOfBirth"/>
+            </of>
+        </dido:schema>
+    </schema>
     <of>
         <dido-poi:text name="name"/>
-        <dido-poi:date name="dateOfBirth" style="date">
-                <type>
-                    <class name="java.util.Date"/>
-
-                </type>
-        </dido-poi:date>
+        <dido-poi:date name="dateOfBirth" style="date"/>
         <dido-poi:numeric name="salary"/>
         <dido-poi:numeric-formula name="bonus" formula='INDIRECT("C"&amp;ROW()) * INDIRECT("E"&amp;ROW())'/>
         <dido-poi:numeric name="percentage"

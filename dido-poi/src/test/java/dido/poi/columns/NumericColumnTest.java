@@ -30,12 +30,12 @@ class NumericColumnTest {
 
 
     DataSchema schema = DataSchema.builder()
-            .add(Byte.class)
-            .add(Short.class)
-            .add(Integer.class)
-            .add(Long.class)
-            .add(Float.class)
-            .add(Double.class)
+            .add(byte.class)
+            .add(short.class)
+            .add(int.class)
+            .add(long.class)
+            .add(float.class)
+            .add(double.class)
             .build();
 
     @BeforeEach
@@ -56,24 +56,19 @@ class NumericColumnTest {
                 .with()
                 .firstRow(2)
                 .firstColumn(2)
+                .schema(schema)
                 .columns(List.of(
                         Columns.numeric()
-                                .type(byte.class)
                                 .make(),
                         Columns.numeric()
-                                .type(short.class)
                                 .make(),
                         Columns.numeric()
-                                .type(int.class)
                                 .make(),
                         Columns.numeric()
-                                .type(long.class)
                                 .make(),
                         Columns.numeric()
-                                .type(float.class)
                                 .make(),
                         Columns.numeric()
-                                .type(double.class)
                                 .make()
                 ))
                 .fromInputStream(getClass().getResourceAsStream("/excel/Numbers.xlsx"))) {
@@ -99,9 +94,11 @@ class NumericColumnTest {
     @Test
     void writeAllTypes() {
 
-        List<DidoData> data = List.of(
-                ArrayData.of(42.0, 42.0, 42.0, 42.0, 42.0, 42.0),
-                ArrayData.of(42.24, 42.24, 42.24, 42.24, 42.24, 42.24));
+        List<DidoData> data = DidoData.valuesWithSchema(schema)
+                .many()
+                .of((byte) 42, (short) 42, 42, 42L, 42.0F, 42.0)
+                .of((byte) 42, (short) 42, 42, 42L, 42.24F, 42.24)
+                .toList();
 
         Path path = workDir.resolve("NumbersOut.xlsx");
 
@@ -111,22 +108,16 @@ class NumericColumnTest {
                 .firstColumn(2)
                 .columns(List.of(
                         Columns.numeric()
-                                .type(byte.class)
                                 .make(),
                         Columns.numeric()
-                                .type(short.class)
                                 .make(),
                         Columns.numeric()
-                                .type(int.class)
                                 .make(),
                         Columns.numeric()
-                                .type(long.class)
                                 .make(),
                         Columns.numeric()
-                                .type(float.class)
                                 .make(),
                         Columns.numeric()
-                                .type(double.class)
                                 .make()
                 ))
                 .toPath(path)) {

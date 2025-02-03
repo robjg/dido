@@ -52,7 +52,7 @@ public class NumericFormulaCellTest {
 			List<DidoData> results = reader.stream()
 					.collect(Collectors.toList());
 
-			DidoData expected = SingleData.type(Double.class).of(4.0);
+			DidoData expected = SingleData.ofDouble(4.0);
 			assertThat(results.get(0).getSchema(), is(expected.getSchema()));
 
 			assertThat(results, contains(expected));

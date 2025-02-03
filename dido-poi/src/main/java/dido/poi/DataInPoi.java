@@ -292,25 +292,30 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
         CellProviderFactory<DataCell> cellProviderFactory = new DataCellFactory();
 
-        if (this.partialSchema || this.schema == null && this.columns == null) {
-            schemaAndCells = SchemaAndCells.withCellFactory(cellProviderFactory)
-                    .fromRowAndHeadings(rowsIn.peekRow(), headings,
-                            this.schema);
-        } else {
-            if (this.schema == null) {
-                schemaAndCells = SchemaAndCells.fromCells(this.columns);
+        if (this.columns == null) {
+            // We must get schema from the data
+            if (this.schema == null || partialSchema) {
+                schemaAndCells = SchemaAndCells.withCellFactory(cellProviderFactory)
+                        .fromRowAndHeadings(rowsIn.peekRow(), headings,
+                                this.schema);
             }
-            else if (this.columns == null) {
+            else {
+                // We get the columns from the schema
                 schemaAndCells = SchemaAndCells.withCellFactory(cellProviderFactory)
                         .fromSchema(this.schema);
             }
+
+        } else {
+            if (this.schema == null || partialSchema) {
+                schemaAndCells = SchemaAndCells.fromCells(this.columns, this.schema);
+            }
             else {
-                schemaAndCells = SchemaAndCells.withCells(this.columns)
-                        .fromSchema(this.schema);
+                schemaAndCells = SchemaAndCells.bothKnown(this.schema, this.columns);
             }
         }
 
         if (schemaAndCells == null) {
+            // No schema, no cells and no data.
             return DataIn.of();
         } else {
             if (schemaListener != null) {

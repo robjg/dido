@@ -3,17 +3,15 @@ package dido.poi.columns;
 import dido.data.DidoData;
 import dido.data.FieldGetter;
 import dido.data.SchemaField;
-import dido.data.util.TypeUtil;
 import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
 import dido.how.conversion.RequiringConversion;
-import dido.how.util.Primitives;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
-import java.util.Objects;
-import java.util.function.DoubleFunction;
+import java.lang.reflect.Type;
+import java.util.function.Function;
 
 /**
  * @oddjob.description Define a Numeric Formula column.
@@ -22,14 +20,10 @@ import java.util.function.DoubleFunction;
  */
 public class NumericFormulaColumn extends FormulaColumn {
 
-	/**
-	 * The type of Number. Defaults to Double.
-	 */
-	private final Class<?> type;
+	public static final Type TYPE = double.class;
 
 	protected NumericFormulaColumn(Settings settings) {
 		super(settings);
-		this.type = settings.type();
 	}
 
 	public static class Settings extends FormulaColumn.FormulaSettings<Settings> {
@@ -39,24 +33,6 @@ public class NumericFormulaColumn extends FormulaColumn {
 		@Override
 		protected Settings self() {
 			return this;
-		}
-
-		public Settings type(Class<?> type) {
-			if (type == null) {
-				this.type = null;
-			} else {
-				type = (Class<?>) Primitives.wrap(type);
-				if (Number.class.isAssignableFrom(type)) {
-					this.type = type;
-				} else {
-					throw new IllegalArgumentException("Type must be a Number");
-				}
-			}
-			return this;
-		}
-
-		public Class<?> type() {
-			return Objects.requireNonNullElse(this.type, Double.class);
 		}
 
 		public NumericFormulaColumn make() {
@@ -69,29 +45,32 @@ public class NumericFormulaColumn extends FormulaColumn {
 	}
 
 	@Override
-	public Class<?> getType() {
-		return type;
+	public Type getType() {
+		return TYPE;
 	}
 
 	@Override
 	protected FieldGetter getterFor(SchemaField schemaField, DidoConversionProvider conversionProvider) {
 
-		Class<?> type = TypeUtil.classOf(Primitives.wrap(schemaField.getType()));
-		if (type.isAssignableFrom(Double.class)) {
+		Type type = schemaField.getType();
+
+		if (type == double.class) {
 			return new DoubleGetter(schemaField);
-		} else if (type.isAssignableFrom(Integer.class)) {
+		} else if (type == int.class) {
 			return new IntGetter(schemaField);
-		} else if (type.isAssignableFrom(Long.class)) {
+		} else if (type == long.class) {
 			return new LongGetter(schemaField);
-		} else if (type.isAssignableFrom(Short.class)) {
+		} else if (type == short.class) {
 			return new ShortGetter(schemaField);
-		} else if (type.isAssignableFrom(Byte.class)) {
+		} else if (type == byte.class) {
 			return new ByteGetter(schemaField);
-		} else if (type.isAssignableFrom(Float.class)) {
+		} else if (type == float.class) {
 			return new FloatGetter(schemaField);
 		} else {
 			return new DoubleCellGetterWithConversion<>(schemaField,
-					RequiringConversion.with(conversionProvider).fromDoubleTo(type));
+					RequiringConversion.with(conversionProvider)
+							.<Double>from(Double.class)
+							.to(type));
 		}
 	}
 
@@ -213,10 +192,10 @@ public class NumericFormulaColumn extends FormulaColumn {
 
 	static class DoubleCellGetterWithConversion<R> extends NumberGetter {
 
-		private final DoubleFunction<R> conversion;
+		private final Function<Double, R> conversion;
 
 		DoubleCellGetterWithConversion(SchemaField schemaField,
-									   DoubleFunction<R> conversion) {
+									   Function<Double, R> conversion) {
 			super(schemaField);
 			this.conversion = conversion;
 		}

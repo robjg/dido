@@ -1,5 +1,7 @@
 package dido.poi;
 
+import java.lang.reflect.Type;
+
 /**
  * Something that provides cells.
  *
@@ -16,7 +18,7 @@ public interface CellProvider {
      */
     int getIndex();
 
-    Class<?> getType();
+    Type getType();
 
     String getName();
 

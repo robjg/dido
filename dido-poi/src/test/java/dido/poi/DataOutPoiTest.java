@@ -40,16 +40,14 @@ class DataOutPoiTest {
                                 .name("Fruit")
                                 .make(),
                         Columns.numeric()
-                                .type(int.class)
                                 .name("Qty")
                                 .make(),
                         Columns.numeric()
-                                .type(double.class)
                                 .name("Price")
                                 .make()
                 )).toOutputStream(out)) {
 
-            dataOut.accept(ArrayData.of("Apple", 5, 20));
+            dataOut.accept(ArrayData.of("Apple", 5, 20.0));
 
         }
     }

@@ -7,13 +7,15 @@ import dido.how.conversion.DidoConversionProvider;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
+import java.lang.reflect.Type;
+
 /**
  * Create a column cells that are blank. Provided for
  * completeness - not sure of the use case for this.
  */
 public class BlankColumn extends AbstractColumn {
 
-    public static final Class<Void> TYPE = Void.class;
+    public static final Class<Void> TYPE = void.class;
 
     protected BlankColumn(Settings settings) {
         super(settings);
@@ -36,7 +38,7 @@ public class BlankColumn extends AbstractColumn {
     }
 
     @Override
-    public Class<Void> getType() {
+    public Type getType() {
         return TYPE;
     }
 

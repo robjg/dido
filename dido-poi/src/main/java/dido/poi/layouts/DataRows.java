@@ -127,7 +127,8 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
     /**
      * @oddjob.property
      * @oddjob.description Is the provided schema only a partial schema.
-     * Only applies when reading. If true, then the rest of the schema is derived from the data.
+     * Only applies when reading. If true, then the rest of the schema is derived from the data when reading,
+     * and the schema will be ignored when writing.
      * @oddjob.required No.
      */
     private boolean partialSchema;
@@ -194,7 +195,7 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
                 .sheetName(this.sheetName)
                 .firstRow(this.firstRow)
                 .firstColumn(this.firstColumn)
-                .schema(this.schema)
+                .schema(this.partialSchema ? null : this.schema)
                 .columns(this.of)
                 .header(this.withHeader)
                 .headerStyle(this.headingsStyle)

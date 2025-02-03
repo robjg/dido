@@ -127,7 +127,7 @@ public class ValueSetFactory implements Supplier<OpDef> {
 
         <F, T> T inferredConversion(F from, Class<T> toType) {
             //noinspection unchecked
-            return conversionProvider.conversionFor((Class<F>) from.getClass(), toType)
+            return (T) conversionProvider.conversionFor(from.getClass(), toType)
                     .apply(from);
         }
     }

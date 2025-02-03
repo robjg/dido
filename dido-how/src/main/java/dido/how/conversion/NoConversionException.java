@@ -2,6 +2,8 @@ package dido.how.conversion;
 
 import dido.how.DataException;
 
+import java.lang.reflect.Type;
+
 /**
  * Thrown when a Conversion can't be found.
  *
@@ -15,18 +17,19 @@ public class NoConversionException extends DataException {
 
     public static class From {
 
-        private final Class<?> from;
+        private final Type from;
 
-        public From(Class<?> from) {
+        public From(Type from) {
             this.from = from;
         }
 
-        public NoConversionException to(Class<?> to) {
-            return new NoConversionException("No conversion from " + from + " to " + to);
+        public NoConversionException to(Type to) {
+            return new NoConversionException("No conversion from " + from.getTypeName()
+                    + " to " + to.getTypeName());
         }
     }
 
-    public static From from(Class<?> from) {
+    public static From from(Type from) {
         return new From(from);
     }
 }

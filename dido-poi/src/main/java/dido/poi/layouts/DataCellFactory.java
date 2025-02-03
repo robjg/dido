@@ -36,7 +36,7 @@ public class DataCellFactory implements CellProviderFactory<DataCell> {
         AbstractDataCell cell;
 
         if (Number.class.isAssignableFrom(cellType)) {
-            cell = createNumericCell(cellType);
+            cell = new NumericCell();
         } else if (Boolean.class == cellType) {
             cell = new BooleanCell();
         } else if (LocalDateTime.class.isAssignableFrom(cellType)) {
@@ -88,12 +88,6 @@ public class DataCellFactory implements CellProviderFactory<DataCell> {
         dataCell.setName(name);
 
         return dataCell;
-    }
-
-    static AbstractDataCell createNumericCell(Class<?> type) {
-        NumericCell numericCell = new NumericCell();
-        numericCell.setType(type);
-        return numericCell;
     }
 
 }

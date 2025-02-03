@@ -13,6 +13,7 @@ The schema has been derived as best can be from the data:
 We can provide a partial schema that only overrides the type of certain
 fields:
 {@oddjob.java.file src/test/java/dido/examples/PoiExamplesTest.java#snippet3}
+Column 2 is now an int.
 
 We can use a full schema that will pick just the columns specified.
 {@oddjob.java.file src/test/java/dido/examples/PoiExamplesTest.java#snippet4}

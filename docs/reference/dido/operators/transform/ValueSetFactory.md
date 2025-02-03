@@ -68,7 +68,7 @@ The value.
 #### Example 1 <a name="example1"></a>
 
 Set a value.
-_java.io.IOException: No Resource Found: 'dido/oddjob/transform/DataSetExample.xml', classloader=java.net.URLClassLoader@8bda377_
+_java.io.IOException: No Resource Found: 'dido/oddjob/transform/DataSetExample.xml', classloader=java.net.URLClassLoader@7be625bf_
 
 
 -----------------------

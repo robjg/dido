@@ -8,7 +8,21 @@
                         <file file="./work" key="work.dir"/>
                     </values>
                 </properties>
-                <dido:converter xmlns:dido="oddjob:dido"/>
+                <dido:converter xmlns:dido="oddjob:dido">
+                    <conversions>
+                        <is>
+                            <from>
+                                <class name="java.lang.String"/>
+                            </from>
+                            <to>
+                                <class name="java.time.LocalDateTime"/>
+                            </to>
+                            <conversion>
+                                <value value="#{ function(dateTime) { return java.time.LocalDate.parse(dateTime, java.time.format.DateTimeFormatter.ofPattern('yyyy-MM-dd')).atStartOfDay() } }"/>
+                            </conversion>
+                        </is>
+                    </conversions>
+                </dido:converter>
                 <bus:bus id="bean-bus" xmlns:bus="oddjob:beanbus">
                     <of>
                         <dido:data-in id="test-data" name="Load Test Data" xmlns:dido="oddjob:dido">
@@ -24,7 +38,15 @@ Banana,2013-11-21,,7,175.5
                                 </buffer>
                             </from>
                             <how>
-                                <dido:csv withHeader="true"/>
+                                <dido:csv withHeader="true" partialSchema="true">
+                                    <schema>
+                                        <dido:schema xmlns:dido="oddjob:dido">
+                                            <of>
+                                                <dido:field type="int" name="quantity"/>
+                                            </of>
+                                        </dido:schema>
+                                    </schema>
+                                </dido:csv>
                             </how>
                         </dido:data-in>
                         <dido:data-out id="data-book-write" xmlns:dido="oddjob:dido">
@@ -36,26 +58,25 @@ Banana,2013-11-21,,7,175.5
                                 </dido-poi:workbook>
                             </to>
                             <how>
-                                <dido-poi:rows autoFilter="true" autoWidth="true" sheetName="Fruit" withHeader="true" xmlns:dido-poi="oddjob:dido:poi">
+                                <dido-poi:rows autoFilter="true" autoWidth="true" sheetName="Fruit" withHeader="true" xmlns:dido-poi="oddjob:dido:poi" partialSchema="true">
                                     <of>
                                         <dido-poi:text name="fruit"/>
-                                        <dido-poi:date name="bestBefore">
-                                            <type>
-                                                <class name="java.util.Date"/>
-                                            </type>
-                                        </dido-poi:date>
+                                        <dido-poi:date name="bestBefore"/>
                                         <dido-poi:text name="colour"/>
-                                        <dido-poi:numeric name="quantity">
-                                            <type>
-                                                <class name="int"/>
-                                            </type>
-                                        </dido-poi:numeric>
+                                        <dido-poi:numeric name="quantity"/>
                                         <dido-poi:numeric name="price"/>
                                     </of>
                                     <styles>
                                         <dido-poi:style bold="true" colour="BLUE" key="heading"/>
                                         <dido-poi:style format="yyyy-mm-dd" key="date"/>
                                     </styles>
+                                    <schema>
+                                        <dido:schema xmlns:dido="oddjob:dido">
+                                            <of>
+                                                <dido:field type="int" name="quantity"/>
+                                            </of>
+                                        </dido:schema>
+                                    </schema>
                                 </dido-poi:rows>
                             </how>
                         </dido:data-out>

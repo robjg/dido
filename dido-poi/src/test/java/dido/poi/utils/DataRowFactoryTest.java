@@ -68,7 +68,8 @@ class DataRowFactoryTest {
 
         DataCell cell = textCell(1);
 
-        SchemaAndCells<DataCell> schemaAndCells = SchemaAndCells.fromCells(Collections.singletonList(cell));
+        SchemaAndCells<DataCell> schemaAndCells = SchemaAndCells.fromCells(
+                Collections.singletonList(cell), null);
 
         DataRowFactory test = DataRowFactory.newInstance(
                 schemaAndCells.getSchema(), schemaAndCells.getDataCells(),
@@ -87,7 +88,8 @@ class DataRowFactoryTest {
         DataCell cell1 = textCell(1);
         DataCell cell2 = numberCell(2);
 
-        SchemaAndCells<DataCell> schemaAndCells = SchemaAndCells.fromCells(Arrays.asList(cell1, cell2));
+        SchemaAndCells<DataCell> schemaAndCells = SchemaAndCells.fromCells(
+                Arrays.asList(cell1, cell2), null);
 
         DataRowFactory test = DataRowFactory.newInstance(
                 schemaAndCells.getSchema(), schemaAndCells.getDataCells(),
@@ -108,7 +110,8 @@ class DataRowFactoryTest {
 
         DataCell cell7 = numberCell(7);
 
-        SchemaAndCells<DataCell> schemaAndCells = SchemaAndCells.fromCells(Arrays.asList(cell3, cell7));
+        SchemaAndCells<DataCell> schemaAndCells = SchemaAndCells.fromCells(
+                Arrays.asList(cell3, cell7), null);
 
         DataRowFactory test = DataRowFactory.newInstance(
                 schemaAndCells.getSchema(), schemaAndCells.getDataCells(),

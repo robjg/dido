@@ -4,6 +4,8 @@ import dido.poi.columns.AbstractColumn;
 import dido.poi.columns.NumericColumn;
 import org.apache.poi.ss.usermodel.CellType;
 
+import java.lang.reflect.Type;
+
 /**
  * @oddjob.description Define a number column. Nests within a {@link DataRows}.
  */
@@ -17,16 +19,8 @@ public class NumericCell extends AbstractDataCell {
     }
 
     @Override
-    public Class<?> getType() {
-        return settings.type();
-    }
-
-    /**
-     * @oddjob.description The type of Number.
-     * @oddjob.required No. Defaults to Double.
-     */
-    public void setType(Class<?> type) {
-        this.settings.type(type);
+    public Type getType() {
+        return NumericColumn.TYPE;
     }
 
     @Override

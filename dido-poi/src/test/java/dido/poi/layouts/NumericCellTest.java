@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NumericCellTest {
@@ -35,8 +36,8 @@ public class NumericCellTest {
 	@BeforeEach
 	protected void setUp(TestInfo testInfo) {
 
-		logger.info("-------------------------   " + testInfo.getDisplayName()  +
-				"   ----------------------");
+        logger.info("-------------------------   {}   ----------------------",
+				testInfo.getDisplayName());
 	}
 
 	@Test
@@ -68,12 +69,16 @@ public class NumericCellTest {
 	@Test
 	public void testWriteAndReadOtherNumericTypes() {
 
+		DataSchema schema = SchemaBuilder.newInstance()
+				.add(int.class)
+				.build();
+
 		PoiWorkbook workbook = new PoiWorkbook();
 
 		NumericCell test = new NumericCell();
-		test.setType(int.class);
 
 		DataRows rows = new DataRows();
+		rows.setSchema(schema);
 		rows.setOf(0, test);
 
 		// Write
@@ -81,7 +86,8 @@ public class NumericCellTest {
 		try (DataOut writer = rows.outTo(workbook)) {
 
 			writer.accept(ArrayData.of(12));
-
+			writer.accept(ArrayData.of((Object) null));
+			writer.accept(ArrayData.of(42.0));
 		}
 
 		// Read side.
@@ -91,7 +97,9 @@ public class NumericCellTest {
 			List<DidoData> results = reader.stream()
 					.collect(Collectors.toList());
 
-			assertThat(results, contains(SingleData.type(Integer.class).of(12)));
+			assertThat(results.get(0), is(SingleData.ofInt(12)));
+			assertThat(results.get(1), is(SingleData.ofInt(0)));
+			assertThat(results.get(2), is(SingleData.ofInt(42)));
 		}
 
 	}
@@ -145,7 +153,7 @@ public class NumericCellTest {
 		}
 		
 		public void setFoo(String foo) {
-			
+			super.setFoo(foo);
 		}
 	}
 	
@@ -156,23 +164,23 @@ public class NumericCellTest {
 	 * <p>
 	 * All to do with <a href="http://bugs.sun.com/view_bug.do?bug-id=6528714">this bug</a>.
 	 * 
-	 * @throws IntrospectionException 
+	 * @throws IntrospectionException If we can't inspect the bean
 	 */
 	@Test
 	public void testValueConfiguredHow() throws IntrospectionException {
 		
 		String javaVersion = System.getProperty("java.version");
-		
-		logger.info("java.version=" + javaVersion);
-		logger.info("java.specification.version=" + System.getProperty("java.specification.version"));
-		logger.info("java.vm.version=" + System.getProperty("java.vm.version"));
-		logger.info("java.home=" + System.getProperty("java.home"));
+
+        logger.info("java.version={}", javaVersion);
+        logger.info("java.specification.version={}", System.getProperty("java.specification.version"));
+        logger.info("java.vm.version={}", System.getProperty("java.vm.version"));
+        logger.info("java.home={}", System.getProperty("java.home"));
 		
 		BeanInfo beanInfo = Introspector.getBeanInfo(StringBean.class);
 		PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
 
 		for (PropertyDescriptor descriptor : descriptors) {
-			logger.info(descriptor.getPropertyType() + " " + descriptor.getName());
+            logger.info("{} {}", descriptor.getPropertyType(), descriptor.getName());
 		}
 		
 		StandardArooaSession session = new StandardArooaSession();

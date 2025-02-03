@@ -27,35 +27,35 @@ public abstract class SingleData extends AbstractData implements DidoData {
         return new ObjectType<>(value == null ? void.class : value.getClass()).of(value);
     }
 
-    public static DidoData of(boolean value) {
+    public static DidoData ofBoolean(boolean value) {
         return new BooleanType().of(value);
     }
 
-    public static DidoData of(byte value) {
+    public static DidoData ofByte(byte value) {
         return new ByteType().of(value);
     }
 
-    public static DidoData of(char value) {
+    public static DidoData ofChar(char value) {
         return new CharType().of(value);
     }
 
-    public static DidoData of(short value) {
+    public static DidoData ofShort(short value) {
         return new ShortType().of(value);
     }
 
-    public static DidoData of(int value) {
+    public static DidoData ofInt(int value) {
         return new IntType().of(value);
     }
 
-    public static DidoData of(long value) {
+    public static DidoData ofLong(long value) {
         return new LongType().of(value);
     }
 
-    public static DidoData of(double value) {
+    public static DidoData ofDouble(double value) {
         return new DoubleType().of(value);
     }
 
-    public static DidoData of(float value) {
+    public static DidoData ofFloat(float value) {
         return new FloatType().of(value);
     }
 
@@ -264,38 +264,37 @@ public abstract class SingleData extends AbstractData implements DidoData {
                     .of(value);
         }
 
-        public DidoData of(boolean value) {
+        public DidoData ofBoolean(boolean value) {
             return new BooleanType(name).of(value);
         }
 
-        public DidoData of(byte value) {
+        public DidoData ofByte(byte value) {
             return new ByteType(name).of(value);
         }
 
-        public DidoData of(char value) {
+        public DidoData ofChar(char value) {
             return new CharType(name).of(value);
         }
 
-        public DidoData of(short value) {
+        public DidoData ofShort(short value) {
             return new ShortType(name).of(value);
         }
 
-        public DidoData of(int value) {
+        public DidoData ofInt(int value) {
             return new IntType(name).of(value);
         }
 
-        public DidoData of(long value) {
+        public DidoData ofLong(long value) {
             return new LongType(name).of(value);
         }
 
-        public DidoData of(double value) {
+        public DidoData ofDouble(double value) {
             return new DoubleType(name).of(value);
         }
 
-        public DidoData of(float value) {
+        public DidoData ofFloat(float value) {
             return new FloatType(name).of(value);
         }
-
     }
 
     public static class ObjectType<T> {

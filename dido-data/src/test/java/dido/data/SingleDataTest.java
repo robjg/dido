@@ -61,7 +61,7 @@ class SingleDataTest {
     @Test
     void booleanType() {
 
-        DidoData data1 = SingleData.of(true);
+        DidoData data1 = SingleData.ofBoolean(true);
 
         assertThat(data1.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -70,7 +70,7 @@ class SingleDataTest {
 
         assertThat(data1.getBooleanAt(1), is(true));
 
-        DidoData data2 = SingleData.named("Boolean").of(true);
+        DidoData data2 = SingleData.named("Boolean").ofBoolean(true);
 
         assertThat(data2.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -89,7 +89,7 @@ class SingleDataTest {
     @Test
     void byteType() {
 
-        DidoData data1 = SingleData.of((byte) 8);
+        DidoData data1 = SingleData.ofByte((byte) 8);
 
         assertThat(data1.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -116,7 +116,7 @@ class SingleDataTest {
         assertThat(g.getDouble(data1), is( 8.0));
         assertThat(g.getString(data1), is( "8"));
 
-        DidoData data2 = SingleData.named("Byte").of((byte) 8);
+        DidoData data2 = SingleData.named("Byte").ofByte((byte) 8);
 
         assertThat(data2.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -152,7 +152,7 @@ class SingleDataTest {
     @Test
     void charType() {
 
-        DidoData data1 = SingleData.of('A');
+        DidoData data1 = SingleData.ofChar('A');
 
         assertThat(data1.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -161,7 +161,7 @@ class SingleDataTest {
 
         assertThat(data1.getCharAt(1), is('A'));
 
-        DidoData data2 = SingleData.named("Char").of('A');
+        DidoData data2 = SingleData.named("Char").ofChar('A');
 
         assertThat(data2.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -179,7 +179,7 @@ class SingleDataTest {
     @Test
     void shortType() {
 
-        DidoData data1 = SingleData.of((short) 24);
+        DidoData data1 = SingleData.ofShort((short) 24);
 
         assertThat(data1.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -188,7 +188,7 @@ class SingleDataTest {
 
         assertThat(data1.getShortAt(1), is((short) 24));
 
-        DidoData data2 = SingleData.named("Short").of((short) 24);
+        DidoData data2 = SingleData.named("Short").ofShort((short) 24);
 
         assertThat(data2.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -206,7 +206,7 @@ class SingleDataTest {
     @Test
     void intType() {
 
-        DidoData data1 = SingleData.of(42);
+        DidoData data1 = SingleData.ofInt(42);
 
         assertThat(data1.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -218,7 +218,7 @@ class SingleDataTest {
         assertThat(data1, is(SingleData.type(int.class).of(42)));
 
         DidoData data2 = SingleData.named("Quantity")
-                .of(42);
+                .ofInt(42);
 
         assertThat(data2.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -241,7 +241,7 @@ class SingleDataTest {
     @Test
     void longType() {
 
-        DidoData data1 = SingleData.of(84L);
+        DidoData data1 = SingleData.ofLong(84L);
 
         assertThat(data1.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -251,7 +251,7 @@ class SingleDataTest {
         assertThat(data1.getLongAt(1), is(84L));
 
         DidoData data2 = SingleData.named("Long")
-                .of(84L);
+                .ofLong(84L);
 
         assertThat(data2.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -269,7 +269,7 @@ class SingleDataTest {
     @Test
     void testFloat() {
 
-        DidoData data1 = SingleData.of(42.24F);
+        DidoData data1 = SingleData.ofFloat(42.24F);
 
         assertThat(data1.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -283,7 +283,7 @@ class SingleDataTest {
                         ArrayData.schemaBuilder().add(float.class).build()).of(42.24F)));
 
         DidoData data2 = SingleData.named("Float")
-                .of(42.24F);
+                .ofFloat(42.24F);
 
         assertThat(data2.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -301,7 +301,7 @@ class SingleDataTest {
     @Test
     void testDouble() {
 
-        DidoData data1 = SingleData.of(42.24);
+        DidoData data1 = SingleData.ofDouble(42.24);
 
         assertThat(data1.getSchema(),
                 is(SchemaBuilder.newInstance()
@@ -315,7 +315,7 @@ class SingleDataTest {
                         ArrayData.schemaBuilder().add(double.class).build()).of(42.24)));
 
         DidoData data2 = SingleData.named("Double")
-                .of(42.24);
+                .ofDouble(42.24);
 
         assertThat(data2.getSchema(),
                 is(SchemaBuilder.newInstance()

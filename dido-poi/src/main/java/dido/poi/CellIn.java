@@ -11,11 +11,17 @@ import dido.data.SchemaField;
  */
 public interface CellIn {
 
+	/**
+	 * Used to capture the getter from the CellIn.
+	 */
 	interface Capture {
 
 		void accept(SchemaField schemaField, FieldGetter getter);
 	}
 
+	/**
+	 * Capture the getter from the Cell.
+	 */
 	void capture(Capture capture);
 
 }

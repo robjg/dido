@@ -26,7 +26,7 @@ The schema has been derived as best can be from the data:
         DataSchema schema = didoData.get(0).getSchema();
 
         assertThat(schema.toString(),
-                is("{[1:f_1]=java.lang.String, [2:f_2]=java.lang.Double, [3:f_3]=java.lang.Double}"));
+                is("{[1:f_1]=java.lang.String, [2:f_2]=double, [3:f_3]=double}"));
 ```
 
 We can provide a partial schema that only overrides the type of certain
@@ -47,9 +47,10 @@ fields:
                 DidoData.of("Pear", 3, 26.84)));
 
         assertThat(didoData.get(0).getSchema().toString(),
-                is("{[1:f_1]=java.lang.String, [2:f_2]=int, [3:f_3]=java.lang.Double}"));
+                is("{[1:f_1]=java.lang.String, [2:f_2]=int, [3:f_3]=double}"));
 ```
 
+Column 2 is now an int.
 
 We can use a full schema that will pick just the columns specified.
 ```java
@@ -97,7 +98,7 @@ Now the schema has the field names taken from the headings.
         DataSchema schema = didoData.get(0).getSchema();
 
         assertThat(schema.toString(),
-                is("{[1:Fruit]=java.lang.String, [2:Quantity]=java.lang.Double, [3:Price]=java.lang.Double}"));
+                is("{[1:Fruit]=java.lang.String, [2:Quantity]=double, [3:Price]=double}"));
 ```
 
 We can also provide a partial schema. With heading, the field names must match the schema.
@@ -105,7 +106,7 @@ The schema index is not used.
 ```java
         try (DataIn in = DataInPoi.with()
                 .partialSchema(DataSchema.builder()
-                        .addNamedAt(2, "Quantity", int.class)
+                        .addNamed("Quantity", int.class)
                         .build())
                 .header(true)
                 .fromPath(Path.of("FruitWithHeadings.xlsx"))) {
@@ -122,7 +123,7 @@ The schema index is not used.
                 DidoData.of("Pear", 3, 26.84)));
 
         assertThat(didoData.get(0).getSchema().toString(),
-                is("{[1:Fruit]=java.lang.String, [2:Quantity]=int, [3:Price]=java.lang.Double}"));
+                is("{[1:Fruit]=java.lang.String, [2:Quantity]=int, [3:Price]=double}"));
 ```
 
 

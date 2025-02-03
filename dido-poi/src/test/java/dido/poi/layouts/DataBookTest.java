@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -248,7 +249,7 @@ public class DataBookTest {
 		Fruit fruit3 = fruits.get(2);
 		
 		assertEquals("Orange", fruit3.getFruit());
-		assertEquals(DateHelper.parseDate("2013-12-05"), fruit3.getBestBefore());
+		assertEquals(LocalDate.parse("2013-12-05"), fruit3.getBestBefore().toLocalDate());
 		assertEquals("", fruit3.getColour());
 		assertEquals(5, fruit3.getQuantity());
 		assertEquals(215.0, fruit3.getPrice());

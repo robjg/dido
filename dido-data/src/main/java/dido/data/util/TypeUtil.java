@@ -29,9 +29,34 @@ public class TypeUtil {
         }
     }
 
-    public static boolean isAssignableFrom(Type type, Class<?> from) {
+    /**
+     * A really rubbish basic check for assignment compatibility.
+     * Number from Double is true, List from List&lt;String&gt; is true
+     * but stuff like List&lt;?&gt; from List&lt;String&gt; is wrongly false.
+     *
+     * @param type The type to be assignable to.
+     * @param from The type to test
+     *
+     * @return true if they are assignable after a few checks.
+     */
+    public static boolean isAssignableFrom(Type type, Type from) {
+        if (type.equals(from)) {
+            return true;
+        }
+
+        Class<?> fromClass;
+        if (from instanceof Class) {
+            fromClass = (Class<?>) from;
+        }
+        else if (from instanceof ParameterizedType) {
+            fromClass = (Class<?>) ((ParameterizedType) from).getRawType();
+        }
+        else {
+            return false;
+        }
+
         if (type instanceof Class) {
-            return ((Class<?>) type).isAssignableFrom(from);
+            return ((Class<?>) type).isAssignableFrom(fromClass);
         }
         else {
             return false;

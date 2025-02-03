@@ -6,6 +6,8 @@ import dido.poi.CellInProvider;
 import dido.poi.CellProvider;
 import dido.poi.RowIn;
 import dido.poi.RowsIn;
+import dido.poi.columns.NumericColumn;
+import dido.poi.columns.TextColumn;
 import dido.poi.data.DataCell;
 import dido.poi.data.PoiRowsIn;
 import dido.poi.layouts.*;
@@ -38,7 +40,8 @@ class SchemaAndCellsTest {
 
         TextCell cell = new TextCell();
 
-        SchemaAndCells<CellProvider> test = SchemaAndCells.fromCells(Collections.singletonList(cell));
+        SchemaAndCells<CellProvider> test = SchemaAndCells.fromCells(
+                Collections.singletonList(cell), null);
 
         DataSchema schema = test.getSchema();
 
@@ -61,11 +64,62 @@ class SchemaAndCellsTest {
         qtyCell.setIndex(7);
         qtyCell.setName("Qty");
 
-        SchemaAndCells<CellProvider> test = SchemaAndCells.fromCells(Arrays.asList(fruitCell, qtyCell));
+        SchemaAndCells<CellProvider> test = SchemaAndCells.fromCells(
+                Arrays.asList(fruitCell, qtyCell), null);
 
         DataSchema expectedSchema = DataSchema.builder()
                 .addNamedAt(3, "Fruit", String.class)
-                .addNamedAt(7, "Qty", Double.class)
+                .addNamedAt(7, "Qty", double.class)
+                .build();
+
+        assertThat(test.getSchema(), is(expectedSchema));
+    }
+
+    @Test
+    void fromAnonymousCellsWithPartialSchema() {
+
+        DataSchema partialSchema = DataSchema.builder()
+                .addAt(2, int.class)
+                .build();
+
+        TextColumn fruitCell = TextColumn.with()
+                .make();
+
+        NumericColumn qtyCell = NumericColumn.with()
+                .make();
+
+        SchemaAndCells<CellProvider> test = SchemaAndCells.fromCells(
+                List.of(fruitCell, qtyCell), partialSchema);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .add(String.class)
+                .add(int.class)
+                .build();
+
+        assertThat(test.getSchema(), is(expectedSchema));
+    }
+
+    @Test
+    void fromNamedCellsWithPartialSchema() {
+
+        DataSchema partialSchema = DataSchema.builder()
+                .addNamed("Qty", int.class)
+                .build();
+
+        TextColumn fruitCell = TextColumn.with()
+                .name("Fruit")
+                .make();
+
+        NumericColumn qtyCell = NumericColumn.with()
+                .name("Qty")
+                .make();
+
+        SchemaAndCells<CellProvider> test = SchemaAndCells.fromCells(
+                List.of(fruitCell, qtyCell), partialSchema);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", int.class)
                 .build();
 
         assertThat(test.getSchema(), is(expectedSchema));
@@ -103,43 +157,43 @@ class SchemaAndCellsTest {
         assertThat(next, instanceOf(BooleanCell.class));
         assertThat(next.getIndex(), is(2));
         assertThat(next.getName(), is("Boolean"));
-        assertThat(next.getType(), is(Boolean.class));
+        assertThat(next.getType(), is(boolean.class));
 
         next = cells.get(2);
         assertThat(next, instanceOf(NumericCell.class));
         assertThat(next.getIndex(), is(3));
         assertThat(next.getName(), is("Byte"));
-        assertThat(next.getType(), is(Byte.class));
+        assertThat(next.getType(), is(double.class));
 
         next = cells.get(3);
         assertThat(next, instanceOf(NumericCell.class));
         assertThat(next.getIndex(), is(4));
         assertThat(next.getName(), is("Short"));
-        assertThat(next.getType(), is(Short.class));
+        assertThat(next.getType(), is(double.class));
 
         next = cells.get(4);
         assertThat(next, instanceOf(NumericCell.class));
         assertThat(next.getIndex(), is(5));
         assertThat(next.getName(), is("Int"));
-        assertThat(next.getType(), is(Integer.class));
+        assertThat(next.getType(), is(double.class));
 
         next = cells.get(5);
         assertThat(next, instanceOf(NumericCell.class));
         assertThat(next.getIndex(), is(6));
         assertThat(next.getName(), is("Long"));
-        assertThat(next.getType(), is(Long.class));
+        assertThat(next.getType(), is(double.class));
 
         next = cells.get(6);
         assertThat(next, instanceOf(NumericCell.class));
         assertThat(next.getIndex(), is(7));
         assertThat(next.getName(), is("Float"));
-        assertThat(next.getType(), is(Float.class));
+        assertThat(next.getType(), is(double.class));
 
         next = cells.get(7);
         assertThat(next, instanceOf(NumericCell.class));
         assertThat(next.getIndex(), is(8));
         assertThat(next.getName(), is("Double"));
-        assertThat(next.getType(), is(Double.class));
+        assertThat(next.getType(), is(double.class));
 
         next = cells.get(8);
         assertThat(next, instanceOf(DateCell.class));
@@ -171,7 +225,7 @@ class SchemaAndCellsTest {
         assertThat(qtyCell, instanceOf(NumericCell.class));
         assertThat(qtyCell.getIndex(), is(7));
         assertThat(qtyCell.getName(), is("Qty"));
-        assertThat(qtyCell.getType(), is(Double.class));
+        assertThat(qtyCell.getType(), is(double.class));
     }
 
     @Test
@@ -206,8 +260,8 @@ class SchemaAndCellsTest {
 
         DataSchema expectedSchema = DataSchema.builder()
                 .addNamed("f_1", String.class)
-                .addNamed("f_2", Double.class)
-                .addNamed("f_3", Double.class)
+                .addNamed("f_2", double.class)
+                .addNamed("f_3", double.class)
                 .addNamed("f_4", LocalDateTime.class)
                 .build();
 
@@ -245,7 +299,7 @@ class SchemaAndCellsTest {
         DataSchema expectedSchema = DataSchema.builder()
                 .addNamed("f_1", String.class)
                 .addNamed("Qty", int.class)
-                .addNamed("f_3", Double.class)
+                .addNamed("f_3", double.class)
                 .addNamed("f_4", LocalDateTime.class)
                 .build();
 
@@ -284,8 +338,8 @@ class SchemaAndCellsTest {
 
         DataSchema expectedSchema = DataSchema.builder()
                 .addNamed("Fruit", String.class)
-                .addNamed("Qty", Double.class)
-                .addNamed("Price", Double.class)
+                .addNamed("Qty", double.class)
+                .addNamed("Price", double.class)
                 .addNamed("BestBefore", LocalDateTime.class)
                 .build();
 
@@ -331,7 +385,7 @@ class SchemaAndCellsTest {
         DataSchema expectedSchema = DataSchema.builder()
                 .addNamed("Fruit", String.class)
                 .addNamed("Qty", int.class)
-                .addNamed("Price", Double.class)
+                .addNamed("Price", double.class)
                 .addNamed("BestBefore", LocalDate.class)
                 .build();
 

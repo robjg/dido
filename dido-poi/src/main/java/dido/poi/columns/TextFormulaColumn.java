@@ -3,7 +3,6 @@ package dido.poi.columns;
 import dido.data.DidoData;
 import dido.data.FieldGetter;
 import dido.data.SchemaField;
-import dido.data.util.TypeUtil;
 import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
 import dido.how.conversion.RequiringConversion;
@@ -11,6 +10,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
+import java.lang.reflect.Type;
 import java.util.function.Function;
 
 /**
@@ -41,21 +41,23 @@ public class TextFormulaColumn extends FormulaColumn {
 	}
 
 	@Override
-	public Class<String> getType() {
+	public Type getType() {
 		return TextColumn.TYPE;
 	}
 
 	@Override
 	protected FieldGetter getterFor(SchemaField schemaField, DidoConversionProvider conversionProvider) {
 
-		Class<?> type = TypeUtil.classOf(schemaField.getType());
+		Type type = schemaField.getType();
 
-		if (type.isAssignableFrom(String.class)) {
+		if (type == String.class) {
 			return new TextCellGetter(schemaField);
 		} else {
 			return new TextCellGetterWithConversion<>(
 					schemaField,
-					RequiringConversion.with(conversionProvider).from(String.class).to(type));
+					RequiringConversion.with(conversionProvider)
+							.<String>from(String.class)
+							.to(type));
 		}
 	}
 

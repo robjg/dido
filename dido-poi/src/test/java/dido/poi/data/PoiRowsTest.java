@@ -170,7 +170,7 @@ public class PoiRowsTest {
 
 		ReadSchema readSchema = ReadSchema.from(data.getSchema());
 
-		return outProvider.provideCellOut(readSchema,1, mock(DidoConversionProvider.class));
+		return outProvider.provideCellOut(readSchema,1, DefaultConversionProvider.defaultInstance());
 	}
 
 

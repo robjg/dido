@@ -90,14 +90,14 @@ class NonBoxedDataTest {
 
         DidoData data = NonBoxedData.builder()
                 .copy(SingleData.named("String").of("Apple"))
-                .copy(SingleData.named("Boolean").of(true))
-                .copy(SingleData.named("Byte").of((byte) 128))
-                .copy(SingleData.named("Char").of('A'))
-                .copy(SingleData.named("Short").of((short) 4))
-                .copy(SingleData.named("Int").of(42))
-                .copy(SingleData.named("Long").of(84L))
-                .copy(SingleData.named("Float").of(4.2f))
-                .copy(SingleData.named("Double").of(8.4))
+                .copy(SingleData.named("Boolean").ofBoolean(true))
+                .copy(SingleData.named("Byte").ofByte((byte) 128))
+                .copy(SingleData.named("Char").ofChar('A'))
+                .copy(SingleData.named("Short").ofShort((short) 4))
+                .copy(SingleData.named("Int").ofInt(42))
+                .copy(SingleData.named("Long").ofLong(84L))
+                .copy(SingleData.named("Float").ofFloat(4.2f))
+                .copy(SingleData.named("Double").ofDouble(8.4))
                 .copy(SingleData.named("Date").of(date))
                 .build();
 

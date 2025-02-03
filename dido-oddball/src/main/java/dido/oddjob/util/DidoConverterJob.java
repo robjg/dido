@@ -1,5 +1,7 @@
 package dido.oddjob.util;
 
+import dido.data.util.TypeUtil;
+import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.convert.ArooaConverter;
@@ -12,9 +14,12 @@ import org.oddjob.arooa.registry.Services;
 import org.oddjob.framework.adapt.HardReset;
 import org.oddjob.framework.adapt.SoftReset;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.*;
+import java.util.function.Function;
 
 /**
  * @oddjob.description Provides a {@link DidoConversionProvider} using Oddjob's conversions.
@@ -25,9 +30,16 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
 
     private volatile ArooaSession arooaSession;
 
+    /**
+     * @oddjob.property
+     * @oddjob.description A Name for the service.
+     * @oddjob.required No. Defaults to the simple class name.
+     */
     private volatile String name;
 
     private volatile ConverterServices services;
+
+    private final List<CustomConversion<?, ?>> conversions = new ArrayList<>();
 
     @ArooaHidden
     @Override
@@ -40,7 +52,21 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
 
         ArooaConverter arooaConverter = arooaSession.getTools().getArooaConverter();
 
-        this.services = new ConverterServices(new ArooaDidoConversionProvider(arooaConverter));
+        if (conversions.isEmpty()) {
+            this.services = new ConverterServices(new ArooaDidoConversionProvider(arooaConverter));
+        } else {
+            DidoConversionProvider conversions = this.conversions.stream()
+                    .collect(DefaultConversionProvider::with,
+                            (builder, customConversion) ->
+                                    builder.conversion(customConversion.from, customConversion.to,
+                                            customConversion.conversion),
+                            (builder1, builder2) -> {
+                            }
+                    )
+                    .make();
+            this.services = new ConverterServices(new PriorityConversionProvider(conversions,
+                    new ArooaDidoConversionProvider(arooaConverter)));
+        }
     }
 
     @HardReset
@@ -68,6 +94,19 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public CustomConversion<?, ?> getConversions(int i) {
+        return conversions.get(i);
+    }
+
+    public void setConversions(int i, CustomConversion<?, ?> conversion) {
+        if (conversion == null) {
+            conversions.remove(i);
+        }
+        else {
+            conversions.add(i, conversion);
+        }
     }
 
     static class ConverterServices implements Services {
@@ -112,8 +151,10 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
         }
 
         @Override
-        public <F, T> Function<F, T> conversionFor(Class<F> from, Class<T> to) {
-            ConversionPath<F, T> conversionPath = arooaConverter.findConversion(from, to);
+        public <F, T> Function<F, T> conversionFor(Type from, Type to) {
+            @SuppressWarnings("unchecked") ConversionPath<F, T> conversionPath =
+                    (ConversionPath<F, T>) arooaConverter.findConversion(
+                            TypeUtil.classOf(from), TypeUtil.classOf(to));
             if (conversionPath == null) {
                 return null;
             }
@@ -126,58 +167,67 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
             };
         }
 
-        @Override
-        public <F> ToIntFunction<F> toIntFrom(Class<F> from) {
-            if (String.class == from) {
-                return string -> Integer.parseInt((String) string);
-            } else {
-                Function<F, Integer> otherwise = conversionFor(from, int.class);
-                return otherwise::apply;
-            }
-        }
-
-        @Override
-        public <F> ToDoubleFunction<F> toDoubleFrom(Class<F> from) {
-            if (String.class == from) {
-                return string -> Double.parseDouble((String) string);
-            } else {
-                Function<F, Double> otherwise = conversionFor(from, double.class);
-                return otherwise::apply;
-            }
-        }
-
-        @Override
-        public <F> ToLongFunction<F> toLongFrom(Class<F> from) {
-            if (String.class == from) {
-                return string -> Long.parseLong((String) string);
-            } else {
-                Function<F, Long> otherwise = conversionFor(from, long.class);
-                return otherwise::apply;
-            }
-        }
-
-        @Override
-        public <T> IntFunction<T> fromIntTo(Class<T> to) {
-            Function<Integer, T> conversion = conversionFor(Integer.class, to);
-            return conversion::apply;
-        }
-
-        @Override
-        public <T> DoubleFunction<T> fromDoubleTo(Class<T> to) {
-            Function<Double, T> conversion = conversionFor(Double.class, to);
-            return conversion::apply;
-        }
-
-        @Override
-        public <T> LongFunction<T> fromLongTo(Class<T> to) {
-            Function<Long, T> conversion = conversionFor(Long.class, to);
-            return conversion::apply;
-        }
     }
 
+    static class PriorityConversionProvider implements DidoConversionProvider {
+
+        private final DidoConversionProvider first;
+
+        private final DidoConversionProvider second;
+
+        PriorityConversionProvider(DidoConversionProvider first, DidoConversionProvider second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        @Override
+        public <F, T> Function<F, T> conversionFor(Type from, Type to) {
+
+            Function<F, T> first = this.first.conversionFor(from, to);
+            if (first == null) {
+                return second.conversionFor(from, to);
+            } else {
+                return first;
+            }
+        }
+
+    }
 
     @Override
     public String toString() {
         return Objects.requireNonNullElseGet(this.name, () -> getClass().getSimpleName());
+    }
+
+    public static class CustomConversion<F, T> {
+
+        private Class<F> from;
+
+        private Class<T> to;
+
+        private Function<? super F, ? extends T> conversion;
+
+        public Class<F> getFrom() {
+            return from;
+        }
+
+        public void setFrom(Class<F> from) {
+            this.from = from;
+        }
+
+        public Class<T> getTo() {
+            return to;
+        }
+
+        public void setTo(Class<T> to) {
+            this.to = to;
+        }
+
+        public Function<? super F, ? extends T> getConversion() {
+            return conversion;
+        }
+
+        public void setConversion(Function<? super F, ? extends T> conversion) {
+            this.conversion = conversion;
+        }
     }
 }

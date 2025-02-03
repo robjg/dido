@@ -28,6 +28,11 @@ public class SchemaAndCells<P extends CellProvider> {
         this.dataCells = dataCells;
     }
 
+    public static <P extends CellProvider> SchemaAndCells<P> bothKnown(DataSchema schema,
+                                                                       Collection<? extends P> dataCells) {
+        return new SchemaAndCells<>(schema, dataCells);
+    }
+
     /**
      * For writing we need be driven by the schema of the data.
      * So we use this until we know the schema.
@@ -140,6 +145,11 @@ public class SchemaAndCells<P extends CellProvider> {
         }
     }
 
+    /**
+     * Holder for when we know the cells, but not the schema yet.
+     *
+     * @param <P> The Cell provider.
+     */
     public static class WithCells<P extends CellProvider> implements Factory<P> {
 
         private final Collection<P> cellProviders;
@@ -156,7 +166,8 @@ public class SchemaAndCells<P extends CellProvider> {
 
         @Override
         public SchemaAndCells<P> noData() {
-            return new SchemaAndCells<>(morphOf(cellProviders), cellProviders);
+            return new SchemaAndCells<>(morphOf(cellProviders, null),
+                    cellProviders);
         }
     }
 
@@ -180,25 +191,49 @@ public class SchemaAndCells<P extends CellProvider> {
      * account the schema.
      *
      * @param dataCells The cell provider.
+     * @param partialSchema Possible partial schema. null if no schema.
      * @return Schema and Cells.
      * @param <P> The type of provider.
      */
-    public static <P extends CellProvider> SchemaAndCells<P> fromCells(Collection<? extends P> dataCells) {
+    public static <P extends CellProvider> SchemaAndCells<P> fromCells(Collection<? extends P> dataCells,
+                                                                       DataSchema partialSchema) {
         dataCells = dataCells == null ? List.of() : dataCells;
-        return new SchemaAndCells<>(morphOf(dataCells), dataCells);
+        return new SchemaAndCells<>(morphOf(dataCells, partialSchema), dataCells);
     }
 
-    static protected DataSchema morphOf(Collection<? extends CellProvider> cells) {
+    static protected DataSchema morphOf(Collection<? extends CellProvider> cells,
+                                        DataSchema partialSchema) {
 
+        partialSchema = Objects.requireNonNullElseGet(partialSchema,
+                DataSchema::emptySchema);
         SchemaBuilder schemaBuilder = SchemaBuilder.newInstance();
 
+        int index, lastIndex = 0;
         for (CellProvider child : cells) {
 
             String name = child.getName();
 
-            Class<?> type = child.getType();
+            index = child.getIndex();
+            if (index == 0) {
+                index = ++lastIndex;
+            }
+            else {
+                lastIndex = index;
+            }
 
-            schemaBuilder.addNamedAt(child.getIndex(), name, type);
+            Type type;
+            if (name == null) {
+                type = partialSchema.getTypeAt(index);
+            }
+            else {
+                type = partialSchema.getTypeNamed(name);
+            }
+
+            if (type == null) {
+                type = child.getType();
+            }
+
+            schemaBuilder.addNamedAt(index, name, type);
         }
 
         return schemaBuilder.build();

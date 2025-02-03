@@ -34,12 +34,8 @@ public class DataRowFactory {
 
         FieldGetter[] getters = new FieldGetter[schema.lastIndex()];
 
-        CellIn.Capture capture = new CellIn.Capture() {
-            @Override
-            public void accept(SchemaField schemaField, FieldGetter getter) {
+        CellIn.Capture capture = (schemaField, getter) ->
                 getters[schemaField.getIndex() - 1] = getter;
-            }
-        };
 
         int lastIndex = 0;
         for (CellInProvider cellProvider : cellList) {
@@ -48,10 +44,6 @@ public class DataRowFactory {
             } else {
                 lastIndex = cellProvider.getIndex();
             }
-
-            SchemaField schemaField = Objects.requireNonNull(schema.getSchemaFieldAt(lastIndex),
-                    "Programmer error: Schema does not match cells at index [" + lastIndex + "]" +
-                            ", schema is: " + schema);
 
             try {
                 CellIn cellIn = cellProvider.provideCellIn(lastIndex,

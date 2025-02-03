@@ -1,12 +1,12 @@
 package dido.poi.test;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Fruit {
 
 	private String fruit;
 	
-	private Date bestBefore;
+	private LocalDateTime bestBefore;
 	
 	private String colour;
 	
@@ -22,11 +22,11 @@ public class Fruit {
 		this.fruit = type;
 	}
 
-	public Date getBestBefore() {
+	public LocalDateTime getBestBefore() {
 		return bestBefore;
 	}
 	
-	public void setBestBefore(Date bestBefore) {
+	public void setBestBefore(LocalDateTime bestBefore) {
 		this.bestBefore = bestBefore;
 	}
 	

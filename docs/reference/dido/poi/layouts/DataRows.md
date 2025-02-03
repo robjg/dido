@@ -148,7 +148,8 @@ or [dido-poi:numeric-formula](../../../dido/poi/layouts/NumericFormulaCell.md).
 </table>
 
 Is the provided schema only a partial schema.
-Only applies when reading. If true, then the rest of the schema is derived from the data.
+Only applies when reading. If true, then the rest of the schema is derived from the data when reading,
+and the schema will be ignored when writing.
 
 #### schema <a name="propertyschema"></a>
 

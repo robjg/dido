@@ -21,8 +21,8 @@ class DataInPoiTest {
 
         DataSchema expectedSchema = MapData.schemaBuilder()
                 .addNamed("f_1", String.class)
-                .addNamed("f_2", Double.class)
-                .addNamed("f_3", Double.class)
+                .addNamed("f_2", double.class)
+                .addNamed("f_3", double.class)
                 .addNamed("f_4", LocalDateTime.class)
                 .build();
 
@@ -48,8 +48,8 @@ class DataInPoiTest {
 
         DataSchema expectedSchema = MapData.schemaBuilder()
                 .addNamed("Fruit", String.class)
-                .addNamed("Quantity", Double.class)
-                .addNamed("Price", Double.class)
+                .addNamed("Quantity", double.class)
+                .addNamed("Price", double.class)
                 .addNamed("BestBefore", LocalDateTime.class)
                 .build();
 
@@ -201,7 +201,7 @@ class DataInPoiTest {
         DataSchema expectedSchema = MapData.schemaBuilder()
                 .addNamed("f_1", String.class)
                 .addNamed("Qty", int.class)
-                .addNamed("f_3", Double.class)
+                .addNamed("f_3", double.class)
                 .addNamed("f_4", LocalDateTime.class)
                 .build();
 
@@ -235,7 +235,7 @@ class DataInPoiTest {
         DataSchema expectedSchema = MapData.schemaBuilder()
                 .addNamed("Fruit", String.class)
                 .addNamed("Quantity", int.class)
-                .addNamed("Price", Double.class)
+                .addNamed("Price", double.class)
                 .addNamed("BestBefore", LocalDateTime.class)
                 .build();
 

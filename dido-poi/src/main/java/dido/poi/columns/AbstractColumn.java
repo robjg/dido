@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 
+import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -256,7 +257,7 @@ abstract public class AbstractColumn implements DataCell {
     /**
      * The Java type of the column.
      */
-    abstract public Class<?> getType();
+    abstract public Type getType();
 
     public String getReference() {
         return reference;

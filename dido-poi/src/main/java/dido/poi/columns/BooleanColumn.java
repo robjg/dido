@@ -3,11 +3,9 @@ package dido.poi.columns;
 import dido.data.DidoData;
 import dido.data.FieldGetter;
 import dido.data.SchemaField;
-import dido.data.util.TypeUtil;
 import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
 import dido.how.conversion.RequiringConversion;
-import dido.how.util.Primitives;
 import org.apache.poi.ss.usermodel.CellType;
 
 import java.lang.reflect.Type;
@@ -18,7 +16,7 @@ import java.util.function.Function;
  */
 public class BooleanColumn extends AbstractColumn {
 
-    public static final Class<Boolean> TYPE = Boolean.class;
+    public static final Type TYPE = boolean.class;
 
     protected BooleanColumn(Settings settings) {
         super(settings);
@@ -41,7 +39,7 @@ public class BooleanColumn extends AbstractColumn {
     }
 
     @Override
-    public Class<Boolean> getType() {
+    public Type getType() {
         return TYPE;
     }
 
@@ -53,14 +51,15 @@ public class BooleanColumn extends AbstractColumn {
     @Override
     protected FieldGetter getterFor(SchemaField schemaField, DidoConversionProvider conversionProvider) {
 
-        Type type = Primitives.wrap(schemaField.getType());
+        Type type = schemaField.getType();
 
-        if (TypeUtil.isAssignableFrom(type, Boolean.class)) {
+        if (type == boolean.class) {
             return new BooleanCellGetter(schemaField);
         } else {
             return new BooleanCellGetterWithConversion<>(schemaField,
-                    RequiringConversion.with(conversionProvider).from(Boolean.class)
-                            .to(TypeUtil.classOf(type)));
+                    RequiringConversion.with(conversionProvider)
+                            .<Boolean>from(Boolean.class)
+                            .to(type));
         }
     }
 
@@ -108,12 +107,11 @@ public class BooleanColumn extends AbstractColumn {
 
         Function<Object, Boolean> conversion;
 
-        if (TypeUtil.isAssignableFrom(fromType, Boolean.class)) {
+        if (fromType == boolean.class) {
             conversion = null;
         } else {
-            //noinspection unchecked
-            conversion = (Function<Object, Boolean>) conversionProvider.conversionFor(
-                    TypeUtil.classOf(fromType), Boolean.class);
+            conversion = conversionProvider.conversionFor(
+                    fromType, boolean.class);
         }
 
         return (cell, data) -> {

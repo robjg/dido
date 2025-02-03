@@ -99,22 +99,23 @@ public class DataSchemaImpl extends AbstractDataSchema {
 
     @Override
     public SchemaField getSchemaFieldAt(int index) {
-        try {
-            return indexToSchemaField[index - firstIndex];
-        } catch (ArrayIndexOutOfBoundsException e) {
+        if (index < firstIndex || index > lastIndex) {
             return null;
+        }
+        else {
+            return indexToSchemaField[index - firstIndex];
         }
     }
 
     @Override
     public Type getTypeAt(int index) {
-        SchemaField schemaField = indexToSchemaField[index - firstIndex];
+        SchemaField schemaField = getSchemaFieldAt(index);
         return schemaField == null ? null : schemaField.getType();
     }
 
     @Override
     public DataSchema getSchemaAt(int index) {
-        SchemaField schemaField = indexToSchemaField[index - firstIndex];
+        SchemaField schemaField = getSchemaFieldAt(index);
         return schemaField == null ? null : schemaField.getNestedSchema();
     }
 

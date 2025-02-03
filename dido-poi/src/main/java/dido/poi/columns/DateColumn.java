@@ -4,17 +4,17 @@ import dido.data.DidoData;
 import dido.data.FieldGetter;
 import dido.data.SchemaField;
 import dido.data.util.TypeUtil;
-import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
 import dido.how.conversion.RequiringConversion;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
+import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
-import java.util.Objects;
-import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -24,35 +24,17 @@ public class DateColumn extends AbstractColumn {
 
     public static final String DEFAULT_DATE_STYLE = "date";
 
-    static Set<Class<?>> SUPPORTED_TYPES = Set.of(Date.class, LocalDateTime.class, LocalDate.class);
-
-    private final Class<?> type;
+    public static final Type TYPE = LocalDateTime.class;
 
     protected DateColumn(Settings settings) {
         super(settings);
-        this.type = settings.type();
     }
 
     public static class Settings extends AbstractColumn.BaseSettings<Settings> {
 
-        private Class<?> type;
-
         @Override
         protected Settings self() {
             return this;
-        }
-
-        public Settings type(Class<?> type) {
-            if (SUPPORTED_TYPES.contains(type)) {
-                this.type = type;
-            } else {
-                throw new IllegalArgumentException("For a Date Cell only supported types are" + SUPPORTED_TYPES);
-            }
-            return this;
-        }
-
-        public Class<?> type() {
-            return  Objects.requireNonNullElse(this.type, LocalDateTime.class);
         }
 
         public DateColumn make() {
@@ -65,8 +47,8 @@ public class DateColumn extends AbstractColumn {
     }
 
     @Override
-    public Class<?> getType() {
-        return type;
+    public Type getType() {
+        return TYPE;
     }
 
     @Override
@@ -92,7 +74,7 @@ public class DateColumn extends AbstractColumn {
                     new LocalDateTimeGetter(schemaField),
                     RequiringConversion.with(conversionProvider).from(LocalDateTime.class).to(type));
         }
-   }
+    }
 
     static class DateGetter extends AbstractCellGetter {
 
@@ -147,38 +129,29 @@ public class DateColumn extends AbstractColumn {
                                    FieldGetter getter,
                                    DidoConversionProvider conversionProvider) {
 
-        Class<?> fromType = TypeUtil.classOf(schemaField.getType());
-        Class<?> toType = getType();
+        Type fromType = schemaField.getType();
 
-        Function<?, ?> conversion;
-        if (toType.isAssignableFrom(fromType)) {
-            conversion = Function.identity();
+        BiConsumer<Cell, Object> setter;
+        if (fromType == LocalDateTime.class) {
+            setter = (cell, value) -> cell.setCellValue((LocalDateTime) value);
+        } else if (fromType == LocalDate.class) {
+            setter = (cell, value) -> cell.setCellValue((LocalDate) value);
+        } else if (TypeUtil.isAssignableFrom(Date.class, fromType)) {
+            setter = (cell, value) -> cell.setCellValue((Date) value);
         } else {
-            conversion = conversionProvider.conversionFor(fromType, toType);
+            Function<Object, LocalDateTime> conversion = RequiringConversion.with(conversionProvider)
+                    .from(fromType).to(LocalDateTime.class);
+            setter = (cell, value) -> cell.setCellValue(conversion.apply(value));
         }
-
         return (cell, data) -> {
 
             Object value = getter.get(data);
 
             if (value == null) {
                 cell.setBlank();
-                return;
-            }
-
-            //noinspection unchecked
-            value = ((Function<Object, Object>) conversion).apply(value);
-
-            if (value instanceof LocalDateTime) {
-                cell.setCellValue((LocalDateTime) value);
-            } else if (value instanceof LocalDate) {
-                cell.setCellValue((LocalDate) value);
-            } else if (value instanceof Date) {
-                cell.setCellValue((Date) value);
             } else {
-                throw DataException.of("Can't extract Date from " + value + " of " + value.getClass());
+                setter.accept(cell, value);
             }
-
         };
     }
 
@@ -186,5 +159,4 @@ public class DateColumn extends AbstractColumn {
     public String getDefaultStyle() {
         return DEFAULT_DATE_STYLE;
     }
-
 }

@@ -26,10 +26,12 @@ class TypeUtilTest {
     void withParameterizedType() {
 
         Type type = new PoorMansTypeToken<List<String>>() {}.type;
+        Type type2 = new PoorMansTypeToken<ArrayList<String>>() {}.type;
 
         assertThat(type.getTypeName(), is("java.util.List<java.lang.String>"));
         assertThat(TypeUtil.classOf(type), is(List.class));
-        assertThat(TypeUtil.isAssignableFrom(type, ArrayList.class), is(false));
+        assertThat(TypeUtil.isAssignableFrom(List.class, type), is(true));
+        assertThat(TypeUtil.isAssignableFrom(type, type2), is(false));
     }
 
     @Test
