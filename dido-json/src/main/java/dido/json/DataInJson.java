@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * How to read CSV Data In.
+ * How to read JSON Data In.
  */
 public class DataInJson implements DataInHow<Reader> {
 

@@ -13,9 +13,9 @@ The schema has been derived from the data:
 {@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#snippet2}
 We can provide a partial schema that only overrides the type of certain
 fields:
-{@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#snippet2}
+{@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#snippet3}
 Or a full schema that will pick just the fields specified.
-{@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#snippet2}
+{@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#snippet4}
 
 ### Copying Data.
 
