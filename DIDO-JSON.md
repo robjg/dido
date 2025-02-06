@@ -135,7 +135,7 @@ We can tell our `DataInJson` to use a Dido Conversion:
 ```java
         DidoData data = DataInJson.with()
                 .conversionProvider(conversionProvider)
-                .didConversion(String.class, LocalDate.class)
+                .didoConversion(String.class, LocalDate.class)
                 .partialSchema(DataSchema.builder()
                         .addNamed("BestBefore", LocalDate.class)
                         .build())
@@ -150,7 +150,7 @@ And likewise our `DataOutJson`:
 ```java
         String jsonAgain = DataOutJson.with()
                 .conversionProvider(conversionProvider)
-                .didConversion(LocalDate.class, String.class)
+                .didoConversion(LocalDate.class, String.class)
                 .mapToString()
                 .apply(data);
 

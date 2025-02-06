@@ -84,7 +84,7 @@ public class DataOutJson implements DataOutHow<Writer> {
             return this;
         }
 
-        public Settings didConversion(Type from, Type to) {
+        public Settings didoConversion(Type from, Type to) {
             didoConversion.register(to, from);
             return this;
         }

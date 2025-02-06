@@ -74,7 +74,7 @@ public class DataInJson implements DataInHow<Reader> {
             return this;
         }
 
-        public Settings didConversion(Type from, Type to) {
+        public Settings didoConversion(Type from, Type to) {
             didoConversion.register(from, to);
             return this;
         }

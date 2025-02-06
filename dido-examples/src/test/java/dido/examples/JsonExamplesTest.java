@@ -164,7 +164,7 @@ class JsonExamplesTest {
         // #conversionDidoIn{
         DidoData data = DataInJson.with()
                 .conversionProvider(conversionProvider)
-                .didConversion(String.class, LocalDate.class)
+                .didoConversion(String.class, LocalDate.class)
                 .partialSchema(DataSchema.builder()
                         .addNamed("BestBefore", LocalDate.class)
                         .build())
@@ -178,7 +178,7 @@ class JsonExamplesTest {
         // #conversionDidoOut{
         String jsonAgain = DataOutJson.with()
                 .conversionProvider(conversionProvider)
-                .didConversion(LocalDate.class, String.class)
+                .didoConversion(LocalDate.class, String.class)
                 .mapToString()
                 .apply(data);
 
