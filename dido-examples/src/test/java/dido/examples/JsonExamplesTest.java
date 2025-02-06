@@ -1,16 +1,26 @@
 package dido.examples;
 
+import com.google.gson.*;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.how.DataIn;
+import dido.how.conversion.DefaultConversionProvider;
+import dido.how.conversion.DidoConversionProvider;
 import dido.json.DataInJson;
+import dido.json.DataOutJson;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -89,8 +99,92 @@ class JsonExamplesTest {
 
         assertThat(didoData.get(0).getSchema().toString(),
                 is("{[1:Fruit]=java.lang.String, [2:Price]=double}"));
-        // }#snippet3
+        // }#snippet4
 
         Files.delete(Path.of("Fruit.json"));
     }
+
+    @Test
+    void conversions() throws JSONException {
+
+        // #conversionJson{
+        String json = "{ 'Fruit': 'Apple', 'BestBefore': '2025-02-14' }";
+        // }#conversionJson
+
+        // #conversionDeserializer{
+        class LocalDateDeserializer implements JsonDeserializer<LocalDate> {
+            public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                    throws JsonParseException {
+                return LocalDate.parse(json.getAsJsonPrimitive().getAsString());
+            }
+        }
+
+        DidoData data = DataInJson.with()
+                .gsonBuilder(gsonBuilder ->
+                        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateDeserializer()))
+                .partialSchema(DataSchema.builder()
+                        .addNamed("BestBefore", LocalDate.class)
+                        .build())
+                .mapFromString()
+                .apply(json);
+
+        assertThat(data, is(DidoData.of("Apple", LocalDate.parse("2025-02-14"))));
+        assertThat(data.getSchema().toString(), is("{[1:Fruit]=java.lang.String, [2:BestBefore]=java.time.LocalDate}"));
+        // }#conversionDeserializer
+
+        // #conversionSerializer{
+        class LocalDateSerializer implements JsonSerializer<LocalDate> {
+            public JsonElement serialize(LocalDate src, Type typeOfSrc, JsonSerializationContext context) {
+                return new JsonPrimitive(src.format(DateTimeFormatter.ISO_DATE));
+            }
+        }
+
+        String jsonAgain = DataOutJson.with()
+                .gsonBuilder(gsonBuilder ->
+                        gsonBuilder.registerTypeAdapter(LocalDate.class, new LocalDateSerializer()))
+                .mapToString()
+                .apply(data);
+
+        JSONAssert.assertEquals("{ 'Fruit': 'Apple', 'BestBefore': '2025-02-14' }", jsonAgain,
+                JSONCompareMode.STRICT);
+        // }#conversionSerializer
+    }
+
+    @Test
+    void didoConversions() throws JSONException {
+
+        String json = "{ 'Fruit': 'Apple', 'BestBefore': '2025-02-14' }";
+
+        // #conversionDido{
+        DidoConversionProvider conversionProvider = DefaultConversionProvider.with()
+                .<String, LocalDate>conversion(String.class, LocalDate.class, LocalDate::parse)
+                .make();
+        // }#conversionDido
+
+        // #conversionDidoIn{
+        DidoData data = DataInJson.with()
+                .conversionProvider(conversionProvider)
+                .didConversion(String.class, LocalDate.class)
+                .partialSchema(DataSchema.builder()
+                        .addNamed("BestBefore", LocalDate.class)
+                        .build())
+                .mapFromString()
+                .apply(json);
+
+        assertThat(data, is(DidoData.of("Apple", LocalDate.parse("2025-02-14"))));
+        assertThat(data.getSchema().toString(), is("{[1:Fruit]=java.lang.String, [2:BestBefore]=java.time.LocalDate}"));
+        // }#conversionDidoIn
+
+        // #conversionDidoOut{
+        String jsonAgain = DataOutJson.with()
+                .conversionProvider(conversionProvider)
+                .didConversion(LocalDate.class, String.class)
+                .mapToString()
+                .apply(data);
+
+        JSONAssert.assertEquals("{ 'Fruit': 'Apple', 'BestBefore': '2025-02-14' }", jsonAgain,
+                JSONCompareMode.STRICT);
+        // }#conversionDidoOut
+    }
 }
+

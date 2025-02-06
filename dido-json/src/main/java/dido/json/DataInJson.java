@@ -7,8 +7,10 @@ import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
+import dido.how.conversion.DidoConversionProvider;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Consumer;
@@ -32,6 +34,9 @@ public class DataInJson implements DataInHow<Reader> {
         private DataFactoryProvider factoryProvider;
 
         private final GsonBuilder gsonBuilder = new GsonBuilder();
+
+        private final DidoConversionAdaptorFactory.Settings didoConversion =
+                DidoConversionAdaptorFactory.with();
 
         public Settings inFormat(JsonDidoFormat didoFormat) {
             this.didoFormat = didoFormat;
@@ -64,6 +69,16 @@ public class DataInJson implements DataInHow<Reader> {
             return this;
         }
 
+        public Settings conversionProvider(DidoConversionProvider conversionProvider) {
+            didoConversion.conversionProvider(conversionProvider);
+            return this;
+        }
+
+        public Settings didConversion(Type from, Type to) {
+            didoConversion.register(from, to);
+            return this;
+        }
+
         public DataIn fromPath(Path path) {
             try {
                 return make().inFrom(Files.newBufferedReader(path));
@@ -80,7 +95,18 @@ public class DataInJson implements DataInHow<Reader> {
             return make().inFrom(reader);
         }
 
+        private void registerGsonBuilderDefaults() {
+
+            DidoConversionAdaptorFactory didoConversionAdaptorFactory = didoConversion.make();
+            if (!didoConversionAdaptorFactory.isEmpty()) {
+                gsonBuilder.registerTypeAdapterFactory(didoConversionAdaptorFactory);
+            }
+        }
+
         public DataInJson make() {
+
+            registerGsonBuilderDefaults();
+
             if (didoFormat == JsonDidoFormat.LINES) {
                 return new DataInJson(
                         DataInJsonLines.withFunction(mapFromString()));
@@ -109,6 +135,8 @@ public class DataInJson implements DataInHow<Reader> {
         }
 
         public Function<String, DidoData> mapFromString() {
+
+            registerGsonBuilderDefaults();
 
             if (factoryProvider == null) {
                 return JsonStringToData.asWrapper()

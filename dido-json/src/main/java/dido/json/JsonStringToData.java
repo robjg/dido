@@ -46,7 +46,8 @@ public class JsonStringToData {
 
             if (schema == null || partial) {
 
-                return new UnknownWrapper(schema == null ? DataSchema.emptySchema() : schema);
+                return new UnknownWrapper(gsonBuilder,
+                        schema == null ? DataSchema.emptySchema() : schema);
             } else {
 
                 return new Known(JsonDataWrapper.registerSchema(gsonBuilder, schema)
@@ -100,11 +101,15 @@ public class JsonStringToData {
 
     static class UnknownWrapper implements Function<String, DidoData> {
 
+        private final GsonBuilder gsonBuilder;
+
         private final DataSchema partialSchema;
 
         private volatile Known known;
 
-        UnknownWrapper(DataSchema partialSchema) {
+        UnknownWrapper(GsonBuilder gsonBuilder,
+                       DataSchema partialSchema) {
+            this.gsonBuilder = gsonBuilder;
             this.partialSchema = partialSchema;
         }
 
@@ -112,10 +117,10 @@ public class JsonStringToData {
         public DidoData apply(String s) {
             if (known == null) {
                 DataSchema schema = JsonSchemaExtractor
-                        .registerPartialSchema(new GsonBuilder(), partialSchema)
+                        .registerPartialSchema(gsonBuilder.create().newBuilder(), partialSchema)
                         .create()
                         .fromJson(s, DataSchema.class);
-                Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema).create();
+                Gson gson = JsonDataWrapper.registerSchema(gsonBuilder.create().newBuilder(), schema).create();
                 known = new Known(gson, toString());
             }
             return known.apply(s);

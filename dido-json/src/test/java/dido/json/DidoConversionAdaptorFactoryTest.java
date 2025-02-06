@@ -31,6 +31,8 @@ class DidoConversionAdaptorFactoryTest {
                 .register(Integer.class, LocalDate.class)
                 .make();
 
+        assertThat(test.isEmpty(), is(false));
+
         Gson gson = new GsonBuilder().registerTypeAdapterFactory(test)
                 .create();
 

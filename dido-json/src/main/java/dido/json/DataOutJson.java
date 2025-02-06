@@ -8,12 +8,14 @@ import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
+import dido.how.conversion.DidoConversionProvider;
 import dido.how.util.IoUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,6 +41,8 @@ public class DataOutJson implements DataOutHow<Writer> {
 
         private final GsonBuilder gsonBuilder = new GsonBuilder();
 
+        private final DidoConversionAdaptorFactory.Settings didoConversion =
+                DidoConversionAdaptorFactory.with();
 
         public Settings gsonBuilder(Consumer<? super GsonBuilder> withBuilder) {
             withBuilder.accept(gsonBuilder);
@@ -75,6 +79,16 @@ public class DataOutJson implements DataOutHow<Writer> {
             return this;
         }
 
+        public Settings conversionProvider(DidoConversionProvider conversionProvider) {
+            didoConversion.conversionProvider(conversionProvider);
+            return this;
+        }
+
+        public Settings didConversion(Type from, Type to) {
+            didoConversion.register(to, from);
+            return this;
+        }
+
         public DataOut toAppendable(Appendable appendable) {
             return toWriter(IoUtil.writerFromAppendable(appendable));
         }
@@ -96,6 +110,11 @@ public class DataOutJson implements DataOutHow<Writer> {
         }
 
         private void registerGsonBuilderDefaults() {
+
+            DidoConversionAdaptorFactory didoConversionAdaptorFactory = didoConversion.make();
+            if (!didoConversionAdaptorFactory.isEmpty()) {
+                gsonBuilder.registerTypeAdapterFactory(didoConversionAdaptorFactory);
+            }
 
             gsonBuilder.registerTypeHierarchyAdapter(
                             DidoData.class,

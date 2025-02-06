@@ -127,6 +127,4 @@ public class DidoConversionAdaptorFactory implements TypeAdapterFactory {
                     .apply(original);
         }
     }
-
-
 }
