@@ -1,7 +1,6 @@
 package dido.json;
 
 import com.google.gson.GsonBuilder;
-import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.how.DataException;
@@ -31,8 +30,6 @@ public class DataInJson implements DataInHow<Reader> {
 
         private boolean partialSchema;
 
-        private DataFactoryProvider factoryProvider;
-
         private final GsonBuilder gsonBuilder = new GsonBuilder();
 
         private final DidoConversionAdaptorFactory.Settings didoConversion =
@@ -40,11 +37,6 @@ public class DataInJson implements DataInHow<Reader> {
 
         public Settings inFormat(JsonDidoFormat didoFormat) {
             this.didoFormat = didoFormat;
-            return this;
-        }
-
-        public Settings factoryProvider(DataFactoryProvider factoryProvider) {
-            this.factoryProvider = factoryProvider;
             return this;
         }
 
@@ -113,23 +105,18 @@ public class DataInJson implements DataInHow<Reader> {
             }
             else {
                 if (schema == null || partialSchema) {
-                    factoryProvider = DataFactoryProvider.newInstance();
-                }
-
-                if (factoryProvider == null) {
                     return new DataInJson(
-                            DataInJsonReader.asWrapper(schema)
+                            DataInJsonReader.asCopy()
+                                    .setSchema(schema)
+                                    .setPartial(true)
                                     .setIsArray(didoFormat == JsonDidoFormat.ARRAY)
                                     .make(gsonBuilder));
                 }
                 else {
                     return new DataInJson(
-                            DataInJsonReader.asCopy()
-                                    .setSchema(schema)
-                                    .setPartial(partialSchema)
+                            DataInJsonReader.asWrapper(schema)
                                     .setIsArray(didoFormat == JsonDidoFormat.ARRAY)
-                                    .make(gsonBuilder)
-                    );
+                                    .make(gsonBuilder));
                 }
             }
         }
@@ -138,16 +125,15 @@ public class DataInJson implements DataInHow<Reader> {
 
             registerGsonBuilderDefaults();
 
-            if (factoryProvider == null) {
-                return JsonStringToData.asWrapper()
+            if (schema == null || partialSchema) {
+                return JsonStringToData.asCopy()
                         .setSchema(schema)
-                        .setPartial(partialSchema)
+                        .setPartial(true)
                         .make(gsonBuilder);
             }
             else {
-                return JsonStringToData.asCopy(factoryProvider)
+                return JsonStringToData.asWrapper()
                         .setSchema(schema)
-                        .setPartial(partialSchema)
                         .make(gsonBuilder);
             }
         }

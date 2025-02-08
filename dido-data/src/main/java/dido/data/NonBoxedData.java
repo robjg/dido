@@ -7,6 +7,11 @@ import dido.data.util.FieldValuesIn;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
+/**
+ * Implementation of {@link DidoData} that stores primitives in there none boxed form. At the moment this is
+ * only happening for Integers and Doubles. Experiments indicate about a 10% performance improvement
+ * over {@link ArrayData}.
+ */
 public class NonBoxedData extends AbstractData {
 
     private final NonBoxedDataSchema schema;

@@ -1,7 +1,5 @@
 package dido.json;
 
-import dido.data.ArrayDataDataFactoryProvider;
-import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
@@ -49,21 +47,6 @@ public class JsonDido {
      */
     private JsonDidoFormat format;
 
-    /**
-     * @oddjob.description When reading data the JSON is copied or wrapped. The idea is that wrapping
-     * data will be more performant for limited amounts of Data but tests really need to be done.
-     * If no dataFactoryProvider is specified a default is used.
-     * @oddjob.required No, defaults to false.
-     */
-    private boolean copy;
-
-    /**
-     * @oddjob.description Provide a data factory to use for the copy. If this is provided a copy rather
-     * than wrapping is assumed.
-     * @oddjob.required No, defaults to ArrayData, if copy is true.
-     */
-    private DataFactoryProvider dataFactoryProvider;
-
     public DataOutHow<OutputStream> toStreamOut() {
 
         return StreamHows.fromWriterHow(toWriterOut());
@@ -86,21 +69,12 @@ public class JsonDido {
 
         JsonDidoFormat format = Objects.requireNonNullElse(this.format, JsonDidoFormat.LINES);
 
-        DataFactoryProvider dataFactoryProvider = this.dataFactoryProvider == null && copy ?
-                DataFactoryProvider.newInstance() : this.dataFactoryProvider;
-
         return DataInJson.with()
                 .inFormat(format)
-                .factoryProvider(dataFactoryProvider)
                 .schema(schema)
                 .partialSchema(partialSchema)
                 .make();
     }
-
-    private DataFactoryProvider dataFactoryProvider() {
-        return this.dataFactoryProvider == null ? new ArrayDataDataFactoryProvider() : this.dataFactoryProvider;
-    }
-
 
     public DataSchema getSchema() {
         return schema;
@@ -124,14 +98,6 @@ public class JsonDido {
 
     public void setFormat(JsonDidoFormat format) {
         this.format = format;
-    }
-
-    public boolean isCopy() {
-        return copy;
-    }
-
-    public void setCopy(boolean copy) {
-        this.copy = copy;
     }
 
     @Override

@@ -1,40 +1,51 @@
 package dido.json;
 
 import com.google.gson.*;
-import dido.data.*;
-import dido.data.util.FieldValuesIn;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.RepeatingData;
+import dido.data.SchemaField;
+import dido.data.mutable.MalleableArrayData;
+import dido.data.mutable.MalleableData;
 
 import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  *
  */
 public class JsonDataPartialCopy {
 
-    private final DataFactoryProvider dataFactoryProvider;
+    private final Supplier<MalleableData> malleableDataSupplier;
 
     private final LinkedList<DataSchema> stack = new LinkedList<>();
 
     private JsonDataPartialCopy(DataSchema partialSchema,
-                                DataFactoryProvider dataFactoryProvider) {
+                                Supplier<MalleableData> malleableDataSupplier) {
         this.stack.addFirst(partialSchema);
-        this.dataFactoryProvider = dataFactoryProvider;
+        this.malleableDataSupplier = Objects.requireNonNullElse(malleableDataSupplier,
+                MalleableArrayData::new);
     }
 
     public static GsonBuilder registerNoSchema(GsonBuilder gsonBuilder,
-                                                                    DataFactoryProvider dataFactory) {
+                                               Supplier<MalleableData> dataFactory) {
         return new JsonDataPartialCopy(DataSchema.emptySchema(), dataFactory).init(gsonBuilder);
     }
 
     public static GsonBuilder registerPartialSchema(GsonBuilder gsonBuilder,
-                                                                         DataSchema partialSchema,
-                                                                         DataFactoryProvider dataFactory) {
+                                                    DataSchema partialSchema,
+                                                    Supplier<MalleableData> dataFactory) {
         return new JsonDataPartialCopy(partialSchema == null ? DataSchema.emptySchema() : partialSchema,
                 dataFactory).init(gsonBuilder);
+    }
+
+    public static GsonBuilder registerPartialSchema(GsonBuilder gsonBuilder,
+                                                    DataSchema partialSchema) {
+        return new JsonDataPartialCopy(
+                partialSchema == null ? DataSchema.emptySchema() : partialSchema,
+                null)
+                .init(gsonBuilder);
     }
 
     private GsonBuilder init(GsonBuilder gsonBuilder) {
@@ -57,13 +68,11 @@ public class JsonDataPartialCopy {
             }
 
             DataSchema prioritySchema = stack.getFirst();
-            SchemaFactory schemaFactory = dataFactoryProvider.getSchemaFactory();
             Set<String> knownFields = new HashSet<>(prioritySchema.getFieldNames());
 
             JsonObject jsonObject = (JsonObject) json;
 
-            Object[] values = new Object[jsonObject.size()];
-            int index = 0;
+            MalleableData data = malleableDataSupplier.get();
 
             for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
 
@@ -81,50 +90,150 @@ public class JsonDataPartialCopy {
                         stack.addFirst(schemaField.getNestedSchema());
                         if (schemaField.isRepeating()) {
                             fieldType = SchemaField.NESTED_REPEATING_TYPE;
-                        }
-                        else {
+                        } else {
                             fieldType = SchemaField.NESTED_TYPE;
                         }
                     }
 
                     Object value = context.deserialize(element, fieldType);
-                    values[index] = value;
 
-                    SchemaField childField;
+                    SchemaField newField;
                     if (schemaField.isNested()) {
 
                         stack.removeFirst();
                         if (schemaField.isRepeating()) {
                             RepeatingData repeatingData = (RepeatingData) value;
                             if (repeatingData.size() > 0) {
-                                childField = SchemaField.ofRepeating(++index, fieldName,
+                                newField = SchemaField.ofRepeating(0, fieldName,
                                         repeatingData.get(0).getSchema());
                             } else {
-                                childField = schemaField.mapToIndex(++index);
+                                newField = schemaField.mapToIndex(0);
                             }
                         } else {
-                            childField = SchemaField.ofNested(++index, fieldName, ((DidoData) value).getSchema());
+                            newField = SchemaField.ofNested(0, fieldName, ((DidoData) value).getSchema());
                         }
                     } else {
-                        childField = SchemaField.of(++index, fieldName, schemaField.getType());
+                        newField = SchemaField.of(0, fieldName, schemaField.getType());
                     }
-                    schemaFactory.addSchemaField(childField);
+
+                    data.setField(newField, value);
 
                 } else {
 
-                    Object value = context.deserialize(element, Object.class);
-
-                    Class<?> type = value.getClass();
-
-                    values[index] = value;
-                    schemaFactory.addSchemaField(SchemaField.of(++index, fieldName, type));
+                    processJson(fieldName, element, data, context);
                 }
             }
 
-            DataSchema schema = schemaFactory.toSchema();
-
-            return FieldValuesIn.withDataFactory(dataFactoryProvider.factoryFor(schema))
-                    .of(values);
+            return data;
         }
+    }
+
+    protected void processJson(String fieldName,
+                               JsonElement element,
+                               MalleableData data,
+                               JsonDeserializationContext context) {
+
+        if (element.isJsonPrimitive()) {
+
+            processPrimitive(data, fieldName,
+                    element.getAsJsonPrimitive());
+        } else if (element.isJsonArray()) {
+
+            processArray(data, fieldName,
+                    element.getAsJsonArray(),
+                    context);
+        } else {
+
+            Object map = context.deserialize(element, Map.class);
+            data.setNamed(fieldName, map, Map.class);
+        }
+    }
+
+    protected void processPrimitive(MalleableData data,
+                                    String field,
+                                    JsonPrimitive jsonPrimitive) {
+
+        if (jsonPrimitive.isString()) {
+            data.setStringNamed(field, jsonPrimitive.getAsString());
+        } else if (jsonPrimitive.isBoolean()) {
+            data.setBooleanNamed(field, jsonPrimitive.getAsBoolean());
+        } else {
+            data.setDoubleNamed(field, jsonPrimitive.getAsDouble());
+        }
+    }
+
+    protected void processArray(MalleableData data,
+                                String field,
+                                JsonArray jsonArray,
+                                JsonDeserializationContext context) {
+        Class<?> type = null;
+        Object[] array = new Object[jsonArray.size()];
+
+        int index = 0;
+        for (JsonElement element : jsonArray.asList()) {
+
+            if (element.isJsonPrimitive()) {
+
+                JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
+
+                if (jsonPrimitive.isString()) {
+                    array[index++] = jsonPrimitive.getAsString();
+                    if (type == null) {
+                        type = String.class;
+                    } else if (type != String.class) {
+                        type = Object.class;
+                    }
+                } else if (jsonPrimitive.isBoolean()) {
+                    array[index++] = jsonPrimitive.getAsBoolean();
+                    if (type == null) {
+                        type = boolean.class;
+                    } else if (type != boolean.class) {
+                        type = Object.class;
+                    }
+                } else {
+                    array[index++] = jsonPrimitive.getAsDouble();
+                    if (type == null) {
+                        type = double.class;
+                    } else if (type != double.class) {
+                        type = Object.class;
+                    }
+                }
+            } else if (element.isJsonArray()) {
+
+                Object[] na = context.deserialize(element, Object[].class);
+                array[index++] = na;
+                type = Object.class;
+            } else {
+
+                Object o = context.deserialize(element, Object.class);
+                array[index++] = o;
+                type = Object.class;
+            }
+        }
+
+        Object result = array;
+        if (type != null) {
+            if (type == String.class) {
+                String[] na = new String[array.length];
+                for (int i = 0; i < array.length; ++i) {
+                    na[i] = (String) array[i];
+                }
+                result = na;
+            } else if (type == boolean.class) {
+                boolean[] na = new boolean[array.length];
+                for (int i = 0; i < array.length; ++i) {
+                    na[i] = (boolean) array[i];
+                }
+                result = na;
+            } else if (type == double.class) {
+                double[] na = new double[array.length];
+                for (int i = 0; i < array.length; ++i) {
+                    na[i] = (double) array[i];
+                }
+                result = na;
+            }
+        }
+
+        data.setNamed(field, result);
     }
 }

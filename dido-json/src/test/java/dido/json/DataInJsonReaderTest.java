@@ -30,8 +30,8 @@ class DataInJsonReaderTest {
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addNamed("Fruit", String.class)
-                .addNamed("Qty", Double.class)
-                .addNamed("Price", Double.class)
+                .addNamed("Qty", double.class)
+                .addNamed("Price", double.class)
                 .build();
 
         FieldValuesIn values = ArrayData.valuesWithSchema(expectedSchema);
@@ -89,7 +89,7 @@ class DataInJsonReaderTest {
 
         DataSchema expectedNestedSchema = SchemaBuilder.newInstance()
                 .addNamed("Fruit", String.class)
-                .addNamed("Qty", Double.class)
+                .addNamed("Qty", double.class)
                 .build();
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()

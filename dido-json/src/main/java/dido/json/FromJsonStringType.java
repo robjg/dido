@@ -1,6 +1,5 @@
 package dido.json;
 
-import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 
@@ -31,29 +30,12 @@ public class FromJsonStringType {
      */
     private boolean partialSchema;
 
-    /**
-     * @oddjob.description When reading data is the data copied or wrapped. The idea is that wrapping
-     * data will be more performant for limited amounts of Data but tests really need to be done.
-     * @oddjob.required No, defaults to false.
-     */
-    private boolean copy;
-
-    /**
-     * @oddjob.description Provide a data factory to use for the copy. If this is provided a copy rather
-     * than wrapping is assumed.
-     * @oddjob.required No, defaults to ArrayData, if copy is true.
-     */
-    private DataFactoryProvider dataFactoryProvider;
 
     public Function<String, DidoData> toFunction() {
-
-        DataFactoryProvider dataFactoryProvider =
-                this.dataFactoryProvider == null && copy ? DataFactoryProvider.newInstance() : this.dataFactoryProvider;
 
         return DataInJson.with()
                 .schema(schema)
                 .partialSchema(partialSchema)
-                .factoryProvider(dataFactoryProvider)
                 .mapFromString();
     }
 
@@ -71,14 +53,6 @@ public class FromJsonStringType {
 
     public void setPartialSchema(boolean partialSchema) {
         this.partialSchema = partialSchema;
-    }
-
-    public boolean isCopy() {
-        return copy;
-    }
-
-    public void setCopy(boolean copy) {
-        this.copy = copy;
     }
 
     @Override

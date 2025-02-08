@@ -78,7 +78,7 @@ class FlattenTypeTest {
         DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addNamed("Name", String.class)
                 .addNamed("Numbers", Integer.class)
-                .addNamed("Letters", Object.class)
+                .addNamed("Letters", String.class)
                 .build();
 
         // Todo Specify Schema

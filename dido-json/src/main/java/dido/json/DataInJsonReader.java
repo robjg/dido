@@ -48,7 +48,7 @@ public class DataInJsonReader implements DataInHow<Reader> {
 
     public static CopySettings asCopy() {
 
-        return new CopySettings(DataFactoryProvider.newInstance());
+        return asCopy(DataFactoryProvider.newInstance());
     }
 
     public static CopySettings asCopy(DataFactoryProvider dataFactoryProvider) {
@@ -115,7 +115,7 @@ public class DataInJsonReader implements DataInHow<Reader> {
 
                 return new DataInJsonReader(
                         JsonDataPartialCopy.registerPartialSchema(gsonBuilder,
-                                        schema, dataFactoryProvider)
+                                        schema)
                                 .create(),
                         isArray);
             } else {

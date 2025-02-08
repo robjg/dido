@@ -59,7 +59,7 @@ class JsonExamplesTest {
         DataSchema schema = didoData.get(0).getSchema();
 
         assertThat(schema.toString(),
-                is("{[1:Fruit]=java.lang.String, [2:Qty]=java.lang.Double, [3:Price]=java.lang.Double}"));
+                is("{[1:Fruit]=java.lang.String, [2:Qty]=double, [3:Price]=double}"));
         // }#snippet2
 
         // #snippet3{
@@ -78,7 +78,7 @@ class JsonExamplesTest {
                 DidoData.of("Pear", 3, 26.84)));
 
         assertThat(didoData.get(0).getSchema().toString(),
-                is("{[1:Fruit]=java.lang.String, [2:Qty]=int, [3:Price]=java.lang.Double}"));
+                is("{[1:Fruit]=java.lang.String, [2:Qty]=int, [3:Price]=double}"));
         // }#snippet3
 
         // #snippet4{

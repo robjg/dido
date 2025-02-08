@@ -70,6 +70,10 @@ public interface SchemaField {
         return mapTo(getIndex(), toName);
     }
 
+    default SchemaField withType(Type type) {
+        return of(getIndex(), getName(), type);
+    }
+
     SchemaField mapTo(int toIndex, String toName);
 
     static SchemaField of(int index, String name, Type type) {

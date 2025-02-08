@@ -21,6 +21,10 @@ public class JsonStringToData {
         return new WrapperSettings();
     }
 
+    public static CopySettings asCopy() {
+        return asCopy(DataFactoryProvider.newInstance());
+    }
+
     public static CopySettings asCopy(DataFactoryProvider dataFactoryProvider) {
 
         return new CopySettings(dataFactoryProvider);
@@ -86,7 +90,7 @@ public class JsonStringToData {
 
                 return new Known(
                         JsonDataPartialCopy.registerPartialSchema(
-                                        gsonBuilder, partialSchema, dataFactoryProvider)
+                                        gsonBuilder, partialSchema)
                                 .create(),
                         "toCopy, partialSchema=" + partialSchema);
             } else {
