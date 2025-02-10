@@ -1,5 +1,5 @@
 [HOME](../../README.md)
-# dido:json-stream
+# dido:json
 
 Creates an In or an Out for JSON data. Data can either be in the format
 of a single JSON Object per line. An array of JSON Objects, or A single JSON Object.
@@ -8,7 +8,6 @@ of a single JSON Object per line. An array of JSON Objects, or A single JSON Obj
 
 | Property | Description |
 | -------- | ----------- |
-| [copy](#propertycopy) | When reading data the JSON is copied or wrapped. | 
 | [format](#propertyformat) | The format of the data. | 
 | [partialSchema](#propertypartialSchema) | When reading data in, indicates that the provided Schema is partial. | 
 | [schema](#propertyschema) | The schema to use. | 
@@ -23,18 +22,6 @@ of a single JSON Object per line. An array of JSON Objects, or A single JSON Obj
 
 
 ### Property Detail
-#### copy <a name="propertycopy"></a>
-
-<table style='font-size:smaller'>
-      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
-      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
-      <tr><td><i>Required</i></td><td>No, defaults to false.</td></tr>
-</table>
-
-When reading data the JSON is copied or wrapped. The idea is that wrapping
-data will be more performant for limited amounts of Data but tests really need to be done.
-If no dataFactoryProvider is specified a default is used.
-
 #### format <a name="propertyformat"></a>
 
 <table style='font-size:smaller'>
@@ -81,7 +68,7 @@ From JSON Lines and back again.
             <of>
                 <dido:data-in xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:json-stream/>
+                        <dido:json/>
                     </how>
                     <from>
                         <buffer>
@@ -94,7 +81,7 @@ From JSON Lines and back again.
                 </dido:data-in>
                 <dido:data-out xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:json-stream/>
+                        <dido:json/>
                     </how>
                     <to>
                         <identify id="results">
@@ -122,7 +109,7 @@ From JSON Array and back again.
             <of>
                 <dido:data-in xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:json-stream copy="true" format="ARRAY"/>
+                        <dido:json format="ARRAY"/>
                     </how>
                     <from>
                         <buffer>
@@ -139,7 +126,7 @@ From JSON Array and back again.
                 </dido:data-in>
                 <dido:data-out xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:json-stream format="ARRAY"/>
+                        <dido:json format="ARRAY"/>
                     </how>
                     <to>
                         <identify id="results">

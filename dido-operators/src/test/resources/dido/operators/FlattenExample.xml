@@ -7,7 +7,7 @@
                     <of>
                         <dido:data-in name="Data" xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json-stream format="ARRAY" partialSchema="true">
+                                <dido:json format="ARRAY" partialSchema="true">
                                     <schema>
                                         <dido:schema>
                                             <of>
@@ -23,7 +23,7 @@
                                             </of>
                                         </dido:schema>
                                     </schema>
-                                </dido:json-stream>
+                                </dido:json>
                             </how>
                             <from>
                                 <buffer>

@@ -3,11 +3,26 @@
     <job>
         <sequential>
             <jobs>
+                <variables id="ourVars">
+                    <ourSchema>
+                        <dido:schema xmlns:dido="oddjob:dido">
+                            <of>
+                                <dido:field name="Fruit" type="java.lang.String"/>
+                                <dido:field name="Qty" type="int"/>
+                                <dido:field name="Price" type="double"/>
+                            </of>
+                        </dido:schema>
+                    </ourSchema>
+                </variables>
                 <bus:bus xmlns:bus="oddjob:beanbus">
                     <of>
                         <dido:data-in xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv/>
+                                <dido:csv>
+                                    <schema>
+                                        <value value="${ourVars.ourSchema}"/>
+                                    </schema>
+                                </dido:csv>
                             </how>
                             <from>
                                 <file file="Fruit.csv"/>

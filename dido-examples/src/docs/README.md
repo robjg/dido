@@ -27,15 +27,16 @@ We get:
 
 ### More Info
 
-[dido-data](DIDO-DATA.md) The definition of Data on which the rest of Dido is based.
+[dido-data](DIDO-DATA.md) provides the definition of Data on which the rest of Dido is based.
+[dido-operators](DIDO-OPERATORS.md) provide functions for processing data.
 
-Formatters: 
+For Reading Data in and Out in different formats: 
  - [dido-csv](DIDO-CSV.md) - For reading and writing CSV data.  
  - [dido-json](DIDO-JSON.md) - For reading and writing JSON. 
  - [dido-sql](DIDO-SQL.md) - For reading and writing to Databases.
  - [dido-poi](DIDO-POI.md) - For reading and writing to Excel sheets.
  - [dido-text](DIDO-TEXT.md) - For writing to Ascii Formatted Text Tables.
 
-[dido-oddball](dido-oddball) For using Dido in Oddjob.
+For using Dido in [Oddjob](http://rgordon.co.uk/oddjob) there is [dido-oddball](DIDO-ODDBALL.md) .
 
 

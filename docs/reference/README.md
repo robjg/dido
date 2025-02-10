@@ -15,8 +15,9 @@
 - [dido:flatten](dido/operators/FlattenType.md) - 
 - [dido:from-bean](dido/oddjob/bean/FromBeanTransformer.md) - Transform a Bean to Dido Data.
 - [dido:from-json](dido/json/FromJsonStringType.md) - Provides a Mapping Function that will convert a GSON String into Dido Data.
-- [dido:json-stream](dido/json/JsonDido.md) - Creates an In or an Out for JSON data.
+- [dido:json](dido/json/JsonDido.md) - Creates an In or an Out for JSON data.
 - [dido:left-join](dido/operators/LeftStreamJoinType.md) - 
+- [dido:lines](dido/oddjob/util/LinesDido.md) - Creates an In or Out for Lines of Text.
 - [dido:schema](dido/oddjob/schema/SchemaBean.md) - Define a Schema.
 - [dido:set](dido/operators/transform/ValueSetFactory.md) - Set the value for a field or index.
 - [dido:sql](dido/sql/SqlDido.md) - Export and Import with SQL.

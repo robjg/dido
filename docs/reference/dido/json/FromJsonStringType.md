@@ -8,7 +8,6 @@ into Dido Data.
 
 | Property | Description |
 | -------- | ----------- |
-| [copy](#propertycopy) | When reading data is the data copied or wrapped. | 
 | [partialSchema](#propertypartialSchema) | Indicates that the provided Schema is partial. | 
 | [schema](#propertyschema) | The schema to use. | 
 
@@ -21,17 +20,6 @@ into Dido Data.
 
 
 ### Property Detail
-#### copy <a name="propertycopy"></a>
-
-<table style='font-size:smaller'>
-      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
-      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
-      <tr><td><i>Required</i></td><td>No, defaults to false.</td></tr>
-</table>
-
-When reading data is the data copied or wrapped. The idea is that wrapping
-data will be more performant for limited amounts of Data but tests really need to be done.
-
 #### partialSchema <a name="propertypartialSchema"></a>
 
 <table style='font-size:smaller'>

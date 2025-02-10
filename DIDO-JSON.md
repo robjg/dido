@@ -29,7 +29,7 @@ The schema has been derived from the data:
         DataSchema schema = didoData.get(0).getSchema();
 
         assertThat(schema.toString(),
-                is("{[1:Fruit]=java.lang.String, [2:Qty]=java.lang.Double, [3:Price]=java.lang.Double}"));
+                is("{[1:Fruit]=java.lang.String, [2:Qty]=double, [3:Price]=double}"));
 ```
 
 We can provide a partial schema that only overrides the type of certain
@@ -50,7 +50,7 @@ fields:
                 DidoData.of("Pear", 3, 26.84)));
 
         assertThat(didoData.get(0).getSchema().toString(),
-                is("{[1:Fruit]=java.lang.String, [2:Qty]=int, [3:Price]=java.lang.Double}"));
+                is("{[1:Fruit]=java.lang.String, [2:Qty]=int, [3:Price]=double}"));
 ```
 
 Or a full schema that will pick just the fields specified.

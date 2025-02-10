@@ -68,7 +68,43 @@ The value.
 #### Example 1 <a name="example1"></a>
 
 Set a value.
-_java.io.IOException: No Resource Found: 'dido/oddjob/transform/DataSetExample.xml', classloader=java.net.URLClassLoader@7be625bf_
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <bus:driver>
+                    <values>
+                        <list>
+                            <values>
+                                <bean class="dido.operators.transform.FruitData" price="27.2" qty="5" type="Apple"/>
+                                <bean class="dido.operators.transform.FruitData" price="31.6" qty="10" type="Orange"/>
+                                <bean class="dido.operators.transform.FruitData" price="22.1" qty="7" type="Pear"/>
+                            </values>
+                        </list>
+                    </values>
+                </bus:driver>
+                <bus:map>
+                    <function>
+                        <dido:transform xmlns:dido="oddjob:dido" withCopy="true">
+                            <of>
+                                <dido:set field="qty">
+                                    <value>
+                                        <value value="20"/>
+                                    </value>
+                                </dido:set>
+                            </of>
+                        </dido:transform>
+                    </function>
+                </bus:map>
+                <bus:collect id="capture"/>
+            </of>
+        </bus:bus>
+    </job>
+</oddjob>
+```
+
 
 
 -----------------------

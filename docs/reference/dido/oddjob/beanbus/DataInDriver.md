@@ -116,7 +116,7 @@ Dog]]>
                                 </buffer>
                             </from>
                             <how>
-                                <bean class="dido.oddjob.stream.StreamLines$In"/>
+                                <dido:lines/>
                             </how>
                         </dido:data-in>
                         <dido:data-out xmlns:dido="oddjob:dido">
@@ -124,7 +124,7 @@ Dog]]>
                                 <value value="${vars.results}"/>
                             </to>
                             <how>
-                                <bean class="dido.oddjob.stream.StreamLines$Out"/>
+                                <dido:lines/>
                             </how>
                         </dido:data-out>
                     </of>

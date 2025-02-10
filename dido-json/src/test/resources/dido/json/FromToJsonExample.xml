@@ -5,7 +5,7 @@
             <of>
                 <dido:data-in xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:json-stream/>
+                        <dido:json/>
                     </how>
                     <from>
                         <buffer>
@@ -18,7 +18,7 @@
                 </dido:data-in>
                 <dido:data-out xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:json-stream/>
+                        <dido:json/>
                     </how>
                     <to>
                         <identify id="results">

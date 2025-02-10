@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  * @oddjob.description Set the value for a field or index. Participates in an {@link TransformationFactory}. If
  * no field or index is specified the index is taken by the position in the transform.
  * @oddjob.example Set a value.
- * {@oddjob.xml.resource dido/oddjob/transform/DataSetExample.xml}
+ * {@oddjob.xml.resource dido/operators/transform/DataSetExample.xml}
  */
 public class ValueSetFactory implements Supplier<OpDef> {
 

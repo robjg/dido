@@ -5,8 +5,12 @@
 		<arooa:conversion className="dido.oddjob.bean.FromBeanTransformer$Conversions"/>
 		<arooa:conversion className="dido.oddjob.schema.SchemaBean$Conversions"/>
 		<arooa:conversion className="dido.oddjob.schema.SchemaFieldBean$Conversions"/>
+		<arooa:conversion className="dido.oddjob.util.LinesDido" methodName="toStreamOut"/>
+		<arooa:conversion className="dido.oddjob.util.LinesDido" methodName="toStreamIn"/>
 	</conversions>
 	<values>
+		<arooa:bean-def element='lines'
+						className='dido.oddjob.util.LinesDido'/>
 		<arooa:bean-def element='schema'
 						className='dido.oddjob.schema.SchemaBean'>
 			<design>

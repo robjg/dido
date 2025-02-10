@@ -11,9 +11,12 @@ import org.oddjob.arooa.life.ArooaSessionAware;
 import org.oddjob.beanbus.Destination;
 import org.oddjob.framework.adapt.Start;
 import org.oddjob.framework.adapt.Stop;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
@@ -28,6 +31,8 @@ import java.util.function.Consumer;
  */
 public class DataOutDestination<O>
         implements Runnable, AutoCloseable, Consumer<DidoData>, ArooaSessionAware {
+
+    private static final Logger logger = LoggerFactory.getLogger(DataOutDestination.class);
 
     private ArooaSession session;
 
@@ -62,7 +67,7 @@ public class DataOutDestination<O>
      * @oddjob.description Count of data sent out.
      * @oddjob.required Read only.
      */
-    private volatile int count;
+    private final AtomicInteger count = new AtomicInteger();
 
     @ArooaHidden
     @Override
@@ -74,7 +79,7 @@ public class DataOutDestination<O>
     @Override
     public void run() {
 
-        count = 0;
+        count.set(0);
 
         DataOutHow<O> how = Objects.requireNonNull(this.how, "No How");
 
@@ -99,7 +104,7 @@ public class DataOutDestination<O>
     public void accept(DidoData data) {
 
         consumer.accept(data);
-        ++count;
+        count.incrementAndGet();
 
         if (next != null) {
             next.accept(data);
@@ -108,9 +113,14 @@ public class DataOutDestination<O>
 
     @Stop
     @Override
-    public void close() throws Exception {
+    public void close() {
 
-        consumer.close();
+        try {
+            consumer.close();
+        }
+        catch (Exception e) {
+            logger.error("Failed to close {}", consumer, e);
+        }
         consumer = null;
     }
 
@@ -148,7 +158,7 @@ public class DataOutDestination<O>
     }
 
     public int getCount() {
-        return count;
+        return count.get();
     }
 
     @Override
