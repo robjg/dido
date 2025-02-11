@@ -12,7 +12,7 @@
 - [dido:copy](dido/operators/transform/ValueCopyFactory.md) - 
 - [dido:csv](dido/csv/CsvDido.md) - Creates an In or Out for CSV Data.
 - [dido:field](dido/oddjob/schema/SchemaFieldBean.md) - Define the field of a Schema.
-- [dido:flatten](dido/operators/FlattenType.md) - 
+- [dido:flatten](dido/operators/FlattenType.md) - Provides a mapping function that either flattens fields that are collections or arrays or a nested repeating schema.
 - [dido:from-bean](dido/oddjob/bean/FromBeanTransformer.md) - Transform a Bean to Dido Data.
 - [dido:from-json](dido/json/FromJsonStringType.md) - Provides a Mapping Function that will convert a GSON String into Dido Data.
 - [dido:json](dido/json/JsonDido.md) - Creates an In or an Out for JSON data.

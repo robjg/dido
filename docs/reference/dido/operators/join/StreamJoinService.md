@@ -4,6 +4,8 @@
 A service that Joins two sources of `dido.data.DidoData` into a single
 destination.
 
+For examples see [dido:left-join](../../../dido/operators/join/LeftStreamJoinType.md).
+
 ### Property Summary
 
 | Property | Description |

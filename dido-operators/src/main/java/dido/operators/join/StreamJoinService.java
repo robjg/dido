@@ -13,6 +13,8 @@ import java.util.function.Consumer;
 /**
  * @oddjob.description A service that Joins two sources of {@link DidoData} into a single
  * destination.
+ *
+ * For examples see {@link LeftStreamJoinType}.
  */
 public class StreamJoinService implements Runnable, AutoCloseable {
 
