@@ -5,7 +5,7 @@
 - [dido:converter](dido/oddjob/util/DidoConverterJob.md) - Provides a `dido.how.conversion.DidoConversionProvider` using Oddjob's conversions.
 - [dido:data-in](dido/oddjob/beanbus/DataInDriver.md) - A Bean Bus Driver that reads data from the 'from' according to the given 'how'.
 - [dido:data-out](dido/oddjob/beanbus/DataOutDestination.md) - A Bean Bus Destination that accepts `dido.data.DidoData` and writes it out to the given 'to' according to the given 'how'.
-- [dido:stream-join](dido/operators/StreamJoinService.md) - 
+- [dido:stream-join](dido/operators/join/StreamJoinService.md) - A service that Joins two sources of `dido.data.DidoData` into a single destination.
 
 ### Types
 
@@ -16,7 +16,7 @@
 - [dido:from-bean](dido/oddjob/bean/FromBeanTransformer.md) - Transform a Bean to Dido Data.
 - [dido:from-json](dido/json/FromJsonStringType.md) - Provides a Mapping Function that will convert a GSON String into Dido Data.
 - [dido:json](dido/json/JsonDido.md) - Creates an In or an Out for JSON data.
-- [dido:left-join](dido/operators/LeftStreamJoinType.md) - 
+- [dido:left-join](dido/operators/join/LeftStreamJoinType.md) - A join operation that performs a full left join.
 - [dido:lines](dido/oddjob/util/LinesDido.md) - Creates an In or Out for Lines of Text.
 - [dido:schema](dido/oddjob/schema/SchemaBean.md) - Define a Schema.
 - [dido:set](dido/operators/transform/ValueSetFactory.md) - Set the value for a field or index.

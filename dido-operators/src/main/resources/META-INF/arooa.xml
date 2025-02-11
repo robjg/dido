@@ -1,7 +1,7 @@
 <arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
         prefix="dido" namespace="oddjob:dido">
 	<conversions>
-		<arooa:conversion className="dido.operators.LeftStreamJoinType"
+		<arooa:conversion className="dido.operators.join.LeftStreamJoinType"
 						  methodName="get"/>
 		<arooa:conversion className="dido.operators.FlattenType"
 						  methodName="get"/>
@@ -13,7 +13,7 @@
 						  methodName="get"/>
 	</conversions>
 	<values>
-		<arooa:bean-def element='left-join' className='dido.operators.LeftStreamJoinType'>
+		<arooa:bean-def element='left-join' className='dido.operators.join.LeftStreamJoinType'>
 			<properties>
 				<arooa:property name="primaryIndices" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
 				<arooa:property name="primaryFields" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
@@ -100,7 +100,7 @@
 	</values>
 	<components>
 		<arooa:bean-def element="stream-join"
-						className="dido.operators.StreamJoinService">
+						className="dido.operators.join.StreamJoinService">
 			<properties>
 				<arooa:property name="to" annotation="org.oddjob.beanbus.Destination"/>
 			</properties>

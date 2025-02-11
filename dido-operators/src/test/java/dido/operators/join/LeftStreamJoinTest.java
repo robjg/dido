@@ -1,4 +1,4 @@
-package dido.operators;
+package dido.operators.join;
 
 import dido.data.ArrayData;
 import dido.data.DidoData;

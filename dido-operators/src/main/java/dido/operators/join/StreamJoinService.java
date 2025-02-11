@@ -1,4 +1,4 @@
-package dido.operators;
+package dido.operators.join;
 
 import dido.data.DidoData;
 import org.slf4j.Logger;
@@ -10,22 +10,52 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+/**
+ * @oddjob.description A service that Joins two sources of {@link DidoData} into a single
+ * destination.
+ */
 public class StreamJoinService implements Runnable, AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(StreamJoinService.class);
 
+    /**
+     * @oddjob.description The name of the component.
+     * @oddjob.required No.
+     */
     private volatile String name;
 
+    /**
+     * @oddjob.description The join operation.
+     * @oddjob.required Yes.
+     */
     private volatile StreamJoin join;
 
+    /**
+     * @oddjob.description The destination.
+     * @oddjob.required No, set automatically by BeanBus.
+     */
     private volatile Consumer<? super DidoData> to;
 
     private volatile ExecutorService executor;
 
+    /**
+     * @oddjob.property primary
+     * @oddjob.description The primary source of data.
+     * @oddjob.required Read Only.
+     */
     private volatile Consumer<DidoData> primaryConsumer;
 
+    /**
+     * @oddjob.property secondary
+     * @oddjob.description The secondary source of data.
+     * @oddjob.required Read Only.
+     */
     private volatile Consumer<DidoData> secondaryConsumer;
 
+    /**
+     * @oddjob.description The number of items sent to the destination.
+     * @oddjob.required Read Only.
+     */
     private volatile int count;
 
     @Override

@@ -1,7 +1,9 @@
-package dido.operators;
+package dido.operators.join;
 
 import dido.data.CompactData;
 import dido.data.DidoData;
+import dido.operators.CompactSubData;
+import dido.operators.Concatenator;
 
 import java.util.Map;
 import java.util.Objects;
@@ -9,8 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * A join operation that performs a full left join.
+ */
 public class LeftStreamJoin implements StreamJoin {
-
 
     private final Consumer<DidoData> primary = new PrimaryConsumer();
 
