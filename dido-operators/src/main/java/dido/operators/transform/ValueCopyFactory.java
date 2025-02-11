@@ -13,43 +13,65 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Copy a field from one position and/or field and/or type to another.
+ * @oddjob.description Copy a field from one position and/or field and/or type to another.
  * <p>
+ *
+ * @oddjob.example Copy from one field to another.
+ * {@oddjob.xml.resource dido/operators/transform/DataCopyToDifferentNamesExample.xml}
+ *
+ * @oddjob.example Copy primitives.
+ * {@oddjob.xml.resource dido/operators/transform/DataCopyToPrimitivesExample.xml}
+ *
+ * @oddjob.example Copy applying a function.
+ * {@oddjob.xml.resource dido/operators/transform/DataCopyFunctionExample.xml}
  */
 public class ValueCopyFactory implements Supplier<OpDef> {
 
     private static final Logger logger = LoggerFactory.getLogger(ValueCopyFactory.class);
 
     /**
-     * From field.
+     * @oddjob.description Copy from the field of this name.
+     * @oddjob.required Either this or index.
      */
     private String field;
 
     /**
-     * From index.
+     * @oddjob.description Copy from the field of this index.
+     * @oddjob.required Either this or field.
      */
     private int index;
 
     /**
-     * To field.
+     * @oddjob.description Copy to the field of this name.
+     * @oddjob.required No. The field will be copied with the same name.
      */
     private String to;
 
     /**
-     * To Index.
+     * @oddjob.description Copy to the field of this index.
+     * @oddjob.required No. The field will be copied either to the provided to field or to the same index.
      */
     private int at;
 
     /**
-     * The to type
+     * @oddjob.description The to type of the new field.
+     * @oddjob.required No. The new field will of they type of the existing field.
      */
     private Class<?> type;
 
     /**
-     * Function
+     * @oddjob.description An optional Function that can be applied during the copy.
+     * The function must return a value assignable to the given type, or the existing field
+     * type.
+     * @oddjob.required No.
      */
     private Function<Object, Object> function;
 
+    /**
+     * @oddjob.description A conversion provider to provide a conversion when a type is provided
+     * but a function isn't. This will be injected by Oddjob if it can.
+     * @oddjob.required No.
+     */
     private DidoConversionProvider conversionProvider;
 
     @Inject
