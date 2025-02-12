@@ -76,8 +76,14 @@
                 </resolve:resolve>
                 <resolve:resolve id="didoResolve" name="Dido Resolve" xmlns:resolve="oddjob:resolve">
                     <dependencies>
-                        <resolve:dependency artifactId="dido-all" groupId="uk.co.rgordon" type="pom"
-                                            version="${project.version}"/>
+                        <resolve:dependencies>
+                            <dependencies>
+                                <resolve:dependency artifactId="dido-all" groupId="uk.co.rgordon" type="pom"
+                                                    version="${project.version}"/>
+                                <resolve:dependency artifactId="oddjob" groupId="uk.co.rgordon"
+                                                    version="${oddjob.version}"/>
+                            </dependencies>
+                        </resolve:dependencies>
                     </dependencies>
                 </resolve:resolve>
                 <bean class="org.oddjob.doc.doclet.ReferenceMain" classPath="${didoResolve.resolvedFilesArray}"

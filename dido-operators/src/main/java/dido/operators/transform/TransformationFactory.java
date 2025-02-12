@@ -12,18 +12,25 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Copies fields from one data item to another allowing for change of field names, indexes
+ * @oddjob.description Copies fields from one data item to another allowing for change of field names, indexes
  * and type.
+ *
+ * For examples see {@link ValueSetFactory} and {@link ValueCopyFactory}
  */
 public class TransformationFactory implements Supplier<Function<DidoData, DidoData>> {
 
     private final List<OpDef> of = new ArrayList<>();
 
     /**
-     * Strategy for creating the new schema for outgoing data. Defaults to merge.
+     * @oddjob.description Copy existing fields before applying transformations.
+     * @oddjob.required No, defaults to false.
      */
     private boolean withCopy;
 
+    /**
+     * @oddjob.description A factory for creating the new Data.
+     * @oddjob.required No. Defaults to something reasonable.
+     */
     private DataFactoryProvider dataFactoryProvider;
 
     @Override
@@ -32,6 +39,13 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         return new TransformerFunctionInitial(this);
     }
 
+    /**
+     * @oddjob.description The field level transformations to apply.
+     * @oddjob.required No. Will just copy or create empty data.
+     *
+     * @param index The index.
+     * @param transformer The transformer.
+     */
     public void setOf(int index, OpDef transformer) {
         if (transformer == null) {
             of.remove(index);
