@@ -2,16 +2,15 @@ package dido.csv;
 
 import dido.data.*;
 import dido.how.DataIn;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
 class DataInCsvTest {
@@ -23,35 +22,25 @@ class DataInCsvTest {
                 "Apple,5,19.50" + System.lineSeparator() +
                         "Orange,2,35.24" + System.lineSeparator();
 
-        DataIn dataIn = DataInCsv.fromReader(new StringReader(records));
+        DataSchema expectedSchema = DataSchema.builder()
+                .add(String.class)
+                .add(String.class)
+                .add(String.class)
+                .build();
 
-        List<DidoData> results = dataIn.stream().collect(Collectors.toList());
+        List<DidoData> expected = DidoData.valuesWithSchema(expectedSchema)
+                .many()
+                .of("Apple", "5", "19.50")
+                .of("Orange", "2", "35.24")
+                .toList();
 
-        assertThat(results.size(), is(2));
+        try (DataIn dataIn = DataInCsv.fromReader(new StringReader(records))) {
 
-        {
-            DidoData data = results.get(0);
+            List<DidoData> results = dataIn.stream().collect(Collectors.toList());
 
-            DataSchema schema = data.getSchema();
-
-            assertThat(schema.getFieldNames(), contains("f_1", "f_2", "f_3"));
-            assertThat(schema.lastIndex(), is(3));
-            assertThat(schema.getTypeAt(1), is(String.class));
-            assertThat(schema.getTypeAt(3), is(String.class));
-
-            assertThat(data.getStringAt(1), is("Apple"));
-            assertThat(data.getStringAt(2), is("5"));
-            assertThat(data.getStringAt(3), is("19.50"));
+            assertThat(results, is(expected));
+            assertThat(results.get(0).getSchema(), is(expectedSchema));
         }
-
-        {
-            DidoData data = results.get(1);
-
-            assertThat(data.getStringAt(1), is("Orange"));
-            assertThat(data.getStringAt(2), is("2"));
-            assertThat(data.getStringAt(3), is("35.24"));
-        }
-
     }
 
     @Test
@@ -62,7 +51,7 @@ class DataInCsvTest {
                         "Orange,2,35.24" + System.lineSeparator();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addNamed("Type", String.class)
+                .addNamed("Fruit", String.class)
                 .addNamed("Quantity", int.class)
                 .addNamed("Price", double.class)
                 .build();
@@ -70,7 +59,7 @@ class DataInCsvTest {
         List<DidoData> expected = ArrayData.valuesWithSchema(schema)
                 .many()
                 .of("Apple", 5, 19.5)
-                .of( "Orange", 2, 35.24)
+                .of("Orange", 2, 35.24)
                 .toList();
 
         try (DataIn in = DataInCsv.with()
@@ -80,6 +69,7 @@ class DataInCsvTest {
             List<DidoData> results = in.stream().collect(Collectors.toList());
 
             assertThat(results, is(expected));
+            assertThat(results.get(0).getSchema(), is(schema));
         }
     }
 
@@ -95,37 +85,113 @@ class DataInCsvTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        List<DidoData> results;
+        DataSchema schema = SchemaBuilder.newInstance()
+                .addNamed("Fruit", String.class)
+                .addNamed("Quantity", int.class)
+                .addNamed("Price", double.class)
+                .build();
+
+        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+                .many()
+                .of("Apple", 5, 19.5)
+                .of("Orange", 2, 35.24)
+                .toList();
 
         try (DataIn in = DataInCsv.with()
                 .partialSchema(someSchema)
                 .fromReader(new StringReader(records))) {
-            results = in.stream().collect(Collectors.toList());
+
+            List<DidoData> results = in.stream().collect(Collectors.toList());
+
+            assertThat(results, is(expected));
+            assertThat(results.get(0).getSchema(), is(schema));
         }
-        assertThat(results.size(), is(2));
+    }
 
-        {
-            DidoData data = results.get(0);
+    @Test
+    void outOfOrderHeader() {
 
-            DataSchema schema = data.getSchema();
+        DataSchema schema = SchemaBuilder.newInstance()
+                .addNamed("Qty", int.class)
+                .addNamed("Price", double.class)
+                .addNamed("Fruit", String.class)
+                .build();
 
-            assertThat(schema.getFieldNames(), Matchers.contains("Fruit", "Quantity", "Price"));
-            assertThat(schema.lastIndex(), is(3));
-            assertThat(schema.getTypeAt(1), is(String.class));
-            assertThat(schema.getTypeAt(2), is(int.class));
-            assertThat(schema.getTypeAt(3), is(double.class));
+        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+                .many()
+                .of(5, 19.5, "Apple")
+                .of(2, 35.24, "Orange")
+                .of(3, 17.65, "Banana")
+                .toList();
 
-            assertThat(data.getStringNamed("Fruit"), is("Apple"));
-            assertThat(data.getIntNamed("Quantity"), is(5));
-            assertThat(data.getDoubleNamed("Price"), is(19.50));
+        try (DataIn in = DataInCsv.with()
+                .schema(schema)
+                .header(true)
+                .fromInputStream(Objects.requireNonNull(
+                        getClass().getResourceAsStream("/data/FruitWithHeader.csv")))) {
+
+            List<DidoData> results = in.stream().collect(Collectors.toList());
+
+            assertThat(results, is(expected));
+            assertThat(results.get(0).getSchema(), is(schema));
         }
+    }
 
-        {
-            DidoData data = results.get(1);
+    @Test
+    void outOfOrderHeaderLessColumns() {
 
-            assertThat(data.getStringAt(1), is("Orange"));
-            assertThat(data.getIntAt(2), is(2));
-            assertThat(data.getDoubleAt(3), is(35.24));
+        DataSchema schema = SchemaBuilder.newInstance()
+                .addNamed("Qty", int.class)
+                .addNamed("Fruit", String.class)
+                .build();
+
+        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+                .many()
+                .of(5, "Apple")
+                .of(2, "Orange")
+                .of(3, "Banana")
+                .toList();
+
+        try (DataIn in = DataInCsv.with()
+                .schema(schema)
+                .header(true)
+                .fromInputStream(Objects.requireNonNull(
+                        getClass().getResourceAsStream("/data/FruitWithHeader.csv")))) {
+
+            List<DidoData> results = in.stream().collect(Collectors.toList());
+
+            assertThat(results, is(expected));
+            assertThat(results.get(0).getSchema(), is(schema));
+        }
+    }
+
+    @Test
+    void outOfOrderHeaderMoreColumns() {
+
+        DataSchema schema = SchemaBuilder.newInstance()
+                .addNamed("Qty", int.class)
+                .addNamed("Description", String.class)
+                .addNamed("Price", double.class)
+                .addNamed("Fruit", String.class)
+                .build();
+
+        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+                .many()
+                .of(5, null, 19.5, "Apple")
+                .of(2, null, 35.24, "Orange")
+                .of(3, null, 17.65, "Banana")
+                .toList();
+
+        try (DataIn in = DataInCsv.with()
+                .schema(schema)
+                .header(true)
+                .fromInputStream(Objects.requireNonNull(
+                        getClass().getResourceAsStream("/data/FruitWithHeader.csv")))) {
+
+            List<DidoData> results = in.stream().collect(Collectors.toList());
+
+            assertThat(results, is(expected));
+            assertThat(results.get(0).getSchema(), is(schema));
         }
     }
 

@@ -155,11 +155,14 @@ public class DataInCsv implements DataInHow<Reader> {
         CSVParser csvParser;
         Iterator<CSVRecord> iterator;
 
-        try {
-            if (this.schema == null || this.partialSchema) {
+        final Function<CSVRecord, CsvData> wrapperFunction;
 
-                csvParser = csvFormat.parse(reader);
-                iterator = csvParser.iterator();
+        try {
+
+            csvParser = csvFormat.parse(reader);
+            iterator = csvParser.iterator();
+
+            if (this.schema == null || this.partialSchema) {
 
                 if (this.withHeader || this.partialSchema) {
                     if (iterator.hasNext()) {
@@ -171,30 +174,30 @@ public class DataInCsv implements DataInHow<Reader> {
                     if (iterator.hasNext()) {
                         CSVRecord record = iterator.next();
                         schema = schemaNoHeader(record);
+                        // We've read a row already, now we need an iterator that will return it again for the data
                         iterator = new OneAheadIterator<>(iterator, record);
                     } else {
                         schema = DataSchema.emptySchema();
                     }
                 }
+                wrapperFunction = CsvData.wrapperFunctionFor(schema, conversionProvider);
+
             } else {
                 schema = this.schema;
-                if (this.withHeader) {
-                    csvFormat = csvFormat.builder()
-                            .setHeader()
-                            .setSkipHeaderRecord(true)
-                            .build();
+                if (this.withHeader && iterator.hasNext()) {
+                        CSVRecord record = iterator.next();
+                        wrapperFunction = CsvData.wrapperFunctionFor(schema,
+                                record.values(), conversionProvider);
                 }
-                csvParser = csvFormat.parse(reader);
-                iterator = csvParser.iterator();
+                else {
+                    wrapperFunction = CsvData.wrapperFunctionFor(schema, conversionProvider);
+                }
             }
         } catch (IOException e) {
             throw DataException.of(e);
         }
 
         final Iterator<CSVRecord> finalIterator = iterator;
-
-        Function<CSVRecord, CsvData> wrapperFunction =
-                CsvData.wrapperFunctionFor(schema, conversionProvider);
 
         return new DataIn() {
 

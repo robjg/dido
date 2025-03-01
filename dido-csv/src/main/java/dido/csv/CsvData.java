@@ -10,7 +10,7 @@ import dido.how.conversion.DidoConversionProvider;
 import org.apache.commons.csv.CSVRecord;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -112,23 +112,35 @@ public class CsvData extends AbstractData {
         }
     }
 
+    static class EmptyGetter extends AbstractFieldGetter {
+
+        @Override
+        public boolean has(DidoData data) {
+            return false;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return null;
+        }
+    }
+
     static class ConversionGetter<F> extends AbstractFieldGetter {
 
-        private final int arrayIndex;
+        private final int dataIndex;
 
         private final Function<String, F> conversion;
 
-        ConversionGetter(int arrayIndex, Function<String, F> conversion) {
-            this.arrayIndex = arrayIndex;
+        ConversionGetter(int dataIndex, Function<String, F> conversion) {
+            this.dataIndex = dataIndex;
             this.conversion = conversion;
         }
 
         @Override
         public Object get(DidoData data) {
-            String s = ((CsvData) data).record.get(arrayIndex);
+            String s = ((CsvData) data).record.get(dataIndex);
             return conversion.apply(s);
         }
-
     }
 
     static class CharGetter extends AbstractFieldGetter {
@@ -211,7 +223,39 @@ public class CsvData extends AbstractData {
         }
     }
 
+
+    @FunctionalInterface
+    public interface ColumnMapping {
+
+        OptionalInt columnFor(String name);
+    }
+
+    public static ColumnMapping fromHeader(String... header) {
+        Map<String, Integer> mapping = new HashMap<>(header.length);
+        for (int i = 0; i < header.length; ++i) {
+            mapping.put(header[i], i);
+        }
+        return name -> Optional.ofNullable(mapping.get(name))
+                .stream().mapToInt(Integer::intValue).findFirst();
+    }
+
     public static Function<CSVRecord, CsvData> wrapperFunctionFor(DataSchema schema,
+                                                                  DidoConversionProvider conversionProvider) {
+        return wrapperFunctionFor(schema,
+                name -> OptionalInt.of(schema.getIndexNamed(name) - 1),
+                conversionProvider);
+    }
+
+    public static Function<CSVRecord, CsvData> wrapperFunctionFor(DataSchema schema,
+                                                                  String[] header,
+                                                                  DidoConversionProvider conversionProvider) {
+        return wrapperFunctionFor(schema,
+                fromHeader(header),
+                conversionProvider);
+    }
+
+    public static Function<CSVRecord, CsvData> wrapperFunctionFor(DataSchema schema,
+                                                                  ColumnMapping columnMapping,
                                                                   DidoConversionProvider conversionProvider) {
 
         FieldGetter[] getters = new FieldGetter[schema.lastIndex()];
@@ -219,21 +263,29 @@ public class CsvData extends AbstractData {
         for (SchemaField schemaField : schema.getSchemaFields()) {
 
             Type type = schemaField.getType();
+            String name = schemaField.getName();
             int arrayIndex = schemaField.getIndex() - 1;
-            if (type == String.class || type == Object.class) {
-                getters[arrayIndex] = new StringGetter(arrayIndex);
-            } else if (type == int.class) {
-                getters[arrayIndex] = new IntGetter(arrayIndex);
-            } else if (type == long.class) {
-                getters[arrayIndex] = new LongGetter(arrayIndex);
-            } else if (type == double.class) {
-                getters[arrayIndex] = new DoubleGetter(arrayIndex);
-            } else if (type == char.class) {
-                getters[arrayIndex] = new CharGetter(arrayIndex);
+            OptionalInt optionalDataIndex = columnMapping.columnFor(name);
+
+            if (optionalDataIndex.isEmpty()) {
+                getters[arrayIndex] = new EmptyGetter();
             } else {
-                Function<String, ?> conversion = conversionProvider.conversionFor(
-                        String.class, TypeUtil.classOf(type));
-                getters[arrayIndex] = new ConversionGetter<>(arrayIndex, conversion);
+                int dataIndex = optionalDataIndex.getAsInt();
+                if (type == String.class || type == Object.class) {
+                    getters[arrayIndex] = new StringGetter(dataIndex);
+                } else if (type == int.class) {
+                    getters[arrayIndex] = new IntGetter(dataIndex);
+                } else if (type == long.class) {
+                    getters[arrayIndex] = new LongGetter(dataIndex);
+                } else if (type == double.class) {
+                    getters[arrayIndex] = new DoubleGetter(dataIndex);
+                } else if (type == char.class) {
+                    getters[arrayIndex] = new CharGetter(dataIndex);
+                } else {
+                    Function<String, ?> conversion = conversionProvider.conversionFor(
+                            String.class, TypeUtil.classOf(type));
+                    getters[arrayIndex] = new ConversionGetter<>(arrayIndex, conversion);
+                }
             }
         }
 
