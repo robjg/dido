@@ -72,6 +72,7 @@
         <module>dido-data</module>
         <module>dido-how</module>
         <module>dido-oddball</module>
+        <module>dido-objects</module>
         <module>dido-json</module>
         <module>dido-text</module>
         <module>dido-csv</module>
@@ -90,6 +91,12 @@
             <dependency>
                 <groupId>uk.co.rgordon</groupId>
                 <artifactId>dido-data</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.co.rgordon</groupId>
+                <artifactId>dido-objects</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

@@ -39,6 +39,11 @@
     <dependencies>
         <dependency>
             <groupId>uk.co.rgordon</groupId>
+            <artifactId>dido-objects</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.co.rgordon</groupId>
             <artifactId>dido-csv</artifactId>
         </dependency>
 
