@@ -10,7 +10,7 @@ import dido.objects.stratagy.BeanStrategies;
 import dido.objects.stratagy.DestructionStrategy;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -79,6 +79,15 @@ public class DataInObjects<T> implements DataInHow<Stream<T>> {
 
             return serializer::serialize;
         }
+
+        public <T> DataIn inFrom(Stream<T> dataIn, Type typeOfT) {
+            return this.<T>makeFor(typeOfT).inFrom(dataIn);
+        }
+
+        public <T> DataInObjects<T> makeFor(Type typeOfT) {
+            return new DataInObjects<>(typeOfT, this);
+        }
+
     }
 
     public static class BeanSettings {
@@ -92,6 +101,8 @@ public class DataInObjects<T> implements DataInHow<Stream<T>> {
         private boolean partialSchema;
 
         private boolean includeClass;
+
+        private String[] fields;
 
         private BeanSettings(Settings settings,
                              Class<?> beanClass) {
@@ -120,10 +131,16 @@ public class DataInObjects<T> implements DataInHow<Stream<T>> {
             return this;
         }
 
+        public BeanSettings fields(String... fields) {
+            this.fields = fields;
+            return this;
+        }
+
         public Settings and() {
 
             DestructionStrategy strategy = BeanStrategies.with()
                     .includeClass(includeClass)
+                    .fields(fields)
                     .from(beanClass);
 
             DidoSerializerFactory factory;
@@ -146,8 +163,12 @@ public class DataInObjects<T> implements DataInHow<Stream<T>> {
             return and().mapperOf(beanClass);
         }
 
+        public <T> DataIn inFrom(Stream<T> dataIn) {
+            return this.<T>make().inFrom(dataIn);
+        }
+
         public <T> DataInObjects<T> make() {
-            return new DataInObjects<>(beanClass, and());
+            return and().makeFor(beanClass);
         }
     }
 

@@ -1,6 +1,5 @@
 package dido.objects.stratagy;
 
-import dido.data.DataSchema;
 import dido.how.DataException;
 import dido.objects.izers.ConstructionStrategyDeserializer;
 import dido.objects.izers.DestructionStrategySerializer;
@@ -11,7 +10,10 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -37,8 +39,15 @@ public class BeanStrategies<T> implements DestructionStrategy, ConstructionStrat
 
         private boolean includeClass;
 
+        private String[] fields;
+
         public Settings includeClass(boolean includeClass) {
             this.includeClass = includeClass;
+            return this;
+        }
+
+        public Settings fields(String... fields) {
+            this.fields = fields;
             return this;
         }
 
@@ -47,13 +56,24 @@ public class BeanStrategies<T> implements DestructionStrategy, ConstructionStrat
             try {
                 BeanInfo beanInfo = Introspector.getBeanInfo(fromClass);
                 PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-                Map<String, BeanSetterGetter> map = new HashMap<>();
+                Map<String, BeanSetterGetter> map = new LinkedHashMap<>();
                 for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
                     if ("class".equals(propertyDescriptor.getName()) && !includeClass) {
                         continue;
                     }
                     BeanSetterGetter beanSetterGetter = new BeanSetterGetter(propertyDescriptor);
                     map.put(beanSetterGetter.getName(), beanSetterGetter);
+                }
+                if (fields != null) {
+                    Map<String, BeanSetterGetter> selected = new LinkedHashMap<>();
+                    for (String field : fields) {
+                        BeanSetterGetter setterGetter = map.get(field);
+                        if (setterGetter == null) {
+                            throw DataException.of("No property " + field + " in " + fromClass);
+                        }
+                        selected.put(field, setterGetter);
+                    }
+                    map = selected;
                 }
                 return new BeanStrategies<>(fromClass, map);
             } catch (IntrospectionException e) {
