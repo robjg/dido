@@ -22,6 +22,13 @@ import java.util.Objects;
  */
 public interface DataSchema extends IndexedSchema {
 
+    /**
+     * Has the schema got a field of this name?
+     *
+     * @param name The field name.
+     *
+     * @return true if it does, false if it doesn't.
+     */
     boolean hasNamed(String name);
 
     /**
@@ -161,6 +168,12 @@ public interface DataSchema extends IndexedSchema {
         return hash;
     }
 
+    /**
+     * Provide a string representation of a schema.
+     *
+     * @param schema The schema.
+     * @return A string.
+     */
     static String toString(DataSchema schema) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -183,10 +196,21 @@ public interface DataSchema extends IndexedSchema {
         return SchemaBuilder.newInstance();
     }
 
-    static String nameForIndex(int index) {
+    /**
+     * Helper method to provide a common default name for an index.
+     *
+     * @param index The index.
+     * @return A default name.
+     */
+    static String defaultNameForIndex(int index) {
         return "f_" + index;
     }
 
+    /**
+     * Helper convenience method to provide an empty schema.
+     *
+     * @return An empty schema.
+     */
     static DataSchema emptySchema() {
         return new EmptySchema();
     }

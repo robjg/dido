@@ -9,6 +9,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +21,6 @@ import java.util.function.Supplier;
  * Provide {@link ConstructionStrategy} and {@link DestructionStrategy}s for Java Beans.
  *
  * @param <T> The Type of Bean.
- *
  * @see ConstructionStrategyDeserializer
  * @see DestructionStrategySerializer
  */
@@ -109,7 +109,7 @@ public class BeanStrategies<T> implements DestructionStrategy, ConstructionStrat
 
     @Override
     public Supplier<ObjectConstructor<T>> getConstructorSupplier() {
-        return ()-> {
+        return () -> {
             try {
                 return new Constructor<>(cl.getConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
@@ -165,22 +165,34 @@ public class BeanStrategies<T> implements DestructionStrategy, ConstructionStrat
 
         @Override
         public Object getValue(Object target) {
+            Method readMethod = propertyDescriptor.getReadMethod();
+            if (readMethod == null) {
+                throw new DataException("Failed extracting " + getName() +
+                        " from " + target + " of " + target.getClass() +
+                        " as property is not readable.");
+
+            }
             try {
-                return propertyDescriptor.getReadMethod().invoke(target);
+                return readMethod.invoke(target);
             } catch (Exception e) {
-                throw DataException.of("Failed extracting " + getName() +
+                throw new DataException("Failed extracting " + getName() +
                         " from " + target + " of " + target.getClass(), e);
             }
         }
 
         @Override
         public void setValue(ObjectConstructor<?> target, Object value) {
+            Method writeMethod = propertyDescriptor.getWriteMethod();
+            if (writeMethod == null) {
+                throw new DataException("Failed setting " + getName() +
+                        " with " + value + " of " + target.getClass() +
+                        " as property is not writable.");
+            }
             try {
-                propertyDescriptor.getWriteMethod()
-                        .invoke(((Constructor<?>) target).instance, value);
+                writeMethod.invoke(((Constructor<?>) target).instance, value);
             } catch (Exception e) {
-                throw DataException.of("Failed setting " + getName() +
-                        " from " + value + " of " + target.getClass(), e);
+                throw new DataException("Failed setting " + getName() +
+                        " with " + value + " of " + target.getClass(), e);
             }
         }
     }

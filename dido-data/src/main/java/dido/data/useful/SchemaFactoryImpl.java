@@ -151,7 +151,7 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
             schemaField = schemaField.mapToIndex(index);
         }
         if (schemaField.getName() == null || schemaField.getName().isBlank()) {
-            schemaField = schemaField.mapToFieldName(DataSchema.nameForIndex(index));
+            schemaField = schemaField.mapToFieldName(DataSchema.defaultNameForIndex(index));
         }
 
         SchemaField existingField = indexToFields.remove(index);
@@ -190,7 +190,7 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
      */
     private <T> T schemaFieldOf(int index, String name, SchemaFieldFunc<T> func) {
         index = index == 0 ? lastIndex() + 1 : index;
-        return func.apply(index, name == null ?  DataSchema.nameForIndex(index): name);
+        return func.apply(index, name == null ?  DataSchema.defaultNameForIndex(index): name);
     }
 
     interface SchemaFieldFunc<T> {

@@ -26,11 +26,14 @@ import java.util.stream.Stream;
  */
 public class DataInObjects<T> implements DataInHow<Stream<T>> {
 
+    private final Type typeOfT;
+
     private final Function<T, DidoData> mapperFunc;
 
     private DataInObjects(Type typeOfT,
                           Settings settings) {
 
+        this.typeOfT = typeOfT;
         this.mapperFunc = settings.mapperOf(typeOfT);
     }
 
@@ -197,6 +200,11 @@ public class DataInObjects<T> implements DataInHow<Stream<T>> {
             @Override
             public Stream<DidoData> stream() {
                 return dataIn.map(mapperFunc);
+            }
+
+            @Override
+            public String toString() {
+                return "DataIn for Objects of " + typeOfT.getTypeName();
             }
         };
     }
