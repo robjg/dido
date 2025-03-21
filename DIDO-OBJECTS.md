@@ -53,18 +53,32 @@ problem by providing the properties in the order we want in the data:
 ```
 
 
-We can also serialize a Java Stream of beans:
+We can also serialize a Java Collection of beans using a `DataIn` in a similar way
+to other formatters:
 ```java
-        List<DidoData> didoData = DataInObjects
+        try (DataIn dataIn = DataInObjects
                 .beanOf(Apple.class)
                 .fields("fruit", "qty", "price")
-                .inFrom(Stream.of(new Apple(), new Apple(), new Apple()))
+                .inFrom(List.of(new Apple(), new Apple(), new Apple()))) {
+
+            List<DidoData> didoData = dataIn
                 .stream().collect(Collectors.toList());
 
-        assertThat(didoData, contains(
-                DidoData.of("Apple", 5, 19.5),
-                DidoData.of("Apple", 5, 19.5),
-                DidoData.of("Apple", 5, 19.5)));
+            assertThat(didoData, contains(
+                    DidoData.of("Apple", 5, 19.5),
+                    DidoData.of("Apple", 5, 19.5),
+                    DidoData.of("Apple", 5, 19.5)));
+        }
+```
+
+However in most situations using the `mapper()` method will be more natural:
+```java
+        List<DidoData> didoData = Stream.of(new Apple(), new Apple(), new Apple())
+                .map(DataInObjects
+                        .beanOf(Apple.class)
+                        .fields("fruit", "qty", "price")
+                        .mapper())
+                .collect(Collectors.toList());
 ```
 
 
@@ -118,10 +132,10 @@ We can create this from DidoData:
         assertThat(fruit.toString(), is("FruitBean{fruit='Apple', qty=5, price=19.5}"));
 ```
 
-The data must have field name that match the properties we want to set,
+The data must have field names that match the properties we want to set,
 that's why we used the builder here to create the DidoData.
 
-We can also consume a Collection of DidoData as Objects:
+We can also consume a Collection of DidoData as Objects in a `DataOut`:
 ```java
         List<FruitBean> fruitBeans = new LinkedList<>();
 
@@ -138,10 +152,13 @@ We can also consume a Collection of DidoData as Objects:
                 .of("Pear", 7, 22.1)
                 .toList();
 
-        didoData.forEach(DataOutObjects
+        try (DataOut dataOut = DataOutObjects
                 .beanOf(FruitBean.class)
                 .schema(schema)
-                .<FruitBean>outTo(fruitBeans::add));
+                .<FruitBean>outTo(fruitBeans::add)) {
+
+            didoData.forEach(dataOut);
+        }
 
         assertThat(fruitBeans.stream()
                         .map(Objects::toString)
@@ -157,7 +174,7 @@ as the transformation can be calculated once up front and
 not done on the fly from the data as it would otherwise have to be.
 
 This chained consumer pipeline is useful for an asynchronous subscription
-scenario, however a simple mapping function is probably more useful:
+scenario, however again a `mapper()` is probably more useful:
 ```java
         fruitBeans = didoData.stream()
                 .map(DataOutObjects
@@ -167,3 +184,4 @@ scenario, however a simple mapping function is probably more useful:
                 .collect(Collectors.toList());
 ```
 
+Which achieves the same as the above.

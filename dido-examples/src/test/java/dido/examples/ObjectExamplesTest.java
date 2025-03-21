@@ -4,6 +4,8 @@ import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.examples.objects.Apple;
 import dido.examples.objects.FruitBean;
+import dido.how.DataIn;
+import dido.how.DataOut;
 import dido.objects.DataInObjects;
 import dido.objects.DataOutObjects;
 import org.junit.jupiter.api.Test;
@@ -49,20 +51,44 @@ public class ObjectExamplesTest {
     }
 
     @Test
-    void serializeStream() {
+    void asDataIn() {
 
-        // #serializeStream{
-        List<DidoData> didoData = DataInObjects
+        // #dataIn{
+        try (DataIn dataIn = DataInObjects
                 .beanOf(Apple.class)
                 .fields("fruit", "qty", "price")
-                .inFrom(Stream.of(new Apple(), new Apple(), new Apple()))
+                .inFrom(List.of(new Apple(), new Apple(), new Apple()))) {
+
+            List<DidoData> didoData = dataIn
                 .stream().collect(Collectors.toList());
+
+            assertThat(didoData, contains(
+                    DidoData.of("Apple", 5, 19.5),
+                    DidoData.of("Apple", 5, 19.5),
+                    DidoData.of("Apple", 5, 19.5)));
+        }
+        // }#dataIn
+
+    }
+
+    @Test
+    void asStream() {
+
+        // #serializeStream{
+        List<DidoData> didoData = Stream.of(new Apple(), new Apple(), new Apple())
+                .map(DataInObjects
+                        .beanOf(Apple.class)
+                        .fields("fruit", "qty", "price")
+                        .mapper())
+                .collect(Collectors.toList());
+        // }#serializeStream
 
         assertThat(didoData, contains(
                 DidoData.of("Apple", 5, 19.5),
                 DidoData.of("Apple", 5, 19.5),
                 DidoData.of("Apple", 5, 19.5)));
-        // }#serializeStream
+
+
     }
 
     @Test
@@ -102,10 +128,13 @@ public class ObjectExamplesTest {
                 .of("Pear", 7, 22.1)
                 .toList();
 
-        didoData.forEach(DataOutObjects
+        try (DataOut dataOut = DataOutObjects
                 .beanOf(FruitBean.class)
                 .schema(schema)
-                .<FruitBean>outTo(fruitBeans::add));
+                .<FruitBean>outTo(fruitBeans::add)) {
+
+            didoData.forEach(dataOut);
+        }
 
         assertThat(fruitBeans.stream()
                         .map(Objects::toString)

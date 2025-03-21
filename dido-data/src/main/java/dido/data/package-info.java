@@ -1,5 +1,5 @@
 /**
- * Provides framework for defining data in a common format regardless of source based around
+ * Provides a common definition for data regardless of source. That common  definition is
  * {@link dido.data.DidoData}.
  */
 package dido.data;

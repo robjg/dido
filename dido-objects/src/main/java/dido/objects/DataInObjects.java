@@ -15,16 +15,16 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * Read {@link DidoData} in from a Stream of Objects. THis is slightly confusing because the Objects are
- * already 'In' unlike CSV or JSON data, however we stick with it to follow the patter. To confuse matters
- * worse we think of serialisation in terms of the Objects, not the data. So we use {@link DidoSerializer}s
+ * Read {@link DidoData} in from an {@link Iterable} of Objects. This is slightly confusing because the Objects are
+ * already 'In' unlike CSV or JSON data, however we stick with it to follow the pattern. To confuse matters
+ * more we think of serialisation in terms of the Objects, not the data. So we use {@link DidoSerializer}s
  * to read the {@code DidoData} in.
  *
  * @see DataOutObjects
  *
  * @param <T> The type of object.
  */
-public class DataInObjects<T> implements DataInHow<Stream<T>> {
+public class DataInObjects<T> implements DataInHow<Iterable<T>> {
 
     private final Type typeOfT;
 
@@ -84,7 +84,11 @@ public class DataInObjects<T> implements DataInHow<Stream<T>> {
         }
 
         public <T> DataIn inFrom(Stream<T> dataIn, Type typeOfT) {
-            return this.<T>makeFor(typeOfT).inFrom(dataIn);
+            return inFrom(dataIn::iterator, typeOfT);
+        }
+
+        public <T> DataIn inFrom(Iterable<T> iterable, Type typeOfT) {
+            return this.<T>makeFor(typeOfT).inFrom(iterable);
         }
 
         public <T> DataInObjects<T> makeFor(Type typeOfT) {
@@ -167,7 +171,11 @@ public class DataInObjects<T> implements DataInHow<Stream<T>> {
         }
 
         public <T> DataIn inFrom(Stream<T> dataIn) {
-            return this.<T>make().inFrom(dataIn);
+            return inFrom(dataIn::iterator);
+        }
+
+        public <T> DataIn inFrom(Iterable<T> iterable) {
+            return this.<T>make().inFrom(iterable);
         }
 
         public <T> DataInObjects<T> make() {
@@ -184,22 +192,29 @@ public class DataInObjects<T> implements DataInHow<Stream<T>> {
     }
 
     @Override
-    public Class<Stream<T>> getInType() {
+    public Class<Iterable<T>> getInType() {
         return null;
     }
 
     @Override
-    public DataIn inFrom(Stream<T> dataIn) {
+    public DataIn inFrom(Iterable<T> dataIn) {
+
+        Iterator<T> it = dataIn.iterator();
 
         return new DataIn() {
             @Override
             public Iterator<DidoData> iterator() {
-                return stream().iterator();
-            }
+                return new Iterator<>() {
+                    @Override
+                    public boolean hasNext() {
+                        return it.hasNext();
+                    }
 
-            @Override
-            public Stream<DidoData> stream() {
-                return dataIn.map(mapperFunc);
+                    @Override
+                    public DidoData next() {
+                        return mapperFunc.apply(it.next());
+                    }
+                };
             }
 
             @Override
