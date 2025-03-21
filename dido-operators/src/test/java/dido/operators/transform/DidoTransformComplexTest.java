@@ -23,11 +23,9 @@ public class DidoTransformComplexTest {
     static class MarkupOperation implements OpDef {
 
         @Override
-        public Prepare prepare(DataSchema incomingSchema, SchemaSetter schemaSetter) {
+        public Prepare prepare(ReadSchema incomingSchema, SchemaSetter schemaSetter) {
 
-            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
-
-            FieldGetter priceGetter = readStrategy.getFieldGetterNamed("Price");
+            FieldGetter priceGetter = incomingSchema.getFieldGetterNamed("Price");
 
             SchemaField markupField = SchemaField.of(0, "Markup", double.class);
             SchemaField amountField = SchemaField.of(0, "MarkupAmount", double.class);

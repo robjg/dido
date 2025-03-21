@@ -12,7 +12,7 @@ public class OpTransformBuilder {
 
     private final DataFactoryProvider dataFactoryProvider;
 
-    private final DataSchema incomingSchema;
+    private final ReadSchema incomingSchema;
 
     private final NavigableMap<Integer, OpDef.Prepare> opsByIndex = new TreeMap<>(); ;
 
@@ -24,7 +24,7 @@ public class OpTransformBuilder {
                                DataSchema incomingSchema,
                                boolean reIndex) {
         this.dataFactoryProvider = dataFactoryProvider;
-        this.incomingSchema = incomingSchema;
+        this.incomingSchema = ReadSchema.from(incomingSchema);
         this.schemaFactory = dataFactoryProvider.getSchemaFactory();
         this.reIndex = reIndex;
     }

@@ -1,6 +1,6 @@
 package dido.operators.transform;
 
-import dido.data.DataSchema;
+import dido.data.ReadSchema;
 import dido.data.util.TypeUtil;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
@@ -95,7 +95,7 @@ public class ValueSetFactory implements Supplier<OpDef> {
         }
 
         @Override
-        public Prepare prepare(DataSchema fromSchema,
+        public Prepare prepare(ReadSchema fromSchema,
                                SchemaSetter schemaSetter) {
 
             int index = fromSchema.getIndexNamed(

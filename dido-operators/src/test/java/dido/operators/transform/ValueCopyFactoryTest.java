@@ -37,7 +37,7 @@ class ValueCopyFactoryTest {
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
-        OpDef.Prepare prepare = opDef.prepare(data.getSchema(), schemaSetter);
+        OpDef.Prepare prepare = opDef.prepare(ReadSchema.from(data.getSchema()), schemaSetter);
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", Integer.class));
 
@@ -68,7 +68,7 @@ class ValueCopyFactoryTest {
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
 
-        OpDef.Prepare prepare = opDef.prepare(data.getSchema(), schemaSetter);
+        OpDef.Prepare prepare = opDef.prepare(ReadSchema.from(data.getSchema()), schemaSetter);
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", int.class));
 

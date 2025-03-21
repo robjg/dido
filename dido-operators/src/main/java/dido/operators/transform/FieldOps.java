@@ -1,7 +1,7 @@
 package dido.operators.transform;
 
-import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.NoSuchFieldException;
 import dido.data.util.TypeUtil;
 
 import java.util.Objects;
@@ -109,9 +109,7 @@ public class FieldOps {
             return opFactory.with(this);
         }
 
-        SchemaFieldAndGetter deriveFrom(DataSchema incomingSchema) {
-
-            ReadStrategy readStrategy = ReadStrategy.fromSchema(incomingSchema);
+        SchemaFieldAndGetter deriveFrom(ReadSchema incomingSchema) {
 
             FieldGetter getter;
             SchemaField schemaField = null;
@@ -122,13 +120,13 @@ public class FieldOps {
                 if (schemaField == null) {
                     throw new NoSuchFieldException(index, incomingSchema);
                 }
-                getter = readStrategy.getFieldGetterAt(index);
+                getter = incomingSchema.getFieldGetterAt(index);
             } else {
                 schemaField = incomingSchema.getSchemaFieldNamed(from);
                 if (schemaField == null) {
                     throw new NoSuchFieldException(from, incomingSchema);
                 }
-                getter = readStrategy.getFieldGetterNamed(from);
+                getter = incomingSchema.getFieldGetterNamed(from);
             }
 
             return new SchemaFieldAndGetter(schemaField, getter);

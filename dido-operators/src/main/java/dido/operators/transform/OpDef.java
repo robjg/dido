@@ -1,7 +1,7 @@
 package dido.operators.transform;
 
-import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.ReadSchema;
 import dido.data.WritableData;
 import dido.data.WriteSchema;
 
@@ -24,7 +24,7 @@ public interface OpDef {
      *
      * @return The complete Transformer. Not expected to ever be null.
      */
-    Prepare prepare(DataSchema incomingSchema,
+    Prepare prepare(ReadSchema incomingSchema,
                     SchemaSetter schemaSetter);
 
     /**
@@ -33,6 +33,6 @@ public interface OpDef {
     @FunctionalInterface
     interface Prepare {
 
-        BiConsumer<DidoData, WritableData> create(WriteSchema writableData);
+        BiConsumer<DidoData, WritableData> create(WriteSchema writeSchema);
     }
 }

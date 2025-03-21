@@ -1,6 +1,9 @@
 package dido.operators.transform;
 
-import dido.data.*;
+import dido.data.FieldGetter;
+import dido.data.FieldSetter;
+import dido.data.ReadSchema;
+import dido.data.SchemaField;
 import dido.data.util.TypeUtil;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
@@ -160,7 +163,7 @@ public class ValueCopyFactory implements Supplier<OpDef> {
         }
 
         @Override
-        public Prepare prepare(DataSchema fromSchema,
+        public Prepare prepare(ReadSchema fromSchema,
                                SchemaSetter schemaSetter) {
 
             String from;
@@ -190,13 +193,12 @@ public class ValueCopyFactory implements Supplier<OpDef> {
             }
 
             Function<Function<Object, ?>, Prepare> transformerFn;
-            ReadStrategy readStrategy = ReadStrategy.fromSchema(fromSchema);
 
             logger.info("Creating Copy from {} to {}", from, to);
             transformerFn = (conversion) ->
                     writableSchema -> {
                         FieldSetter setter = writableSchema.getFieldSetterNamed(to);
-                        FieldGetter getter = readStrategy.getFieldGetterAt(index);
+                        FieldGetter getter = fromSchema.getFieldGetterAt(index);
                         return (fromData, toData) -> setter.set(toData, conversion.apply(getter.get(fromData)));
                     };
 
