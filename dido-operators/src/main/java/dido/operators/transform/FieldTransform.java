@@ -47,7 +47,7 @@ public interface FieldTransform {
             Definition definition = define(incomingSchema);
             SchemaField schemaField = schemaSetter.addField(definition.schemaField());
             return (OpDef.Prepare) writeSchema -> {
-                FieldSetter fieldSetter = writeSchema.getFieldSetterAt(schemaField.getIndex());
+                FieldSetter fieldSetter = writeSchema.getFieldSetterNamed(schemaField.getName());
                 return definition.createCopy(fieldSetter);
             };
         };

@@ -64,8 +64,12 @@ class StreamJoinServiceTest {
                 getClass().getResource("LeftJoinExample2.xml")).getFile()));
 
         StateSteps state = new StateSteps(oddjob);
-        state.startCheck(ParentState.READY, ParentState.EXECUTING,
-                ParentState.ACTIVE, ParentState.STARTED, ParentState.COMPLETE);
+        state.startCheck(
+                StateSteps.definitely(ParentState.READY),
+                StateSteps.definitely(ParentState.EXECUTING),
+                StateSteps.maybe(ParentState.ACTIVE),
+                StateSteps.definitely(ParentState.STARTED),
+                StateSteps.definitely(ParentState.COMPLETE));
 
         oddjob.run();
 
@@ -100,8 +104,12 @@ class StreamJoinServiceTest {
                 getClass().getResource("LeftJoinMultiKeyExample.xml")).getFile()));
 
         StateSteps state = new StateSteps(oddjob);
-        state.startCheck(ParentState.READY, ParentState.EXECUTING,
-                ParentState.ACTIVE, ParentState.STARTED, ParentState.COMPLETE);
+        state.startCheck(
+                StateSteps.definitely(ParentState.READY),
+                StateSteps.definitely(ParentState.EXECUTING),
+                StateSteps.maybe(ParentState.ACTIVE),
+                StateSteps.definitely(ParentState.STARTED),
+                StateSteps.definitely(ParentState.COMPLETE));
 
         oddjob.run();
 

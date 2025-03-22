@@ -2,6 +2,7 @@ package dido.operators.transform;
 
 import dido.data.*;
 import dido.data.NoSuchFieldException;
+import dido.data.useful.AbstractFieldGetter;
 import dido.data.util.TypeUtil;
 
 import java.util.Objects;
@@ -229,9 +230,9 @@ public class FieldOps {
      * @param index The index to copy.
      * @return A Copy Operation Definition.
      */
-    public static OpDef copyAt(int index) {
+    public static FieldTransform copyAt(int index) {
         return copy().index(index)
-                .with().out();
+                .with().transform();
     }
 
     /**
@@ -240,11 +241,11 @@ public class FieldOps {
      * @param index The index to copy.
      * @return A Copy Operation Definition.
      */
-    public static OpDef copyAt(int index, int at) {
+    public static FieldTransform copyAt(int index, int at) {
 
         return copy().index(index)
                 .at(at)
-                .with().out();
+                .with().transform();
     }
 
     /**
@@ -254,10 +255,10 @@ public class FieldOps {
      * @param name The field name to copy.
      * @return A Copy Operation Definition.
      */
-    public static OpDef copyNamed(String name) {
+    public static FieldTransform copyNamed(String name) {
 
         return copy().from(name)
-                .with().out();
+                .with().transform();
     }
 
     /**
@@ -268,11 +269,11 @@ public class FieldOps {
      * @param to   The field name to copy.
      * @return A Copy Operation Definition.
      */
-    public static OpDef copyNamed(String from, String to) {
+    public static FieldTransform copyNamed(String from, String to) {
 
         return copy().from(from)
                 .to(to)
-                .with().out();
+                .with().transform();
     }
 
     /**
@@ -284,10 +285,10 @@ public class FieldOps {
      * @param at   The index to copy to.
      * @return A Copy Operation Definition.
      */
-    public static OpDef copyNamedAt(String from, int at) {
+    public static FieldTransform copyNamedAt(String from, int at) {
         return copy().from(from)
                 .at(at)
-                .with().out();
+                .with().transform();
     }
 
     /**
@@ -300,12 +301,12 @@ public class FieldOps {
      * @param to   The field name to copy.
      * @return A Copy Operation Definition.
      */
-    public static OpDef copyNamedAt(String from, int at, String to) {
+    public static FieldTransform copyNamedAt(String from, int at, String to) {
 
         return copy().from(from)
                 .to(to)
                 .at(at)
-                .with().out();
+                .with().transform();
     }
 
     public static OpDef rename(String from, String to) {
@@ -336,7 +337,7 @@ public class FieldOps {
      * @param value The value to set.
      * @return The Operation Definition.
      */
-    public static OpDef setAt(int at,
+    public static FieldTransform setAt(int at,
                               Object value) {
         return setNamedAt(at, null, value, null);
     }
@@ -352,7 +353,7 @@ public class FieldOps {
      * @param type  The type of the field.
      * @return The Operation Definition.
      */
-    public static OpDef setAt(int at,
+    public static FieldTransform setAt(int at,
                               Object value,
                               Class<?> type) {
         return setNamedAt(at, null, value, type);
@@ -366,7 +367,7 @@ public class FieldOps {
      * @param value The value to set.
      * @return The Operation Definition.
      */
-    public static OpDef setNamed(String name,
+    public static FieldTransform setNamed(String name,
                                  Object value) {
         return setNamedAt(-1, name, value, null);
     }
@@ -382,7 +383,7 @@ public class FieldOps {
      * @param type  The type of the field.
      * @return The Operation Definition.
      */
-    public static OpDef setNamed(String name,
+    public static FieldTransform setNamed(String name,
                                  Object value,
                                  Class<?> type) {
         return setNamedAt(-1, name, value, type);
@@ -398,7 +399,7 @@ public class FieldOps {
      * @param value The value to set.
      * @return The Operation Definition.
      */
-    public static OpDef setNamedAt(int at,
+    public static FieldTransform setNamedAt(int at,
                                    String name,
                                    Object value) {
 
@@ -419,7 +420,7 @@ public class FieldOps {
      * @param type  The type of the field.
      * @return The Operation Definition.
      */
-    public static OpDef setNamedAt(int at,
+    public static FieldTransform setNamedAt(int at,
                                    String name,
                                    Object value,
                                    Class<?> type) {
@@ -427,7 +428,7 @@ public class FieldOps {
         Class<?> type_ = Objects.requireNonNullElseGet(type,
                 () -> value == null ? Void.class : value.getClass());
 
-        return (incomingSchema, schemaSetter) -> {
+        return (incomingSchema) -> {
 
             SchemaField schemaField = null;
             if (name == null) {
@@ -448,10 +449,60 @@ public class FieldOps {
                 schemaField = schemaField.mapToIndex(at);
             }
 
-            schemaField = schemaSetter.addField(schemaField);
+            SchemaField finalfield = schemaField;
 
-            return setterFactoryFor(schemaField.getName(), value, TypeUtil.classOf(schemaField.getType()));
+            return new FieldTransform.Definition(schemaField, constGetterFor(value)) {
+                @Override
+                public BiConsumer<DidoData, WritableData> createCopy(FieldSetter fieldSetter) {
+                    return setterFactoryFor(fieldSetter,
+                            finalfield.getName(), value,
+                            TypeUtil.classOf(finalfield.getType()));
+                }
+            };
         };
+    }
+
+    static class ConstantObjectGetter extends AbstractFieldGetter {
+
+        private final Object value;
+
+        ConstantObjectGetter(Object value) {
+            this.value = value;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return value;
+        }
+    }
+
+    static class ConstantIntGetter extends AbstractFieldGetter {
+
+        private final int value;
+
+        ConstantIntGetter(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return value;
+        }
+
+        @Override
+        public int getInt(DidoData data) {
+            return value;
+        }
+    }
+
+    static FieldGetter constGetterFor(Object value) {
+
+        if (value instanceof Integer) {
+            return new ConstantIntGetter((Integer) value);
+        }
+        else {
+            return new ConstantObjectGetter(value);
+        }
     }
 
     /**
@@ -460,10 +511,11 @@ public class FieldOps {
      * @param type  The type.
      * @return The prepare step.
      */
-    static OpDef.Prepare setterFactoryFor(String to, Object value, Class<?> type) {
+    static BiConsumer<DidoData, WritableData> setterFactoryFor(FieldSetter setter,
+                                                               String to,
+                                                               Object value,
+                                                               Class<?> type) {
 
-        return writableSchema -> {
-            FieldSetter setter = writableSchema.getFieldSetterNamed(to);
             if (value == null) {
                 return (data, out) -> setter.clear(out);
             } else if (boolean.class.isAssignableFrom(type)) {
@@ -493,7 +545,6 @@ public class FieldOps {
             } else {
                 return (data, out) -> setter.set(out, value);
             }
-        };
     }
 
     /**

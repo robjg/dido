@@ -122,7 +122,7 @@ public class ValueSetFactory implements Supplier<OpDef> {
                 value = inferredConversion(this.value, toType);
             }
 
-            return FieldOps.setNamed(field, value, toType).prepare(fromSchema, schemaSetter);
+            return FieldOps.setNamed(field, value, toType).asOpDef().prepare(fromSchema, schemaSetter);
         }
 
         <F, T> T inferredConversion(F from, Class<T> toType) {
