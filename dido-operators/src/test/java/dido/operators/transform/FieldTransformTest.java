@@ -32,18 +32,7 @@ class FieldTransformTest {
                 }
             };
 
-            return new FieldTransform.Definition() {
-
-                @Override
-                public SchemaField schemaField() {
-                    return schemaField;
-                }
-
-                @Override
-                public FieldGetter fieldGetter() {
-                    return fieldGetter;
-                }
-            };
+            return new FieldTransform.Definition(schemaField, fieldGetter);
         };
 
         DidoData data = DataBuilder.newInstance()

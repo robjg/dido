@@ -174,6 +174,20 @@ public class FieldOps {
             this.copyTo = copyTo;
         }
 
+        public FieldTransform transform() {
+
+            return (incomingSchema) -> {
+
+                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+                SchemaField schemaField = from.schemaField;
+
+                schemaField = copyTo.deriveTo(incomingSchema, schemaField);
+
+                return new FieldTransform.Definition(schemaField, from.fieldGetter);
+            };
+        }
+
+
         public OpDef out() {
 
             return (incomingSchema, schemaSetter) -> {

@@ -15,13 +15,26 @@ public interface FieldTransform {
      */
     Definition define(ReadSchema incomingSchema);
 
-    interface Definition {
+    class Definition {
 
-        SchemaField schemaField();
+        private final SchemaField schemaField;
 
-        FieldGetter fieldGetter();
+        private final FieldGetter fieldGetter;
 
-        default BiConsumer<DidoData, WritableData> createCopy(FieldSetter fieldSetter) {
+        public Definition(SchemaField schemaField, FieldGetter fieldGetter) {
+            this.schemaField = schemaField;
+            this.fieldGetter = fieldGetter;
+        }
+
+        public SchemaField schemaField() {
+            return schemaField;
+        }
+
+        public FieldGetter fieldGetter() {
+            return fieldGetter;
+        }
+
+        public BiConsumer<DidoData, WritableData> createCopy(FieldSetter fieldSetter) {
 
             return (incomingData, writableData) ->
                     fieldSetter.set(writableData, fieldGetter().get(incomingData));
