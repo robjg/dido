@@ -476,6 +476,82 @@ public class FieldOps {
         }
     }
 
+    static class ConstantBooleanGetter extends AbstractFieldGetter {
+
+        private final boolean value;
+
+        ConstantBooleanGetter(boolean value) {
+            this.value = value;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return value;
+        }
+
+        @Override
+        public boolean getBoolean(DidoData data) {
+            return value;
+        }
+    }
+
+    static class ConstantByteGetter extends AbstractFieldGetter {
+
+        private final byte value;
+
+        ConstantByteGetter(byte value) {
+            this.value = value;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return value;
+        }
+
+        @Override
+        public byte getByte(DidoData data) {
+            return value;
+        }
+    }
+
+    static class ConstantCharGetter extends AbstractFieldGetter {
+
+        private final char value;
+
+        ConstantCharGetter(char value) {
+            this.value = value;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return value;
+        }
+
+        @Override
+        public char getChar(DidoData data) {
+            return super.getChar(data);
+        }
+    }
+
+    static class ConstantShortGetter extends AbstractFieldGetter {
+
+        private final short value;
+
+        ConstantShortGetter(short value) {
+            this.value = value;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return value;
+        }
+
+        @Override
+        public short getShort(DidoData data) {
+            return value;
+        }
+    }
+
     static class ConstantIntGetter extends AbstractFieldGetter {
 
         private final int value;
@@ -495,10 +571,110 @@ public class FieldOps {
         }
     }
 
+    static class ConstantLongGetter extends AbstractFieldGetter {
+
+        private final long value;
+
+        ConstantLongGetter(long value) {
+            this.value = value;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return value;
+        }
+
+        @Override
+        public long getLong(DidoData data) {
+            return value;
+        }
+    }
+
+    static class ConstantFloatGetter extends AbstractFieldGetter {
+
+        private final float value;
+
+        ConstantFloatGetter(float value) {
+            this.value = value;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return value;
+        }
+
+        @Override
+        public float getFloat(DidoData data) {
+            return super.getFloat(data);
+        }
+    }
+
+    static class ConstantDoubleGetter extends AbstractFieldGetter {
+
+        private final double value;
+
+        ConstantDoubleGetter(double value) {
+            this.value = value;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return value;
+        }
+
+        @Override
+        public double getDouble(DidoData data) {
+            return value;
+        }
+    }
+
+    static class ConstantStringGetter extends AbstractFieldGetter {
+
+        private final String value;
+
+        ConstantStringGetter(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return value;
+        }
+
+        @Override
+        public String getString(DidoData data) {
+            return super.getString(data);
+        }
+    }
+
     static FieldGetter constGetterFor(Object value) {
 
-        if (value instanceof Integer) {
+        if (value instanceof Boolean) {
+            return new ConstantBooleanGetter((Boolean) value);
+        }
+        else if (value instanceof Byte) {
+            return new ConstantByteGetter((Byte) value);
+        }
+        else if (value instanceof Character) {
+            return new ConstantCharGetter((Character) value);
+        }
+        else if (value instanceof Short) {
+            return new ConstantShortGetter((Short) value);
+        }
+        else if (value instanceof Integer) {
             return new ConstantIntGetter((Integer) value);
+        }
+        else if (value instanceof Long){
+            return new ConstantLongGetter((Long) value);
+        }
+        else if (value instanceof Float) {
+            return new ConstantFloatGetter((Float) value);
+        }
+        else if (value instanceof Double) {
+            return new ConstantDoubleGetter((Double) value);
+        }
+        else if (value instanceof String) {
+            return new ConstantStringGetter((String) value);
         }
         else {
             return new ConstantObjectGetter(value);
