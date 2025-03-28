@@ -17,7 +17,7 @@ public class ViewTransformBuilder {
 
     private final ReadSchema incomingSchema;
 
-    private final NavigableMap<Integer, FieldTransform.Definition> opsByIndex = new TreeMap<>(); ;
+    private final NavigableMap<Integer, FieldGetter> opsByIndex = new TreeMap<>(); ;
 
     private final SchemaFactory schemaFactory;
 
@@ -111,28 +111,69 @@ public class ViewTransformBuilder {
         }
     }
 
+    class ViewDefinitionImpl implements FieldView.Definition {
+
+        @Override
+        public void addField(SchemaField schemaField, FieldGetter fieldGetter) {
+            SchemaField existing = null;
+
+            String newName = schemaField.getName();
+            int newIndex = schemaField.getIndex();
+
+            if (newName != null) {
+                existing = schemaFactory.removeNamed(newName);
+            }
+            if (existing == null && newIndex > 0) {
+                existing = schemaFactory.removeAt(newIndex);
+            }
+
+            SchemaField newField;
+            if (existing == null) {
+                newField =  schemaFactory.addSchemaField(schemaField);
+            }
+            else {
+                if (newName == null) {
+                    newName = existing.getName();
+                }
+                if (newIndex == 0) {
+                    newIndex = existing.getIndex();
+                }
+                newField =  schemaFactory.addSchemaField(schemaField
+                        .mapToIndex(newIndex).mapToFieldName(newName));
+            }
+            opsByIndex.put(newField.getIndex(), fieldGetter);
+        }
+
+        @Override
+        public void removeField(SchemaField schemaField) {
+            SchemaField removedField = schemaFactory.removeNamed(schemaField.getName());
+            if (removedField != null) {
+                opsByIndex.remove(removedField.getIndex());
+            }
+        }
+    }
 
 
     public ViewTransformBuilder addOp(FieldTransform opDef) {
         SchemaSetterImpl schemaSetter = new SchemaSetterImpl();
         FieldTransform.Definition definition = opDef.define(incomingSchema);
         SchemaField schemaField = schemaSetter.addField(definition.schemaField());
-        opsByIndex.put(schemaField.getIndex(), definition);
+        opsByIndex.put(schemaField.getIndex(), definition.fieldGetter());
         return this;
     }
 
     public DidoTransform build() {
 
         SchemaFactory schemaFactory ;
-        NavigableMap<Integer, FieldTransform.Definition> opsByIndex;
+        NavigableMap<Integer, FieldGetter> opsByIndex;
 
         if (reIndex) {
             opsByIndex = new TreeMap<>();
             schemaFactory = DataSchemaFactory.newInstance();
             for (SchemaField schemaField : this.schemaFactory.getSchemaFields()) {
-                FieldTransform.Definition prepare = this.opsByIndex.get(schemaField.getIndex());
+                FieldGetter fieldGetter = this.opsByIndex.get(schemaField.getIndex());
                 schemaField = schemaFactory.addSchemaField(schemaField.mapToIndex(0));
-                opsByIndex.put(schemaField.getIndex(), prepare);
+                opsByIndex.put(schemaField.getIndex(), fieldGetter);
             }
         } else {
             schemaFactory = this.schemaFactory;
@@ -141,8 +182,8 @@ public class ViewTransformBuilder {
 
         FieldGetter[] getters = new FieldGetter[schemaFactory.lastIndex()];
 
-        for (Map.Entry<Integer, FieldTransform.Definition> transforms : opsByIndex.entrySet()) {
-            getters[transforms.getKey() - 1] = new FieldGetterDelegate(transforms.getValue().fieldGetter());
+        for (Map.Entry<Integer, FieldGetter> transforms : opsByIndex.entrySet()) {
+            getters[transforms.getKey() - 1] = new FieldGetterDelegate(transforms.getValue());
         }
 
         ViewDataSchema schema = new ViewDataSchema(schemaFactory, getters);
