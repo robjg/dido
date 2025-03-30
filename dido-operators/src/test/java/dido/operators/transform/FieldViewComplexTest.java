@@ -21,7 +21,7 @@ class FieldViewComplexTest {
     static class MarkupOperation implements FieldView {
 
         @Override
-        public void define(ReadSchema incomingSchema, Definition definition) {
+        public void define(ReadSchema incomingSchema, Definition viewDefinition) {
 
             FieldGetter priceGetter = incomingSchema.getFieldGetterNamed("Price");
 
@@ -69,9 +69,9 @@ class FieldViewComplexTest {
                 }
             };
 
-            definition.addField(markupField, markupGetter);
-            definition.addField(amountField, amountGetter);
-            definition.addField(totalField, totalGetter);
+            viewDefinition.addField(markupField, markupGetter);
+            viewDefinition.addField(amountField, amountGetter);
+            viewDefinition.addField(totalField, totalGetter);
         }
     }
 

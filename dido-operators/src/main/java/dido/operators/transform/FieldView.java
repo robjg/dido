@@ -17,7 +17,7 @@ public interface FieldView {
     /**
      *
      */
-    void define(ReadSchema incomingSchema, Definition definition);
+    void define(ReadSchema incomingSchema, Definition viewDefinition);
 
     interface Definition {
 

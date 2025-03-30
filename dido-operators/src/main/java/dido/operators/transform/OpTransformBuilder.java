@@ -127,6 +127,10 @@ public class OpTransformBuilder {
         return addOp(fieldTransform.asOpDef());
     }
 
+    public OpTransformBuilder addOp(FieldView fieldView) {
+        return addOp(fieldView.asOpDef());
+    }
+
     public OpTransformBuilder addOp(OpDef opDef) {
         SchemaSetterImpl schemaSetter = new SchemaSetterImpl();
         OpDef.Prepare prepare = opDef.prepare(incomingSchema, schemaSetter);

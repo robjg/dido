@@ -55,7 +55,7 @@ public class ViewTransformBuilder {
             if (copy) {
                 for (SchemaField schemaField: incomingSchema.getSchemaFields()) {
 
-                    builder.addOp(FieldOps.copy().index(schemaField.getIndex()).with().transform());
+                    builder.addOp(FieldOps.copy().index(schemaField.getIndex()).with().view());
                 }
             }
 
@@ -153,6 +153,11 @@ public class ViewTransformBuilder {
         }
     }
 
+    public ViewTransformBuilder addOp(FieldView opDef) {
+        ViewDefinitionImpl schemaSetter = new ViewDefinitionImpl();
+        opDef.define(incomingSchema, schemaSetter);
+        return this;
+    }
 
     public ViewTransformBuilder addOp(FieldTransform opDef) {
         SchemaSetterImpl schemaSetter = new SchemaSetterImpl();

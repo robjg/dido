@@ -14,6 +14,12 @@ import java.util.function.*;
  */
 public class FieldOps {
 
+    /**
+     * Provide fluent copy builders with the same structure. An {@link CopyField}
+     * can then define different operations.
+     *
+     * @param <O> The Operation that will be doing the copy.
+     */
     private interface OpFactory<O> {
 
         O with(CopyTo<O> to);
@@ -175,19 +181,18 @@ public class FieldOps {
             this.copyTo = copyTo;
         }
 
-        public FieldTransform transform() {
+        public FieldView view() {
 
-            return (incomingSchema) -> {
+            return (incomingSchema, definition) -> {
 
                 SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
                 SchemaField schemaField = from.schemaField;
 
                 schemaField = copyTo.deriveTo(incomingSchema, schemaField);
 
-                return new FieldTransform.Definition(schemaField, from.fieldGetter);
+                definition.addField(schemaField, from.fieldGetter);
             };
         }
-
 
         public OpDef out() {
 
@@ -230,9 +235,9 @@ public class FieldOps {
      * @param index The index to copy.
      * @return A Copy Operation Definition.
      */
-    public static FieldTransform copyAt(int index) {
+    public static FieldView copyAt(int index) {
         return copy().index(index)
-                .with().transform();
+                .with().view();
     }
 
     /**
@@ -241,11 +246,11 @@ public class FieldOps {
      * @param index The index to copy.
      * @return A Copy Operation Definition.
      */
-    public static FieldTransform copyAt(int index, int at) {
+    public static FieldView copyAt(int index, int at) {
 
         return copy().index(index)
                 .at(at)
-                .with().transform();
+                .with().view();
     }
 
     /**
@@ -255,10 +260,10 @@ public class FieldOps {
      * @param name The field name to copy.
      * @return A Copy Operation Definition.
      */
-    public static FieldTransform copyNamed(String name) {
+    public static FieldView copyNamed(String name) {
 
         return copy().from(name)
-                .with().transform();
+                .with().view();
     }
 
     /**
@@ -269,11 +274,11 @@ public class FieldOps {
      * @param to   The field name to copy.
      * @return A Copy Operation Definition.
      */
-    public static FieldTransform copyNamed(String from, String to) {
+    public static FieldView copyNamed(String from, String to) {
 
         return copy().from(from)
                 .to(to)
-                .with().transform();
+                .with().view();
     }
 
     /**
@@ -285,10 +290,10 @@ public class FieldOps {
      * @param at   The index to copy to.
      * @return A Copy Operation Definition.
      */
-    public static FieldTransform copyNamedAt(String from, int at) {
+    public static FieldView copyNamedAt(String from, int at) {
         return copy().from(from)
                 .at(at)
-                .with().transform();
+                .with().view();
     }
 
     /**
@@ -301,31 +306,46 @@ public class FieldOps {
      * @param to   The field name to copy.
      * @return A Copy Operation Definition.
      */
-    public static FieldTransform copyNamedAt(String from, int at, String to) {
+    public static FieldView copyNamedAt(String from, int at, String to) {
 
         return copy().from(from)
                 .to(to)
                 .at(at)
-                .with().transform();
+                .with().view();
     }
 
-    public static OpDef rename(String from, String to) {
+    /**
+     * Rename a field.
+     *
+     * @param from The existing field name.
+     * @param to The new field name.
+     *
+     * @return The operation definition.
+     */
+    public static FieldView rename(String from, String to) {
         return renameAt(from, -1, to);
     }
 
-    public static OpDef renameAt(String from, int at, String to) {
+    /**
+     * Rename a field and give it a new index.
+     *
+     * @param from The existing field name.
+     * @param at The new index.
+     * @param to The new field name.
+     *
+     * @return An operation definition.
+     */
+    public static FieldView renameAt(String from, int at, String to) {
 
-        return (incomingSchema, schemaSetter) -> {
+        return (incomingSchema, definition) -> {
 
-            OpDef.Prepare prepare = copy()
+            copy()
                     .from(Objects.requireNonNull(from, "No From"))
                     .to(Objects.requireNonNull(to, "No To"))
                     .at(at)
-                    .with().out().prepare(incomingSchema, schemaSetter);
+                    .with().view().define(incomingSchema, definition);
 
-            schemaSetter.removeField(incomingSchema.getSchemaFieldNamed(from));
-
-            return prepare;
+            definition.removeField(incomingSchema.getSchemaFieldNamed(from));
         };
     }
 
@@ -337,7 +357,7 @@ public class FieldOps {
      * @param value The value to set.
      * @return The Operation Definition.
      */
-    public static FieldTransform setAt(int at,
+    public static FieldView setAt(int at,
                               Object value) {
         return setNamedAt(at, null, value, null);
     }
@@ -353,7 +373,7 @@ public class FieldOps {
      * @param type  The type of the field.
      * @return The Operation Definition.
      */
-    public static FieldTransform setAt(int at,
+    public static FieldView setAt(int at,
                               Object value,
                               Class<?> type) {
         return setNamedAt(at, null, value, type);
@@ -367,7 +387,7 @@ public class FieldOps {
      * @param value The value to set.
      * @return The Operation Definition.
      */
-    public static FieldTransform setNamed(String name,
+    public static FieldView setNamed(String name,
                                  Object value) {
         return setNamedAt(-1, name, value, null);
     }
@@ -383,7 +403,7 @@ public class FieldOps {
      * @param type  The type of the field.
      * @return The Operation Definition.
      */
-    public static FieldTransform setNamed(String name,
+    public static FieldView setNamed(String name,
                                  Object value,
                                  Class<?> type) {
         return setNamedAt(-1, name, value, type);
@@ -399,7 +419,7 @@ public class FieldOps {
      * @param value The value to set.
      * @return The Operation Definition.
      */
-    public static FieldTransform setNamedAt(int at,
+    public static FieldView setNamedAt(int at,
                                    String name,
                                    Object value) {
 
@@ -418,9 +438,10 @@ public class FieldOps {
      * @param name  The name of the field.
      * @param value The value to set.
      * @param type  The type of the field.
+     *
      * @return The Operation Definition.
      */
-    public static FieldTransform setNamedAt(int at,
+    public static FieldView setNamedAt(int at,
                                    String name,
                                    Object value,
                                    Class<?> type) {
@@ -428,37 +449,56 @@ public class FieldOps {
         Class<?> type_ = Objects.requireNonNullElseGet(type,
                 () -> value == null ? Void.class : value.getClass());
 
-        return (incomingSchema) -> {
+        return new FieldView() {
 
-            SchemaField schemaField = null;
-            if (name == null) {
-                if (at > 0) {
-                    schemaField = incomingSchema.getSchemaFieldAt(at);
+            SchemaField finalField(ReadSchema incomingSchema) {
+
+                SchemaField schemaField = null;
+                if (name == null) {
+                    if (at > 0) {
+                        schemaField = incomingSchema.getSchemaFieldAt(at);
+                    }
+                } else {
+                    schemaField = incomingSchema.getSchemaFieldNamed(name);
                 }
-            } else {
-                schemaField = incomingSchema.getSchemaFieldNamed(name);
-            }
 
-            if (schemaField == null) {
-                schemaField = SchemaField.of(Math.max(at, 0), name, type_);
-            } else {
-                schemaField = SchemaField.of(schemaField.getIndex(), schemaField.getName(), type_);
-            }
-
-            if (at >= 0) {
-                schemaField = schemaField.mapToIndex(at);
-            }
-
-            SchemaField finalfield = schemaField;
-
-            return new FieldTransform.Definition(schemaField, constGetterFor(value)) {
-                @Override
-                public BiConsumer<DidoData, WritableData> createCopy(FieldSetter fieldSetter) {
-                    return setterFactoryFor(fieldSetter,
-                            finalfield.getName(), value,
-                            TypeUtil.classOf(finalfield.getType()));
+                if (schemaField == null) {
+                    schemaField = SchemaField.of(Math.max(at, 0), name, type_);
+                } else {
+                    schemaField = SchemaField.of(schemaField.getIndex(), schemaField.getName(), type_);
                 }
-            };
+
+                if (at >= 0) {
+                    schemaField = schemaField.mapToIndex(at);
+                }
+
+                return schemaField;
+            }
+
+            @Override
+            public void define(ReadSchema incomingSchema, Definition viewDefinition) {
+
+                viewDefinition.addField(finalField(incomingSchema), constGetterFor(value));
+            }
+
+            @Override
+            public OpDef asOpDef() {
+                return (incomingSchema, schemaSetter) -> {
+
+                    SchemaField finalField = finalField(incomingSchema);
+
+                    schemaSetter.addField(finalField);
+
+                    return writeSchema -> {
+
+                        FieldSetter fieldSetter = writeSchema.getFieldSetterNamed(finalField.getName());
+
+                        return setterFactoryFor(fieldSetter,
+                                finalField.getName(), value,
+                                TypeUtil.classOf(finalField.getType()));
+                    };
+                };
+            }
         };
     }
 
@@ -595,17 +635,14 @@ public class FieldOps {
      * @param name The name of the field.
      * @return The operation definition.
      */
-    public static OpDef removeNamed(String name) {
+    public static FieldView removeNamed(String name) {
 
-        return (incomingSchema, schemaSetter) -> {
+        return (incomingSchema, viewDefinition) -> {
             SchemaField field = incomingSchema.getSchemaFieldNamed(name);
             if (field == null) {
                 throw new NoSuchFieldException(name, incomingSchema);
             }
-            schemaSetter.removeField(field);
-            return dataFactory -> (dataIn, dataOut) -> {
-                // Nothing to do - the new data is assumed not to have the field.
-            };
+            viewDefinition.removeField(field);
         };
     }
 
@@ -615,17 +652,14 @@ public class FieldOps {
      * @param index The index of the field.
      * @return The operation definition.
      */
-    public static OpDef removeAt(int index) {
+    public static FieldView removeAt(int index) {
 
-        return (incomingSchema, schemaSetter) -> {
+        return (incomingSchema, viewDefinition) -> {
             SchemaField field = incomingSchema.getSchemaFieldAt(index);
             if (field == null) {
                 throw new NoSuchFieldException(index, incomingSchema);
             }
-            schemaSetter.removeField(field);
-            return dataFactory -> (dataIn, dataOut) -> {
-                // Nothing to do - the new data is assumed not to have the field.
-            };
+            viewDefinition.removeField(field);
         };
     }
 

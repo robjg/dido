@@ -25,8 +25,8 @@ class ViewTransformBuilderTest {
         DidoTransform transformation = ViewTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
-                .addOp(FieldOps.copy().index(3).with().transform()) // copies index 3 to index 3
-                .addOp(FieldOps.copy().from("Qty").with().transform()) // copies Qty to index 2
+                .addOp(FieldOps.copy().index(3).with().view()) // copies index 3 to index 3
+                .addOp(FieldOps.copy().from("Qty").with().view()) // copies Qty to index 2
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -213,6 +213,34 @@ class ViewTransformBuilderTest {
     }
 
     @Test
+    void rename() {
+
+        DidoTransform transformation = ViewTransformBuilder
+                .with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.renameAt("Qty", 5, "Quantity"))
+                .addOp(FieldOps.renameAt("Price", 3, "ThePrice"))
+                .addOp(FieldOps.rename("Fruit", "Type"))
+                .build();
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("Type", String.class)
+                .addNamedAt(5, "Quantity", int.class)
+                .addNamedAt(3, "ThePrice", double.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData result = transformation.apply(data);
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of("Apple", 23.5, 10);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
     void setNamedWithCopy() {
 
         DidoTransform transformation = ViewTransformBuilder.with()
@@ -236,6 +264,83 @@ class ViewTransformBuilderTest {
 
         DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
                 .of("Orange", 1234L, 23.5, true);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void setAtWithCopy() {
+
+        DidoTransform transformation = ViewTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.setAt(1, "Orange"))
+                .addOp(FieldOps.setAt(2, 1234L, long.class))
+                .addOp(FieldOps.setNamedAt(4, "InStock", true))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", long.class)
+                .addNamed("Price", double.class)
+                .addNamed("InStock", java.lang.Boolean.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of("Orange", 1234L, 23.5, true);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void removeNamed() {
+
+        DidoTransform transformation = ViewTransformBuilder.with()
+                .copy(true)
+                .reIndex(true)
+                .forSchema(schema)
+                .addOp(FieldOps.removeNamed("Fruit"))
+                .addOp(FieldOps.removeNamed("Price"))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("Qty", int.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of(10);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void removeAt() {
+
+        DidoTransform transformation = ViewTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.removeAt(1))
+                .addOp(FieldOps.removeAt(3))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamedAt(2, "Qty", int.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of(10);
 
         assertThat(result, is(expectedData));
     }
