@@ -3,7 +3,11 @@ package dido.operators.transform;
 import dido.data.ArrayData;
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.SchemaBuilder;
 import org.junit.jupiter.api.Test;
+
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -345,4 +349,224 @@ class ViewTransformBuilderTest {
         assertThat(result, is(expectedData));
     }
 
+    @Test
+    void mapAt() {
+
+        UnaryOperator<String> fruitOp = String::toUpperCase;
+        Function<Integer, Double> qtyOp = qty -> (double) qty * 2.5;
+        Function<Double, String> priceOp = price -> "£" + price;
+
+        DidoTransform transformation = ViewTransformBuilder.with()
+                .forSchema(schema)
+                .addOp(FieldOps.map()
+                        .index(1)
+                        .with().func(fruitOp))
+                .addOp(FieldOps.map()
+                        .index(2)
+                        .at(3)
+                        .with().type(double.class)
+                        .func(qtyOp))
+                .addOp(FieldOps.map()
+                        .index(3)
+                        .atLastIndex()
+                        .to("DisplayPrice")
+                        .with().type(String.class)
+                        .func(priceOp))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
+                .addNamed("Fruit", String.class)
+                .addNamedAt(3, "Qty", double.class)
+                .addNamed("DisplayPrice", String.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+                .of("APPLE", 25.0, "£23.5");
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void mapNamed() {
+
+        DidoTransform transformation = ViewTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.map()
+                        .from("Qty")
+                        .with().func(qty -> (int) qty * 2))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        assertThat(transformation.getResultantSchema(), is(schema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+                .of("Apple", 20, 23.5);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void unaryMapNewField() {
+
+        DidoTransform transformation = ViewTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.map()
+                        .from("Qty")
+                        .to("Extra")
+                        .with()
+                        .func(qty -> (int) qty * 2))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = SchemaBuilder.newInstance()
+                .merge(schema)
+                .addNamed("Extra", int.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of("Apple", 10, 23.5, 20);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void unaryMapSameIndexNewName() {
+
+        DidoTransform transformation = ViewTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.map()
+                        .from("Qty")
+                        .to("Extra")
+                        .atSameIndex()
+                        .with()
+                        .func(qty -> (int) qty * 2))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Extra", int.class)
+                .addNamed("Price", double.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of("Apple", 20, 23.5);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void mapIntToIntNamed() {
+
+        DidoTransform transformation = ViewTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.map()
+                        .from("Qty")
+                        .with().intOp(qty -> qty * 2))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        assertThat(transformation.getResultantSchema(), is(schema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+                .of("Apple", 20, 23.5);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void mapIntToIntAt() {
+
+        DidoTransform transformation = ViewTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.map()
+                        .index(2)
+                        .with().intOp(qty -> qty * 2))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        assertThat(transformation.getResultantSchema(), is(schema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+                .of("Apple", 20, 23.5);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void mapLongToLongNamedAt() {
+
+        DataSchema schema = ArrayData.schemaBuilder()
+                .addNamed("BigNumber", long.class)
+                .build();
+
+        DidoData data = DidoData.valuesWithSchema(schema)
+                .of(1000L);
+
+        DidoTransform transformation = ViewTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.map()
+                        .from("BigNumber")
+                        .at(20)
+                        .with().longOp(qty -> qty * 2))
+                .addOp(FieldOps.map()
+                        .from("BigNumber")
+                        .to("AnotherBigNumber").at(15)
+                        .with().longOp(qty -> qty * 2))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = ArrayData.schemaBuilder()
+                .addNamedAt(15, "AnotherBigNumber", long.class)
+                .addNamedAt(20, "BigNumber", long.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of(2000L, 2000L);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void mapDoubleToDoubleAt() {
+
+        DidoTransform transformation = ViewTransformBuilder.with()
+                .copy(true)
+                .forSchema(schema)
+                .addOp(FieldOps.map()
+                        .index(3)
+                        .with().doubleOp(price -> price * 2))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        assertThat(transformation.getResultantSchema(), is(schema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+                .of("Apple", 10, 47.0);
+
+        assertThat(result, is(expectedData));
+    }
 }

@@ -8,7 +8,7 @@ import dido.data.util.DataBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.Matchers.*;
 
 class FieldViewTest {
 
@@ -20,12 +20,7 @@ class FieldViewTest {
             FieldGetter incomingGetter = incomingSchema.getFieldGetterNamed("price");
             SchemaField schemaField = SchemaField.of(0, "markup", double.class);
 
-            FieldGetter fieldGetter = new AbstractFieldGetter() {
-                @Override
-                public Object get(DidoData data) {
-                    return getDouble(data);
-                }
-
+            FieldGetter fieldGetter = new AbstractFieldGetter.ForDouble() {
                 @Override
                 public double getDouble(DidoData data) {
                     return incomingGetter.getDouble(data) * 1.2;
@@ -46,4 +41,33 @@ class FieldViewTest {
 
         assertThat(result.getDoubleNamed("markup"), closeTo(60.6, 0.01));
     }
+
+    @Test
+    void clearField() {
+
+        FieldView fieldView = (incomingSchema, definition) -> {
+
+            FieldGetter fieldGetter = new AbstractFieldGetter() {
+                @Override
+                public Object get(DidoData data) {
+                    return null;
+                }
+            };
+
+            definition.addField(incomingSchema.getSchemaFieldNamed("colour"), fieldGetter);
+        };
+
+        DidoData data = DataBuilder.newInstance()
+                .withString("colour", "red")
+                .build();
+
+        DidoTransform transform = OpTransformBuilder.with()
+                .copy(true).forSchema(data.getSchema()).addOp(fieldView.asOpDef()).build();
+
+        DidoData result = transform.apply(data);
+
+        assertThat(result.hasNamed("colour"), is(false));
+        assertThat(result.getNamed("colour"), nullValue());
+    }
+
 }

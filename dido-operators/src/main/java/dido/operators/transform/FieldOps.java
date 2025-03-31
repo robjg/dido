@@ -140,7 +140,7 @@ public class FieldOps {
         }
 
         SchemaField deriveTo(DataSchema incomingSchema,
-                                     SchemaField fromField) {
+                             SchemaField fromField) {
 
             SchemaField schemaField;
             if (to == null) {
@@ -318,8 +318,7 @@ public class FieldOps {
      * Rename a field.
      *
      * @param from The existing field name.
-     * @param to The new field name.
-     *
+     * @param to   The new field name.
      * @return The operation definition.
      */
     public static FieldView rename(String from, String to) {
@@ -330,9 +329,8 @@ public class FieldOps {
      * Rename a field and give it a new index.
      *
      * @param from The existing field name.
-     * @param at The new index.
-     * @param to The new field name.
-     *
+     * @param at   The new index.
+     * @param to   The new field name.
      * @return An operation definition.
      */
     public static FieldView renameAt(String from, int at, String to) {
@@ -358,7 +356,7 @@ public class FieldOps {
      * @return The Operation Definition.
      */
     public static FieldView setAt(int at,
-                              Object value) {
+                                  Object value) {
         return setNamedAt(at, null, value, null);
     }
 
@@ -374,8 +372,8 @@ public class FieldOps {
      * @return The Operation Definition.
      */
     public static FieldView setAt(int at,
-                              Object value,
-                              Class<?> type) {
+                                  Object value,
+                                  Class<?> type) {
         return setNamedAt(at, null, value, type);
     }
 
@@ -388,7 +386,7 @@ public class FieldOps {
      * @return The Operation Definition.
      */
     public static FieldView setNamed(String name,
-                                 Object value) {
+                                     Object value) {
         return setNamedAt(-1, name, value, null);
     }
 
@@ -404,8 +402,8 @@ public class FieldOps {
      * @return The Operation Definition.
      */
     public static FieldView setNamed(String name,
-                                 Object value,
-                                 Class<?> type) {
+                                     Object value,
+                                     Class<?> type) {
         return setNamedAt(-1, name, value, type);
     }
 
@@ -420,8 +418,8 @@ public class FieldOps {
      * @return The Operation Definition.
      */
     public static FieldView setNamedAt(int at,
-                                   String name,
-                                   Object value) {
+                                       String name,
+                                       Object value) {
 
         return setNamedAt(at, name, value, null);
     }
@@ -438,13 +436,12 @@ public class FieldOps {
      * @param name  The name of the field.
      * @param value The value to set.
      * @param type  The type of the field.
-     *
      * @return The Operation Definition.
      */
     public static FieldView setNamedAt(int at,
-                                   String name,
-                                   Object value,
-                                   Class<?> type) {
+                                       String name,
+                                       Object value,
+                                       Class<?> type) {
 
         Class<?> type_ = Objects.requireNonNullElseGet(type,
                 () -> value == null ? Void.class : value.getClass());
@@ -511,72 +508,63 @@ public class FieldOps {
                     return (Boolean) value;
                 }
             };
-        }
-        else if (value instanceof Byte) {
+        } else if (value instanceof Byte) {
             return new AbstractFieldGetter.ForByte() {
                 @Override
                 public byte getByte(DidoData data) {
                     return (Byte) value;
                 }
             };
-        }
-        else if (value instanceof Character) {
+        } else if (value instanceof Character) {
             return new AbstractFieldGetter.ForChar() {
                 @Override
                 public char getChar(DidoData data) {
                     return (Character) value;
                 }
             };
-        }
-        else if (value instanceof Short) {
+        } else if (value instanceof Short) {
             return new AbstractFieldGetter.ForShort() {
                 @Override
                 public short getShort(DidoData data) {
                     return (Short) value;
                 }
             };
-        }
-        else if (value instanceof Integer) {
+        } else if (value instanceof Integer) {
             return new AbstractFieldGetter.ForInt() {
                 @Override
                 public int getInt(DidoData data) {
                     return (Integer) value;
                 }
             };
-        }
-        else if (value instanceof Long){
+        } else if (value instanceof Long) {
             return new AbstractFieldGetter.ForLong() {
                 @Override
                 public long getLong(DidoData data) {
                     return (Long) value;
                 }
             };
-        }
-        else if (value instanceof Float) {
+        } else if (value instanceof Float) {
             return new AbstractFieldGetter.ForFloat() {
                 @Override
                 public float getFloat(DidoData data) {
                     return (Float) value;
                 }
             };
-        }
-        else if (value instanceof Double) {
+        } else if (value instanceof Double) {
             return new AbstractFieldGetter.ForDouble() {
                 @Override
                 public double getDouble(DidoData data) {
                     return (Double) value;
                 }
             };
-        }
-        else if (value instanceof String) {
+        } else if (value instanceof String) {
             return new AbstractFieldGetter.ForString() {
                 @Override
                 public String getString(DidoData data) {
                     return (String) value;
                 }
             };
-        }
-        else {
+        } else {
             return new AbstractFieldGetter() {
 
                 @Override
@@ -598,35 +586,35 @@ public class FieldOps {
                                                                Object value,
                                                                Class<?> type) {
 
-            if (value == null) {
-                return (data, out) -> setter.clear(out);
-            } else if (boolean.class.isAssignableFrom(type)) {
-                boolean boolValue = (boolean) value;
-                return (data, out) -> setter.setBoolean(out, boolValue);
-            } else if (byte.class.isAssignableFrom(type)) {
-                byte byteValue = (byte) value;
-                return (data, out) -> setter.setByte(out, byteValue);
-            } else if (short.class.isAssignableFrom(type)) {
-                short shortValue = (short) value;
-                return (data, out) -> setter.setShort(out, shortValue);
-            } else if (char.class.isAssignableFrom(type)) {
-                char charValue = (char) value;
-                return (data, out) -> setter.setChar(out, charValue);
-            } else if (int.class.isAssignableFrom(type)) {
-                int intValue = (int) value;
-                return (data, out) -> setter.setInt(out, intValue);
-            } else if (long.class.isAssignableFrom(type)) {
-                long longValue = (long) value;
-                return (data, out) -> setter.setLong(out, longValue);
-            } else if (float.class.isAssignableFrom(type)) {
-                float floatValue = (float) value;
-                return (data, out) -> setter.setFloat(out, floatValue);
-            } else if (double.class.isAssignableFrom(type)) {
-                double doubleValue = (double) value;
-                return (data, out) -> setter.setDouble(out, doubleValue);
-            } else {
-                return (data, out) -> setter.set(out, value);
-            }
+        if (value == null) {
+            return (data, out) -> setter.clear(out);
+        } else if (boolean.class.isAssignableFrom(type)) {
+            boolean boolValue = (boolean) value;
+            return (data, out) -> setter.setBoolean(out, boolValue);
+        } else if (byte.class.isAssignableFrom(type)) {
+            byte byteValue = (byte) value;
+            return (data, out) -> setter.setByte(out, byteValue);
+        } else if (short.class.isAssignableFrom(type)) {
+            short shortValue = (short) value;
+            return (data, out) -> setter.setShort(out, shortValue);
+        } else if (char.class.isAssignableFrom(type)) {
+            char charValue = (char) value;
+            return (data, out) -> setter.setChar(out, charValue);
+        } else if (int.class.isAssignableFrom(type)) {
+            int intValue = (int) value;
+            return (data, out) -> setter.setInt(out, intValue);
+        } else if (long.class.isAssignableFrom(type)) {
+            long longValue = (long) value;
+            return (data, out) -> setter.setLong(out, longValue);
+        } else if (float.class.isAssignableFrom(type)) {
+            float floatValue = (float) value;
+            return (data, out) -> setter.setFloat(out, floatValue);
+        } else if (double.class.isAssignableFrom(type)) {
+            double doubleValue = (double) value;
+            return (data, out) -> setter.setDouble(out, doubleValue);
+        } else {
+            return (data, out) -> setter.set(out, value);
+        }
     }
 
     /**
@@ -695,7 +683,7 @@ public class FieldOps {
          * @param func The function.
          * @return The op
          */
-        public OpDef func(Function<?, ?> func) {
+        public FieldView func(Function<?, ?> func) {
 
             return (incomingSchema, schemaSetter) -> {
 
@@ -706,11 +694,15 @@ public class FieldOps {
                     schemaField = SchemaField.of(schemaField.getIndex(), schemaField.getName(), type);
                 }
 
-                SchemaField finalField = schemaSetter.addField(schemaField);
+                FieldGetter fieldGetter = new AbstractFieldGetter() {
+                    @Override
+                    public Object get(DidoData data) {
+                        //noinspection rawtypes,unchecked
+                        return ((Function) func).apply(from.fieldGetter.get(data));
+                    }
+                };
 
-                //noinspection unchecked,rawtypes
-                return dataFactory -> new Compute(dataFactory.getFieldSetterNamed(finalField.getName()),
-                        data -> ((Function) func).apply(from.fieldGetter.get(data)));
+                schemaSetter.addField(schemaField, fieldGetter);
             };
         }
 
@@ -720,18 +712,23 @@ public class FieldOps {
          * @param func The operation.
          * @return The op
          */
-        public OpDef intOp(IntUnaryOperator func) {
+        public FieldView intOp(IntUnaryOperator func) {
 
-            return (incomingSchema, schemaSetter) -> {
+            return (incomingSchema, viewDefinition) -> {
 
                 SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
 
-                SchemaField finalField = schemaSetter.addField(
-                        copyTo.deriveTo(incomingSchema, from.schemaField));
+                FieldGetter fieldGetter = new AbstractFieldGetter.ForInt() {
 
-                return dataFactory -> new IntCompute(
-                        dataFactory.getFieldSetterNamed(finalField.getName()),
-                        data -> func.applyAsInt(from.fieldGetter.getInt(data)));
+                    @Override
+                    public int getInt(DidoData data) {
+                        return func.applyAsInt(from.fieldGetter.getInt(data));
+                    }
+                };
+
+                viewDefinition.addField(
+                        copyTo.deriveTo(incomingSchema, from.schemaField),
+                        fieldGetter);
             };
         }
 
@@ -741,35 +738,42 @@ public class FieldOps {
          * @param func The operation.
          * @return The op
          */
-        public OpDef longOp(LongUnaryOperator func) {
+        public FieldView longOp(LongUnaryOperator func) {
 
-            return (incomingSchema, schemaSetter) -> {
+            return (incomingSchema, viewDefinition) -> {
 
                 SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
 
-                SchemaField finalField = schemaSetter.addField(
-                        copyTo.deriveTo(incomingSchema, from.schemaField));
+                FieldGetter fieldGetter = new AbstractFieldGetter.ForLong() {
+                    @Override
+                    public long getLong(DidoData data) {
+                        return func.applyAsLong(from.fieldGetter.getInt(data));
+                    }
+                };
 
-                return dataFactory -> new LongCompute(
-                        dataFactory.getFieldSetterNamed(finalField.getName()),
-                        data -> func.applyAsLong(from.fieldGetter.getInt(data)));
+                viewDefinition.addField(
+                        copyTo.deriveTo(incomingSchema, from.schemaField),
+                        fieldGetter);
             };
         }
 
-        public OpDef doubleOp(DoubleUnaryOperator func) {
+        public FieldView doubleOp(DoubleUnaryOperator func) {
 
-            return (incomingSchema, schemaSetter) -> {
+            return (incomingSchema, viewDefinition) -> {
 
                 SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
                 SchemaField schemaField = from.schemaField;
 
                 schemaField = copyTo.deriveTo(incomingSchema, schemaField);
 
-                SchemaField finalField = schemaSetter.addField(schemaField);
+                FieldGetter fieldGetter = new AbstractFieldGetter.ForDouble() {
+                    @Override
+                    public double getDouble(DidoData data) {
+                        return func.applyAsDouble(from.fieldGetter.getDouble(data));
+                    }
+                };
 
-                return dataFactory -> new DoubleCompute(
-                        dataFactory.getFieldSetterNamed(finalField.getName()),
-                        data -> func.applyAsDouble(from.fieldGetter.getDouble(data)));
+                viewDefinition.addField(schemaField, fieldGetter);
             };
         }
     }

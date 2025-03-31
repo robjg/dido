@@ -349,7 +349,6 @@ class FieldOpsTest {
         assertThat(result, is(expectedData));
     }
 
-
     @Test
     void mapAt() {
 
