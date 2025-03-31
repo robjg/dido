@@ -159,14 +159,6 @@ public class ViewTransformBuilder {
         return this;
     }
 
-    public ViewTransformBuilder addOp(FieldTransform opDef) {
-        SchemaSetterImpl schemaSetter = new SchemaSetterImpl();
-        FieldTransform.Definition definition = opDef.define(incomingSchema);
-        SchemaField schemaField = schemaSetter.addField(definition.schemaField());
-        opsByIndex.put(schemaField.getIndex(), definition.fieldGetter());
-        return this;
-    }
-
     public DidoTransform build() {
 
         SchemaFactory schemaFactory ;

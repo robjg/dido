@@ -123,10 +123,6 @@ public class OpTransformBuilder {
         }
     }
 
-    public OpTransformBuilder addOp(FieldTransform fieldTransform) {
-        return addOp(fieldTransform.asOpDef());
-    }
-
     public OpTransformBuilder addOp(FieldView fieldView) {
         return addOp(fieldView.asOpDef());
     }
