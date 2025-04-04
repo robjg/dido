@@ -37,6 +37,8 @@ For Reading Data in and Out in different formats:
  - [dido-poi](DIDO-POI.md) - For reading and writing to Excel sheets.
  - [dido-text](DIDO-TEXT.md) - For writing to Ascii Formatted Text Tables.
 
+[dido-objects](DIDO-OBJECTS.md) for converting to and from Java Objects.
+
 For using Dido in [Oddjob](http://rgordon.co.uk/oddjob) there is [dido-oddball](DIDO-ODDBALL.md) .
 
 

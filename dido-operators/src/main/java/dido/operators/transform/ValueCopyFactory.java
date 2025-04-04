@@ -1,10 +1,6 @@
 package dido.operators.transform;
 
-import dido.data.FieldGetter;
-import dido.data.FieldSetter;
 import dido.data.ReadSchema;
-import dido.data.SchemaField;
-import dido.data.util.TypeUtil;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 import org.slf4j.Logger;
@@ -166,67 +162,58 @@ public class ValueCopyFactory implements Supplier<OpDef> {
         public Prepare prepare(ReadSchema fromSchema,
                                SchemaSetter schemaSetter) {
 
-            String from;
-            int index;
+            FieldView fieldView;
+            if (this.type ==null) {
+                if (this.function == null) {
+                    fieldView = copyField(FieldOps.copy())
+                            .view();
+                }
+                else {
+                    fieldView = copyField(FieldOps.map())
+                            .func(this.function);
+                }
+            }
+            else {
+                if (this.function == null) {
+                    fieldView = copyField(FieldOps.conversion())
+                            .conversionProvider(conversionProvider)
+                            .toType(this.type);
+                }
+                else {
+                    fieldView = copyField(FieldOps.map())
+                            .type(this.type)
+                            .func(this.function);
+                }
+            }
 
+            logger.info("Creating Copy {}", fieldView);
+
+            OpDef opDef = fieldView.asOpDef();
+            return opDef.prepare(fromSchema, schemaSetter);
+
+        }
+
+        <O>  O copyField(FieldOps.CopyField<O> copyField) {
+
+            FieldOps.CopyTo<O> copyTo;
             if (this.from == null) {
                 if (this.index == 0) {
                     throw new IllegalArgumentException("Index or Field Name required.");
                 } else {
-                    index = this.index;
+                    copyTo = copyField.index(this.index);
                 }
-                from = fromSchema.getFieldNameAt(index);
             } else {
-                from = this.from;
-                // ignore index - should we warn?
-                index = fromSchema.getIndexNamed(from);
-                if (index < 1) {
-                    throw new IllegalArgumentException("No field [" + from + "]");
-                }
+                copyTo = copyField.from(this.from);
             }
 
-            String to;
-            if (this.to == null) {
-                to = from;
-            } else {
-                to = this.to;
+            if (this.to != null) {
+                copyTo = copyTo.to(this.to);
+            }
+            if (this.at > 0) {
+                copyTo = copyTo.at(this.at);
             }
 
-            Function<Function<Object, ?>, Prepare> transformerFn;
-
-            logger.info("Creating Copy from {} to {}", from, to);
-            transformerFn = (conversion) ->
-                    writableSchema -> {
-                        FieldSetter setter = writableSchema.getFieldSetterNamed(to);
-                        FieldGetter getter = fromSchema.getFieldGetterAt(index);
-                        return (fromData, toData) -> setter.set(toData, conversion.apply(getter.get(fromData)));
-                    };
-
-            Class<?> fromType = TypeUtil.classOf(fromSchema.getTypeAt(index));
-            Class<?> toType;
-            if (this.type == null) {
-                toType = TypeUtil.classOf(fromSchema.getTypeAt(index));
-            } else {
-                toType = type;
-            }
-
-            Function<Object, ?> function;
-            if (this.function == null) {
-                if (fromType == toType) {
-                    function = Function.identity();
-                }
-                else {
-                    //noinspection unchecked
-                    function =  (Function<Object, ?>) conversionProvider.conversionFor(fromType, toType);
-                }
-            }
-            else {
-                function = this.function;
-            }
-
-            schemaSetter.addField(SchemaField.of(this.at, to, toType));
-
-            return transformerFn.apply(function);
+            return copyTo.with();
         }
     }
 

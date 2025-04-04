@@ -4,8 +4,12 @@ import dido.data.*;
 import dido.data.NoSuchFieldException;
 import dido.data.useful.AbstractFieldGetter;
 import dido.data.util.TypeUtil;
+import dido.how.conversion.DefaultConversionProvider;
+import dido.how.conversion.DidoConversionProvider;
 
+import java.lang.reflect.Type;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
 
 /**
@@ -171,6 +175,14 @@ public class FieldOps {
             return schemaField;
         }
 
+        @Override
+        public String toString() {
+            return "Copy" +
+                    (from == null ? "" : " from " + from) +
+                    (index > 0 ? " index " + index : "" ) +
+                    (to == null ? "" : " to " + to) +
+                    (at > 0 ? " at " + at : "" );
+        }
     }
 
     public static class CopyDef {
@@ -183,14 +195,22 @@ public class FieldOps {
 
         public FieldView view() {
 
-            return (incomingSchema, definition) -> {
+            return new FieldView() {
+                @Override
+                public void define(ReadSchema incomingSchema, Definition viewDefinition) {
 
-                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
-                SchemaField schemaField = from.schemaField;
+                    SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+                    SchemaField schemaField = from.schemaField;
 
-                schemaField = copyTo.deriveTo(incomingSchema, schemaField);
+                    schemaField = copyTo.deriveTo(incomingSchema, schemaField);
 
-                definition.addField(schemaField, from.fieldGetter);
+                    viewDefinition.addField(schemaField, from.fieldGetter);
+                }
+
+                @Override
+                public String toString() {
+                    return copyTo.toString();
+                }
             };
         }
 
@@ -212,7 +232,7 @@ public class FieldOps {
         }
     }
 
-    public static class CopyDefFactory<T> implements OpFactory<CopyDef> {
+    public static class CopyDefFactory implements OpFactory<CopyDef> {
 
         @Override
         public CopyDef with(CopyTo<CopyDef> to) {
@@ -226,7 +246,7 @@ public class FieldOps {
      * @return Fluent fields to define the copy.
      */
     public static CopyField<CopyDef> copy() {
-        return new CopyField<>(new CopyDefFactory<>());
+        return new CopyField<>(new CopyDefFactory());
     }
 
     /**
@@ -501,78 +521,69 @@ public class FieldOps {
 
     static FieldGetter constGetterFor(Object value) {
 
-        if (value instanceof Boolean) {
-            return new AbstractFieldGetter.ForBoolean() {
+        return switch (value) {
+            case Boolean b -> new AbstractFieldGetter.ForBoolean() {
                 @Override
                 public boolean getBoolean(DidoData data) {
-                    return (Boolean) value;
+                    return b;
                 }
             };
-        } else if (value instanceof Byte) {
-            return new AbstractFieldGetter.ForByte() {
+            case Byte b -> new AbstractFieldGetter.ForByte() {
                 @Override
                 public byte getByte(DidoData data) {
-                    return (Byte) value;
+                    return b;
                 }
             };
-        } else if (value instanceof Character) {
-            return new AbstractFieldGetter.ForChar() {
+            case Character c -> new AbstractFieldGetter.ForChar() {
                 @Override
                 public char getChar(DidoData data) {
-                    return (Character) value;
+                    return c;
                 }
             };
-        } else if (value instanceof Short) {
-            return new AbstractFieldGetter.ForShort() {
+            case Short i -> new AbstractFieldGetter.ForShort() {
                 @Override
                 public short getShort(DidoData data) {
-                    return (Short) value;
+                    return i;
                 }
             };
-        } else if (value instanceof Integer) {
-            return new AbstractFieldGetter.ForInt() {
+            case Integer i -> new AbstractFieldGetter.ForInt() {
                 @Override
                 public int getInt(DidoData data) {
-                    return (Integer) value;
+                    return i;
                 }
             };
-        } else if (value instanceof Long) {
-            return new AbstractFieldGetter.ForLong() {
+            case Long l -> new AbstractFieldGetter.ForLong() {
                 @Override
                 public long getLong(DidoData data) {
-                    return (Long) value;
+                    return l;
                 }
             };
-        } else if (value instanceof Float) {
-            return new AbstractFieldGetter.ForFloat() {
+            case Float v -> new AbstractFieldGetter.ForFloat() {
                 @Override
                 public float getFloat(DidoData data) {
-                    return (Float) value;
+                    return v;
                 }
             };
-        } else if (value instanceof Double) {
-            return new AbstractFieldGetter.ForDouble() {
+            case Double v -> new AbstractFieldGetter.ForDouble() {
                 @Override
                 public double getDouble(DidoData data) {
-                    return (Double) value;
+                    return v;
                 }
             };
-        } else if (value instanceof String) {
-            return new AbstractFieldGetter.ForString() {
+            case String s -> new AbstractFieldGetter.ForString() {
                 @Override
                 public String getString(DidoData data) {
-                    return (String) value;
+                    return s;
                 }
             };
-        } else {
-            return new AbstractFieldGetter() {
+            case null, default -> new AbstractFieldGetter() {
 
                 @Override
                 public Object get(DidoData data) {
                     return value;
                 }
             };
-        }
+        };
     }
 
     /**
@@ -651,6 +662,73 @@ public class FieldOps {
         };
     }
 
+    /**
+     * Create a conversion mapping.
+     *
+     * @return A fluent builder.
+     */
+    public static CopyField<ConversionDef> conversion() {
+        return new CopyField<>(new ConversionDefFactory());
+    }
+
+    public static class ConversionDefFactory implements OpFactory<ConversionDef> {
+
+        @Override
+        public ConversionDef with(CopyTo<ConversionDef> to) {
+            return new ConversionDef(to);
+        }
+    }
+
+    public static class ConversionDef {
+
+        private final CopyTo<?> copyTo;
+
+        private DidoConversionProvider conversionProvider;
+
+        ConversionDef(CopyTo<?> copyTo) {
+            this.copyTo = copyTo;
+        }
+
+        public ConversionDef conversionProvider(DidoConversionProvider conversionProvider) {
+            this.conversionProvider = conversionProvider;
+            return this;
+        }
+
+        /**
+         * Define a new type for the resultant field.
+         *
+         * @param type The type.
+         * @return Ongoing mapping definition.
+         */
+        public FieldView toType(Type type) {
+
+            Objects.requireNonNull(type, "No Type");
+
+            return (incomingSchema, viewDefinition) -> {
+
+                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+
+                SchemaField schemaField = copyTo.deriveTo(incomingSchema, from.schemaField);
+                schemaField = SchemaField.of(schemaField.getIndex(), schemaField.getName(), type);
+
+                Function<?, ?> conversion = Objects.requireNonNullElse(conversionProvider,
+                                DefaultConversionProvider.defaultInstance())
+                        .conversionFor(from.schemaField.getType(), type);
+
+
+                FieldGetter fieldGetter = new AbstractFieldGetter() {
+                    @Override
+                    public Object get(DidoData data) {
+                        //noinspection rawtypes,unchecked
+                        return ((Function) conversion).apply(from.fieldGetter.get(data));
+                    }
+                };
+
+                viewDefinition.addField(schemaField, fieldGetter);
+            };
+        }
+    }
+
     public static class FuncMapDef {
 
         private final CopyTo<?> copyTo;
@@ -685,24 +763,32 @@ public class FieldOps {
          */
         public FieldView func(Function<?, ?> func) {
 
-            return (incomingSchema, schemaSetter) -> {
+            return new FieldView() {
+                @Override
+                public void define(ReadSchema incomingSchema, Definition viewDefinition) {
 
-                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+                    SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
 
-                SchemaField schemaField = copyTo.deriveTo(incomingSchema, from.schemaField);
-                if (type != null) {
-                    schemaField = SchemaField.of(schemaField.getIndex(), schemaField.getName(), type);
+                    SchemaField schemaField = copyTo.deriveTo(incomingSchema, from.schemaField);
+                    if (type != null) {
+                        schemaField = SchemaField.of(schemaField.getIndex(), schemaField.getName(), type);
+                    }
+
+                    FieldGetter fieldGetter = new AbstractFieldGetter() {
+                        @Override
+                        public Object get(DidoData data) {
+                            //noinspection rawtypes,unchecked
+                            return ((Function) func).apply(from.fieldGetter.get(data));
+                        }
+                    };
+
+                    viewDefinition.addField(schemaField, fieldGetter);
                 }
 
-                FieldGetter fieldGetter = new AbstractFieldGetter() {
-                    @Override
-                    public Object get(DidoData data) {
-                        //noinspection rawtypes,unchecked
-                        return ((Function) func).apply(from.fieldGetter.get(data));
-                    }
-                };
-
-                schemaSetter.addField(schemaField, fieldGetter);
+                @Override
+                public String toString() {
+                    return copyTo + " with Function " + func;
+                }
             };
         }
 
@@ -714,21 +800,30 @@ public class FieldOps {
          */
         public FieldView intOp(IntUnaryOperator func) {
 
-            return (incomingSchema, viewDefinition) -> {
+            return new MapFieldView() {
+                @Override
+                public void define(ReadSchema incomingSchema, Definition viewDefinition) {
 
-                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+                    SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
 
-                FieldGetter fieldGetter = new AbstractFieldGetter.ForInt() {
+                    FieldGetter fieldGetter = new AbstractFieldGetter.ForInt() {
 
-                    @Override
-                    public int getInt(DidoData data) {
-                        return func.applyAsInt(from.fieldGetter.getInt(data));
-                    }
-                };
+                        @Override
+                        public int getInt(DidoData data) {
+                            return func.applyAsInt(from.fieldGetter.getInt(data));
+                        }
+                    };
 
-                viewDefinition.addField(
-                        copyTo.deriveTo(incomingSchema, from.schemaField),
-                        fieldGetter);
+                    viewDefinition.addField(
+                            copyTo.deriveTo(incomingSchema, from.schemaField),
+                            fieldGetter);
+                }
+
+                @Override
+                BiConsumer<DidoData, WritableData> doMap(FieldGetter getter, FieldSetter setter) {
+                    return (didoData, writableData) ->
+                            setter.setInt(writableData, getter.getInt(didoData));
+                }
             };
         }
 
@@ -740,42 +835,99 @@ public class FieldOps {
          */
         public FieldView longOp(LongUnaryOperator func) {
 
-            return (incomingSchema, viewDefinition) -> {
+            return new MapFieldView() {
 
-                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+                @Override
+                public void define(ReadSchema incomingSchema, Definition viewDefinition) {
 
-                FieldGetter fieldGetter = new AbstractFieldGetter.ForLong() {
-                    @Override
-                    public long getLong(DidoData data) {
-                        return func.applyAsLong(from.fieldGetter.getInt(data));
-                    }
-                };
+                    SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
 
-                viewDefinition.addField(
-                        copyTo.deriveTo(incomingSchema, from.schemaField),
-                        fieldGetter);
+                    FieldGetter fieldGetter = new AbstractFieldGetter.ForLong() {
+                        @Override
+                        public long getLong(DidoData data) {
+                            return func.applyAsLong(from.fieldGetter.getInt(data));
+                        }
+                    };
+
+                    viewDefinition.addField(
+                            copyTo.deriveTo(incomingSchema, from.schemaField),
+                            fieldGetter);
+                }
+
+                @Override
+                BiConsumer<DidoData, WritableData> doMap(FieldGetter getter, FieldSetter setter) {
+                    return (didoData, writableData) ->
+                            setter.setLong(writableData, getter.getLong(didoData));
+                }
             };
         }
 
         public FieldView doubleOp(DoubleUnaryOperator func) {
 
-            return (incomingSchema, viewDefinition) -> {
+            return new MapFieldView() {
 
-                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
-                SchemaField schemaField = from.schemaField;
+                @Override
+                public void define(ReadSchema incomingSchema, Definition viewDefinition) {
 
-                schemaField = copyTo.deriveTo(incomingSchema, schemaField);
+                    SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
+                    SchemaField schemaField = from.schemaField;
 
-                FieldGetter fieldGetter = new AbstractFieldGetter.ForDouble() {
-                    @Override
-                    public double getDouble(DidoData data) {
-                        return func.applyAsDouble(from.fieldGetter.getDouble(data));
-                    }
-                };
+                    schemaField = copyTo.deriveTo(incomingSchema, schemaField);
 
-                viewDefinition.addField(schemaField, fieldGetter);
+                    FieldGetter fieldGetter = new AbstractFieldGetter.ForDouble() {
+                        @Override
+                        public double getDouble(DidoData data) {
+                            return func.applyAsDouble(from.fieldGetter.getDouble(data));
+                        }
+                    };
+
+                    viewDefinition.addField(schemaField, fieldGetter);
+                }
+
+                @Override
+                BiConsumer<DidoData, WritableData> doMap(FieldGetter getter, FieldSetter setter) {
+                    return (didoData, writableData) ->
+                            setter.setDouble(writableData, getter.getDouble(didoData));
+                }
             };
         }
+    }
+
+    static abstract class MapFieldView implements FieldView {
+
+        @Override
+        public OpDef asOpDef() {
+
+            AtomicReference<SchemaField> schemaFieldRef = new AtomicReference<>();
+            AtomicReference<FieldGetter> fieldGetterRef = new AtomicReference<>();
+
+            return (incomingSchema, schemaSetter) -> {
+
+                define(incomingSchema, new Definition() {
+                    @Override
+                    public void addField(SchemaField schemaField, FieldGetter fieldGetter) {
+                        schemaFieldRef.set(schemaSetter.addField(schemaField));
+                        fieldGetterRef.set(fieldGetter);
+                    }
+
+                    @Override
+                    public void removeField(SchemaField schemaField) {
+                        throw new UnsupportedOperationException("Unexpected");
+                    }
+                });
+
+                FieldGetter getter = fieldGetterRef.get();
+
+                return writeSchema -> {
+                    FieldSetter setter = writeSchema.getFieldSetterNamed(schemaFieldRef.get().getName());
+
+                    return doMap(getter, setter);
+                };
+            };
+        }
+
+        abstract BiConsumer<DidoData, WritableData> doMap(FieldGetter getter,
+                                                          FieldSetter setter);
     }
 
     public static class FuncMapDefFactory implements OpFactory<FuncMapDef> {
@@ -839,57 +991,4 @@ public class FieldOps {
         }
     }
 
-    static class IntCompute implements BiConsumer<DidoData, WritableData> {
-
-        private final FieldSetter setter;
-
-        private final ToIntFunction<? super DidoData> func;
-
-        IntCompute(FieldSetter setter, ToIntFunction<? super DidoData> func) {
-            this.setter = setter;
-            this.func = func;
-        }
-
-        @Override
-        public void accept(DidoData data, WritableData out) {
-            int now = func.applyAsInt(data);
-            setter.setInt(out, now);
-        }
-    }
-
-    static class LongCompute implements BiConsumer<DidoData, WritableData> {
-
-        private final FieldSetter setter;
-
-        private final ToLongFunction<? super DidoData> func;
-
-        LongCompute(FieldSetter setter, ToLongFunction<? super DidoData> func) {
-            this.setter = setter;
-            this.func = func;
-        }
-
-        @Override
-        public void accept(DidoData data, WritableData out) {
-            long now = func.applyAsLong(data);
-            setter.setLong(out, now);
-        }
-    }
-
-    static class DoubleCompute implements BiConsumer<DidoData, WritableData> {
-
-        private final FieldSetter setter;
-
-        private final ToDoubleFunction<? super DidoData> func;
-
-        DoubleCompute(FieldSetter setter, ToDoubleFunction<? super DidoData> func) {
-            this.setter = setter;
-            this.func = func;
-        }
-
-        @Override
-        public void accept(DidoData data, WritableData out) {
-            double now = func.applyAsDouble(data);
-            setter.setDouble(out, now);
-        }
-    }
 }

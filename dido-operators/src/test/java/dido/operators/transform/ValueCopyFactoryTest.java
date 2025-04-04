@@ -36,6 +36,8 @@ class ValueCopyFactoryTest {
         DidoData data = MapData.of("Foo", "423");
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
+        when(schemaSetter.addField(SchemaField.of(0, "FooAmount", Integer.class)))
+                .thenReturn(SchemaField.of(1, "FooAmount", Integer.class));
 
         OpDef.Prepare prepare = opDef.prepare(ReadSchema.from(data.getSchema()), schemaSetter);
 
@@ -67,6 +69,8 @@ class ValueCopyFactoryTest {
         DidoData data = MapData.of("Foo", "423");
 
         SchemaSetter schemaSetter = mock(SchemaSetter.class);
+        when(schemaSetter.addField(SchemaField.of(0, "FooAmount", int.class)))
+                .thenReturn(SchemaField.of(1, "FooAmount", int.class));
 
         OpDef.Prepare prepare = opDef.prepare(ReadSchema.from(data.getSchema()), schemaSetter);
 
