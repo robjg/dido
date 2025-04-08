@@ -24,7 +24,7 @@ public class FieldOps {
      *
      * @param <O> The Operation that will be doing the copy.
      */
-    private interface OpFactory<O> {
+    private interface CopyOpFactory<O> {
 
         O with(CopyTo<O> to);
     }
@@ -36,22 +36,35 @@ public class FieldOps {
      */
     public static class CopyField<O> {
 
-        private final OpFactory<O> opFactory;
+        private final CopyOpFactory<O> opFactory;
 
         private String from;
 
         private int index;
 
-        private CopyField(OpFactory<O> opFactory) {
+        private CopyField(CopyOpFactory<O> opFactory) {
             this.opFactory = opFactory;
         }
 
+        /**
+         * The name of the field to copy from.
+         *
+         * @param name A field name. Must exist in the schema. Must not be null.
+         *
+         * @return An ongoing fluent copy builder to specify the 'to' field.
+         */
         public CopyTo<O> from(String name) {
             Objects.requireNonNull(name, "Field name can not be null");
             this.from = name;
             return new CopyTo<>(this);
         }
 
+        /**
+         * The index of the field to copy from.
+         *
+         * @param index A field index. Must exist in the schema. Must be &gt; 0.
+         * @return An ongoing fluent copy builder to specify the 'to' field.
+         */
         public CopyTo<O> index(int index) {
             if (index < 1) {
                 throw new IllegalArgumentException("Field index must be greater than 0");
@@ -61,21 +74,18 @@ public class FieldOps {
         }
     }
 
-    private static class SchemaFieldAndGetter {
-
-        private final SchemaField schemaField;
-
-        private final FieldGetter fieldGetter;
-
-        SchemaFieldAndGetter(SchemaField schemaField, FieldGetter fieldGetter) {
-            this.schemaField = schemaField;
-            this.fieldGetter = fieldGetter;
-        }
+    private record SchemaFieldAndGetter(SchemaField schemaField,
+                                        FieldGetter fieldGetter) {
     }
 
+    /**
+     * Fluent Builder to specify the 'to' options for a copy operation.
+     *
+     * @param <O> The type of copy operation.
+     */
     public static class CopyTo<O> {
 
-        private final OpFactory<O> opFactory;
+        private final CopyOpFactory<O> opFactory;
 
         private final String from;
 
@@ -96,6 +106,7 @@ public class FieldOps {
          * The name of the field to copy to. If the name exists the field will be replaced.
          *
          * @param to The field name.
+         *
          * @return these fluent options.
          */
         public CopyTo<O> to(String to) {
@@ -103,19 +114,41 @@ public class FieldOps {
             return this;
         }
 
+        /**
+         * The index of the field to copy to. If index exists the field will be replaced.
+         *
+         * @param at The field index.
+         *
+         * @return these fluent options.
+         */
         public CopyTo<O> at(int at) {
             this.at = at;
             return this;
         }
 
+        /**
+         * Copy to the same index in the resultant schema.
+         *
+         * @return these fluent options.
+         */
         public CopyTo<O> atSameIndex() {
             return at(-1);
         }
 
+        /**
+         * Copy to the current end of the resultant schema.
+         *
+         * @return these fluent options.
+         */
         public CopyTo<O> atLastIndex() {
             return at(0);
         }
 
+        /**
+         * Continue to the final stage of building a copy operation.
+         *
+         * @return The operation specification.
+         */
         public O with() {
             return opFactory.with(this);
         }
@@ -179,12 +212,15 @@ public class FieldOps {
         public String toString() {
             return "Copy" +
                     (from == null ? "" : " from " + from) +
-                    (index > 0 ? " index " + index : "" ) +
+                    (index > 0 ? " index " + index : "") +
                     (to == null ? "" : " to " + to) +
-                    (at > 0 ? " at " + at : "" );
+                    (at > 0 ? " at " + at : "");
         }
     }
 
+    /**
+     * Builder for the definition of a simple copy.
+     */
     public static class CopyDef {
 
         private final CopyTo<?> copyTo;
@@ -193,6 +229,11 @@ public class FieldOps {
             this.copyTo = copyTo;
         }
 
+        /**
+         * Create the copy as a view over the incoming data.
+         *
+         * @return The view.
+         */
         public FieldView view() {
 
             return new FieldView() {
@@ -213,26 +254,9 @@ public class FieldOps {
                 }
             };
         }
-
-        public OpDef out() {
-
-            return (incomingSchema, schemaSetter) -> {
-
-                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
-                SchemaField schemaField = from.schemaField;
-
-                schemaField = copyTo.deriveTo(incomingSchema, schemaField);
-
-                SchemaField finalField = schemaSetter.addField(schemaField);
-
-                return dataFactory -> new Copy(
-                        from.fieldGetter,
-                        dataFactory.getFieldSetterNamed(finalField.getName()));
-            };
-        }
     }
 
-    public static class CopyDefFactory implements OpFactory<CopyDef> {
+    static class CopyDefFactory implements CopyOpFactory<CopyDef> {
 
         @Override
         public CopyDef with(CopyTo<CopyDef> to) {
@@ -365,6 +389,233 @@ public class FieldOps {
 
             definition.removeField(incomingSchema.getSchemaFieldNamed(from));
         };
+    }
+
+    /**
+     * Provide fluent setting builders with the same structure. An {@link SetField}
+     * can then define different operations.
+     *
+     * @param <O> The Operation that will be doing the setting.
+     */
+    private interface SetOpFactory<O> {
+
+        O with(SetField<O> set);
+    }
+
+    /**
+     * Specify the set location operation. Either the field name or the field index can be specified.
+     *
+     * @param <O> The Operation Type passed through to the {@link CopyTo#with()}
+     */
+    public static class SetField<O> {
+
+        private final SetOpFactory<O> opFactory;
+
+        private String name;
+
+        private int at;
+
+        private SetField(SetOpFactory<O> opFactory) {
+            this.opFactory = opFactory;
+        }
+
+        /**
+         * The name of the field to set the value at.
+         *
+         * @param name The field name. If it exists the existing value will be overwritten. Must not be null.
+         *
+         * @return These field setting options.
+         */
+        public SetField<O> named(String name) {
+            Objects.requireNonNull(name, "Field name can not be null");
+            this.name = name;
+            return this;
+        }
+
+        /**
+         * The index of the field to set the value at.
+         *
+         * @param index A field index. Must exist in the schema. Must be &gt; 0.
+         *
+         * @return These field setting options.
+         */
+        public SetField<O> at(int index) {
+            if (index < 1) {
+                throw new IllegalArgumentException("Field index must be greater than 0");
+            }
+            this.at = index;
+            return this;
+        }
+
+        /**
+         * Continue to the final stage of building a set operation.
+         *
+         * @return The operation specification.
+         */
+        public O with() {
+            return opFactory.with(this);
+        }
+
+        @Override
+        public String toString() {
+            return "Set" +
+                    (name == null ? "" : " named " + name) +
+                    (at > 0 ? " at " + at : "");
+        }
+    }
+
+    static class SetValueFactory implements SetOpFactory<SetValue> {
+
+        @Override
+        public SetValue with(SetField<SetValue> setField) {
+            return new SetValue(setField);
+        }
+    }
+
+    /**
+     * Builder for a Set Value operation.
+     */
+    public static class SetValue {
+
+        private final SetField<?> setField;
+
+        private Object value;
+
+        private Type type;
+
+        private DidoConversionProvider conversionProvider;
+
+        SetValue(SetField<?> setField) {
+            this.setField = setField;
+        }
+
+        /**
+         * Provide the value to set.
+         *
+         * @param value The value.
+         *
+         * @return This builder for more options.
+         */
+        public SetValue value(Object value) {
+            this.value = value;
+            return this;
+        }
+
+        /**
+         * Specify The type of the value.
+         *
+         * @param type The type.
+         *
+         * @return This builder for more options.
+         */
+        public SetValue type(Type type) {
+            this.type = type;
+            return this;
+        }
+
+        /**
+         * Provide a Conversion Provider that will be used to convert the value to the type.
+         *
+         * @param conversionProvider A Conversion Provider.
+         *
+         * @return This builder for more options.
+         */
+        public SetValue conversionProvider(DidoConversionProvider conversionProvider) {
+            this.conversionProvider = conversionProvider;
+            return this;
+        }
+
+        /**
+         * Create the set as a view over the incoming data.
+         *
+         * @return The view.
+         */
+        public FieldView view() {
+
+            Type valueType = value == null ? void.class : value.getClass();
+
+            return new FieldView() {
+
+                SchemaField finalField(ReadSchema incomingSchema) {
+
+                    SchemaField schemaField = null;
+                    if (setField.name == null) {
+                        if (setField.at > 0) {
+                            schemaField = incomingSchema.getSchemaFieldAt(setField.at);
+                        }
+                    } else {
+                        schemaField = incomingSchema.getSchemaFieldNamed(setField.name);
+                    }
+
+                    if (schemaField == null) {
+                        Type newType = Objects.requireNonNullElse(type, valueType);
+                        schemaField = SchemaField.of(Math.max(setField.at, 0), setField.name, newType);
+                    } else {
+                        Type newType = Objects.requireNonNullElse(type, schemaField.getType());
+                        schemaField = SchemaField.of(schemaField.getIndex(), schemaField.getName(), newType);
+                    }
+
+                    if (setField.at >= 0) {
+                        schemaField = schemaField.mapToIndex(setField.at);
+                    }
+
+                    return schemaField;
+                }
+
+                Object convertedValue(Type type) {
+
+                    if (value == null) {
+                        return null;
+                    } else {
+                        DidoConversionProvider conversionProviderOrDefault = Objects.requireNonNullElse(
+                                conversionProvider,
+                                DefaultConversionProvider.defaultInstance());
+
+                        return conversionProviderOrDefault.conversionFor(value.getClass(), type).apply(value);
+                    }
+                }
+
+                @Override
+                public void define(ReadSchema incomingSchema, FieldView.Definition viewDefinition) {
+
+                    SchemaField schemaField = finalField(incomingSchema);
+
+                    final Object value = convertedValue(schemaField.getType());
+
+                    viewDefinition.addField(finalField(incomingSchema), constGetterFor(value));
+                }
+
+                @Override
+                public OpDef asOpDef() {
+                    return (incomingSchema, schemaSetter) -> {
+
+                        SchemaField finalField = finalField(incomingSchema);
+
+                        schemaSetter.addField(finalField);
+
+                        final Object value = convertedValue(finalField.getType());
+
+                        return writeSchema -> {
+
+                            FieldSetter fieldSetter = writeSchema.getFieldSetterNamed(finalField.getName());
+
+                            return setterFactoryFor(fieldSetter,
+                                    finalField.getName(), value,
+                                    TypeUtil.classOf(finalField.getType()));
+                        };
+                    };
+                }
+            };
+        }
+    }
+
+    /**
+     * Create a set operation using fluent field locations.
+     *
+     * @return Fluent fields to define the set.
+     */
+    public static SetField<SetValue> set() {
+        return new SetField<>(new SetValueFactory());
     }
 
     /**
@@ -671,7 +922,7 @@ public class FieldOps {
         return new CopyField<>(new ConversionDefFactory());
     }
 
-    public static class ConversionDefFactory implements OpFactory<ConversionDef> {
+    public static class ConversionDefFactory implements CopyOpFactory<ConversionDef> {
 
         @Override
         public ConversionDef with(CopyTo<ConversionDef> to) {
@@ -930,7 +1181,7 @@ public class FieldOps {
                                                           FieldSetter setter);
     }
 
-    public static class FuncMapDefFactory implements OpFactory<FuncMapDef> {
+    public static class FuncMapDefFactory implements CopyOpFactory<FuncMapDef> {
 
         @Override
         public FuncMapDef with(CopyTo<FuncMapDef> to) {

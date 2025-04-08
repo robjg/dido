@@ -29,8 +29,8 @@ class FieldOpsTest {
         DidoTransform transformation = OpTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
-                .addOp(FieldOps.copy().index(3).with().out()) // copies index 3 to index 3
-                .addOp(FieldOps.copy().from("Qty").with().out()) // copies Qty to index 2
+                .addOp(FieldOps.copy().index(3).with().view()) // copies index 3 to index 3
+                .addOp(FieldOps.copy().from("Qty").with().view()) // copies Qty to index 2
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -268,6 +268,37 @@ class FieldOpsTest {
 
         DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
                 .of("Orange", 1234L, 23.5, true);
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
+    void setWithFieldLocBuilder() {
+
+        DidoTransform transformation = OpTransformBuilder.with()
+                .forSchema(schema)
+                .addOp(FieldOps.set().at(3).with()
+                        .value(54.3).view()) // copies index 3 to index 3
+                .addOp(FieldOps.set().named("Qty").with()
+                        .value(5).view()) // copies Qty to index 2
+                .addOp(FieldOps.set().named("Fruit").with()
+                        .value("Orange").view()) // copies Qty to index 2
+                .addOp(FieldOps.set().named("InStock").with()
+                        .value(true).type(boolean.class).view()) // copies Qty to index 2
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamedAt(3, "Price", double.class)
+                .addNamed("Qty", int.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("InStock", boolean.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = DidoData.of(54.3, 5, "Orange", true);
 
         assertThat(result, is(expectedData));
     }
