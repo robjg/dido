@@ -1,12 +1,9 @@
 package dido.operators.transform;
 
 import dido.data.ReadSchema;
-import dido.data.util.TypeUtil;
-import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 
 import javax.inject.Inject;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -22,6 +19,12 @@ public class ValueSetFactory implements Supplier<OpDef> {
      * @oddjob.required No
      */
     private String field;
+
+    /**
+     * @oddjob.description The index to set the value at.
+     * @oddjob.required No
+     */
+    private int at;
 
     /**
      * @oddjob.description The value.
@@ -42,10 +45,6 @@ public class ValueSetFactory implements Supplier<OpDef> {
      */
     private DidoConversionProvider conversionProvider;
 
-    @Inject
-    public void setConversionProvider(DidoConversionProvider conversionProvider) {
-        this.conversionProvider = conversionProvider;
-    }
 
     @Override
     public OpDef get() {
@@ -58,6 +57,14 @@ public class ValueSetFactory implements Supplier<OpDef> {
 
     public void setField(String field) {
         this.field = field;
+    }
+
+    public int getAt() {
+        return at;
+    }
+
+    public void setAt(int at) {
+        this.at = at;
     }
 
     public Object getValue() {
@@ -76,9 +83,20 @@ public class ValueSetFactory implements Supplier<OpDef> {
         this.type = type;
     }
 
+    public DidoConversionProvider getConversionProvider() {
+        return conversionProvider;
+    }
+
+    @Inject
+    public void setConversionProvider(DidoConversionProvider conversionProvider) {
+        this.conversionProvider = conversionProvider;
+    }
+
     static class CopyTransformerFactory implements OpDef {
 
         private final String field;
+
+        private final int at;
 
         private final Object value;
 
@@ -88,48 +106,26 @@ public class ValueSetFactory implements Supplier<OpDef> {
 
         CopyTransformerFactory(ValueSetFactory config) {
             this.field = config.field;
+            this.at = config.at;
             this.value = config.value;
             this.type = config.type;
-            this.conversionProvider = Objects.requireNonNullElseGet(config.conversionProvider,
-                    DefaultConversionProvider::defaultInstance);
+            this.conversionProvider = config.conversionProvider;
         }
 
         @Override
         public Prepare prepare(ReadSchema fromSchema,
                                SchemaSetter schemaSetter) {
 
-            int index = fromSchema.getIndexNamed(
-                    Objects.requireNonNull(field, "Field Name must be provided"));
+            FieldView fieldView = FieldOps.set()
+                    .named(this.field)
+                    .at(this.at)
+                    .with()
+                    .value(value)
+                    .type(type)
+                    .conversionProvider(conversionProvider)
+                    .view();
 
-            Class<?> toType;
-            if (type == null) {
-                if (index == 0) {
-                    toType = Object.class;
-                }
-                else {
-                    toType = TypeUtil.classOf(fromSchema.getTypeAt(index));
-                }
-            }
-            else {
-                toType = type;
-            }
-
-            final Object value;
-            if (this.value == null) {
-                value = null;
-            }
-            else {
-                value = inferredConversion(this.value, toType);
-            }
-
-            return FieldOps.setNamed(field, value, toType).asOpDef().prepare(fromSchema, schemaSetter);
-        }
-
-        <F, T> T inferredConversion(F from, Class<T> toType) {
-            //noinspection unchecked
-            return (T) conversionProvider.conversionFor(from.getClass(), toType)
-                    .apply(from);
+            return fieldView.asOpDef().prepare(fromSchema, schemaSetter);
         }
     }
-
 }

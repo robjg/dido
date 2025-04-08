@@ -527,7 +527,11 @@ public class FieldOps {
     }
 
     /**
-     * Builder for a Set Value operation.
+     * Builder for an operation to set a field to a constant value. The field may have a name, or an index, or both.
+     * If the index is 0, the new field will be added to the schema, if it is negative the existing index
+     * is used if it exists.
+     * Specifying a type is useful when the new field is to be a primitive type, or a super class of the value.
+     * If the value is not assignable to the type a conversion is used.
      */
     public static class SetValue {
 
@@ -778,81 +782,6 @@ public class FieldOps {
                 .with()
                 .value(value)
                 .view();
-    }
-
-    /**
-     * Create an operation to set a field with the given name to be the given value, at the given index,
-     * with a schema type of the given type.
-     * If the index is 0, the new field will be added to the schema, if it is negative the existing index
-     * is used if it exists. Specifying a type
-     * is useful when the new field is to be a primitive type, or a super class of the value. No check is made that the
-     * value is assignable to the type.
-     *
-     * @param at    The index to set the value at.
-     * @param name  The name of the field.
-     * @param value The value to set.
-     * @param type  The type of the field.
-     * @return The Operation Definition.
-     */
-    public static FieldView setNamedAt(int at,
-                                       String name,
-                                       Object value,
-                                       Class<?> type) {
-
-        Class<?> type_ = Objects.requireNonNullElseGet(type,
-                () -> value == null ? Void.class : value.getClass());
-
-        return new FieldView() {
-
-            SchemaField finalField(ReadSchema incomingSchema) {
-
-                SchemaField schemaField = null;
-                if (name == null) {
-                    if (at > 0) {
-                        schemaField = incomingSchema.getSchemaFieldAt(at);
-                    }
-                } else {
-                    schemaField = incomingSchema.getSchemaFieldNamed(name);
-                }
-
-                if (schemaField == null) {
-                    schemaField = SchemaField.of(Math.max(at, 0), name, type_);
-                } else {
-                    schemaField = SchemaField.of(schemaField.getIndex(), schemaField.getName(), type_);
-                }
-
-                if (at >= 0) {
-                    schemaField = schemaField.mapToIndex(at);
-                }
-
-                return schemaField;
-            }
-
-            @Override
-            public void define(ReadSchema incomingSchema, Definition viewDefinition) {
-
-                viewDefinition.addField(finalField(incomingSchema), constGetterFor(value));
-            }
-
-            @Override
-            public OpDef asOpDef() {
-                return (incomingSchema, schemaSetter) -> {
-
-                    SchemaField finalField = finalField(incomingSchema);
-
-                    schemaSetter.addField(finalField);
-
-                    return writeSchema -> {
-
-                        FieldSetter fieldSetter = writeSchema.getFieldSetterNamed(finalField.getName());
-
-                        return setterFactoryFor(fieldSetter,
-                                finalField.getName(), value,
-                                TypeUtil.classOf(finalField.getType()));
-                    };
-                };
-            }
-        };
     }
 
     static FieldGetter constGetterFor(Object value) {
