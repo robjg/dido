@@ -175,9 +175,10 @@ public class ValueCopyFactory implements Supplier<OpDef> {
             }
             else {
                 if (this.function == null) {
-                    fieldView = copyField(FieldOps.conversion())
+                    fieldView = copyField(FieldOps.copy())
                             .conversionProvider(conversionProvider)
-                            .toType(this.type);
+                            .type(this.type)
+                            .view();
                 }
                 else {
                     fieldView = copyField(FieldOps.map())

@@ -225,8 +225,36 @@ public class FieldOps {
 
         private final CopyTo<?> copyTo;
 
+        private Type type;
+
+        private DidoConversionProvider conversionProvider;
+
         public CopyDef(CopyTo<?> copyTo) {
             this.copyTo = copyTo;
+        }
+
+        /**
+         * Define a new type for the copied field, which may involve a conversion.
+         *
+         * @param type The type.
+         *
+         * @return This builder for more options.
+         */
+        public CopyDef type(Type type) {
+            this.type = type;
+            return this;
+        }
+
+        /**
+         * Provide a Conversion Provider that will be used to convert the value to the type.
+         *
+         * @param conversionProvider A Conversion Provider.
+         *
+         * @return This builder for more options.
+         */
+        public CopyDef conversionProvider(DidoConversionProvider conversionProvider) {
+            this.conversionProvider = conversionProvider;
+            return this;
         }
 
         /**
@@ -245,7 +273,27 @@ public class FieldOps {
 
                     schemaField = copyTo.deriveTo(incomingSchema, schemaField);
 
-                    viewDefinition.addField(schemaField, from.fieldGetter);
+                    FieldGetter fieldGetter;
+                    if (type == null) {
+                        fieldGetter = from.fieldGetter;
+                    }
+                    else {
+
+                        Function<?, ?> conversion = Objects.requireNonNullElse(conversionProvider,
+                                        DefaultConversionProvider.defaultInstance())
+                                .conversionFor(from.schemaField.getType(), type);
+
+                        schemaField = schemaField.withType(type);
+
+                        fieldGetter = new AbstractFieldGetter() {
+                            @Override
+                            public Object get(DidoData data) {
+                                //noinspection rawtypes,unchecked
+                                return ((Function) conversion).apply(from.fieldGetter.get(data));
+                            }
+                        };
+                    }
+                    viewDefinition.addField(schemaField, fieldGetter);
                 }
 
                 @Override
@@ -605,6 +653,11 @@ public class FieldOps {
                         };
                     };
                 }
+
+                @Override
+                public String toString() {
+                    return setField.toString();
+                }
             };
         }
     }
@@ -949,6 +1002,7 @@ public class FieldOps {
          * Define a new type for the resultant field.
          *
          * @param type The type.
+         *
          * @return Ongoing mapping definition.
          */
         public FieldView toType(Type type) {

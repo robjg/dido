@@ -49,6 +49,33 @@ class FieldOpsTest {
     }
 
     @Test
+    void copyWithConversion() {
+
+        DidoTransform transformation = OpTransformBuilder.with()
+                .copy(true)
+                .reIndex(true)
+                .forSchema(schema)
+                .addOp(FieldOps.copy().from("Qty").with().type(String.class).view()) // copies index 3 to index 3
+                .addOp(FieldOps.copy().from("Price").with().type(String.class).view()) // copies Qty to index 2
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", String.class)
+                .addNamed("Price", String.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+                .of("Apple", "10", "23.5");
+
+        assertThat(result, is(expectedData));
+    }
+
+    @Test
     void copyAt() {
 
         DidoTransform transformation = OpTransformBuilder.with()
