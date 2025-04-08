@@ -470,12 +470,11 @@ public class FieldOps {
         /**
          * The name of the field to set the value at.
          *
-         * @param name The field name. If it exists the existing value will be overwritten. Must not be null.
+         * @param name The field name. If it exists the existing value will be overwritten.
          *
          * @return These field setting options.
          */
         public SetField<O> named(String name) {
-            Objects.requireNonNull(name, "Field name can not be null");
             this.name = name;
             return this;
         }
@@ -488,12 +487,19 @@ public class FieldOps {
          * @return These field setting options.
          */
         public SetField<O> at(int index) {
-            if (index < 1) {
-                throw new IllegalArgumentException("Field index must be greater than 0");
-            }
             this.at = index;
             return this;
         }
+
+        /**
+         * Copy to the same index in the resultant schema.
+         *
+         * @return these fluent options.
+         */
+        public SetField<O> atSameIndex() {
+            return at(-1);
+        }
+
 
         /**
          * Continue to the final stage of building a set operation.
@@ -681,7 +687,11 @@ public class FieldOps {
      */
     public static FieldView setAt(int at,
                                   Object value) {
-        return setNamedAt(at, null, value, null);
+        return set()
+                .at(at)
+                .with()
+                .value(value)
+                .view();
     }
 
     /**
@@ -698,7 +708,12 @@ public class FieldOps {
     public static FieldView setAt(int at,
                                   Object value,
                                   Class<?> type) {
-        return setNamedAt(at, null, value, type);
+        return set()
+                .at(at)
+                .with()
+                .value(value)
+                .type(type)
+                .view();
     }
 
     /**
@@ -711,7 +726,12 @@ public class FieldOps {
      */
     public static FieldView setNamed(String name,
                                      Object value) {
-        return setNamedAt(-1, name, value, null);
+        return set()
+                .named(name)
+                .atSameIndex()
+                .with()
+                .value(value)
+                .view();
     }
 
     /**
@@ -728,7 +748,14 @@ public class FieldOps {
     public static FieldView setNamed(String name,
                                      Object value,
                                      Class<?> type) {
-        return setNamedAt(-1, name, value, type);
+
+        return set()
+                .named(name)
+                .atSameIndex()
+                .with()
+                .value(value)
+                .type(type)
+                .view();
     }
 
     /**
@@ -745,7 +772,12 @@ public class FieldOps {
                                        String name,
                                        Object value) {
 
-        return setNamedAt(at, name, value, null);
+        return set()
+                .named(name)
+                .at(at)
+                .with()
+                .value(value)
+                .view();
     }
 
     /**
@@ -964,74 +996,6 @@ public class FieldOps {
             }
             viewDefinition.removeField(field);
         };
-    }
-
-    /**
-     * Create a conversion mapping.
-     *
-     * @return A fluent builder.
-     */
-    public static CopyField<ConversionDef> conversion() {
-        return new CopyField<>(new ConversionDefFactory());
-    }
-
-    public static class ConversionDefFactory implements CopyOpFactory<ConversionDef> {
-
-        @Override
-        public ConversionDef with(CopyTo<ConversionDef> to) {
-            return new ConversionDef(to);
-        }
-    }
-
-    public static class ConversionDef {
-
-        private final CopyTo<?> copyTo;
-
-        private DidoConversionProvider conversionProvider;
-
-        ConversionDef(CopyTo<?> copyTo) {
-            this.copyTo = copyTo;
-        }
-
-        public ConversionDef conversionProvider(DidoConversionProvider conversionProvider) {
-            this.conversionProvider = conversionProvider;
-            return this;
-        }
-
-        /**
-         * Define a new type for the resultant field.
-         *
-         * @param type The type.
-         *
-         * @return Ongoing mapping definition.
-         */
-        public FieldView toType(Type type) {
-
-            Objects.requireNonNull(type, "No Type");
-
-            return (incomingSchema, viewDefinition) -> {
-
-                SchemaFieldAndGetter from = copyTo.deriveFrom(incomingSchema);
-
-                SchemaField schemaField = copyTo.deriveTo(incomingSchema, from.schemaField);
-                schemaField = SchemaField.of(schemaField.getIndex(), schemaField.getName(), type);
-
-                Function<?, ?> conversion = Objects.requireNonNullElse(conversionProvider,
-                                DefaultConversionProvider.defaultInstance())
-                        .conversionFor(from.schemaField.getType(), type);
-
-
-                FieldGetter fieldGetter = new AbstractFieldGetter() {
-                    @Override
-                    public Object get(DidoData data) {
-                        //noinspection rawtypes,unchecked
-                        return ((Function) conversion).apply(from.fieldGetter.get(data));
-                    }
-                };
-
-                viewDefinition.addField(schemaField, fieldGetter);
-            };
-        }
     }
 
     public static class FuncMapDef {
