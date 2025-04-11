@@ -2,7 +2,7 @@ Dido Text
 ========
 
 Out to an Ascii Text Table. [DataOutTextTable](http://rgordon.co.uk/projects/dido/current/api/dido/text/DataOutTextTable.html)
-in the module [dido-text](dido-text) provide a wrapper around [org.nocrala.tools.texttablefmt/text-table-formatter](https://mvnrepository.com/artifact/org.nocrala.tools.texttablefmt/text-table-formatter)
+in the module [dido-text](../dido-text) provide a wrapper around [org.nocrala.tools.texttablefmt/text-table-formatter](https://mvnrepository.com/artifact/org.nocrala.tools.texttablefmt/text-table-formatter)
 
 Here's an example of writing. Given this schema and data:
 {@oddjob.java.file src/test/java/dido/examples/TextExamplesTest.java#snippet1}
@@ -14,4 +14,4 @@ Giving this result:
 
 ### Oddjob
 
-For examples of using Dido CSV in Oddjob, see [dido:table](docs/reference/dido/text/TextTableDido.md)
+For examples of using Dido CSV in Oddjob, see [dido:table](reference/dido/text/TextTableDido.md)

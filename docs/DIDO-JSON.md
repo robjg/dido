@@ -3,11 +3,11 @@ Dido JSON
 
 JSON in and out. [DataInJson](http://rgordon.co.uk/projects/dido/current/api/dido/json/DataInJson.html)
 and [DataOutJson](http://rgordon.co.uk/projects/dido/current/api/dido/json/DataOutJson.html)
-in the module [dido-json](dido-json) provide a wrapper around [GSON](https://github.com/google/gson).
+in the module [dido-json](../dido-json) provide a wrapper around [GSON](https://github.com/google/gson).
 
 ### Reading
 
-We have already seen in the [README](README.md) an example of writing JSON.
+We have already seen in the [README](../README.md) an example of writing JSON.
 
 Here's an example of reading that JSON back in.
 ```java
@@ -168,4 +168,4 @@ This will be deprecated at some point in future releases.
 
 ### Oddjob
 
-For examples of using Dido JSON in Oddjob, see [dido:json-stream](docs/reference/dido/json/JsonDido.md)
+For examples of using Dido JSON in Oddjob, see [dido:json](reference/dido/json/JsonDido.md)

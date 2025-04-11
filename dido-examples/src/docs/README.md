@@ -27,18 +27,18 @@ We get:
 
 ### More Info
 
-[dido-data](DIDO-DATA.md) provides the definition of Data on which the rest of Dido is based.
-[dido-operators](DIDO-OPERATORS.md) provide functions for processing data.
+[dido-data](docs/DIDO-DATA.md) provides the definition of Data on which the rest of Dido is based.
+[dido-operators](docs/DIDO-OPERATORS.md) provide functions for processing data.
 
 For Reading Data in and Out in different formats: 
- - [dido-csv](DIDO-CSV.md) - For reading and writing CSV data.  
- - [dido-json](DIDO-JSON.md) - For reading and writing JSON. 
- - [dido-sql](DIDO-SQL.md) - For reading and writing to Databases.
- - [dido-poi](DIDO-POI.md) - For reading and writing to Excel sheets.
- - [dido-text](DIDO-TEXT.md) - For writing to Ascii Formatted Text Tables.
+ - [dido-csv](docs/DIDO-CSV.md) - For reading and writing CSV data.  
+ - [dido-json](docs/DIDO-JSON.md) - For reading and writing JSON. 
+ - [dido-sql](docs/DIDO-SQL.md) - For reading and writing to Databases.
+ - [dido-poi](docs/DIDO-POI.md) - For reading and writing to Excel sheets.
+ - [dido-text](docs/DIDO-TEXT.md) - For writing to Ascii Formatted Text Tables.
 
-[dido-objects](DIDO-OBJECTS.md) for converting to and from Java Objects.
+[dido-objects](docs/DIDO-OBJECTS.md) for converting to and from Java Objects.
 
-For using Dido in [Oddjob](http://rgordon.co.uk/oddjob) there is [dido-oddball](DIDO-ODDBALL.md) .
+For using Dido in [Oddjob](http://rgordon.co.uk/oddjob) there is [dido-oddball](docs/DIDO-ODDBALL.md) .
 
 

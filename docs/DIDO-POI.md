@@ -4,7 +4,7 @@ Dido POI
 Data in and out from Excel.
 [DataInPoi](http://rgordon.co.uk/projects/dido/current/api/dido/poi/DataInPoi.html)
 and [DataOutPoi](http://rgordon.co.uk/projects/dido/current/api/dido/poi/DataOutPoi.html)
-in the module [dido-poi](dido-poi) provide a wrapper around [Apache POI](https://poi.apache.org/)
+in the module [dido-poi](../dido-poi) provide a wrapper around [Apache POI](https://poi.apache.org/)
 
 Data can be read from Excel
 ```java
@@ -164,4 +164,4 @@ and with a header taken from the Schema
 
 ### Oddjob
 
-For examples of using Dido POI in Oddjob, see [dido:poi](docs/reference/dido/poi/layouts/DataRows.md)
+For examples of using Dido POI in Oddjob, see [dido:poi](reference/dido/poi/layouts/DataRows.md)

@@ -1,7 +1,7 @@
 Dido Operators
 ==============
 
-Operators exist in [dido-operators](dido-operators) for transforming 
+Operators exist in [dido-operators](../dido-operators) for transforming 
 data.
 
 ### Field Level Transforms
@@ -94,4 +94,4 @@ improve performance.
 
 ### Oddjob
 
-For examples of using Dido CSV in Oddjob, see [dido:transform](docs/reference/dido/operators/transform/TransformFactory.md)
+For examples of using Dido CSV in Oddjob, see [dido:transform](reference/dido/operators/transform/TransformationFactory.md)
