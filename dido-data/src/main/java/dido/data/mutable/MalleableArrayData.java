@@ -1,7 +1,7 @@
 package dido.data.mutable;
 
-import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.NoSuchFieldException;
 import dido.data.util.TypeUtil;
 
 import java.lang.reflect.Type;
@@ -145,19 +145,14 @@ public class MalleableArrayData extends AbstractMalleableData implements Malleab
     @Override
     public void setField(SchemaField schemaField, Object value) {
 
-        String name = schemaField.getName();
-        int index = schemaField.getIndex();
-
-
-
         schemaField = schemaFactory.addSchemaField(schemaField);
-        int at = schemaField.getIndex() - 1;
-        ensure(at)[at] = value;
+        int index = schemaField.getIndex();
+        ensure(index)[index - 1] = value;
     }
 
 
     private Object[] ensure(int minCapacity) {
-        if (minCapacity < values.length) {
+        if (minCapacity <= values.length) {
             return values;
         }
         int newCapacity = values.length;

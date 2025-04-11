@@ -17,15 +17,15 @@ class MalleableArrayDataTest {
 
         MalleableArrayData test = new MalleableArrayData();
 
-        test.setAt(75, 37.4);
+        test.setAt(33, 7);
         test.setAt(3, "Apple");
-        test.setAt(5, 7);
+        test.setAt(75, 37.4);
 
         assertThat(test, is(DidoData.of("Apple", 7, 37.4)));
 
         DataSchema expectedSchema = DataSchema.builder()
                 .addAt(3, String.class)
-                .addAt(5, Integer.class)
+                .addAt(33, Integer.class)
                 .addAt(75, Double.class)
                 .build();
 
@@ -35,7 +35,7 @@ class MalleableArrayDataTest {
     @Test
     void addPrimitivesNamed() {
 
-        MalleableArrayData test = new MalleableArrayData();
+        MalleableArrayData test = new MalleableArrayData(2);
 
         test.setBooleanNamed("Boolean", true);
         test.setByteNamed("Byte", (byte) 80);
