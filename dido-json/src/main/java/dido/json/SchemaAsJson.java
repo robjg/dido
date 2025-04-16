@@ -58,9 +58,11 @@ public class SchemaAsJson {
 
     public static void toJson(DataSchema schema, Writer output) {
 
-        try (DataOut out = DataOutJsonWriter.streamOutSingle().outTo(output)) {
+        DidoData data = DataSchemaSchema.schemaToData(schema);
 
-            DidoData data = DataSchemaSchema.schemaToData(schema);
+        try (DataOut out = DataOutJson.with()
+                .schema(data.getSchema())
+             .toAppendable(output)) {
 
             out.accept(data);
         }

@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 /**
- *
+ * Reads JSON when the schema is unknown or partially known.
  */
 public class JsonDataPartialCopy {
 
@@ -137,6 +137,10 @@ public class JsonDataPartialCopy {
 
             processPrimitive(data, fieldName,
                     element.getAsJsonPrimitive());
+        } else if (element.isJsonNull()) {
+
+            data.setNamed(fieldName, null, void.class);
+
         } else if (element.isJsonArray()) {
 
             processArray(data, fieldName,

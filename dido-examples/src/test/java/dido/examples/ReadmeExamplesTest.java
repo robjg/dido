@@ -96,7 +96,9 @@ class ReadmeExamplesTest {
     void captureSnippet2(List<DidoData> didoData) {
 
         // #snippet2{
-        try (DataOut out = DataOutJson.toOutputStream(System.out)) {
+        try (DataOut out = DataOutJson.with()
+                .outFormat(JsonDidoFormat.LINES)
+                .toOutputStream(System.out)) {
 
             didoData.forEach(out);
         }

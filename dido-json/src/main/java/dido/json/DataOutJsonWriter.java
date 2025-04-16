@@ -1,7 +1,5 @@
 package dido.json;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 import dido.data.DidoData;
 import dido.how.DataException;
@@ -16,30 +14,14 @@ import java.io.Writer;
  */
 public class DataOutJsonWriter implements DataOutHow<Writer> {
 
-    private final Gson gson;
+    private final JsonWriterWrapperProvider wrapperProvider;
 
     final private boolean array;
 
-    private DataOutJsonWriter(boolean array) {
-        this(new GsonBuilder()
-                .registerTypeHierarchyAdapter(DidoData.class,
-                        DataSerializer.forUnknownSchema())
-                .create(), array);
-    }
-
-    DataOutJsonWriter(Gson gson, boolean array) {
+    DataOutJsonWriter(JsonWriterWrapperProvider wrapperProvider, boolean array) {
         this.array = array;
-        this.gson = gson;
+        this.wrapperProvider = wrapperProvider;
     }
-
-    public static DataOutHow<Writer> streamOutSingle() {
-        return new DataOutJsonWriter(false);
-    }
-
-    public static DataOutHow<Writer> streamOutArray() {
-        return new DataOutJsonWriter(true);
-    }
-
 
     @Override
     public Class<Writer> getOutType() {
@@ -50,19 +32,19 @@ public class DataOutJsonWriter implements DataOutHow<Writer> {
     public DataOut outTo(Writer outTo) {
 
         try {
-            final JsonWriter jsonWriter = gson.newJsonWriter(outTo);
+            final JsonWriterWrapper writerWrapper = wrapperProvider.writerFor(outTo);
 
             if (array) {
-                jsonWriter.beginArray();
+                writerWrapper.getWrappedWriter().beginArray();
             }
 
             return new DataOut() {
 
                 @Override
                 public void close() {
-                    try (jsonWriter) {
+                    try (JsonWriter writer = writerWrapper.getWrappedWriter()) {
                         if (array) {
-                            jsonWriter.endArray();
+                            writer.endArray();
                         }
                     } catch (IOException e) {
                         throw DataException.of(e);
@@ -71,11 +53,15 @@ public class DataOutJsonWriter implements DataOutHow<Writer> {
 
                 @Override
                 public void accept(DidoData data) {
-                    gson.toJson(data, DidoData.class, jsonWriter);
+                    try {
+                        writerWrapper.write(data);
+                    } catch (IOException e) {
+                        throw new DataException(e);
+                    }
                 }
             };
         } catch (IOException e) {
-            throw DataException.of(e);
+            throw new DataException(e);
         }
     }
 

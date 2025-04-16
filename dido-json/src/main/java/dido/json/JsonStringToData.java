@@ -8,6 +8,11 @@ import dido.data.DidoData;
 
 import java.util.function.Function;
 
+/**
+ * Internal implementation for {@link DataInJson#mapFromString()}. Note that the copy
+ * with {@link JsonDataCopy} is no longer used from {@link DataInJson},
+ * only {@link JsonDataPartialCopy} is.
+ */
 public class JsonStringToData {
 
     public static Function<String, DidoData> asWrapperWithSchema(DataSchema schema) {

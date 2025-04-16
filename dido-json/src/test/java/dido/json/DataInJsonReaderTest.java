@@ -1,6 +1,7 @@
 package dido.json;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.Strictness;
 import dido.data.*;
 import dido.data.util.FieldValuesIn;
 import dido.how.DataIn;
@@ -122,9 +123,9 @@ class DataInJsonReaderTest {
     void readsObjects() {
 
         String json =
-                "{ \"Fruit\"=\"Apple\", \"Qty\"=5, \"Price\"=27.2 }" +
-                        "{ \"Fruit\"=\"Orange\", \"Qty\"=10, \"Price\"=31.6 }" +
-                        "{ \"Fruit\"=\"Pear\", \"Qty\"=7, \"Price\"=22.1 }";
+                "{ \"Fruit\":\"Apple\", \"Qty\":5, \"Price\":27.2 }" +
+                        "{ \"Fruit\":\"Orange\", \"Qty\":10, \"Price\":31.6 }" +
+                        "{ \"Fruit\":\"Pear\", \"Qty\":7, \"Price\":22.1 }";
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addNamed("Fruit", String.class)
@@ -135,7 +136,7 @@ class DataInJsonReaderTest {
         FieldValuesIn values = ArrayData.valuesWithSchema(expectedSchema);
 
         DataInHow<Reader> test = DataInJsonReader.asCopy()
-                .make(new GsonBuilder());
+                .make(new GsonBuilder().setStrictness(Strictness.LENIENT));
 
         try (DataIn in = test.inFrom(new StringReader(json))) {
 

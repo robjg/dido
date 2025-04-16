@@ -9,9 +9,9 @@
                     </how>
                     <from>
                         <buffer>
-                            <![CDATA[{ "Fruit"="Apple", "Qty"=5, "Price"=27.2 }
-{ "Fruit"="Orange", "Qty"=10, "Price"=31.6 }
-{ "Fruit"="Pear", "Qty"=7, "Price"=22.1 }
+                            <![CDATA[{ "Fruit":"Apple", "Qty":5, "Price":27.2 }
+{ "Fruit":"Orange", "Qty":10, "Price":31.6 }
+{ "Fruit":"Pear", "Qty":7, "Price":22.1 }
 ]]>
                         </buffer>
                     </from>

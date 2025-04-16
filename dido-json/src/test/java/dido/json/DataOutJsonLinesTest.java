@@ -23,6 +23,7 @@ class DataOutJsonLinesTest {
         StringBuilder stringBuilder = new StringBuilder();
 
         try (DataOut dataOut = DataOutJson.with()
+                .serializeSpecialFloatingPointValues()
                 .outFormat(JsonDidoFormat.LINES)
                 .toAppendable(stringBuilder)) {
 

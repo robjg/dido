@@ -1,8 +1,8 @@
 package dido.json;
 
 import com.google.gson.*;
-import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.NoSuchFieldException;
 import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractFieldGetter;
 import dido.data.useful.DataSchemaImpl;
@@ -80,7 +80,7 @@ public class JsonDataWrapper {
                 }
 
                 JsonElement element = jsonObject.get(schema.getFieldNameAt(index));
-                if (element == null) {
+                if (element == null || element.isJsonNull()) {
                     values[index - 1] = NONE;
                     return null;
                 }

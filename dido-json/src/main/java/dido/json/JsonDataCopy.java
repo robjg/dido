@@ -7,7 +7,9 @@ import java.lang.reflect.Type;
 import java.util.LinkedList;
 
 /**
- * Adds Deserialisers to a GsonBuilder for create DidoData. Done in this way to support nested JSON.
+ * Adds Deserialisers to a GsonBuilder for create DidoData.
+ * Done in this way to support nested JSON. This is no longer used by
+ * {@link DataInJson} but is here in case useful one day.
  *
  */
 public class JsonDataCopy {

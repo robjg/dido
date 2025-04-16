@@ -1,9 +1,6 @@
 package dido.json;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.*;
 import dido.data.ArrayData;
 import dido.data.MapData;
 import dido.how.DataOut;
@@ -14,7 +11,6 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class DataOutJsonTest {
@@ -39,25 +35,30 @@ class DataOutJsonTest {
         JSONAssert.assertEquals(expected, result.toString(), JSONCompareMode.STRICT);
     }
 
+    record Foo(String foo) {
+
+    }
+
     @Test
     void testCustomGsonSerializer() throws JSONException {
 
-        class FooSerializer implements JsonSerializer<String> {
+        class FooSerializer implements JsonSerializer<Foo> {
 
             @Override
-            public JsonElement serialize(String src, Type typeOfSrc, JsonSerializationContext context) {
+            public JsonElement serialize(Foo src, Type typeOfSrc, JsonSerializationContext context) {
 
-                return new JsonPrimitive(src + " Foo");
+                return new JsonPrimitive(src.foo + " Foo");
             }
         }
 
         StringBuilder result = new StringBuilder();
 
         try (DataOut out = DataOutJson.with()
-                .gsonBuilder(gson -> gson.registerTypeAdapter(String.class, new FooSerializer()))
+                .gsonBuilder(gson -> gson.registerTypeAdapter(Foo.class, new FooSerializer()))
+                .strictness(Strictness.LENIENT)
                 .toAppendable(result)) {
 
-            List.of(ArrayData.of("Some"), ArrayData.of("Other"))
+            List.of(ArrayData.of(new Foo("Some")), ArrayData.of(new Foo("Other")))
                     .forEach(out);
         }
 
@@ -76,7 +77,7 @@ class DataOutJsonTest {
                 Stream.of(MapData.of("Fruit", "Apple", "Qty", 5),
                         MapData.of("Fruit", "Orange", "Qty", 3))
                         .map(DataOutJson.mapToString())
-                        .collect(Collectors.toList());
+                        .toList();
 
         String expected1 = "{\"Fruit\": \"Apple\", \"Qty\": 5}";
         String expected2 = "{\"Fruit\": \"Orange\", \"Qty\": 3}";

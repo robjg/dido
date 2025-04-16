@@ -44,7 +44,9 @@ class JsonExamplesTest {
         // #snippet1{
         List<DidoData> didoData;
 
-        try (DataIn in = DataInJson.fromPath(Path.of("Fruit.json"))) {
+        try (DataIn in = DataInJson
+                .with().strictness(Strictness.LENIENT)
+                .fromPath(Path.of("Fruit.json"))) {
 
             didoData = in.stream().collect(Collectors.toList());
         }
@@ -64,6 +66,7 @@ class JsonExamplesTest {
 
         // #snippet3{
         try (DataIn in = DataInJson.with()
+                .strictness(Strictness.LENIENT)
                 .partialSchema(DataSchema.builder()
                         .addNamed("Qty", int.class)
                         .build())
@@ -83,6 +86,7 @@ class JsonExamplesTest {
 
         // #snippet4{
         try (DataIn in = DataInJson.with()
+                .strictness(Strictness.LENIENT)
                 .schema(DataSchema.builder()
                         .addNamed("Fruit", String.class)
                         .addNamed("Price", double.class)

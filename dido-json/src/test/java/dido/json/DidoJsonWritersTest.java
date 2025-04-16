@@ -9,11 +9,14 @@ import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 
-class DataSerializerTest {
+class DidoJsonWritersTest {
 
     @Test
-    void whenDataOfPrimitivesThenCorrectJsonProduced() throws JSONException {
+    void whenDataOfPrimitivesThenCorrectJsonProduced() throws JSONException, IOException {
 
         DataSchema schema = SchemaBuilder.newInstance()
                 .addNamed("type", String.class)
@@ -25,12 +28,17 @@ class DataSerializerTest {
         DidoData data = ArrayData.valuesWithSchema(schema)
                 .of("Apple", null, 15, 26.5);
 
-        Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(IndexedData.class,
-                        DataSerializer.forSchema(schema))
-                .create();
+        Gson gson = new Gson();
 
-        String json = gson.toJson(data, IndexedData.class);
+        DidoJsonWriter test = DidoJsonWriters.forSchema(schema, gson);
+
+        Writer writer = new StringWriter();
+
+        test.write(data, gson.newJsonWriter(writer));
+
+        writer.close();
+
+        String json = writer.toString();
 
         String expected = "{\"type\":\"Apple\",\"qty\":15,\"price\":26.5}";
 
@@ -38,7 +46,7 @@ class DataSerializerTest {
     }
 
     @Test
-    void whenDataOfNestedDataThenCorrectJsonProduced() throws JSONException {
+    void whenDataOfNestedDataThenCorrectJsonProduced() throws JSONException, IOException {
 
         DataSchema fooSchema = SchemaBuilder.newInstance()
                 .addNamed("foo", String.class)
@@ -61,12 +69,15 @@ class DataSerializerTest {
                         MapData.valuesWithSchema(posSchema)
                                 .of(1.2, 3.4));
 
-        Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(IndexedData.class,
-                        DataSerializer.forSchema(schema))
-                .create();
+        Gson gson = new Gson();
 
-        String json = gson.toJson(data, IndexedData.class);
+        DidoJsonWriter test = DidoJsonWriters.forSchema(schema, gson);
+
+        Writer writer = new StringWriter();
+        test.write(data, gson.newJsonWriter(writer));
+        writer.close();
+
+        String json = writer.toString();
 
         String expected = "{\"foo\":{\"foo\":\"Stuff\",\"qty\":15},\"pos\":{\"x\":1.2,\"y\":3.4}}";
 
@@ -74,7 +85,7 @@ class DataSerializerTest {
     }
 
     @Test
-    void whenDataOfRepeatingThenCorrectJsonProduced() throws JSONException {
+    void whenDataOfRepeatingThenCorrectJsonProduced() throws JSONException, IOException {
 
         DataSchema posSchema = SchemaBuilder.newInstance()
                 .addNamed("x", double.class)
@@ -95,12 +106,15 @@ class DataSerializerTest {
         DidoData data = MapData.valuesWithSchema(schema)
                 .of("Foo", positions);
 
-        Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(IndexedData.class,
-                        DataSerializer.forSchema(schema))
-                .create();
+        Gson gson = new Gson();
 
-        String json = gson.toJson(data, IndexedData.class);
+        DidoJsonWriter test = DidoJsonWriters.forSchema(schema, gson);
+
+        Writer writer = new StringWriter();
+        test.write(data, gson.newJsonWriter(writer));
+        writer.close();
+
+        String json = writer.toString();
 
         String expected = "{\"foo\":\"Foo\",\"positions\":[{\"x\":1.2,\"y\":3.4},{\"x\":2.0,\"y\":3.0},{\"x\":-7.7,\"y\":-8.8}]}";
 
@@ -108,7 +122,7 @@ class DataSerializerTest {
     }
 
     @Test
-    void whenNestedRefThenCorrectJsonProduced() throws JSONException {
+    void whenNestedRefThenCorrectJsonProduced() throws JSONException, IOException {
 
         SchemaReference schemaReference = SchemaReference.named("Person");
 
@@ -127,58 +141,65 @@ class DataSerializerTest {
         FieldValuesIn childrenValue = MapData.valuesWithSchema(childrenSchema);
 
         DidoData data = personValue.of("Alice", childrenValue.of(RepeatingData.of(
-                        personValue.of("Bob", childrenValue.of(
-                                RepeatingData.of(
-                                        personValue.of("Cathrine", null),
-                                        personValue.of("Diana", null)))),
-                        personValue.of("Eric", null),
-                        personValue.of("Fred", childrenValue.of(
-                                RepeatingData.of(
-                                        personValue.of("Greg", null))))
-                )));
+                personValue.of("Bob", childrenValue.of(
+                        RepeatingData.of(
+                                personValue.of("Cathrine", null),
+                                personValue.of("Diana", null)))),
+                personValue.of("Eric", null),
+                personValue.of("Fred", childrenValue.of(
+                        RepeatingData.of(
+                                personValue.of("Greg", null))))
+        )));
 
         Gson gson = new GsonBuilder()
-                .registerTypeHierarchyAdapter(IndexedData.class,
-                        DataSerializer.forSchema(personSchema))
                 .setPrettyPrinting()
                 .create();
 
-        String json = gson.toJson(data, IndexedData.class);
+        DidoJsonWriter test = DidoJsonWriters.forSchema(personSchema, gson);
 
-        String expected = "{\n" +
-                "  \"Name\": \"Alice\",\n" +
-                "  \"Children\": {\n" +
-                "    \"People\": [\n" +
-                "      {\n" +
-                "        \"Name\": \"Bob\",\n" +
-                "        \"Children\": {\n" +
-                "          \"People\": [\n" +
-                "            {\n" +
-                "              \"Name\": \"Cathrine\"\n" +
-                "            },\n" +
-                "            {\n" +
-                "              \"Name\": \"Diana\"\n" +
-                "            }\n" +
-                "          ]\n" +
-                "        }\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"Name\": \"Eric\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"Name\": \"Fred\",\n" +
-                "        \"Children\": {\n" +
-                "          \"People\": [\n" +
-                "            {\n" +
-                "              \"Name\": \"Greg\"\n" +
-                "            }\n" +
-                "          ]\n" +
-                "        }\n" +
-                "      }\n" +
-                "    ]\n" +
-                "  }\n" +
-                "}\n";
+        Writer writer = new StringWriter();
+        test.write(data, gson.newJsonWriter(writer));
+        writer.close();
+
+        String json = writer.toString();
+
+        String expected = """
+                {
+                  "Name": "Alice",
+                  "Children": {
+                    "People": [
+                      {
+                        "Name": "Bob",
+                        "Children": {
+                          "People": [
+                            {
+                              "Name": "Cathrine"
+                            },
+                            {
+                              "Name": "Diana"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "Name": "Eric"
+                      },
+                      {
+                        "Name": "Fred",
+                        "Children": {
+                          "People": [
+                            {
+                              "Name": "Greg"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+                """;
 
         JSONAssert.assertEquals(expected, json, JSONCompareMode.LENIENT);
     }
+
 }

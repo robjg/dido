@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <bus:driver>
+                            <values>
+                                <bean class="dido.json.JsonExamplesTest$IterableOfData"/>
+                            </values>
+                        </bus:driver>
+                        <bus:map>
+                            <function>
+                                <dido:to-json xmlns:dido="oddjob:dido" serializeSpecialFloatingPointValues="true" serializeNulls="true"/>
+                            </function>
+                        </bus:map>
+                        <bus:collect>
+                            <output>
+                                <identify id="results">
+                                    <value>
+                                        <buffer/>
+                                    </value>
+                                </identify>
+                            </output>
+                        </bus:collect>
+                    </of>
+                </bus:bus>
+                <echo><![CDATA[${results}]]></echo>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <bus:driver>
+                            <values>
+                                <value value="${results}"/>
+                            </values>
+                        </bus:driver>
+                        <bus:map>
+                            <function>
+                                <dido:from-json xmlns:dido="oddjob:dido" partialSchema="true" strictness="LENIENT">
+                                    <schema>
+                                        <dido:schema>
+                                            <of>
+                                                <dido:field name="Price" type="double"/>
+                                            </of>
+                                        </dido:schema>
+                                    </schema>
+                                </dido:from-json>
+                            </function>
+                        </bus:map>
+                        <bus:collect id="capture"/>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>

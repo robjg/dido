@@ -3,6 +3,8 @@ package dido.json;
 import com.google.gson.FormattingStyle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.Strictness;
+import com.google.gson.stream.JsonWriter;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.how.DataException;
@@ -11,10 +13,7 @@ import dido.how.DataOutHow;
 import dido.how.conversion.DidoConversionProvider;
 import dido.how.util.IoUtil;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -46,6 +45,24 @@ public class DataOutJson implements DataOutHow<Writer> {
 
         public Settings gsonBuilder(Consumer<? super GsonBuilder> withBuilder) {
             withBuilder.accept(gsonBuilder);
+            return this;
+        }
+
+        public Settings strictness(Strictness strictness) {
+            gsonBuilder.setStrictness(strictness == null ? Strictness.LEGACY_STRICT : strictness);
+            return this;
+        }
+
+        public Settings serializeSpecialFloatingPointValues() {
+            // SerializeSpecialFloatingPointValues is not passed through to the writer
+            // but Strictness is.
+            gsonBuilder.serializeSpecialFloatingPointValues()
+                    .setStrictness(Strictness.LENIENT);
+            return this;
+        }
+
+        public Settings serializeNulls() {
+            gsonBuilder.serializeNulls();
             return this;
         }
 
@@ -109,23 +126,41 @@ public class DataOutJson implements DataOutHow<Writer> {
             return make().outTo(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
         }
 
-        private void registerGsonBuilderDefaults() {
+        private JsonWriterWrapperProvider writerProvider() {
 
             DidoConversionAdaptorFactory didoConversionAdaptorFactory = didoConversion.make();
             if (!didoConversionAdaptorFactory.isEmpty()) {
                 gsonBuilder.registerTypeAdapterFactory(didoConversionAdaptorFactory);
             }
 
-            gsonBuilder.registerTypeHierarchyAdapter(
-                            DidoData.class,
-                            schema == null ? DataSerializer.forUnknownSchema() :
-                                    DataSerializer.forSchema(schema))
-                    .serializeSpecialFloatingPointValues();
+            Gson gson = gsonBuilder.create();
+
+            DidoJsonWriter didoWriter = schema == null
+                    ? DidoJsonWriters.forUnknownSchema(gson)
+                    : DidoJsonWriters.forSchema(schema, gson);
+
+            return writer -> {
+                JsonWriter jsonWriter = gson.newJsonWriter(writer);
+                return new JsonWriterWrapper() {
+                    @Override
+                    public void write(DidoData data) throws IOException {
+                        didoWriter.write(data, jsonWriter);
+                    }
+
+                    @Override
+                    public void close() throws IOException {
+                        jsonWriter.close();
+                    }
+
+                    @Override
+                    public JsonWriter getWrappedWriter() {
+                        return jsonWriter;
+                    }
+                };
+            };
         }
 
         public DataOutJson make() {
-
-            registerGsonBuilderDefaults();
 
             if (didoFormat == JsonDidoFormat.LINES) {
 
@@ -136,27 +171,34 @@ public class DataOutJson implements DataOutHow<Writer> {
                 FormattingStyle formattingStyle = this.formattingStyle.withNewline("");
                 gsonBuilder.setFormattingStyle(formattingStyle);
 
-                return new DataOutJson(new DataOutJsonLines(gsonBuilder.create(), lineSeparator));
+                return new DataOutJson(new DataOutJsonLines(writerProvider(), lineSeparator));
             }
 
             gsonBuilder.setFormattingStyle(formattingStyle);
 
             if (didoFormat == JsonDidoFormat.ARRAY) {
-                return new DataOutJson(new DataOutJsonWriter(gsonBuilder.create(), true));
+                return new DataOutJson(new DataOutJsonWriter(writerProvider(), true));
             } else {
-                return new DataOutJson(new DataOutJsonWriter(gsonBuilder.create(), false));
+                return new DataOutJson(new DataOutJsonWriter(writerProvider(), false));
             }
         }
 
         public Function<DidoData, String> mapToString() {
 
-            registerGsonBuilderDefaults();
-
             FormattingStyle formattingStyle = this.formattingStyle.withNewline("");
             gsonBuilder.setFormattingStyle(formattingStyle);
-            Gson gson = gsonBuilder.create();
 
-            return gson::toJson;
+            JsonWriterWrapperProvider wrapperProvider = writerProvider();
+
+            return data -> {
+                Writer writer = new StringWriter();
+                try {
+                    wrapperProvider.writerFor(writer).write(data);
+                } catch (IOException e) {
+                    throw new DataException(e);
+                }
+                return writer.toString();
+            };
         }
     }
 

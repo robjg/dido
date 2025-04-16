@@ -36,11 +36,10 @@ public class DataSerializer implements JsonSerializer<DidoData> {
             AtomicReference<DataSerializer> ref = serializers.get(schema);
             if (ref == null) {
                 serializers.put(schema, new AtomicReference<>(null));
-            }
-            else {
+            } else {
                 return ref.get();
             }
-            
+
             JsonSetter[] jsonSetters = new JsonSetter[schema.lastIndex()];
 
             ReadStrategy readStrategy = ReadStrategy.fromSchema(schema);
@@ -68,8 +67,7 @@ public class DataSerializer implements JsonSerializer<DidoData> {
                     if (nestedSerializer == null) {
                         deferredActions.computeIfAbsent(nestedSchema, key -> new ArrayList<>())
                                 .add(serializerConsumer);
-                    }
-                    else {
+                    } else {
                         serializerConsumer.accept(nestedSerializer);
                     }
                 } else {
@@ -194,9 +192,7 @@ public class DataSerializer implements JsonSerializer<DidoData> {
         @Override
         public void doSet(JsonObject jsonObject, DidoData data, JsonSerializationContext context) {
 
-            if (getter.has(data)) {
-                jsonObject.add(name, context.serialize(getter.get(data)));
-            }
+            jsonObject.add(name, context.serialize(getter.get(data)));
         }
     }
 

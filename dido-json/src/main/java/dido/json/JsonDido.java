@@ -1,5 +1,6 @@
 package dido.json;
 
+import com.google.gson.Strictness;
 import dido.data.DataSchema;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
@@ -47,6 +48,29 @@ public class JsonDido {
      */
     private JsonDidoFormat format;
 
+    /**
+     * @oddjob.description Serialize null values. True to serialize null to the JSON,
+     * false and they will be ignored and no field will be written.
+     * @oddjob.required No, defaults to false.
+     */
+    private boolean serializeNulls;
+
+    /**
+     * @oddjob.description Serialize NaN and Infinity values. True to serialize, false
+     * and these values in data will result in an Exception. Note that because of an
+     * oversight in the underlying Gson implementation, this has the same effect as
+     * setting Strictness to LENIENT.
+     *
+     * @oddjob.required No, defaults to false.
+     */
+    private boolean serializeSpecialFloatingPointValues;
+
+    /**
+     * @oddjob.description Gson Strictness passed through to underlying Gson builder.
+     * @oddjob.required No, defaults to false.
+     */
+    private Strictness strictness;
+
     public DataOutHow<OutputStream> toStreamOut() {
 
         return StreamHows.fromWriterHow(toWriterOut());
@@ -55,10 +79,21 @@ public class JsonDido {
     public DataOutHow<Writer> toWriterOut() {
 
         JsonDidoFormat format = Objects.requireNonNullElse(this.format, JsonDidoFormat.LINES);
-        return DataOutJson.with()
+
+        DataOutJson.Settings settings = DataOutJson.with()
                 .schema(schema)
-                .outFormat(format)
-                .make();
+                .strictness(strictness)
+                .outFormat(format);
+
+        if (serializeSpecialFloatingPointValues) {
+            settings.serializeSpecialFloatingPointValues();
+        }
+
+        if (serializeNulls) {
+            settings.serializeNulls();
+        }
+
+        return settings.make();
     }
 
     public DataInHow<InputStream> toStreamIn() {
@@ -71,6 +106,7 @@ public class JsonDido {
 
         return DataInJson.with()
                 .inFormat(format)
+                .strictness(strictness)
                 .schema(schema)
                 .partialSchema(partialSchema)
                 .make();
@@ -98,6 +134,30 @@ public class JsonDido {
 
     public void setFormat(JsonDidoFormat format) {
         this.format = format;
+    }
+
+    public boolean isSerializeNulls() {
+        return serializeNulls;
+    }
+
+    public void setSerializeNulls(boolean serializeNulls) {
+        this.serializeNulls = serializeNulls;
+    }
+
+    public boolean isSerializeSpecialFloatingPointValues() {
+        return serializeSpecialFloatingPointValues;
+    }
+
+    public void setSerializeSpecialFloatingPointValues(boolean serializeSpecialFloatingPointValues) {
+        this.serializeSpecialFloatingPointValues = serializeSpecialFloatingPointValues;
+    }
+
+    public Strictness getStrictness() {
+        return strictness;
+    }
+
+    public void setStrictness(Strictness strictness) {
+        this.strictness = strictness;
     }
 
     @Override

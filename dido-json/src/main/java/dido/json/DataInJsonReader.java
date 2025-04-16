@@ -2,7 +2,6 @@ package dido.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.Strictness;
 import com.google.gson.stream.JsonReader;
 import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
@@ -138,8 +137,7 @@ public class DataInJsonReader implements DataInHow<Reader> {
     @Override
     public DataIn inFrom(Reader inFrom)  {
 
-        final JsonReader reader = new JsonReader(inFrom);
-        reader.setStrictness(Strictness.LENIENT);
+        final JsonReader reader = gson.newJsonReader(inFrom);
 
         if (isArray) {
             try {

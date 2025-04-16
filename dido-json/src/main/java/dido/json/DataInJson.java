@@ -1,6 +1,7 @@
 package dido.json;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.Strictness;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.how.DataException;
@@ -37,6 +38,11 @@ public class DataInJson implements DataInHow<Reader> {
 
         public Settings inFormat(JsonDidoFormat didoFormat) {
             this.didoFormat = didoFormat;
+            return this;
+        }
+
+        public Settings strictness(Strictness strictness) {
+            gsonBuilder.setStrictness(strictness == null ? Strictness.LEGACY_STRICT : strictness);
             return this;
         }
 

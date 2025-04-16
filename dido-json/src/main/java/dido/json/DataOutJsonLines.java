@@ -1,7 +1,5 @@
 package dido.json;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonWriter;
 import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataOut;
@@ -15,12 +13,13 @@ import java.io.Writer;
  */
 public class DataOutJsonLines implements DataOutHow<Writer> {
 
-    private final Gson gson;
+    private final JsonWriterWrapperProvider writerProvider;
 
     private final String lineSeparator;
 
-    DataOutJsonLines(Gson gson, String lineSeparator) {
-        this.gson = gson;
+    DataOutJsonLines(JsonWriterWrapperProvider writerProvider,
+                     String lineSeparator) {
+        this.writerProvider = writerProvider;
         this.lineSeparator = lineSeparator;
     }
 
@@ -32,14 +31,11 @@ public class DataOutJsonLines implements DataOutHow<Writer> {
     @Override
     public DataOut outTo(Writer writer) {
 
-        try {
-            JsonWriter jsonWriter = gson.newJsonWriter(writer);
-
             return new DataOut() {
                 @Override
                 public void close() {
                     try {
-                        jsonWriter.close();
+                        writer.close();
                     } catch (IOException e) {
                         throw DataException.of(e);
                     }
@@ -48,10 +44,10 @@ public class DataOutJsonLines implements DataOutHow<Writer> {
                 @Override
                 public void accept(DidoData data) {
 
-                    gson.toJson(data, DidoData.class, jsonWriter);
-
                     try {
-                        jsonWriter.flush();
+                        JsonWriterWrapper jsonWriter = writerProvider.writerFor(writer);
+                        jsonWriter.write(data);
+                        jsonWriter.getWrappedWriter().flush();
                         writer.append(lineSeparator);
                         writer.flush();
                     } catch (IOException e) {
@@ -59,10 +55,6 @@ public class DataOutJsonLines implements DataOutHow<Writer> {
                     }
                 }
             };
-        } catch (IOException e) {
-            throw DataException.of(e);
-        }
-
     }
 
     @Override
