@@ -13,7 +13,9 @@ Here's an example of reading that JSON back in.
 ```java
         List<DidoData> didoData;
 
-        try (DataIn in = DataInJson.fromPath(Path.of("Fruit.json"))) {
+        try (DataIn in = DataInJson
+                .with().strictness(Strictness.LENIENT)
+                .fromPath(Path.of("Fruit.json"))) {
 
             didoData = in.stream().collect(Collectors.toList());
         }
@@ -36,6 +38,7 @@ We can provide a partial schema that only overrides the type of certain
 fields:
 ```java
         try (DataIn in = DataInJson.with()
+                .strictness(Strictness.LENIENT)
                 .partialSchema(DataSchema.builder()
                         .addNamed("Qty", int.class)
                         .build())
@@ -56,6 +59,7 @@ fields:
 Or a full schema that will pick just the fields specified.
 ```java
         try (DataIn in = DataInJson.with()
+                .strictness(Strictness.LENIENT)
                 .schema(DataSchema.builder()
                         .addNamed("Fruit", String.class)
                         .addNamed("Price", double.class)

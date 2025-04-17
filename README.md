@@ -33,7 +33,9 @@ We can read it in:
 
 And we can write it out as Json
 ```java
-        try (DataOut out = DataOutJson.toOutputStream(System.out)) {
+        try (DataOut out = DataOutJson.with()
+                .outFormat(JsonDidoFormat.LINES)
+                .toOutputStream(System.out)) {
 
             didoData.forEach(out);
         }

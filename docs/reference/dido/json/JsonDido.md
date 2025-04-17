@@ -72,9 +72,9 @@ From JSON Lines and back again.
                     </how>
                     <from>
                         <buffer>
-                            <![CDATA[{ "Fruit"="Apple", "Qty"=5, "Price"=27.2 }
-{ "Fruit"="Orange", "Qty"=10, "Price"=31.6 }
-{ "Fruit"="Pear", "Qty"=7, "Price"=22.1 }
+                            <![CDATA[{ "Fruit":"Apple", "Qty":5, "Price":27.2 }
+{ "Fruit":"Orange", "Qty":10, "Price":31.6 }
+{ "Fruit":"Pear", "Qty":7, "Price":22.1 }
 ]]>
                         </buffer>
                     </from>
@@ -115,9 +115,9 @@ From JSON Array and back again.
                         <buffer>
                             <![CDATA[
 [
-    { "Fruit"="Apple", "Qty"=5, "Price"=27.2 },
-    { "Fruit"="Orange", "Qty"=10, "Price"=31.6 },
-    { "Fruit"="Pear", "Qty"=7, "Price"=22.1 }
+    { "Fruit":"Apple", "Qty":5, "Price":27.2 },
+    { "Fruit":"Orange", "Qty":10, "Price":31.6 },
+    { "Fruit":"Pear", "Qty":7, "Price":22.1 }
 ]
 ]]>
 

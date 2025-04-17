@@ -4,6 +4,9 @@
 Provides a Mapping Function that will convert a GSON String
 into Dido Data.
 
+
+See also [dido:to-json](../../dido/json/ToJsonStringType.md)
+
 ### Property Summary
 
 | Property | Description |

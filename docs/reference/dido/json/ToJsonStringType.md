@@ -2,7 +2,7 @@
 # dido:to-json
 
 Provides a Mapping Function that will convert a Dido Data
-into a JSON String.
+into a JSON String. See also [dido:from-json](../../dido/json/FromJsonStringType.md)
 
 ### Example Summary
 
