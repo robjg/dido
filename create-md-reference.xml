@@ -7,7 +7,7 @@
                     <values>
                         <file file="${oddjob.dir}/docs/reference" key="reference.dir"/>
                         <value key="oddjob.version" value="1.7.0-SNAPSHOT"/>
-                        <value key="project.version" value="1.1.0-SNAPSHOT"/>
+                        <value key="project.version" value="2.0.0-SNAPSHOT"/>
                     </values>
                 </properties>
                 <variables id="vars">

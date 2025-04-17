@@ -8,6 +8,7 @@ no field or index is specified the index is taken by the position in the transfo
 
 | Property | Description |
 | -------- | ----------- |
+| [at](#propertyat) | The index to set the value at. | 
 | [conversionProvider](#propertyconversionProvider) | A Conversion provider that will be used to convert the value to the type. | 
 | [field](#propertyfield) | The field name. | 
 | [type](#propertytype) | The type. | 
@@ -22,11 +23,21 @@ no field or index is specified the index is taken by the position in the transfo
 
 
 ### Property Detail
+#### at <a name="propertyat"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No</td></tr>
+</table>
+
+The index to set the value at.
+
 #### conversionProvider <a name="propertyconversionProvider"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
-      <tr><td><i>Access</i></td><td>WRITE_ONLY</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
       <tr><td><i>Required</i></td><td>No. Defaults to a simple one.</td></tr>
 </table>
 

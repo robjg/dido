@@ -13,6 +13,7 @@ See also [dido:to-json](../../dido/json/ToJsonStringType.md)
 | -------- | ----------- |
 | [partialSchema](#propertypartialSchema) | Indicates that the provided Schema is partial. | 
 | [schema](#propertyschema) | The schema to use. | 
+| [strictness](#propertystrictness) | Gson Strictness passed through to underlying Gson builder. | 
 
 
 ### Example Summary
@@ -44,6 +45,16 @@ rest of the schema will be taken from the data.
 
 The schema to use. If one is not provided a simple schema will be
 created based on the JSON primitive type.
+
+#### strictness <a name="propertystrictness"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No, defaults to Gson default, LEGACY_STRICT.</td></tr>
+</table>
+
+Gson Strictness passed through to underlying Gson builder.
 
 
 ### Examples
