@@ -4,6 +4,7 @@ import dido.data.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
@@ -61,6 +62,20 @@ public class FieldValuesIn {
             }
             else {
                 setters[i++].set(writableData, value);
+            }
+        }
+        return dataFactory.toData();
+    }
+
+    public DidoData ofMap(Map<String, ?> map) {
+        WritableData writableData = dataFactory.getWritableData();
+        for (SchemaField schemaField : getSchema().getSchemaFields()) {
+            Object value = map.get(schemaField.getName());
+            if (value == null) {
+                setters[schemaField.getIndex() - 1].clear(writableData);
+            }
+            else {
+                setters[schemaField.getIndex() - 1].set(writableData, value);
             }
         }
         return dataFactory.toData();

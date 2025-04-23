@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -103,6 +104,28 @@ class FieldValuesInTest {
 
         assertThat(arrayData.getAt(1), nullValue());
         assertThat(arrayData.getAt(2), is("Red"));
+    }
+
+    @Test
+    void ofMap() {
+
+        DataSchema schema = DataSchema.builder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", int.class)
+                .addNamed("Price", double.class)
+                .addNamed("Colour", String.class)
+                .build();
+
+        Map<String, Object> map = Map.of(
+                "Qty", 5,
+                "Fruit", "Apple",
+                "Price", 23.4,
+                "Farmer", "Jones");
+
+        DidoData data = DidoData.valuesWithSchema(schema)
+                .ofMap(map);
+
+        assertThat(data, is(DidoData.of("Apple", 5, 23.4, null)));
     }
 
     @Test
