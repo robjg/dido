@@ -14,7 +14,7 @@ import java.util.function.BiConsumer;
  * a {@link Prepare} as the intermediate step.
  */
 @FunctionalInterface
-public interface OpDef {
+public interface FieldWrite {
 
     /**
      * Creates the {@link Prepare}.
@@ -28,7 +28,7 @@ public interface OpDef {
                     SchemaSetter schemaSetter);
 
     /**
-     * Intermediate step created by {@link OpDef}
+     * Intermediate step created by {@link FieldWrite}
      */
     @FunctionalInterface
     interface Prepare {

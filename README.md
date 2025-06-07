@@ -43,7 +43,9 @@ And we can write it out as Json
 
 Giving us:
 ```
-{"f_1":"Apple","f_2":"5","f_3":"19.50"}{"f_1":"Orange","f_2":"2","f_3":"35.24"}{"f_1":"Pear","f_2":"3","f_3":"26.84"}
+{"f_1":"Apple","f_2":"5","f_3":"19.50"}
+{"f_1":"Orange","f_2":"2","f_3":"35.24"}
+{"f_1":"Pear","f_2":"3","f_3":"26.84"}
 ```
 
 We can give our data a schema:

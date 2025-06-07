@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  */
 public class TransformationFactory implements Supplier<Function<DidoData, DidoData>> {
 
-    private final List<OpDef> of = new ArrayList<>();
+    private final List<FieldWrite> of = new ArrayList<>();
 
     /**
      * @oddjob.description Copy existing fields before applying transformations.
@@ -46,7 +46,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
      * @param index The index.
      * @param transformer The transformer.
      */
-    public void setOf(int index, OpDef transformer) {
+    public void setOf(int index, FieldWrite transformer) {
         if (transformer == null) {
             of.remove(index);
         }
@@ -73,7 +73,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
 
     static class TransformerFunctionInitial implements Function<DidoData, DidoData> {
 
-        private final List<OpDef> transformerFactories;
+        private final List<FieldWrite> transformerFactories;
 
         private final boolean withCopy;
 
@@ -102,19 +102,19 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         }
     }
 
-    static DidoTransform functionFor(List<OpDef> definitions,
+    static DidoTransform functionFor(List<FieldWrite> definitions,
                                      DataSchema schemaFrom,
                                      boolean withCopy,
                                      DataFactoryProvider dataFactoryProvider) {
 
-        OpTransformBuilder transformationManager = OpTransformBuilder.with()
-                .copy(withCopy)
+        WriteTransformBuilder transformationManager = WriteTransformBuilder.with()
+                .existingFields(withCopy)
                 .dataFactoryProvider(dataFactoryProvider)
                 .forSchema(schemaFrom);
 
-        for (OpDef definition : definitions) {
+        for (FieldWrite definition : definitions) {
 
-            transformationManager.addOp(definition);
+            transformationManager.addFieldWrite(definition);
         }
 
         return transformationManager.build();

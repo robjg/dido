@@ -12,7 +12,7 @@ import java.util.function.UnaryOperator;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class FieldOpsTest {
+class FieldViewsTest {
 
     static DataSchema schema = ArrayData.schemaBuilder()
             .addNamed("Fruit", String.class)
@@ -26,11 +26,11 @@ class FieldOpsTest {
     @Test
     void copyWithFieldLocBuilder() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
+        DidoTransform transformation = WriteTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
-                .addOp(FieldOps.copy().index(3).with().view()) // copies index 3 to index 3
-                .addOp(FieldOps.copy().from("Qty").with().view()) // copies Qty to index 2
+                .addFieldView(FieldViews.copy().index(3).with().view()) // copies index 3 to index 3
+                .addFieldView(FieldViews.copy().from("Qty").with().view()) // copies Qty to index 2
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -51,12 +51,12 @@ class FieldOpsTest {
     @Test
     void copyWithConversion() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .reIndex(true)
                 .forSchema(schema)
-                .addOp(FieldOps.copy().from("Qty").with().type(String.class).view()) // copies index 3 to index 3
-                .addOp(FieldOps.copy().from("Price").with().type(String.class).view()) // copies Qty to index 2
+                .addFieldView(FieldViews.copy().from("Qty").with().type(String.class).view()) // copies index 3 to index 3
+                .addFieldView(FieldViews.copy().from("Price").with().type(String.class).view()) // copies Qty to index 2
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -78,11 +78,11 @@ class FieldOpsTest {
     @Test
     void copyAt() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
+        DidoTransform transformation = WriteTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
-                .addOp(FieldOps.copyAt(3))
-                .addOp(FieldOps.copyAt(2))
+                .addFieldView(FieldViews.copyAt(3))
+                .addFieldView(FieldViews.copyAt(2))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -103,11 +103,11 @@ class FieldOpsTest {
     @Test
     void copyIndexAt() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
+        DidoTransform transformation = WriteTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
-                .addOp(FieldOps.copyAt(3, 1))
-                .addOp(FieldOps.copyAt(2, 0))
+                .addFieldView(FieldViews.copyAt(3, 1))
+                .addFieldView(FieldViews.copyAt(2, 0))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -128,11 +128,11 @@ class FieldOpsTest {
     @Test
     void copyNamed() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
+        DidoTransform transformation = WriteTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
-                .addOp(FieldOps.copyNamed("Price"))
-                .addOp(FieldOps.copyNamed("Fruit"))
+                .addFieldView(FieldViews.copyNamed("Price"))
+                .addFieldView(FieldViews.copyNamed("Fruit"))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -153,10 +153,10 @@ class FieldOpsTest {
     @Test
     void copyNamedFromTo() {
 
-        DidoTransform transformation = OpTransformBuilder
+        DidoTransform transformation = WriteTransformBuilder
                 .forSchema(schema)
-                .addOp(FieldOps.copyNamed("Fruit", "Type"))
-                .addOp(FieldOps.copyNamed("Price", "Price"))
+                .addFieldView(FieldViews.copyNamed("Fruit", "Type"))
+                .addFieldView(FieldViews.copyNamed("Price", "Price"))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -177,11 +177,11 @@ class FieldOpsTest {
     @Test
     void copySameName() {
 
-        DidoTransform transformation = OpTransformBuilder
+        DidoTransform transformation = WriteTransformBuilder
                 .forSchema(schema)
-                .addOp(FieldOps.copyNamed("Qty", "Qty"))
-                .addOp(FieldOps.copyNamed("Price", "Price"))
-                .addOp(FieldOps.copyNamed("Fruit", "Fruit"))
+                .addFieldView(FieldViews.copyNamed("Qty", "Qty"))
+                .addFieldView(FieldViews.copyNamed("Price", "Price"))
+                .addFieldView(FieldViews.copyNamed("Fruit", "Fruit"))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -194,11 +194,11 @@ class FieldOpsTest {
     @Test
     void copyNamedAt() {
 
-        DidoTransform transformation = OpTransformBuilder
+        DidoTransform transformation = WriteTransformBuilder
                 .forSchema(schema)
-                .addOp(FieldOps.copyNamedAt("Qty", 0))
-                .addOp(FieldOps.copyNamedAt("Price", 0))
-                .addOp(FieldOps.copyNamedAt("Fruit", 0))
+                .addFieldView(FieldViews.copyNamedAt("Qty", 0))
+                .addFieldView(FieldViews.copyNamedAt("Price", 0))
+                .addFieldView(FieldViews.copyNamedAt("Fruit", 0))
                 .build();
 
         DataSchema expectedSchema = DataSchema.builder()
@@ -220,11 +220,11 @@ class FieldOpsTest {
     @Test
     void copyNamedAtTo() {
 
-        DidoTransform transformation = OpTransformBuilder
+        DidoTransform transformation = WriteTransformBuilder
                 .forSchema(schema)
-                .addOp(FieldOps.copyNamedAt("Qty", 5, "Quantity"))
-                .addOp(FieldOps.copyNamedAt("Price", 3, "ThePrice"))
-                .addOp(FieldOps.copyNamedAt("Fruit", -1, "Type"))
+                .addFieldView(FieldViews.copyNamedAt("Qty", 5, "Quantity"))
+                .addFieldView(FieldViews.copyNamedAt("Price", 3, "ThePrice"))
+                .addFieldView(FieldViews.copyNamedAt("Fruit", -1, "Type"))
                 .build();
 
         DataSchema expectedSchema = DataSchema.builder()
@@ -246,13 +246,13 @@ class FieldOpsTest {
     @Test
     void rename() {
 
-        DidoTransform transformation = OpTransformBuilder
+        DidoTransform transformation = WriteTransformBuilder
                 .with()
-                .copy(true)
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(FieldOps.renameAt("Qty", 5, "Quantity"))
-                .addOp(FieldOps.renameAt("Price", 3, "ThePrice"))
-                .addOp(FieldOps.rename("Fruit", "Type"))
+                .addFieldView(FieldViews.renameAt("Qty", 5, "Quantity"))
+                .addFieldView(FieldViews.renameAt("Price", 3, "ThePrice"))
+                .addFieldView(FieldViews.rename("Fruit", "Type"))
                 .build();
 
         DataSchema expectedSchema = DataSchema.builder()
@@ -274,12 +274,12 @@ class FieldOpsTest {
     @Test
     void setNamedWithCopy() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(FieldOps.setNamed("Fruit", "Orange"))
-                .addOp(FieldOps.setNamed("Qty", 1234L, long.class))
-                .addOp(FieldOps.setNamed("InStock", true, boolean.class))
+                .addFieldView(FieldViews.setNamed("Fruit", "Orange"))
+                .addFieldView(FieldViews.setNamed("Qty", 1234L, long.class))
+                .addFieldView(FieldViews.setNamed("InStock", true, boolean.class))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -302,15 +302,15 @@ class FieldOpsTest {
     @Test
     void setWithFieldLocBuilder() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
+        DidoTransform transformation = WriteTransformBuilder.with()
                 .forSchema(schema)
-                .addOp(FieldOps.set().at(3).with()
+                .addFieldView(FieldViews.set().at(3).with()
                         .value(54.3).view()) // copies index 3 to index 3
-                .addOp(FieldOps.set().named("Qty").with()
+                .addFieldView(FieldViews.set().named("Qty").with()
                         .value(5).view()) // copies Qty to index 2
-                .addOp(FieldOps.set().named("Fruit").with()
+                .addFieldView(FieldViews.set().named("Fruit").with()
                         .value("Orange").view()) // copies Qty to index 2
-                .addOp(FieldOps.set().named("InStock").with()
+                .addFieldView(FieldViews.set().named("InStock").with()
                         .value(true).type(boolean.class).view()) // copies Qty to index 2
                 .build();
 
@@ -333,12 +333,12 @@ class FieldOpsTest {
     @Test
     void setAtWithCopy() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(FieldOps.setAt(1, "Orange"))
-                .addOp(FieldOps.setAt(2, 1234L, long.class))
-                .addOp(FieldOps.setNamedAt(4, "InStock", true))
+                .addFieldView(FieldViews.setAt(1, "Orange"))
+                .addFieldView(FieldViews.setAt(2, 1234L, long.class))
+                .addFieldView(FieldViews.setNamedAt(4, "InStock", true))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -361,12 +361,12 @@ class FieldOpsTest {
     @Test
     void removeNamed() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .reIndex(true)
                 .forSchema(schema)
-                .addOp(FieldOps.removeNamed("Fruit"))
-                .addOp(FieldOps.removeNamed("Price"))
+                .addFieldView(FieldViews.removeNamed("Fruit"))
+                .addFieldView(FieldViews.removeNamed("Price"))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -386,11 +386,11 @@ class FieldOpsTest {
     @Test
     void removeAt() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(FieldOps.removeAt(1))
-                .addOp(FieldOps.removeAt(3))
+                .addFieldView(FieldViews.removeAt(1))
+                .addFieldView(FieldViews.removeAt(3))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -414,17 +414,17 @@ class FieldOpsTest {
         Function<Integer, Double> qtyOp = qty -> (double) qty * 2.5;
         Function<Double, String> priceOp = price -> "£" + price;
 
-        DidoTransform transformation = OpTransformBuilder.with()
+        DidoTransform transformation = WriteTransformBuilder.with()
                 .forSchema(schema)
-                .addOp(FieldOps.map()
+                .addFieldView(FieldViews.map()
                         .index(1)
                         .with().func(fruitOp))
-                .addOp(FieldOps.map()
+                .addFieldView(FieldViews.map()
                         .index(2)
                         .at(3)
                         .with().type(double.class)
                         .func(qtyOp))
-                .addOp(FieldOps.map()
+                .addFieldView(FieldViews.map()
                         .index(3)
                         .atLastIndex()
                         .to("DisplayPrice")
@@ -451,10 +451,10 @@ class FieldOpsTest {
     @Test
     void mapNamed() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(FieldOps.map()
+                .addFieldView(FieldViews.map()
                         .from("Qty")
                                 .with().func(qty -> (int) qty * 2))
                 .build();
@@ -472,10 +472,10 @@ class FieldOpsTest {
     @Test
     void unaryMapNewField() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(FieldOps.map()
+                .addFieldView(FieldViews.map()
                         .from("Qty")
                         .to("Extra")
                         .with()
@@ -500,10 +500,10 @@ class FieldOpsTest {
     @Test
     void unaryMapSameIndexNewName() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(FieldOps.map()
+                .addFieldView(FieldViews.map()
                         .from("Qty")
                         .to("Extra")
                         .atSameIndex()
@@ -530,10 +530,10 @@ class FieldOpsTest {
     @Test
     void mapIntToIntNamed() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(FieldOps.map()
+                .addFieldView(FieldViews.map()
                         .from("Qty")
                         .with().intOp(qty -> qty * 2))
                 .build();
@@ -551,10 +551,10 @@ class FieldOpsTest {
     @Test
     void mapIntToIntAt() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(FieldOps.map()
+                .addFieldView(FieldViews.map()
                         .index(2)
                         .with().intOp(qty -> qty * 2))
                 .build();
@@ -579,14 +579,14 @@ class FieldOpsTest {
         DidoData data = DidoData.valuesWithSchema(schema)
                 .of(1000L);
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(FieldOps.map()
+                .addFieldView(FieldViews.map()
                         .from("BigNumber")
                         .at(20)
                         .with().longOp(qty -> qty * 2))
-                .addOp(FieldOps.map()
+                .addFieldView(FieldViews.map()
                         .from("BigNumber")
                         .to("AnotherBigNumber").at(15)
                         .with().longOp(qty -> qty * 2))
@@ -610,10 +610,10 @@ class FieldOpsTest {
     @Test
     void mapDoubleToDoubleAt() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(FieldOps.map()
+                .addFieldView(FieldViews.map()
                         .index(3)
                         .with().doubleOp(price -> price * 2))
                 .build();

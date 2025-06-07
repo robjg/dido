@@ -6,23 +6,23 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 /**
- * Provides a Builder for creating {@link DidoTransform}s from {@link OpDef}s.
+ * Provides a Builder for creating {@link DidoTransform}s from {@link FieldWrite}s.
  */
-public class OpTransformBuilder {
+public class WriteTransformBuilder {
 
     private final DataFactoryProvider dataFactoryProvider;
 
     private final ReadSchema incomingSchema;
 
-    private final NavigableMap<Integer, OpDef.Prepare> opsByIndex = new TreeMap<>(); ;
+    private final NavigableMap<Integer, FieldWrite.Prepare> opsByIndex = new TreeMap<>(); ;
 
     private final SchemaFactory schemaFactory;
 
     private final boolean reIndex;
 
-    private OpTransformBuilder(DataFactoryProvider dataFactoryProvider,
-                               DataSchema incomingSchema,
-                               boolean reIndex) {
+    private WriteTransformBuilder(DataFactoryProvider dataFactoryProvider,
+                                  DataSchema incomingSchema,
+                                  boolean reIndex) {
         this.dataFactoryProvider = dataFactoryProvider;
         this.incomingSchema = ReadSchema.from(incomingSchema);
         this.schemaFactory = dataFactoryProvider.getSchemaFactory();
@@ -33,7 +33,7 @@ public class OpTransformBuilder {
 
         private DataFactoryProvider dataFactoryProvider;
 
-        private boolean copy;
+        private boolean existingFields;
 
         private boolean reIndex;
 
@@ -42,8 +42,8 @@ public class OpTransformBuilder {
             return this;
         }
 
-        public Settings copy(boolean copy) {
-            this.copy = copy;
+        public Settings existingFields(boolean existingFields) {
+            this.existingFields = existingFields;
             return this;
         }
 
@@ -52,19 +52,19 @@ public class OpTransformBuilder {
             return this;
         }
 
-        public OpTransformBuilder forSchema(DataSchema incomingSchema) {
+        public WriteTransformBuilder forSchema(DataSchema incomingSchema) {
 
             DataFactoryProvider dataFactoryProvider = Objects.requireNonNullElse(
                     this.dataFactoryProvider, DataFactoryProvider.newInstance());
 
-            OpTransformBuilder builder = new OpTransformBuilder(dataFactoryProvider,
+            WriteTransformBuilder builder = new WriteTransformBuilder(dataFactoryProvider,
                     incomingSchema,
                     reIndex);
 
-            if (copy) {
+            if (existingFields) {
                 for (SchemaField schemaField: incomingSchema.getSchemaFields()) {
 
-                    builder.addOp(FieldOps.copyAt(schemaField.getIndex()));
+                    builder.addFieldView(FieldViews.copyAt(schemaField.getIndex()));
                 }
             }
 
@@ -76,7 +76,7 @@ public class OpTransformBuilder {
         return new Settings();
     }
 
-    public static OpTransformBuilder forSchema(DataSchema incomingSchema) {
+    public static WriteTransformBuilder forSchema(DataSchema incomingSchema) {
         return with().forSchema(incomingSchema);
     }
 
@@ -123,13 +123,13 @@ public class OpTransformBuilder {
         }
     }
 
-    public OpTransformBuilder addOp(FieldView fieldView) {
-        return addOp(fieldView.asOpDef());
+    public WriteTransformBuilder addFieldView(FieldView fieldView) {
+        return addFieldWrite(fieldView.asFieldWrite());
     }
 
-    public OpTransformBuilder addOp(OpDef opDef) {
+    public WriteTransformBuilder addFieldWrite(FieldWrite fieldWrite) {
         SchemaSetterImpl schemaSetter = new SchemaSetterImpl();
-        OpDef.Prepare prepare = opDef.prepare(incomingSchema, schemaSetter);
+        FieldWrite.Prepare prepare = fieldWrite.prepare(incomingSchema, schemaSetter);
         if (schemaSetter.lastField != null) {
             opsByIndex.put(schemaSetter.lastField.getIndex(), prepare);
         }
@@ -139,13 +139,13 @@ public class OpTransformBuilder {
     public DidoTransform build() {
 
         SchemaFactory schemaFactory ;
-        NavigableMap<Integer, OpDef.Prepare> opsByIndex;
+        NavigableMap<Integer, FieldWrite.Prepare> opsByIndex;
 
         if (reIndex) {
             opsByIndex = new TreeMap<>();
             schemaFactory = dataFactoryProvider.getSchemaFactory();
             for (SchemaField schemaField : this.schemaFactory.getSchemaFields()) {
-                OpDef.Prepare prepare = this.opsByIndex.get(schemaField.getIndex());
+                FieldWrite.Prepare prepare = this.opsByIndex.get(schemaField.getIndex());
                 schemaField = schemaFactory.addSchemaField(schemaField.mapToIndex(0));
                 // If an Op is registered that creates multiple fields only the last field
                 // will have been linked to the op.
@@ -164,7 +164,7 @@ public class OpTransformBuilder {
 
         List<BiConsumer<DidoData, WritableData>> ops = new ArrayList<>(schema.lastIndex());
 
-        for (OpDef.Prepare prepare : opsByIndex.values()) {
+        for (FieldWrite.Prepare prepare : opsByIndex.values()) {
             ops.add(prepare.create(schema));
         }
 

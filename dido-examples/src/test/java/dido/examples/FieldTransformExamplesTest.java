@@ -5,8 +5,8 @@ import dido.data.DidoData;
 import dido.data.ReadStrategy;
 import dido.data.util.DataBuilder;
 import dido.operators.transform.DidoTransform;
-import dido.operators.transform.FieldOps;
-import dido.operators.transform.OpTransformBuilder;
+import dido.operators.transform.FieldViews;
+import dido.operators.transform.WriteTransformBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -66,15 +66,15 @@ class FieldTransformExamplesTest {
 
         // #snippet1{
 
-        DidoTransform transform = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transform = WriteTransformBuilder.with()
+                .existingFields(true)
                 .reIndex(true)
                 .forSchema(fromSchema)
-                .addOp(FieldOps.rename("Quantity", "Qty"))
-                .addOp(FieldOps.map().from("Price").to("DiscountPrice")
+                .addFieldView(FieldViews.rename("Quantity", "Qty"))
+                .addFieldView(FieldViews.map().from("Price").to("DiscountPrice")
                         .with().doubleOp(price -> price * .9))
-                .addOp(FieldOps.removeNamed("Price"))
-                .addOp(FieldOps.setNamed("BestBefore", bestBeforeDate))
+                .addFieldView(FieldViews.removeNamed("Price"))
+                .addFieldView(FieldViews.setNamed("BestBefore", bestBeforeDate))
                 .build();
 
         List<DidoData> results = didoData.stream()

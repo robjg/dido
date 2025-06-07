@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  * @oddjob.example Set a value.
  * {@oddjob.xml.resource dido/operators/transform/DataSetExample.xml}
  */
-public class ValueSetFactory implements Supplier<OpDef> {
+public class ValueSetFactory implements Supplier<FieldWrite> {
 
     /**
      * @oddjob.description The field name.
@@ -47,7 +47,7 @@ public class ValueSetFactory implements Supplier<OpDef> {
 
 
     @Override
-    public OpDef get() {
+    public FieldWrite get() {
         return new CopyTransformerFactory(this);
     }
 
@@ -92,7 +92,7 @@ public class ValueSetFactory implements Supplier<OpDef> {
         this.conversionProvider = conversionProvider;
     }
 
-    static class CopyTransformerFactory implements OpDef {
+    static class CopyTransformerFactory implements FieldWrite {
 
         private final String field;
 
@@ -116,7 +116,7 @@ public class ValueSetFactory implements Supplier<OpDef> {
         public Prepare prepare(ReadSchema fromSchema,
                                SchemaSetter schemaSetter) {
 
-            FieldView fieldView = FieldOps.set()
+            FieldView fieldView = FieldViews.set()
                     .named(this.field)
                     .at(this.at)
                     .with()
@@ -125,7 +125,7 @@ public class ValueSetFactory implements Supplier<OpDef> {
                     .conversionProvider(conversionProvider)
                     .view();
 
-            return fieldView.asOpDef().prepare(fromSchema, schemaSetter);
+            return fieldView.asFieldWrite().prepare(fromSchema, schemaSetter);
         }
     }
 }

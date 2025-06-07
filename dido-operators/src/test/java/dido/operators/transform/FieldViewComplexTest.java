@@ -2,6 +2,13 @@ package dido.operators.transform;
 
 import dido.data.*;
 import dido.data.useful.AbstractFieldGetter;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 class FieldViewComplexTest {
 
@@ -73,6 +80,37 @@ class FieldViewComplexTest {
             viewDefinition.addField(amountField, amountGetter);
             viewDefinition.addField(totalField, totalGetter);
         }
+    }
+
+    @Test
+    void complexOp() {
+
+        List<SchemaField> schemaFields = new ArrayList<>();
+        List<FieldGetter> fieldGetters = new ArrayList<>();
+
+        new MarkupOperation().define(ReadSchema.from(data.getSchema()), new FieldView.Definition() {
+            @Override
+            public void addField(SchemaField schemaField, FieldGetter fieldGetter) {
+                schemaFields.add(schemaField);
+                fieldGetters.add(fieldGetter);
+            }
+
+            @Override
+            public void removeField(SchemaField schemaField) {
+                throw new UnsupportedOperationException();
+            }
+        });
+
+        assertThat(schemaFields, contains(
+                SchemaField.of(0, "Markup", double.class),
+                SchemaField.of(0, "MarkupAmount", double.class),
+                SchemaField.of(0, "FinalPrice", double.class)));
+
+        assertThat(fieldGetters.size(), is(3));
+
+        assertThat(fieldGetters.get(0).getDouble(data), closeTo(0.5, 0.01));
+        assertThat(fieldGetters.get(1).getDouble(data), closeTo(11.75, 0.01));
+        assertThat(fieldGetters.get(2).getDouble(data), closeTo(35.25, 0.01));
     }
 
 }

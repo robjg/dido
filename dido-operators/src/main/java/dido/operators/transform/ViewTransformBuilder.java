@@ -11,7 +11,7 @@ import java.util.TreeMap;
 
 /**
  * Provides a Builder for creating {@link DidoTransform}s that is
- * a view of underlying data define with {@link FieldTransform}s.
+ * a view of underlying data define with {@link FieldView}s.
  */
 public class ViewTransformBuilder {
 
@@ -32,12 +32,12 @@ public class ViewTransformBuilder {
 
     public static class Settings {
 
-        private boolean copy;
+        private boolean existingFields;
 
         private boolean reIndex;
 
-        public Settings copy(boolean copy) {
-            this.copy = copy;
+        public Settings existingFields(boolean existingFields) {
+            this.existingFields = existingFields;
             return this;
         }
 
@@ -52,10 +52,10 @@ public class ViewTransformBuilder {
                     incomingSchema,
                     reIndex);
 
-            if (copy) {
+            if (existingFields) {
                 for (SchemaField schemaField: incomingSchema.getSchemaFields()) {
 
-                    builder.addOp(FieldOps.copy().index(schemaField.getIndex()).with().view());
+                    builder.addFieldView(FieldViews.copy().index(schemaField.getIndex()).with().view());
                 }
             }
 
@@ -69,46 +69,6 @@ public class ViewTransformBuilder {
 
     public static ViewTransformBuilder forSchema(DataSchema incomingSchema) {
         return with().forSchema(incomingSchema);
-    }
-
-    class SchemaSetterImpl implements SchemaSetter {
-
-        @Override
-        public SchemaField addField(SchemaField schemaField) {
-            SchemaField existing = null;
-
-            String newName = schemaField.getName();
-            int newIndex = schemaField.getIndex();
-
-            if (newName != null) {
-                existing = schemaFactory.removeNamed(newName);
-            }
-            if (existing == null && newIndex > 0) {
-                existing = schemaFactory.removeAt(newIndex);
-            }
-            if (existing == null) {
-                return schemaFactory.addSchemaField(schemaField);
-            }
-            else {
-                if (newName == null) {
-                    newName = existing.getName();
-                }
-                if (newIndex == 0) {
-                    newIndex = existing.getIndex();
-                }
-                return schemaFactory.addSchemaField(schemaField
-                        .mapToIndex(newIndex).mapToFieldName(newName));
-            }
-        }
-
-        @Override
-        public SchemaField removeField(SchemaField schemaField) {
-            SchemaField removedField = schemaFactory.removeNamed(schemaField.getName());
-            if (removedField != null) {
-                opsByIndex.remove(removedField.getIndex());
-            }
-            return removedField;
-        }
     }
 
     class ViewDefinitionImpl implements FieldView.Definition {
@@ -153,9 +113,9 @@ public class ViewTransformBuilder {
         }
     }
 
-    public ViewTransformBuilder addOp(FieldView opDef) {
+    public ViewTransformBuilder addFieldView(FieldView fieldView) {
         ViewDefinitionImpl schemaSetter = new ViewDefinitionImpl();
-        opDef.define(incomingSchema, schemaSetter);
+        fieldView.define(incomingSchema, schemaSetter);
         return this;
     }
 

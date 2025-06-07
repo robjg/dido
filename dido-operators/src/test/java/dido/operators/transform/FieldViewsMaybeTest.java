@@ -9,9 +9,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 /**
- * Should these be added to {@link FieldOps} ?
+ * Should these be added to {@link FieldViews} ?
  */
-public class FieldOpsMaybeTest {
+public class FieldViewsMaybeTest {
 
     static DataSchema schema = ArrayData.schemaBuilder()
             .addNamed("Fruit", String.class)
@@ -23,10 +23,10 @@ public class FieldOpsMaybeTest {
             .of("Apple", 10, 23.5);
 
 
-    public static <T> OpDef computeNamedGetter(String to,
-                                               Function<? super ReadSchema,
+    public static <T> FieldWrite computeNamedGetter(String to,
+                                                    Function<? super ReadSchema,
                                                        Function<? super DidoData, ? extends T>> func,
-                                               Class<T> type) {
+                                                    Class<T> type) {
 
         return (incomingSchema, schemaSetter) -> {
 
@@ -39,16 +39,16 @@ public class FieldOpsMaybeTest {
 
             SchemaField finalField = schemaSetter.addField(field);
 
-            return dataFactory -> new FieldOps.Compute(dataFactory.getFieldSetterNamed(finalField.getName()),
+            return dataFactory -> new FieldViews.Compute(dataFactory.getFieldSetterNamed(finalField.getName()),
                     func.apply(ReadSchema.from(incomingSchema)));
         };
     }
 
     // Whole Data Computes -  experimental.
 
-    public static <T> OpDef computeFromDataNamed(String to,
-                                                 Function<? super DidoData, ? extends T> func,
-                                                 Class<T> type) {
+    public static <T> FieldWrite computeFromDataNamed(String to,
+                                                      Function<? super DidoData, ? extends T> func,
+                                                      Class<T> type) {
 
         return (incomingSchema, schemaSetter) -> {
 
@@ -61,7 +61,7 @@ public class FieldOpsMaybeTest {
 
             SchemaField finalField = schemaSetter.addField(field);
 
-            return dataFactory -> new FieldOps.Compute(dataFactory.getFieldSetterNamed(finalField.getName()),
+            return dataFactory -> new FieldViews.Compute(dataFactory.getFieldSetterNamed(finalField.getName()),
                     func);
         };
     }
@@ -69,10 +69,10 @@ public class FieldOpsMaybeTest {
     @Test
     void computeInPlaceWithGetter() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(computeNamedGetter("Qty",
+                .addFieldWrite(computeNamedGetter("Qty",
                         readSchema -> {
                             FieldGetter getter = readSchema.getFieldGetterNamed("Qty");
                             return data -> getter.getInt(data) * 2;
@@ -92,10 +92,10 @@ public class FieldOpsMaybeTest {
     @Test
     void computeInPlace() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(computeFromDataNamed("Qty",
+                .addFieldWrite(computeFromDataNamed("Qty",
                         data -> data.getIntAt(2) * 2, int.class))
                 .build();
 
@@ -113,10 +113,10 @@ public class FieldOpsMaybeTest {
     @Test
     void computeNewField() {
 
-        DidoTransform transformation = OpTransformBuilder.with()
-                .copy(true)
+        DidoTransform transformation = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(schema)
-                .addOp(computeFromDataNamed("QtyDoubled",
+                .addFieldWrite(computeFromDataNamed("QtyDoubled",
                         data -> data.getIntAt(2) * 2, int.class))
                 .build();
 

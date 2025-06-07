@@ -44,8 +44,8 @@
 
         <javax.inject.version>1</javax.inject.version>
 
-        <slf4j.version>2.0.12</slf4j.version>
-        <logback.version>1.5.3</logback.version>
+        <slf4j.version>2.0.17</slf4j.version>
+        <logback.version>1.5.18</logback.version>
         <commons-io.version>2.17.0</commons-io.version>
 
         <junit5.version>5.7.0</junit5.version>
@@ -420,6 +420,11 @@
                         <groupId>uk.co.rgordon</groupId>
                         <artifactId>oj-doc</artifactId>
                         <version>1.7.0-SNAPSHOT</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                        <version>${logback.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  * @oddjob.example Copy applying a function.
  * {@oddjob.xml.resource dido/operators/transform/DataCopyFunctionExample.xml}
  */
-public class ValueCopyFactory implements Supplier<OpDef> {
+public class ValueCopyFactory implements Supplier<FieldWrite> {
 
     private static final Logger logger = LoggerFactory.getLogger(ValueCopyFactory.class);
 
@@ -79,7 +79,7 @@ public class ValueCopyFactory implements Supplier<OpDef> {
     }
 
     @Override
-    public OpDef get() {
+    public FieldWrite get() {
         return new CopyTransformerFactory(this);
     }
 
@@ -131,7 +131,7 @@ public class ValueCopyFactory implements Supplier<OpDef> {
         this.function = function;
     }
 
-    static class CopyTransformerFactory implements OpDef {
+    static class CopyTransformerFactory implements FieldWrite {
 
         private final String from;
 
@@ -165,23 +165,23 @@ public class ValueCopyFactory implements Supplier<OpDef> {
             FieldView fieldView;
             if (this.type ==null) {
                 if (this.function == null) {
-                    fieldView = copyField(FieldOps.copy())
+                    fieldView = copyField(FieldViews.copy())
                             .view();
                 }
                 else {
-                    fieldView = copyField(FieldOps.map())
+                    fieldView = copyField(FieldViews.map())
                             .func(this.function);
                 }
             }
             else {
                 if (this.function == null) {
-                    fieldView = copyField(FieldOps.copy())
+                    fieldView = copyField(FieldViews.copy())
                             .conversionProvider(conversionProvider)
                             .type(this.type)
                             .view();
                 }
                 else {
-                    fieldView = copyField(FieldOps.map())
+                    fieldView = copyField(FieldViews.map())
                             .type(this.type)
                             .func(this.function);
                 }
@@ -189,14 +189,14 @@ public class ValueCopyFactory implements Supplier<OpDef> {
 
             logger.info("Creating Copy {}", fieldView);
 
-            OpDef opDef = fieldView.asOpDef();
-            return opDef.prepare(fromSchema, schemaSetter);
+            FieldWrite fieldWrite = fieldView.asFieldWrite();
+            return fieldWrite.prepare(fromSchema, schemaSetter);
 
         }
 
-        <O>  O copyField(FieldOps.CopyField<O> copyField) {
+        <O>  O copyField(FieldViews.CopyField<O> copyField) {
 
-            FieldOps.CopyTo<O> copyTo;
+            FieldViews.CopyTo<O> copyTo;
             if (this.from == null) {
                 if (this.index == 0) {
                     throw new IllegalArgumentException("Index or Field Name required.");

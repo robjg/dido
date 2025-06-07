@@ -20,7 +20,7 @@ public class DidoTransformComplexTest {
     /**
      * Demo of a more complicated field definition.
      */
-    static class MarkupOperation implements OpDef {
+    static class MarkupOperation implements FieldWrite {
 
         @Override
         public Prepare prepare(ReadSchema incomingSchema, SchemaSetter schemaSetter) {
@@ -64,13 +64,13 @@ public class DidoTransformComplexTest {
     @Test
     void complicated() {
 
-        DidoTransform didoTransform = OpTransformBuilder.with()
+        DidoTransform didoTransform = WriteTransformBuilder.with()
                 .reIndex(true)
-                .copy(true)
+                .existingFields(true)
                 .dataFactoryProvider(new ArrayDataDataFactoryProvider())
                 .forSchema(schema)
-                .addOp(FieldOps.removeNamed("Qty"))
-                .addOp(new MarkupOperation())
+                .addFieldView(FieldViews.removeNamed("Qty"))
+                .addFieldWrite(new MarkupOperation())
                 .build();
 
         DidoData result = didoTransform.apply(data);

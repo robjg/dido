@@ -31,7 +31,7 @@ class ValueCopyFactoryTest {
         test.setType(Integer.class);
         test.setTo("FooAmount");
 
-        OpDef opDef = test.get();
+        FieldWrite fieldWrite = test.get();
 
         DidoData data = MapData.of("Foo", "423");
 
@@ -39,7 +39,7 @@ class ValueCopyFactoryTest {
         when(schemaSetter.addField(SchemaField.of(0, "FooAmount", Integer.class)))
                 .thenReturn(SchemaField.of(1, "FooAmount", Integer.class));
 
-        OpDef.Prepare prepare = opDef.prepare(ReadSchema.from(data.getSchema()), schemaSetter);
+        FieldWrite.Prepare prepare = fieldWrite.prepare(ReadSchema.from(data.getSchema()), schemaSetter);
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", Integer.class));
 
@@ -64,7 +64,7 @@ class ValueCopyFactoryTest {
         test.setType(int.class);
         test.setTo("FooAmount");
 
-        OpDef opDef = test.get();
+        FieldWrite fieldWrite = test.get();
 
         DidoData data = MapData.of("Foo", "423");
 
@@ -72,7 +72,7 @@ class ValueCopyFactoryTest {
         when(schemaSetter.addField(SchemaField.of(0, "FooAmount", int.class)))
                 .thenReturn(SchemaField.of(1, "FooAmount", int.class));
 
-        OpDef.Prepare prepare = opDef.prepare(ReadSchema.from(data.getSchema()), schemaSetter);
+        FieldWrite.Prepare prepare = fieldWrite.prepare(ReadSchema.from(data.getSchema()), schemaSetter);
 
         verify(schemaSetter).addField(SchemaField.of(0, "FooAmount", int.class));
 

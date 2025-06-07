@@ -2,10 +2,14 @@ package dido.operators.transform;
 
 import dido.data.DidoData;
 import dido.data.FieldGetter;
+import dido.data.ReadSchema;
 import dido.data.SchemaField;
 import dido.data.useful.AbstractFieldGetter;
 import dido.data.util.DataBuilder;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -15,10 +19,11 @@ class FieldViewTest {
     @Test
     void simpleOp() {
 
+        SchemaField schemaField = SchemaField.of(0, "markup", double.class);
+
         FieldView fieldView = (incomingSchema, definition) -> {
 
             FieldGetter incomingGetter = incomingSchema.getFieldGetterNamed("price");
-            SchemaField schemaField = SchemaField.of(0, "markup", double.class);
 
             FieldGetter fieldGetter = new AbstractFieldGetter.ForDouble() {
                 @Override
@@ -34,12 +39,29 @@ class FieldViewTest {
                 .withDouble("price", 50.5)
                 .build();
 
-        DidoTransform transform = OpTransformBuilder.with()
-                .copy(true).forSchema(data.getSchema()).addOp(fieldView.asOpDef()).build();
+        List<SchemaField> schemaFields = new ArrayList<>();
+        List<FieldGetter> fieldGetters = new ArrayList<>();
 
-        DidoData result = transform.apply(data);
+        fieldView.define(ReadSchema.from(data.getSchema()), new FieldView.Definition() {
+            @Override
+            public void addField(SchemaField schemaField, FieldGetter fieldGetter) {
+                schemaFields.add(schemaField);
+                fieldGetters.add(fieldGetter);
+            }
 
-        assertThat(result.getDoubleNamed("markup"), closeTo(60.6, 0.01));
+            @Override
+            public void removeField(SchemaField schemaField) {
+                throw new UnsupportedOperationException();
+            }
+        });
+
+        assertThat(schemaFields, contains(schemaField));
+        assertThat(fieldGetters.size(), is(1));
+
+        FieldGetter fieldGetter = fieldGetters.getFirst();
+
+        double result = fieldGetter.getDouble(data);
+        assertThat(result, closeTo(60.6, 0.01));
     }
 
     @Test
@@ -61,8 +83,8 @@ class FieldViewTest {
                 .withString("colour", "red")
                 .build();
 
-        DidoTransform transform = OpTransformBuilder.with()
-                .copy(true).forSchema(data.getSchema()).addOp(fieldView.asOpDef()).build();
+        DidoTransform transform = WriteTransformBuilder.with()
+                .existingFields(true).forSchema(data.getSchema()).addFieldWrite(fieldView.asFieldWrite()).build();
 
         DidoData result = transform.apply(data);
 

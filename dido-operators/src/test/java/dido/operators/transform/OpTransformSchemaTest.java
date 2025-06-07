@@ -7,24 +7,24 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 /**
- * Tests that {@link OpTransformBuilder} creates the correct schema.
+ * Tests that {@link WriteTransformBuilder} creates the correct schema.
  */
 class OpTransformSchemaTest {
 
     @Test
     void whenNewFieldsTheAdded() {
 
-        OpTransformBuilder transformationBuilder = OpTransformBuilder
+        WriteTransformBuilder transformationBuilder = WriteTransformBuilder
                 .forSchema(ReadSchema.emptySchema());
 
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(0, "One", int.class));
                     return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(0, "Two", long.class));
                     return df -> (d, o) -> {
                     };
@@ -48,18 +48,18 @@ class OpTransformSchemaTest {
     @Test
     void mergeNewFieldsIntoEmptySchema() {
 
-        OpTransformBuilder transformationBuilder = OpTransformBuilder.with()
-                .copy(true)
+        WriteTransformBuilder transformationBuilder = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(ReadSchema.emptySchema());
 
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(0, "One", int.class));
                     return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(0, "Two", long.class));
                     return df -> (d, o) -> {
                     };
@@ -85,12 +85,12 @@ class OpTransformSchemaTest {
                 .addNamedAt(20, "There", int.class)
                 .build();
 
-        OpTransformBuilder transformationBuilder = OpTransformBuilder.with()
-                .copy(true)
+        WriteTransformBuilder transformationBuilder = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(existing);
 
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(0, "Here", String.class));
                     return df -> (d, o) -> {
                     };
@@ -116,12 +116,12 @@ class OpTransformSchemaTest {
                 .addNamedAt(20, "There", int.class)
                 .build();
 
-        OpTransformBuilder transformationBuilder = OpTransformBuilder.with()
-                .copy(true)
+        WriteTransformBuilder transformationBuilder = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(existing);
 
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(10, "Now", String.class));
                     return df -> (d, o) -> {
                     };
@@ -147,12 +147,12 @@ class OpTransformSchemaTest {
                 .addNamedAt(20, "There", int.class)
                 .build();
 
-        OpTransformBuilder transformationBuilder = OpTransformBuilder.with()
-                .copy(true)
+        WriteTransformBuilder transformationBuilder = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(existing);
 
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(20, "Here", String.class));
                     return df -> (d, o) -> {
                     };
@@ -176,19 +176,19 @@ class OpTransformSchemaTest {
                 .addNamedAt(10, "Here", int.class)
                 .build();
 
-        OpTransformBuilder transformationBuilder = OpTransformBuilder.with()
+        WriteTransformBuilder transformationBuilder = WriteTransformBuilder.with()
                 .reIndex(true)
-                .copy(true)
+                .existingFields(true)
                 .forSchema(existing);
 
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(0, "One", int.class));
                     return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(0, "Two", long.class));
                     return df -> (d, o) -> {
                     };
@@ -216,24 +216,24 @@ class OpTransformSchemaTest {
                 .addNamedAt(30, "Three", double.class)
                 .build();
 
-        OpTransformBuilder transformationBuilder = OpTransformBuilder.with()
-                .copy(true)
+        WriteTransformBuilder transformationBuilder = WriteTransformBuilder.with()
+                .existingFields(true)
                 .forSchema(existing);
 
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(30, "One", Integer.class));
                     return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(20, "Two", Long.class));
                     return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(10, "Three", Double.class));
                     return df -> (d, o) -> {
                     };
@@ -262,25 +262,25 @@ class OpTransformSchemaTest {
                 .addNamedAt(30, "Three", double.class)
                 .build();
 
-        OpTransformBuilder transformationBuilder = OpTransformBuilder.with()
+        WriteTransformBuilder transformationBuilder = WriteTransformBuilder.with()
                 .reIndex(true)
-                .copy(true)
+                .existingFields(true)
                 .forSchema(existing);
 
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(30, "One", Integer.class));
                     return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(20, "Two", Long.class));
                     return df -> (d, o) -> {
                     };
                 });
         transformationBuilder
-                .addOp((s, sf) -> {
+                .addFieldWrite((s, sf) -> {
                     sf.addField(SchemaField.of(10, "Three", Double.class));
                     return df -> (d, o) -> {
                     };

@@ -13,10 +13,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
 
 /**
- * Operations on a single filed that can be used in an {@link OpTransformBuilder} to create an
- * {@link DidoTransform}.
+ * Views on a single field that can be used in an {@link WriteTransformBuilder} or
+ * {@link WriteTransformBuilder} to create an {@link DidoTransform}.
  */
-public class FieldOps {
+public class FieldViews {
 
     /**
      * Provide fluent copy builders with the same structure. An {@link CopyField}
@@ -644,7 +644,7 @@ public class FieldOps {
                 }
 
                 @Override
-                public OpDef asOpDef() {
+                public FieldWrite asFieldWrite() {
                     return (incomingSchema, schemaSetter) -> {
 
                         SchemaField finalField = finalField(incomingSchema);
@@ -1094,7 +1094,7 @@ public class FieldOps {
     static abstract class MapFieldView implements FieldView {
 
         @Override
-        public OpDef asOpDef() {
+        public FieldWrite asFieldWrite() {
 
             AtomicReference<SchemaField> schemaFieldRef = new AtomicReference<>();
             AtomicReference<FieldGetter> fieldGetterRef = new AtomicReference<>();
