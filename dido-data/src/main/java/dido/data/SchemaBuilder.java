@@ -21,6 +21,10 @@ public class SchemaBuilder {
         return new SchemaBuilder(DataSchemaFactory.newInstance());
     }
 
+    public static SchemaBuilder builderFrom(DataSchema schema) {
+        return builderFor(SchemaFactory.newInstanceFrom(schema));
+    }
+
     // Add Simple Fields
 
     public SchemaBuilder add(Type fieldType) {
