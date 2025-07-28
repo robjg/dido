@@ -3,7 +3,6 @@ package dido.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dido.data.*;
-import dido.data.util.FieldValuesIn;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -25,7 +24,7 @@ class DidoJsonWritersTest {
                 .addNamed("price", double.class)
                 .build();
 
-        DidoData data = ArrayData.valuesWithSchema(schema)
+        DidoData data = ArrayData.withSchema(schema)
                 .of("Apple", null, 15, 26.5);
 
         Gson gson = new Gson();
@@ -63,10 +62,10 @@ class DidoJsonWritersTest {
                 .addNestedNamed("pos", posSchema)
                 .build();
 
-        DidoData data = MapData.valuesWithSchema(schema)
-                .of(MapData.valuesWithSchema(fooSchema)
+        DidoData data = MapData.withSchema(schema)
+                .of(MapData.withSchema(fooSchema)
                                 .of("Stuff", 15),
-                        MapData.valuesWithSchema(posSchema)
+                        MapData.withSchema(posSchema)
                                 .of(1.2, 3.4));
 
         Gson gson = new Gson();
@@ -98,12 +97,12 @@ class DidoJsonWritersTest {
                 .build();
 
         RepeatingData positions = RepeatingData.of(
-                MapData.valuesWithSchema(posSchema).of(1.2, 3.4),
-                MapData.valuesWithSchema(posSchema).of(2.0, 3.0),
-                MapData.valuesWithSchema(posSchema).of(-7.7, -8.8));
+                MapData.withSchema(posSchema).of(1.2, 3.4),
+                MapData.withSchema(posSchema).of(2.0, 3.0),
+                MapData.withSchema(posSchema).of(-7.7, -8.8));
 
 
-        DidoData data = MapData.valuesWithSchema(schema)
+        DidoData data = MapData.withSchema(schema)
                 .of("Foo", positions);
 
         Gson gson = new Gson();
@@ -137,8 +136,8 @@ class DidoJsonWritersTest {
 
         schemaReference.set(personSchema);
 
-        FieldValuesIn personValue = MapData.valuesWithSchema(personSchema);
-        FieldValuesIn childrenValue = MapData.valuesWithSchema(childrenSchema);
+        FromValues personValue = MapData.withSchema(personSchema);
+        FromValues childrenValue = MapData.withSchema(childrenSchema);
 
         DidoData data = personValue.of("Alice", childrenValue.of(RepeatingData.of(
                 personValue.of("Bob", childrenValue.of(

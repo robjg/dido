@@ -235,10 +235,8 @@ public abstract class SingleData extends AbstractData implements DidoData {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof SingleData) {
-            SingleData other = (SingleData) obj;
-            return other.schema.schemaField.equals(this.schema.schemaField)
-                && Objects.equals(other.schema.getter.get(other),
+        if (obj instanceof SingleData other) {
+            return Objects.equals(other.schema.getter.get(other),
                     this.schema.getter.get(this));
         }
         else {

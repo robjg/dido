@@ -81,7 +81,7 @@ class DataInPoiTest {
                 .addNamed("SellBy", LocalDateTime.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+        List<DidoData> expected = ArrayData.withSchema(schema)
                 .many()
                 .of("Apple", 5, 23.5, date("2024-11-19"))
                 .of("Orange", 3, 47.2, date("2024-12-05"))
@@ -110,7 +110,7 @@ class DataInPoiTest {
                 .addNamedAt(4, "SellBy", LocalDateTime.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+        List<DidoData> expected = ArrayData.withSchema(schema)
                 .many()
                 .of("Apple", 5, date("2024-11-19"))
                 .of("Orange", 3, date("2024-12-05"))
@@ -140,7 +140,7 @@ class DataInPoiTest {
                 .addNamed("SellBy", LocalDateTime.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+        List<DidoData> expected = ArrayData.withSchema(schema)
                 .many()
                 .of("Apple", 5, 23.5, date("2024-11-19"))
                 .of("Orange", 3, 47.2, date("2024-12-05"))
@@ -170,7 +170,7 @@ class DataInPoiTest {
                 .addNamedAt(4, "SellBy", LocalDateTime.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+        List<DidoData> expected = ArrayData.withSchema(schema)
                 .many()
                 .of("Apple", 5, date("2024-11-19"))
                 .of("Orange", 3, date("2024-12-05"))
@@ -205,7 +205,7 @@ class DataInPoiTest {
                 .addNamed("f_4", LocalDateTime.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(expectedSchema)
+        List<DidoData> expected = ArrayData.withSchema(expectedSchema)
                 .many()
                 .of("Apple", 5, 23.5, date("2024-11-19"))
                 .of("Orange", 3, 47.2, date("2024-12-05"))
@@ -239,7 +239,7 @@ class DataInPoiTest {
                 .addNamed("BestBefore", LocalDateTime.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(expectedSchema)
+        List<DidoData> expected = ArrayData.withSchema(expectedSchema)
                 .many()
                 .of("Apple", 5, 23.5, date("2024-11-19"))
                 .of("Orange", 3, 47.2, date("2024-12-05"))

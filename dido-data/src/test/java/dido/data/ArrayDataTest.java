@@ -108,7 +108,7 @@ class ArrayDataTest {
         assertThat(data1, not(is(data3)));
         assertThat(data3, not(is(data1)));
 
-        DidoData data4 = ArrayData.valuesWithSchema(
+        DidoData data4 = ArrayData.withSchema(
                         DataSchema.builder()
                                 .addAt(3, String.class)
                                 .addAt(8, Void.class)
@@ -126,7 +126,7 @@ class ArrayDataTest {
 
         DidoData data1 = ArrayData.of("Apple", null, 15, 26.5);
 
-        DidoData data2 = ArrayData.valuesWithSchema(data1.getSchema())
+        DidoData data2 = ArrayData.withSchema(data1.getSchema())
                 .of("Apple", null, 15, 26.5);
 
         assertThat(data1, is(data2));

@@ -12,7 +12,7 @@ Here's an example of writing. Given this schema and data:
                 .addNamed("Price", double.class)
                 .build();
 
-        List<DidoData> didoData = DidoData.valuesWithSchema(schema)
+        List<DidoData> didoData = DidoData.withSchema(schema)
                 .many()
                 .of("Apple", 5, 19.50)
                 .of("Orange", 2, 35.24)

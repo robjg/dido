@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 /**
  * A fluent way of creating {@link DidoData} from field values for a known schema.
  */
-public class FieldValuesIn {
+public class FieldValuesIn implements FromValues {
 
     private final DataFactory dataFactory;
 
@@ -38,10 +38,12 @@ public class FieldValuesIn {
         return new FieldValuesIn(dataFactory);
     }
 
+    @Override
     public DataSchema getSchema() {
         return dataFactory.getSchema();
     }
 
+    @Override
     public DidoData of(Object... values) {
         WritableData writableData = dataFactory.getWritableData();
         for (int i = 0; i < values.length; ++i) {
@@ -53,6 +55,7 @@ public class FieldValuesIn {
         return dataFactory.toData();
     }
 
+    @Override
     public DidoData ofCollection(Collection<?> values) {
         WritableData writableData = dataFactory.getWritableData();
         int i = 0;
@@ -67,6 +70,7 @@ public class FieldValuesIn {
         return dataFactory.toData();
     }
 
+    @Override
     public DidoData ofMap(Map<String, ?> map) {
         WritableData writableData = dataFactory.getWritableData();
         for (SchemaField schemaField : getSchema().getSchemaFields()) {
@@ -81,8 +85,14 @@ public class FieldValuesIn {
         return dataFactory.toData();
     }
 
+    @Override
     public DidoData copy(DidoData from) {
         return ofCollection(FieldValuesOut.collectionOf(from));
+    }
+
+    @Override
+    public DataBuilder asBuilder() {
+        return DataBuilder.forFactory(dataFactory);
     }
 
     /**
@@ -90,6 +100,7 @@ public class FieldValuesIn {
      *
      * @return A collector.
      */
+    @Override
     public Collector<Object, WritableData, DidoData> toCollector() {
         return new Collector<>() {
             int i = 1;
@@ -123,23 +134,27 @@ public class FieldValuesIn {
         };
     }
 
-    public Many many() {
+    @Override
+    public FromValues.Many many() {
         return new Many();
     }
 
-    public class Many {
+    class Many implements FromValues.Many {
 
         private final Stream.Builder<DidoData> stream = Stream.builder();
 
-        public Many of(Object... values) {
+        @Override
+        public FromValues.Many of(Object... values) {
             stream.accept(FieldValuesIn.this.of(values));
             return this;
         }
 
+        @Override
         public Stream<DidoData> toStream() {
             return stream.build();
         }
 
+        @Override
         public List<DidoData> toList() {
 
             return toStream().collect(Collectors.toList());

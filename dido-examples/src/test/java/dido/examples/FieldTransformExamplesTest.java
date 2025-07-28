@@ -26,7 +26,7 @@ class FieldTransformExamplesTest {
             .addNamed("Price", double.class)
             .build();
 
-    List<DidoData> didoData = DidoData.valuesWithSchema(fromSchema)
+    List<DidoData> didoData = DidoData.withSchema(fromSchema)
             .many()
             .of("Apple", 5, 19.50)
             .of("Orange", 2, 35.24)

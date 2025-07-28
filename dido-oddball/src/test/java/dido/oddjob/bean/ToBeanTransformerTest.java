@@ -53,11 +53,11 @@ class ToBeanTransformerTest {
                     .addRepeatingNamed("orderLines", nestedSchema)
                     .build();
 
-            DidoData data = ArrayData.valuesWithSchema(schema)
+            DidoData data = ArrayData.withSchema(schema)
                     .of("A123",
-                            RepeatingData.of(ArrayData.valuesWithSchema(nestedSchema)
+                            RepeatingData.of(ArrayData.withSchema(nestedSchema)
                                             .of("Apple", 5),
-                                    ArrayData.valuesWithSchema(nestedSchema)
+                                    ArrayData.withSchema(nestedSchema)
                                             .of("Pear", 4)));
 
             return List.of(data);

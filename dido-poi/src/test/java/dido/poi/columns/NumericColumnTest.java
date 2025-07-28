@@ -94,7 +94,7 @@ class NumericColumnTest {
     @Test
     void writeAllTypes() {
 
-        List<DidoData> data = DidoData.valuesWithSchema(schema)
+        List<DidoData> data = DidoData.withSchema(schema)
                 .many()
                 .of((byte) 42, (short) 42, 42, 42L, 42.0F, 42.0)
                 .of((byte) 42, (short) 42, 42, 42L, 42.24F, 42.24)
@@ -127,7 +127,7 @@ class NumericColumnTest {
 
         // Then
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+        List<DidoData> expected = ArrayData.withSchema(schema)
                 .many()
                 .of((byte) 42, (short) 42, 42, 42L, 42.0f, 42.0)
                 .of((byte) 42, (short) 42, 42, 42L, 42.24f, 42.24)

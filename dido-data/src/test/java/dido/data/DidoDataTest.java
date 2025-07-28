@@ -31,8 +31,8 @@ class DidoDataTest {
                 .addNamedAt(7, "Name", String.class)
                 .build();
 
-        DidoData data1 = DidoData.valuesWithSchema(schema1).of(42);
-        DidoData data2 = DidoData.valuesWithSchema(schema2).of(42);
+        DidoData data1 = DidoData.withSchema(schema1).of(42);
+        DidoData data2 = DidoData.withSchema(schema2).of(42);
 
         MatcherAssert.assertThat(DidoData.equals(data1, data2), is(true));
         MatcherAssert.assertThat(data1.hashCode(), is(data2.hashCode()));

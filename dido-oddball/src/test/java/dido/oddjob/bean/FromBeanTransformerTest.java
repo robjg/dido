@@ -41,11 +41,11 @@ class FromBeanTransformerTest {
                 .addRepeatingNamed("orderLines", nestedSchema)
                 .build();
 
-        IndexedData expectedData = ArrayData.valuesWithSchema(schema)
+        IndexedData expectedData = ArrayData.withSchema(schema)
                 .of("A123",
-                        RepeatingData.of(ArrayData.valuesWithSchema(nestedSchema)
+                        RepeatingData.of(ArrayData.withSchema(nestedSchema)
                                         .of("Apple", 5),
-                                ArrayData.valuesWithSchema(nestedSchema)
+                                ArrayData.withSchema(nestedSchema)
                                         .of("Pear", 4)));
 
         assertThat(results.get(0), is(expectedData));

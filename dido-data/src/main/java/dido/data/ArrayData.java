@@ -68,7 +68,7 @@ public final class ArrayData extends AbstractData implements DidoData {
         return new ArrayDataFactory(asArrayDataSchema(schema));
     }
 
-    public static FieldValuesIn valuesWithSchema(DataSchema schema) {
+    public static FromValues withSchema(DataSchema schema) {
 
         return FieldValuesIn.withDataFactory(factoryForSchema(schema));
     }
@@ -79,7 +79,7 @@ public final class ArrayData extends AbstractData implements DidoData {
             return (ArrayData) from;
         }
         else {
-            return (ArrayData) valuesWithSchema(from.getSchema()).copy(from);
+            return (ArrayData) withSchema(from.getSchema()).copy(from);
         }
     }
 

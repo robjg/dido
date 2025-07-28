@@ -107,7 +107,7 @@ public class JsonExamplesTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        final List<DidoData> data = DidoData.valuesWithSchema(schema)
+        final List<DidoData> data = DidoData.withSchema(schema)
                 .many()
                 .of("Apple", Double.POSITIVE_INFINITY)
                 .of(null, 31.6)

@@ -2,7 +2,6 @@ package dido.examples;
 
 import dido.data.*;
 import dido.data.util.DataBuilder;
-import dido.data.util.FieldValuesIn;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -44,8 +43,8 @@ public class EnsureStandardDataApiTest {
                                 .getReturnType()),
                 is(true));
 
-        assertThat(FieldValuesIn.class.isAssignableFrom(
-                        dataClass.getMethod("valuesWithSchema", DataSchema.class)
+        assertThat(FromValues.class.isAssignableFrom(
+                        dataClass.getMethod("withSchema", DataSchema.class)
                                 .getReturnType()),
                 is(true));
 

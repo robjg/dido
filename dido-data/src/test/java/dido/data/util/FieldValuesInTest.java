@@ -1,9 +1,6 @@
 package dido.data.util;
 
-import dido.data.ArrayData;
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -19,14 +16,14 @@ class FieldValuesInTest {
     @Test
     void values() {
 
-        FieldValuesIn mapValues = MapData.valuesWithSchema(
+        FromValues mapValues = MapData.withSchema(
                 MapData.schemaBuilder()
                         .addNamed("Fruit", String.class)
                         .addNamed("Qty", int.class)
                         .addNamed("Price", double.class)
                         .build());
 
-        FieldValuesIn arrayValues = ArrayData.valuesWithSchema(
+        FromValues arrayValues = ArrayData.withSchema(
                 MapData.schemaBuilder()
                         .addNamed("Fruit", String.class)
                         .addNamed("Qty", int.class)
@@ -46,14 +43,14 @@ class FieldValuesInTest {
     @Test
     void valuesDisparateIndexes() {
 
-        FieldValuesIn mapValues = MapData.valuesWithSchema(
+        FromValues mapValues = MapData.withSchema(
                 MapData.schemaBuilder()
                         .addNamedAt(3, "Fruit", String.class)
                         .addNamedAt(7, "Qty", int.class)
                         .addNamedAt(10, "Price", double.class)
                         .build());
 
-        FieldValuesIn arrayValues = ArrayData.valuesWithSchema(
+        FromValues arrayValues = ArrayData.withSchema(
                 MapData.schemaBuilder()
                         .addNamedAt(4, "Fruit", String.class)
                         .addNamedAt(8, "Qty", int.class)
@@ -74,7 +71,7 @@ class FieldValuesInTest {
     @Test
     void copy() {
 
-        FieldValuesIn arrayValues = ArrayData.valuesWithSchema(
+        FromValues arrayValues = ArrayData.withSchema(
                 MapData.schemaBuilder()
                         .addNamed("Fruit", String.class)
                         .addNamed("Qty", int.class)
@@ -90,7 +87,7 @@ class FieldValuesInTest {
     @Test
     void collectionWithNulls() {
 
-        FieldValuesIn arrayValues = ArrayData.valuesWithSchema(
+        FromValues arrayValues = ArrayData.withSchema(
                 MapData.schemaBuilder()
                         .addNamed("Fruit", String.class)
                         .addNamed("Colour", String.class)
@@ -122,7 +119,7 @@ class FieldValuesInTest {
                 "Price", 23.4,
                 "Farmer", "Jones");
 
-        DidoData data = DidoData.valuesWithSchema(schema)
+        DidoData data = DidoData.withSchema(schema)
                 .ofMap(map);
 
         assertThat(data, is(DidoData.of("Apple", 5, 23.4, null)));

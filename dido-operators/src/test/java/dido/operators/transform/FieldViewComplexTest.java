@@ -19,7 +19,7 @@ class FieldViewComplexTest {
             .addNamed("Price", double.class)
             .build();
 
-    DidoData data = ArrayData.valuesWithSchema(schema)
+    DidoData data = ArrayData.withSchema(schema)
             .of("Apple", 10, 23.5);
 
     /**

@@ -121,7 +121,7 @@ public class ObjectExamplesTest {
                 .addNamed("price", double.class)
                 .build();
 
-        List<DidoData> didoData = DidoData.valuesWithSchema(schema)
+        List<DidoData> didoData = DidoData.withSchema(schema)
                 .many()
                 .of("Apple", 5, 19.5)
                 .of("Orange", 10, 31.6)

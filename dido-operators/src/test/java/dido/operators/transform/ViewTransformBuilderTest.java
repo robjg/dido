@@ -20,7 +20,7 @@ class ViewTransformBuilderTest {
             .addNamed("Price", double.class)
             .build();
 
-    DidoData data = ArrayData.valuesWithSchema(schema)
+    DidoData data = ArrayData.withSchema(schema)
             .of("Apple", 10, 23.5);
 
     @Test
@@ -42,7 +42,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(10, 23.5);
 
         assertThat(result, is(expectedData));
@@ -67,7 +67,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(10, 23.5);
 
         assertThat(result, is(expectedData));
@@ -92,7 +92,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(23.5, 10);
 
         assertThat(result, is(expectedData));
@@ -117,7 +117,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Apple", 23.5);
 
         assertThat(result, is(expectedData));
@@ -141,7 +141,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Apple", 23.5);
 
         assertThat(result, is(expectedData));
@@ -184,7 +184,7 @@ class ViewTransformBuilderTest {
 
         DidoData result = transformation.apply(data);
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(10, 23.5, "Apple");
 
         assertThat(result, is(expectedData));
@@ -210,7 +210,7 @@ class ViewTransformBuilderTest {
 
         DidoData result = transformation.apply(data);
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Apple", 23.5, 10);
 
         assertThat(result, is(expectedData));
@@ -238,7 +238,7 @@ class ViewTransformBuilderTest {
 
         DidoData result = transformation.apply(data);
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Apple", 23.5, 10);
 
         assertThat(result, is(expectedData));
@@ -266,7 +266,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Orange", 1234L, 23.5, true);
 
         assertThat(result, is(expectedData));
@@ -294,7 +294,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Orange", 1234L, 23.5, true);
 
         assertThat(result, is(expectedData));
@@ -319,7 +319,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(10);
 
         assertThat(result, is(expectedData));
@@ -343,7 +343,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(10);
 
         assertThat(result, is(expectedData));
@@ -384,7 +384,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+        DidoData expectedData = ArrayData.withSchema(schema)
                 .of("APPLE", 25.0, "£23.5");
 
         assertThat(result, is(expectedData));
@@ -405,7 +405,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(schema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+        DidoData expectedData = ArrayData.withSchema(schema)
                 .of("Apple", 20, 23.5);
 
         assertThat(result, is(expectedData));
@@ -433,7 +433,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Apple", 10, 23.5, 20);
 
         assertThat(result, is(expectedData));
@@ -463,7 +463,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Apple", 20, 23.5);
 
         assertThat(result, is(expectedData));
@@ -484,7 +484,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(schema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+        DidoData expectedData = ArrayData.withSchema(schema)
                 .of("Apple", 20, 23.5);
 
         assertThat(result, is(expectedData));
@@ -505,7 +505,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(schema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+        DidoData expectedData = ArrayData.withSchema(schema)
                 .of("Apple", 20, 23.5);
 
         assertThat(result, is(expectedData));
@@ -518,7 +518,7 @@ class ViewTransformBuilderTest {
                 .addNamed("BigNumber", long.class)
                 .build();
 
-        DidoData data = DidoData.valuesWithSchema(schema)
+        DidoData data = DidoData.withSchema(schema)
                 .of(1000L);
 
         DidoTransform transformation = ViewTransformBuilder.with()
@@ -543,7 +543,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(2000L, 2000L);
 
         assertThat(result, is(expectedData));
@@ -564,7 +564,7 @@ class ViewTransformBuilderTest {
 
         assertThat(transformation.getResultantSchema(), is(schema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(schema)
+        DidoData expectedData = ArrayData.withSchema(schema)
                 .of("Apple", 10, 47.0);
 
         assertThat(result, is(expectedData));

@@ -2,8 +2,8 @@ package dido.operators.join;
 
 import dido.data.ArrayData;
 import dido.data.DidoData;
+import dido.data.FromValues;
 import dido.data.SchemaBuilder;
-import dido.data.util.FieldValuesIn;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ class LeftStreamJoinTest {
     @Test
     void testSimpleExample() {
 
-        FieldValuesIn farmBuilder = ArrayData.valuesWithSchema(
+        FromValues farmBuilder = ArrayData.withSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Id", int.class)
                         .addNamed("Farmer", String.class)
@@ -29,7 +29,7 @@ class LeftStreamJoinTest {
         DidoData farm1 = farmBuilder.of(1, "Brown");
         DidoData farm2 = farmBuilder.of(2, "Giles");
 
-        FieldValuesIn produceBuilder = ArrayData.valuesWithSchema(
+        FromValues produceBuilder = ArrayData.withSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)
@@ -40,7 +40,7 @@ class LeftStreamJoinTest {
         DidoData produce2 = produceBuilder.of("Pears", 7, 1);
         DidoData produce3 = produceBuilder.of("Carrots", 15, 2);
 
-        FieldValuesIn expectedBuilder = ArrayData.valuesWithSchema(
+        FromValues expectedBuilder = ArrayData.withSchema(
                 SchemaBuilder.newInstance()
                         .addNamed("Type", String.class)
                         .addNamed("Quantity", int.class)

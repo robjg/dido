@@ -35,7 +35,7 @@ class DidoTransformFactoryTest {
 
         assertThat(result.getSchema(), is(expectedSchema));
 
-        DidoData expectedData = ArrayData.valuesWithSchema(expectedSchema).of("apple", 12, "apple");
+        DidoData expectedData = ArrayData.withSchema(expectedSchema).of("apple", 12, "apple");
 
         assertThat(result, is(expectedData));
     }

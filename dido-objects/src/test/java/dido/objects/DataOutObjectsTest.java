@@ -19,7 +19,7 @@ class DataOutObjectsTest {
                 .addNamed("price", double.class)
                 .build();
 
-        DidoData data = DidoData.valuesWithSchema(schema).of("Apple", 5, 22.4);
+        DidoData data = DidoData.withSchema(schema).of("Apple", 5, 22.4);
 
         Fruit fruit = DataOutObjects.beanOf(Fruit.class)
                 .fromDidoData(data);
@@ -43,9 +43,9 @@ class DataOutObjectsTest {
                 .addRepeatingNamed("fruits", fruitSchema)
                 .build();
 
-        DidoData data = DidoData.valuesWithSchema(basketSchema)
+        DidoData data = DidoData.withSchema(basketSchema)
                 .of("X", RepeatingData.of(
-                        DidoData.valuesWithSchema(fruitSchema)
+                        DidoData.withSchema(fruitSchema)
                                 .many()
                                 .of("Apple", 5, 22.4)
                                 .of("Orange", 3, 37.4)

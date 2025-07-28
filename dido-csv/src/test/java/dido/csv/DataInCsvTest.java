@@ -28,7 +28,7 @@ class DataInCsvTest {
                 .add(String.class)
                 .build();
 
-        List<DidoData> expected = DidoData.valuesWithSchema(expectedSchema)
+        List<DidoData> expected = DidoData.withSchema(expectedSchema)
                 .many()
                 .of("Apple", "5", "19.50")
                 .of("Orange", "2", "35.24")
@@ -56,7 +56,7 @@ class DataInCsvTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+        List<DidoData> expected = ArrayData.withSchema(schema)
                 .many()
                 .of("Apple", 5, 19.5)
                 .of("Orange", 2, 35.24)
@@ -91,7 +91,7 @@ class DataInCsvTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+        List<DidoData> expected = ArrayData.withSchema(schema)
                 .many()
                 .of("Apple", 5, 19.5)
                 .of("Orange", 2, 35.24)
@@ -117,7 +117,7 @@ class DataInCsvTest {
                 .addNamed("Fruit", String.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+        List<DidoData> expected = ArrayData.withSchema(schema)
                 .many()
                 .of(5, 19.5, "Apple")
                 .of(2, 35.24, "Orange")
@@ -145,7 +145,7 @@ class DataInCsvTest {
                 .addNamed("Fruit", String.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+        List<DidoData> expected = ArrayData.withSchema(schema)
                 .many()
                 .of(5, "Apple")
                 .of(2, "Orange")
@@ -175,7 +175,7 @@ class DataInCsvTest {
                 .addNamed("Fruit", String.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(schema)
+        List<DidoData> expected = ArrayData.withSchema(schema)
                 .many()
                 .of(5, null, 19.5, "Apple")
                 .of(2, null, 35.24, "Orange")

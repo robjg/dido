@@ -3,7 +3,6 @@ package dido.json;
 import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
 import dido.data.*;
-import dido.data.util.FieldValuesIn;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import org.junit.jupiter.api.Test;
@@ -23,11 +22,13 @@ class DataInJsonReaderTest {
     @Test
     void readsArrayOk() {
 
-        String json = "[\n" +
-                "    { \"Fruit\"=\"Apple\", \"Qty\"=5, \"Price\"=27.2 },\n" +
-                "    { \"Fruit\"=\"Orange\", \"Qty\"=10, \"Price\"=31.6 },\n" +
-                "    { \"Fruit\"=\"Pear\", \"Qty\"=7, \"Price\"=22.1 }\n" +
-                "]\n";
+        String json = """
+                [
+                    { "Fruit"="Apple", "Qty"=5, "Price"=27.2 },
+                    { "Fruit"="Orange", "Qty"=10, "Price"=31.6 },
+                    { "Fruit"="Pear", "Qty"=7, "Price"=22.1 }
+                ]
+                """;
 
         DataSchema expectedSchema = SchemaBuilder.newInstance()
                 .addNamed("Fruit", String.class)
@@ -35,7 +36,7 @@ class DataInJsonReaderTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        FieldValuesIn values = ArrayData.valuesWithSchema(expectedSchema);
+        FromValues values = ArrayData.withSchema(expectedSchema);
 
         DataInHow<Reader> test = DataInJsonReader.asCopy()
                 .setIsArray(true)
@@ -69,14 +70,15 @@ class DataInJsonReaderTest {
     @Test
     void readsNestedArray() {
 
-        String json = "[\n" +
-                "  { \"OrderId\": \"A123\", \n" +
-                "    \"OrderLines\": [ \n" +
-                "      {\"Fruit\": \"Apple\", \"Qty\": 4}, \n" +
-                "      {\"Fruit\": \"Pear\", \"Qty\": 5}\n" +
-                "    ]\n" +
-                "  }\n" +
-                "]";
+        String json = """
+                [
+                  { "OrderId": "A123",\s
+                    "OrderLines": [\s
+                      {"Fruit": "Apple", "Qty": 4},\s
+                      {"Fruit": "Pear", "Qty": 5}
+                    ]
+                  }
+                ]""";
 
         DataSchema schema = SchemaBuilder.newInstance()
                 .addRepeatingNamed("OrderLines", DataSchema.emptySchema())
@@ -133,7 +135,7 @@ class DataInJsonReaderTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        FieldValuesIn values = ArrayData.valuesWithSchema(expectedSchema);
+        FromValues values = ArrayData.withSchema(expectedSchema);
 
         DataInHow<Reader> test = DataInJsonReader.asCopy()
                 .make(new GsonBuilder().setStrictness(Strictness.LENIENT));

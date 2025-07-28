@@ -66,7 +66,7 @@ class NonBoxedDataTest {
 
         assertThat(data.getSchema(), is(schema));
 
-        assertThat(data, is(ArrayData.valuesWithSchema(schema)
+        assertThat(data, is(ArrayData.withSchema(schema)
                 .of("Apple", 2, 26.3, date)));
     }
 
@@ -103,7 +103,7 @@ class NonBoxedDataTest {
 
         assertThat(data.getSchema(), is(schema));
 
-        assertThat(data, is(ArrayData.valuesWithSchema(schema)
+        assertThat(data, is(ArrayData.withSchema(schema)
                 .of("Apple", true, (byte) 128, 'A', (short) 4, 42, 84L, 4.2F, 8.4, date)));
     }
 

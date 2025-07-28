@@ -1,10 +1,6 @@
 package dido.csv;
 
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.MapData;
-import dido.data.SchemaBuilder;
-import dido.data.util.FieldValuesIn;
+import dido.data.*;
 import dido.how.DataOut;
 import org.apache.commons.csv.CSVFormat;
 import org.junit.jupiter.api.Test;
@@ -63,7 +59,7 @@ class DataOutCsvTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        FieldValuesIn values = MapData.valuesWithSchema(schema);
+        FromValues values = MapData.withSchema(schema);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 

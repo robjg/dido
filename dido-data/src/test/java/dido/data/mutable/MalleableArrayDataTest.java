@@ -103,7 +103,7 @@ class MalleableArrayDataTest {
     @Test
     void changeFields() {
 
-        DidoData data = DidoData.valuesWithSchema(DataSchema.builder()
+        DidoData data = DidoData.withSchema(DataSchema.builder()
                         .addNamed("Boolean", boolean.class)
                         .addNamed("Byte", byte.class) // 2
                         .addNamed("Char", char.class)

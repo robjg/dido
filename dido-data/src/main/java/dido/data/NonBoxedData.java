@@ -38,7 +38,7 @@ public class NonBoxedData extends AbstractData {
                     datum == null ? void.class : datum.getClass()));
         }
 
-        return (NonBoxedData) valuesWithSchema(schemaFactory.toSchema()).of(data);
+        return (NonBoxedData) withSchema(schemaFactory.toSchema()).of(data);
     }
 
     public static SchemaFactory schemaFactory() {
@@ -72,14 +72,14 @@ public class NonBoxedData extends AbstractData {
         return DataBuilder.forProvider(new NonBoxedDataFactoryProvider());
     }
 
-    public static FieldValuesIn valuesWithSchema(DataSchema schema) {
+    public static FromValues withSchema(DataSchema schema) {
 
         return FieldValuesIn.withDataFactory(factoryForSchema(schema));
     }
 
     public static NonBoxedData copy(DidoData from) {
 
-        return (NonBoxedData) valuesWithSchema(from.getSchema()).copy(from);
+        return (NonBoxedData) withSchema(from.getSchema()).copy(from);
     }
 
     @Override

@@ -88,8 +88,8 @@ class CompactDatasTest {
                 .addNamed("Id", int.class)
                 .build();
 
-        DidoData data1 = ArrayData.valuesWithSchema(schema).of(42);
-        DidoData data2 = ArrayData.valuesWithSchema(schema).of(42);
+        DidoData data1 = ArrayData.withSchema(schema).of(42);
+        DidoData data2 = ArrayData.withSchema(schema).of(42);
 
         CompactData.Extractor extractor1 = CompactDatas.extractorForIndices(
                 data1.getSchema(), 1);
@@ -131,18 +131,18 @@ class CompactDatasTest {
                 .addRepeatingNamed("OrderLines", nestedSchema)
                 .build();
 
-        DidoData data1 = ArrayData.valuesWithSchema(schema)
+        DidoData data1 = ArrayData.withSchema(schema)
                 .of("A123",
-                        List.of(ArrayData.valuesWithSchema(nestedSchema)
+                        List.of(ArrayData.withSchema(nestedSchema)
                                         .of("Apple", 4),
-                                ArrayData.valuesWithSchema(nestedSchema)
+                                ArrayData.withSchema(nestedSchema)
                                         .of("Pear", 5)));
 
-        DidoData data2 = ArrayData.valuesWithSchema(schema)
+        DidoData data2 = ArrayData.withSchema(schema)
                 .of("A123",
-                        List.of(ArrayData.valuesWithSchema(nestedSchema)
+                        List.of(ArrayData.withSchema(nestedSchema)
                                         .of("Apple", 4),
-                                ArrayData.valuesWithSchema(nestedSchema)
+                                ArrayData.withSchema(nestedSchema)
                                         .of("Pear", 5)));
 
         CompactData copy1 = CompactDatas.extractorForIndices(

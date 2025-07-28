@@ -216,11 +216,11 @@ class JsonDataWrapperTest {
 
         DidoData result = gson.fromJson(json, DidoData.class);
 
-        IndexedData expectedData = ArrayData.valuesWithSchema(schema)
+        IndexedData expectedData = ArrayData.withSchema(schema)
                 .of("A123",
-                        RepeatingData.of(ArrayData.valuesWithSchema(nestedSchema)
+                        RepeatingData.of(ArrayData.withSchema(nestedSchema)
                                         .of("Apple", 4),
-                                ArrayData.valuesWithSchema(nestedSchema)
+                                ArrayData.withSchema(nestedSchema)
                                         .of("Pear", 5)));
 
         assertThat(result, is(expectedData));

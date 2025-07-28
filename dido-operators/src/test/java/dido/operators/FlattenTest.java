@@ -1,7 +1,6 @@
 package dido.operators;
 
 import dido.data.*;
-import dido.data.util.FieldValuesIn;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -25,11 +24,11 @@ class FlattenTest {
                 .addRepeatingNamed("OrderLines", nestedSchema)
                 .build();
 
-        DidoData data = ArrayData.valuesWithSchema(schema)
+        DidoData data = ArrayData.withSchema(schema)
                 .of("A123",
-                        RepeatingData.of(ArrayData.valuesWithSchema(nestedSchema)
+                        RepeatingData.of(ArrayData.withSchema(nestedSchema)
                                         .of("Apple", 4),
-                                ArrayData.valuesWithSchema(nestedSchema)
+                                ArrayData.withSchema(nestedSchema)
                                         .of("Pear", 5)));
 
         List<DidoData> results = Flatten.fieldOfSchema("OrderLines", schema)
@@ -41,7 +40,7 @@ class FlattenTest {
                 .addNamed("Qty", int.class)
                 .build();
 
-        List<DidoData> expected = ArrayData.valuesWithSchema(expectedSchema)
+        List<DidoData> expected = ArrayData.withSchema(expectedSchema)
                 .many()
                 .of("A123", "Apple", 4)
                 .of("A123", "Pear", 5)
@@ -70,7 +69,7 @@ class FlattenTest {
 
         assertThat(resultSchema1, is(expectedSchema));
 
-        FieldValuesIn values = ArrayData.valuesWithSchema(expectedSchema);
+        FromValues values = ArrayData.withSchema(expectedSchema);
 
         assertThat(results, contains(
                 values.of("Foo", 1, "X"),

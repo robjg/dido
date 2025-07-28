@@ -233,7 +233,7 @@ class SingleDataTest {
         assertThat(data3, is(data2));
 
         assertThat(data1,
-                is(ArrayData.valuesWithSchema(
+                is(ArrayData.withSchema(
                         ArrayData.schemaBuilder().add(int.class).build()).of(42)));
 
     }
@@ -279,7 +279,7 @@ class SingleDataTest {
         assertThat(data1.getFloatAt(1), is(42.24F));
 
         assertThat(data1,
-                is(ArrayData.valuesWithSchema(
+                is(ArrayData.withSchema(
                         ArrayData.schemaBuilder().add(float.class).build()).of(42.24F)));
 
         DidoData data2 = SingleData.named("Float")
@@ -310,9 +310,8 @@ class SingleDataTest {
 
         assertThat(data1.getDoubleAt(1), is(42.24));
 
-        assertThat(data1,
-                is(ArrayData.valuesWithSchema(
-                        ArrayData.schemaBuilder().add(double.class).build()).of(42.24)));
+        assertThat(data1, is(ArrayData.of(42.24)));
+        assertThat(ArrayData.of(42.24), is(data1));
 
         DidoData data2 = SingleData.named("Double")
                 .ofDouble(42.24);
@@ -328,6 +327,8 @@ class SingleDataTest {
                 .of(42.24);
 
         assertThat(data3, is(data2));
+
+        assertThat(data3, is(SingleData.of(42.24)));
     }
 
 }

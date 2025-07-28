@@ -26,7 +26,7 @@ class ConstructionStrategyDeserializerTest {
         DidoDeserializerFactory test = ConstructionStrategyDeserializer
                 .from(BeanStrategies.from(Fruit.class), schema);
 
-        DidoData data = DidoData.valuesWithSchema(schema).of("Apple", 5, 35.7);
+        DidoData data = DidoData.withSchema(schema).of("Apple", 5, 35.7);
 
         DidoDataDeserializer<Fruit> deserializer = (DidoDataDeserializer<Fruit>)
                 test.create(Fruit.class, mock(DeserializationCache.class));

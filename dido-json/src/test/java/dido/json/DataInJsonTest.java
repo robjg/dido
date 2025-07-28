@@ -2,11 +2,7 @@ package dido.json;
 
 import com.google.gson.Gson;
 import com.google.gson.Strictness;
-import dido.data.ArrayData;
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.SchemaBuilder;
-import dido.data.util.FieldValuesIn;
+import dido.data.*;
 import dido.how.DataIn;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +28,7 @@ class DataInJsonTest {
                 .addNamed("Price", Double.class)
                 .build();
 
-        FieldValuesIn values = ArrayData.valuesWithSchema(expectedSchema);
+        FromValues values = ArrayData.withSchema(expectedSchema);
 
         try (DataIn in = DataInJson.fromReader(new StringReader(json))) {
 

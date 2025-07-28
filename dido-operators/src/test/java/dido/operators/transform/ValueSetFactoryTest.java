@@ -49,14 +49,14 @@ class ValueSetFactoryTest {
 
         assertThat(schema, is(expectedSchema));
 
-        DidoData expectedData1 = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData1 = ArrayData.withSchema(expectedSchema)
                         .of("Apple", 20, 27.2);
 
         assertThat(result1, is(expectedData1));
 
         DidoData result2 = results.get(1);
 
-        DidoData expectedData2 = ArrayData.valuesWithSchema(expectedSchema)
+        DidoData expectedData2 = ArrayData.withSchema(expectedSchema)
                 .of("Orange", 20, 31.6);
 
         assertThat(result2, is(expectedData2));

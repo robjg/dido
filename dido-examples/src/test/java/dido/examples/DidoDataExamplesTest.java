@@ -94,7 +94,7 @@ class DidoDataExamplesTest {
         // }#snippet3
 
         // #snippet4{
-        DidoData data = DidoData.valuesWithSchema(schema)
+        DidoData data = DidoData.withSchema(schema)
                 .of("Apple", 5, 15.6);
 
         assertThat(data.toString(), is("{[1:Fruit]=Apple, [2:Qty]=5, [3:Price]=15.6}"));

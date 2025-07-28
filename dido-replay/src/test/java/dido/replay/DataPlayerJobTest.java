@@ -40,6 +40,6 @@ class DataPlayerJobTest {
                 "{\"Fields\":[{\"Index\":1,\"Field\":\"type\",\"Type\":\"java.lang.String\"},{\"Index\":2,\"Field\":\"quantity\",\"Type\":\"int\"},{\"Index\":3,\"Field\":\"price\",\"Type\":\"double\"}]}\n");
 
         MatcherAssert.assertThat(results, Matchers.contains(
-                MapData.valuesWithSchema(schema).of("Orange", 10, 31.6)));
+                MapData.withSchema(schema).of("Orange", 10, 31.6)));
     }
 }
