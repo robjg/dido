@@ -9,6 +9,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * Allows data with repeating fields to be flattened to a list of data with no repeating fields.
+ */
 public class Flatten {
 
     public static List<DidoData> flatten(String field, DidoData data) {
@@ -62,8 +65,8 @@ public class Flatten {
         DataSchema nestedSchema = Objects.requireNonNull(extractor.getSchema(schema),
                 "No Nested Schema for " + extractor);
 
-        Concatenator concatenator = extractor.bodgeFields(Concatenator.withSettings())
-                .makeFromSchemas(ReadSchema.from(schema),
+        Concatenator concatenator = extractor.bodgeFields(Concatenator.with())
+                .fromSchemas(ReadSchema.from(schema),
                         ReadSchema.from(nestedSchema));
 
         return new KnownRepeatingFlatten(concatenator, extractor);

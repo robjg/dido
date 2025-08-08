@@ -3,7 +3,7 @@ package dido.operators.join;
 import dido.data.CompactData;
 import dido.data.DidoData;
 import dido.operators.CompactSubData;
-import dido.operators.Concatenator;
+import dido.operators.FlexibleConcatenator;
 
 import java.util.Map;
 import java.util.Objects;
@@ -30,8 +30,8 @@ public class LeftStreamJoin implements StreamJoin {
 
     private volatile Consumer<? super DidoData> to;
 
-    private final Concatenator.Factory concatenator = Concatenator.withSettings()
-            .skipDuplicates(true).factory();
+    private final FlexibleConcatenator concatenator = FlexibleConcatenator.with()
+            .skipDuplicates(true).create();
 
     private LeftStreamJoin(With with) {
         this.primaryIndices = with.primaryIndices();

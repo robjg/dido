@@ -1,7 +1,7 @@
 package dido.operators;
 
-import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.NoSuchFieldException;
 import dido.data.useful.AbstractData;
 import dido.data.useful.DataSchemaImpl;
 import dido.data.useful.SchemaFactoryImpl;
@@ -59,7 +59,7 @@ public class Concatenator {
             return this;
         }
 
-        public Concatenator makeFromSchemas(DataSchema... schemas) {
+        public Concatenator fromSchemas(DataSchema... schemas) {
 
             List<Location> locations = new LinkedList<>();
             Map<String, Location> fieldLocations = new HashMap<>();
@@ -111,8 +111,6 @@ public class Concatenator {
                     if (fieldLocations.containsKey(name)) {
                         if (skipDuplicates) {
                             continue;
-                        } else {
-                            throw new IllegalArgumentException("Fields must be unique: " + name);
                         }
                     }
                     fieldLocations.put(name, location);
@@ -127,12 +125,13 @@ public class Concatenator {
                     fieldLocations);
         }
 
-        public Factory factory() {
-            return new Factory(this);
-        }
-
         public DidoData of(DidoData... data) {
-            return factory().concat(data);
+
+            DataSchema[] schemas = Arrays.stream(data)
+                    .map(DidoData::getSchema)
+                    .toArray(DataSchema[]::new);
+
+            return fromSchemas(schemas).concat(data);
         }
     }
 
@@ -213,20 +212,16 @@ public class Concatenator {
      */
     public static Concatenator fromSchemas(DataSchema... schemas) {
 
-        return new Settings().makeFromSchemas(schemas);
+        return new Settings().fromSchemas(schemas);
     }
 
-    public static Settings withSettings() {
+    public static Settings with() {
         return new Settings();
     }
 
     public static DidoData of(DidoData... data) {
-        return new Factory(new Settings()).concat(data);
-    }
 
-    public static Factory factory() {
-
-        return new Factory(new Settings());
+        return with().of(data);
     }
 
     public DidoData concat(DidoData... data) {
@@ -236,47 +231,6 @@ public class Concatenator {
 
     public ReadSchema getSchema() {
         return schema;
-    }
-
-    /**
-     * Compares previous schemas so we can maybe shortcut.
-     */
-    public static class Factory {
-
-        private final Settings settings;
-
-        private Concatenator last;
-
-        private ReadSchema[] previous;
-
-        public Factory(Settings settings) {
-            this.settings = settings;
-        }
-
-        public DidoData concat(DidoData... data) {
-
-            boolean recreate = false;
-            if (last == null) {
-                recreate = true;
-                previous = new ReadSchema[data.length];
-                for (int i = 0; i < data.length; ++i) {
-                    previous[i] = ReadSchema.from(data[i].getSchema());
-                }
-            } else {
-                for (int i = 0; i < data.length; ++i) {
-                    if (previous[i] != data[i].getSchema()) {
-                        recreate = true;
-                        previous[i] = ReadSchema.from(data[i].getSchema());
-                    }
-                }
-            }
-
-            if (recreate) {
-                last = settings.makeFromSchemas(previous);
-            }
-
-            return last.concat(data);
-        }
     }
 
     /**
