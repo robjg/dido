@@ -220,7 +220,7 @@ class SchemaBuilderTest {
 
         // The index is ignored now.
         DataSchema expected = SchemaBuilder.newInstance()
-                .addNamedAt(4,"f_2", int.class)
+                .addNamedAt(4, "f_2", int.class)
                 .addNamedAt(1, "fruit", String.class)
                 .addNamedAt(2, "qty", String.class)
                 .addNamedAt(3, "price", double.class)
@@ -362,26 +362,41 @@ class SchemaBuilderTest {
         assertThat(schema1, is(schema2));
     }
 
-//    @Test
-//    void whenAddSchemaFieldThenOk() {
-//
-//        DataSchema schemaSimple = SchemaBuilder.newInstance()
-//                .addSchemaField(SchemaField.of(5, "Foo", Integer.class))
-//                .build();
-//
-//        assertThat(schemaSimple.getSchemaFieldAt(5), is(SchemaField.of(5, "Foo", Integer.class)));
-//
-//        DataSchema schemaNested = SchemaBuilder.newInstance()
-//                .addSchemaField(SchemaField.ofNested(3, "Nested", schemaSimple))
-//                .build();
-//
-//        assertThat(schemaNested.getSchemaFieldAt(3), is(SchemaField.ofNested(3, "Nested", schemaSimple)));
-//
-//        DataSchema schemaRepeating = SchemaBuilder.newInstance()
-//                .addSchemaField(SchemaField.ofRepeating(3, "Nested", schemaSimple))
-//                .build();
-//
-//        assertThat(schemaRepeating.getSchemaFieldAt(3), is(SchemaField.ofRepeating(3, "Nested", schemaSimple)));
-//    }
+    @Test
+    void testConcat() {
+
+
+        DataSchema colourSchema = DataSchema.builder()
+                .addNamed("Id", String.class)
+                .addNamed("Colour", String.class)
+                .build();
+
+        DataSchema grocerSchema = DataSchema.builder()
+                .addNamed("Id", String.class)
+                .addNamed("Jones", String.class)
+                .build();
+
+        DataSchema fruitSchema = DataSchema.builder()
+                .addNamed("Id", String.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("GrocerId", String.class)
+                .addNamed("Price", double.class)
+                .concat(colourSchema)
+                .concat(grocerSchema)
+                .build();
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("Id", String.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("GrocerId", String.class)
+                .addNamed("Price", double.class)
+                .addNamed("Id_", String.class)
+                .addNamed("Colour", String.class)
+                .addNamed("Id__", String.class)
+                .addNamed("Jones", String.class)
+                .build();
+
+        assertThat(fruitSchema, is(expectedSchema));
+    }
 
 }

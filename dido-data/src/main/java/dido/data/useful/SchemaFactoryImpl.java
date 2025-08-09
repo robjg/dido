@@ -36,7 +36,6 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
 
     /**
      * implemented by subclasses to create the actual schema.
-     *
      */
     protected abstract S create(Collection<SchemaField> fields, int firstIndex, int lastIndex);
 
@@ -100,8 +99,7 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
         SchemaField schemaField = this.indexToFields.remove(index);
         if (schemaField == null) {
             return null;
-        }
-        else {
+        } else {
             this.nameToIndex.remove(schemaField.getName());
             return schemaField;
         }
@@ -113,8 +111,7 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
         Integer index = nameToIndex.get(name);
         if (index == null) {
             return null;
-        }
-        else {
+        } else {
             return removeAt(index);
         }
     }
@@ -143,6 +140,16 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
     }
 
     @Override
+    public void concat(DataSchema otherSchema) {
+
+        for (int i = otherSchema.firstIndex(); i > 0; i = otherSchema.nextIndex(i)) {
+
+            SchemaField schemaField = otherSchema.getSchemaFieldAt(i);
+            addSchemaField(schemaField.mapToIndex(lastIndex() + 1));
+        }
+    }
+
+    @Override
     public SchemaField addSchemaField(SchemaField schemaField) {
 
         int index = schemaField.getIndex();
@@ -162,8 +169,7 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
             if (nameToIndex.containsKey(name)) {
                 return addSchemaField(schemaField.mapToFieldName(
                         fieldRenameStrategy.apply(name)));
-            }
-            else {
+            } else {
                 indexToFields.put(index, schemaField);
                 nameToIndex.put(name, index);
                 return schemaField;
@@ -190,7 +196,7 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
      */
     private <T> T schemaFieldOf(int index, String name, SchemaFieldFunc<T> func) {
         index = index == 0 ? lastIndex() + 1 : index;
-        return func.apply(index, name == null ?  DataSchema.defaultNameForIndex(index): name);
+        return func.apply(index, name == null ? DataSchema.defaultNameForIndex(index) : name);
     }
 
     interface SchemaFieldFunc<T> {

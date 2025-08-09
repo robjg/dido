@@ -34,7 +34,19 @@ public interface SchemaFactory extends DataSchema {
      */
     SchemaField removeNamed(String name);
 
+    /**
+     * Merge a schema giving priority to the type of the priority schema.
+     * If the name of the priority field exists in existing schema, the field is
+     * replaced at the existing index. If the name of the priority field is not
+     * in the existing schema it is added at the end. The indexes of the incoming
+     * schema is ignored.
+     *
+     * @param prioritySchema The schema to take priority in the merge.
+     */
     void merge(DataSchema prioritySchema);
+
+    void concat(DataSchema otherSchema);
+
 
     DataSchema toSchema();
 

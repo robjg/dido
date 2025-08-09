@@ -102,4 +102,42 @@ class DataSchemaFactoryTest {
 
         assertThat(newSchema, is(expected));
     }
+
+    @Test
+    void testConcat() {
+
+        DataSchema fruitSchema = DataSchema.builder()
+                .addNamed("Id", String.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("GrocerId", String.class)
+                .addNamed("Price", double.class)
+                .build();
+
+        DataSchema colourSchema = DataSchema.builder()
+                .addNamed("Id", String.class)
+                .addNamed("Colour", String.class)
+                .build();
+
+        DataSchema grocerSchema = DataSchema.builder()
+                .addNamed("Id", String.class)
+                .addNamed("Jones", String.class)
+                .build();
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("Id", String.class)
+                .addNamed("Fruit", String.class)
+                .addNamed("GrocerId", String.class)
+                .addNamed("Price", double.class)
+                .addNamed("Id_", String.class)
+                .addNamed("Colour", String.class)
+                .addNamed("Id__", String.class)
+                .addNamed("Jones", String.class)
+                .build();
+
+        SchemaFactory schemaFactory = SchemaFactory.newInstanceFrom(fruitSchema);
+        schemaFactory.concat(colourSchema);
+        schemaFactory.concat(grocerSchema);
+
+        assertThat(schemaFactory.toSchema(), is(expectedSchema));
+    }
 }

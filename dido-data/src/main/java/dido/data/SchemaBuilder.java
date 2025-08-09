@@ -187,6 +187,11 @@ public class SchemaBuilder {
         return this;
     }
 
+    public SchemaBuilder concat(DataSchema dataSchema) {
+
+        schemaFactory.concat(dataSchema);
+        return this;
+    }
 
     public DataSchema build() {
 
