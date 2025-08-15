@@ -49,5 +49,25 @@ public interface IndexedSchema {
      */
     Type getTypeAt(int index);
 
+    /**
+     * The number of fields in the schema.
+     *
+     * @return The size.
+     */
+    int getSize();
 
+    /**
+     * Get the indices in the schema. Implementations must return an array
+     * such that there internal structure can not be manipulated.
+     *
+     * @return An array of the indices. Never null.
+     */
+    default int[] getIndices() {
+        int[] indices = new int[getSize()];
+        int i = 0;
+        for (int index = firstIndex(); index > 0; index = nextIndex(index)) {
+            indices[i++] = index;
+        }
+        return indices;
+    }
 }

@@ -154,6 +154,11 @@ public class CompactDatas {
         }
 
         @Override
+        public int getSize() {
+            return types.length;
+        }
+
+        @Override
         public Type getTypeAt(int index) {
             return types[index - 1];
         }
@@ -227,6 +232,11 @@ public class CompactDatas {
 
         @Override
         public int lastIndex() {
+            return 1;
+        }
+
+        @Override
+        public int getSize() {
             return 1;
         }
 

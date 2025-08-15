@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * An implementation of {@link DataSchema}
+ */
 public class DataSchemaImpl extends AbstractDataSchema {
 
     private final Map<String, SchemaField> nameToSchemaField;
@@ -63,6 +66,13 @@ public class DataSchemaImpl extends AbstractDataSchema {
         this.hashCode = other.hashCode;
     }
 
+    /**
+     * Create a schema from {@link SchemaField}s. The fields are expected
+     * to have a name, a none 0 index, and be in index order.
+     *
+     * @param schemaFields Schema Fields.
+     * @return A Data Schema.
+     */
     public static DataSchema fromFields(SchemaField... schemaFields) {
 
         return new DataSchemaImpl(() -> Arrays.stream(schemaFields).iterator(),
@@ -111,6 +121,11 @@ public class DataSchemaImpl extends AbstractDataSchema {
     public Type getTypeAt(int index) {
         SchemaField schemaField = getSchemaFieldAt(index);
         return schemaField == null ? null : schemaField.getType();
+    }
+
+    @Override
+    public int getSize() {
+        return nameToSchemaField.size();
     }
 
     @Override

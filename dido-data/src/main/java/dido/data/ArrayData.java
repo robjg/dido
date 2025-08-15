@@ -1,6 +1,5 @@
 package dido.data;
 
-import dido.data.generic.GenericData;
 import dido.data.useful.*;
 import dido.data.util.DataBuilder;
 import dido.data.util.FieldValuesIn;
@@ -9,7 +8,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 /**
- * {@link GenericData} stored in an Array.
+ * {@link DidoData} stored in an Array.
  */
 public final class ArrayData extends AbstractData implements DidoData {
 

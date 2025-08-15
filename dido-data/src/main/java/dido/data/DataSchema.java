@@ -243,6 +243,11 @@ public interface DataSchema extends IndexedSchema {
         }
 
         @Override
+        public int getSize() {
+            return 0;
+        }
+
+        @Override
         public SchemaField getSchemaFieldAt(int index) {
             return null;
         }

@@ -6,6 +6,10 @@ import dido.data.SchemaField;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
+/**
+ * Used when adapting a schema to an {@link dido.data.ReadSchema}
+ * or {@link dido.data.WriteSchema}.
+ */
 public class SchemaDelegate extends AbstractDataSchema implements DataSchema {
 
     private final DataSchema delegate;
@@ -86,6 +90,11 @@ public class SchemaDelegate extends AbstractDataSchema implements DataSchema {
     @Override
     public int lastIndex() {
         return delegate.lastIndex();
+    }
+
+    @Override
+    public int getSize() {
+        return delegate.getSize();
     }
 
     @Override

@@ -2,8 +2,8 @@ package dido.proto;
 
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Message;
-import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.NoSuchFieldException;
 import dido.data.useful.AbstractDataSchema;
 import dido.data.useful.AbstractFieldGetter;
 
@@ -99,6 +99,11 @@ public class DescriptorSchema extends AbstractDataSchema implements ReadSchema {
         return Optional.ofNullable(byIndex.lastEntry())
                 .map(Map.Entry::getKey)
                 .orElse(0);
+    }
+
+    @Override
+    public int getSize() {
+        return byIndex.size();
     }
 
     @Override

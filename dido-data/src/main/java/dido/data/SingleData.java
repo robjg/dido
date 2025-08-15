@@ -87,6 +87,11 @@ public abstract class SingleData extends AbstractData implements DidoData {
         }
 
         @Override
+        public int getSize() {
+            return 1;
+        }
+
+        @Override
         public SchemaField getSchemaFieldAt(int index) {
             if (index == 1) {
                 return schemaField;

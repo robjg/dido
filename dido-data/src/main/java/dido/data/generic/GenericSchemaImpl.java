@@ -133,6 +133,11 @@ public class GenericSchemaImpl<F> extends AbstractGenericDataSchema<F> {
     }
 
     @Override
+    public int getSize() {
+        return nameToSchemaField.size();
+    }
+
+    @Override
     public GenericSchemaField<F> getSchemaFieldAt(int index) {
         return indexToSchemaField[index - firstIndex];
     }

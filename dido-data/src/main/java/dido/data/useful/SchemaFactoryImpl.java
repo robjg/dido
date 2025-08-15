@@ -67,6 +67,11 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
     }
 
     @Override
+    public int getSize() {
+        return nameToIndex.size();
+    }
+
+    @Override
     public SchemaField getSchemaFieldAt(int index) {
         return indexToFields.get(index);
     }

@@ -29,5 +29,7 @@ class EmptyDataTest {
         assertThat(data.hasNamed("Qty"), is(false));
         assertThat(data.hasNamed("Price"), is(false));
 
+        assertThat(data.toString(), is("{[1:Fruit]=null, [2:Qty]=null, [3:Price]=null}"));
+
     }
 }

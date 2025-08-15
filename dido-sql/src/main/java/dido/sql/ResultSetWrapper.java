@@ -1,7 +1,7 @@
 package dido.sql;
 
-import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.NoSuchFieldException;
 import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractDataSchema;
 import dido.data.util.TypeUtil;
@@ -479,6 +479,11 @@ public class ResultSetWrapper extends AbstractData implements DidoData {
 
         @Override
         public int lastIndex() {
+            return indexToSchemaField.length;
+        }
+
+        @Override
+        public int getSize() {
             return indexToSchemaField.length;
         }
 
