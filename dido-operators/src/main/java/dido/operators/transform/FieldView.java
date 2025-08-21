@@ -2,6 +2,7 @@ package dido.operators.transform;
 
 import dido.data.*;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,9 +78,9 @@ public interface FieldView {
                 List<BiConsumer<DidoData, WritableData>> copies = new ArrayList<>(getters.size());
                 for (Map.Entry<String, FieldGetter> entry : getters.entrySet()) {
                     FieldSetter fieldSetter = writeSchema.getFieldSetterNamed(entry.getKey());
-                    copies.add((didoData, writableData) -> {
-                        fieldSetter.set(writableData, entry.getValue().get(didoData));
-                    });
+                    copies.add(
+                        copyOpFor( entry.getValue(), fieldSetter,
+                                writeSchema.getTypeNamed(entry.getKey())));
                 }
                 return ((didoData, writableData) -> {
                     for (BiConsumer<DidoData, WritableData> copy : copies) {
@@ -89,4 +90,85 @@ public interface FieldView {
             };
         };
     }
+
+    /**
+     * @param getter The getter.
+     * @param setter The setter.
+     * @param type  The type.
+     * @return The op.
+     */
+    static BiConsumer<DidoData, WritableData> copyOpFor(FieldGetter getter,
+                              FieldSetter setter,
+                              Type type) {
+
+        if (boolean.class == type) {
+            return (didoData, writableData) -> {
+                if (getter.has(didoData)) {
+                    setter.setBoolean(writableData, getter.getBoolean(didoData));
+                } else {
+                    setter.clear(writableData);
+                }
+            };
+        } else if (byte.class == type) {
+            return (didoData, writableData) -> {
+                if (getter.has(didoData)) {
+                    setter.setByte(writableData, getter.getByte(didoData));
+                } else {
+                    setter.clear(writableData);
+                }
+            };
+        } else if (short.class == type) {
+            return (didoData, writableData) -> {
+                if (getter.has(didoData)) {
+                    setter.setShort(writableData, getter.getShort(didoData));
+                } else {
+                    setter.clear(writableData);
+                }
+            };
+        } else if (char.class == type) {
+            return (didoData, writableData) -> {
+                if (getter.has(didoData)) {
+                    setter.setChar(writableData, getter.getChar(didoData));
+                } else {
+                    setter.clear(writableData);
+                }
+            };
+        } else if (int.class == type) {
+            return (didoData, writableData) -> {
+                if (getter.has(didoData)) {
+                    setter.setInt(writableData, getter.getInt(didoData));
+                } else {
+                    setter.clear(writableData);
+                }
+            };
+        } else if (long.class == type) {
+            return (didoData, writableData) -> {
+                if (getter.has(didoData)) {
+                    setter.setLong(writableData, getter.getLong(didoData));
+                } else {
+                    setter.clear(writableData);
+                }
+            };
+        } else if (float.class == type) {
+            return (didoData, writableData) -> {
+                if (getter.has(didoData)) {
+                    setter.setFloat(writableData, getter.getFloat(didoData));
+                } else {
+                    setter.clear(writableData);
+                }
+            };
+        } else if (double.class == type) {
+            return (didoData, writableData) -> {
+                if (getter.has(didoData)) {
+                    setter.setDouble(writableData, getter.getDouble(didoData));
+                } else {
+                    setter.clear(writableData);
+                }
+            };
+        } else {
+            return (didoData, writableData)
+                    -> setter.set(writableData, getter.get(didoData));
+        }
+    }
+
 }
