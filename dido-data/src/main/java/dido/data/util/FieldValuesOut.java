@@ -70,15 +70,17 @@ public class FieldValuesOut {
         @Override
         public Iterator<Object> iterator() {
             return new Iterator<>() {
-                int i = 0;
+                int i = schema.firstIndex();
                 @Override
                 public boolean hasNext() {
-                    return i < fieldGetters.length;
+                    return i > 0 && i <= fieldGetters.length;
                 }
 
                 @Override
                 public Object next() {
-                    return fieldGetters[i++].get(data);
+                    Object val = fieldGetters[i - 1].get(data);
+                    i = schema.nextIndex(i);
+                    return val;
                 }
             };
         }
@@ -105,9 +107,10 @@ public class FieldValuesOut {
 
         @Override
         public Object[] toArray() {
-            Object[] array = new Object[fieldGetters.length];
-            for (int i = 0; i < array.length; ++i) {
-                array[i] = fieldGetters[i].get(data);
+            Object[] array = new Object[schema.getSize()];
+            int j = 0;
+            for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
+                array[j++] = fieldGetters[i - 1].get(data);
             }
             return array;
         }
@@ -115,13 +118,14 @@ public class FieldValuesOut {
         @SuppressWarnings("unchecked")
         @Override
         public <T> T[] toArray(T[] a) {
-            int size = fieldGetters.length;
+            int size = size();
             T[] r = a.length >= size ? a :
                     (T[])java.lang.reflect.Array
                             .newInstance(a.getClass().getComponentType(), size);
 
-            for (int i = 0; i < r.length; ++i) {
-                r[i] = (T) fieldGetters[i].get(data);
+            int j = 0;
+            for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
+                r[j++] = (T) fieldGetters[i - 1].get(data);
             }
 
             for (int i = size; i < r.length; ++i) {

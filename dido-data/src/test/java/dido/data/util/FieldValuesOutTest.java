@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
 public class FieldValuesOutTest {
@@ -56,6 +57,45 @@ public class FieldValuesOutTest {
         String[] aStrings = stringCollection.toArray(new String[0]);
 
         assertThat(aStrings, is(new String[]{ "Apple", "5", "27.2"}));
+    }
+
+    @Test
+    void disparateIndices() {
+
+        DataSchema dataSchema = ArrayData.schemaBuilder()
+                .addNamedAt(2,"Fruit", String.class)
+                .addNamedAt( 5,"Qty", int.class)
+                .addNamedAt( 7, "Price", double.class)
+                .build();
+
+        DidoData data = DidoData.withSchema(dataSchema)
+                .of("Apple", 5, 27.2);
+
+        FieldValuesOut valuesOut = new FieldValuesOut(dataSchema);
+
+        Collection<Object> collection = valuesOut.toCollection(data);
+
+        assertThat(collection.size(), is(3));
+        assertThat(collection.isEmpty(), is(false));
+
+        assertThat(collection.toArray(),
+                is(new Object[] { "Apple", 5, 27.2 }));
+
+        Object[] smallArray = new Object[1];
+        assertThat(collection.toArray(smallArray),
+                is(new Object[] {"Apple", 5, 27.2}));
+
+        Object[] largeArray = new Object[5];
+        assertThat(collection.toArray(largeArray),
+                is(new Object[] {"Apple", 5, 27.2, null, null}));
+
+        assertThat(collection.toString(), is("[Apple, 5, 27.2]"));
+
+        List<Object> its = new ArrayList<>(collection);
+        assertThat(its, contains("Apple", 5, 27.2));
+
+        List<Object> stream= collection.stream().toList();
+        assertThat(stream, contains("Apple", 5, 27.2));
     }
 
     @Test
