@@ -1,28 +1,30 @@
 package dido.data.util;
 
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.FieldGetter;
-import dido.data.ReadStrategy;
+import dido.data.*;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Provides the field values of {@link DidoData} as a collection of objects.
  */
 public class FieldValuesOut {
 
-    private final List<FieldGetter> fieldGetters;
+    private final DataSchema schema;
+
+    private final FieldGetter[] fieldGetters;
 
     protected FieldValuesOut(DataSchema dataSchema) {
 
+        this.schema = dataSchema;
+
         ReadStrategy readStrategy = ReadStrategy.fromSchema(dataSchema);
 
-        fieldGetters = new ArrayList<>(dataSchema.lastIndex());
+        fieldGetters = new FieldGetter[dataSchema.lastIndex()];
 
         for (int i = dataSchema.firstIndex(); i > 0; i = dataSchema.nextIndex(i)) {
 
-            fieldGetters.add(readStrategy.getFieldGetterAt(i));
+            fieldGetters[i - 1] = readStrategy.getFieldGetterAt(i);
         }
     }
 
@@ -34,8 +36,27 @@ public class FieldValuesOut {
         return new FieldValuesOut(data.getSchema()).toCollection(data);
     }
 
+    public static Map<String, Object> mapOf(DidoData data) {
+        return new FieldValuesOut(data.getSchema()).toMap(data);
+    }
+
     public Collection<Object> toCollection(DidoData data) {
         return new ValuesCollection(data);
+    }
+
+    public Map<String, Object> toMap(DidoData data) {
+
+        return toMap(data, HashMap::new);
+    }
+
+    public Map<String, Object> toMap(DidoData data, Supplier<? extends Map<String, Object>> supplier) {
+        Map<String, Object> map = supplier.get();
+        for (SchemaField schemaField: schema.getSchemaFields()) {
+
+            map.put(schemaField.getName(),
+                    fieldGetters[schemaField.getIndex() -1].get(data));
+        }
+        return map;
     }
 
     class ValuesCollection implements Collection<Object> {
@@ -48,28 +69,28 @@ public class FieldValuesOut {
 
         @Override
         public Iterator<Object> iterator() {
-            Iterator<FieldGetter> iterator = fieldGetters.iterator();
             return new Iterator<>() {
+                int i = 0;
                 @Override
                 public boolean hasNext() {
-                    return iterator.hasNext();
+                    return i < fieldGetters.length;
                 }
 
                 @Override
                 public Object next() {
-                    return iterator.next().get(data);
+                    return fieldGetters[i++].get(data);
                 }
             };
         }
 
         @Override
         public int size() {
-            return fieldGetters.size();
+            return schema.getSize();
         }
 
         @Override
         public boolean isEmpty() {
-            return fieldGetters.isEmpty();
+            return size() == 0;
         }
 
         @Override
@@ -84,9 +105,9 @@ public class FieldValuesOut {
 
         @Override
         public Object[] toArray() {
-            Object[] array = new Object[fieldGetters.size()];
+            Object[] array = new Object[fieldGetters.length];
             for (int i = 0; i < array.length; ++i) {
-                array[i] = fieldGetters.get(i).get(data);
+                array[i] = fieldGetters[i].get(data);
             }
             return array;
         }
@@ -94,13 +115,13 @@ public class FieldValuesOut {
         @SuppressWarnings("unchecked")
         @Override
         public <T> T[] toArray(T[] a) {
-            int size = fieldGetters.size();
+            int size = fieldGetters.length;
             T[] r = a.length >= size ? a :
                     (T[])java.lang.reflect.Array
                             .newInstance(a.getClass().getComponentType(), size);
 
             for (int i = 0; i < r.length; ++i) {
-                r[i] = (T) fieldGetters.get(i).get(data);
+                r[i] = (T) fieldGetters[i].get(data);
             }
 
             for (int i = size; i < r.length; ++i) {

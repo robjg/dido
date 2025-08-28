@@ -6,10 +6,7 @@ import dido.data.DidoData;
 import dido.data.MapData;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -119,4 +116,20 @@ public class FieldValuesOutTest {
         assertThat(copy, is(Arrays.asList(null, null, null)));
     }
 
+    @Test
+    void toMap() {
+
+        DataSchema dataSchema = ArrayData.schemaBuilder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", int.class)
+                .addNamed("Price", double.class)
+                .build();
+
+        DidoData data = DidoData.withSchema(dataSchema).of("Apple", 5, 27.2);
+
+        Map<String, Object> expected =
+                Map.of("Fruit", "Apple", "Qty", 5, "Price", 27.2);
+
+        assertThat(FieldValuesOut.mapOf(data), is(expected));
+    }
 }
