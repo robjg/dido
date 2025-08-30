@@ -23,12 +23,14 @@ public class FieldGetterDelegate implements FieldGetter {
 
     @Override
     public Object get(DidoData data) {
-        return original.get(to.apply(data));
+        DidoData d = to.apply(data);
+        return d == null ? null : original.get(d);
     }
 
     @Override
     public boolean has(DidoData data) {
-        return original.has(to.apply(data));
+        DidoData d = to.apply(data);
+        return d != null && original.has(d);
     }
 
     @Override
@@ -73,6 +75,7 @@ public class FieldGetterDelegate implements FieldGetter {
 
     @Override
     public String getString(DidoData data) {
-        return original.getString(to.apply(data));
+        DidoData d = to.apply(data);
+        return d == null ? null : original.getString(d);
     }
 }
