@@ -5,6 +5,11 @@ Comma Separated Values in and out. [DataInCsv](http://rgordon.co.uk/projects/did
 and [DataOutCsv](http://rgordon.co.uk/projects/dido/current/api/dido/csv/DataOutCsv.html)
 in the module [dido-csv](../dido-csv) provide a wrapper around [Apache Commons CSV](https://commons.apache.org/proper/commons-csv/)
 
+- [Overview](#overview)
+- [Custom-Formats](#custom-formats)
+- [Oddjob](#in-oddjob)
+
+### Overview
 We have already seen in the [README](../README.md) an example of Reading a CSV. By default,
 all columns are Strings, and the field names are derived. In the last
 example a Schema was provided that gave the columns names and types.
@@ -14,6 +19,16 @@ the header of the CSV file, and a partial schema applied which only
 overrides the type of specified columns leaving the rest as String.
 We also see an Example of writing a CSV including a header line.
 
-### Oddjob
+## Custom Formats
+
+To customise the format, provide a [CSVFormat](https://commons.apache.org/proper/commons-csv/apidocs/org/apache/commons/csv/CSVFormat.html)
+as a setting.
+
+When writing:
+{@oddjob.java.file src/test/java/dido/examples/CsvDelimitersExampleTest.java#customCsvOut}
+When reading:
+{@oddjob.java.file src/test/java/dido/examples/CsvDelimitersExampleTest.java#customCsvIn}
+
+### In Oddjob
 
 For examples of using Dido CSV in Oddjob, see [dido:csv](reference/dido/csv/CsvDido.md)

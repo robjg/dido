@@ -1,31 +1,30 @@
-Dido CSV
-========
+package dido.examples;
 
-Comma Separated Values in and out. [DataInCsv](http://rgordon.co.uk/projects/dido/current/api/dido/csv/DataInCsv.html)
-and [DataOutCsv](http://rgordon.co.uk/projects/dido/current/api/dido/csv/DataOutCsv.html)
-in the module [dido-csv](../dido-csv) provide a wrapper around [Apache Commons CSV](https://commons.apache.org/proper/commons-csv/)
+import dido.csv.DataInCsv;
+import dido.csv.DataOutCsv;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.how.DataIn;
+import dido.how.DataOut;
+import org.apache.commons.csv.CSVFormat;
+import org.junit.jupiter.api.Test;
 
-- [Overview](#overview)
-- [Custom-Formats](#custom-formats)
-- [Oddjob](#in-oddjob)
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.List;
 
-### Overview
-We have already seen in the [README](../README.md) an example of Reading a CSV. By default,
-all columns are Strings, and the field names are derived. In the last
-example a Schema was provided that gave the columns names and types.
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
 
-In [dido-sql](DIDO-SQL.md) we see that column names can also be taken from
-the header of the CSV file, and a partial schema applied which only
-overrides the type of specified columns leaving the rest as String.
-We also see an Example of writing a CSV including a header line.
+class CsvDelimitersExampleTest {
 
-## Custom Formats
+    @Test
+    void example() {
 
-To customise the format, provide a [CSVFormat](https://commons.apache.org/proper/commons-csv/apidocs/org/apache/commons/csv/CSVFormat.html)
-as a setting.
-
-When writing:
-```java
+        // #customCsvOut{
         DataSchema schema = DataSchema.builder()
                 .addNamed("Fruit", String.class)
                 .addNamed("Qty", int.class)
@@ -57,10 +56,9 @@ When writing:
                         Orange|2|35.24
                         Pear|3|26.84
                         """));
-```
+        // }#customCsvOut
 
-When reading:
-```java
+        // #customCsvIn{
         Reader reader = new StringReader(writer.toString());
 
         List<DidoData> dataBack;
@@ -79,9 +77,6 @@ When reading:
                 DidoData.of("Apple", "5", "19.50"),
                 DidoData.of("Orange", "2", "35.24"),
                 DidoData.of("Pear", "3", "26.84")));
-```
-
-
-### In Oddjob
-
-For examples of using Dido CSV in Oddjob, see [dido:csv](reference/dido/csv/CsvDido.md)
+        // }#customCsvIn
+    }
+}
