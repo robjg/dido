@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <dido:data-in xmlns:dido="oddjob:dido">
+                    <how>
+                        <dido:csv withHeader="true">
+                            <csvFormat>
+                                <dido:csv-format delimiter="|" formatFrom="RFC4180" nullString="null"/>
+                            </csvFormat>
+                        </dido:csv>
+                    </how>
+                    <from>
+                        <buffer><![CDATA[Fruit|Qty|Price
+Apple|5|27.2
+Orange|null|31.6
+Pear|7|22.1]]></buffer>
+                    </from>
+                </dido:data-in>
+                <dido:data-out xmlns:dido="oddjob:dido">
+                    <how>
+                        <dido:csv withHeader="true">
+                            <csvFormat>
+                                <dido:csv-format formatFrom="TDF" nullString="blank"/>
+                            </csvFormat>
+                        </dido:csv>
+                    </how>
+                    <to>
+                        <identify id="results">
+                            <value>
+                                <buffer/>
+                            </value>
+                        </identify>
+                    </to>
+                </dido:data-out>
+            </of>
+        </bus:bus>
+    </job>
+</oddjob>

@@ -89,4 +89,25 @@ public class CsvExampleTest {
         assertThat(results[2], is("Orange,10,31.6"));
         assertThat(results[3], is("Pear,7,22.1"));
     }
+
+    @Test
+    void customFormat() throws ArooaConversionException {
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setFile(new File(Objects.requireNonNull(
+                getClass().getResource("CustomFormatExample.xml")).getFile()));
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        String[] results = lookup.lookup("results", String[].class);
+
+        assertThat(results[0], is("Fruit\tQty\tPrice"));
+        assertThat(results[1], is("Apple\t5\t27.2"));
+        assertThat(results[2], is("Orange\tblank\t31.6"));
+        assertThat(results[3], is("Pear\t7\t22.1"));
+    }
 }

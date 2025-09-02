@@ -11,10 +11,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * @oddjob.description Creates an In or Out for CSV Data.
+ * @oddjob.description Reads and write CSV format from Dido Data.
+ * <a href="https://commons.apache.org/proper/commons-csv/">Apache Commons CSV</a>
+ * is used for this using the DEFAULT format. Please see their documentation
+ * for more details.
  *
  * @oddjob.example From CSV data and back again.
  * {@oddjob.xml.resource dido/csv/FromToCsvExample.xml}
+ *
+ * @oddjob.example Using a Custom Format.
+ * {@oddjob.xml.resource dido/csv/CustomFormatExample.xml}
  *
  */
 public class CsvDido {

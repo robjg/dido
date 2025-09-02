@@ -35,20 +35,10 @@
         <connection>scm:git:git://github.com/robjg/dido</connection>
     </scm>
 
-    <properties>
-        <csv-parser.version>1.12.0</csv-parser.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>uk.co.rgordon</groupId>
             <artifactId>dido-how</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <version>${csv-parser.version}</version>
         </dependency>
 
         <dependency>
@@ -94,7 +84,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
                 <executions>
                     <execution>
                         <goals>

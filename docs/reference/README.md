@@ -10,7 +10,8 @@
 ### Types
 
 - [dido:copy](dido/operators/transform/ValueCopyFactory.md) - Copy a field from one position and/or field and/or type to another.
-- [dido:csv](dido/csv/CsvDido.md) - Creates an In or Out for CSV Data.
+- [dido:csv](dido/csv/CsvDido.md) - Reads and write CSV format from Dido Data.
+- [dido:csv-format](dido/csv/CsvFormatType.md) - A wrapper around Apache's <a href="https://commons.apache.org/proper/commons-csv/apidocs/org/apache/commons/csv/CSVFormat.html">CSVFormat</a>
 - [dido:field](dido/oddjob/schema/SchemaFieldBean.md) - Define the field of a Schema.
 - [dido:flatten](dido/operators/FlattenType.md) - Provides a mapping function that either flattens fields that are collections or arrays or a nested repeating schema.
 - [dido:from-bean](dido/oddjob/bean/FromBeanTransformer.md) - Transform a Bean to Dido Data.

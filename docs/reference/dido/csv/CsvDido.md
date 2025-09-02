@@ -1,7 +1,10 @@
 [HOME](../../README.md)
 # dido:csv
 
-Creates an In or Out for CSV Data.
+Reads and write CSV format from Dido Data.
+<a href="https://commons.apache.org/proper/commons-csv/">Apache Commons CSV</a>
+is used for this using the DEFAULT format. Please see their documentation
+for more details.
 
 ### Property Summary
 
@@ -19,6 +22,7 @@ Creates an In or Out for CSV Data.
 | Title | Description |
 | ----- | ----------- |
 | [Example 1](#example1) | From CSV data and back again. |
+| [Example 2](#example2) | Using a Custom Format. |
 
 
 ### Property Detail
@@ -105,6 +109,53 @@ Pear,7,22.1]]>
                 <dido:data-out xmlns:dido="oddjob:dido">
                     <how>
                         <dido:csv withHeader="true"/>
+                    </how>
+                    <to>
+                        <identify id="results">
+                            <value>
+                                <buffer/>
+                            </value>
+                        </identify>
+                    </to>
+                </dido:data-out>
+            </of>
+        </bus:bus>
+    </job>
+</oddjob>
+```
+
+
+#### Example 2 <a name="example2"></a>
+
+Using a Custom Format.
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <bus:bus xmlns:bus="oddjob:beanbus">
+            <of>
+                <dido:data-in xmlns:dido="oddjob:dido">
+                    <how>
+                        <dido:csv withHeader="true">
+                            <csvFormat>
+                                <dido:csv-format delimiter="|" formatFrom="RFC4180" nullString="null"/>
+                            </csvFormat>
+                        </dido:csv>
+                    </how>
+                    <from>
+                        <buffer><![CDATA[Fruit|Qty|Price
+Apple|5|27.2
+Orange|null|31.6
+Pear|7|22.1]]></buffer>
+                    </from>
+                </dido:data-in>
+                <dido:data-out xmlns:dido="oddjob:dido">
+                    <how>
+                        <dido:csv withHeader="true">
+                            <csvFormat>
+                                <dido:csv-format formatFrom="TDF" nullString="blank"/>
+                            </csvFormat>
+                        </dido:csv>
                     </how>
                     <to>
                         <identify id="results">

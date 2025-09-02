@@ -3,9 +3,17 @@
 	<conversions>
 		<arooa:conversion className="dido.csv.CsvDido" methodName="toStreamOut"/>
 		<arooa:conversion className="dido.csv.CsvDido" methodName="toStreamIn"/>
+		<arooa:conversion className="dido.csv.CsvFormatType" methodName="get"/>
 	</conversions>
 	<values>
 		<arooa:bean-def element='csv'
 		    className='dido.csv.CsvDido'/>
+		<arooa:bean-def element='csv-format'
+						className='dido.csv.CsvFormatType'>
+			<properties>
+				<arooa:property name="formatFrom" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
+				<arooa:property name="quoteMode" annotation="org.oddjob.arooa.deploy.annotations.ArooaAttribute"/>
+			</properties>
+		</arooa:bean-def>
 	</values>
 </arooa:descriptor>
