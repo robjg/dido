@@ -1,6 +1,10 @@
 package dido.operators.transform;
 
-import dido.data.*;
+import dido.data.ArrayData;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.MapData;
+import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;

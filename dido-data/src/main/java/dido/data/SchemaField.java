@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.schema.SchemaFields;
+
 import java.lang.reflect.Type;
 import java.util.Objects;
 

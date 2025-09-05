@@ -3,7 +3,7 @@ package dido.json;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.MapData;
-import dido.data.SchemaBuilder;
+import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;

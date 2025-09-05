@@ -13,26 +13,26 @@ public class GenericSchemaFieldTest {
     static class Grr {
     }
 
-    public static Grr FOO = new Grr() {
+    static Grr FOO = new Grr() {
         @Override
         public String toString() {
             return "Foo";
         }
     };
-    public static Grr NESTED = new Grr() {
+    static Grr NESTED = new Grr() {
         @Override
         public String toString() {
             return "Nested";
         }
     };
-    public static Grr OTHER = new Grr() {
+    static Grr OTHER = new Grr() {
         @Override
         public String toString() {
             return "Other";
         }
     };
 
-    public Map<String, Grr> fieldNameMapping = Map.of(
+    Map<String, Grr> fieldNameMapping = Map.of(
             FOO.toString(), FOO, NESTED.toString(), NESTED, OTHER.toString(), OTHER);
 
     @Test
@@ -125,14 +125,6 @@ public class GenericSchemaFieldTest {
                 is(genericField.ofRepeating(5, "Foo", nested)));
 
         SchemaReference nestedRef = SchemaReference.named("SomeSchema");
-
-        // Need to think if this important - are schemas equal when ref not set.
-
-        assertThat(genericField.ofNested(5, "Foo", nestedRef),
-                is(genericField.ofNested(5, "Foo", nestedRef)));
-
-        assertThat(genericField.ofRepeating(5, "Foo", nestedRef),
-                is(genericField.ofRepeating(5, "Foo", nestedRef)));
 
         nestedRef.set(nested);
 

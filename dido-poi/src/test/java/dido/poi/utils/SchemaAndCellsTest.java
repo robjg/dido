@@ -1,7 +1,7 @@
 package dido.poi.utils;
 
 import dido.data.DataSchema;
-import dido.data.SchemaBuilder;
+import dido.data.schema.SchemaBuilder;
 import dido.poi.CellInProvider;
 import dido.poi.CellProvider;
 import dido.poi.RowIn;

@@ -1,10 +1,10 @@
 package dido.csv;
 
-import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.NoSuchFieldException;
+import dido.data.schema.DataSchemaImpl;
 import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractFieldGetter;
-import dido.data.useful.DataSchemaImpl;
 import dido.data.util.TypeUtil;
 import dido.how.conversion.DidoConversionProvider;
 import org.apache.commons.csv.CSVRecord;

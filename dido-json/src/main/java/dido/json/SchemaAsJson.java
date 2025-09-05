@@ -1,8 +1,8 @@
 package dido.json;
 
 import dido.data.DataSchema;
-import dido.data.DataSchemaSchema;
 import dido.data.DidoData;
+import dido.data.schema.DataSchemaSchema;
 import dido.how.CloseableConsumer;
 import dido.how.DataIn;
 import dido.how.DataInHow;

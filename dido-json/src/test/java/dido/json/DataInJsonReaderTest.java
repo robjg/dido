@@ -3,6 +3,7 @@ package dido.json;
 import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
 import dido.data.*;
+import dido.data.schema.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import org.junit.jupiter.api.Test;

@@ -3,7 +3,7 @@ package dido.json;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import dido.data.DataSchema;
-import dido.data.SchemaBuilder;
+import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Type;

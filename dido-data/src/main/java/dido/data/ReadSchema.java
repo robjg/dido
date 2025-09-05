@@ -1,6 +1,6 @@
 package dido.data;
 
-import dido.data.useful.SchemaDelegate;
+import dido.data.schema.SchemaDelegate;
 
 /**
  * A Data Schema that can provide the most efficient way of reading the

@@ -1,10 +1,10 @@
 package dido.objects.izers;
 
-import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.NoSuchFieldException;
+import dido.data.schema.DataSchemaImpl;
 import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractFieldGetter;
-import dido.data.useful.DataSchemaImpl;
 import dido.how.DataException;
 import dido.objects.*;
 import dido.objects.stratagy.DestructionStrategy;

@@ -1,6 +1,7 @@
 package dido.operators.transform;
 
 import dido.data.*;
+import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;

@@ -2,8 +2,8 @@ package dido.json;
 
 import com.google.gson.*;
 import dido.data.DataSchema;
-import dido.data.SchemaBuilder;
 import dido.data.SchemaField;
+import dido.data.schema.SchemaBuilder;
 
 import java.lang.reflect.Type;
 import java.util.LinkedList;

@@ -3,7 +3,7 @@ package dido.sql;
 import dido.data.ArrayData;
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.SchemaBuilder;
+import dido.data.schema.SchemaBuilder;
 import dido.how.*;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;

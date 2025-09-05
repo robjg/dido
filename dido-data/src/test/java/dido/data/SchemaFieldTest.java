@@ -1,5 +1,6 @@
 package dido.data;
 
+import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -91,14 +92,6 @@ public class SchemaFieldTest {
                 is(SchemaField.ofRepeating(5, "Foo", nested)));
 
         SchemaReference nestedRef = SchemaReference.named("SomeSchema");
-
-        // Need to think if this important - are schemas equal when ref not set.
-
-        assertThat(SchemaField.ofNested(5, "Foo", nestedRef),
-                is(SchemaField.ofNested(5, "Foo", nestedRef)));
-
-        assertThat(SchemaField.ofRepeating(5, "Foo", nestedRef),
-                is(SchemaField.ofRepeating(5, "Foo", nestedRef)));
 
         nestedRef.set(nested);
 

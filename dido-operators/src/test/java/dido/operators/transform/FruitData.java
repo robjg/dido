@@ -3,7 +3,7 @@ package dido.operators.transform;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.MapData;
-import dido.data.SchemaBuilder;
+import dido.data.schema.SchemaBuilder;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.types.ValueFactory;
 

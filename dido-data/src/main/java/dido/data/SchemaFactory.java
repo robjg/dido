@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.schema.DataSchemaFactory;
+
 /**
  * Something that can create a {@link DataSchema}. During the schema creation process this factory
  * provides a view of the in progress schema by implementing {@link DataSchema}. This allows things

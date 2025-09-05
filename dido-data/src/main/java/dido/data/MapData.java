@@ -1,7 +1,13 @@
 package dido.data;
 
 import dido.data.generic.GenericData;
-import dido.data.useful.*;
+import dido.data.schema.DataSchemaImpl;
+import dido.data.schema.SchemaBuilder;
+import dido.data.schema.SchemaFactoryImpl;
+import dido.data.useful.AbstractData;
+import dido.data.useful.AbstractFieldGetter;
+import dido.data.useful.AbstractFieldSetter;
+import dido.data.useful.AbstractWritableData;
 import dido.data.util.DataBuilder;
 import dido.data.util.FieldValuesIn;
 

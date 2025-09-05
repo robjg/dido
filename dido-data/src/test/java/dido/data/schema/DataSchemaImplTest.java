@@ -1,7 +1,8 @@
-package dido.data.useful;
+package dido.data.schema;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
+import dido.data.SchemaReference;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,7 +22,7 @@ class DataSchemaImplTest {
         assertThat(schema.getSize(), is(3));
         assertThat(schema.firstIndex(), is(2));
         assertThat(schema.lastIndex(), is(7));
-        assertThat(schema.getIndices(), is(new int[] {2, 5, 7}));
+        assertThat(schema.getIndices(), is(new int[]{2, 5, 7}));
 
         assertThat(schema.hasIndex(3), is(false));
         assertThat(schema.hasIndex(5), is(true));
@@ -39,4 +40,23 @@ class DataSchemaImplTest {
         assertThat(schema.getSchemaFieldNamed("Alice"),
                 is(nullValue()));
     }
+
+    @Test
+    void recursive() {
+
+        SchemaReference ref = SchemaReference.named("person");
+
+        DataSchema schema = DataSchemaImpl.fromFields(
+                SchemaField.of(1, "Name", String.class),
+                SchemaField.ofRepeating(2, "Children", ref));
+
+        ref.set(schema);
+
+        assertThat(schema, is(schema));
+
+        assertThat(schema.toString(),
+                is("{[1:Name]=java.lang.String, [2:Children]=[SchemaReference{'person'}]}"));
+
+    }
+
 }

@@ -1,6 +1,10 @@
 package dido.poi.utils;
 
-import dido.data.*;
+import dido.data.DataSchema;
+import dido.data.SchemaFactory;
+import dido.data.SchemaField;
+import dido.data.schema.DataSchemaFactory;
+import dido.data.schema.SchemaBuilder;
 import dido.poi.CellProvider;
 import dido.poi.CellProviderFactory;
 import dido.poi.RowIn;

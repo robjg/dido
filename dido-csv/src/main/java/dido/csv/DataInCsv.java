@@ -1,6 +1,10 @@
 package dido.csv;
 
-import dido.data.*;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.SchemaFactory;
+import dido.data.SchemaField;
+import dido.data.schema.DataSchemaFactory;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;

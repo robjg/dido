@@ -1,7 +1,8 @@
-package dido.data.useful;
+package dido.data.schema;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
+import dido.data.useful.AbstractDataSchema;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;

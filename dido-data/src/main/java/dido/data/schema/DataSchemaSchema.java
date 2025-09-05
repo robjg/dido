@@ -1,5 +1,6 @@
-package dido.data;
+package dido.data.schema;
 
+import dido.data.*;
 import dido.data.util.DataBuilder;
 
 import java.util.ArrayList;

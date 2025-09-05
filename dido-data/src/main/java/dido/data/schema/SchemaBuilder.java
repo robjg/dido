@@ -1,4 +1,9 @@
-package dido.data;
+package dido.data.schema;
+
+import dido.data.DataSchema;
+import dido.data.SchemaFactory;
+import dido.data.SchemaField;
+import dido.data.SchemaReference;
 
 import java.lang.reflect.Type;
 

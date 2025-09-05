@@ -1,7 +1,7 @@
 package dido.oddjob.schema;
 
 import dido.data.DataSchema;
-import dido.data.SchemaManager;
+import dido.data.schema.SchemaManager;
 import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.convert.ConversionProvider;
@@ -127,7 +127,7 @@ public class SchemaBean implements ArooaValue {
     }
 
     <B extends SchemaManager.NewSchema<B>> void addNested(SchemaManager.NewSchema<B> builder,
-                                                                  SchemaWrapper wrapper) {
+                                                          SchemaWrapper wrapper) {
         for (SchemaFieldDef field : wrapper.getSchemaFields()) {
             int index = field.getIndex();
             String fieldName = field.getFieldName();

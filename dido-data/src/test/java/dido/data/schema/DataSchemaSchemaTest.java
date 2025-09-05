@@ -1,5 +1,7 @@
-package dido.data;
+package dido.data.schema;
 
+import dido.data.DataSchema;
+import dido.data.DidoData;
 import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.utils.ClassUtils;
 import org.slf4j.Logger;

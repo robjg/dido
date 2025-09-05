@@ -1,5 +1,6 @@
 package dido.data;
 
+import dido.data.schema.SchemaBuilder;
 import dido.data.util.DataBuilder;
 import org.junit.jupiter.api.Test;
 

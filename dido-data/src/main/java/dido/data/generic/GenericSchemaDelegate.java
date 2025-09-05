@@ -1,7 +1,7 @@
 package dido.data.generic;
 
 import dido.data.DataSchema;
-import dido.data.useful.SchemaDelegate;
+import dido.data.schema.SchemaDelegate;
 
 import java.lang.reflect.Type;
 import java.util.Collection;

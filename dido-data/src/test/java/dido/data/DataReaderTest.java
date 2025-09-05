@@ -1,5 +1,6 @@
 package dido.data;
 
+import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

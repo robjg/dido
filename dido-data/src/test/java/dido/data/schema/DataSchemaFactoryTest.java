@@ -1,5 +1,8 @@
-package dido.data;
+package dido.data.schema;
 
+import dido.data.DataSchema;
+import dido.data.SchemaFactory;
+import dido.data.SchemaField;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

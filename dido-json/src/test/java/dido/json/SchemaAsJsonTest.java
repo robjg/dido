@@ -1,7 +1,7 @@
 package dido.json;
 
 import dido.data.DataSchema;
-import dido.data.SchemaManager;
+import dido.data.schema.SchemaManager;
 import dido.how.CloseableConsumer;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

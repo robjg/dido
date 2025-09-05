@@ -1,10 +1,10 @@
 package dido.oddjob.bean;
 
-import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.NoSuchFieldException;
+import dido.data.schema.DataSchemaImpl;
+import dido.data.schema.SchemaFactoryImpl;
 import dido.data.useful.AbstractData;
-import dido.data.useful.DataSchemaImpl;
-import dido.data.useful.SchemaFactoryImpl;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.ArooaClass;

@@ -1,8 +1,9 @@
-package dido.data;
+package dido.data.schema;
 
 
-import dido.data.useful.DataSchemaImpl;
-import dido.data.useful.SchemaFactoryImpl;
+import dido.data.DataSchema;
+import dido.data.SchemaFactory;
+import dido.data.SchemaField;
 
 import java.util.Collection;
 

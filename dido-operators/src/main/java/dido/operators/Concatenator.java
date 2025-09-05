@@ -2,10 +2,10 @@ package dido.operators;
 
 import dido.data.*;
 import dido.data.NoSuchFieldException;
+import dido.data.schema.DataSchemaImpl;
+import dido.data.schema.SchemaFactoryImpl;
 import dido.data.useful.AbstractData;
-import dido.data.useful.DataSchemaImpl;
 import dido.data.useful.FieldGetterDelegate;
-import dido.data.useful.SchemaFactoryImpl;
 
 import java.util.*;
 

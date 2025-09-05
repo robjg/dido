@@ -1,6 +1,10 @@
 package dido.operators.transform;
 
-import dido.data.*;
+import dido.data.DataSchema;
+import dido.data.MapData;
+import dido.data.ReadSchema;
+import dido.data.SchemaField;
+import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

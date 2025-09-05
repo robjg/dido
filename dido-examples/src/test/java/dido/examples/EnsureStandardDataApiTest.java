@@ -1,6 +1,7 @@
 package dido.examples;
 
 import dido.data.*;
+import dido.data.schema.SchemaBuilder;
 import dido.data.util.DataBuilder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

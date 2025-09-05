@@ -1,6 +1,6 @@
 package dido.data;
 
-import dido.data.useful.SchemaDelegate;
+import dido.data.schema.SchemaDelegate;
 
 /**
  * A {@link DataSchema} that is able to support a transformation of the {@link DidoData} this is a schema for.

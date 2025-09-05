@@ -2,6 +2,7 @@ package dido.data.mutable;
 
 import dido.data.*;
 import dido.data.NoSuchFieldException;
+import dido.data.schema.DataSchemaFactory;
 import dido.data.util.TypeUtil;
 
 import java.lang.reflect.Type;

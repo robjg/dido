@@ -1,11 +1,14 @@
-package dido.data;
+package dido.data.schema;
 
+import dido.data.DataSchema;
+import dido.data.SchemaField;
+import dido.data.SchemaReference;
 import dido.data.generic.GenericSchemaField;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
 
-class SchemaFields {
+public class SchemaFields {
 
     public static SchemaField of(int index, String field, Type type) {
             return new Simple(index, field, type);

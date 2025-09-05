@@ -2,8 +2,9 @@ package dido.operators.transform;
 
 import dido.data.*;
 import dido.data.NoSuchFieldException;
+import dido.data.schema.DataSchemaFactory;
+import dido.data.schema.DataSchemaImpl;
 import dido.data.useful.AbstractData;
-import dido.data.useful.DataSchemaImpl;
 
 import java.util.Map;
 import java.util.NavigableMap;

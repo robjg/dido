@@ -1,11 +1,15 @@
-package dido.data;
+package dido.data.schema;
+
+import dido.data.DataSchema;
+import dido.data.SchemaField;
+import dido.data.SchemaReference;
 
 import java.util.*;
 
 /**
  * Manage schemas by name so that nested schemas can easily be constructed.
  */
-public class SchemaManager {
+public class SchemaManager implements SchemaLookup {
 
     public static final String DEFAULT_SCHEMA_NAME = "default";
 
@@ -259,6 +263,7 @@ public class SchemaManager {
         return schemaMap.get(DEFAULT_SCHEMA_NAME);
     }
 
+    @Override
     public  DataSchema getSchema(String schemaName) {
         return schemaMap.get(schemaName);
     }

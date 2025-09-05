@@ -3,6 +3,7 @@ package dido.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dido.data.*;
+import dido.data.schema.SchemaBuilder;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;

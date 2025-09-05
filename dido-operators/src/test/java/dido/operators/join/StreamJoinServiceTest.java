@@ -3,7 +3,7 @@ package dido.operators.join;
 import dido.data.ArrayData;
 import dido.data.DidoData;
 import dido.data.FromValues;
-import dido.data.SchemaBuilder;
+import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;

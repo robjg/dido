@@ -1,7 +1,7 @@
 package dido.oddjob.bean;
 
 import dido.data.DataSchema;
-import dido.data.SchemaBuilder;
+import dido.data.schema.SchemaBuilder;
 import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.ArooaClass;
 import org.oddjob.arooa.reflect.BeanOverview;

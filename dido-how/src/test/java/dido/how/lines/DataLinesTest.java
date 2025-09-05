@@ -2,7 +2,7 @@ package dido.how.lines;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.SchemaBuilder;
+import dido.data.schema.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;

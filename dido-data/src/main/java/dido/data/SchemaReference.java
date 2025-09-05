@@ -7,6 +7,11 @@ import java.util.function.Supplier;
 /**
  * Provide a reference to a schema that is yet to be defined. Required for nested tree like
  * schemas. The reference may be named for identification.
+ * </p>
+ * A reference may only be set once. It should be set as soon as possible. A schema containing
+ * a reference can be considered effectively immutable once the reference is set.
+ * </p>
+ * Equality
  */
 public class SchemaReference implements Supplier<DataSchema> {
 
@@ -32,12 +37,22 @@ public class SchemaReference implements Supplier<DataSchema> {
     }
 
     public void set(DataSchema schema) {
-        schemaRef.set(schema);
+        if (schemaRef.get() != null) {
+            throw new IllegalStateException(
+                    "Attempting to set a schema in a schema reference that has already been set. New: " +
+                    schema + ", in: " + this);
+        }
+        schemaRef.set(Objects.requireNonNull(schema, "Schema is null setting: " + this));
     }
 
     @Override
     public DataSchema get() {
-        return schemaRef.get();
+        DataSchema schema = schemaRef.get();
+        if (schema == null) {
+            throw new IllegalStateException("Attempt to access a schema in a reference before it has been set: " +
+                    this);
+        }
+        return schema;
     }
 
     @Override

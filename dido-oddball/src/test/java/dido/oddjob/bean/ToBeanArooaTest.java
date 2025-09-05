@@ -4,7 +4,7 @@ package dido.oddjob.bean;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.MapData;
-import dido.data.SchemaBuilder;
+import dido.data.schema.SchemaBuilder;
 import org.apache.commons.beanutils.DynaBean;
 import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.beanutils.BeanUtilsPropertyAccessor;

@@ -1,6 +1,7 @@
 package dido.operators;
 
 import dido.data.*;
+import dido.data.schema.DataSchemaFactory;
 import dido.data.util.TypeUtil;
 
 import java.lang.reflect.Type;
