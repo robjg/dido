@@ -44,7 +44,7 @@ public class DataSchemaSchema {
                 .addRepeatingField(FIELDS_FIELD, FIELD_SCHEMA_NAME)
                 .addToManager();
 
-        SchemaReference schemaRef = SchemaReference.blank();
+        SchemaRefImpl schemaRef = SchemaRefImpl.blank();
 
         DataSchema fieldSchema = SchemaBuilder.newInstance()
                 .addNamedAt(1, INDEX_FIELD, int.class)

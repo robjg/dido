@@ -1,8 +1,8 @@
 package dido.data.enums;
 
 import dido.data.SchemaField;
-import dido.data.SchemaReference;
 import dido.data.generic.GenericDataSchema;
+import dido.data.schema.SchemaRefImpl;
 
 import java.util.Objects;
 
@@ -47,7 +47,7 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         return this;
     }
 
-    public EnumSchemaBuilder<E> addRepeatingField(E field, SchemaReference nestedSchemaRef) {
+    public EnumSchemaBuilder<E> addRepeatingField(E field, SchemaRefImpl nestedSchemaRef) {
         schemaFactory.addGenericSchemaField(schemaFactory.of()
                 .ofRepeating(field.ordinal() + 1, field, nestedSchemaRef));
         return this;

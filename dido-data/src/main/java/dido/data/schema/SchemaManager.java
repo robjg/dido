@@ -2,7 +2,6 @@ package dido.data.schema;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
-import dido.data.SchemaReference;
 
 import java.util.*;
 
@@ -15,7 +14,7 @@ public class SchemaManager implements SchemaLookup {
 
     private final Map<String, DataSchema> schemaMap = new HashMap<>();
 
-    private final Map<String, List<SchemaReference>> schemaRefs = new HashMap<>();
+    private final Map<String, List<SchemaRefImpl>> schemaRefs = new HashMap<>();
 
     public static SchemaManager newInstance() {
         return new SchemaManager();
@@ -66,7 +65,7 @@ public class SchemaManager implements SchemaLookup {
 
             DataSchema schema = schemaMap.get(schemaName);
             if (schema == null) {
-                SchemaReference schemaRef = SchemaReference.named(schemaName);
+                SchemaRefImpl schemaRef = SchemaRefImpl.named(schemaName);
                 schemaRefs.computeIfAbsent(schemaName, k -> new ArrayList<>())
                         .add(schemaRef);
                 schemaFactory.addSchemaField(SchemaField.ofNested(index, field, schemaRef));
@@ -123,7 +122,7 @@ public class SchemaManager implements SchemaLookup {
 
             DataSchema schema = schemaMap.get(schemaName);
             if (schema == null) {
-                SchemaReference schemaRef = SchemaReference.named(schemaName);
+                SchemaRefImpl schemaRef = SchemaRefImpl.named(schemaName);
                 schemaRefs.computeIfAbsent(schemaName, k -> new ArrayList<>())
                         .add(schemaRef);
                 schemaFactory.addSchemaField(SchemaField.ofRepeating(index, field, schemaRef));
@@ -192,7 +191,7 @@ public class SchemaManager implements SchemaLookup {
         @Override
         public void add() {
             DataSchema schema = this.schemaFactory.toSchema();
-            List<SchemaReference> schemaReferences =
+            List<SchemaRefImpl> schemaReferences =
                     SchemaManager.this.schemaRefs.remove(name);
             if (schemaReferences != null) {
                 schemaReferences.forEach(ref -> ref.set(schema));
@@ -264,7 +263,7 @@ public class SchemaManager implements SchemaLookup {
     }
 
     @Override
-    public  DataSchema getSchema(String schemaName) {
+    public DataSchema getSchema(String schemaName) {
         return schemaMap.get(schemaName);
     }
 }

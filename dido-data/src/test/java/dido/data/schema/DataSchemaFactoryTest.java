@@ -107,7 +107,7 @@ class DataSchemaFactoryTest {
     }
 
     @Test
-    void testConcat() {
+    void concatWorks() {
 
         DataSchema fruitSchema = DataSchema.builder()
                 .addNamed("Id", String.class)
@@ -143,4 +143,23 @@ class DataSchemaFactoryTest {
 
         assertThat(schemaFactory.toSchema(), is(expectedSchema));
     }
+
+    @Test
+    void recursiveSchemaCreated() {
+
+        DataSchemaFactory schemaFactory = DataSchemaFactory.newInstance();
+        schemaFactory.setSchemaName("person");
+        schemaFactory.addSchemaField(SchemaField.of(1, "Name", String.class));
+        schemaFactory.addSchemaReference(SchemaField.repeatingRefOf(2, "Children",
+                "person"));
+
+        DataSchema schema = schemaFactory.toSchema();
+
+        assertThat(schema.getSchemaNamed("Children"), is(schema));
+
+        assertThat(schema.toString(),
+                is("{[1:Name]=java.lang.String, [2:Children]=[SchemaReference{'person'}]}"));
+
+    }
+
 }

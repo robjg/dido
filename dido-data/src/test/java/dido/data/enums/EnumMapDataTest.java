@@ -1,8 +1,8 @@
 package dido.data.enums;
 
-import dido.data.SchemaReference;
 import dido.data.generic.GenericData;
 import dido.data.generic.GenericDataBuilder;
+import dido.data.schema.SchemaRefImpl;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -205,7 +205,7 @@ class EnumMapDataTest {
     @Test
     void canBuildRecursiveSchema() {
 
-        SchemaReference nodeSchemaRef = SchemaReference.blank();
+        SchemaRefImpl nodeSchemaRef = SchemaRefImpl.blank();
 
         EnumSchema<Node> nodeSchema = EnumSchemaBuilder.forEnumType(Node.class)
                 .addField(Node.NAME, String.class)

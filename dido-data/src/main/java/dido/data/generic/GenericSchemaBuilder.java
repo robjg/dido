@@ -2,7 +2,7 @@ package dido.data.generic;
 
 
 import dido.data.DataSchema;
-import dido.data.SchemaReference;
+import dido.data.schema.SchemaRefImpl;
 
 import java.util.function.Function;
 
@@ -72,13 +72,13 @@ public class GenericSchemaBuilder<F, S extends GenericDataSchema<F>> {
     // Add Nested Reference
 
     public GenericSchemaBuilder<F, S> addNestedField(F field,
-                                                  SchemaReference nestedSchemaRef) {
+                                                  SchemaRefImpl nestedSchemaRef) {
         return addNestedFieldAt(0, field, nestedSchemaRef);
     }
 
     public GenericSchemaBuilder<F, S> addNestedFieldAt(int index,
                                                         F field,
-                                                        SchemaReference nestedSchemaRef) {
+                                                        SchemaRefImpl nestedSchemaRef) {
         schemaFactory.addGenericSchemaField(schemaFactory.of().ofNested(index, field, nestedSchemaRef));
         return this;
     }
@@ -99,23 +99,23 @@ public class GenericSchemaBuilder<F, S extends GenericDataSchema<F>> {
 
     // Add Repeating Nested Schema Ref
 
-    public GenericSchemaBuilder<F, S> addRepeating(SchemaReference nestedSchemaRef) {
+    public GenericSchemaBuilder<F, S> addRepeating(SchemaRefImpl nestedSchemaRef) {
         return addRepeatingAt(0, nestedSchemaRef);
     }
 
     public GenericSchemaBuilder<F, S> addRepeatingAt(int index,
-                                                  SchemaReference nestedSchemaRef) {
+                                                  SchemaRefImpl nestedSchemaRef) {
         return addRepeatingFieldAt(index, null, nestedSchemaRef);
     }
 
     public GenericSchemaBuilder<F, S> addRepeatingField(F field,
-                                                     SchemaReference nestedSchemaRef) {
+                                                     SchemaRefImpl nestedSchemaRef) {
         return addRepeatingFieldAt(0, field, nestedSchemaRef);
     }
 
     public GenericSchemaBuilder<F, S> addRepeatingFieldAt(int index,
                                                        F field,
-                                                       SchemaReference nestedSchemaRef) {
+                                                       SchemaRefImpl nestedSchemaRef) {
 
         schemaFactory.addGenericSchemaField(schemaFactory.of().ofRepeating(index, field, nestedSchemaRef));
         return this;

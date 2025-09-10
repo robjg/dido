@@ -1,6 +1,7 @@
 package dido.data;
 
 import dido.data.schema.DataSchemaFactory;
+import dido.data.schema.SchemaDefs;
 
 /**
  * Something that can create a {@link DataSchema}. During the schema creation process this factory
@@ -9,6 +10,10 @@ import dido.data.schema.DataSchemaFactory;
  *
  */
 public interface SchemaFactory extends DataSchema {
+
+    void setSchemaDefs(SchemaDefs schemaDefs);
+
+    void setSchemaName(String schemaName);
 
     /**
      * Add a schema field to be included in the created schema. If the index is &lt; 1, the field will be
@@ -19,6 +24,8 @@ public interface SchemaFactory extends DataSchema {
      * @param schemaField The schema field. Must not be null.
      */
     SchemaField addSchemaField(SchemaField schemaField);
+
+    SchemaField addSchemaReference(SchemaField.RefFactory refFactory);
 
     /**
      * Attempt to remove the SchemaField at the given index.

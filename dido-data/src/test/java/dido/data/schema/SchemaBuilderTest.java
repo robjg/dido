@@ -2,7 +2,6 @@ package dido.data.schema;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
-import dido.data.SchemaReference;
 import dido.data.generic.GenericDataSchema;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -277,7 +276,7 @@ class SchemaBuilderTest {
     @Test
     void testAddNestedSchemaRef() {
 
-        SchemaReference self = SchemaReference.blank();
+        SchemaRefImpl self = SchemaRefImpl.blank();
         DataSchema schema = SchemaBuilder.newInstance()
                 .addNestedNamed("node", self)
                 .build();
@@ -306,7 +305,7 @@ class SchemaBuilderTest {
     @Test
     void testAddRepeatingSchemaRef() {
 
-        SchemaReference ref = SchemaReference.blank();
+        SchemaRefImpl ref = SchemaRefImpl.blank();
 
         DataSchema nested = SchemaBuilder.newInstance()
                 .addNamed("fruit", String.class)

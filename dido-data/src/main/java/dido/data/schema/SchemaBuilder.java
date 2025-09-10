@@ -3,7 +3,6 @@ package dido.data.schema;
 import dido.data.DataSchema;
 import dido.data.SchemaFactory;
 import dido.data.SchemaField;
-import dido.data.SchemaReference;
 
 import java.lang.reflect.Type;
 
@@ -88,23 +87,23 @@ public class SchemaBuilder {
 
     // Add Nested Reference
 
-    public SchemaBuilder addNested(SchemaReference nestedSchemaRef) {
+    public SchemaBuilder addNested(SchemaRefImpl nestedSchemaRef) {
         return addNestedAt(0, nestedSchemaRef);
     }
 
     public SchemaBuilder addNestedAt(int index,
-                                     SchemaReference nestedSchemaRef) {
+                                     SchemaRefImpl nestedSchemaRef) {
         return addNestedNamedAt(index, null, nestedSchemaRef);
     }
 
     public SchemaBuilder addNestedNamed(String field,
-                                        SchemaReference nestedSchemaRef) {
+                                        SchemaRefImpl nestedSchemaRef) {
         return addNestedNamedAt(0, field, nestedSchemaRef);
     }
 
     public SchemaBuilder addNestedNamedAt(int index,
                                           String name,
-                                          SchemaReference nestedSchemaRef) {
+                                          SchemaRefImpl nestedSchemaRef) {
 
         schemaFactory.addSchemaField(SchemaField.ofNested(index, name, nestedSchemaRef));
         return this;
@@ -135,23 +134,23 @@ public class SchemaBuilder {
 
     // Add Repeating Nested Schema Ref
 
-    public SchemaBuilder addRepeating(SchemaReference nestedSchemaRef) {
+    public SchemaBuilder addRepeating(SchemaRefImpl nestedSchemaRef) {
         return addRepeatingAt(0, nestedSchemaRef);
     }
 
     public SchemaBuilder addRepeatingAt(int index,
-                                        SchemaReference nestedSchemaRef) {
+                                        SchemaRefImpl nestedSchemaRef) {
         return addRepeatingNamedAt(index, null, nestedSchemaRef);
     }
 
     public SchemaBuilder addRepeatingNamed(String name,
-                                           SchemaReference nestedSchemaRef) {
+                                           SchemaRefImpl nestedSchemaRef) {
         return addRepeatingNamedAt(0, name, nestedSchemaRef);
     }
 
     public SchemaBuilder addRepeatingNamedAt(int index,
                                              String name,
-                                             SchemaReference nestedSchemaRef) {
+                                             SchemaRefImpl nestedSchemaRef) {
 
         schemaFactory.addSchemaField(SchemaField.ofRepeating(index, name, nestedSchemaRef));
         return this;

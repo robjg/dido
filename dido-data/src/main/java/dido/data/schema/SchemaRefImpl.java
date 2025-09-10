@@ -1,8 +1,9 @@
-package dido.data;
+package dido.data.schema;
+
+import dido.data.DataSchema;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
 /**
  * Provide a reference to a schema that is yet to be defined. Required for nested tree like
@@ -13,27 +14,27 @@ import java.util.function.Supplier;
  * </p>
  * Equality
  */
-public class SchemaReference implements Supplier<DataSchema> {
+public class SchemaRefImpl implements SchemaRef {
 
     private final AtomicReference<DataSchema> schemaRef = new AtomicReference<>();
 
     private final String name;
 
-    private SchemaReference() {
+    private SchemaRefImpl() {
         this(null);
     }
 
-    private SchemaReference(String name) {
+    private SchemaRefImpl(String name) {
         this.name = name;
     }
 
 
-    public static SchemaReference blank() {
-        return new SchemaReference();
+    public static SchemaRefImpl blank() {
+        return new SchemaRefImpl();
     }
 
-    public static <F> SchemaReference named(String name) {
-        return new SchemaReference(name);
+    public static SchemaRefImpl named(String name) {
+        return new SchemaRefImpl(name);
     }
 
     public void set(DataSchema schema) {
@@ -43,6 +44,10 @@ public class SchemaReference implements Supplier<DataSchema> {
                     schema + ", in: " + this);
         }
         schemaRef.set(Objects.requireNonNull(schema, "Schema is null setting: " + this));
+    }
+
+    public String getSchemaName() {
+        return name;
     }
 
     @Override
@@ -62,7 +67,7 @@ public class SchemaReference implements Supplier<DataSchema> {
         }
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SchemaReference that = (SchemaReference) o;
+        SchemaRefImpl that = (SchemaRefImpl) o;
         return Objects.equals(name, that.name) && schemaRef.get().equals(that.schemaRef.get());
     }
 

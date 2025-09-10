@@ -1,6 +1,6 @@
 package dido.data.generic;
 
-import dido.data.SchemaReference;
+import dido.data.schema.SchemaRefImpl;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -53,7 +53,7 @@ public class GenericSchemaFieldTest {
         assertThat(genericField.ofRepeating(5, "Foo", nested).toString(),
                 is("[5:Foo]=[{[1:Nested]=int}]"));
 
-        SchemaReference nestedRef = SchemaReference.named("SomeSchema");
+        SchemaRefImpl nestedRef = SchemaRefImpl.named("SomeSchema");
 
         assertThat(genericField.ofNested(5, "Foo", nestedRef).toString(),
                 is("[5:Foo]=SchemaReference{'SomeSchema'} (unset)"));
@@ -89,7 +89,7 @@ public class GenericSchemaFieldTest {
         assertThat(genericField.ofRepeating(5, "Foo", nested).hashCode(),
                 is(genericField.ofRepeating(5, "Foo", nested).hashCode()));
 
-        SchemaReference nestedRef = SchemaReference.named("SomeSchema");
+        SchemaRefImpl nestedRef = SchemaRefImpl.named("SomeSchema");
 
         assertThat(genericField.ofNested(5, "Foo", nestedRef).hashCode(),
                 is(genericField.ofNested(5, "Foo", nestedRef).hashCode()));
@@ -124,7 +124,7 @@ public class GenericSchemaFieldTest {
         assertThat(genericField.ofRepeating(5, "Foo", nested),
                 is(genericField.ofRepeating(5, "Foo", nested)));
 
-        SchemaReference nestedRef = SchemaReference.named("SomeSchema");
+        SchemaRefImpl nestedRef = SchemaRefImpl.named("SomeSchema");
 
         nestedRef.set(nested);
 
@@ -153,7 +153,7 @@ public class GenericSchemaFieldTest {
         assertThat(genericField.ofRepeating(5, "Foo", nested).getType(),
                 is(GenericSchemaField.NESTED_REPEATING_TYPE));
 
-        SchemaReference nestedRef = SchemaReference.named("SomeSchema");
+        SchemaRefImpl nestedRef = SchemaRefImpl.named("SomeSchema");
 
         assertThat(genericField.ofNested(5, "Foo", nestedRef).getType(),
                 is(GenericSchemaField.NESTED_TYPE));

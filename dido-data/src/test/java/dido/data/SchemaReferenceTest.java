@@ -1,5 +1,6 @@
 package dido.data;
 
+import dido.data.schema.SchemaRefImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -11,7 +12,7 @@ class SchemaReferenceTest {
     @Test
     void equality() {
 
-        SchemaReference ref = SchemaReference.named("person");
+        SchemaRefImpl ref = SchemaRefImpl.named("person");
 
         assertThat(ref, not(is(ref)));
 
@@ -21,7 +22,7 @@ class SchemaReferenceTest {
 
         assertThat(ref, is(ref));
 
-        SchemaReference ref2 = SchemaReference.named("person");
+        SchemaRefImpl ref2 = SchemaRefImpl.named("person");
         ref2.set(DataSchema.builder().add(int.class).build());
 
         assertThat(ref2, not(is(ref)));

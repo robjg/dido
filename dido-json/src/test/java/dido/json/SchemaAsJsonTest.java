@@ -1,6 +1,8 @@
 package dido.json;
 
+import com.google.gson.*;
 import dido.data.DataSchema;
+import dido.data.SchemaField;
 import dido.data.schema.SchemaManager;
 import dido.how.CloseableConsumer;
 import org.junit.jupiter.api.Test;
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,4 +90,43 @@ class SchemaAsJsonTest {
         assertThat(back, contains(schema, schema, schema));
     }
 
+    static class SchemaSerializer implements JsonSerializer<DataSchema> {
+        public JsonElement serialize(DataSchema schema, Type typeOfSrc, JsonSerializationContext context) {
+
+            JsonArray array = new JsonArray();
+            for (SchemaField schemaField : schema.getSchemaFields()) {
+                JsonObject object = new JsonObject();
+                object.add("Index", new JsonPrimitive(schemaField.getIndex()));
+                object.add("Name", new JsonPrimitive(schemaField.getIndex()));
+                if (schemaField.isNested()) {
+                    object.add("Repeating", new JsonPrimitive(schemaField.isRepeating()));
+                    object.add("Nested", context.serialize(schemaField.getNestedSchema()));
+                }
+                array.add(object);
+            }
+
+            JsonObject result = new JsonObject();
+            result.add("Fields", array);
+            return result;
+        }
+    }
+
+    @Test
+    void nestedSchema() {
+
+
+        DataSchema orderLine = DataSchema.builder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", int.class)
+                .build();
+
+        DataSchema order = DataSchema.builder()
+                .addNamed("OrderId", String.class)
+                .addRepeatingNamed("Fruits", orderLine)
+                .build();
+
+        String json = SchemaAsJson.toJson(order);
+
+        System.out.println(json);
+    }
 }

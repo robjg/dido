@@ -2,7 +2,7 @@ package dido.data.generic;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
-import dido.data.SchemaReference;
+import dido.data.schema.SchemaRefImpl;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -32,12 +32,12 @@ class GenericSchemaFields<F> implements GenericSchemaField.Of<F> {
     }
 
     @Override
-    public GenericSchemaField<F> ofNested(int index, String name, SchemaReference nestedRef) {
+    public GenericSchemaField<F> ofNested(int index, String name, SchemaRefImpl nestedRef) {
         return ofNested(index, fieldMappingFunc.apply(name), nestedRef);
     }
 
     @Override
-    public GenericSchemaField<F> ofNested(int index, F field, SchemaReference nestedRef) {
+    public GenericSchemaField<F> ofNested(int index, F field, SchemaRefImpl nestedRef) {
         return new Extension(
                 SchemaField.ofNested(
                         index,
@@ -77,12 +77,12 @@ class GenericSchemaFields<F> implements GenericSchemaField.Of<F> {
     }
 
     @Override
-    public GenericSchemaField<F> ofRepeating(int index, String name, SchemaReference nestedRef) {
+    public GenericSchemaField<F> ofRepeating(int index, String name, SchemaRefImpl nestedRef) {
         return ofRepeating(index, fieldMappingFunc.apply(name), nestedRef);
     }
 
     @Override
-    public GenericSchemaField<F> ofRepeating(int index, F field, SchemaReference nestedRef) {
+    public GenericSchemaField<F> ofRepeating(int index, F field, SchemaRefImpl nestedRef) {
         return new Extension(
                 SchemaField.ofRepeating(
                         index,

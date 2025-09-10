@@ -305,10 +305,9 @@ public interface DataSchema extends IndexedSchema {
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof DataSchema)) {
+            if (!(obj instanceof DataSchema other)) {
                 return false;
             }
-            DataSchema other = (DataSchema) obj;
             return other.firstIndex() == 0 && other.lastIndex() == 0;
         }
 

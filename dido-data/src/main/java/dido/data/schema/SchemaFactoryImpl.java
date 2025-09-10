@@ -21,9 +21,12 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
 
     private final Map<String, Integer> nameToIndex = new HashMap<>();
 
+    private SchemaDefs schemaDefs;
+
     // TODO: Make configurable.
     private static final UnaryOperator<String> fieldRenameStrategy = s -> s + "_";
 
+    private String schemaName;
 
     protected SchemaFactoryImpl() {
     }
@@ -40,6 +43,22 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
      */
     protected abstract S create(Collection<SchemaField> fields, int firstIndex, int lastIndex);
 
+    @Override
+    public void setSchemaDefs(SchemaDefs schemaDefs) {
+        if (this.schemaDefs != null) {
+            throw new IllegalArgumentException("Schema Definitions set already: " + this.schemaDefs);
+        }
+        this.schemaDefs = new SchemaDefsImpl();
+    }
+
+    @Override
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
+        if (schemaDefs == null) {
+            schemaDefs = new SchemaDefsImpl();
+        }
+        this.schemaDefs.registerSchema(schemaName, SchemaRefImpl.named(schemaName));
+    }
 
     @Override
     public boolean hasIndex(int index) {
@@ -158,6 +177,23 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
     @Override
     public SchemaField addSchemaField(SchemaField schemaField) {
 
+        return mapSchemaField(schemaField);
+    }
+
+    @Override
+    public SchemaField addSchemaReference(SchemaField.RefFactory refFactory) {
+
+        String schemaName = Objects.requireNonNull(refFactory.getSchemaName(), "No Schema Name");
+        SchemaRef ref = schemaDefs.resolveSchema(schemaName);
+        if (ref == null) {
+            throw new IllegalArgumentException("No Schema found for name " + schemaName);
+        }
+
+        return mapSchemaField(refFactory.toSchemaField(ref));
+    }
+
+    protected SchemaField mapSchemaField(SchemaField schemaField) {
+
         int index = schemaField.getIndex();
         if (index < 1) {
             index = lastIndex() + 1;
@@ -188,25 +224,11 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
 
     @Override
     public S toSchema() {
-        return create(indexToFields.values(), firstIndex(), lastIndex());
+        S schema = create(indexToFields.values(), firstIndex(), lastIndex());
+        if (schemaName != null) {
+            ((SchemaRefImpl) schemaDefs.resolveSchema(schemaName)).set(schema);
+        }
+        return schema;
     }
 
-    // Implementation
-
-    /**
-     * If the index is 0 we're finding the next available index. We're also remembering
-     * what that is for next time.
-     *
-     * @param index The index;
-     * @return The same index, or the next available.
-     */
-    private <T> T schemaFieldOf(int index, String name, SchemaFieldFunc<T> func) {
-        index = index == 0 ? lastIndex() + 1 : index;
-        return func.apply(index, name == null ? DataSchema.defaultNameForIndex(index) : name);
-    }
-
-    interface SchemaFieldFunc<T> {
-
-        T apply(int index, String field);
-    }
 }

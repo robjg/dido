@@ -2,7 +2,6 @@ package dido.data.schema;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
-import dido.data.SchemaReference;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,7 +43,7 @@ class DataSchemaImplTest {
     @Test
     void recursive() {
 
-        SchemaReference ref = SchemaReference.named("person");
+        SchemaRefImpl ref = SchemaRefImpl.named("person");
 
         DataSchema schema = DataSchemaImpl.fromFields(
                 SchemaField.of(1, "Name", String.class),

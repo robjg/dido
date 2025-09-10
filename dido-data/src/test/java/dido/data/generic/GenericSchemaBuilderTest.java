@@ -1,8 +1,8 @@
 package dido.data.generic;
 
 import dido.data.DataSchema;
-import dido.data.SchemaReference;
 import dido.data.schema.SchemaBuilder;
+import dido.data.schema.SchemaRefImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -169,7 +169,7 @@ class GenericSchemaBuilderTest {
     @Test
     void testAddNestedSchema() {
 
-        SchemaReference self = SchemaReference.blank();
+        SchemaRefImpl self = SchemaRefImpl.blank();
         GenericDataSchema<String> schema = GenericSchemaBuilder.forStringFields()
                 .addNestedField("node", self)
                 .build();

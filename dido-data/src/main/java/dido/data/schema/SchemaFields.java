@@ -2,8 +2,6 @@ package dido.data.schema;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
-import dido.data.SchemaReference;
-import dido.data.generic.GenericSchemaField;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -11,27 +9,37 @@ import java.util.Objects;
 public class SchemaFields {
 
     public static SchemaField of(int index, String field, Type type) {
-            return new Simple(index, field, type);
+        return new Simple(index, field, type);
     }
 
-    public static SchemaField ofNested(int index, String field, SchemaReference nestedRef) {
-            return new NestedRef(new Simple(index, field, GenericSchemaField.NESTED_TYPE),
-                    nestedRef, false);
+    public static SchemaField ofNested(int index, String field, SchemaRef nestedRef) {
+        return new NestedRef(new Simple(index, field, SchemaField.NESTED_TYPE),
+                nestedRef, false);
+    }
+
+    public static SchemaField.RefFactory refOf(int index, String field, String schemaName) {
+        return new NestedRefFactory(new Simple(index, field, SchemaField.NESTED_TYPE),
+                schemaName, false);
     }
 
     public static SchemaField ofNested(int index, String field, DataSchema nested) {
-            return new Nested(new Simple(index, field, GenericSchemaField.NESTED_TYPE),
-                    nested, false);
+        return new Nested(new Simple(index, field, SchemaField.NESTED_TYPE),
+                nested, false);
+    }
+
+    public static SchemaField.RefFactory repeatingRefOf(int index, String field, String schemaName) {
+        return new NestedRefFactory(new Simple(index, field, SchemaField.NESTED_REPEATING_TYPE),
+                schemaName, true);
     }
 
     public static SchemaField ofRepeating(int index, String field, DataSchema nested) {
-            return new Nested(new Simple(index, field, GenericSchemaField.NESTED_REPEATING_TYPE),
-                    nested, true);
+        return new Nested(new Simple(index, field, SchemaField.NESTED_REPEATING_TYPE),
+                nested, true);
     }
 
-    public static SchemaField ofRepeating(int index, String field, SchemaReference nestedRef) {
-            return new NestedRef(new Simple(index, field, GenericSchemaField.NESTED_REPEATING_TYPE),
-                    nestedRef, true);
+    public static SchemaField ofRepeating(int index, String field, SchemaRef nestedRef) {
+        return new NestedRef(new Simple(index, field, SchemaField.NESTED_REPEATING_TYPE),
+                nestedRef, true);
     }
 
     private static final class Simple implements SchemaField {
@@ -96,8 +104,7 @@ public class SchemaFields {
             }
             if (obj instanceof SchemaField) {
                 return SchemaField.equals(this, (SchemaField) obj);
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -175,8 +182,7 @@ public class SchemaFields {
             }
             if (obj instanceof SchemaField) {
                 return SchemaField.equals(this, (SchemaField) obj);
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -193,8 +199,7 @@ public class SchemaFields {
             String nested;
             if (repeating) {
                 nested = "[" + this.nested + "]";
-            }
-            else {
+            } else {
                 nested = this.nested.toString();
             }
             return "[" + simple.getIndex() + field +
@@ -202,16 +207,53 @@ public class SchemaFields {
         }
     }
 
-    private static final class NestedRef implements SchemaField {
+    private static final class NestedRefFactory implements SchemaField.RefFactory {
 
         private final SchemaField simple;
 
-        private final SchemaReference nestedRef;
+        private final String schemaName;
+
+        private final boolean repeating;
+
+        private NestedRefFactory(SchemaField simple, String schemaName, boolean repeating) {
+            this.simple = simple;
+            this.schemaName = schemaName;
+            this.repeating = repeating;
+        }
+
+        @Override
+        public int getIndex() {
+            return simple.getIndex();
+        }
+
+        @Override
+        public String getName() {
+            return simple.getName();
+        }
+
+        @Override
+        public String getSchemaName() {
+            return schemaName;
+        }
+
+        @Override
+        public SchemaField.Ref toSchemaField(SchemaRef schemaSupplier) {
+            return new NestedRef(simple,
+                    schemaSupplier,
+                    repeating);
+        }
+    }
+
+    private static final class NestedRef implements SchemaField.Ref {
+
+        private final SchemaField simple;
+
+        private final SchemaRef nestedRef;
 
         private final boolean repeating;
 
         private NestedRef(SchemaField simple,
-                          SchemaReference nestedRef,
+                          SchemaRef nestedRef,
                           boolean repeating) {
             this.simple = simple;
             this.nestedRef = Objects.requireNonNull(nestedRef);
@@ -259,6 +301,11 @@ public class SchemaFields {
         }
 
         @Override
+        public String getSchemaRef() {
+            return nestedRef.getSchemaName();
+        }
+
+        @Override
         public int hashCode() {
             return SchemaField.hash(this);
         }
@@ -270,8 +317,7 @@ public class SchemaFields {
             }
             if (obj instanceof SchemaField) {
                 return SchemaField.equals(this, (SchemaField) obj);
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -288,8 +334,7 @@ public class SchemaFields {
             String nested;
             if (repeating) {
                 nested = "[" + this.nestedRef + "]";
-            }
-            else {
+            } else {
                 nested = this.nestedRef.toString();
             }
             return "[" + simple.getIndex() + field +

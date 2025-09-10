@@ -1,6 +1,8 @@
 package dido.data;
 
 import dido.data.schema.SchemaFields;
+import dido.data.schema.SchemaRef;
+import dido.data.schema.SchemaRefImpl;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -64,6 +66,22 @@ public interface SchemaField {
      */
     DataSchema getNestedSchema();
 
+    interface Ref extends SchemaField{
+
+        String getSchemaRef();
+    }
+
+    interface RefFactory {
+
+        int getIndex();
+
+        String getName();
+
+        String getSchemaName();
+
+        Ref toSchemaField(SchemaRef schemaSupplier);
+    }
+
     default SchemaField mapToIndex(int toIndex) {
         return mapTo(toIndex, getName());
     }
@@ -86,7 +104,11 @@ public interface SchemaField {
         return SchemaFields.ofNested(index, name, nested);
     }
 
-    static SchemaField ofNested(int index, String name, SchemaReference nestedRef) {
+    static RefFactory refOf(int index, String field, String schemaName) {
+        return SchemaFields.refOf(index, field, schemaName);
+    }
+
+    static SchemaField ofNested(int index, String name, SchemaRef nestedRef) {
         return SchemaFields.ofNested(index, name, nestedRef);
     }
 
@@ -94,8 +116,12 @@ public interface SchemaField {
         return SchemaFields.ofRepeating(index, name, nested);
     }
 
-    static SchemaField ofRepeating(int index, String name, SchemaReference nestedRef) {
+    static SchemaField ofRepeating(int index, String name, SchemaRefImpl nestedRef) {
         return SchemaFields.ofRepeating(index, name, nestedRef);
+    }
+
+    static RefFactory repeatingRefOf(int index, String field, String schemaName) {
+        return SchemaFields.repeatingRefOf(index, field, schemaName);
     }
 
     static int hash(SchemaField field) {
