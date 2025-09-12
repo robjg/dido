@@ -1,4 +1,4 @@
-package dido.how.util;
+package dido.data.util;
 
 
 import java.util.HashMap;
@@ -33,7 +33,7 @@ public class ClassUtils {
 	}
 
 	/**
-	 * Same as {@link Class#forName} except copes with primitives.
+	 * Same as {@link Class#forName(String)} except copes with primitives.
 	 *
 	 * @param className The name of the class
 	 * @param loader The Class Loader.

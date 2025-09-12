@@ -167,6 +167,10 @@ public interface DidoData extends IndexedData {
         return ArrayData.builderForSchema(schema);
     }
 
+    static DataFactory factoryForSchema(DataSchema schema) {
+        return ArrayData.factoryForSchema(schema);
+    }
+
     /**
      * Copy data from the given data. If the data being copied is
      * immutable then the same data may be returned.

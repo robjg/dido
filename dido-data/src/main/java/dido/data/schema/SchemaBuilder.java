@@ -29,6 +29,16 @@ public class SchemaBuilder {
         return builderFor(SchemaFactory.newInstanceFrom(schema));
     }
 
+    public SchemaBuilder withSchemaDefs(SchemaDefs schemaDefs) {
+        schemaFactory.setSchemaDefs(schemaDefs);
+        return this;
+    }
+
+    public SchemaBuilder withSchemaName(String schemaName) {
+        schemaFactory.setSchemaName(schemaName);
+        return this;
+    }
+
     // Add Simple Fields
 
     public SchemaBuilder add(Type fieldType) {
@@ -91,14 +101,28 @@ public class SchemaBuilder {
         return addNestedAt(0, nestedSchemaRef);
     }
 
+    public SchemaBuilder addRef(String ref) {
+        return addRefAt(0, ref);
+    }
+
     public SchemaBuilder addNestedAt(int index,
                                      SchemaRefImpl nestedSchemaRef) {
         return addNestedNamedAt(index, null, nestedSchemaRef);
     }
 
+    public SchemaBuilder addRefAt(int index,
+                                     String ref) {
+        return addRefNamedAt(index, null, ref);
+    }
+
     public SchemaBuilder addNestedNamed(String field,
                                         SchemaRefImpl nestedSchemaRef) {
         return addNestedNamedAt(0, field, nestedSchemaRef);
+    }
+
+    public SchemaBuilder addRefNamed(String field,
+                                        String ref) {
+        return addRefNamedAt(0, field, ref);
     }
 
     public SchemaBuilder addNestedNamedAt(int index,
@@ -109,10 +133,22 @@ public class SchemaBuilder {
         return this;
     }
 
+    public SchemaBuilder addRefNamedAt(int index,
+                                          String name,
+                                          String ref) {
+
+        schemaFactory.addSchemaReference(SchemaField.ofRef(index, name, ref));
+        return this;
+    }
+
     // Add Repeating Nested Schema
 
     public SchemaBuilder addRepeating(DataSchema nestedSchema) {
         return addRepeatingAt(0, nestedSchema);
+    }
+
+    public SchemaBuilder addRepeatingRef(String ref) {
+        return addRepeatingRefAt(0, ref);
     }
 
     public SchemaBuilder addRepeatingAt(int index,
@@ -120,15 +156,32 @@ public class SchemaBuilder {
         return addRepeatingNamedAt(index, null, nestedSchema);
     }
 
+    public SchemaBuilder addRepeatingRefAt(int index,
+                                        String ref) {
+        return addRepeatingRefNamedAt(index, null, ref);
+    }
+
     public SchemaBuilder addRepeatingNamed(String name,
                                            DataSchema nestedSchema) {
         return addRepeatingNamedAt(0, name, nestedSchema);
+    }
+
+    public SchemaBuilder addRepeatingRefNamed(String name,
+                                           String ref) {
+        return addRepeatingRefNamedAt(0, name, ref);
     }
 
     public SchemaBuilder addRepeatingNamedAt(int index,
                                              String name,
                                              DataSchema nestedSchema) {
         schemaFactory.addSchemaField(SchemaField.ofRepeating(index, name, nestedSchema));
+        return this;
+    }
+
+    public SchemaBuilder addRepeatingRefNamedAt(int index,
+                                             String name,
+                                             String ref) {
+        schemaFactory.addSchemaReference(SchemaField.ofRepeatingRef(index, name, ref));
         return this;
     }
 

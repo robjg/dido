@@ -3,7 +3,7 @@ package dido.sql;
 import dido.data.DataSchema;
 import dido.data.SchemaField;
 import dido.data.schema.DataSchemaFactory;
-import dido.how.util.ClassUtils;
+import dido.data.util.ClassUtils;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

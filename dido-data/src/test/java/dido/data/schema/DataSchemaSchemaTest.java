@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.sameInstance;
 
 class DataSchemaSchemaTest {
 
@@ -37,5 +38,27 @@ class DataSchemaSchemaTest {
                 });
 
         assertThat(back, is(schema));
+    }
+
+    @Test
+    void givenSchemaSchemaThenCanGoToDataAndBack() {
+
+        DidoData data = DataSchemaSchema.schemaToData(DataSchemaSchema.DATA_SCHEMA_SCHEMA);
+
+        logger.info(data.toString());
+
+        DataSchema back = DataSchemaSchema.schemaFromData(data, getClass().getClassLoader());
+
+        assertThat(back, is(DataSchemaSchema.DATA_SCHEMA_SCHEMA));
+
+        DataSchema mainSchema = back.getSchemaNamed(DataSchemaSchema.SCHEMA_FIELD);
+
+        DataSchema fieldsSchema = mainSchema.getSchemaNamed(DataSchemaSchema.FIELDS_FIELD);
+
+        DataSchema nestedSchema = fieldsSchema.getSchemaNamed(DataSchemaSchema.NESTED_FIELD);
+
+        DataSchema nestedSchemaSchema = nestedSchema.getSchemaNamed(DataSchemaSchema.SCHEMA_FIELD);
+
+        assertThat(nestedSchemaSchema, sameInstance(mainSchema));
     }
 }

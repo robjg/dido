@@ -3,7 +3,6 @@ package dido.data.schema;
 import dido.data.DataSchema;
 import dido.data.SchemaField;
 import dido.data.generic.GenericDataSchema;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -267,7 +266,7 @@ class SchemaBuilderTest {
                 .addNestedNamed("item", item)
                 .build();
 
-        assertThat(schema.getTypeNamed("item"), Matchers.is(SchemaField.NESTED_TYPE));
+        assertThat(schema.getTypeNamed("item"), is(SchemaField.NESTED_TYPE));
         assertThat(schema.getSchemaFieldNamed("item").isNested(), is(true));
         assertThat(schema.getSchemaFieldNamed("item").isRepeating(), is(false));
         assertThat(schema.getSchemaNamed("item"), sameInstance(item));

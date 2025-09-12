@@ -48,7 +48,7 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
         if (this.schemaDefs != null) {
             throw new IllegalArgumentException("Schema Definitions set already: " + this.schemaDefs);
         }
-        this.schemaDefs = new SchemaDefsImpl();
+        this.schemaDefs = Objects.requireNonNull(schemaDefs);
     }
 
     @Override
@@ -57,7 +57,6 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
         if (schemaDefs == null) {
             schemaDefs = new SchemaDefsImpl();
         }
-        this.schemaDefs.registerSchema(schemaName, SchemaRefImpl.named(schemaName));
     }
 
     @Override
@@ -184,10 +183,8 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
     public SchemaField addSchemaReference(SchemaField.RefFactory refFactory) {
 
         String schemaName = Objects.requireNonNull(refFactory.getSchemaName(), "No Schema Name");
-        SchemaRef ref = schemaDefs.resolveSchema(schemaName);
-        if (ref == null) {
-            throw new IllegalArgumentException("No Schema found for name " + schemaName);
-        }
+        SchemaRef ref = Objects.requireNonNull(schemaDefs, "No Schema Defs defined when adding ref: " + refFactory)
+                .getSchemaRef(schemaName);
 
         return mapSchemaField(refFactory.toSchemaField(ref));
     }
@@ -226,7 +223,7 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
     public S toSchema() {
         S schema = create(indexToFields.values(), firstIndex(), lastIndex());
         if (schemaName != null) {
-            ((SchemaRefImpl) schemaDefs.resolveSchema(schemaName)).set(schema);
+            ((SchemaRefImpl) schemaDefs.getSchemaRef(schemaName)).set(schema);
         }
         return schema;
     }

@@ -1,0 +1,117 @@
+{
+  "Defs": [
+    {
+      "Def": "DataSchema",
+      "Schema": {
+        "Fields": [
+          {
+            "Index": 1,
+            "Name": "Fields",
+            "Type": "dido.data.RepeatingData",
+            "Nested": {
+              "Ref": "FieldSchema",
+              "Repeating": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "Def": "FieldSchema",
+      "Schema": {
+        "Fields": [
+          {
+            "Index": 1,
+            "Name": "Index",
+            "Type": "int"
+          },
+          {
+            "Index": 2,
+            "Name": "Name",
+            "Type": "java.lang.String"
+          },
+          {
+            "Index": 3,
+            "Name": "Type",
+            "Type": "java.lang.String"
+          },
+          {
+            "Index": 4,
+            "Name": "Nested",
+            "Type": "dido.data.DidoData",
+            "Nested": {
+              "Schema": {
+                "Fields": [
+                  {
+                    "Index": 1,
+                    "Name": "Ref",
+                    "Type": "java.lang.String"
+                  },
+                  {
+                    "Index": 2,
+                    "Name": "Schema",
+                    "Type": "dido.data.DidoData",
+                    "Nested": {
+                      "Ref": "DataSchema",
+                      "Repeating": false
+                    }
+                  },
+                  {
+                    "Index": 3,
+                    "Name": "Repeating",
+                    "Type": "boolean"
+                  }
+                ]
+              },
+              "Repeating": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Schema": {
+    "Fields": [
+      {
+        "Index": 1,
+        "Name": "Name",
+        "Type": "java.lang.String"
+      },
+      {
+        "Index": 2,
+        "Name": "Defs",
+        "Type": "dido.data.RepeatingData",
+        "Nested": {
+          "Schema": {
+            "Fields": [
+              {
+                "Index": 1,
+                "Name": "Def",
+                "Type": "java.lang.String"
+              },
+              {
+                "Index": 2,
+                "Name": "Schema",
+                "Type": "dido.data.DidoData",
+                "Nested": {
+                  "Ref": "DataSchema",
+                  "Repeating": false
+                }
+              }
+            ]
+          },
+          "Repeating": true
+        }
+      },
+      {
+        "Index": 3,
+        "Name": "Schema",
+        "Type": "dido.data.DidoData",
+        "Nested": {
+          "Ref": "DataSchema",
+          "Repeating": false
+        }
+      }
+    ]
+  }
+}

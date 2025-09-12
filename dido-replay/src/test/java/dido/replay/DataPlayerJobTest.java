@@ -3,7 +3,6 @@ package dido.replay;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.MapData;
-import dido.json.SchemaAsJson;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -36,10 +35,13 @@ class DataPlayerJobTest {
             dataPlayerJob.run();
         }
 
-        DataSchema schema = SchemaAsJson.fromJson(
-                "{\"Fields\":[{\"Index\":1,\"Field\":\"type\",\"Type\":\"java.lang.String\"},{\"Index\":2,\"Field\":\"quantity\",\"Type\":\"int\"},{\"Index\":3,\"Field\":\"price\",\"Type\":\"double\"}]}\n");
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("type", String.class)
+                .addNamed("quantity", int.class)
+                .addNamed("price", double.class)
+                .build();
 
         MatcherAssert.assertThat(results, Matchers.contains(
-                MapData.withSchema(schema).of("Orange", 10, 31.6)));
+                MapData.withSchema(expectedSchema).of("Orange", 10, 31.6)));
     }
 }

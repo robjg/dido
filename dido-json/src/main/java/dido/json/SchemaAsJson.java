@@ -3,11 +3,11 @@ package dido.json;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.schema.DataSchemaSchema;
+import dido.data.util.ClassUtils;
 import dido.how.CloseableConsumer;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import dido.how.DataOut;
-import dido.how.util.ClassUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

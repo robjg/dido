@@ -301,7 +301,7 @@ public class SchemaFields {
         }
 
         @Override
-        public String getSchemaRef() {
+        public String getSchemaName() {
             return nestedRef.getSchemaName();
         }
 

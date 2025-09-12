@@ -61,6 +61,11 @@ public class SchemaRefImpl implements SchemaRef {
     }
 
     @Override
+    public boolean isResolved() {
+        return schemaRef.get() != null;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (schemaRef.get() == null) {
             return false;

@@ -10,7 +10,8 @@ import java.util.Objects;
 /**
  * Definition of a field in an {@link DataSchema}.
  * Schema fields should always be equal if their index, type and name match regardless of any other attributes
- * they might have.
+ * they might have. Nested schemas are not considered for equality because of the complexities of dealing with
+ * recursive schemas.
  */
 public interface SchemaField {
 
@@ -68,7 +69,7 @@ public interface SchemaField {
 
     interface Ref extends SchemaField{
 
-        String getSchemaRef();
+        String getSchemaName();
     }
 
     interface RefFactory {
@@ -104,7 +105,7 @@ public interface SchemaField {
         return SchemaFields.ofNested(index, name, nested);
     }
 
-    static RefFactory refOf(int index, String field, String schemaName) {
+    static RefFactory ofRef(int index, String field, String schemaName) {
         return SchemaFields.refOf(index, field, schemaName);
     }
 
@@ -120,7 +121,7 @@ public interface SchemaField {
         return SchemaFields.ofRepeating(index, name, nestedRef);
     }
 
-    static RefFactory repeatingRefOf(int index, String field, String schemaName) {
+    static RefFactory ofRepeatingRef(int index, String field, String schemaName) {
         return SchemaFields.repeatingRefOf(index, field, schemaName);
     }
 
@@ -138,10 +139,7 @@ public interface SchemaField {
 
         return field1.getIndex() == field2.getIndex() &&
                 Objects.equals(field1.getName(), field2.getName()) &&
-                Objects.equals(field1.getType(), field2.getType()) &&
-                field1.isNested() == field2.isNested() &&
-                field1.isRepeating() == field2.isRepeating() &&
-                DataSchema.equals(field1.getNestedSchema(), field2.getNestedSchema());
+                Objects.equals(field1.getType(), field2.getType());
     }
 
 }

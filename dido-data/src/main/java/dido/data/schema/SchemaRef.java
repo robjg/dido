@@ -13,4 +13,5 @@ public interface SchemaRef extends Supplier<DataSchema> {
 
     String getSchemaName();
 
+    boolean isResolved();
 }

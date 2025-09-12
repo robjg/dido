@@ -150,7 +150,7 @@ class DataSchemaFactoryTest {
         DataSchemaFactory schemaFactory = DataSchemaFactory.newInstance();
         schemaFactory.setSchemaName("person");
         schemaFactory.addSchemaField(SchemaField.of(1, "Name", String.class));
-        schemaFactory.addSchemaReference(SchemaField.repeatingRefOf(2, "Children",
+        schemaFactory.addSchemaReference(SchemaField.ofRepeatingRef(2, "Children",
                 "person"));
 
         DataSchema schema = schemaFactory.toSchema();

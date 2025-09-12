@@ -3,6 +3,7 @@ package dido.json;
 import com.google.gson.*;
 import dido.data.DataSchema;
 import dido.data.SchemaField;
+import dido.data.schema.DataSchemaSchema;
 import dido.data.schema.SchemaManager;
 import dido.how.CloseableConsumer;
 import org.junit.jupiter.api.Test;
@@ -112,7 +113,7 @@ class SchemaAsJsonTest {
     }
 
     @Test
-    void nestedSchema() {
+    void nestedSchema() throws Exception {
 
 
         DataSchema orderLine = DataSchema.builder()
@@ -127,6 +128,23 @@ class SchemaAsJsonTest {
 
         String json = SchemaAsJson.toJson(order);
 
-        System.out.println(json);
+        logger.info(json);
+
+        DataSchema back = SchemaAsJson.fromJson(json);
+
+        assertThat(back, is(order));
+        assertThat(back.getSchemaNamed("Fruits"), is(orderLine));
+    }
+
+    @Test
+    void schemaSchema() throws Exception {
+
+        String json = SchemaAsJson.toJson(DataSchemaSchema.DATA_SCHEMA_SCHEMA);
+
+        logger.info(json);
+
+        DataSchema back = SchemaAsJson.fromJson(json);
+
+        assertThat(back, is(DataSchemaSchema.DATA_SCHEMA_SCHEMA));
     }
 }

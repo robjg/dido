@@ -1,12 +1,17 @@
 package dido.data.schema;
 
+import dido.data.DataSchema;
+
 /**
  * Holder for schema definitions that are referenced elsewhere.
  */
 public interface SchemaDefs {
 
-    void registerSchema(String schemaName, SchemaRef schemaRef);
+    void setSchema(String schemaName, DataSchema schema);
 
-    SchemaRef resolveSchema(String schemaName);
+    SchemaRef getSchemaRef(String schemaName);
 
+    static SchemaDefs newInstance() {
+        return new SchemaDefsImpl();
+    }
 }
