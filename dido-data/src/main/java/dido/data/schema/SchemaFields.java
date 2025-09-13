@@ -12,11 +12,6 @@ public class SchemaFields {
         return new Simple(index, field, type);
     }
 
-    public static SchemaField ofNested(int index, String field, SchemaRef nestedRef) {
-        return new NestedRef(new Simple(index, field, SchemaField.NESTED_TYPE),
-                nestedRef, false);
-    }
-
     public static SchemaField.RefFactory refOf(int index, String field, String schemaName) {
         return new NestedRefFactory(new Simple(index, field, SchemaField.NESTED_TYPE),
                 schemaName, false);
@@ -35,11 +30,6 @@ public class SchemaFields {
     public static SchemaField ofRepeating(int index, String field, DataSchema nested) {
         return new Nested(new Simple(index, field, SchemaField.NESTED_REPEATING_TYPE),
                 nested, true);
-    }
-
-    public static SchemaField ofRepeating(int index, String field, SchemaRef nestedRef) {
-        return new NestedRef(new Simple(index, field, SchemaField.NESTED_REPEATING_TYPE),
-                nestedRef, true);
     }
 
     private static final class Simple implements SchemaField {

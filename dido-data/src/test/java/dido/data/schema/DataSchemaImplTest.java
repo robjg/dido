@@ -43,13 +43,13 @@ class DataSchemaImplTest {
     @Test
     void recursive() {
 
-        SchemaRefImpl ref = SchemaRefImpl.named("person");
+        SchemaDefs defs = SchemaDefs.newInstance();
 
         DataSchema schema = DataSchemaImpl.fromFields(
                 SchemaField.of(1, "Name", String.class),
-                SchemaField.ofRepeating(2, "Children", ref));
+                SchemaField.ofRepeatingRef(2, "Children", "person").toSchemaField(defs));
 
-        ref.set(schema);
+        defs.setSchema("person", schema);
 
         assertThat(schema, is(schema));
 

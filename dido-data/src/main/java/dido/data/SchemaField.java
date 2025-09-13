@@ -2,8 +2,6 @@ package dido.data;
 
 import dido.data.schema.SchemaDefs;
 import dido.data.schema.SchemaFields;
-import dido.data.schema.SchemaRef;
-import dido.data.schema.SchemaRefImpl;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -105,16 +103,8 @@ public interface SchemaField {
         return SchemaFields.refOf(index, field, schemaName);
     }
 
-    static SchemaField ofNested(int index, String name, SchemaRef nestedRef) {
-        return SchemaFields.ofNested(index, name, nestedRef);
-    }
-
     static SchemaField ofRepeating(int index, String name, DataSchema nested) {
         return SchemaFields.ofRepeating(index, name, nested);
-    }
-
-    static SchemaField ofRepeating(int index, String name, SchemaRefImpl nestedRef) {
-        return SchemaFields.ofRepeating(index, name, nestedRef);
     }
 
     static RefFactory ofRepeatingRef(int index, String field, String schemaName) {
