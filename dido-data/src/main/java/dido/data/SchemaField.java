@@ -1,5 +1,6 @@
 package dido.data;
 
+import dido.data.schema.SchemaDefs;
 import dido.data.schema.SchemaFields;
 import dido.data.schema.SchemaRef;
 import dido.data.schema.SchemaRefImpl;
@@ -72,15 +73,10 @@ public interface SchemaField {
         String getSchemaName();
     }
 
+    @FunctionalInterface
     interface RefFactory {
 
-        int getIndex();
-
-        String getName();
-
-        String getSchemaName();
-
-        Ref toSchemaField(SchemaRef schemaSupplier);
+        Ref toSchemaField(SchemaDefs schemaDefs);
     }
 
     default SchemaField mapToIndex(int toIndex) {

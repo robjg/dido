@@ -2,7 +2,6 @@ package dido.data.generic;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
-import dido.data.schema.SchemaRefImpl;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -47,17 +46,17 @@ public interface GenericSchemaField<F> extends SchemaField {
 
         GenericSchemaField<F> ofNested(int index, F field, DataSchema nested);
 
-        GenericSchemaField<F> ofNested(int index, String name, SchemaRefImpl nestedRef);
+        SchemaField.RefFactory ofRef(int index, String name, String refSchemaName);
 
-        GenericSchemaField<F> ofNested(int index, F field, SchemaRefImpl nestedRef);
+        SchemaField.RefFactory ofRef(int index, F field, String refSchemaName);
 
         GenericSchemaField<F> ofRepeating(int index, String field, DataSchema nested);
 
         GenericSchemaField<F> ofRepeating(int index, F field, DataSchema nested);
 
-        GenericSchemaField<F> ofRepeating(int index, String field, SchemaRefImpl nestedRef);
+        SchemaField.RefFactory ofRepeatingRef(int index, String field, String refSchemaName);
 
-        GenericSchemaField<F> ofRepeating(int index, F field, SchemaRefImpl nestedRef);
+        SchemaField.RefFactory ofRepeatingRef(int index, F field, String refSchemaName);
 
         GenericSchemaField<F> from(SchemaField schemaField);
     }

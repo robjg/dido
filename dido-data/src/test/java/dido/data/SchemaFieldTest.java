@@ -1,7 +1,7 @@
 package dido.data;
 
 import dido.data.schema.SchemaBuilder;
-import dido.data.schema.SchemaRefImpl;
+import dido.data.schema.SchemaDefs;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,20 +25,30 @@ public class SchemaFieldTest {
         assertThat(SchemaField.ofRepeating(5, "Foo", nested).toString(),
                 is("[5:Foo]=[{[1:Nested]=int}]"));
 
-        SchemaRefImpl nestedRef = SchemaRefImpl.named("SomeSchema");
+        SchemaField.RefFactory ref = SchemaField.ofRef(5, "Foo", "SomeSchema");
+        assertThat(ref.toString(),
+                is("RefFactory{5:Foo]=SomeSchema}"));
 
-        assertThat(SchemaField.ofNested(5, "Foo", nestedRef).toString(),
+        SchemaField.RefFactory repeatingRef = SchemaField.ofRepeatingRef(5, "Foo", "SomeSchema");
+        assertThat(repeatingRef.toString(),
+                is("RefFactory{5:Foo]=[SomeSchema]}"));
+
+        SchemaDefs defs = SchemaDefs.newInstance();
+
+        SchemaField refField = ref.toSchemaField(defs);
+        assertThat(refField.toString(),
                 is("[5:Foo]=SchemaReference{'SomeSchema'} (unset)"));
 
-        assertThat(SchemaField.ofRepeating(5, "Foo", nestedRef).toString(),
+        SchemaField repeatingRefField = repeatingRef.toSchemaField(defs);
+        assertThat(repeatingRefField.toString(),
                 is("[5:Foo]=[SchemaReference{'SomeSchema'} (unset)]"));
 
-        nestedRef.set(nested);
+        defs.setSchema("SomeSchema", DataSchema.emptySchema());
 
-        assertThat(SchemaField.ofNested(5, "Foo", nestedRef).toString(),
+        assertThat(refField.toString(),
                 is("[5:Foo]=SchemaReference{'SomeSchema'}"));
 
-        assertThat(SchemaField.ofRepeating(5, "Foo", nestedRef).toString(),
+        assertThat(repeatingRefField.toString(),
                 is("[5:Foo]=[SchemaReference{'SomeSchema'}]"));
 
     }
@@ -59,21 +69,15 @@ public class SchemaFieldTest {
         assertThat(SchemaField.ofRepeating(5, "Foo", nested).hashCode(),
                 is(SchemaField.ofRepeating(5, "Foo", nested).hashCode()));
 
-        SchemaRefImpl nestedRef = SchemaRefImpl.named("SomeSchema");
+        SchemaDefs defs = SchemaDefs.newInstance();
 
-        assertThat(SchemaField.ofNested(5, "Foo", nestedRef).hashCode(),
-                is(SchemaField.ofNested(5, "Foo", nestedRef).hashCode()));
+        assertThat(SchemaField.ofRef(5, "Foo", "SomeSchema")
+                        .toSchemaField(defs).hashCode(),
+                is(5));
 
-        assertThat(SchemaField.ofRepeating(5, "Foo", nestedRef).hashCode(),
-                is(SchemaField.ofRepeating(5, "Foo", nestedRef).hashCode()));
-
-        nestedRef.set(nested);
-
-        assertThat(SchemaField.ofNested(5, "Foo", nestedRef).hashCode(),
-                is(SchemaField.ofNested(5, "Foo", nestedRef).hashCode()));
-
-        assertThat(SchemaField.ofRepeating(5, "Foo", nestedRef).hashCode(),
-                is(SchemaField.ofRepeating(5, "Foo", nestedRef).hashCode()));
+        assertThat(SchemaField.ofRepeatingRef(5, "Foo", "SomeSchema")
+                        .toSchemaField(defs).hashCode(),
+                is(5));
     }
 
     @Test
@@ -92,15 +96,17 @@ public class SchemaFieldTest {
         assertThat(SchemaField.ofRepeating(5, "Foo", nested),
                 is(SchemaField.ofRepeating(5, "Foo", nested)));
 
-        SchemaRefImpl nestedRef = SchemaRefImpl.named("SomeSchema");
+        SchemaDefs defs = SchemaDefs.newInstance();
 
-        nestedRef.set(nested);
+        assertThat(SchemaField.ofRef(5, "Foo", "SomeSchema")
+                        .toSchemaField(defs),
+                is(SchemaField.ofRef(5, "Foo", "SomeSchema")
+                        .toSchemaField(defs)));
 
-        assertThat(SchemaField.ofNested(5, "Foo", nestedRef),
-                is(SchemaField.ofNested(5, "Foo", nestedRef)));
-
-        assertThat(SchemaField.ofRepeating(5, "Foo", nestedRef),
-                is(SchemaField.ofRepeating(5, "Foo", nestedRef)));
+        assertThat(SchemaField.ofRepeatingRef(5, "Foo", "SomeSchema")
+                        .toSchemaField(defs),
+                is(SchemaField.ofRepeatingRef(5, "Foo", "SomeSchema")
+                        .toSchemaField(defs)));
     }
 
     @Test
@@ -119,20 +125,24 @@ public class SchemaFieldTest {
         assertThat(SchemaField.ofRepeating(5, "Foo", nested).getType(),
                 is(SchemaField.NESTED_REPEATING_TYPE));
 
-        SchemaRefImpl nestedRef = SchemaRefImpl.named("SomeSchema");
+        SchemaDefs defs = SchemaDefs.newInstance();
 
-        assertThat(SchemaField.ofNested(5, "Foo", nestedRef).getType(),
+        assertThat(SchemaField.ofRef(5, "Foo", "SomeSchema")
+                        .toSchemaField(defs).getType(),
                 is(SchemaField.NESTED_TYPE));
 
-        assertThat(SchemaField.ofRepeating(5, "Foo", nestedRef).getType(),
+        assertThat(SchemaField.ofRepeatingRef(5, "Foo", "SomeSchema")
+                        .toSchemaField(defs).getType(),
                 is(SchemaField.NESTED_REPEATING_TYPE));
 
-        nestedRef.set(nested);
+        defs.setSchema("SomeSchema", DataSchema.emptySchema());
 
-        assertThat(SchemaField.ofNested(5, "Foo", nestedRef).getType(),
+        assertThat(SchemaField.ofRef(5, "Foo", "SomeSchema")
+                        .toSchemaField(defs).getType(),
                 is(SchemaField.NESTED_TYPE));
 
-        assertThat(SchemaField.ofRepeating(5, "Foo", nestedRef).getType(),
+        assertThat(SchemaField.ofRepeatingRef(5, "Foo", "SomeSchema")
+                        .toSchemaField(defs).getType(),
                 is(SchemaField.NESTED_REPEATING_TYPE));
     }
 

@@ -275,11 +275,13 @@ class SchemaBuilderTest {
     @Test
     void testAddNestedSchemaRef() {
 
-        SchemaRefImpl self = SchemaRefImpl.blank();
+        SchemaDefs defs = SchemaDefs.newInstance();
+
         DataSchema schema = SchemaBuilder.newInstance()
-                .addNestedNamed("node", self)
+                .withSchemaDefs(defs)
+                .withSchemaName("self")
+                .addRefNamed("node", "self")
                 .build();
-        self.set(schema);
 
         assertThat(schema.getSchemaNamed("node"), sameInstance(schema));
     }
@@ -304,16 +306,18 @@ class SchemaBuilderTest {
     @Test
     void testAddRepeatingSchemaRef() {
 
-        SchemaRefImpl ref = SchemaRefImpl.blank();
+        SchemaDefs defs = SchemaDefs.newInstance();
 
         DataSchema nested = SchemaBuilder.newInstance()
+                .withSchemaDefs(defs)
+                .withSchemaName("fruits")
                 .addNamed("fruit", String.class)
                 .build();
 
         DataSchema schema = SchemaBuilder.newInstance()
-                .addRepeatingNamed("list", ref)
+                .withSchemaDefs(defs)
+                .addRepeatingRefNamed("list", "fruits")
                 .build();
-        ref.set(nested);
 
         assertThat(schema.getTypeNamed("list"), is(SchemaField.NESTED_REPEATING_TYPE));
         assertThat(schema.getSchemaFieldNamed("list").isNested(), is(true));

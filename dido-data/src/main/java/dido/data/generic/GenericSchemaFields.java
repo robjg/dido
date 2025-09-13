@@ -2,7 +2,7 @@ package dido.data.generic;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
-import dido.data.schema.SchemaRefImpl;
+import dido.data.schema.SchemaDefs;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -32,17 +32,17 @@ class GenericSchemaFields<F> implements GenericSchemaField.Of<F> {
     }
 
     @Override
-    public GenericSchemaField<F> ofNested(int index, String name, SchemaRefImpl nestedRef) {
-        return ofNested(index, fieldMappingFunc.apply(name), nestedRef);
+    public SchemaField.RefFactory ofRef(int index, String name, String refSchemaName) {
+        return ofRef(index, fieldMappingFunc.apply(name), refSchemaName);
     }
 
     @Override
-    public GenericSchemaField<F> ofNested(int index, F field, SchemaRefImpl nestedRef) {
-        return new Extension(
-                SchemaField.ofNested(
+    public SchemaField.RefFactory ofRef(int index, F field, String refSchemaName) {
+        return new ExtensionRefFactory(
+                SchemaField.ofRef(
                         index,
                         Objects.requireNonNull(field, "Field can not be null").toString(),
-                        nestedRef),
+                        refSchemaName),
                 field);
     }
 
@@ -77,17 +77,17 @@ class GenericSchemaFields<F> implements GenericSchemaField.Of<F> {
     }
 
     @Override
-    public GenericSchemaField<F> ofRepeating(int index, String name, SchemaRefImpl nestedRef) {
-        return ofRepeating(index, fieldMappingFunc.apply(name), nestedRef);
+    public SchemaField.RefFactory ofRepeatingRef(int index, String name, String refSchemaName) {
+        return ofRepeatingRef(index, fieldMappingFunc.apply(name), refSchemaName);
     }
 
     @Override
-    public GenericSchemaField<F> ofRepeating(int index, F field, SchemaRefImpl nestedRef) {
-        return new Extension(
-                SchemaField.ofRepeating(
+    public SchemaField.RefFactory ofRepeatingRef(int index, F field, String refSchemaName) {
+        return new ExtensionRefFactory(
+                SchemaField.ofRepeatingRef(
                         index,
                         Objects.requireNonNull(field, "Field can not be null").toString(),
-                        nestedRef),
+                        refSchemaName),
                 field);
     }
 
@@ -96,9 +96,9 @@ class GenericSchemaFields<F> implements GenericSchemaField.Of<F> {
         return new Extension(schemaField, fieldMappingFunc.apply(schemaField.getName()));
     }
 
-    private final class Extension implements GenericSchemaField<F> {
+    private class Extension implements GenericSchemaField<F> {
 
-        private final SchemaField delegate;
+        protected final SchemaField delegate;
 
         private final F field;
 
@@ -179,4 +179,39 @@ class GenericSchemaFields<F> implements GenericSchemaField.Of<F> {
         }
     }
 
+    private class ExtensionRefFactory implements SchemaField.RefFactory {
+
+        private final SchemaField.RefFactory delegate;
+
+        private final F field;
+
+        private ExtensionRefFactory(SchemaField.RefFactory delegate, F field) {
+            this.delegate = delegate;
+            this.field = field;
+        }
+
+        @Override
+        public SchemaField.Ref toSchemaField(SchemaDefs schemaDefs) {
+            return new ExtensionRef(
+                    delegate.toSchemaField(schemaDefs),
+                    field);
+        }
+
+        @Override
+        public String toString() {
+            return delegate.toString();
+        }
+    }
+
+    private class ExtensionRef extends Extension implements SchemaField.Ref {
+
+        ExtensionRef(SchemaField.Ref delegate, F field) {
+            super(delegate, field);
+        }
+
+        @Override
+        public String getSchemaName() {
+            return ((SchemaField.Ref) delegate).getSchemaName();
+        }
+    }
 }

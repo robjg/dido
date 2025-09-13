@@ -54,9 +54,6 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
     @Override
     public void setSchemaName(String schemaName) {
         this.schemaName = schemaName;
-        if (schemaDefs == null) {
-            schemaDefs = new SchemaDefsImpl();
-        }
     }
 
     @Override
@@ -182,11 +179,8 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
     @Override
     public SchemaField addSchemaReference(SchemaField.RefFactory refFactory) {
 
-        String schemaName = Objects.requireNonNull(refFactory.getSchemaName(), "No Schema Name");
-        SchemaRef ref = Objects.requireNonNull(schemaDefs, "No Schema Defs defined when adding ref: " + refFactory)
-                .getSchemaRef(schemaName);
-
-        return mapSchemaField(refFactory.toSchemaField(ref));
+        return mapSchemaField(refFactory.toSchemaField(
+                Objects.requireNonNull(schemaDefs, "No Schema Defs defined when adding ref: " + refFactory)));
     }
 
     protected SchemaField mapSchemaField(SchemaField schemaField) {
@@ -223,7 +217,8 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
     public S toSchema() {
         S schema = create(indexToFields.values(), firstIndex(), lastIndex());
         if (schemaName != null) {
-            ((SchemaRefImpl) schemaDefs.getSchemaRef(schemaName)).set(schema);
+            Objects.requireNonNull(schemaDefs, "Schema Name can only be used with Schema Defs.")
+                    .setSchema(schemaName, schema);
         }
         return schema;
     }

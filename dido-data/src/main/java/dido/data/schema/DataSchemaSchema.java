@@ -286,13 +286,12 @@ public class DataSchemaSchema {
                             nestedData.getBooleanNamed(REPEATING_FIELD);
 
                     if (nestedData.hasNamed(REF_FIELD)) {
-                        String refShemaName = nestedData.getStringNamed(REF_FIELD);
-                        SchemaRef ref = defs.getSchemaRef(refShemaName);
+                        String refSchemaName = nestedData.getStringNamed(REF_FIELD);
                         schemaField = repeating ?
-                                SchemaField.ofRepeatingRef(index, name, refShemaName)
-                                        .toSchemaField(ref) :
-                                SchemaField.ofRef(index, name, refShemaName)
-                                        .toSchemaField(ref);
+                                SchemaField.ofRepeatingRef(index, name, refSchemaName)
+                                        .toSchemaField(defs) :
+                                SchemaField.ofRef(index, name, refSchemaName)
+                                        .toSchemaField(defs);
                     } else {
                         DidoData nestedSchemaData = (DidoData) nestedData.getNamed(SCHEMA_FIELD);
 

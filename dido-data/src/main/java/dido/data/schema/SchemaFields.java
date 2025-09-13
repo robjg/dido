@@ -217,30 +217,33 @@ public class SchemaFields {
 
         private NestedRefFactory(SchemaField simple, String schemaName, boolean repeating) {
             this.simple = simple;
-            this.schemaName = schemaName;
+            this.schemaName = Objects.requireNonNull(schemaName, "No Ref Shema Name");
             this.repeating = repeating;
         }
 
-        @Override
-        public int getIndex() {
-            return simple.getIndex();
-        }
-
-        @Override
-        public String getName() {
-            return simple.getName();
-        }
-
-        @Override
-        public String getSchemaName() {
-            return schemaName;
-        }
-
-        @Override
-        public SchemaField.Ref toSchemaField(SchemaRef schemaSupplier) {
+        public SchemaField.Ref toSchemaField(SchemaDefs defs) {
             return new NestedRef(simple,
-                    schemaSupplier,
+                    defs.getSchemaRef(schemaName),
                     repeating);
+        }
+
+        @Override
+        public String toString() {
+            String field;
+            String f = simple.getName();
+            if (f == null) {
+                field = "";
+            } else {
+                field = ":" + f;
+            }
+            String nested;
+            if (repeating) {
+                nested = "[" + schemaName + "]";
+            } else {
+                nested = schemaName;
+            }
+            return "RefFactory{" + simple.getIndex() + field +
+                    "]=" + nested + "}";
         }
     }
 

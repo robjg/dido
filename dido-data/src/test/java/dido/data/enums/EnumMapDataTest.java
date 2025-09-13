@@ -2,7 +2,7 @@ package dido.data.enums;
 
 import dido.data.generic.GenericData;
 import dido.data.generic.GenericDataBuilder;
-import dido.data.schema.SchemaRefImpl;
+import dido.data.schema.SchemaDefs;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -148,7 +148,6 @@ class EnumMapDataTest {
     @Test
     void givenNestedSchemaThenFieldTypeWorksOut() {
 
-
         EnumSchema<Person> personSchema = EnumSchemaBuilder.forEnumType(Person.class)
                 .addField(Person.NAME, String.class)
                 .addField(Person.SEX, Sex.class)
@@ -197,6 +196,62 @@ class EnumMapDataTest {
                 "{[NAME]=Louis, [SEX]=MALE, [AGE]=4}]}"));
     }
 
+    @Test
+    void schemaWithRefs() {
+
+        SchemaDefs defs = SchemaDefs.newInstance();
+
+        EnumSchema<Person> personSchema = EnumSchemaBuilder.forEnumType(Person.class)
+                .withSchemaDefs(defs)
+                .withSchemaName("person")
+                .addField(Person.NAME, String.class)
+                .addField(Person.SEX, Sex.class)
+                .addField(Person.AGE, int.class)
+                .build();
+
+        EnumSchema<Family> familySchema = EnumSchemaBuilder.forEnumType(Family.class)
+                .withSchemaDefs(defs)
+                .addRef(Family.MUM, "person")
+                .addRef(Family.DAD, "person")
+                .addRepeatingField(Family.CHILDREN, personSchema)
+                .build();
+
+        GenericData<Family> family = EnumMapData.newBuilder(familySchema)
+                .with(Family.MUM, EnumMapData.newBuilder(personSchema)
+                        .with(Person.NAME, "Kate")
+                        .with(Person.SEX, Sex.FEMALE)
+                        .withInt(Person.AGE, 40)
+                        .build())
+                .with(Family.DAD, EnumMapData.newBuilder(personSchema)
+                        .with(Person.NAME, "William")
+                        .with(Person.SEX, Sex.MALE)
+                        .withInt(Person.AGE, 39)
+                        .build())
+                .with(Family.CHILDREN, Arrays.asList(
+                        EnumMapData.newBuilder(personSchema)
+                                .with(Person.NAME, "George")
+                                .with(Person.SEX, Sex.MALE)
+                                .withInt(Person.AGE, 8)
+                                .build(),
+                        EnumMapData.newBuilder(personSchema)
+                                .with(Person.NAME, "Charlotte")
+                                .with(Person.SEX, Sex.FEMALE)
+                                .withInt(Person.AGE, 7)
+                                .build(),
+                        EnumMapData.newBuilder(personSchema)
+                                .with(Person.NAME, "Louis")
+                                .with(Person.SEX, Sex.MALE)
+                                .withInt(Person.AGE, 4)
+                                .build()))
+                .build();
+
+        assertThat(family.toString(), is("{[MUM]={[NAME]=Kate, [SEX]=FEMALE, [AGE]=40}, " +
+                "[DAD]={[NAME]=William, [SEX]=MALE, [AGE]=39}, " +
+                "[CHILDREN]=[{[NAME]=George, [SEX]=MALE, [AGE]=8}, " +
+                "{[NAME]=Charlotte, [SEX]=FEMALE, [AGE]=7}, " +
+                "{[NAME]=Louis, [SEX]=MALE, [AGE]=4}]}"));
+    }
+
     enum Node {
         NAME,
         CHILDREN
@@ -205,18 +260,15 @@ class EnumMapDataTest {
     @Test
     void canBuildRecursiveSchema() {
 
-        SchemaRefImpl nodeSchemaRef = SchemaRefImpl.blank();
-
         EnumSchema<Node> nodeSchema = EnumSchemaBuilder.forEnumType(Node.class)
+                .withSchemaDefs(SchemaDefs.newInstance())
+                .withSchemaName("node")
                 .addField(Node.NAME, String.class)
-                .addRepeatingField(Node.CHILDREN, nodeSchemaRef)
+                .addRepeatingRef(Node.CHILDREN, "node")
                 .build();
 
-        assertThat(nodeSchema.toString(), is("{[1:NAME]=java.lang.String, [2:CHILDREN]=[SchemaReference (unset)]}"));
-
-        nodeSchemaRef.set(nodeSchema);
-
-        assertThat(nodeSchema.toString(), is("{[1:NAME]=java.lang.String, [2:CHILDREN]=[SchemaReference]}"));
+        assertThat(nodeSchema.toString(),
+                is("{[1:NAME]=java.lang.String, [2:CHILDREN]=[SchemaReference{'node'}]}"));
 
         GenericData<Node> george = EnumMapData.newBuilder(nodeSchema)
                 .with(Node.NAME, "George")

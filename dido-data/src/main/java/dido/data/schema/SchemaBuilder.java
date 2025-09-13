@@ -97,17 +97,8 @@ public class SchemaBuilder {
 
     // Add Nested Reference
 
-    public SchemaBuilder addNested(SchemaRefImpl nestedSchemaRef) {
-        return addNestedAt(0, nestedSchemaRef);
-    }
-
     public SchemaBuilder addRef(String ref) {
         return addRefAt(0, ref);
-    }
-
-    public SchemaBuilder addNestedAt(int index,
-                                     SchemaRefImpl nestedSchemaRef) {
-        return addNestedNamedAt(index, null, nestedSchemaRef);
     }
 
     public SchemaBuilder addRefAt(int index,
@@ -115,22 +106,9 @@ public class SchemaBuilder {
         return addRefNamedAt(index, null, ref);
     }
 
-    public SchemaBuilder addNestedNamed(String field,
-                                        SchemaRefImpl nestedSchemaRef) {
-        return addNestedNamedAt(0, field, nestedSchemaRef);
-    }
-
     public SchemaBuilder addRefNamed(String field,
                                         String ref) {
         return addRefNamedAt(0, field, ref);
-    }
-
-    public SchemaBuilder addNestedNamedAt(int index,
-                                          String name,
-                                          SchemaRefImpl nestedSchemaRef) {
-
-        schemaFactory.addSchemaField(SchemaField.ofNested(index, name, nestedSchemaRef));
-        return this;
     }
 
     public SchemaBuilder addRefNamedAt(int index,
@@ -147,28 +125,14 @@ public class SchemaBuilder {
         return addRepeatingAt(0, nestedSchema);
     }
 
-    public SchemaBuilder addRepeatingRef(String ref) {
-        return addRepeatingRefAt(0, ref);
-    }
-
     public SchemaBuilder addRepeatingAt(int index,
                                         DataSchema nestedSchema) {
         return addRepeatingNamedAt(index, null, nestedSchema);
     }
 
-    public SchemaBuilder addRepeatingRefAt(int index,
-                                        String ref) {
-        return addRepeatingRefNamedAt(index, null, ref);
-    }
-
     public SchemaBuilder addRepeatingNamed(String name,
                                            DataSchema nestedSchema) {
         return addRepeatingNamedAt(0, name, nestedSchema);
-    }
-
-    public SchemaBuilder addRepeatingRefNamed(String name,
-                                           String ref) {
-        return addRepeatingRefNamedAt(0, name, ref);
     }
 
     public SchemaBuilder addRepeatingNamedAt(int index,
@@ -178,6 +142,22 @@ public class SchemaBuilder {
         return this;
     }
 
+    // Add Repeating Nested Schema Ref
+
+    public SchemaBuilder addRepeatingRef(String ref) {
+        return addRepeatingRefAt(0, ref);
+    }
+
+    public SchemaBuilder addRepeatingRefAt(int index,
+                                           String ref) {
+        return addRepeatingRefNamedAt(index, null, ref);
+    }
+
+    public SchemaBuilder addRepeatingRefNamed(String name,
+                                              String ref) {
+        return addRepeatingRefNamedAt(0, name, ref);
+    }
+
     public SchemaBuilder addRepeatingRefNamedAt(int index,
                                              String name,
                                              String ref) {
@@ -185,29 +165,7 @@ public class SchemaBuilder {
         return this;
     }
 
-    // Add Repeating Nested Schema Ref
-
-    public SchemaBuilder addRepeating(SchemaRefImpl nestedSchemaRef) {
-        return addRepeatingAt(0, nestedSchemaRef);
-    }
-
-    public SchemaBuilder addRepeatingAt(int index,
-                                        SchemaRefImpl nestedSchemaRef) {
-        return addRepeatingNamedAt(index, null, nestedSchemaRef);
-    }
-
-    public SchemaBuilder addRepeatingNamed(String name,
-                                           SchemaRefImpl nestedSchemaRef) {
-        return addRepeatingNamedAt(0, name, nestedSchemaRef);
-    }
-
-    public SchemaBuilder addRepeatingNamedAt(int index,
-                                             String name,
-                                             SchemaRefImpl nestedSchemaRef) {
-
-        schemaFactory.addSchemaField(SchemaField.ofRepeating(index, name, nestedSchemaRef));
-        return this;
-    }
+    // Remove
 
     public SchemaBuilder removeAt(int index) {
 
@@ -221,6 +179,8 @@ public class SchemaBuilder {
         schemaFactory.removeNamed(name);
         return this;
     }
+
+    // Schema Fields
 
     public SchemaBuilder addSchemaField(SchemaField schemaField) {
 

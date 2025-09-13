@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dido.data.*;
 import dido.data.schema.SchemaBuilder;
-import dido.data.schema.SchemaRefImpl;
+import dido.data.schema.SchemaDefs;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -125,18 +125,19 @@ class DidoJsonWritersTest {
     @Test
     void whenNestedRefThenCorrectJsonProduced() throws JSONException, IOException {
 
-        SchemaRefImpl schemaReference = SchemaRefImpl.named("Person");
+        SchemaDefs defs = SchemaDefs.newInstance();
 
         DataSchema childrenSchema = SchemaBuilder.newInstance()
-                .addRepeatingNamed("People", schemaReference)
+                .withSchemaDefs(defs)
+                .addRepeatingRefNamed("People", "person")
                 .build();
 
         DataSchema personSchema = SchemaBuilder.newInstance()
+                .withSchemaDefs(defs)
+                .withSchemaName("person")
                 .addNamed("Name", String.class)
                 .addNestedNamed("Children", childrenSchema)
                 .build();
-
-        schemaReference.set(personSchema);
 
         FromValues personValue = MapData.withSchema(personSchema);
         FromValues childrenValue = MapData.withSchema(childrenSchema);

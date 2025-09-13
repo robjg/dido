@@ -2,7 +2,7 @@ package dido.data.generic;
 
 
 import dido.data.DataSchema;
-import dido.data.schema.SchemaRefImpl;
+import dido.data.schema.SchemaDefs;
 
 import java.util.function.Function;
 
@@ -42,6 +42,18 @@ public class GenericSchemaBuilder<F, S extends GenericDataSchema<F>> {
         return new GenericSchemaBuilder<>(new GenericSchemaFactoryImpl.FromFunction<>(fieldType, fieldMappingFunc));
     }
 
+    // Setup
+
+    public GenericSchemaBuilder<F, S> withSchemaName(String schemaName) {
+        schemaFactory.setSchemaName(schemaName);
+        return this;
+    }
+
+    public GenericSchemaBuilder<F, S> withSchemaDefs(SchemaDefs defs) {
+        schemaFactory.setSchemaDefs(defs);
+        return this;
+    }
+
     // Add Simple Fields
 
     public GenericSchemaBuilder<F, S> addField(F field, Class<?> fieldType) {
@@ -71,15 +83,15 @@ public class GenericSchemaBuilder<F, S extends GenericDataSchema<F>> {
 
     // Add Nested Reference
 
-    public GenericSchemaBuilder<F, S> addNestedField(F field,
-                                                  SchemaRefImpl nestedSchemaRef) {
-        return addNestedFieldAt(0, field, nestedSchemaRef);
+    public GenericSchemaBuilder<F, S> addNestedRefField(F field,
+                                                  String refSchemaName) {
+        return addNestedRefFieldAt(0, field, refSchemaName);
     }
 
-    public GenericSchemaBuilder<F, S> addNestedFieldAt(int index,
-                                                        F field,
-                                                        SchemaRefImpl nestedSchemaRef) {
-        schemaFactory.addGenericSchemaField(schemaFactory.of().ofNested(index, field, nestedSchemaRef));
+    public GenericSchemaBuilder<F, S> addNestedRefFieldAt(int index,
+                                                          F field,
+                                                          String refSchemaName) {
+        schemaFactory.addSchemaReference(schemaFactory.of().ofRef(index, field, refSchemaName));
         return this;
     }
 
@@ -99,25 +111,25 @@ public class GenericSchemaBuilder<F, S extends GenericDataSchema<F>> {
 
     // Add Repeating Nested Schema Ref
 
-    public GenericSchemaBuilder<F, S> addRepeating(SchemaRefImpl nestedSchemaRef) {
-        return addRepeatingAt(0, nestedSchemaRef);
+    public GenericSchemaBuilder<F, S> addRepeatingRef(String refSchemaName) {
+        return addRepeatingRefAt(0, refSchemaName);
     }
 
-    public GenericSchemaBuilder<F, S> addRepeatingAt(int index,
-                                                  SchemaRefImpl nestedSchemaRef) {
-        return addRepeatingFieldAt(index, null, nestedSchemaRef);
+    public GenericSchemaBuilder<F, S> addRepeatingRefAt(int index,
+                                                        String refSchemaName) {
+        return addRepeatingRefFieldAt(index, null, refSchemaName);
     }
 
-    public GenericSchemaBuilder<F, S> addRepeatingField(F field,
-                                                     SchemaRefImpl nestedSchemaRef) {
-        return addRepeatingFieldAt(0, field, nestedSchemaRef);
+    public GenericSchemaBuilder<F, S> addRepeatingRefField(F field,
+                                                           String refSchemaName) {
+        return addRepeatingRefFieldAt(0, field, refSchemaName);
     }
 
-    public GenericSchemaBuilder<F, S> addRepeatingFieldAt(int index,
-                                                       F field,
-                                                       SchemaRefImpl nestedSchemaRef) {
+    public GenericSchemaBuilder<F, S> addRepeatingRefFieldAt(int index,
+                                                             F field,
+                                                             String refSchemaName) {
 
-        schemaFactory.addGenericSchemaField(schemaFactory.of().ofRepeating(index, field, nestedSchemaRef));
+        schemaFactory.addSchemaReference(schemaFactory.of().ofRepeatingRef(index, field, refSchemaName));
         return this;
     }
 

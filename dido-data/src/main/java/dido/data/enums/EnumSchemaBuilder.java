@@ -2,7 +2,7 @@ package dido.data.enums;
 
 import dido.data.SchemaField;
 import dido.data.generic.GenericDataSchema;
-import dido.data.schema.SchemaRefImpl;
+import dido.data.schema.SchemaDefs;
 
 import java.util.Objects;
 
@@ -24,6 +24,18 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         return new EnumSchemaBuilder<>(EnumSchemaFactory.schemaFactoryFor(enumClass));
     }
 
+    // Setup
+
+    public EnumSchemaBuilder<E> withSchemaName(String schemaName) {
+        schemaFactory.setSchemaName(schemaName);
+        return this;
+    }
+
+    public EnumSchemaBuilder<E> withSchemaDefs(SchemaDefs defs) {
+        schemaFactory.setSchemaDefs(defs);
+        return this;
+    }
+
     public EnumSchemaBuilder<E> addSchemaField(SchemaField schemaField) {
         schemaFactory.addSchemaField(schemaField);
         return this;
@@ -41,15 +53,21 @@ public class EnumSchemaBuilder<E extends Enum<E>> {
         return this;
     }
 
+    public <N> EnumSchemaBuilder<E> addRef(E field, String refSchemaName) {
+        schemaFactory.addSchemaReference(schemaFactory.of()
+                .ofRef(field.ordinal() + 1, field, refSchemaName));
+        return this;
+    }
+
     public <N> EnumSchemaBuilder<E> addRepeatingField(E field, GenericDataSchema<N> nestedSchema) {
         schemaFactory.addGenericSchemaField(schemaFactory.of()
                 .ofRepeating(field.ordinal() + 1, field, nestedSchema));
         return this;
     }
 
-    public EnumSchemaBuilder<E> addRepeatingField(E field, SchemaRefImpl nestedSchemaRef) {
-        schemaFactory.addGenericSchemaField(schemaFactory.of()
-                .ofRepeating(field.ordinal() + 1, field, nestedSchemaRef));
+    public EnumSchemaBuilder<E> addRepeatingRef(E field, String refSchemaName) {
+        schemaFactory.addSchemaReference(schemaFactory.of()
+                .ofRepeatingRef(field.ordinal() + 1, field, refSchemaName));
         return this;
     }
 
