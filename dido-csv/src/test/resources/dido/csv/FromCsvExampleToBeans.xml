@@ -13,7 +13,7 @@ Pear,7,22.1</buffer>
                             <schema>
                                 <dido:schema>
                                     <of>
-                                        <dido:field name="type"/>
+                                        <dido:field name="type" type="java.lang.String"/>
                                         <dido:field type="int" name="quantity"/>
                                         <dido:field type="double" name="price"/>
                                     </of>

@@ -48,7 +48,7 @@ abstract public class SchemaFactoryImpl<S extends DataSchema> extends AbstractDa
         if (this.schemaDefs != null) {
             throw new IllegalArgumentException("Schema Definitions set already: " + this.schemaDefs);
         }
-        this.schemaDefs = Objects.requireNonNull(schemaDefs);
+        this.schemaDefs = schemaDefs;
     }
 
     @Override

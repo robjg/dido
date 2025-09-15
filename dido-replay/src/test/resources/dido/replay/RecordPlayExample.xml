@@ -17,7 +17,7 @@
                                     <schema>
                                         <dido:schema>
                                             <of>
-                                                <dido:field name="type"/>
+                                                <dido:field name="type" type="java.lang.String"/>
                                                 <dido:field name="quantity" type="int"/>
                                                 <dido:field name="price" type="double"/>
                                             </of>

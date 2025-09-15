@@ -1,20 +1,22 @@
 package dido.oddjob.schema;
 
+import dido.data.DataSchema;
+import dido.data.SchemaFactory;
+import dido.data.SchemaField;
 import org.oddjob.arooa.ArooaSession;
-import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.ClassResolver;
 import org.oddjob.arooa.convert.ArooaConversionException;
-import org.oddjob.arooa.convert.ConversionProvider;
-import org.oddjob.arooa.convert.ConversionRegistry;
 import org.oddjob.arooa.deploy.annotations.ArooaHidden;
 import org.oddjob.arooa.life.ArooaSessionAware;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @oddjob.description Define the field of a Schema. See {@link SchemaBean} for examples.
  */
-public class SchemaFieldBean implements ArooaValue, ArooaSessionAware {
+public class SchemaFieldBean implements ArooaSessionAware, SchemaFactoryConsumer {
 
     /**
      * @oddjob.description The name of the field.
@@ -38,7 +40,9 @@ public class SchemaFieldBean implements ArooaValue, ArooaSessionAware {
      * @oddjob.description The nested schema.
      * @oddjob.required No.
      */
-    private SchemaWrapper nested;
+    private DataSchema nested;
+
+    private String ref;
 
     /**
      * @oddjob.description Is the nested schema repeating.
@@ -48,13 +52,6 @@ public class SchemaFieldBean implements ArooaValue, ArooaSessionAware {
 
     private ArooaSession arooaSession;
 
-    public static class Conversions implements ConversionProvider {
-        @Override
-        public void registerWith(ConversionRegistry registry) {
-            registry.register(SchemaFieldBean.class, SchemaFieldDef.class,
-                    SchemaFieldBean::toSchemaField);
-        }
-    }
 
     @Override
     @ArooaHidden
@@ -62,37 +59,33 @@ public class SchemaFieldBean implements ArooaValue, ArooaSessionAware {
         this.arooaSession = session;
     }
 
-    public SchemaFieldDef toSchemaField() throws ArooaConversionException {
 
-        Class<?> type;
+    @Override
+    public void acceptSchemaFactory(SchemaFactory schemaFactory) throws ArooaConversionException {
 
-        if (nested == null) {
-            if (this.type == null) {
-                type = String.class;
+        if (ref != null) {
+            schemaFactory.addSchemaReference(repeating ?
+                    SchemaField.ofRepeatingRef(index, name, ref) :
+                    SchemaField.ofRef(index, name, ref));
+        } else if (nested != null) {
+            schemaFactory.addSchemaField(repeating ?
+                    SchemaField.ofRepeating(index, name, nested) :
+                    SchemaField.ofNested(index, name, nested));
+        } else {
+            ClassResolver classResolver = this.arooaSession.getArooaDescriptor().getClassResolver();
+            Type type = classResolver.findClass(Objects.requireNonNull(this.type, "No Type Specified."));
+            if (type == null) {
+                throw new ArooaConversionException("Failed to find class " + this.type +
+                        " from class loaders " + Arrays.toString(classResolver.getClassLoaders()));
             }
-            else {
-                ClassResolver classResolver = this.arooaSession.getArooaDescriptor().getClassResolver();
-                type = classResolver.findClass(this.type);
-                if (type == null) {
-                    throw new ArooaConversionException("Failed to find class " + this.type +
-                            " from class loaders " + Arrays.toString(classResolver.getClassLoaders()));
-                }
-            }
+            schemaFactory.addSchemaField(SchemaField.of(index, name, type));
         }
-        else {
-            type = null;
-        }
-
-        return new SchemaFieldDefImpl(name,
-                index,
-                type,
-                nested,
-                repeating);
     }
 
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -115,11 +108,11 @@ public class SchemaFieldBean implements ArooaValue, ArooaSessionAware {
         this.type = type;
     }
 
-    public SchemaWrapper getNested() {
+    public DataSchema getNested() {
         return nested;
     }
 
-    public void setNested(SchemaWrapper nested) {
+    public void setNested(DataSchema nested) {
         this.nested = nested;
     }
 
@@ -131,65 +124,12 @@ public class SchemaFieldBean implements ArooaValue, ArooaSessionAware {
         this.repeating = repeating;
     }
 
-    static class SchemaFieldDefImpl implements SchemaFieldDef {
+    public String getRef() {
+        return ref;
+    }
 
-        private final String name;
-
-        private final int index;
-
-        private final Class<?> type;
-
-        private final SchemaWrapper nested;
-
-        private final boolean repeating;
-
-        SchemaFieldDefImpl(String name,
-                           int index,
-                           Class<?> type,
-                           SchemaWrapper nested,
-                           boolean repeating) {
-            this.name = name;
-            this.index = index;
-            this.type = type;
-            this.nested = nested;
-            this.repeating = repeating;
-        }
-
-        @Override
-        public String getFieldName() {
-            return this.name;
-        }
-
-        @Override
-        public int getIndex() {
-            return this.index;
-        }
-
-        @Override
-        public Class<?> getType() {
-            return this.type;
-        }
-
-        @Override
-        public SchemaWrapper getNested() {
-            return this.nested;
-        }
-
-        @Override
-        public boolean isRepeating() {
-            return repeating;
-        }
-
-        @Override
-        public String toString() {
-            return "SchemaFieldImpl{" +
-                    "name='" + name + '\'' +
-                    ", index=" + index +
-                    ", type=" + type +
-                    ", nested=" + nested +
-                    ", repeating=" + repeating +
-                    '}';
-        }
+    public void setRef(String ref) {
+        this.ref = ref;
     }
 
     @Override
@@ -197,6 +137,9 @@ public class SchemaFieldBean implements ArooaValue, ArooaSessionAware {
         return "SchemaFieldBean{" +
                 "name='" + name + '\'' +
                 ", index=" + index +
+                ", type=" + type +
+                ", nested=" + nested +
+                ", repeating=" + repeating +
                 '}';
     }
 }

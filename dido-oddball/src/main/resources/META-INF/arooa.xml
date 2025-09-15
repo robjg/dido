@@ -4,7 +4,6 @@
 		<arooa:conversion className="dido.oddjob.bean.ToBeanTransformer$Conversions"/>
 		<arooa:conversion className="dido.oddjob.bean.FromBeanTransformer$Conversions"/>
 		<arooa:conversion className="dido.oddjob.schema.SchemaBean$Conversions"/>
-		<arooa:conversion className="dido.oddjob.schema.SchemaFieldBean$Conversions"/>
 		<arooa:conversion className="dido.oddjob.util.LinesDido" methodName="toStreamOut"/>
 		<arooa:conversion className="dido.oddjob.util.LinesDido" methodName="toStreamIn"/>
 	</conversions>
@@ -19,18 +18,9 @@
 						<design:group bordered="true" title="General">
 							<formItems>
 								<design:text property="name" title="Name"/>
+                                <design:single property="defs" title="Schema Defs"/>
+                                <design:indexed property="of" title="Of Fields"/>
 							</formItems>
-						</design:group>
-						<design:group bordered="true" title="One Of">
-								<formItems>
-									<design:radio>
-										<formItems>
-											<design:text property="named" title="Named"/>
-											<design:indexed property="of" title="Of"/>
-											<design:indexed property="list" title="List"/>
-										</formItems>
-									</design:radio>
-								</formItems>
 						</design:group>
 					</formItems>
 				</design:form>
@@ -59,6 +49,7 @@
 										<design:group bordered="true" title="Nested">
 											<formItems>
 												<design:single property="nested" title="Schema"/>
+                                                <design:text property="ref" title="Ref"/>
 												<design:text property="repeating" title="Repeating"/>
 											</formItems>
 										</design:group>
@@ -70,6 +61,8 @@
 				</design:form>
 			</design>
 		</arooa:bean-def>
+        <arooa:bean-def element='schema-defs'
+                        className='dido.oddjob.schema.SchemaDefsBean'/>
 		<arooa:bean-def element='to-bean'
 		    className='dido.oddjob.bean.ToBeanTransformer'/>
 		<arooa:bean-def element='from-bean'

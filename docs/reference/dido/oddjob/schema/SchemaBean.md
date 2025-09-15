@@ -7,9 +7,8 @@ Define a Schema.
 
 | Property | Description |
 | -------- | ----------- |
-| [list](#propertylist) | Nested Schemas. | 
+| [defs](#propertydefs) | Schema definitions for nested schema references. | 
 | [name](#propertyname) | The name of the schema. | 
-| [named](#propertynamed) | Reference a schema by name. | 
 | [of](#propertyof) | The fields. | 
 
 
@@ -23,7 +22,7 @@ Define a Schema.
 
 
 ### Property Detail
-#### list <a name="propertylist"></a>
+#### defs <a name="propertydefs"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
@@ -31,7 +30,8 @@ Define a Schema.
       <tr><td><i>Required</i></td><td>No.</td></tr>
 </table>
 
-Nested Schemas.
+Schema definitions for nested schema references. These are generally defined with [dido:schema-defs](../../../dido/oddjob/schema/SchemaDefsBean.md)s.
+These will be set automatically if this is a nested schema.
 
 #### name <a name="propertyname"></a>
 
@@ -41,19 +41,8 @@ Nested Schemas.
       <tr><td><i>Required</i></td><td>No.</td></tr>
 </table>
 
-The name of the schema. This is so this schema  may be
-referenced elsewhere in the definition.
-
-#### named <a name="propertynamed"></a>
-
-<table style='font-size:smaller'>
-      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
-      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
-      <tr><td><i>Required</i></td><td>No.</td></tr>
-</table>
-
-Reference a schema by name. Used when a schema is a nested schema and pulls in
-a schema definition named elsewhere in the overall schema definition.
+The name of the schema. This is so this schema may be
+referenced elsewhere in the definition. If set then SchemaDefs must also be set.
 
 #### of <a name="propertyof"></a>
 
@@ -77,7 +66,7 @@ Define a simple schema.
             <schema>
                 <dido:schema xmlns:dido="oddjob:dido">
                     <of>
-                        <dido:field index="3" name="Fruit"/>
+                        <dido:field index="3" name="Fruit" type="java.lang.String"/>
                         <dido:field type="int" name="Qty"/>
                         <dido:field type="double" index="8" name="Price"/>
                     </of>
@@ -93,45 +82,40 @@ Define a simple schema.
 
 Define a nested schema.
 ```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <oddjob>
     <job>
         <variables id="vars">
             <schema>
                 <dido:schema xmlns:dido="oddjob:dido">
-                    <list>
-                        <dido:schema name="Fruit">
-                            <of>
-                                <dido:field index="3" name="Fruit"/>
-                                <dido:field type="int" name="Qty"/>
-                                <dido:field type="double" index="8" name="Price"/>
-                            </of>
-                        </dido:schema>
-                        <dido:schema>
-                            <of>
-                                <dido:field name="Name"/>
-                                <dido:field name="Fruit1">
-                                    <nested>
-                                        <dido:schema named="Fruit"/>
-                                    </nested>
-                                </dido:field>
-                                <dido:field name="Fruit2">
-                                    <nested>
-                                        <dido:schema named="Fruit"/>
-                                    </nested>
-                                </dido:field>
-                                <dido:field name="Drink">
-                                    <nested>
-                                        <dido:schema>
-                                            <of>
-                                                <dido:field name="Name"/>
-                                                <dido:field name="Volume" type="double"/>
-                                            </of>
-                                        </dido:schema>
-                                    </nested>
-                                </dido:field>
-                            </of>
-                        </dido:schema>
-                    </list>
+                    <defs>
+                        <dido:schema-defs>
+                            <schemas>
+                                <dido:schema name="Fruit">
+                                    <of>
+                                        <dido:field index="3" name="Fruit" type="java.lang.String"/>
+                                        <dido:field name="Qty" type="int"/>
+                                        <dido:field index="8" name="Price" type="double"/>
+                                    </of>
+                                </dido:schema>
+                            </schemas>
+                        </dido:schema-defs>
+                    </defs>
+                    <of>
+                        <dido:field name="Name" type="java.lang.String"/>
+                        <dido:field name="Fruit1" ref="Fruit"/>
+                        <dido:field name="Fruit2" ref="Fruit"/>
+                        <dido:field name="Drink">
+                            <nested>
+                                <dido:schema>
+                                    <of>
+                                        <dido:field name="Name" type="java.lang.String"/>
+                                        <dido:field name="Volume" type="double"/>
+                                    </of>
+                                </dido:schema>
+                            </nested>
+                        </dido:field>
+                    </of>
                 </dido:schema>
             </schema>
         </variables>
@@ -144,40 +128,39 @@ Define a nested schema.
 
 Define a repeating schema.
 ```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <oddjob>
     <job>
         <variables id="vars">
             <schema>
                 <dido:schema xmlns:dido="oddjob:dido">
-                    <list>
-                        <dido:schema name="Fruit">
-                            <of>
-                                <dido:field index="3" name="Fruit"/>
-                                <dido:field type="int" name="Qty"/>
-                                <dido:field type="double" index="8" name="Price"/>
-                            </of>
-                        </dido:schema>
-                        <dido:schema>
-                            <of>
-                                <dido:field name="Name"/>
-                                <dido:field name="Fruit" repeating="true">
-                                    <nested>
-                                        <dido:schema named="Fruit"/>
-                                    </nested>
-                                </dido:field>
-                                <dido:field name="Drink" repeating="true">
-                                    <nested>
-                                        <dido:schema>
-                                            <of>
-                                                <dido:field name="Name"/>
-                                                <dido:field name="Volume" type="double"/>
-                                            </of>
-                                        </dido:schema>
-                                    </nested>
-                                </dido:field>
-                            </of>
-                        </dido:schema>
-                    </list>
+                    <defs>
+                        <dido:schema-defs>
+                            <schemas>
+                                <dido:schema name="Fruit">
+                                    <of>
+                                        <dido:field index="3" name="Fruit" type="java.lang.String"/>
+                                        <dido:field name="Qty" type="int"/>
+                                        <dido:field index="8" name="Price" type="double"/>
+                                    </of>
+                                </dido:schema>
+                            </schemas>
+                        </dido:schema-defs>
+                    </defs>
+                    <of>
+                        <dido:field name="Name" type="java.lang.String"/>
+                        <dido:field name="Fruit" ref="Fruit" repeating="true"/>
+                        <dido:field name="Drink" repeating="true">
+                            <nested>
+                                <dido:schema>
+                                    <of>
+                                        <dido:field name="Name" type="java.lang.String"/>
+                                        <dido:field name="Volume" type="double"/>
+                                    </of>
+                                </dido:schema>
+                            </nested>
+                        </dido:field>
+                    </of>
                 </dido:schema>
             </schema>
         </variables>
