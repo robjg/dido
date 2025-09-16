@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @oddjob.description Define a Schema Definitions that will be referenced
+ * @oddjob.description Define Schema Definitions that will be referenced
  * elsewhere.
  * The schemas defined here as {@link SchemaBean} values must have the name property set and
  * can then be reference elsewhere using the Ref property of a {@link SchemaFieldBean}.
@@ -26,8 +26,7 @@ public class SchemaDefsBean implements ValueFactory<SchemaDefs> {
     public SchemaDefs toValue() throws ArooaConversionException {
         SchemaDefs schemaDefs = SchemaDefs.newInstance();
         for (NestedSchema nestedSchema : list) {
-            nestedSchema.setDefs(schemaDefs);
-            nestedSchema.toSchema();
+            nestedSchema.toSchema(schemaDefs);
         }
         return schemaDefs;
     }

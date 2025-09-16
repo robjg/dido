@@ -25,7 +25,9 @@ public class SchemaBean implements NestedSchema {
 
     /**
      * @oddjob.description The name of the schema. This is so this schema may be
-     * referenced elsewhere in the definition. If set then SchemaDefs must also be set.
+     * referenced elsewhere in the definition. If set then SchemaDefs must also be set, either directly
+     * or because this is nested within another Schema.
+     *
      * @oddjob.required No.
      */
     private String name;
@@ -53,6 +55,11 @@ public class SchemaBean implements NestedSchema {
     }
 
     public DataSchema toSchema() throws ArooaConversionException {
+        return toSchema(defs);
+    }
+
+    @Override
+    public DataSchema toSchema(SchemaDefs defs) throws ArooaConversionException {
 
         SchemaFactory schemaFactory = DataSchemaFactory.newInstance();
         schemaFactory.setSchemaName(name);
@@ -63,10 +70,8 @@ public class SchemaBean implements NestedSchema {
         }
 
         return schemaFactory.toSchema();
-
     }
 
-    @Override
     public void setDefs(SchemaDefs defs) {
         this.defs = defs;
     }

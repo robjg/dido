@@ -1,7 +1,7 @@
 [HOME](../../../README.md)
 # dido:schema-defs
 
-Define a Schema Definitions that will be referenced
+Define Schema Definitions that will be referenced
 elsewhere.
 The schemas defined here as [dido:schema](../../../dido/oddjob/schema/SchemaBean.md) values must have the name property set and
 can then be reference elsewhere using the Ref property of a [dido:field](../../../dido/oddjob/schema/SchemaFieldBean.md).

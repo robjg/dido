@@ -42,7 +42,8 @@ These will be set automatically if this is a nested schema.
 </table>
 
 The name of the schema. This is so this schema may be
-referenced elsewhere in the definition. If set then SchemaDefs must also be set.
+referenced elsewhere in the definition. If set then SchemaDefs must also be set, either directly
+or because this is nested within another Schema.
 
 #### of <a name="propertyof"></a>
 

@@ -4,6 +4,7 @@
 		<arooa:conversion className="dido.oddjob.bean.ToBeanTransformer$Conversions"/>
 		<arooa:conversion className="dido.oddjob.bean.FromBeanTransformer$Conversions"/>
 		<arooa:conversion className="dido.oddjob.schema.SchemaBean$Conversions"/>
+        <arooa:conversion className="dido.oddjob.schema.SchemaFromBean$Conversions"/>
 		<arooa:conversion className="dido.oddjob.util.LinesDido" methodName="toStreamOut"/>
 		<arooa:conversion className="dido.oddjob.util.LinesDido" methodName="toStreamIn"/>
 	</conversions>
@@ -63,6 +64,28 @@
 		</arooa:bean-def>
         <arooa:bean-def element='schema-defs'
                         className='dido.oddjob.schema.SchemaDefsBean'/>
+        <arooa:bean-def element='schema-from'
+                        className='dido.oddjob.schema.SchemaFromBean'>
+            <properties>
+                <arooa:property name="exclude" type="ATTRIBUTE"/>
+            </properties>
+            <design>
+                <design:form xmlns:design="arooa:design">
+                    <formItems>
+                        <design:group bordered="true" title="Properties">
+                            <formItems>
+                                <design:text property="name" title="Name"/>
+                                <design:single property="from" title="From"/>
+                                <design:indexed property="merge" title="Merge"/>
+                                <design:indexed property="concat" title="Concat"/>
+                                <design:text property="exclude" title="Exclude"/>
+                                <design:text property="reIndex" title="Re-Index"/>
+                            </formItems>
+                        </design:group>
+                    </formItems>
+                </design:form>
+            </design>
+        </arooa:bean-def>
 		<arooa:bean-def element='to-bean'
 		    className='dido.oddjob.bean.ToBeanTransformer'/>
 		<arooa:bean-def element='from-bean'

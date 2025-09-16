@@ -9,7 +9,5 @@ import org.oddjob.arooa.convert.ArooaConversionException;
  */
 public interface NestedSchema {
 
-    void setDefs(SchemaDefs defs);
-
-    DataSchema toSchema() throws ArooaConversionException;
+    DataSchema toSchema(SchemaDefs defs) throws ArooaConversionException;
 }

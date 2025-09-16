@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <variables id="vars">
+                    <schema>
+                        <dido:schema-from xmlns:dido="oddjob:dido">
+                            <from>
+                                <dido:schema>
+                                    <of>
+                                        <dido:field name="Fruit" type="java.lang.String"/>
+                                        <dido:field name="Qty" type="int"/>
+                                        <dido:field name="Price" type="double"/>
+                                    </of>
+                                </dido:schema>
+                            </from>
+                            <merge>
+                                <dido:schema>
+                                    <of>
+                                        <dido:field name="Qty" type="double"/>
+                                        <dido:field name="Colour" type="java.lang.String"/>
+                                    </of>
+                                </dido:schema>
+                            </merge>
+                        </dido:schema-from>
+                    </schema>
+                    <expected>
+                        <dido:schema xmlns:dido="oddjob:dido">
+                            <of>
+                                <dido:field name="Fruit" type="java.lang.String"/>
+                                <dido:field name="Qty" type="double"/>
+                                <dido:field name="Price" type="double"/>
+                                <dido:field name="Colour" type="java.lang.String"/>
+                            </of>
+                        </dido:schema>
+                    </expected>
+                </variables>
+                <bean class="dido.oddjob.schema.CheckSchemasMatch">
+                    <actual>
+                        <value value="${vars.schema}"/>
+                    </actual>
+                    <expected>
+                        <value value="${vars.expected}"/>
+                    </expected>
+                </bean>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>

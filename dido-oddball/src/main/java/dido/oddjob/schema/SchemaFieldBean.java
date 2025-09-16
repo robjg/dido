@@ -37,11 +37,15 @@ public class SchemaFieldBean implements ArooaSessionAware, SchemaFactoryConsumer
     private String type;
 
     /**
-     * @oddjob.description The nested schema.
+     * @oddjob.description A nested schema.
      * @oddjob.required No.
      */
     private DataSchema nested;
 
+    /**
+     * @oddjob.description A reference to a nested schema defined elsewhere.
+     * @oddjob.required No.
+     */
     private String ref;
 
     /**

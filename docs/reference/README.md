@@ -20,7 +20,8 @@
 - [dido:left-join](dido/operators/join/LeftStreamJoinType.md) - A join operation that performs a full left join.
 - [dido:lines](dido/oddjob/util/LinesDido.md) - Creates an In or Out for Lines of Text.
 - [dido:schema](dido/oddjob/schema/SchemaBean.md) - Define a Schema.
-- [dido:schema-defs](dido/oddjob/schema/SchemaDefsBean.md) - Define a Schema Definitions that will be referenced elsewhere.
+- [dido:schema-defs](dido/oddjob/schema/SchemaDefsBean.md) - Define Schema Definitions that will be referenced elsewhere.
+- [dido:schema-from](dido/oddjob/schema/SchemaFromBean.md) - Create a Schema from another schema by merging, concatenating or excluding fields.
 - [dido:set](dido/operators/transform/ValueSetFactory.md) - Set the value for a field or index.
 - [dido:sql](dido/sql/SqlDido.md) - Export and Import with SQL.
 - [dido:table](dido/text/TextTableDido.md) - Creates an Out that write data to a text table.

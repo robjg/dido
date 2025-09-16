@@ -9,8 +9,8 @@ Define the field of a Schema. See [dido:schema](../../../dido/oddjob/schema/Sche
 | -------- | ----------- |
 | [index](#propertyindex) | The index of the field. | 
 | [name](#propertyname) | The name of the field. | 
-| [nested](#propertynested) | The nested schema. | 
-| [ref](#propertyref) |  | 
+| [nested](#propertynested) | A nested schema. | 
+| [ref](#propertyref) | A reference to a nested schema defined elsewhere. | 
 | [repeating](#propertyrepeating) | Is the nested schema repeating. | 
 | [type](#propertytype) | The type of the field. | 
 
@@ -44,16 +44,17 @@ The name of the field.
       <tr><td><i>Required</i></td><td>No.</td></tr>
 </table>
 
-The nested schema.
+A nested schema.
 
 #### ref <a name="propertyref"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
       <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
 </table>
 
-
+A reference to a nested schema defined elsewhere.
 
 #### repeating <a name="propertyrepeating"></a>
 
