@@ -12,6 +12,18 @@ import static org.hamcrest.Matchers.is;
 class SchemaFromBeanTest {
 
     @Test
+    void include() {
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setFile(new File(Objects.requireNonNull(
+                getClass().getResource("SchemaFromInclude.xml")).getFile()));
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+    }
+
+    @Test
     void exclude() {
 
         Oddjob oddjob = new Oddjob();

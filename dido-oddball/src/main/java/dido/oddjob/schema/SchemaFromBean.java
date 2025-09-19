@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * @oddjob.description Create a Schema from another schema by merging, concatenating or excluding fields.
+ * @oddjob.description Create a Schema from another schema by including, merging, concatenating
+ * or excluding fields. The changes are applied in that order.
  *
  * @oddjob.example Exclude fields.
  * {@oddjob.xml.resource dido/oddjob/schema/SchemaFromExclude.xml}
@@ -54,6 +55,13 @@ public class SchemaFromBean implements NestedSchema {
     private final List<DataSchema> concat = new ArrayList<>();
 
     /**
+     * @oddjob.description The fields to include from the schema. The same
+     * as excluding all the other fields in the schema.
+     * @oddjob.required No.
+     */
+    private String[] include;
+
+    /**
      * @oddjob.description The fields to exclude.
      * @oddjob.required No.
      */
@@ -84,7 +92,17 @@ public class SchemaFromBean implements NestedSchema {
 
         DataSchema from = Objects.requireNonNull(this.from, "No From Schema");
 
-        SchemaFactory factory = SchemaFactory.newInstanceFrom(from);
+        SchemaFactory factory;
+
+        if (include != null && include.length > 0) {
+            factory = SchemaFactory.newInstance();
+            for (String name : include) {
+                factory.addSchemaField(from.getSchemaFieldNamed(name));
+            }
+        }
+        else {
+            factory = SchemaFactory.newInstanceFrom(from);
+        }
 
         for (DataSchema schema : merge) {
             factory.merge(schema);
@@ -157,6 +175,14 @@ public class SchemaFromBean implements NestedSchema {
         this.exclude = exclude;
     }
 
+    public String[] getInclude() {
+        return include;
+    }
+
+    public void setInclude(String[] include) {
+        this.include = include;
+    }
+
     public boolean isReIndex() {
         return reIndex;
     }
@@ -170,6 +196,7 @@ public class SchemaFromBean implements NestedSchema {
         return "SchemaFromBean{" +
                 "name='" + name + '\'' +
                 ", from=" + from +
+                ", include=" + Arrays.toString(include) +
                 ", merge=" + merge +
                 ", concat=" + concat +
                 ", exclude=" + Arrays.toString(exclude) +

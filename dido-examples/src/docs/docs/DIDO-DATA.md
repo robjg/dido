@@ -27,7 +27,7 @@ defines its layout.
 {@oddjob.java.file src/test/java/dido/examples/DidoDataExamplesTest.java#snippet8}
 A `DataSchema` consists of [SchemaField](http://rgordon.co.uk/projects/dido/current/api/dido/data/SchemaField.html)s
 A `SchemaField` of a `DataSchema` will always hav an index > 0, a non-null field name, 
-and a type. No constraints are put on the type data. Nested `DidoData` and 
+and a type. No constraints are put on the type of data. Nested `DidoData` and 
 repeating nested `DidoData` are also supported, although to what extent these 
 are implemented by the formatters is limited. For instance, there is currently no way to
 return a nested `DidoData` field from the column of a CSV file. 

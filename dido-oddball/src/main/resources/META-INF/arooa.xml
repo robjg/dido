@@ -67,6 +67,7 @@
         <arooa:bean-def element='schema-from'
                         className='dido.oddjob.schema.SchemaFromBean'>
             <properties>
+                <arooa:property name="include" type="ATTRIBUTE"/>
                 <arooa:property name="exclude" type="ATTRIBUTE"/>
             </properties>
             <design>
@@ -75,6 +76,7 @@
                         <design:group bordered="true" title="Properties">
                             <formItems>
                                 <design:text property="name" title="Name"/>
+                                <design:text property="include" title="Include"/>
                                 <design:single property="from" title="From"/>
                                 <design:indexed property="merge" title="Merge"/>
                                 <design:indexed property="concat" title="Concat"/>
