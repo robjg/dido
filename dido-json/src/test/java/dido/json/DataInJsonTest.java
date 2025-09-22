@@ -2,10 +2,10 @@ package dido.json;
 
 import com.google.gson.Gson;
 import com.google.gson.Strictness;
-import dido.data.ArrayData;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.FromValues;
+import dido.data.immutable.ArrayData;
 import dido.data.schema.SchemaBuilder;
 import dido.how.DataIn;
 import org.junit.jupiter.api.Test;

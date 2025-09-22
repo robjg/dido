@@ -1,7 +1,7 @@
 package dido.json;
 
 import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.immutable.MapData;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
 

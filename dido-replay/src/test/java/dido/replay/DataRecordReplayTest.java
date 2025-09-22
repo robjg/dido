@@ -1,7 +1,7 @@
 package dido.replay;
 
 import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.immutable.MapData;
 import dido.how.CloseableConsumer;
 import org.junit.jupiter.api.Test;
 

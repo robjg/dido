@@ -1,5 +1,7 @@
-package dido.data;
+package dido.data.immutable;
 
+import dido.data.*;
+import dido.data.NoSuchFieldException;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -77,9 +79,9 @@ class ArrayDataTest {
         assertThat(getter4.getDouble(data), is(26.5));
         assertThat(getter4.getString(data), is("26.5"));
 
-        Assertions.assertThrows(NoSuchFieldException.class,
+        Assertions.assertThrows(dido.data.NoSuchFieldException.class,
                 () -> readSchema.getFieldGetterAt(5));
-        Assertions.assertThrows(NoSuchFieldException.class,
+        Assertions.assertThrows(dido.data.NoSuchFieldException.class,
                 () -> readSchema.getFieldGetterAt(0));
         Assertions.assertThrows(NoSuchFieldException.class,
                 () -> readSchema.getFieldGetterNamed("Wrong"));

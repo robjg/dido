@@ -1,5 +1,7 @@
-package dido.data;
+package dido.data.immutable;
 
+import dido.data.*;
+import dido.data.NoSuchFieldException;
 import dido.data.generic.GenericData;
 import dido.data.schema.DataSchemaImpl;
 import dido.data.schema.SchemaBuilder;
@@ -241,7 +243,7 @@ public class MapData extends AbstractData implements DidoData {
 
             String name = getFieldNameAt(index);
             if (name == null) {
-                throw new NoSuchFieldException(index, this);
+                throw new dido.data.NoSuchFieldException(index, this);
             }
 
             return new AbstractFieldGetter() {

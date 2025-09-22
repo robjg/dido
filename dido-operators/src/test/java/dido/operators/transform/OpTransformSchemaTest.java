@@ -1,9 +1,9 @@
 package dido.operators.transform;
 
 import dido.data.DataSchema;
-import dido.data.MapData;
 import dido.data.ReadSchema;
 import dido.data.SchemaField;
+import dido.data.immutable.MapData;
 import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 

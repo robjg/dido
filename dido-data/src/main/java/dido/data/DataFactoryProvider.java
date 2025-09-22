@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.immutable.ArrayDataDataFactoryProvider;
+
 /**
  * Something that is able to provide a {@link DataFactory}.
  *

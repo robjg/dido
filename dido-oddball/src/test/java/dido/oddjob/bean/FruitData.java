@@ -2,7 +2,7 @@ package dido.oddjob.bean;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.immutable.MapData;
 import dido.data.schema.SchemaBuilder;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.types.ValueFactory;

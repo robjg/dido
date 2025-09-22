@@ -1,5 +1,7 @@
-package dido.data;
+package dido.data.immutable;
 
+import dido.data.*;
+import dido.data.NoSuchFieldException;
 import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractDataSchema;
 import dido.data.useful.AbstractFieldGetter;
@@ -114,7 +116,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
             if (index == 1) {
                 return getter;
             } else {
-                throw new NoSuchFieldException(index, this);
+                throw new dido.data.NoSuchFieldException(index, this);
             }
         }
 
@@ -123,7 +125,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
             if (schemaField.getName().equals(name)) {
                 return getter;
             } else {
-                throw new NoSuchFieldException(name, this);
+                throw new dido.data.NoSuchFieldException(name, this);
             }
         }
     }
@@ -138,7 +140,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
         if (index == 1) {
             return schema.getter.get(this);
         } else {
-            throw new NoSuchFieldException(index, schema);
+            throw new dido.data.NoSuchFieldException(index, schema);
         }
     }
 
@@ -147,7 +149,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
         if (index == 1) {
             return schema.getter.has(this);
         } else {
-            throw new NoSuchFieldException(index, schema);
+            throw new dido.data.NoSuchFieldException(index, schema);
         }
     }
 
@@ -156,7 +158,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
         if (index == 1) {
             return schema.getter.getBoolean(this);
         } else {
-            throw new NoSuchFieldException(index, schema);
+            throw new dido.data.NoSuchFieldException(index, schema);
         }
     }
 
@@ -165,7 +167,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
         if (index == 1) {
             return schema.getter.getByte(this);
         } else {
-            throw new NoSuchFieldException(index, schema);
+            throw new dido.data.NoSuchFieldException(index, schema);
         }
     }
 
@@ -174,7 +176,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
         if (index == 1) {
             return schema.getter.getChar(this);
         } else {
-            throw new NoSuchFieldException(index, schema);
+            throw new dido.data.NoSuchFieldException(index, schema);
         }
     }
 
@@ -183,7 +185,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
         if (index == 1) {
             return schema.getter.getShort(this);
         } else {
-            throw new NoSuchFieldException(index, schema);
+            throw new dido.data.NoSuchFieldException(index, schema);
         }
     }
 
@@ -192,7 +194,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
         if (index == 1) {
             return schema.getter.getInt(this);
         } else {
-            throw new NoSuchFieldException(index, schema);
+            throw new dido.data.NoSuchFieldException(index, schema);
         }
     }
 
@@ -201,7 +203,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
         if (index == 1) {
             return schema.getter.getLong(this);
         } else {
-            throw new NoSuchFieldException(index, schema);
+            throw new dido.data.NoSuchFieldException(index, schema);
         }
     }
 
@@ -210,7 +212,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
         if (index == 1) {
             return schema.getter.getFloat(this);
         } else {
-            throw new NoSuchFieldException(index, schema);
+            throw new dido.data.NoSuchFieldException(index, schema);
         }
     }
 
@@ -219,7 +221,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
         if (index == 1) {
             return schema.getter.getDouble(this);
         } else {
-            throw new NoSuchFieldException(index, schema);
+            throw new dido.data.NoSuchFieldException(index, schema);
         }
     }
 

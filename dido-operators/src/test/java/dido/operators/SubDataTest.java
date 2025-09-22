@@ -1,7 +1,7 @@
 package dido.operators;
 
 import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.immutable.MapData;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

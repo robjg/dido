@@ -1,7 +1,7 @@
 package dido.data.enums;
 
 import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.immutable.MapData;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

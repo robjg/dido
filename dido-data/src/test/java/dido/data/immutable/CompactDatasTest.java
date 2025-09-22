@@ -1,5 +1,9 @@
-package dido.data;
+package dido.data.immutable;
 
+import dido.data.CompactData;
+import dido.data.CompactSchema;
+import dido.data.DataSchema;
+import dido.data.DidoData;
 import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 

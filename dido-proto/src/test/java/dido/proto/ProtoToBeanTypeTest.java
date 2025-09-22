@@ -2,7 +2,7 @@ package dido.proto;
 
 
 import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.immutable.MapData;
 import dido.foo.Person;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;

@@ -2,7 +2,11 @@ package dido.json;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
-import dido.data.*;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.FromValues;
+import dido.data.RepeatingData;
+import dido.data.immutable.ArrayData;
 import dido.data.schema.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataInHow;

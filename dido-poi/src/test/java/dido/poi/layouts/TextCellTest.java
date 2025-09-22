@@ -1,9 +1,9 @@
 package dido.poi.layouts;
 
-import dido.data.ArrayData;
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.immutable.ArrayData;
+import dido.data.immutable.MapData;
 import dido.data.schema.SchemaBuilder;
 import dido.how.DataIn;
 import dido.how.DataOut;

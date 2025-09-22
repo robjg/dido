@@ -1,5 +1,7 @@
-package dido.data;
+package dido.data.immutable;
 
+import dido.data.*;
+import dido.data.NoSuchFieldException;
 import dido.data.schema.DataSchemaImpl;
 import dido.data.schema.SchemaBuilder;
 import dido.data.schema.SchemaFactoryImpl;
@@ -310,14 +312,14 @@ public class NonBoxedData extends AbstractData {
             try {
                 return schema.setters[index - 1];
             } catch (ArrayIndexOutOfBoundsException e) {
-                throw new NoSuchFieldException(index, schema);
+                throw new dido.data.NoSuchFieldException(index, schema);
             }
         }
 
         FieldSetter getSetterWithCheck(String name) {
             int index = schema.getIndexNamed(name);
             if (index == 0) {
-                throw new NoSuchFieldException(name, schema);
+                throw new dido.data.NoSuchFieldException(name, schema);
             }
             return schema.setters[index];
         }
@@ -439,11 +441,11 @@ public class NonBoxedData extends AbstractData {
             try {
                 FieldGetter getter = getters[index - 1];
                 if (getter == null) {
-                    throw new NoSuchFieldException(index, NonBoxedDataSchema.this);
+                    throw new dido.data.NoSuchFieldException(index, NonBoxedDataSchema.this);
                 }
                 return getter;
             } catch (ArrayIndexOutOfBoundsException e) {
-                throw new NoSuchFieldException(index, NonBoxedDataSchema.this);
+                throw new dido.data.NoSuchFieldException(index, NonBoxedDataSchema.this);
             }
         }
 
@@ -451,7 +453,7 @@ public class NonBoxedData extends AbstractData {
         public FieldGetter getFieldGetterNamed(String name) {
             int index = getIndexNamed(name);
             if (index == 0) {
-                throw new NoSuchFieldException(name, NonBoxedDataSchema.this);
+                throw new dido.data.NoSuchFieldException(name, NonBoxedDataSchema.this);
             }
             return getFieldGetterAt(index);
         }
@@ -461,11 +463,11 @@ public class NonBoxedData extends AbstractData {
             try {
                 FieldSetter setter = setters[index - 1];
                 if (setter == null) {
-                    throw new NoSuchFieldException(index, this);
+                    throw new dido.data.NoSuchFieldException(index, this);
                 }
                 return setter;
             } catch (ArrayIndexOutOfBoundsException e) {
-                throw new NoSuchFieldException(index, this);
+                throw new dido.data.NoSuchFieldException(index, this);
             }
         }
 

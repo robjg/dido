@@ -1,8 +1,8 @@
 package dido.poi.data;
 
 import dido.data.DidoData;
-import dido.data.MapData;
-import dido.data.SingleData;
+import dido.data.immutable.MapData;
+import dido.data.immutable.SingleData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.layouts.DataRows;

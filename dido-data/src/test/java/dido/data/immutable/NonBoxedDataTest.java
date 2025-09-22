@@ -1,5 +1,7 @@
-package dido.data;
+package dido.data.immutable;
 
+import dido.data.DataSchema;
+import dido.data.DidoData;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;

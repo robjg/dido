@@ -1,7 +1,7 @@
 package dido.data.util;
 
-import dido.data.ArrayData;
 import dido.data.DataSchema;
+import dido.data.immutable.ArrayData;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;

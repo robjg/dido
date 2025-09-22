@@ -1,9 +1,9 @@
 package dido.operators.transform;
 
-import dido.data.ArrayDataDataFactoryProvider;
 import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.immutable.ArrayDataDataFactoryProvider;
 
 import java.util.ArrayList;
 import java.util.List;

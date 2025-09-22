@@ -1,7 +1,7 @@
 package dido.how.lines;
 
 import dido.data.DidoData;
-import dido.data.SingleData;
+import dido.data.immutable.SingleData;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;

@@ -1,7 +1,7 @@
 package dido.text;
 
 import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.immutable.MapData;
 import org.oddjob.arooa.types.ValueFactory;
 
 import java.util.List;

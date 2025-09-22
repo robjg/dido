@@ -1,7 +1,7 @@
 package dido.poi.layouts;
 
 import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.immutable.MapData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.how.conversion.DefaultConversionProvider;

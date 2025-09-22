@@ -11,7 +11,10 @@ import java.util.stream.Collectors;
 
 /**
  * For creating things based on a selection of fields
- * @param <C>
+ *
+ * @param <C> The thing being created.
+ *
+ * @see SubData
  */
 public class FieldSelectionFactory<C> {
 

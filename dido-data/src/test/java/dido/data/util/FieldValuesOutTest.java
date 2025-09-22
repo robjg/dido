@@ -1,9 +1,9 @@
 package dido.data.util;
 
-import dido.data.ArrayData;
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.immutable.ArrayData;
+import dido.data.immutable.MapData;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;

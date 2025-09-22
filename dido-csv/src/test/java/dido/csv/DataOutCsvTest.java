@@ -3,7 +3,7 @@ package dido.csv;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.FromValues;
-import dido.data.MapData;
+import dido.data.immutable.MapData;
 import dido.data.schema.SchemaBuilder;
 import dido.how.DataOut;
 import org.apache.commons.csv.CSVFormat;

@@ -1,5 +1,6 @@
 package dido.data;
 
+import dido.data.immutable.ArrayData;
 import dido.data.util.DataBuilder;
 
 import java.util.Iterator;

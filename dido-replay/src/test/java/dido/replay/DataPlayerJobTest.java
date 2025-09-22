@@ -2,7 +2,7 @@ package dido.replay;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.immutable.MapData;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;

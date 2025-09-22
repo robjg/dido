@@ -1,5 +1,7 @@
-package dido.data;
+package dido.data.immutable;
 
+import dido.data.*;
+import dido.data.NoSuchFieldException;
 import dido.data.useful.AbstractCompactData;
 import dido.data.useful.AbstractCompactSchema;
 
@@ -45,7 +47,7 @@ public class CompactDatas {
                 .mapToInt(name -> {
                     int index = original.getIndexNamed(name);
                     if (index < 1) {
-                        throw new NoSuchFieldException(name, original);
+                        throw new dido.data.NoSuchFieldException(name, original);
                     }
                     return index;
                 }).toArray();
@@ -271,7 +273,7 @@ public class CompactDatas {
             if (index == 1) {
                 return value;
             } else {
-                throw new NoSuchFieldException(index, schema);
+                throw new dido.data.NoSuchFieldException(index, schema);
             }
         }
 

@@ -1,5 +1,8 @@
 package dido.data;
 
+import dido.data.immutable.ArrayData;
+import dido.data.immutable.MapData;
+import dido.data.immutable.NonBoxedData;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

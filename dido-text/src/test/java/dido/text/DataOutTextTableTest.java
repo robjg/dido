@@ -1,9 +1,9 @@
 package dido.text;
 
-import dido.data.ArrayData;
 import dido.data.DidoData;
 import dido.data.enums.EnumMapData;
 import dido.data.generic.GenericDataBuilder;
+import dido.data.immutable.ArrayData;
 import dido.how.DataOut;
 import org.junit.jupiter.api.Test;
 

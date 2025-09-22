@@ -1,9 +1,9 @@
 package dido.operators;
 
 import dido.data.CompactData;
-import dido.data.CompactDatas;
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.immutable.CompactDatas;
 
 import java.util.function.Function;
 

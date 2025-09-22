@@ -1,9 +1,9 @@
 package dido.poi.style;
 
-import dido.data.ArrayData;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.ReadSchema;
+import dido.data.immutable.ArrayData;
 import dido.how.DataOut;
 import dido.how.conversion.DidoConversionProvider;
 import dido.poi.CellIn;

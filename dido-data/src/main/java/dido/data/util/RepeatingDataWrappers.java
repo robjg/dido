@@ -1,5 +1,7 @@
-package dido.data;
+package dido.data.util;
 
+import dido.data.DidoData;
+import dido.data.RepeatingData;
 import dido.data.useful.AbstractRepeatingData;
 
 import java.util.Arrays;

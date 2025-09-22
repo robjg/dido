@@ -1,6 +1,8 @@
 package dido.operators.transform;
 
 import dido.data.*;
+import dido.data.immutable.ArrayData;
+import dido.data.immutable.MapData;
 import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;

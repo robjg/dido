@@ -1,5 +1,7 @@
-package dido.data;
+package dido.data.immutable;
 
+import dido.data.*;
+import dido.data.NoSuchFieldException;
 import dido.data.schema.DataSchemaImpl;
 import dido.data.schema.SchemaBuilder;
 import dido.data.schema.SchemaFactoryImpl;
@@ -177,7 +179,7 @@ public final class ArrayData extends AbstractData implements DidoData {
         public FieldGetter getFieldGetterAt(int index) {
             String fieldName = getFieldNameAt(index);
             if (fieldName == null) {
-                throw new NoSuchFieldException(index, this);
+                throw new dido.data.NoSuchFieldException(index, this);
             }
             String toString = "ArrayDataGetter for [" + index + ":" + fieldName + "]";
 
@@ -198,7 +200,7 @@ public final class ArrayData extends AbstractData implements DidoData {
         public FieldGetter getFieldGetterNamed(String name) {
             int index = getIndexNamed(name);
             if (index == 0) {
-                throw new NoSuchFieldException(name, this);
+                throw new dido.data.NoSuchFieldException(name, this);
             }
 
             return getFieldGetterAt(index);
@@ -211,7 +213,7 @@ public final class ArrayData extends AbstractData implements DidoData {
         @Override
         public FieldSetter getFieldSetterAt(int index) {
             if (!hasIndex(index)) {
-                throw new NoSuchFieldException(index, this);
+                throw new dido.data.NoSuchFieldException(index, this);
             }
             return new AbstractFieldSetter() {
                 @Override

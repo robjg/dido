@@ -1,6 +1,10 @@
 package dido.operators;
 
-import dido.data.*;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.FromValues;
+import dido.data.RepeatingData;
+import dido.data.immutable.ArrayData;
 import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 

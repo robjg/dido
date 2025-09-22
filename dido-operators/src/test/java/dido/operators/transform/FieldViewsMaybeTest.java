@@ -1,6 +1,7 @@
 package dido.operators.transform;
 
 import dido.data.*;
+import dido.data.immutable.ArrayData;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;

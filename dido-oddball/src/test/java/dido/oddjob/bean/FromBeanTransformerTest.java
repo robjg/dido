@@ -1,6 +1,10 @@
 package dido.oddjob.bean;
 
-import dido.data.*;
+import dido.data.DataSchema;
+import dido.data.DidoData;
+import dido.data.IndexedData;
+import dido.data.RepeatingData;
+import dido.data.immutable.ArrayData;
 import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;

@@ -4,7 +4,7 @@ import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.MapData;
+import dido.data.immutable.MapData;
 import dido.foo.Person;
 import org.junit.jupiter.api.Test;
 

@@ -1,6 +1,9 @@
 package dido.examples;
 
 import dido.data.*;
+import dido.data.immutable.ArrayData;
+import dido.data.immutable.MapData;
+import dido.data.immutable.NonBoxedData;
 import dido.data.schema.SchemaBuilder;
 import dido.data.util.DataBuilder;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -1,5 +1,8 @@
 package dido.data;
 
+import dido.data.immutable.ArrayDataDataFactoryProvider;
+import dido.data.immutable.MapDataDataFactoryProvider;
+import dido.data.immutable.NonBoxedDataFactoryProvider;
 import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 

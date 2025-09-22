@@ -1,6 +1,8 @@
 package dido.operators.transform;
 
 import dido.data.*;
+import dido.data.immutable.ArrayData;
+import dido.data.immutable.NonBoxedDataFactoryProvider;
 import dido.data.useful.AbstractFieldGetter;
 import org.junit.jupiter.api.Test;
 

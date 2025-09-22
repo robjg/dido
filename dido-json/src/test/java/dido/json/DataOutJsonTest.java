@@ -1,8 +1,8 @@
 package dido.json;
 
 import com.google.gson.*;
-import dido.data.ArrayData;
-import dido.data.MapData;
+import dido.data.immutable.ArrayData;
+import dido.data.immutable.MapData;
 import dido.how.DataOut;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;

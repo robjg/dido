@@ -3,6 +3,8 @@ package dido.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dido.data.*;
+import dido.data.immutable.ArrayData;
+import dido.data.immutable.MapData;
 import dido.data.schema.SchemaBuilder;
 import dido.data.schema.SchemaDefs;
 import org.json.JSONException;

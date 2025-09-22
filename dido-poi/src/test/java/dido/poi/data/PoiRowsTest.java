@@ -1,8 +1,8 @@
 package dido.poi.data;
 
-import dido.data.ArrayData;
 import dido.data.DidoData;
 import dido.data.ReadSchema;
+import dido.data.immutable.ArrayData;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 import dido.poi.*;

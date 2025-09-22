@@ -1,8 +1,8 @@
 package dido.poi.layouts;
 
-import dido.data.ArrayData;
 import dido.data.DidoData;
-import dido.data.SingleData;
+import dido.data.immutable.ArrayData;
+import dido.data.immutable.SingleData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.poi.data.PoiWorkbook;

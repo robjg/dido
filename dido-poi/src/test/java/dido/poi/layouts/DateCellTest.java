@@ -1,8 +1,8 @@
 package dido.poi.layouts;
 
-import dido.data.ArrayData;
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.immutable.ArrayData;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.how.conversion.DefaultConversionProvider;

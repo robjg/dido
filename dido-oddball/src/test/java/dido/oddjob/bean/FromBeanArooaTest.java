@@ -1,9 +1,9 @@
 package dido.oddjob.bean;
 
-import dido.data.ArrayData;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.RepeatingData;
+import dido.data.immutable.ArrayData;
 import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
 import org.oddjob.arooa.beanutils.BeanUtilsPropertyAccessor;

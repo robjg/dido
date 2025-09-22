@@ -1,6 +1,6 @@
 package dido.poi;
 
-import dido.data.ArrayData;
+import dido.data.immutable.ArrayData;
 import dido.how.DataOut;
 import dido.poi.columns.Columns;
 import dido.test.OurDirs;
