@@ -9,8 +9,7 @@
             "Name": "Fields",
             "Type": "dido.data.RepeatingData",
             "Nested": {
-              "Ref": "FieldSchema",
-              "Repeating": true
+              "Ref": "FieldSchema"
             }
           }
         ]
@@ -52,8 +51,7 @@
                     "Name": "Schema",
                     "Type": "dido.data.DidoData",
                     "Nested": {
-                      "Ref": "DataSchema",
-                      "Repeating": false
+                      "Ref": "DataSchema"
                     }
                   },
                   {
@@ -94,13 +92,11 @@
                 "Name": "Schema",
                 "Type": "dido.data.DidoData",
                 "Nested": {
-                  "Ref": "DataSchema",
-                  "Repeating": false
+                  "Ref": "DataSchema"
                 }
               }
             ]
-          },
-          "Repeating": true
+          }
         }
       },
       {
@@ -108,8 +104,7 @@
         "Name": "Schema",
         "Type": "dido.data.DidoData",
         "Nested": {
-          "Ref": "DataSchema",
-          "Repeating": false
+          "Ref": "DataSchema"
         }
       }
     ]

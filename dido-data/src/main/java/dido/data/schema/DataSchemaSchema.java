@@ -3,6 +3,7 @@ package dido.data.schema;
 import dido.data.*;
 import dido.data.util.ClassUtils;
 import dido.data.util.DataBuilder;
+import dido.data.util.TypeUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -46,8 +47,6 @@ public class DataSchemaSchema {
 
     public static final String NESTED_FIELD = "Nested";
 
-    public static final String REPEATING_FIELD = "Repeating";
-
     public static final String REF_FIELD = "Ref";
 
     public static final DataSchema DEFS_SCHEMA;
@@ -74,7 +73,6 @@ public class DataSchemaSchema {
                 .withSchemaDefs(defs)
                 .addNamed(REF_FIELD, String.class)
                 .addRefNamed(SCHEMA_FIELD, SCHEMA_SCHEMA_NAME)
-                .addNamed(REPEATING_FIELD, boolean.class)
                 .build();
 
         FIELD_SCHEMA = SchemaBuilder.newInstance()
@@ -195,7 +193,6 @@ public class DataSchemaSchema {
                 fieldData.setStringNamed(TYPE_FIELD, schemaField.getType().getTypeName());
 
                 if (schemaField.isNested()) {
-                    nestedData.setBooleanNamed(REPEATING_FIELD, schemaField.isRepeating());
                     DataSchema nestedSchema = schemaField.getNestedSchema();
                     if (schemaField instanceof SchemaField.Ref ref) {
                         String refSchemaName = ref.getSchemaName();
@@ -277,13 +274,14 @@ public class DataSchemaSchema {
                 int index = fieldData.getIntNamed(INDEX_FIELD);
                 String name = fieldData.getStringNamed(NAME_FIELD);
 
+                Class<?> type = classResolverFunc.apply(fieldData.getStringNamed(TYPE_FIELD));
+
                 SchemaField schemaField;
                 if (fieldData.hasNamed(NESTED_FIELD)) {
 
                     DidoData nestedData = (DidoData) fieldData.getNamed(NESTED_FIELD);
 
-                    boolean repeating = nestedData.hasNamed(REPEATING_FIELD) &&
-                            nestedData.getBooleanNamed(REPEATING_FIELD);
+                    boolean repeating = TypeUtil.isAssignableFrom(RepeatingData.class, type);
 
                     if (nestedData.hasNamed(REF_FIELD)) {
                         String refSchemaName = nestedData.getStringNamed(REF_FIELD);
@@ -301,7 +299,6 @@ public class DataSchemaSchema {
                                         nestedSchemaFromData(nestedSchemaData, defs));
                     }
                 } else {
-                    Class<?> type = classResolverFunc.apply(fieldData.getStringNamed(TYPE_FIELD));
                     schemaField = SchemaField.of(index, name, type);
                 }
                 builder.addSchemaField(schemaField);

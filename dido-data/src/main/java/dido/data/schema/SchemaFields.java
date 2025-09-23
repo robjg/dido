@@ -1,7 +1,9 @@
 package dido.data.schema;
 
 import dido.data.DataSchema;
+import dido.data.RepeatingData;
 import dido.data.SchemaField;
+import dido.data.util.TypeUtil;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -14,22 +16,22 @@ public class SchemaFields {
 
     public static SchemaField.RefFactory refOf(int index, String field, String schemaName) {
         return new NestedRefFactory(new Simple(index, field, SchemaField.NESTED_TYPE),
-                schemaName, false);
+                schemaName);
     }
 
     public static SchemaField ofNested(int index, String field, DataSchema nested) {
         return new Nested(new Simple(index, field, SchemaField.NESTED_TYPE),
-                nested, false);
+                nested);
     }
 
     public static SchemaField.RefFactory repeatingRefOf(int index, String field, String schemaName) {
         return new NestedRefFactory(new Simple(index, field, SchemaField.NESTED_REPEATING_TYPE),
-                schemaName, true);
+                schemaName);
     }
 
     public static SchemaField ofRepeating(int index, String field, DataSchema nested) {
         return new Nested(new Simple(index, field, SchemaField.NESTED_REPEATING_TYPE),
-                nested, true);
+                nested);
     }
 
     private static final class Simple implements SchemaField {
@@ -111,12 +113,9 @@ public class SchemaFields {
 
         private final DataSchema nested;
 
-        private final boolean repeating;
-
-        private Nested(SchemaField simple, DataSchema nested, boolean repeating) {
+        private Nested(SchemaField simple, DataSchema nested) {
             this.simple = simple;
             this.nested = Objects.requireNonNull(nested, "Null nested schema for " + simple);
-            this.repeating = repeating;
         }
 
 
@@ -137,7 +136,7 @@ public class SchemaFields {
 
         @Override
         public boolean isRepeating() {
-            return repeating;
+            return TypeUtil.isAssignableFrom(RepeatingData.class, simple.getType());
         }
 
         @Override
@@ -157,7 +156,7 @@ public class SchemaFields {
             toName = toName == null ? getName() : toName;
 
             return new Nested(new Simple(toIndex, toName, this.simple.getType()),
-                    this.nested, this.repeating);
+                    this.nested);
         }
 
         @Override
@@ -187,7 +186,7 @@ public class SchemaFields {
                 field = ":" + f;
             }
             String nested;
-            if (repeating) {
+            if (isRepeating()) {
                 nested = "[" + this.nested + "]";
             } else {
                 nested = this.nested.toString();
@@ -203,18 +202,18 @@ public class SchemaFields {
 
         private final String schemaName;
 
-        private final boolean repeating;
-
-        private NestedRefFactory(SchemaField simple, String schemaName, boolean repeating) {
+        private NestedRefFactory(SchemaField simple, String schemaName) {
             this.simple = simple;
             this.schemaName = Objects.requireNonNull(schemaName, "No Ref Shema Name");
-            this.repeating = repeating;
         }
 
         public SchemaField.Ref toSchemaField(SchemaDefs defs) {
             return new NestedRef(simple,
-                    defs.getSchemaRef(schemaName),
-                    repeating);
+                    defs.getSchemaRef(schemaName));
+        }
+
+        boolean isRepeating() {
+            return TypeUtil.isAssignableFrom(RepeatingData.class, simple.getType());
         }
 
         @Override
@@ -227,7 +226,7 @@ public class SchemaFields {
                 field = ":" + f;
             }
             String nested;
-            if (repeating) {
+            if (isRepeating()) {
                 nested = "[" + schemaName + "]";
             } else {
                 nested = schemaName;
@@ -243,14 +242,10 @@ public class SchemaFields {
 
         private final SchemaRef nestedRef;
 
-        private final boolean repeating;
-
         private NestedRef(SchemaField simple,
-                          SchemaRef nestedRef,
-                          boolean repeating) {
+                          SchemaRef nestedRef) {
             this.simple = simple;
             this.nestedRef = Objects.requireNonNull(nestedRef);
-            this.repeating = repeating;
         }
 
         @Override
@@ -270,7 +265,7 @@ public class SchemaFields {
 
         @Override
         public boolean isRepeating() {
-            return repeating;
+            return TypeUtil.isAssignableFrom(RepeatingData.class, simple.getType());
         }
 
         @Override
@@ -280,7 +275,7 @@ public class SchemaFields {
             toName = toName == null ? getName() : toName;
 
             return new NestedRef(new Simple(toIndex, toName, this.simple.getType()),
-                    this.nestedRef, this.repeating);
+                    this.nestedRef);
         }
 
         @Override
@@ -325,7 +320,7 @@ public class SchemaFields {
                 field = ":" + f;
             }
             String nested;
-            if (repeating) {
+            if (isRepeating()) {
                 nested = "[" + this.nestedRef + "]";
             } else {
                 nested = this.nestedRef.toString();
