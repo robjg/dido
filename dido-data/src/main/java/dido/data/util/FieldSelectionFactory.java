@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  *
  * @param <C> The thing being created.
  *
- * @see SubData
+ * @see dido.data.schema.SubSchema
  */
 public class FieldSelectionFactory<C> {
 

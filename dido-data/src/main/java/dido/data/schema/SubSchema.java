@@ -1,9 +1,10 @@
-package dido.data.util;
+package dido.data.schema;
 
 import dido.data.DataSchema;
 import dido.data.ReadSchema;
 import dido.data.SchemaField;
 import dido.data.useful.AbstractDataSchema;
+import dido.data.util.FieldSelectionFactory;
 
 import java.util.NavigableMap;
 import java.util.TreeMap;

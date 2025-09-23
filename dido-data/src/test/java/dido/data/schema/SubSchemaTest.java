@@ -1,4 +1,4 @@
-package dido.data.util;
+package dido.data.schema;
 
 import dido.data.DataSchema;
 import dido.data.SchemaField;
