@@ -109,6 +109,57 @@ class JsonExamplesTest {
     }
 
     @Test
+    void nullsAndNans() throws JSONException {
+
+        // #missingJsonFieldIn{
+        DataSchema schema = DataSchema.builder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", int.class)
+                .addNamed("Price", double.class)
+                .build();
+
+        DidoData data = DataInJson.with()
+                .schema(schema)
+                .mapFromString()
+                .apply("{ 'Fruit': 'Apple', 'Price': 19.50 }");
+
+        assertThat(data, is(DidoData.withSchema(schema)
+                .of("Apple", null, 19.50)));
+        // }#missingJsonFieldIn
+
+        // #nullDidoFieldOut{
+        String json = DataOutJson.with()
+                .schema(schema)
+                .mapToString()
+                .apply(data);
+
+        JSONAssert.assertEquals("{ 'Fruit': 'Apple', 'Price': 19.50 }", json,
+                JSONCompareMode.STRICT);
+        // }#nullDidoFieldOut
+
+        // #serializeNulls{
+        String jsonWithNull = DataOutJson.with()
+                .schema(schema)
+                .serializeNulls()
+                .mapToString()
+                .apply(data);
+
+        JSONAssert.assertEquals("{ 'Fruit': 'Apple', Qty: null, 'Price': 19.50 }", jsonWithNull,
+                JSONCompareMode.STRICT);
+        // }#serializeNulls
+
+        DidoData dataWithNull = DataInJson.with()
+                .schema(schema)
+                .mapFromString()
+                .apply("{ 'Fruit': 'Apple', 'Qty': null, 'Price': 19.50 }");
+
+        assertThat(dataWithNull, is(DidoData.withSchema(schema)
+                .of("Apple", null, 19.50)));
+
+        assertThat(data.hasNamed("Qty"), is(false));
+    }
+
+    @Test
     void conversions() throws JSONException {
 
         // #conversionJson{

@@ -5,13 +5,14 @@ JSON in and out. [DataInJson](http://rgordon.co.uk/projects/dido/current/api/did
 and [DataOutJson](http://rgordon.co.uk/projects/dido/current/api/dido/json/DataOutJson.html)
 in the module [dido-json](../dido-json) provide a wrapper around [GSON](https://github.com/google/gson).
 
-- [Reading](#reading)
+- [Reading & Writing](#reading--writing)
 - [Schemas](#schemas)
 - [Conversions](#conversions)
+- [Nulls](#nulls)
 - [Copying Data](#copying-data)
 - [Oddjob](#oddjob)
 
-### Reading
+### Reading & Writing
 
 We have already seen in the [README](../README.md) an example of writing JSON.
 
@@ -44,6 +45,17 @@ We can tell our `DataInJson` to use a Dido Conversion:
 {@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#conversionDidoIn}
 And likewise our `DataOutJson`:
 {@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#conversionDidoOut}
+
+### Nulls
+
+When a schema is provided any missing fields in the JSON are not set in the 
+Dido Data. 
+{@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#missingJsonFieldIn}
+And any null fields are not written out by default.
+{@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#nullDidoFieldOut}
+To write null field values out use `serializeNulls`
+{@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#serializeNulls}
+JSON with null fields can be read in as before. No extra configuration is needed.
 
 ### Copying Data
 

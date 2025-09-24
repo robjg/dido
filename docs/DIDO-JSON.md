@@ -5,13 +5,14 @@ JSON in and out. [DataInJson](http://rgordon.co.uk/projects/dido/current/api/did
 and [DataOutJson](http://rgordon.co.uk/projects/dido/current/api/dido/json/DataOutJson.html)
 in the module [dido-json](../dido-json) provide a wrapper around [GSON](https://github.com/google/gson).
 
-- [Reading](#reading)
+- [Reading & Writing](#reading--writing)
 - [Schemas](#schemas)
 - [Conversions](#conversions)
+- [Nulls](#nulls)
 - [Copying Data](#copying-data)
 - [Oddjob](#oddjob)
 
-### Reading
+### Reading & Writing
 
 We have already seen in the [README](../README.md) an example of writing JSON.
 
@@ -171,6 +172,51 @@ And likewise our `DataOutJson`:
                 JSONCompareMode.STRICT);
 ```
 
+
+### Nulls
+
+When a schema is provided any missing fields in the JSON are not set in the 
+Dido Data. 
+```java
+        DataSchema schema = DataSchema.builder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Qty", int.class)
+                .addNamed("Price", double.class)
+                .build();
+
+        DidoData data = DataInJson.with()
+                .schema(schema)
+                .mapFromString()
+                .apply("{ 'Fruit': 'Apple', 'Price': 19.50 }");
+
+        assertThat(data, is(DidoData.withSchema(schema)
+                .of("Apple", null, 19.50)));
+```
+
+And any null fields are not written out by default.
+```java
+        String json = DataOutJson.with()
+                .schema(schema)
+                .mapToString()
+                .apply(data);
+
+        JSONAssert.assertEquals("{ 'Fruit': 'Apple', 'Price': 19.50 }", json,
+                JSONCompareMode.STRICT);
+```
+
+To write null field values out use `serializeNulls`
+```java
+        String jsonWithNull = DataOutJson.with()
+                .schema(schema)
+                .serializeNulls()
+                .mapToString()
+                .apply(data);
+
+        JSONAssert.assertEquals("{ 'Fruit': 'Apple', Qty: null, 'Price': 19.50 }", jsonWithNull,
+                JSONCompareMode.STRICT);
+```
+
+JSON with null fields can be read in as before. No extra configuration is needed.
 
 ### Copying Data
 
