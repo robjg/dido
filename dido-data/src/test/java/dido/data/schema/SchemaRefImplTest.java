@@ -27,6 +27,6 @@ class SchemaRefImplTest {
 
         assertThat(ref2, not(is(ref)));
 
-        assertThat(ref2.toString(), is("SchemaReference{'person'}"));
+        assertThat(ref2.toString(), is("Ref#person"));
     }
 }

@@ -20,17 +20,8 @@ public class SchemaRefImpl implements SchemaRef {
 
     private final String name;
 
-    private SchemaRefImpl() {
-        this(null);
-    }
-
     private SchemaRefImpl(String name) {
-        this.name = name;
-    }
-
-
-    public static SchemaRefImpl blank() {
-        return new SchemaRefImpl();
+        this.name = Objects.requireNonNull(name);
     }
 
     public static SchemaRefImpl named(String name) {
@@ -89,11 +80,6 @@ public class SchemaRefImpl implements SchemaRef {
     @Override
     public String toString() {
         String maybeSet = schemaRef.get() == null ? " (unset)" : "";
-        if (name == null) {
-            return "SchemaReference" + maybeSet;
-        }
-        else {
-            return "SchemaReference{'" + name + '\'' + '}' + maybeSet;
-        }
+        return "Ref#" + name + maybeSet;
     }
 }

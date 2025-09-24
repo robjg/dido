@@ -5,6 +5,12 @@ JSON in and out. [DataInJson](http://rgordon.co.uk/projects/dido/current/api/did
 and [DataOutJson](http://rgordon.co.uk/projects/dido/current/api/dido/json/DataOutJson.html)
 in the module [dido-json](../dido-json) provide a wrapper around [GSON](https://github.com/google/gson).
 
+- [Reading](#reading)
+- [Schemas](#schemas)
+- [Conversions](#conversions)
+- [Copying Data](#copying-data)
+- [Oddjob](#oddjob)
+
 ### Reading
 
 We have already seen in the [README](../README.md) an example of writing JSON.
@@ -33,6 +39,9 @@ The schema has been derived from the data:
         assertThat(schema.toString(),
                 is("{[1:Fruit]=java.lang.String, [2:Qty]=double, [3:Price]=double}"));
 ```
+
+
+### Schemas
 
 We can provide a partial schema that only overrides the type of certain
 fields:
@@ -163,7 +172,7 @@ And likewise our `DataOutJson`:
 ```
 
 
-### Copying Data.
+### Copying Data
 
 The API supports providing an [DataFactoryProvider](http://rgordon.co.uk/projects/dido/current/api/dido/data/DataFactoryProvider.html)
 that will copy data as it is parsed. This is historical, as it was easier to develop 

@@ -268,7 +268,7 @@ class EnumMapDataTest {
                 .build();
 
         assertThat(nodeSchema.toString(),
-                is("{[1:NAME]=java.lang.String, [2:CHILDREN]=[SchemaReference{'node'}]}"));
+                is("{[1:NAME]=java.lang.String, [2:CHILDREN]=[Ref#node]}"));
 
         GenericData<Node> george = EnumMapData.newBuilder(nodeSchema)
                 .with(Node.NAME, "George")

@@ -77,7 +77,6 @@ class SchemaExamplesTest {
             out.accept(schemaAsData);
         }
 
-        System.out.println(output);
         assertThat(output.toString(), ignoresAllWhitespaces(
                 """
 {

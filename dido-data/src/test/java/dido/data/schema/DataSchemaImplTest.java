@@ -54,7 +54,7 @@ class DataSchemaImplTest {
         assertThat(schema, is(schema));
 
         assertThat(schema.toString(),
-                is("{[1:Name]=java.lang.String, [2:Children]=[SchemaReference{'person'}]}"));
+                is("{[1:Name]=java.lang.String, [2:Children]=[Ref#person]}"));
 
     }
 

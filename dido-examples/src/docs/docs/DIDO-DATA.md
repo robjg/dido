@@ -11,6 +11,7 @@ defines the data format common to all sources of data.
 - [Creating Data From a Schema](#creating-data-from-a-schema)
 - [Complex Schemas](#complex-schemas)
 - [The Schema of a Schema](#the-schema-of-a-schema)
+- [Schemas in Oddjob](#schemas-in-oddjob)
 
 ### Overview
 
@@ -80,7 +81,7 @@ Here's the above schema converted to DidoData.
 {@oddjob.java.file src/test/java/dido/examples/SchemaExamplesTest.java#schemaAsData}
 
 This data can then be serialized with anything that can serialize nested Dido Data. Here it is using 
-`dido-json` module.
+the `dido-json` module.
 {@oddjob.java.file src/test/java/dido/examples/SchemaExamplesTest.java#schemaDataAsJson}
 
 You'll notice that we use the 'Schema of a Schema' to create the Json. 

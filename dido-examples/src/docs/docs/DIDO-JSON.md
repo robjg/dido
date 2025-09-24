@@ -5,6 +5,12 @@ JSON in and out. [DataInJson](http://rgordon.co.uk/projects/dido/current/api/did
 and [DataOutJson](http://rgordon.co.uk/projects/dido/current/api/dido/json/DataOutJson.html)
 in the module [dido-json](../dido-json) provide a wrapper around [GSON](https://github.com/google/gson).
 
+- [Reading](#reading)
+- [Schemas](#schemas)
+- [Conversions](#conversions)
+- [Copying Data](#copying-data)
+- [Oddjob](#oddjob)
+
 ### Reading
 
 We have already seen in the [README](../README.md) an example of writing JSON.
@@ -13,6 +19,9 @@ Here's an example of reading that JSON back in.
 {@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#snippet1}
 The schema has been derived from the data:
 {@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#snippet2}
+
+### Schemas
+
 We can provide a partial schema that only overrides the type of certain
 fields:
 {@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#snippet3}
@@ -36,7 +45,7 @@ We can tell our `DataInJson` to use a Dido Conversion:
 And likewise our `DataOutJson`:
 {@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#conversionDidoOut}
 
-### Copying Data.
+### Copying Data
 
 The API supports providing an [DataFactoryProvider](http://rgordon.co.uk/projects/dido/current/api/dido/data/DataFactoryProvider.html)
 that will copy data as it is parsed. This is historical, as it was easier to develop 

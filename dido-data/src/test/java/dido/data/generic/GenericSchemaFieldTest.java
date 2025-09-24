@@ -69,19 +69,19 @@ public class GenericSchemaFieldTest {
 
         SchemaField refField = ref.toSchemaField(defs);
         assertThat(refField.toString(),
-                is("[5:Foo]=SchemaReference{'SomeSchema'} (unset)"));
+                is("[5:Foo]=Ref#SomeSchema (unset)"));
 
         SchemaField repeatingRefField = repeatingRef.toSchemaField(defs);
         assertThat(repeatingRefField.toString(),
-                is("[5:Foo]=[SchemaReference{'SomeSchema'} (unset)]"));
+                is("[5:Foo]=[Ref#SomeSchema (unset)]"));
 
         defs.setSchema("SomeSchema", DataSchema.emptySchema());
 
         assertThat(refField.toString(),
-                is("[5:Foo]=SchemaReference{'SomeSchema'}"));
+                is("[5:Foo]=Ref#SomeSchema"));
 
         assertThat(repeatingRefField.toString(),
-                is("[5:Foo]=[SchemaReference{'SomeSchema'}]"));
+                is("[5:Foo]=[Ref#SomeSchema]"));
 
     }
 

@@ -53,15 +53,9 @@
                     "Nested": {
                       "Ref": "DataSchema"
                     }
-                  },
-                  {
-                    "Index": 3,
-                    "Name": "Repeating",
-                    "Type": "boolean"
                   }
                 ]
-              },
-              "Repeating": false
+              }
             }
           }
         ]
