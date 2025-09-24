@@ -9,6 +9,7 @@ in the module [dido-json](../dido-json) provide a wrapper around [GSON](https://
 - [Schemas](#schemas)
 - [Conversions](#conversions)
 - [Nulls](#nulls)
+- [Special Floating Point Values](#special-floating-point-values)
 - [Copying Data](#copying-data)
 - [Oddjob](#oddjob)
 
@@ -56,6 +57,12 @@ And any null fields are not written out by default.
 To write null field values out use `serializeNulls`
 {@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#serializeNulls}
 JSON with null fields can be read in as before. No extra configuration is needed.
+
+### Special Floating Point Values
+
+To serialize special floating point values (NaN/Infinity) use `serializeSpecialFloatingPointValues`
+{@oddjob.java.file src/test/java/dido/examples/JsonExamplesTest.java#serializeNans}
+Reading JSON with special float point values does not require any special configuration.
 
 ### Copying Data
 

@@ -9,6 +9,7 @@ in the module [dido-json](../dido-json) provide a wrapper around [GSON](https://
 - [Schemas](#schemas)
 - [Conversions](#conversions)
 - [Nulls](#nulls)
+- [Special Floating Point Values](#special-floating-point-values)
 - [Copying Data](#copying-data)
 - [Oddjob](#oddjob)
 
@@ -217,6 +218,23 @@ To write null field values out use `serializeNulls`
 ```
 
 JSON with null fields can be read in as before. No extra configuration is needed.
+
+### Special Floating Point Values
+
+To serialize special floating point values (NaN/Infinity) use `serializeSpecialFloatingPointValues`
+```java
+        String jsonWithNan = DataOutJson.with()
+                .schema(schema)
+                .serializeSpecialFloatingPointValues()
+                .mapToString()
+                .apply(DidoData.withSchema(schema)
+                        .of("Apple", 5, Double.NaN));
+
+        assertThat(jsonWithNan,
+                is("{\"Fruit\":\"Apple\",\"Qty\":5,\"Price\":NaN}"));
+```
+
+Reading JSON with special floating point values does not require any special configuration.
 
 ### Copying Data
 

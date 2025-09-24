@@ -151,12 +151,31 @@ class JsonExamplesTest {
         DidoData dataWithNull = DataInJson.with()
                 .schema(schema)
                 .mapFromString()
-                .apply("{ 'Fruit': 'Apple', 'Qty': null, 'Price': 19.50 }");
+                .apply(jsonWithNull);
 
         assertThat(dataWithNull, is(DidoData.withSchema(schema)
                 .of("Apple", null, 19.50)));
 
         assertThat(data.hasNamed("Qty"), is(false));
+
+        // #serializeNans{
+        String jsonWithNan = DataOutJson.with()
+                .schema(schema)
+                .serializeSpecialFloatingPointValues()
+                .mapToString()
+                .apply(DidoData.withSchema(schema)
+                        .of("Apple", 5, Double.NaN));
+
+        assertThat(jsonWithNan,
+                is("{\"Fruit\":\"Apple\",\"Qty\":5,\"Price\":NaN}"));
+        // }#serializeNans
+
+        DidoData dataWithNan = DataInJson.with()
+                .schema(schema)
+                .mapFromString()
+                .apply(jsonWithNan);
+
+        assertThat(Double.isNaN(dataWithNan.getDoubleNamed("Price")), is(true));
     }
 
     @Test
