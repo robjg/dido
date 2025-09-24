@@ -9,6 +9,8 @@ defines the data format common to all sources of data.
 - [Instances](#instances-of-dido-data)
 - [Creating Dido Data](#creating-dido-data)
 - [Creating Data From a Schema](#creating-data-from-a-schema)
+- [Complex Schemas](#complex-schemas)
+- [The Schema of a Schema](#the-schema-of-a-schema)
 
 ### Overview
 
@@ -65,11 +67,28 @@ And now we can create data matching the schema from field values:
 Or a builder:
 {@oddjob.java.file src/test/java/dido/examples/DidoDataExamplesTest.java#snippet5}
 
+### Complex Schemas
 
-### Concatenating Data
+A schema can reference other schemas including themselves. It
+does this using Defs and Refs. Here's an example of a tree:
+{@oddjob.java.file src/test/java/dido/examples/SchemaExamplesTest.java#treeSchema}
 
-### Sub Data
+### The Schema of a Schema
 
-### Nested Data
+A schema can be converted to DidoData using `DataSchemaSchema` class.
+Here's the above schema converted to DidoData.
+{@oddjob.java.file src/test/java/dido/examples/SchemaExamplesTest.java#schemaAsData}
 
-### Schema Manager
+This data can then be serialized with anything that can serialize nested Dido Data. Here it is using 
+`dido-json` module.
+{@oddjob.java.file src/test/java/dido/examples/SchemaExamplesTest.java#schemaDataAsJson}
+
+You'll notice that we use the 'Schema of a Schema' to create the Json. 
+
+It's actually quite a complicated schema. Here's what it looks like as JSON:
+{@oddjob.text.file src/test/resources/schema/SchemaAsJson.json}
+
+### Schemas in Oddjob
+
+Oddjob has several types for creating and manipulating schemas. A good starting point is 
+[dido:schema](https://github.com/robjg/dido/blob/master/docs/reference/dido/oddjob/schema/SchemaBean.md)
