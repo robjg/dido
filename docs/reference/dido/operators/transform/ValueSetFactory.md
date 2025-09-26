@@ -9,7 +9,7 @@ no field or index is specified the index is taken by the position in the transfo
 | Property | Description |
 | -------- | ----------- |
 | [at](#propertyat) | The index to set the value at. | 
-| [conversionProvider](#propertyconversionProvider) | A Conversion provider that will be used to convert the value to the type. | 
+| [conversionProvider](#propertyconversionprovider) | A Conversion provider that will be used to convert the value to the type. | 
 | [field](#propertyfield) | The field name. | 
 | [type](#propertytype) | The type. | 
 | [value](#propertyvalue) | The value. | 
@@ -33,7 +33,7 @@ no field or index is specified the index is taken by the position in the transfo
 
 The index to set the value at.
 
-#### conversionProvider <a name="propertyconversionProvider"></a>
+#### conversionProvider <a name="propertyconversionprovider"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>

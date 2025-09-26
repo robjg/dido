@@ -1,7 +1,8 @@
 [HOME](../../../README.md)
 # dido:schema-from
 
-Create a Schema from another schema by merging, concatenating or excluding fields.
+Create a Schema from another schema by including, merging, concatenating
+or excluding fields. The changes are applied in that order.
 
 ### Property Summary
 
@@ -10,9 +11,10 @@ Create a Schema from another schema by merging, concatenating or excluding field
 | [concat](#propertyconcat) | The schemas to concatenate. | 
 | [exclude](#propertyexclude) | The fields to exclude. | 
 | [from](#propertyfrom) | The schema to start from. | 
+| [include](#propertyinclude) | The fields to include from the schema. | 
 | [merge](#propertymerge) | The schemas to merge. | 
 | [name](#propertyname) | The name of the schema. | 
-| [reIndex](#propertyreIndex) | Reindex the fields to remove gaps. | 
+| [reIndex](#propertyreindex) | Reindex the fields to remove gaps. | 
 
 
 ### Example Summary
@@ -55,6 +57,17 @@ The fields to exclude.
 
 The schema to start from.
 
+#### include <a name="propertyinclude"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
+</table>
+
+The fields to include from the schema. The same
+as excluding all the other fields in the schema.
+
 #### merge <a name="propertymerge"></a>
 
 <table style='font-size:smaller'>
@@ -77,7 +90,7 @@ The name of the schema. This is so this schema may be
 referenced elsewhere in the definition. If set then SchemaDefs must also be set, either directly
 or because this is nested within another Schema.
 
-#### reIndex <a name="propertyreIndex"></a>
+#### reIndex <a name="propertyreindex"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>

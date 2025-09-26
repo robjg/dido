@@ -9,8 +9,8 @@ into a JSON String. See also [dido:from-json](../../dido/json/FromJsonStringType
 | Property | Description |
 | -------- | ----------- |
 | [schema](#propertyschema) | The schema to use. | 
-| [serializeNulls](#propertyserializeNulls) | Serialize null values. | 
-| [serializeSpecialFloatingPointValues](#propertyserializeSpecialFloatingPointValues) | Serialize NaN and Infinity values. | 
+| [serializeNulls](#propertyserializenulls) | Serialize null values. | 
+| [serializeSpecialFloatingPointValues](#propertyserializespecialfloatingpointvalues) | Serialize NaN and Infinity values. | 
 | [strictness](#propertystrictness) | Gson Strictness passed through to underlying Gson builder. | 
 
 
@@ -33,7 +33,7 @@ into a JSON String. See also [dido:from-json](../../dido/json/FromJsonStringType
 The schema to use. This schema will be used to limit the number
 of fields written.
 
-#### serializeNulls <a name="propertyserializeNulls"></a>
+#### serializeNulls <a name="propertyserializenulls"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -44,7 +44,7 @@ of fields written.
 Serialize null values. True to serialize null to the JSON,
 false and they will be ignored and no field will be written.
 
-#### serializeSpecialFloatingPointValues <a name="propertyserializeSpecialFloatingPointValues"></a>
+#### serializeSpecialFloatingPointValues <a name="propertyserializespecialfloatingpointvalues"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>

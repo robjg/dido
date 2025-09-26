@@ -8,29 +8,29 @@ A wrapper around Apache's
 
 | Property | Description |
 | -------- | ----------- |
-| [allowMissingColumnNames](#propertyallowMissingColumnNames) |  | 
-| [commentMarker](#propertycommentMarker) |  | 
+| [allowMissingColumnNames](#propertyallowmissingcolumnnames) |  | 
+| [commentMarker](#propertycommentmarker) |  | 
 | [delimiter](#propertydelimiter) |  | 
-| [duplicateHeaderMode](#propertyduplicateHeaderMode) |  | 
-| [escapeCharacter](#propertyescapeCharacter) |  | 
-| [formatFrom](#propertyformatFrom) |  | 
-| [headerComments](#propertyheaderComments) |  | 
-| [ignoreEmptyLines](#propertyignoreEmptyLines) |  | 
-| [ignoreHeaderCase](#propertyignoreHeaderCase) |  | 
-| [ignoreSurroundingSpaces](#propertyignoreSurroundingSpaces) |  | 
-| [lenientEof](#propertylenientEof) |  | 
-| [maxRows](#propertymaxRows) |  | 
-| [nullString](#propertynullString) |  | 
-| [quoteCharacter](#propertyquoteCharacter) |  | 
-| [quoteMode](#propertyquoteMode) |  | 
-| [recordSeparator](#propertyrecordSeparator) |  | 
-| [trailingData](#propertytrailingData) |  | 
-| [trailingDelimiter](#propertytrailingDelimiter) |  | 
+| [duplicateHeaderMode](#propertyduplicateheadermode) |  | 
+| [escapeCharacter](#propertyescapecharacter) |  | 
+| [formatFrom](#propertyformatfrom) |  | 
+| [headerComments](#propertyheadercomments) |  | 
+| [ignoreEmptyLines](#propertyignoreemptylines) |  | 
+| [ignoreHeaderCase](#propertyignoreheadercase) |  | 
+| [ignoreSurroundingSpaces](#propertyignoresurroundingspaces) |  | 
+| [lenientEof](#propertylenienteof) |  | 
+| [maxRows](#propertymaxrows) |  | 
+| [nullString](#propertynullstring) |  | 
+| [quoteCharacter](#propertyquotecharacter) |  | 
+| [quoteMode](#propertyquotemode) |  | 
+| [recordSeparator](#propertyrecordseparator) |  | 
+| [trailingData](#propertytrailingdata) |  | 
+| [trailingDelimiter](#propertytrailingdelimiter) |  | 
 | [trim](#propertytrim) |  | 
 
 
 ### Property Detail
-#### allowMissingColumnNames <a name="propertyallowMissingColumnNames"></a>
+#### allowMissingColumnNames <a name="propertyallowmissingcolumnnames"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -39,7 +39,7 @@ A wrapper around Apache's
 
 
 
-#### commentMarker <a name="propertycommentMarker"></a>
+#### commentMarker <a name="propertycommentmarker"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -57,7 +57,7 @@ A wrapper around Apache's
 
 
 
-#### duplicateHeaderMode <a name="propertyduplicateHeaderMode"></a>
+#### duplicateHeaderMode <a name="propertyduplicateheadermode"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -66,7 +66,7 @@ A wrapper around Apache's
 
 
 
-#### escapeCharacter <a name="propertyescapeCharacter"></a>
+#### escapeCharacter <a name="propertyescapecharacter"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -75,7 +75,7 @@ A wrapper around Apache's
 
 
 
-#### formatFrom <a name="propertyformatFrom"></a>
+#### formatFrom <a name="propertyformatfrom"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -84,7 +84,7 @@ A wrapper around Apache's
 
 
 
-#### headerComments <a name="propertyheaderComments"></a>
+#### headerComments <a name="propertyheadercomments"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
@@ -93,7 +93,7 @@ A wrapper around Apache's
 
 
 
-#### ignoreEmptyLines <a name="propertyignoreEmptyLines"></a>
+#### ignoreEmptyLines <a name="propertyignoreemptylines"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -102,7 +102,7 @@ A wrapper around Apache's
 
 
 
-#### ignoreHeaderCase <a name="propertyignoreHeaderCase"></a>
+#### ignoreHeaderCase <a name="propertyignoreheadercase"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -111,7 +111,7 @@ A wrapper around Apache's
 
 
 
-#### ignoreSurroundingSpaces <a name="propertyignoreSurroundingSpaces"></a>
+#### ignoreSurroundingSpaces <a name="propertyignoresurroundingspaces"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -120,7 +120,7 @@ A wrapper around Apache's
 
 
 
-#### lenientEof <a name="propertylenientEof"></a>
+#### lenientEof <a name="propertylenienteof"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -129,7 +129,7 @@ A wrapper around Apache's
 
 
 
-#### maxRows <a name="propertymaxRows"></a>
+#### maxRows <a name="propertymaxrows"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -138,7 +138,7 @@ A wrapper around Apache's
 
 
 
-#### nullString <a name="propertynullString"></a>
+#### nullString <a name="propertynullstring"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -147,7 +147,7 @@ A wrapper around Apache's
 
 
 
-#### quoteCharacter <a name="propertyquoteCharacter"></a>
+#### quoteCharacter <a name="propertyquotecharacter"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -156,7 +156,7 @@ A wrapper around Apache's
 
 
 
-#### quoteMode <a name="propertyquoteMode"></a>
+#### quoteMode <a name="propertyquotemode"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -165,7 +165,7 @@ A wrapper around Apache's
 
 
 
-#### recordSeparator <a name="propertyrecordSeparator"></a>
+#### recordSeparator <a name="propertyrecordseparator"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -174,7 +174,7 @@ A wrapper around Apache's
 
 
 
-#### trailingData <a name="propertytrailingData"></a>
+#### trailingData <a name="propertytrailingdata"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -183,7 +183,7 @@ A wrapper around Apache's
 
 
 
-#### trailingDelimiter <a name="propertytrailingDelimiter"></a>
+#### trailingDelimiter <a name="propertytrailingdelimiter"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>

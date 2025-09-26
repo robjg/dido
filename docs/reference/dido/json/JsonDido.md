@@ -9,10 +9,10 @@ of a single JSON Object per line. An array of JSON Objects, or A single JSON Obj
 | Property | Description |
 | -------- | ----------- |
 | [format](#propertyformat) | The format of the data. | 
-| [partialSchema](#propertypartialSchema) | When reading data in, indicates that the provided Schema is partial. | 
+| [partialSchema](#propertypartialschema) | When reading data in, indicates that the provided Schema is partial. | 
 | [schema](#propertyschema) | The schema to use. | 
-| [serializeNulls](#propertyserializeNulls) | Serialize null values. | 
-| [serializeSpecialFloatingPointValues](#propertyserializeSpecialFloatingPointValues) | Serialize NaN and Infinity values. | 
+| [serializeNulls](#propertyserializenulls) | Serialize null values. | 
+| [serializeSpecialFloatingPointValues](#propertyserializespecialfloatingpointvalues) | Serialize NaN and Infinity values. | 
 | [strictness](#propertystrictness) | Gson Strictness passed through to underlying Gson builder. | 
 
 
@@ -35,7 +35,7 @@ of a single JSON Object per line. An array of JSON Objects, or A single JSON Obj
 
 The format of the data. LINES, ARRAY, SINGLE.
 
-#### partialSchema <a name="propertypartialSchema"></a>
+#### partialSchema <a name="propertypartialschema"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -58,7 +58,7 @@ The schema to use. When reading in, if one is not provided a simple schema will 
 created based on the JSON primitive type. When writing out the schema will be used to limit the number
 of fields written.
 
-#### serializeNulls <a name="propertyserializeNulls"></a>
+#### serializeNulls <a name="propertyserializenulls"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -69,7 +69,7 @@ of fields written.
 Serialize null values. True to serialize null to the JSON,
 false and they will be ignored and no field will be written.
 
-#### serializeSpecialFloatingPointValues <a name="propertyserializeSpecialFloatingPointValues"></a>
+#### serializeSpecialFloatingPointValues <a name="propertyserializespecialfloatingpointvalues"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>

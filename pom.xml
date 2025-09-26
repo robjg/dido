@@ -39,7 +39,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
 
-        <oddjob.version>1.6.0</oddjob.version>
+        <oddjob.version>1.7.0-SNAPSHOT</oddjob.version>
         <oj-doc.version>1.7.0-SNAPSHOT</oj-doc.version>
 
         <javax.inject.version>1</javax.inject.version>

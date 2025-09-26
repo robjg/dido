@@ -11,7 +11,7 @@ See also [dido:to-json](../../dido/json/ToJsonStringType.md)
 
 | Property | Description |
 | -------- | ----------- |
-| [partialSchema](#propertypartialSchema) | Indicates that the provided Schema is partial. | 
+| [partialSchema](#propertypartialschema) | Indicates that the provided Schema is partial. | 
 | [schema](#propertyschema) | The schema to use. | 
 | [strictness](#propertystrictness) | Gson Strictness passed through to underlying Gson builder. | 
 
@@ -24,7 +24,7 @@ See also [dido:to-json](../../dido/json/ToJsonStringType.md)
 
 
 ### Property Detail
-#### partialSchema <a name="propertypartialSchema"></a>
+#### partialSchema <a name="propertypartialschema"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>

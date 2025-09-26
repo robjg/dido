@@ -10,7 +10,7 @@ Copy a field from one position and/or field and/or type to another.
 | Property | Description |
 | -------- | ----------- |
 | [at](#propertyat) | Copy to the field of this index. | 
-| [conversionProvider](#propertyconversionProvider) | A conversion provider to provide a conversion when a type is provided but a function isn't. | 
+| [conversionProvider](#propertyconversionprovider) | A conversion provider to provide a conversion when a type is provided but a function isn't. | 
 | [field](#propertyfield) | Copy from the field of this name. | 
 | [function](#propertyfunction) | An optional Function that can be applied during the copy. | 
 | [index](#propertyindex) | Copy from the field of this index. | 
@@ -38,7 +38,7 @@ Copy a field from one position and/or field and/or type to another.
 
 Copy to the field of this index.
 
-#### conversionProvider <a name="propertyconversionProvider"></a>
+#### conversionProvider <a name="propertyconversionprovider"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>

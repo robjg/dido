@@ -7,14 +7,14 @@ Transform a Bean to Dido Data.
 
 | Property | Description |
 | -------- | ----------- |
-| [arooaClass](#propertyarooaClass) |  | 
-| [arooaSession](#propertyarooaSession) |  | 
+| [arooaClass](#propertyarooaclass) |  | 
+| [arooaSession](#propertyarooasession) |  | 
 | [partial](#propertypartial) |  | 
 | [schema](#propertyschema) |  | 
 
 
 ### Property Detail
-#### arooaClass <a name="propertyarooaClass"></a>
+#### arooaClass <a name="propertyarooaclass"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
@@ -23,7 +23,7 @@ Transform a Bean to Dido Data.
 
 
 
-#### arooaSession <a name="propertyarooaSession"></a>
+#### arooaSession <a name="propertyarooasession"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>

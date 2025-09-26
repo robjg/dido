@@ -7,8 +7,8 @@ Export and Import with SQL.
 
 | Property | Description |
 | -------- | ----------- |
-| [batchSize](#propertybatchSize) | Batch size. | 
-| [classLoader](#propertyclassLoader) | The classloader used to derive the schema from a query. | 
+| [batchSize](#propertybatchsize) | Batch size. | 
+| [classLoader](#propertyclassloader) | The classloader used to derive the schema from a query. | 
 | [schema](#propertyschema) | An override schema that supplies a desired type to the underlying [java.sql.ResultSet](https://docs.oracle.com/en/java/javase/11/docs/api/java.sql/java/sql/ResultSet.html) method. | 
 | [sql](#propertysql) | The SQL that will extract or insert the data. | 
 
@@ -21,7 +21,7 @@ Export and Import with SQL.
 
 
 ### Property Detail
-#### batchSize <a name="propertybatchSize"></a>
+#### batchSize <a name="propertybatchsize"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -31,7 +31,7 @@ Export and Import with SQL.
 
 Batch size. This is passed directly to JDBC.
 
-#### classLoader <a name="propertyclassLoader"></a>
+#### classLoader <a name="propertyclassloader"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>

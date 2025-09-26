@@ -11,10 +11,10 @@ for more details.
 | Property | Description |
 | -------- | ----------- |
 | [converter](#propertyconverter) | A converter used to convert Strings to the required schema type. | 
-| [csvFormat](#propertycsvFormat) | The CSV Format to use. | 
-| [partialSchema](#propertypartialSchema) | When reading data in, indicates that the provided Schema is partial. | 
+| [csvFormat](#propertycsvformat) | The CSV Format to use. | 
+| [partialSchema](#propertypartialschema) | When reading data in, indicates that the provided Schema is partial. | 
 | [schema](#propertyschema) | The schema to use. | 
-| [withHeader](#propertywithHeader) | Does the data contain a header or is a header to be written. | 
+| [withHeader](#propertywithheader) | Does the data contain a header or is a header to be written. | 
 
 
 ### Example Summary
@@ -38,7 +38,7 @@ A converter used to convert Strings to the required schema type.
 Note Converter is only used for Input. Output is more complicated as the printer needs to know
 if values should be quoted, so we can't pre convert to a String.
 
-#### csvFormat <a name="propertycsvFormat"></a>
+#### csvFormat <a name="propertycsvformat"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
@@ -49,7 +49,7 @@ if values should be quoted, so we can't pre convert to a String.
 The CSV Format to use. See the <a href="https://commons.apache.org/proper/commons-csv/apidocs/org/apache/commons/csv/CSVFormat.html">CSVFormat JavaDoc</a>
 for more information.
 
-#### partialSchema <a name="propertypartialSchema"></a>
+#### partialSchema <a name="propertypartialschema"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -72,7 +72,7 @@ The schema to use. When reading in, if one is not provided an all String schema 
 created. When writing out the schema is only used to provide a header in the event that no data arrives. It
 is expected to match the schema of the data. No check is made to ensure it does.
 
-#### withHeader <a name="propertywithHeader"></a>
+#### withHeader <a name="propertywithheader"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>

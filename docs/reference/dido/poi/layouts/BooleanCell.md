@@ -7,8 +7,8 @@ Define a column of Boolean cells.
 
 | Property | Description |
 | -------- | ----------- |
-| [cellType](#propertycellType) | The Excel type of this column. | 
-| [defaultStyle](#propertydefaultStyle) | The default style for the cell. | 
+| [cellType](#propertycelltype) | The Excel type of this column. | 
+| [defaultStyle](#propertydefaultstyle) | The default style for the cell. | 
 | [index](#propertyindex) | The 1 based column index of this layout. | 
 | [name](#propertyname) | The name of this layout. | 
 | [reference](#propertyreference) | The Excel reference of the last row of this column that has been written. | 
@@ -17,7 +17,7 @@ Define a column of Boolean cells.
 
 
 ### Property Detail
-#### cellType <a name="propertycellType"></a>
+#### cellType <a name="propertycelltype"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Access</i></td><td>READ_ONLY</td></tr>
@@ -26,7 +26,7 @@ Define a column of Boolean cells.
 
 The Excel type of this column.
 
-#### defaultStyle <a name="propertydefaultStyle"></a>
+#### defaultStyle <a name="propertydefaultstyle"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Access</i></td><td>READ_ONLY</td></tr>

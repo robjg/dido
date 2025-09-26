@@ -10,13 +10,13 @@ For examples see [dido:set](../../../dido/operators/transform/ValueSetFactory.md
 
 | Property | Description |
 | -------- | ----------- |
-| [dataFactoryProvider](#propertydataFactoryProvider) | A factory for creating the new Data. | 
+| [dataFactoryProvider](#propertydatafactoryprovider) | A factory for creating the new Data. | 
 | [of](#propertyof) | The field level transformations to apply. | 
-| [withCopy](#propertywithCopy) | Copy existing fields before applying transformations. | 
+| [withCopy](#propertywithcopy) | Copy existing fields before applying transformations. | 
 
 
 ### Property Detail
-#### dataFactoryProvider <a name="propertydataFactoryProvider"></a>
+#### dataFactoryProvider <a name="propertydatafactoryprovider"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
@@ -36,7 +36,7 @@ A factory for creating the new Data.
 
 The field level transformations to apply.
 
-#### withCopy <a name="propertywithCopy"></a>
+#### withCopy <a name="propertywithcopy"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>

@@ -7,12 +7,12 @@ A join operation that performs a full left join.
 
 | Property | Description |
 | -------- | ----------- |
-| [foreignFields](#propertyforeignFields) | The names of the fields that form the foreign key in the primary data. | 
-| [foreignIndices](#propertyforeignIndices) | The indices of the fields that form the foreign key in the primary data. | 
-| [primaryFields](#propertyprimaryFields) | The names of the fields that are the key of the primary data. | 
-| [primaryIndices](#propertyprimaryIndices) | The indices of the fields that are the key of the primary data. | 
-| [secondaryFields](#propertysecondaryFields) | The names of the fields that form the key in the secondary data. | 
-| [secondaryIndices](#propertysecondaryIndices) | The indices of the fields that form the key in the secondary data. | 
+| [foreignFields](#propertyforeignfields) | The names of the fields that form the foreign key in the primary data. | 
+| [foreignIndices](#propertyforeignindices) | The indices of the fields that form the foreign key in the primary data. | 
+| [primaryFields](#propertyprimaryfields) | The names of the fields that are the key of the primary data. | 
+| [primaryIndices](#propertyprimaryindices) | The indices of the fields that are the key of the primary data. | 
+| [secondaryFields](#propertysecondaryfields) | The names of the fields that form the key in the secondary data. | 
+| [secondaryIndices](#propertysecondaryindices) | The indices of the fields that form the key in the secondary data. | 
 
 
 ### Example Summary
@@ -25,7 +25,7 @@ A join operation that performs a full left join.
 
 
 ### Property Detail
-#### foreignFields <a name="propertyforeignFields"></a>
+#### foreignFields <a name="propertyforeignfields"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -36,7 +36,7 @@ A join operation that performs a full left join.
 The names of the fields that form the foreign key in the primary data. The data in
 these fields must match that in the Secondary key fields by value and type for a match.
 
-#### foreignIndices <a name="propertyforeignIndices"></a>
+#### foreignIndices <a name="propertyforeignindices"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -47,7 +47,7 @@ these fields must match that in the Secondary key fields by value and type for a
 The indices of the fields that form the foreign key in the primary data. The data in
 these fields must match that in the Secondary key fields by value and type for a match.
 
-#### primaryFields <a name="propertyprimaryFields"></a>
+#### primaryFields <a name="propertyprimaryfields"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -57,7 +57,7 @@ these fields must match that in the Secondary key fields by value and type for a
 
 The names of the fields that are the key of the primary data.
 
-#### primaryIndices <a name="propertyprimaryIndices"></a>
+#### primaryIndices <a name="propertyprimaryindices"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -67,7 +67,7 @@ The names of the fields that are the key of the primary data.
 
 The indices of the fields that are the key of the primary data.
 
-#### secondaryFields <a name="propertysecondaryFields"></a>
+#### secondaryFields <a name="propertysecondaryfields"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -78,7 +78,7 @@ The indices of the fields that are the key of the primary data.
 The names of the fields that form the key in the secondary data. The data in
 these fields must match that in the Foreign fields by value and type for a match.
 
-#### secondaryIndices <a name="propertysecondaryIndices"></a>
+#### secondaryIndices <a name="propertysecondaryindices"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>

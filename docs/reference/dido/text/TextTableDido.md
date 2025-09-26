@@ -7,9 +7,9 @@ Creates an Out that write data to a text table.
 
 | Property | Description |
 | -------- | ----------- |
-| [borderStyle](#propertyborderStyle) | A string code for which borders to show. | 
+| [borderStyle](#propertyborderstyle) | A string code for which borders to show. | 
 | [schema](#propertyschema) | The schema to use when writing out the schema will be used to limit the number of fields written. | 
-| [shownBorders](#propertyshownBorders) | A string code for which borders to show. | 
+| [shownBorders](#propertyshownborders) | A string code for which borders to show. | 
 
 
 ### Example Summary
@@ -20,7 +20,7 @@ Creates an Out that write data to a text table.
 
 
 ### Property Detail
-#### borderStyle <a name="propertyborderStyle"></a>
+#### borderStyle <a name="propertyborderstyle"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
@@ -42,7 +42,7 @@ to look at the source code in Maven to understand the format.
 The schema to use when writing out the schema will be used to limit the number
 of fields written.
 
-#### shownBorders <a name="propertyshownBorders"></a>
+#### shownBorders <a name="propertyshownborders"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>

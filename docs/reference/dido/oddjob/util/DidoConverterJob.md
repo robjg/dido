@@ -7,14 +7,14 @@ Provides a `dido.how.conversion.DidoConversionProvider` using Oddjob's conversio
 
 | Property | Description |
 | -------- | ----------- |
-| [conversionProvider](#propertyconversionProvider) |  | 
+| [conversionProvider](#propertyconversionprovider) |  | 
 | [conversions](#propertyconversions) |  | 
 | [name](#propertyname) | A Name for the service. | 
 | [services](#propertyservices) |  | 
 
 
 ### Property Detail
-#### conversionProvider <a name="propertyconversionProvider"></a>
+#### conversionProvider <a name="propertyconversionprovider"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Access</i></td><td>READ_ONLY</td></tr>

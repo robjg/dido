@@ -10,16 +10,16 @@
 | [alignment](#propertyalignment) |  | 
 | [bold](#propertybold) |  | 
 | [colour](#propertycolour) |  | 
-| [fillBackgroundColour](#propertyfillBackgroundColour) |  | 
-| [fillForegroundColour](#propertyfillForegroundColour) |  | 
-| [fillPattern](#propertyfillPattern) |  | 
+| [fillBackgroundColour](#propertyfillbackgroundcolour) |  | 
+| [fillForegroundColour](#propertyfillforegroundcolour) |  | 
+| [fillPattern](#propertyfillpattern) |  | 
 | [font](#propertyfont) |  | 
 | [format](#propertyformat) |  | 
 | [italic](#propertyitalic) |  | 
 | [size](#propertysize) |  | 
 | [strikeout](#propertystrikeout) |  | 
 | [underline](#propertyunderline) |  | 
-| [verticalAlignment](#propertyverticalAlignment) |  | 
+| [verticalAlignment](#propertyverticalalignment) |  | 
 | [wrapped](#propertywrapped) |  | 
 
 
@@ -51,7 +51,7 @@
 
 
 
-#### fillBackgroundColour <a name="propertyfillBackgroundColour"></a>
+#### fillBackgroundColour <a name="propertyfillbackgroundcolour"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -60,7 +60,7 @@
 
 
 
-#### fillForegroundColour <a name="propertyfillForegroundColour"></a>
+#### fillForegroundColour <a name="propertyfillforegroundcolour"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -69,7 +69,7 @@
 
 
 
-#### fillPattern <a name="propertyfillPattern"></a>
+#### fillPattern <a name="propertyfillpattern"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
@@ -132,7 +132,7 @@
 
 
 
-#### verticalAlignment <a name="propertyverticalAlignment"></a>
+#### verticalAlignment <a name="propertyverticalalignment"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>

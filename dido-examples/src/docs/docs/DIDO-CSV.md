@@ -7,7 +7,7 @@ in the module [dido-csv](../dido-csv) provide a wrapper around [Apache Commons C
 
 - [Overview](#overview)
 - [Custom-Formats](#custom-formats)
-- [Oddjob](#in-oddjob)
+- [Oddjob](#oddjob)
 
 ### Overview
 We have already seen in the [README](../README.md) an example of Reading a CSV. By default,
@@ -29,6 +29,6 @@ When writing:
 When reading:
 {@oddjob.java.file src/test/java/dido/examples/CsvDelimitersExampleTest.java#customCsvIn}
 
-### In Oddjob
+### Oddjob
 
 For examples of using Dido CSV in Oddjob, see [dido:csv](reference/dido/csv/CsvDido.md)
