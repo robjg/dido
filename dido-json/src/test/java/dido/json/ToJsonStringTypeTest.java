@@ -42,6 +42,20 @@ class ToJsonStringTypeTest {
 
         assertThat(func.apply(DidoData.of(Double.NaN)),
                 is("{\"f_1\":NaN}"));
+
+        element = new JsonPrimitive(Double.POSITIVE_INFINITY);
+
+        assertThat(gson.toJson(element), is("Infinity"));
+
+        assertThat(func.apply(DidoData.of(Double.POSITIVE_INFINITY)),
+                is("{\"f_1\":Infinity}"));
+
+        element = new JsonPrimitive(Double.NEGATIVE_INFINITY);
+
+        assertThat(gson.toJson(element), is("-Infinity"));
+
+        assertThat(func.apply(DidoData.of(Double.NEGATIVE_INFINITY)),
+                is("{\"f_1\":-Infinity}"));
     }
 
     @Test

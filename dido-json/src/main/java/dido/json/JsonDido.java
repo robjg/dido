@@ -24,6 +24,15 @@ import java.util.Objects;
  *
  * @oddjob.example From JSON Array and back again.
  * {@oddjob.xml.resource dido/json/FromToJsonArrayExample.xml}
+ *
+ * @oddjob.example Json with Nulls and Special Floating Point Numbers. Without setting the properties
+ * the jobs would fail.
+ * {@oddjob.xml.resource dido/json/FromToJsonNullsAndNans.xml}
+ * The captured data is:
+ * {@oddjob.text.resource expected/FromToJsonNullsAndNans.txt}
+ * The output in results is:
+ * {@oddjob.text.resource expected/FromToJsonNullsAndNans.json}
+ *
  */
 public class JsonDido {
 

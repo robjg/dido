@@ -1,0 +1,3 @@
+{[1:Fruit]=Apple, [2:Price]=Infinity}
+{[1:Fruit]=null, [2:Price]=31.6}
+{[1:Fruit]=Pear, [2:Price]=NaN}

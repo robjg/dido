@@ -22,6 +22,7 @@ of a single JSON Object per line. An array of JSON Objects, or A single JSON Obj
 | ----- | ----------- |
 | [Example 1](#example1) | From JSON Lines and back again. |
 | [Example 2](#example2) | From JSON Array and back again. |
+| [Example 3](#example3) | Json with Nulls and Special Floating Point Numbers. |
 
 
 ### Property Detail
@@ -177,6 +178,81 @@ From JSON Array and back again.
         </bus:bus>
     </job>
 </oddjob>
+```
+
+
+#### Example 3 <a name="example3"></a>
+
+Json with Nulls and Special Floating Point Numbers. Without setting the properties
+the jobs would fail.
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:json strictness="LENIENT">
+                                    <schema>
+                                        <dido:schema>
+                                            <of>
+                                                <dido:field name="Fruit" type="java.lang.String"/>
+                                                <dido:field name="Price" type="double"/>
+                                            </of>
+                                        </dido:schema>
+                                    </schema>
+                                </dido:json>
+                            </how>
+                            <from>
+                                <buffer>
+                                    <![CDATA[{ "Fruit":"Apple", "Price":Infinity }
+{ "Fruit":null, "Price":31.6 }
+{ "Fruit":"Pear", "Price":NaN }
+]]>
+                                </buffer>
+                            </from>
+                        </dido:data-in>
+                        <bus:bus xmlns:bus="oddjob:beanbus">
+                            <of>
+                                <bus:collect id="capture"/>
+                            </of>
+                        </bus:bus>
+                        <dido:data-out xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:json serializeNulls="true" serializeSpecialFloatingPointValues="true"/>
+                            </how>
+                            <to>
+                                <identify id="results">
+                                    <value>
+                                        <buffer/>
+                                    </value>
+                                </identify>
+                            </to>
+                        </dido:data-out>
+                    </of>
+                </bus:bus>
+                <echo><![CDATA[${results}]]></echo>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>
+```
+
+The captured data is:
+```
+{[1:Fruit]=Apple, [2:Price]=Infinity}
+{[1:Fruit]=null, [2:Price]=31.6}
+{[1:Fruit]=Pear, [2:Price]=NaN}
+```
+
+The output in results is:
+```
+{"Fruit":"Apple","Price":Infinity}
+{"Fruit":null,"Price":31.6}
+{"Fruit":"Pear","Price":NaN}
 ```
 
 

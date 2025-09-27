@@ -11,6 +11,10 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -79,7 +83,7 @@ public class JsonExamplesTest {
     }
 
     @Test
-    void testReadAndWriteNullsAndNans() throws ArooaConversionException, JSONException {
+    void testReadAndWriteNullsAndNans() throws ArooaConversionException, JSONException, IOException, URISyntaxException {
 
         Oddjob oddjob = new Oddjob();
         oddjob.setFile(new File(Objects.requireNonNull(
@@ -98,6 +102,16 @@ public class JsonExamplesTest {
         assertThat(Double.isInfinite(capture.get(0).getDoubleNamed("Price")), is(true));
         assertThat(capture.get(1).getNamed("Fruit"), nullValue());
         assertThat(capture.get(1).getStringNamed("Fruit"), is("null"));
+
+        List<String> expectedData = Files.readAllLines(Path.of(Objects.requireNonNull(getClass()
+                .getResource("/expected/FromToJsonNullsAndNans.txt")).toURI()));
+
+        assertThat(capture.stream().map(Objects::toString).toList(), is(expectedData));
+
+        List<String> expectedJson = Files.readAllLines(Path.of(Objects.requireNonNull(getClass()
+                .getResource("/expected/FromToJsonNullsAndNans.json")).toURI()));
+
+        assertThat(lookup.lookup("results.lines", List.class), is(expectedJson));
     }
 
     public static class IterableOfData implements Iterable<DidoData> {

@@ -1,0 +1,3 @@
+{"Fruit":"Apple","Price":Infinity}
+{"Fruit":null,"Price":31.6}
+{"Fruit":"Pear","Price":NaN}
