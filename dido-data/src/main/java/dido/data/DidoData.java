@@ -2,6 +2,7 @@ package dido.data;
 
 import dido.data.immutable.ArrayData;
 import dido.data.util.DataBuilder;
+import dido.data.util.FieldValuesIn;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -145,7 +146,12 @@ public interface DidoData extends IndexedData {
      * @return A Fluent Builder for specifying the filed values.
      */
     static FromValues withSchema(DataSchema schema) {
-        return ArrayData.withSchema(schema);
+        if (schema instanceof WriteSchema) {
+            return FieldValuesIn.withDataFactory(((WriteSchema) schema).dataFactory());
+        }
+        else {
+            return ArrayData.withSchema(schema);
+        }
     }
 
     /**

@@ -5,6 +5,7 @@ import dido.how.util.Primitives;
 import dido.poi.CellProviderFactory;
 import dido.poi.data.DataCell;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 
 import java.lang.reflect.Type;
 import java.time.LocalDate;
@@ -69,7 +70,9 @@ public class DataCellFactory implements CellProviderFactory<DataCell> {
                 dataCell = new BooleanCell();
                 break;
             case NUMERIC:
-                if (DATE_FORMATS.contains(cell.getCellStyle().getDataFormat())) {
+                CellStyle cellStyle = cell.getCellStyle();
+                if (DATE_FORMATS.contains(cellStyle.getDataFormat())
+                    || cellStyle.getDataFormatString().contains("yy")) {
                     dataCell = new DateCell();
                 } else {
                     dataCell = new NumericCell();

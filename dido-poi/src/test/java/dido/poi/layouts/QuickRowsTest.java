@@ -125,7 +125,7 @@ class QuickRowsTest {
         assertEquals("dateOfBirth", sheet.getRow(0).getCell(1).toString());
         assertEquals("salary", sheet.getRow(0).getCell(2).toString());
         assertEquals("John", sheet.getRow(1).getCell(0).toString());
-        assertEquals("25-Mar-1970", sheet.getRow(1).getCell(1).toString());
+        assertEquals("1970-03-25", sheet.getRow(1).getCell(1).toString());
         assertEquals("45000.0", sheet.getRow(1).getCell(2).toString());
 
         List<DidoData> results;

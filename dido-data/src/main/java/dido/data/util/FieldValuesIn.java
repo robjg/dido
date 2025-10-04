@@ -25,12 +25,11 @@ public class FieldValuesIn implements FromValues {
 
     private FieldValuesIn(DataFactory dataFactory) {
         this.dataFactory = dataFactory;
-        DataSchema schema = dataFactory.getSchema();
-        WriteStrategy writeStrategy = WriteStrategy.fromSchema(schema);
+        WriteSchema schema = dataFactory.getSchema();
         setters = new FieldSetter[schema.lastIndex()];
         int i = 0;
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
-            setters[i++] = writeStrategy.getFieldSetterAt(index);
+            setters[i++] = schema.getFieldSetterAt(index);
         }
     }
 

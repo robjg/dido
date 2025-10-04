@@ -206,7 +206,7 @@ public final class ArrayData extends AbstractData implements DidoData {
             return getFieldGetterAt(index);
         }
 
-        public DataFactory newDataFactory() {
+        public DataFactory dataFactory() {
             return new ArrayDataFactory(this);
         }
 

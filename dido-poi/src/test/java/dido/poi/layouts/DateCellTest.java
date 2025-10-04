@@ -50,7 +50,7 @@ class DateCellTest {
         CellStyle cellStyle = dobCell.getCellStyle();
         assertThat(cellStyle.getDataFormatString(), is(DefaultStyleProivderFactory.DATE_FORMAT));
 
-        assertThat(dobCell.toString(), is(formatedExpectedDate()));
+        assertThat(dobCell.toString(), is("2021-09-22"));
 
         // Read side.
 
@@ -101,7 +101,7 @@ class DateCellTest {
         CellStyle cellStyle = dobCell.getCellStyle();
         assertThat(cellStyle.getDataFormatString(), is(DefaultStyleProivderFactory.DATE_FORMAT));
 
-        assertThat(dobCell.toString(), is(formatedExpectedDate()));
+        assertThat(dobCell.toString(), is("2021-09-22"));
 
         // Read side.
 
@@ -114,7 +114,4 @@ class DateCellTest {
         }
     }
 
-    static String formatedExpectedDate() {
-        return LocalDate.parse("2021-09-22").format(DateTimeFormatter.ofPattern("dd-MMM-yyyy"));
-    }
 }

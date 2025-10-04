@@ -269,6 +269,11 @@ public class MapData extends AbstractData implements DidoData {
         }
 
         @Override
+        public DataFactory dataFactory() {
+            return new MapDataFactory(this);
+        }
+
+        @Override
         public FieldSetter getFieldSetterAt(int index) {
             String name = getFieldNameAt(index);
             return getFieldSetterNamed(name);

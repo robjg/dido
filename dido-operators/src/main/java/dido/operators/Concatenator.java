@@ -85,7 +85,6 @@ public class Concatenator {
                     if (location == null) {
                         throw new NoSuchFieldException(name, this);
                     }
-                    ;
                     return location.getter;
                 }
             }
@@ -116,9 +115,9 @@ public class Concatenator {
                             continue;
                         }
                     }
-                    fieldLocations.put(name, location);
+                    SchemaField newField = schemaFactory.addSchemaField(schemaField.mapToIndex(++locationIndex));
+                    fieldLocations.put(newField.getName(), location);
                     locations.add(location);
-                    schemaFactory.addSchemaField(schemaField.mapToIndex(++locationIndex));
                 }
                 ++dataIndex;
             }

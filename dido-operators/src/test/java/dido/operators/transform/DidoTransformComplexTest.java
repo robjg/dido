@@ -118,7 +118,7 @@ public class DidoTransformComplexTest {
 
             DataFactory dataFactory = factoryProvider.factoryFor(outSchema);
 
-            WriteStrategy writeStrategy = WriteStrategy.fromSchema(outSchema);
+            WriteSchema writeStrategy = dataFactory.getSchema();
 
             FieldSetter fruitSetter = writeStrategy.getFieldSetterNamed("Fruit");
             FieldSetter priceSetter = writeStrategy.getFieldSetterNamed("Price");

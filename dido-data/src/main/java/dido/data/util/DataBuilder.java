@@ -1,7 +1,7 @@
 package dido.data.util;
 
-import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.NoSuchFieldException;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -64,12 +64,11 @@ abstract public class DataBuilder {
 
         private Known(DataFactory dataFactory) {
             this.dataFactory = dataFactory;
-            DataSchema schema = dataFactory.getSchema();
-            WriteStrategy writeStrategy = WriteStrategy.fromSchema(schema);
+            WriteSchema schema = dataFactory.getSchema();
 
             Map<String, FieldSetter> setters = new HashMap<>();
             for (String name : schema.getFieldNames()) {
-                setters.put(name, writeStrategy.getFieldSetterNamed(name));
+                setters.put(name, schema.getFieldSetterNamed(name));
             }
             this.setters = setters;
         }

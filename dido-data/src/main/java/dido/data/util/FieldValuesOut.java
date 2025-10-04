@@ -32,6 +32,10 @@ public class FieldValuesOut {
         return new FieldValuesOut(schema);
     }
 
+    public static Object[] arrayOf(DidoData data) {
+        return new FieldValuesOut(data.getSchema()).toArray(data);
+    }
+
     public static Collection<Object> collectionOf(DidoData data) {
         return new FieldValuesOut(data.getSchema()).toCollection(data);
     }
@@ -42,6 +46,10 @@ public class FieldValuesOut {
 
     public Collection<Object> toCollection(DidoData data) {
         return new ValuesCollection(data);
+    }
+
+    public Object[] toArray(DidoData data) {
+        return toCollection(data).toArray();
     }
 
     public Map<String, Object> toMap(DidoData data) {

@@ -437,6 +437,11 @@ public class NonBoxedData extends AbstractData {
         }
 
         @Override
+        public DataFactory dataFactory() {
+            return new Factory(this);
+        }
+
+        @Override
         public FieldGetter getFieldGetterAt(int index) {
             try {
                 FieldGetter getter = getters[index - 1];

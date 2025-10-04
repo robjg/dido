@@ -4,6 +4,7 @@ import dido.data.*;
 import dido.data.immutable.ArrayData;
 import dido.data.immutable.MapData;
 import dido.data.util.DataBuilder;
+import dido.data.util.FieldValuesOut;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -80,6 +81,10 @@ class ConcatenatorDataTest {
                 .build();
 
         assertThat(result, is(DidoData.withSchema(expected).of("apple", 2, 26.3, "Alice", "Bob", true)));
+
+        Object[] withGetters = FieldValuesOut.arrayOf(result);
+
+        assertThat(withGetters, is(new Object[]{"apple", 2, 26.3, "Alice", "Bob", true}));
     }
 
     @Test
@@ -155,9 +160,14 @@ class ConcatenatorDataTest {
                 "Id_", 2,
                 "Farmer", "Giles");
 
-        assertThat(
-                Concatenator.of(data1, data2),
-                is(expected));
+        DidoData result = Concatenator.of(data1, data2);
+
+        assertThat(result.getSchema(), is(expected.getSchema()));
+        assertThat(result, is(expected));
+
+        Object[] withGetters = FieldValuesOut.arrayOf(result);
+
+        assertThat(withGetters, is(new Object[]{"Apple", 12, 2, 2, "Giles"}));
     }
 
     @Test
@@ -263,6 +273,31 @@ class ConcatenatorDataTest {
         assertThat(getter2.has(result1), is(false));
         assertThat(getter3.getDouble(result2), is(26.3));
         assertThat(getter4.get(result3), nullValue());
+    }
+
+    @Test
+    void disparateIndices() {
+
+        DataSchema schema1 = ArrayData.schemaBuilder()
+                .addNamedAt(7, "Fruit", String.class)
+                .addNamedAt(3, "Qty", int.class)
+                .addNamedAt(20, "Price", double.class)
+                .build();
+
+        DataSchema schema2 = MapData.schemaBuilder()
+                .addNamedAt(2, "Supplier", String.class)
+                .build();
+
+        Concatenator concatenator = Concatenator.fromSchemas(schema1, schema2);
+
+        DidoData result = concatenator.concat(DidoData.withSchema(schema1).of(5, "Apple", 27.2),
+                DidoData.withSchema(schema2).of("Giles"));
+
+        assertThat(result, is(DidoData.of(5, "Apple", 27.2, "Giles")));
+
+        Object[] withGetters = FieldValuesOut.arrayOf(result);
+
+        assertThat(withGetters, is(new Object[]{ 5, "Apple", 27.2, "Giles" }));
 
     }
 }

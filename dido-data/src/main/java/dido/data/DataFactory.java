@@ -6,11 +6,11 @@ package dido.data;
  */
 public interface DataFactory {
 
-    DataSchema getSchema();
+    WriteSchema getSchema();
 
     /**
      * Provides Writable data that can be written to either directly using the {@code set} methods
-     * or using a {@link FieldSetter} provided by a {@link WriteStrategy} appropriate for the data type.
+     * or using a {@link FieldSetter} appropriate for the data type.
      *
      * @return Writable Data. Never null.
      */

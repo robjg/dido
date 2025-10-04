@@ -158,9 +158,9 @@ public class WriteTransformBuilder {
             opsByIndex = this.opsByIndex;
         }
 
-        WriteSchema schema = WriteSchema.from(schemaFactory.toSchema());
+        DataFactory dataFactory = dataFactoryProvider.factoryFor(schemaFactory.toSchema());
 
-        DataFactory dataFactory = dataFactoryProvider.factoryFor(schema);
+        WriteSchema schema = dataFactory.getSchema();
 
         List<BiConsumer<DidoData, WritableData>> ops = new ArrayList<>(schema.lastIndex());
 

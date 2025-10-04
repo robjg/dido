@@ -17,6 +17,6 @@ class StyleBeanTest {
 
         CellStyle cellStyle = styleBean.createStyle(new XSSFWorkbook());
 
-        assertThat(cellStyle.getDataFormat(), is((short) 0xe));
+        assertThat(cellStyle.getDataFormatString(), is(DefaultStyleProivderFactory.DATE_FORMAT));
     }
 }
