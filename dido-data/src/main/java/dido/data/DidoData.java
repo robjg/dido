@@ -200,9 +200,6 @@ public interface DidoData extends IndexedData {
         DataSchema schema = data.getSchema();
         int hash = 0;
         for (int index = schema.firstIndex(); index > 0; index = schema.nextIndex(index)) {
-            if (!data.hasAt(index)) {
-                continue;
-            }
             Object value = data.getAt(index);
             hash = hash * 31 + (value == null ? 0 :value.hashCode());
         }

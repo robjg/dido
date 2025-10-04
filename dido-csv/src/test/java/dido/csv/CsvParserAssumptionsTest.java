@@ -3,7 +3,6 @@ package dido.csv;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -12,14 +11,14 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 
 public class CsvParserAssumptionsTest {
 
     @Test
     void heading() throws IOException {
 
-        CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-                .build();
+        CSVFormat csvFormat = CSVFormat.DEFAULT;
 
         CSVParser parser = csvFormat.parse(
                 new InputStreamReader(Objects.requireNonNull(
@@ -27,8 +26,8 @@ public class CsvParserAssumptionsTest {
 
         List<CSVRecord> records = parser.getRecords();
 
-        CSVRecord row1 = records.get(0);
+        CSVRecord row1 = records.getFirst();
 
-        assertThat(row1.toList(), Matchers.contains("Fruit","Qty","Price"));
+        assertThat(row1.toList(), contains("Id", "Fruit","Qty","Price", "BestBefore"));
     }
 }

@@ -5,16 +5,21 @@ import dido.data.DidoData;
 import dido.data.immutable.ArrayData;
 import dido.data.immutable.MapData;
 import dido.data.schema.SchemaBuilder;
+import dido.data.util.FieldValuesOut;
 import dido.how.DataIn;
+import dido.how.conversion.DefaultConversionProvider;
+import dido.how.conversion.DidoConversionProvider;
 import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
+import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
 class DataInCsvTest {
@@ -48,7 +53,7 @@ class DataInCsvTest {
     }
 
     @Test
-    void testWithSchema() {
+    void withSchema() {
 
         String records =
                 "Apple,5,19.50" + System.lineSeparator() +
@@ -78,6 +83,36 @@ class DataInCsvTest {
     }
 
     @Test
+    void pickColumns() {
+
+        String records =
+                "Apple,5,19.50" + System.lineSeparator() +
+                        "Orange,2,35.24" + System.lineSeparator();
+
+        DataSchema schema = SchemaBuilder.newInstance()
+                .addNamedAt(2, "Quantity", int.class)
+                .addNamedAt( 3, "Price", double.class)
+                .build();
+
+        List<DidoData> expected = ArrayData.withSchema(schema)
+                .many()
+                .of(5, 19.5)
+                .of(2, 35.24)
+                .toList();
+
+        try (DataIn in = DataInCsv.with()
+                .schema(schema)
+                .fromReader(new StringReader(records))) {
+
+            List<DidoData> results = in.stream().collect(Collectors.toList());
+
+            assertThat(results, is(expected));
+            assertThat(results.getFirst().getSchema(), is(schema));
+        }
+    }
+
+
+    @Test
     void testWithPartialSchema() {
 
         String records = "Fruit,Quantity,Price" + System.lineSeparator() +
@@ -101,44 +136,93 @@ class DataInCsvTest {
                 .of("Orange", 2, 35.24)
                 .toList();
 
+        List<DidoData> results;
+
         try (DataIn in = DataInCsv.with()
                 .partialSchema(someSchema)
                 .fromReader(new StringReader(records))) {
 
-            List<DidoData> results = in.stream().collect(Collectors.toList());
+            results = in.stream().collect(Collectors.toList());
 
-            assertThat(results, is(expected));
-            assertThat(results.get(0).getSchema(), is(schema));
         }
+
+        assertThat(results, is(expected));
+        assertThat(results.get(0).getSchema(), is(schema));
+
+        List<Object[]> values = results.stream()
+                .map(FieldValuesOut.forSchema(schema)::toArray)
+                .toList();
+
+        assertThat(values, contains(new Object[]{"Apple", 5, 19.5}, new Object[]{"Orange", 2, 35.24}));
+
     }
 
     @Test
     void outOfOrderHeader() {
 
         DataSchema schema = SchemaBuilder.newInstance()
+                .addNamed("InStock", boolean.class)
                 .addNamed("Qty", int.class)
                 .addNamed("Price", double.class)
+                .addNamed("BestBefore", LocalDate.class)
                 .addNamed("Fruit", String.class)
                 .build();
 
         List<DidoData> expected = ArrayData.withSchema(schema)
                 .many()
-                .of(5, 19.5, "Apple")
-                .of(2, 35.24, "Orange")
-                .of(3, 17.65, "Banana")
+                .of(null, 5, 19.5, LocalDate.of(2025, 10, 16), "Apple")
+                .of(null, 2, 35.24, LocalDate.of(2025, 10, 24), "Orange")
+                .of(null, 3, 17.65, LocalDate.of(2025, 10, 13), "Banana")
                 .toList();
+
+        List<DidoData> results;
+
+        DidoConversionProvider conversionProvider = DefaultConversionProvider.with()
+                .conversion(String.class, LocalDate.class, ((String s) -> LocalDate.parse(s)))
+                .make();
 
         try (DataIn in = DataInCsv.with()
                 .schema(schema)
                 .header(true)
+                .conversionProvider(conversionProvider)
                 .fromInputStream(Objects.requireNonNull(
                         getClass().getResourceAsStream("/data/FruitWithHeader.csv")))) {
 
-            List<DidoData> results = in.stream().collect(Collectors.toList());
+            results = in.stream().collect(Collectors.toList());
 
             assertThat(results, is(expected));
-            assertThat(results.get(0).getSchema(), is(schema));
+            assertThat(results.getFirst().getSchema(), is(schema));
         }
+
+        DidoData row1 = results.getFirst();
+        assertThat(row1.hasNamed("InStock"), is(false));
+        assertThat(row1.getStringNamed("Fruit"), is("Apple"));
+        assertThat(row1.getIntNamed("Qty"), is(5));
+        assertThat(row1.getShortNamed("Qty"), is((short) 5));
+        assertThat(row1.getByteNamed("Qty"), is((byte) 5));
+        assertThat(row1.getLongNamed("Qty"), is(5L));
+        assertThat(row1.getDoubleNamed("Price"), is(19.5));
+        assertThat(row1.getFloatNamed("Price"), is(19.5F));
+        assertThat(row1.getNamed("BestBefore"), is(LocalDate.of(2025, 10, 16)));
+        assertThat(row1.hasAt(1), is(false));
+        assertThat(row1.getStringAt(5), is("Apple"));
+        assertThat(row1.getIntAt(2), is(5));
+        assertThat(row1.getShortAt(2), is((short) 5));
+        assertThat(row1.getByteAt(2), is((byte) 5));
+        assertThat(row1.getLongAt(2), is(5L));
+        assertThat(row1.getDoubleAt(3), is(19.5));
+        assertThat(row1.getFloatAt(3), is(19.5F));
+        assertThat(row1.getAt(4), is(LocalDate.of(2025, 10, 16)));
+
+        List<Object[]> values = results.stream()
+                .map(FieldValuesOut.forSchema(results.getFirst().getSchema())::toArray)
+                .toList();
+
+        assertThat(values, contains(
+                new Object[]{null, 5, 19.5, LocalDate.of(2025, 10, 16), "Apple"},
+                new Object[]{null, 2, 35.24, LocalDate.of(2025, 10, 24), "Orange"},
+                new Object[]{null, 3, 17.65, LocalDate.of(2025, 10, 13), "Banana"}));
+
     }
 
     @Test

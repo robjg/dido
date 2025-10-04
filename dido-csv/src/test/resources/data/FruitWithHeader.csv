@@ -1,4 +1,4 @@
-Fruit,Qty,Price
-Apple,5,19.50
-Orange,2,35.24
-Banana,3,17.65
+Id,Fruit,Qty,Price,BestBefore
+F2,Apple,5,19.50,2025-10-16
+F3,Orange,2,35.24,2025-10-24
+F4,Banana,3,17.65,2025-10-13

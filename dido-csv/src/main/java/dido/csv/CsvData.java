@@ -39,12 +39,12 @@ public class CsvData extends AbstractData {
 
     @Override
     public boolean hasAt(int index) {
-        return record.get(index - 1) != null;
+        return schema.getters[index - 1].has(this);
     }
 
     @Override
     public String getStringAt(int index) {
-        return record.get(index - 1);
+        return schema.getters[index - 1].getString(this);
     }
 
     @Override
@@ -284,7 +284,7 @@ public class CsvData extends AbstractData {
                 } else {
                     Function<String, ?> conversion = conversionProvider.conversionFor(
                             String.class, TypeUtil.classOf(type));
-                    getters[arrayIndex] = new ConversionGetter<>(arrayIndex, conversion);
+                    getters[arrayIndex] = new ConversionGetter<>(dataIndex, conversion);
                 }
             }
         }
