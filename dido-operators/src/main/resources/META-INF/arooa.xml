@@ -7,6 +7,8 @@
 						  methodName="get"/>
 		<arooa:conversion className="dido.operators.transform.TransformationFactory"
 						  methodName="get"/>
+        <arooa:conversion className="dido.operators.transform.ValueRemoveFactory"
+                          methodName="get"/>
 		<arooa:conversion className="dido.operators.transform.ValueSetFactory"
 						  methodName="get"/>
 		<arooa:conversion className="dido.operators.transform.ValueCopyFactory"
@@ -58,6 +60,21 @@
 		</arooa:bean-def>
 		<arooa:bean-def element='transform'
 						className='dido.operators.transform.TransformationFactory'/>
+        <arooa:bean-def element='remove'
+                        className='dido.operators.transform.ValueRemoveFactory'>
+            <design>
+                <design:form xmlns:design="arooa:design">
+                    <formItems>
+                        <design:group bordered="true" title="Properties">
+                            <formItems>
+                                <design:text property="field" title="Field Name"/>
+                                <design:text property="at" title="Index"/>
+                            </formItems>
+                        </design:group>
+                    </formItems>
+                </design:form>
+            </design>
+        </arooa:bean-def>
 		<arooa:bean-def element='set'
 						className='dido.operators.transform.ValueSetFactory'>
 			<design>
@@ -65,9 +82,11 @@
 					<formItems>
 						<design:group bordered="true" title="Properties">
 							<formItems>
-								<design:text property="field" title="Field"/>
-								<design:single property="value" title="Value"/>
+								<design:text property="field" title="Field Name"/>
+                                <design:text property="at" title="Index"/>
+                                <design:single property="value" title="Value"/>
 								<design:single property="type" title="Type"/>
+                                <design:single property="conversionProvider" title="Conversion Provider"/>
 							</formItems>
 						</design:group>
 					</formItems>
@@ -81,14 +100,14 @@
 					<formItems>
 						<design:group bordered="true" title="From">
 							<formItems>
-								<design:text property="index" title="Index"/>
-								<design:text property="field" title="Field"/>
+                                <design:text property="field" title="Field Name"/>
+                                <design:text property="index" title="Index"/>
 							</formItems>
 						</design:group>
 						<design:group bordered="true" title="To">
 							<formItems>
-								<design:text property="at" title="Index"/>
-								<design:text property="to" title="Field"/>
+								<design:text property="to" title="Field Name"/>
+                                <design:text property="at" title="Index"/>
 								<design:single property="type" title="Type"/>
 								<design:single property="function" title="Function"/>
 							</formItems>

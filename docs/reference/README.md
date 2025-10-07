@@ -19,6 +19,7 @@
 - [dido:json](dido/json/JsonDido.md) - Creates an In or an Out for JSON data.
 - [dido:left-join](dido/operators/join/LeftStreamJoinType.md) - A join operation that performs a full left join.
 - [dido:lines](dido/oddjob/util/LinesDido.md) - Creates an In or Out for Lines of Text.
+- [dido:remove](dido/operators/transform/ValueRemoveFactory.md) - Remove the value for a field or index.
 - [dido:schema](dido/oddjob/schema/SchemaBean.md) - Define a Schema.
 - [dido:schema-defs](dido/oddjob/schema/SchemaDefsBean.md) - Define Schema Definitions that will be referenced elsewhere.
 - [dido:schema-from](dido/oddjob/schema/SchemaFromBean.md) - Create a Schema from another schema by including, merging, concatenating or excluding fields.

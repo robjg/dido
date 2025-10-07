@@ -1,0 +1,121 @@
+[HOME](../../../README.md)
+# dido:remove
+
+Remove the value for a field or index. Participates in an [dido:transform](../../../dido/operators/transform/TransformationFactory.md).
+
+### Property Summary
+
+| Property | Description |
+| -------- | ----------- |
+| [at](#propertyat) | The index to set the value at. | 
+| [field](#propertyfield) | The field name. | 
+
+
+### Example Summary
+
+| Title | Description |
+| ----- | ----------- |
+| [Example 1](#example1) | Removes a value by Field Name. |
+
+
+### Property Detail
+#### at <a name="propertyat"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No</td></tr>
+</table>
+
+The index to set the value at.
+
+#### field <a name="propertyfield"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No</td></tr>
+</table>
+
+The field name.
+
+
+### Examples
+#### Example 1 <a name="example1"></a>
+
+Removes a value by Field Name.
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <variables id="vars">
+                    <schema>
+                        <dido:schema xmlns:dido="oddjob:dido">
+                            <of>
+                                <dido:field name="Fruit" type="java.lang.String"/>
+                                <dido:field name="Qty" type="int"/>
+                                <dido:field name="Price" type="double"/>
+                            </of>
+                        </dido:schema>
+                    </schema>
+                    <expectedSchema>
+                        <dido:schema-from exclude="Qty" xmlns:dido="oddjob:dido">
+                            <from>
+                                <value value="${vars.schema}"/>
+                            </from>
+                        </dido:schema-from>
+                    </expectedSchema>
+                </variables>
+                <script id="defineData">
+                    <beans>
+                        <value key="schema" value="${vars.schema}"/>
+                    </beans><![CDATA[
+                    Java.type("dido.data.DidoData").withSchema(schema).many()
+                    .of("Apple", 5, 27.2)
+                    .of("Orange", 10, 31.6)
+                    .of("Pear", 7, 22.1)
+                    .toList()
+                ]]></script>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <bus:driver>
+                            <values>
+                                <value value="${defineData.result}"/>
+                            </values>
+                        </bus:driver>
+                        <bus:map>
+                            <function>
+                                <dido:transform withCopy="true" xmlns:dido="oddjob:dido">
+                                    <of>
+                                        <dido:remove field="Qty"/>
+                                    </of>
+                                </dido:transform>
+                            </function>
+                        </bus:map>
+                        <bus:collect id="capture"/>
+                    </of>
+                </bus:bus>
+                <script name="Verify Result">
+                    <beans>
+                        <value key="expectedSchema" value="${vars.expectedSchema}"/>
+                        <value key="actual" value="${capture.beans.list}"/>
+                    </beans><![CDATA[var expected = Java.type("dido.data.DidoData").withSchema(expectedSchema).many()
+                    .of("Apple", 27.2)
+                    .of("Orange", 31.6)
+                    .of("Pear", 22.1)
+                    .toList()
+                expected.equals(actual) ? 0 : 1
+]]></script>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>
+```
+
+
+
+-----------------------
+
+<div style='font-size: smaller; text-align: center;'>(c) R Gordon Ltd 2005 - Present</div>
