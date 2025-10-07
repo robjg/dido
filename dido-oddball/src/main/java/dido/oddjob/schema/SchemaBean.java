@@ -4,6 +4,7 @@ import dido.data.DataSchema;
 import dido.data.SchemaFactory;
 import dido.data.schema.DataSchemaFactory;
 import dido.data.schema.SchemaDefs;
+import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.convert.ConversionProvider;
 import org.oddjob.arooa.convert.ConversionRegistry;
@@ -21,7 +22,7 @@ import java.util.List;
  * @oddjob.example Define a repeating schema.
  * {@oddjob.xml.resource dido/oddjob/schema/RepeatingSchema.xml}
  */
-public class SchemaBean implements NestedSchema {
+public class SchemaBean implements NestedSchema, ArooaValue {
 
     /**
      * @oddjob.description The name of the schema. This is so this schema may be
@@ -51,6 +52,8 @@ public class SchemaBean implements NestedSchema {
         public void registerWith(ConversionRegistry registry) {
             registry.register(SchemaBean.class, DataSchema.class,
                     SchemaBean::toSchema);
+            registry.register(SchemaBean.class, NestedSchema.class,
+                    bean -> bean);
         }
     }
 

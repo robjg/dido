@@ -36,14 +36,12 @@
                         </dido:schema>
                     </expected>
                 </variables>
-                <bean class="dido.oddjob.schema.CheckSchemasMatch">
-                    <actual>
-                        <value value="${vars.schema}"/>
-                    </actual>
-                    <expected>
-                        <value value="${vars.expected}"/>
-                    </expected>
-                </bean>
+                <script resultForState="true">
+                    <beans>
+                        <value key="actual" value="${vars.schema}"/>
+                        <value key="expected" value="${vars.expected}"/>
+                    </beans><![CDATA[expected.equals(actual) ? 0 : 1
+]]></script>
             </jobs>
         </sequential>
     </job>

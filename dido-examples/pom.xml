@@ -91,6 +91,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- For MainForIntellij so we can open script examples -->
+        <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

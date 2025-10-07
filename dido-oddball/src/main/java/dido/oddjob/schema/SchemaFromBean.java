@@ -4,6 +4,7 @@ import dido.data.DataSchema;
 import dido.data.SchemaFactory;
 import dido.data.SchemaField;
 import dido.data.schema.SchemaDefs;
+import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.convert.ConversionProvider;
 import org.oddjob.arooa.convert.ConversionRegistry;
@@ -25,8 +26,13 @@ import java.util.Objects;
  *
  * @oddjob.example Concatenate another schema.
  * {@oddjob.xml.resource dido/oddjob/schema/SchemaFromConcat.xml}
+ *
+ * @oddjob.example Define a nested schema that is a combination
+ * of two schemas. Also shows how schemas can be referenced from
+ * variables in Oddjob.
+ * {@oddjob.xml.resource dido/oddjob/schema/SchemaFromConcat.xml}
  */
-public class SchemaFromBean implements NestedSchema {
+public class SchemaFromBean implements NestedSchema, ArooaValue {
 
     /**
      * @oddjob.description The name of the schema. This is so this schema may be
@@ -79,6 +85,8 @@ public class SchemaFromBean implements NestedSchema {
         public void registerWith(ConversionRegistry registry) {
             registry.register(SchemaFromBean.class, DataSchema.class,
                     SchemaFromBean::toSchema);
+            registry.register(SchemaFromBean.class, NestedSchema.class,
+                    bean -> bean);
         }
     }
 

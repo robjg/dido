@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <variables id="vars">
+                    <snack>
+                        <dido:schema xmlns:dido="oddjob:dido">
+                            <of>
+                                <dido:field name="Snack" type="java.lang.String"/>
+                            </of>
+                        </dido:schema>
+                    </snack>
+                    <drink>
+                        <dido:schema xmlns:dido="oddjob:dido">
+                            <of>
+                                <dido:field name="Drink" type="java.lang.String"/>
+                            </of>
+                        </dido:schema>
+                    </drink>
+                    <schema>
+                        <dido:schema xmlns:dido="oddjob:dido">
+                            <defs>
+                                <dido:schema-defs>
+                                    <schemas>
+                                        <dido:schema-from name="Picnic">
+                                            <from>
+                                                <value value="${vars.snack}"/>
+                                            </from>
+                                            <concat>
+                                                <value value="${vars.drink}"/>
+                                            </concat>
+                                        </dido:schema-from>
+                                    </schemas>
+                                </dido:schema-defs>
+                            </defs>
+                            <of>
+                                <dido:field name="Activity" type="java.lang.String"/>
+                                <dido:field name="Lunch" ref="Picnic"/>
+                            </of>
+                        </dido:schema>
+                    </schema>
+                    <expectedNested>
+                        <dido:schema xmlns:dido="oddjob:dido">
+                            <of>
+                                <dido:field name="Snack" type="java.lang.String"/>
+                                <dido:field name="Drink" type="java.lang.String"/>
+                            </of>
+                        </dido:schema>
+                    </expectedNested>
+                </variables>
+                <script resultForState="true">
+                    <beans>
+                        <value key="actual" value="${vars.schema}"/>
+                        <value key="expected" value="${vars.expectedNested}"/>
+                    </beans><![CDATA[var nested = actual.getSchemaNamed('Lunch');
+if (expected.equals(nested)) {
+  0;
+}
+else {
+  print(expected);
+  print(nested);
+  1;
+}]]></script>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>

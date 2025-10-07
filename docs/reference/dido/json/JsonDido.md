@@ -207,19 +207,13 @@ the jobs would fail.
                                 </dido:json>
                             </how>
                             <from>
-                                <buffer>
-                                    <![CDATA[{ "Fruit":"Apple", "Price":Infinity }
+                                <buffer><![CDATA[{ "Fruit":"Apple", "Price":Infinity }
 { "Fruit":null, "Price":31.6 }
 { "Fruit":"Pear", "Price":NaN }
-]]>
-                                </buffer>
+]]></buffer>
                             </from>
                         </dido:data-in>
-                        <bus:bus xmlns:bus="oddjob:beanbus">
-                            <of>
-                                <bus:collect id="capture"/>
-                            </of>
-                        </bus:bus>
+                        <bus:collect id="capture"/>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
                                 <dido:json serializeNulls="true" serializeSpecialFloatingPointValues="true"/>

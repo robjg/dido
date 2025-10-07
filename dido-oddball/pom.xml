@@ -78,5 +78,11 @@
             <artifactId>dido-test</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

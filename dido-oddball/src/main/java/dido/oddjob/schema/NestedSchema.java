@@ -5,7 +5,7 @@ import dido.data.schema.SchemaDefs;
 import org.oddjob.arooa.convert.ArooaConversionException;
 
 /**
- * Defines a Nested Schema configuration for use in a {@link SchemaFieldBean}.
+ * Defines a Nested Schema configuration for use in a {@link SchemaDefsBean}.
  */
 public interface NestedSchema {
 

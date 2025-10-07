@@ -24,6 +24,7 @@ or excluding fields. The changes are applied in that order.
 | [Example 1](#example1) | Exclude fields. |
 | [Example 2](#example2) | Merge another schema. |
 | [Example 3](#example3) | Concatenate another schema. |
+| [Example 4](#example4) | Define a nested schema that is a combination of two schemas. |
 
 
 ### Property Detail
@@ -135,14 +136,12 @@ Exclude fields.
                         </dido:schema>
                     </expected>
                 </variables>
-                <bean class="dido.oddjob.schema.CheckSchemasMatch">
-                    <actual>
-                        <value value="${vars.schema}"/>
-                    </actual>
-                    <expected>
-                        <value value="${vars.expected}"/>
-                    </expected>
-                </bean>
+                <script resultForState="true">
+                    <beans>
+                        <value key="actual" value="${vars.schema}"/>
+                        <value key="expected" value="${vars.expected}"/>
+                    </beans><![CDATA[expected.equals(actual) ? 0 : 1
+]]></script>
             </jobs>
         </sequential>
     </job>
@@ -192,14 +191,12 @@ Merge another schema.
                         </dido:schema>
                     </expected>
                 </variables>
-                <bean class="dido.oddjob.schema.CheckSchemasMatch">
-                    <actual>
-                        <value value="${vars.schema}"/>
-                    </actual>
-                    <expected>
-                        <value value="${vars.expected}"/>
-                    </expected>
-                </bean>
+                <script resultForState="true">
+                    <beans>
+                        <value key="actual" value="${vars.schema}"/>
+                        <value key="expected" value="${vars.expected}"/>
+                    </beans><![CDATA[expected.equals(actual) ? 0 : 1
+]]></script>
             </jobs>
         </sequential>
     </job>
@@ -250,14 +247,70 @@ Concatenate another schema.
                         </dido:schema>
                     </expected>
                 </variables>
-                <bean class="dido.oddjob.schema.CheckSchemasMatch">
-                    <actual>
-                        <value value="${vars.schema}"/>
-                    </actual>
+                <script resultForState="true">
+                    <beans>
+                        <value key="actual" value="${vars.schema}"/>
+                        <value key="expected" value="${vars.expected}"/>
+                    </beans><![CDATA[expected.equals(actual) ? 0 : 1
+]]></script>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>
+```
+
+
+#### Example 4 <a name="example4"></a>
+
+Define a nested schema that is a combination
+of two schemas. Also shows how schemas can be referenced from
+variables in Oddjob.
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <variables id="vars">
+                    <schema>
+                        <dido:schema-from xmlns:dido="oddjob:dido">
+                            <from>
+                                <dido:schema>
+                                    <of>
+                                        <dido:field name="Fruit" type="java.lang.String"/>
+                                        <dido:field name="Qty" type="int"/>
+                                        <dido:field name="Price" type="double"/>
+                                    </of>
+                                </dido:schema>
+                            </from>
+                            <concat>
+                                <dido:schema>
+                                    <of>
+                                        <dido:field name="Qty" type="double"/>
+                                        <dido:field name="Colour" type="java.lang.String"/>
+                                    </of>
+                                </dido:schema>
+                            </concat>
+                        </dido:schema-from>
+                    </schema>
                     <expected>
-                        <value value="${vars.expected}"/>
+                        <dido:schema xmlns:dido="oddjob:dido">
+                            <of>
+                                <dido:field name="Fruit" type="java.lang.String"/>
+                                <dido:field name="Qty" type="int"/>
+                                <dido:field name="Price" type="double"/>
+                                <dido:field name="Qty_" type="double"/>
+                                <dido:field name="Colour" type="java.lang.String"/>
+                            </of>
+                        </dido:schema>
                     </expected>
-                </bean>
+                </variables>
+                <script resultForState="true">
+                    <beans>
+                        <value key="actual" value="${vars.schema}"/>
+                        <value key="expected" value="${vars.expected}"/>
+                    </beans><![CDATA[expected.equals(actual) ? 0 : 1
+]]></script>
             </jobs>
         </sequential>
     </job>
