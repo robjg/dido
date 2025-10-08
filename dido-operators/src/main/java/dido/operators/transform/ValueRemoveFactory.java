@@ -1,16 +1,19 @@
 package dido.operators.transform;
 
-import dido.data.ReadSchema;
-
 import java.util.function.Supplier;
 
 /**
  * @oddjob.description Remove the value for a field or index. Participates in an {@link TransformationFactory}.
  *
- * @oddjob.example Removes a value by Field Name.
+ * @oddjob.example Removes a value by Field Name. The actual example is
+ * a single element of XML half-way down the configuration. First this example
+ * sets up the schema and expected schemas. Then it creates 3 items
+ * of data. It pipes these through a transformation that removes the Qty
+ * field from each item. It collects this data and then finally uses
+ * JavaScript again to verify the result.
  * {@oddjob.xml.resource dido/operators/transform/ValueRemoveExample.xml}
  */
-public class ValueRemoveFactory implements Supplier<FieldWrite> {
+public class ValueRemoveFactory implements Supplier<FieldView> {
 
     /**
      * @oddjob.description The field name.
@@ -26,8 +29,24 @@ public class ValueRemoveFactory implements Supplier<FieldWrite> {
 
 
     @Override
-    public FieldWrite get() {
-        return new RemoveTransformerFactory(this);
+    public FieldView get() {
+        if (field == null) {
+            if (at == 0) {
+                throw new IllegalArgumentException("Remove: Field or Index must be provided");
+            }
+            else {
+                return FieldViews.removeAt(at);
+            }
+        }
+        else {
+            if (at == 0) {
+                return FieldViews.removeNamed(field);
+            }
+            else {
+                throw new IllegalArgumentException("Remove: Field " + field + " and Index " +
+                        at + " provided. Only one can be specified.");
+            }
+        }
     }
 
     public String getField() {
@@ -44,38 +63,6 @@ public class ValueRemoveFactory implements Supplier<FieldWrite> {
 
     public void setAt(int at) {
         this.at = at;
-    }
-
-    static class RemoveTransformerFactory implements FieldWrite {
-
-        private final String field;
-
-        private final int at;
-
-        RemoveTransformerFactory(ValueRemoveFactory config) {
-            this.field = config.field;
-            this.at = config.at;
-        }
-
-        @Override
-        public Prepare prepare(ReadSchema fromSchema,
-                               SchemaSetter schemaSetter) {
-
-            FieldView fieldView;
-
-            if (field == null) {
-                fieldView = FieldViews.removeAt(at);
-            }
-            else {
-                if (at != 0) {
-                    throw new IllegalArgumentException("Remove: Field " + field + " and Index " +
-                            at + " provided. Only one can be specified.");
-                }
-                fieldView = FieldViews.removeNamed(field);
-            }
-
-            return fieldView.asFieldWrite().prepare(fromSchema, schemaSetter);
-        }
     }
 
     @Override

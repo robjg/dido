@@ -21,7 +21,7 @@
                         </dido:schema-from>
                     </expectedSchema>
                 </variables>
-                <script id="defineData">
+                <script id="defineData" name="Define Test Data">
                     <beans>
                         <value key="schema" value="${vars.schema}"/>
                     </beans><![CDATA[
@@ -31,16 +31,16 @@
                     .of("Pear", 7, 22.1)
                     .toList()
                 ]]></script>
-                <bus:bus xmlns:bus="oddjob:beanbus">
+                <bus:bus name="Pipe Test Data to Result Data with Transformation" xmlns:bus="oddjob:beanbus">
                     <of>
                         <bus:driver>
                             <values>
                                 <value value="${defineData.result}"/>
                             </values>
                         </bus:driver>
-                        <bus:map>
+                        <bus:map name="Perform the Transform">
                             <function>
-                                <dido:transform withCopy="true" xmlns:dido="oddjob:dido">
+                                <dido:transform withExisting="true" xmlns:dido="oddjob:dido">
                                     <of>
                                         <dido:remove field="Qty"/>
                                     </of>
@@ -50,7 +50,7 @@
                         <bus:collect id="capture"/>
                     </of>
                 </bus:bus>
-                <script name="Verify Result">
+                <script name="Verify Result" resultForState="true">
                     <beans>
                         <value key="expectedSchema" value="${vars.expectedSchema}"/>
                         <value key="actual" value="${capture.beans.list}"/>

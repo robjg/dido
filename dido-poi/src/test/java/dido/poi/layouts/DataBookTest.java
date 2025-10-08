@@ -106,8 +106,8 @@ public class DataBookTest {
 				.ofClass(Person.class);
 
 		TransformationFactory transformationFactory = new TransformationFactory();
-		transformationFactory.setWithCopy(true);
-		transformationFactory.setOf(0, FieldViews.setNamed("percentage", 0.1).asFieldWrite());
+		transformationFactory.setWithExisting(true);
+		transformationFactory.setOf(0, FieldViews.setNamed("percentage", 0.1));
 
 		beans.stream()
 				.map(transformerFromBean)

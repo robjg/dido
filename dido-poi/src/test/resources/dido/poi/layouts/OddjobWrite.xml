@@ -15,7 +15,7 @@
                 </bus:map>
                 <bus:map xmlns:bus="oddjob:beanbus">
                     <function>
-                        <dido:transform xmlns:dido="oddjob:dido" withCopy="true">
+                        <dido:transform xmlns:dido="oddjob:dido" withExisting="true">
                             <of>
                                 <dido:set field="percentage">
                                     <value>

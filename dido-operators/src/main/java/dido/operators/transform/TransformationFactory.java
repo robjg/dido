@@ -3,7 +3,6 @@ package dido.operators.transform;
 import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.immutable.ArrayDataDataFactoryProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,23 +11,38 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * @oddjob.description Copies fields from one data item to another allowing for change of field names, indexes
- * and type.
- *
- * For examples see {@link ValueSetFactory} and {@link ValueCopyFactory}
+ * @oddjob.description Create a transformation of data by applying field transformations.
+ * <p>
+ * By default, only
+ * fields resulting from a transformation will appear in the resultant data. If you include all other existing fields
+ * in a transformation then set the {@code withExisting} property to {@code true}. If you wish to include most, but not
+ * all fields, use the {@code withExisting} property in conjunction with the {@link ValueRemoveFactory} transformation.
+ * <p>
+ * The resultant data is by default, a view of the original data. Any functions on the data are applied every time
+ * that field is read. This is the most performant approach for simple in-out pipelines. If the data is going to
+ * be read many times, then set the {@code copy} property to  {@code true} so the operations are only performed once.
+ * <p>
+ * For examples see {@link ValueSetFactory}, {@link ValueCopyFactory} and {@link ValueRemoveFactory}
  */
 public class TransformationFactory implements Supplier<Function<DidoData, DidoData>> {
 
-    private final List<FieldWrite> of = new ArrayList<>();
+    private final List<FieldView> of = new ArrayList<>();
 
     /**
-     * @oddjob.description Copy existing fields before applying transformations.
+     * @oddjob.description Include existing fields before applying transformations.
      * @oddjob.required No, defaults to false.
      */
-    private boolean withCopy;
+    private boolean withExisting;
 
     /**
-     * @oddjob.description A factory for creating the new Data.
+     * @oddjob.description Include existing fields before applying transformations.
+     * @oddjob.required No, defaults to false.
+     */
+    private boolean copy;
+
+    /**
+     * @oddjob.description A factory for creating the new Data. This is only applicable
+     * if {@code copy} is true, as no new data is created when {code copy} is false.
      * @oddjob.required No. Defaults to something reasonable.
      */
     private DataFactoryProvider dataFactoryProvider;
@@ -36,31 +50,42 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
     @Override
     public Function<DidoData, DidoData> get() {
 
-        return new TransformerFunctionInitial(this);
+        if (copy) {
+            return new TransformerFunctionCopy(this);
+        }
+        else {
+            return new TransformerFunctionView(this);
+        }
     }
 
     /**
+     * @param index       The index.
+     * @param transformer The transformer.
      * @oddjob.description The field level transformations to apply.
      * @oddjob.required No. Will just copy or create empty data.
-     *
-     * @param index The index.
-     * @param transformer The transformer.
      */
-    public void setOf(int index, FieldWrite transformer) {
+    public void setOf(int index, FieldView transformer) {
         if (transformer == null) {
             of.remove(index);
-        }
-        else {
+        } else {
             of.add(index, transformer);
         }
     }
 
-    public boolean getWithCopy() {
-        return withCopy;
+    public boolean isWithExisting() {
+        return withExisting;
     }
 
-    public void setWithCopy(boolean withCopy) {
-        this.withCopy = withCopy;
+    public void setWithExisting(boolean withExisting) {
+        this.withExisting = withExisting;
+    }
+
+    public boolean isCopy() {
+        return copy;
+    }
+
+    public void setCopy(boolean copy) {
+        this.copy = copy;
     }
 
     public DataFactoryProvider getDataFactoryProvider() {
@@ -71,50 +96,99 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         this.dataFactoryProvider = dataFactoryProvider;
     }
 
-    static class TransformerFunctionInitial implements Function<DidoData, DidoData> {
+    abstract static class TransformerFunctionInitial implements DidoTransform {
 
-        private final List<FieldWrite> transformerFactories;
+        protected final List<FieldView> transformerFactories;
 
-        private final boolean withCopy;
-
-        private final DataFactoryProvider dataFactoryProvider;
-
-        private Function<? super DidoData, ? extends DidoData> delegate;
+        protected final boolean withExisting;
 
         private DataSchema lastSchema;
 
+        private DidoTransform delegate;
+
         TransformerFunctionInitial(TransformationFactory config) {
             this.transformerFactories = new ArrayList<>(config.of);
-            this.withCopy = config.withCopy;
-            this.dataFactoryProvider = Objects.requireNonNullElseGet(config.dataFactoryProvider,
-                    ArrayDataDataFactoryProvider::new);
+            this.withExisting = config.withExisting;
+        }
+
+
+        @Override
+        public DataSchema getResultantSchema() {
+            return delegate == null ? null : delegate.getResultantSchema();
         }
 
         @Override
         public DidoData apply(DidoData dataIn) {
-
             if (delegate == null || !dataIn.getSchema().equals(lastSchema)) {
                 lastSchema = dataIn.getSchema();
-                delegate = functionFor(transformerFactories, lastSchema, withCopy,
-                        dataFactoryProvider);
+                delegate = createTransform(lastSchema);
             }
             return delegate.apply(dataIn);
         }
+
+        abstract DidoTransform createTransform(DataSchema schema);
     }
 
-    static DidoTransform functionFor(List<FieldWrite> definitions,
-                                     DataSchema schemaFrom,
-                                     boolean withCopy,
-                                     DataFactoryProvider dataFactoryProvider) {
+
+    static class TransformerFunctionCopy extends TransformerFunctionInitial {
+
+        private final DataFactoryProvider dataFactoryProvider;
+
+        TransformerFunctionCopy(TransformationFactory config) {
+            super(config);
+            this.dataFactoryProvider = Objects.requireNonNullElseGet(config.dataFactoryProvider,
+                    DataFactoryProvider::newInstance);
+        }
+
+        @Override
+        DidoTransform createTransform(DataSchema lastSchema) {
+            return functionForCopy(transformerFactories, lastSchema, withExisting,
+                    dataFactoryProvider);
+        }
+
+    }
+
+    static class TransformerFunctionView extends TransformerFunctionInitial {
+
+        TransformerFunctionView(TransformationFactory config) {
+            super(config);
+        }
+
+        @Override
+        DidoTransform createTransform(DataSchema schema) {
+            return functionForView(transformerFactories, schema, withExisting);
+        }
+    }
+
+    static DidoTransform functionForView(List<FieldView> definitions,
+                                         DataSchema schemaFrom,
+                                         boolean withExisting) {
+
+        ViewTransformBuilder transformationManager = ViewTransformBuilder.with()
+                .existingFields(withExisting)
+                .forSchema(schemaFrom);
+
+        for (FieldView definition : definitions) {
+
+            transformationManager.addFieldView(definition);
+        }
+
+        return transformationManager.build();
+    }
+
+    static DidoTransform functionForCopy(List<FieldView> definitions,
+                                         DataSchema schemaFrom,
+                                         boolean withExisting,
+                                         DataFactoryProvider dataFactoryProvider) {
 
         WriteTransformBuilder transformationManager = WriteTransformBuilder.with()
-                .existingFields(withCopy)
+                .existingFields(withExisting)
                 .dataFactoryProvider(dataFactoryProvider)
                 .forSchema(schemaFrom);
 
-        for (FieldWrite definition : definitions) {
+        for (FieldView definition : definitions) {
 
-            transformationManager.addFieldWrite(definition);
+            transformationManager.addFieldView(definition);
         }
 
         return transformationManager.build();

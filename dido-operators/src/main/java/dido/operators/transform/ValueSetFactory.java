@@ -1,6 +1,5 @@
 package dido.operators.transform;
 
-import dido.data.ReadSchema;
 import dido.how.conversion.DidoConversionProvider;
 
 import javax.inject.Inject;
@@ -12,7 +11,7 @@ import java.util.function.Supplier;
  * @oddjob.example Set a value.
  * {@oddjob.xml.resource dido/operators/transform/DataSetExample.xml}
  */
-public class ValueSetFactory implements Supplier<FieldWrite> {
+public class ValueSetFactory implements Supplier<FieldView> {
 
     /**
      * @oddjob.description The field name.
@@ -45,10 +44,16 @@ public class ValueSetFactory implements Supplier<FieldWrite> {
      */
     private DidoConversionProvider conversionProvider;
 
-
     @Override
-    public FieldWrite get() {
-        return new CopyTransformerFactory(this);
+    public FieldView get() {
+        return FieldViews.set()
+                .named(this.field)
+                .at(this.at)
+                .with()
+                .value(value)
+                .type(type)
+                .conversionProvider(conversionProvider)
+                .view();
     }
 
     public String getField() {
@@ -92,40 +97,13 @@ public class ValueSetFactory implements Supplier<FieldWrite> {
         this.conversionProvider = conversionProvider;
     }
 
-    static class CopyTransformerFactory implements FieldWrite {
-
-        private final String field;
-
-        private final int at;
-
-        private final Object value;
-
-        private final Class<?> type;
-
-        private final DidoConversionProvider conversionProvider;
-
-        CopyTransformerFactory(ValueSetFactory config) {
-            this.field = config.field;
-            this.at = config.at;
-            this.value = config.value;
-            this.type = config.type;
-            this.conversionProvider = config.conversionProvider;
-        }
-
-        @Override
-        public Prepare prepare(ReadSchema fromSchema,
-                               SchemaSetter schemaSetter) {
-
-            FieldView fieldView = FieldViews.set()
-                    .named(this.field)
-                    .at(this.at)
-                    .with()
-                    .value(value)
-                    .type(type)
-                    .conversionProvider(conversionProvider)
-                    .view();
-
-            return fieldView.asFieldWrite().prepare(fromSchema, schemaSetter);
-        }
+    @Override
+    public String toString() {
+        return "ValueSetFactory{" +
+                "field='" + field + '\'' +
+                ", at=" + at +
+                ", value=" + value +
+                ", type=" + type +
+                '}';
     }
 }

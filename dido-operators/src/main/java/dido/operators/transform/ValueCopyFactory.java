@@ -1,13 +1,8 @@
 package dido.operators.transform;
 
-import dido.data.ReadSchema;
-import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -24,9 +19,7 @@ import java.util.function.Supplier;
  * @oddjob.example Copy applying a function.
  * {@oddjob.xml.resource dido/operators/transform/DataCopyFunctionExample.xml}
  */
-public class ValueCopyFactory implements Supplier<FieldWrite> {
-
-    private static final Logger logger = LoggerFactory.getLogger(ValueCopyFactory.class);
+public class ValueCopyFactory implements Supplier<FieldView> {
 
     /**
      * @oddjob.description Copy from the field of this name.
@@ -79,8 +72,54 @@ public class ValueCopyFactory implements Supplier<FieldWrite> {
     }
 
     @Override
-    public FieldWrite get() {
-        return new CopyTransformerFactory(this);
+    public FieldView get() {
+        if (this.type ==null) {
+            if (this.function == null) {
+                return copyField(FieldViews.copy())
+                        .view();
+            }
+            else {
+                return copyField(FieldViews.map())
+                        .func(this.function);
+            }
+        }
+        else {
+            if (this.function == null) {
+                return copyField(FieldViews.copy())
+                        .conversionProvider(conversionProvider)
+                        .type(this.type)
+                        .view();
+            }
+            else {
+                return copyField(FieldViews.map())
+                        .type(this.type)
+                        .func(this.function);
+            }
+        }
+
+    }
+
+    <O>  O copyField(FieldViews.CopyField<O> copyField) {
+
+        FieldViews.CopyTo<O> copyTo;
+        if (this.field == null) {
+            if (this.index == 0) {
+                throw new IllegalArgumentException("Index or Field Name required.");
+            } else {
+                copyTo = copyField.index(this.index);
+            }
+        } else {
+            copyTo = copyField.from(this.field);
+        }
+
+        if (this.to != null) {
+            copyTo = copyTo.to(this.to);
+        }
+        if (this.at > 0) {
+            copyTo = copyTo.at(this.at);
+        }
+
+        return copyTo.with();
     }
 
     public String getField() {
@@ -131,91 +170,15 @@ public class ValueCopyFactory implements Supplier<FieldWrite> {
         this.function = function;
     }
 
-    static class CopyTransformerFactory implements FieldWrite {
-
-        private final String from;
-
-        private final String to;
-
-        private final int index;
-
-        private final int at;
-
-        private final Class<?> type;
-
-        private final Function<Object, Object> function;
-
-        private final DidoConversionProvider conversionProvider;
-
-        CopyTransformerFactory(ValueCopyFactory from) {
-            this.from = from.field;
-            this.to = from.to;
-            this.index = from.index;
-            this.at = from.at;
-            this.type = from.type;
-            this.function = from.function;
-            this.conversionProvider = Objects.requireNonNullElseGet(from.conversionProvider,
-                    DefaultConversionProvider::defaultInstance);
-        }
-
-        @Override
-        public Prepare prepare(ReadSchema fromSchema,
-                               SchemaSetter schemaSetter) {
-
-            FieldView fieldView;
-            if (this.type ==null) {
-                if (this.function == null) {
-                    fieldView = copyField(FieldViews.copy())
-                            .view();
-                }
-                else {
-                    fieldView = copyField(FieldViews.map())
-                            .func(this.function);
-                }
-            }
-            else {
-                if (this.function == null) {
-                    fieldView = copyField(FieldViews.copy())
-                            .conversionProvider(conversionProvider)
-                            .type(this.type)
-                            .view();
-                }
-                else {
-                    fieldView = copyField(FieldViews.map())
-                            .type(this.type)
-                            .func(this.function);
-                }
-            }
-
-            logger.info("Creating Copy {}", fieldView);
-
-            FieldWrite fieldWrite = fieldView.asFieldWrite();
-            return fieldWrite.prepare(fromSchema, schemaSetter);
-
-        }
-
-        <O>  O copyField(FieldViews.CopyField<O> copyField) {
-
-            FieldViews.CopyTo<O> copyTo;
-            if (this.from == null) {
-                if (this.index == 0) {
-                    throw new IllegalArgumentException("Index or Field Name required.");
-                } else {
-                    copyTo = copyField.index(this.index);
-                }
-            } else {
-                copyTo = copyField.from(this.from);
-            }
-
-            if (this.to != null) {
-                copyTo = copyTo.to(this.to);
-            }
-            if (this.at > 0) {
-                copyTo = copyTo.at(this.at);
-            }
-
-            return copyTo.with();
-        }
+    @Override
+    public String toString() {
+        return "ValueCopyFactory{" +
+                "function=" + function +
+                ", type=" + type +
+                ", at=" + at +
+                ", to='" + to + '\'' +
+                ", index=" + index +
+                ", field='" + field + '\'' +
+                '}';
     }
-
 }

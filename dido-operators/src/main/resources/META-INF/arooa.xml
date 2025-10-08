@@ -59,7 +59,22 @@
 			</properties>
 		</arooa:bean-def>
 		<arooa:bean-def element='transform'
-						className='dido.operators.transform.TransformationFactory'/>
+						className='dido.operators.transform.TransformationFactory'>
+            <design>
+                <design:form xmlns:design="arooa:design">
+                    <formItems>
+                        <design:indexed property="of" title="Of Field Transforms"/>
+                        <design:text property="withExisting" title="With Existing Fields"/>
+                        <design:group bordered="true" title="Copy">
+                            <formItems>
+                                <design:text property="copy" title="Copy Fields"/>
+                                <design:single property="dataFactoryProvider" title="Data Factory Provider"/>
+                            </formItems>
+                        </design:group>
+                    </formItems>
+                </design:form>
+            </design>
+        </arooa:bean-def>
         <arooa:bean-def element='remove'
                         className='dido.operators.transform.ValueRemoveFactory'>
             <design>

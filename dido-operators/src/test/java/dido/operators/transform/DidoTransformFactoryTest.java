@@ -23,7 +23,7 @@ class DidoTransformFactoryTest {
 
         TransformationFactory transformationFactory = new TransformationFactory();
         transformationFactory.setOf(0, copy1.get());
-        transformationFactory.setWithCopy(true);
+        transformationFactory.setWithExisting(true);
 
         Function<DidoData, DidoData> func = transformationFactory.get();
 
@@ -53,7 +53,7 @@ class DidoTransformFactoryTest {
 
         TransformationFactory transformationFactory = new TransformationFactory();
         transformationFactory.setOf(0, copy1.get());
-        transformationFactory.setWithCopy(false);
+        transformationFactory.setWithExisting(false);
 
         Function<DidoData, DidoData> func = transformationFactory.get();
 
@@ -75,7 +75,7 @@ class DidoTransformFactoryTest {
     void testCopyAll() {
 
         TransformationFactory transformationFactory = new TransformationFactory();
-        transformationFactory.setWithCopy(true);
+        transformationFactory.setWithExisting(true);
 
         Function<DidoData, DidoData> func = transformationFactory.get();
 
