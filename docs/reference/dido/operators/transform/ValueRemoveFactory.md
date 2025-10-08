@@ -43,7 +43,12 @@ The field name.
 ### Examples
 #### Example 1 <a name="example1"></a>
 
-Removes a value by Field Name.
+Removes a value by Field Name. The actual example is
+a single element of XML half-way down the configuration. First this example
+sets up the schema and expected schemas. Then it creates 3 items
+of data. It pipes these through a transformation that removes the Qty
+field from each item. It collects this data and then finally uses
+JavaScript again to verify the result.
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <oddjob>
@@ -61,14 +66,14 @@ Removes a value by Field Name.
                         </dido:schema>
                     </schema>
                     <expectedSchema>
-                        <dido:schema-from exclude="Qty" xmlns:dido="oddjob:dido">
+                        <dido:schema-from exclude="Qty" reIndex="true" xmlns:dido="oddjob:dido">
                             <from>
                                 <value value="${vars.schema}"/>
                             </from>
                         </dido:schema-from>
                     </expectedSchema>
                 </variables>
-                <script id="defineData">
+                <script id="defineData" name="Define Test Data">
                     <beans>
                         <value key="schema" value="${vars.schema}"/>
                     </beans><![CDATA[
@@ -78,16 +83,16 @@ Removes a value by Field Name.
                     .of("Pear", 7, 22.1)
                     .toList()
                 ]]></script>
-                <bus:bus xmlns:bus="oddjob:beanbus">
+                <bus:bus name="Pipe Test Data to Result Data with Transformation" xmlns:bus="oddjob:beanbus">
                     <of>
                         <bus:driver>
                             <values>
                                 <value value="${defineData.result}"/>
                             </values>
                         </bus:driver>
-                        <bus:map>
+                        <bus:map name="Perform the Transform">
                             <function>
-                                <dido:transform withCopy="true" xmlns:dido="oddjob:dido">
+                                <dido:transform reIndex="true" withExisting="true" xmlns:dido="oddjob:dido">
                                     <of>
                                         <dido:remove field="Qty"/>
                                     </of>
@@ -97,7 +102,7 @@ Removes a value by Field Name.
                         <bus:collect id="capture"/>
                     </of>
                 </bus:bus>
-                <script name="Verify Result">
+                <script name="Verify Result" resultForState="true">
                     <beans>
                         <value key="expectedSchema" value="${vars.expectedSchema}"/>
                         <value key="actual" value="${capture.beans.list}"/>
@@ -106,7 +111,24 @@ Removes a value by Field Name.
                     .of("Orange", 31.6)
                     .of("Pear", 22.1)
                     .toList()
-                expected.equals(actual) ? 0 : 1
+var actualSchema = actual.get(0).getSchema()
+if (expectedSchema.equals(actualSchema)) {
+  if (expected.equals(actual)) {
+     0
+  }
+  else {
+    print("Expected data did not match actual")
+    print(expected)
+    print(actual)
+    1
+  }
+}
+else {
+  print("Expected Schema did not match actual")
+  print(expectedSchema)
+  print(actualSchema)
+  1
+}
 ]]></script>
             </jobs>
         </sequential>

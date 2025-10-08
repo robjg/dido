@@ -150,7 +150,7 @@ Copy from one field to another.
                 </bus:driver>
                 <bus:map>
                     <function>
-                        <dido:transform withCopy="true" xmlns:dido="oddjob:dido">
+                        <dido:transform withExisting="true" xmlns:dido="oddjob:dido">
                             <of>
                                 <dido:copy field="Six" to="SomeSix"/>
                                 <dido:copy field="Three" to="SomeThree"/>

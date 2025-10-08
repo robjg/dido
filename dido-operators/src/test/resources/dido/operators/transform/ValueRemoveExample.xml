@@ -14,7 +14,7 @@
                         </dido:schema>
                     </schema>
                     <expectedSchema>
-                        <dido:schema-from exclude="Qty" xmlns:dido="oddjob:dido">
+                        <dido:schema-from exclude="Qty" reIndex="true" xmlns:dido="oddjob:dido">
                             <from>
                                 <value value="${vars.schema}"/>
                             </from>
@@ -40,7 +40,7 @@
                         </bus:driver>
                         <bus:map name="Perform the Transform">
                             <function>
-                                <dido:transform withExisting="true" xmlns:dido="oddjob:dido">
+                                <dido:transform reIndex="true" withExisting="true" xmlns:dido="oddjob:dido">
                                     <of>
                                         <dido:remove field="Qty"/>
                                     </of>
@@ -59,7 +59,24 @@
                     .of("Orange", 31.6)
                     .of("Pear", 22.1)
                     .toList()
-                expected.equals(actual) ? 0 : 1
+var actualSchema = actual.get(0).getSchema()
+if (expectedSchema.equals(actualSchema)) {
+  if (expected.equals(actual)) {
+     0
+  }
+  else {
+    print("Expected data did not match actual")
+    print(expected)
+    print(actual)
+    1
+  }
+}
+else {
+  print("Expected Schema did not match actual")
+  print(expectedSchema)
+  print(actualSchema)
+  1
+}
 ]]></script>
             </jobs>
         </sequential>

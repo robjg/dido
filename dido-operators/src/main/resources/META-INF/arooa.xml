@@ -63,8 +63,13 @@
             <design>
                 <design:form xmlns:design="arooa:design">
                     <formItems>
-                        <design:indexed property="of" title="Of Field Transforms"/>
-                        <design:text property="withExisting" title="With Existing Fields"/>
+                        <design:group bordered="true" title="All">
+                            <formItems>
+                                <design:indexed property="of" title="Of Field Transforms"/>
+                                <design:text property="withExisting" title="With Existing Fields"/>
+                                <design:text property="reIndex" title="Re Index Schema"/>
+                            </formItems>
+                        </design:group>
                         <design:group bordered="true" title="Copy">
                             <formItems>
                                 <design:text property="copy" title="Copy Fields"/>

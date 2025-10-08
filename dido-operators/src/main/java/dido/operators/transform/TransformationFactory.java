@@ -35,6 +35,14 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
     private boolean withExisting;
 
     /**
+     * @oddjob.description If fields have been removed there will be wholes in
+     * the schema where indices are missing. Setting this property to true
+     * ensures the resultant schema has indices 1, 2, 3, etc.
+     * @oddjob.required No, defaults to false.
+     */
+    private boolean reIndex;
+
+    /**
      * @oddjob.description Include existing fields before applying transformations.
      * @oddjob.required No, defaults to false.
      */
@@ -88,6 +96,14 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         this.copy = copy;
     }
 
+    public boolean isReIndex() {
+        return reIndex;
+    }
+
+    public void setReIndex(boolean reIndex) {
+        this.reIndex = reIndex;
+    }
+
     public DataFactoryProvider getDataFactoryProvider() {
         return dataFactoryProvider;
     }
@@ -102,6 +118,8 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
 
         protected final boolean withExisting;
 
+        protected final boolean reIndex;
+
         private DataSchema lastSchema;
 
         private DidoTransform delegate;
@@ -109,6 +127,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         TransformerFunctionInitial(TransformationFactory config) {
             this.transformerFactories = new ArrayList<>(config.of);
             this.withExisting = config.withExisting;
+            this.reIndex = config.reIndex;
         }
 
 
@@ -142,8 +161,8 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
 
         @Override
         DidoTransform createTransform(DataSchema lastSchema) {
-            return functionForCopy(transformerFactories, lastSchema, withExisting,
-                    dataFactoryProvider);
+            return functionForCopy(transformerFactories, lastSchema,
+                    withExisting, reIndex, dataFactoryProvider);
         }
 
     }
@@ -156,16 +175,19 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
 
         @Override
         DidoTransform createTransform(DataSchema schema) {
-            return functionForView(transformerFactories, schema, withExisting);
+            return functionForView(transformerFactories, schema,
+                    withExisting, reIndex);
         }
     }
 
     static DidoTransform functionForView(List<FieldView> definitions,
                                          DataSchema schemaFrom,
-                                         boolean withExisting) {
+                                         boolean withExisting,
+                                         boolean reIndex) {
 
         ViewTransformBuilder transformationManager = ViewTransformBuilder.with()
                 .existingFields(withExisting)
+                .reIndex(reIndex)
                 .forSchema(schemaFrom);
 
         for (FieldView definition : definitions) {
@@ -179,10 +201,12 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
     static DidoTransform functionForCopy(List<FieldView> definitions,
                                          DataSchema schemaFrom,
                                          boolean withExisting,
+                                         boolean reIndex,
                                          DataFactoryProvider dataFactoryProvider) {
 
         WriteTransformBuilder transformationManager = WriteTransformBuilder.with()
                 .existingFields(withExisting)
+                .reIndex(reIndex)
                 .dataFactoryProvider(dataFactoryProvider)
                 .forSchema(schemaFrom);
 

@@ -28,7 +28,7 @@
 - [dido:table](dido/text/TextTableDido.md) - Creates an Out that write data to a text table.
 - [dido:to-bean](dido/oddjob/bean/ToBeanTransformer.md) - 
 - [dido:to-json](dido/json/ToJsonStringType.md) - Provides a Mapping Function that will convert a Dido Data into a JSON String.
-- [dido:transform](dido/operators/transform/TransformationFactory.md) - Copies fields from one data item to another allowing for change of field names, indexes and type.
+- [dido:transform](dido/operators/transform/TransformationFactory.md) - Create a transformation of data by applying field transformations.
 - [dido-poi:blank](dido/poi/layouts/BlankCell.md) - Create a column cells that are blank.
 - [dido-poi:boolean](dido/poi/layouts/BooleanCell.md) - Define a column of Boolean cells.
 - [dido-poi:date](dido/poi/layouts/DateCell.md) - Define a date column.

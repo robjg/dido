@@ -98,7 +98,7 @@ Set a value.
                 </bus:driver>
                 <bus:map>
                     <function>
-                        <dido:transform xmlns:dido="oddjob:dido" withCopy="true">
+                        <dido:transform xmlns:dido="oddjob:dido" withExisting="true">
                             <of>
                                 <dido:set field="qty">
                                     <value>
