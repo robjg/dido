@@ -1,11 +1,28 @@
 Dido Object
 ===========
 
-Serialize Java Objects to Dido Data, and deserialize Dido Data
-to Java Objects.
+Dido Data to and from Java Objects.
 
-Serializing
------------
+- [Overview](#overview)
+- [Serializing](#serializing)
+- [Deserializing](#deserializing)
+- [Oddjob](#oddjob)
+
+### Overview
+
+The `dido-objects` module provides some limited ability to go between Dido Data
+and Java Objects. Its existence is historical because before `DidoData` the Java
+Bean was the Canonical type that Dido converted everything into. If the 
+source of your data isn't going to change, there isn't much point in using Dido, 
+just use an appropriate Mapping tool for your source - Gson, Jackson, 
+Hibernate, etc. 
+
+The terms Serializing and Deserializing are slightly wrong as we aren't 
+going to and from a 'wire format' but another Java Object. However, we 
+can't think of another term so we use these, and treat Dido as being
+the wire format.
+
+### Serializing
 
 Given an Object with standard Java Getters:
 ```java
@@ -82,8 +99,7 @@ However in most situations using the `mapper()` method will be more natural:
 ```
 
 
-Deserializing
------------
+### Deserializing
 
 Given an Object with standard Java Setters:
 ```java
@@ -185,3 +201,8 @@ scenario, however again a `mapper()` is probably more useful:
 ```
 
 Which achieves the same as the above.
+
+### Oddjob
+
+For examples using Oddjob, see [dido:from-bean](reference/dido/oddjob/bean/FromBeanTransformer.md)
+and [dido:to-bean](reference/dido/oddjob/bean/ToBeanTransformer.md)

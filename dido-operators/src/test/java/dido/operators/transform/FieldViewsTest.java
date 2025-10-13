@@ -338,7 +338,8 @@ class FieldViewsTest {
                 .forSchema(schema)
                 .addFieldView(FieldViews.setAt(1, "Orange"))
                 .addFieldView(FieldViews.setAt(2, 1234L, long.class))
-                .addFieldView(FieldViews.setNamedAt(4, "InStock", true))
+                .addFieldView(FieldViews.setNamedAt(5, "InStock", true))
+                .addFieldView(FieldViews.setNamedAt(4, "Discount", null, int.class))
                 .build();
 
         DidoData result = transformation.apply(data);
@@ -347,13 +348,14 @@ class FieldViewsTest {
                 .addNamed("Fruit", String.class)
                 .addNamed("Qty", long.class)
                 .addNamed("Price", double.class)
+                .addNamed("Discount", int.class)
                 .addNamed("InStock", java.lang.Boolean.class)
                 .build();
 
         assertThat(transformation.getResultantSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
-                .of("Orange", 1234L, 23.5, true);
+                .of("Orange", 1234L, 23.5, null, true);
 
         assertThat(result, is(expectedData));
     }

@@ -91,7 +91,7 @@ public class DataOutCsv implements DataOutHow<Appendable> {
                     csvFormat(Objects.requireNonNullElse(csvFormat, CSVFormat.DEFAULT)
                             .builder()
                             .setRecordSeparator("")
-                            .build())
+                            .get())
                             .make();
 
             return data -> {
@@ -156,7 +156,7 @@ public class DataOutCsv implements DataOutHow<Appendable> {
         if (this.withHeader) {
             csvFormat = csvFormat.builder()
                     .setHeader(headerFrom(schema))
-                    .build();
+                    .get();
         }
 
         final CSVPrinter printer;

@@ -1,5 +1,7 @@
 package dido.data;
 
+import dido.data.useful.AbstractFieldGetter;
+
 /**
  * Something capable of getting data. Field Getters are designed to be reused and so can be
  * optimised for the fastest possible access.
@@ -148,4 +150,22 @@ public interface FieldGetter {
             }
         };
     }
+
+    static FieldGetter emptyGetter() {
+        return new EmptyGetter();
+    }
+
+    class EmptyGetter extends AbstractFieldGetter {
+
+        @Override
+        public boolean has(DidoData data) {
+            return false;
+        }
+
+        @Override
+        public Object get(DidoData data) {
+            return null;
+        }
+    }
+
 }

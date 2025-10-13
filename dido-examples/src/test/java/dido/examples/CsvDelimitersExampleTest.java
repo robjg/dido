@@ -44,7 +44,7 @@ class CsvDelimitersExampleTest {
                 .csvFormat(CSVFormat.DEFAULT.builder()
                         .setDelimiter('|')
                         .setRecordSeparator('\n')
-                        .build())
+                        .get())
                 .toWriter(writer)) {
 
             didoData.forEach(out);
@@ -67,7 +67,7 @@ class CsvDelimitersExampleTest {
                 .csvFormat(CSVFormat.DEFAULT.builder()
                         .setDelimiter('|')
                         .setRecordSeparator('\n')
-                        .build())
+                        .get())
                 .fromReader(reader)) {
 
             dataBack = in.stream().toList();

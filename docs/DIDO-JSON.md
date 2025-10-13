@@ -234,7 +234,7 @@ To serialize special floating point values (NaN/Infinity) use `serializeSpecialF
                 is("{\"Fruit\":\"Apple\",\"Qty\":5,\"Price\":NaN}"));
 ```
 
-Reading JSON with special floating point values does not require any special configuration.
+Reading JSON with special float point values does not require any special configuration.
 
 ### Copying Data
 

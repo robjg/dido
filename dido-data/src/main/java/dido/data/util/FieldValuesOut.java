@@ -14,7 +14,7 @@ public class FieldValuesOut {
 
     private final FieldGetter[] fieldGetters;
 
-    protected FieldValuesOut(DataSchema dataSchema) {
+    private FieldValuesOut(DataSchema dataSchema) {
 
         this.schema = dataSchema;
 
@@ -33,15 +33,15 @@ public class FieldValuesOut {
     }
 
     public static Object[] arrayOf(DidoData data) {
-        return new FieldValuesOut(data.getSchema()).toArray(data);
+        return FieldValuesOut.forSchema(data.getSchema()).toArray(data);
     }
 
     public static Collection<Object> collectionOf(DidoData data) {
-        return new FieldValuesOut(data.getSchema()).toCollection(data);
+        return FieldValuesOut.forSchema(data.getSchema()).toCollection(data);
     }
 
     public static Map<String, Object> mapOf(DidoData data) {
-        return new FieldValuesOut(data.getSchema()).toMap(data);
+        return FieldValuesOut.forSchema(data.getSchema()).toMap(data);
     }
 
     public Collection<Object> toCollection(DidoData data) {

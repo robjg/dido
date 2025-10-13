@@ -27,7 +27,7 @@ public class FieldValuesOutTest {
 
         DidoData data = values.of("Apple", 5, 27.2);
 
-        FieldValuesOut valuesOut = new FieldValuesOut(dataSchema);
+        FieldValuesOut valuesOut = FieldValuesOut.forSchema(dataSchema);
 
         Collection<Object> collection = valuesOut.toCollection(data);
 
@@ -71,7 +71,7 @@ public class FieldValuesOutTest {
         DidoData data = DidoData.withSchema(dataSchema)
                 .of("Apple", 5, 27.2);
 
-        FieldValuesOut valuesOut = new FieldValuesOut(dataSchema);
+        FieldValuesOut valuesOut = FieldValuesOut.forSchema(dataSchema);
 
         Collection<Object> collection = valuesOut.toCollection(data);
 
@@ -101,7 +101,7 @@ public class FieldValuesOutTest {
     @Test
     void empty() {
 
-        FieldValuesOut valuesOut = new FieldValuesOut(DataSchema.emptySchema());
+        FieldValuesOut valuesOut = FieldValuesOut.forSchema(DataSchema.emptySchema());
 
         Collection<Object> collection = valuesOut.toCollection(ArrayData.of());
 
@@ -134,7 +134,7 @@ public class FieldValuesOutTest {
                 .add(double.class)
                 .build();
 
-        FieldValuesOut valuesOut = new FieldValuesOut(schema);
+        FieldValuesOut valuesOut = FieldValuesOut.forSchema(schema);
 
         DidoData data = ArrayData.of(null, null, null);
 

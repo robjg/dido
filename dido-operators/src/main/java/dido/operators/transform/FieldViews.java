@@ -747,6 +747,7 @@ public class FieldViews {
      * @param name  The name of the field.
      * @param value The value to set.
      * @param type  The type of the field.
+     *
      * @return The Operation Definition.
      */
     public static FieldView setNamed(String name,
@@ -770,6 +771,7 @@ public class FieldViews {
      * @param at    The index to set the value at.
      * @param name  The name of the field.
      * @param value The value to set.
+     *
      * @return The Operation Definition.
      */
     public static FieldView setNamedAt(int at,
@@ -781,6 +783,33 @@ public class FieldViews {
                 .at(at)
                 .with()
                 .value(value)
+                .view();
+    }
+
+    /**
+     * Create an operation to set a field with the given name to be the given value, at the given index.
+     * If the index is 0, the new field will be added to the schema, if it is negative the existing index
+     * is used if it exists. Specifying a type is useful when the new field is to be a primitive type,
+     * or a super class of the value. No check is made that the value is assignable to the type.
+     *
+     * @param at    The index to set the value at.
+     * @param name  The name of the field.
+     * @param value The value to set.
+     * @param type  The type of the field.
+     *
+     * @return The Operation Definition.
+     */
+    public static FieldView setNamedAt(int at,
+                                       String name,
+                                       Object value,
+                                        Type type) {
+
+        return set()
+                .named(name)
+                .at(at)
+                .with()
+                .value(value)
+                .type(type)
                 .view();
     }
 

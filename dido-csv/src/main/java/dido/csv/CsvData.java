@@ -112,19 +112,6 @@ public class CsvData extends AbstractData {
         }
     }
 
-    static class EmptyGetter extends AbstractFieldGetter {
-
-        @Override
-        public boolean has(DidoData data) {
-            return false;
-        }
-
-        @Override
-        public Object get(DidoData data) {
-            return null;
-        }
-    }
-
     static class ConversionGetter<F> extends AbstractFieldGetter {
 
         private final int dataIndex;
@@ -268,7 +255,7 @@ public class CsvData extends AbstractData {
             OptionalInt optionalDataIndex = columnMapping.columnFor(name);
 
             if (optionalDataIndex.isEmpty()) {
-                getters[arrayIndex] = new EmptyGetter();
+                getters[arrayIndex] = FieldGetter.emptyGetter();
             } else {
                 int dataIndex = optionalDataIndex.getAsInt();
                 if (type == String.class || type == Object.class) {
