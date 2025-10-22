@@ -4,6 +4,11 @@ Dido Text
 Out to an Ascii Text Table. [DataOutTextTable](http://rgordon.co.uk/projects/dido/current/api/dido/text/DataOutTextTable.html)
 in the module [dido-text](../dido-text) provide a wrapper around [org.nocrala.tools.texttablefmt/text-table-formatter](https://mvnrepository.com/artifact/org.nocrala.tools.texttablefmt/text-table-formatter)
 
+- [Writing a Table Table](#writing-a-text-table)
+- [Oddjob](#oddjob)
+
+### Writing a Text Table
+
 Here's an example of writing. Given this schema and data:
 {@oddjob.java.file src/test/java/dido/examples/TextExamplesTest.java#snippet1}
 We can write it to a text table with:

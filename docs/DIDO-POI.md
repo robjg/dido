@@ -6,6 +6,15 @@ Data in and out from Excel.
 and [DataOutPoi](http://rgordon.co.uk/projects/dido/current/api/dido/poi/DataOutPoi.html)
 in the module [dido-poi](../dido-poi) provide a wrapper around [Apache POI](https://poi.apache.org/)
 
+- [Reading from Excel](#reading-from-excel)
+- [Reading with a Partial Schema](#reading-with-a-partial-schema)
+- [Reading with a Full Schema](#reading-with-a-full-schema)
+- [Reading with Headings](#reading-with-headings)
+- [Writing to Excel](#writing-to-excel)
+- [Oddjob](#oddjob)
+
+### Reading from Excel
+
 Data can be read from Excel
 ```java
         List<DidoData> didoData;
@@ -28,6 +37,9 @@ The schema has been derived as best can be from the data:
         assertThat(schema.toString(),
                 is("{[1:f_1]=java.lang.String, [2:f_2]=double, [3:f_3]=double}"));
 ```
+
+
+### Reading with a Partial Schema
 
 We can provide a partial schema that only overrides the type of certain
 fields:
@@ -52,6 +64,8 @@ fields:
 
 Column 2 is now an int.
 
+### Reading with a Full Schema
+
 We can use a full schema that will pick just the columns specified.
 ```java
         try (DataIn in = DataInPoi.with()
@@ -75,6 +89,8 @@ We can use a full schema that will pick just the columns specified.
 
 The Schema must match the type of the columns or errors will occur when reading 
 the fields.  
+
+### Reading with Headings
 
 We can also read Data with headings
 ```java
@@ -126,6 +142,8 @@ The schema index is not used.
                 is("{[1:Fruit]=java.lang.String, [2:Quantity]=int, [3:Price]=double}"));
 ```
 
+
+### Writing to Excel
 
 We can write data To Excel
 ```java

@@ -155,7 +155,7 @@ We can concatenate data:
 
 ### Removing Data
 
-We can create subData. 
+We can create sub data: 
 ```java
         DidoTransform subData = SubData.asMappingFrom(fromSchema)
                 .excludingNames("Quantity");

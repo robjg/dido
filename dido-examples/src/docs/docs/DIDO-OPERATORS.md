@@ -51,7 +51,7 @@ We can concatenate data:
 
 ### Removing Data
 
-We can create subData. 
+We can create sub data: 
 {@oddjob.java.file src/test/java/dido/examples/FieldTransformExamplesTest.java#subData}
 This creates a view on the data. No underlying data is changed. It may be 
 slightly more performant than doing the same with field level removes but
