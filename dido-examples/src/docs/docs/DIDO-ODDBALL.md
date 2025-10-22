@@ -33,7 +33,7 @@ This is the configuration it used:
 And this is how to run it directly from code via Oddjob:
 {@oddjob.java.file src/test/java/dido/examples/OddballExamplesTest.java#oddjobCode}
 The dependencies for this example were resolved using Maven.
-Look at [dido-examples/pom.xml](dido-examples/pom.xml) for what was required.
+Look at [dido-examples/pom.xml](../dido-examples/pom.xml) for what was required.
 If you use the Downloaded Oddjob Application then Dido can be resolved 
 as an 'Oddball'. Here is the configuration to enable the example to be run in this
 way:

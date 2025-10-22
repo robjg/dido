@@ -241,10 +241,10 @@ public final class ArrayData extends AbstractData implements DidoData {
 
     static class ArrayDataSchemaFactory extends SchemaFactoryImpl<ArrayDataSchema> {
 
-        protected ArrayDataSchemaFactory() {
+        ArrayDataSchemaFactory() {
         }
 
-        protected ArrayDataSchemaFactory(DataSchema from) {
+        ArrayDataSchemaFactory(DataSchema from) {
             super(from);
         }
 
