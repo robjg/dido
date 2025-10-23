@@ -47,7 +47,7 @@ Here's an example Loading a Table from a CSV file:
 ```
 
 
-## Reading from DB
+### Reading from DB
 
 And now reading that table and creating a CSV that matches the original:
 ```java

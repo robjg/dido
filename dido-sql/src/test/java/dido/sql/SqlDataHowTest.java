@@ -556,10 +556,11 @@ public class SqlDataHowTest {
 
             assertThat(dates.getNamed("A_Time").getClass(), is(java.sql.Time.class));
             java.sql.Time aTime = (java.sql.Time) dates.getNamed("A_Time");
+            // HSQL 2.7.2 uses Default Time Zone, HSQL 2.7.4 uses UTC.
             assertThat(aTime.getTime(),
-                    is(20 * HOUR + 8 * MINUTE + 8 * SECOND));
-            // java.sql.Time uses Default Time Zone when converting back to a string... so we can't do this...
-//            assertThat(aTime.toString(), is("20:08:08"));
+                    is(19 * HOUR + 8 * MINUTE + 8 * SECOND));
+//          // Also didn't work with 2.7.2 but now does
+            assertThat(aTime.toString(), is("20:08:08"));
 
             assertThat(dates.getNamed("A_Zoned_Time").getClass(), is(java.time.OffsetTime.class));
             assertThat(dates.getNamed("A_Zoned_Time"),

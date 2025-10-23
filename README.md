@@ -1,6 +1,14 @@
 Dido
 ====
 
+- [Overview](#overview)
+- [Some Examples](#some-examples)
+- [More Info](#more-info)
+- [Building](#building)
+- [Background](#background)
+
+### Overview
+
 Dido stands for Data-In/Data-Out. It is a framework for making data from different sources
 look the same so that it can be copied, processed and compared.
 
@@ -78,7 +86,6 @@ We get:
 ```
 
 
-
 ### More Info
 
 [dido-data](docs/DIDO-DATA.md) provides the definition of Data on which the rest of Dido is based.
@@ -95,4 +102,12 @@ For Reading Data in and Out in different formats:
 
 For using Dido in [Oddjob](http://rgordon.co.uk/oddjob) there is [dido-oddball](docs/DIDO-ODDBALL.md) .
 
+### Building
+
+See [Building](BUILDING.md)
+
+### Background
+
+For a more information on why Dido was created please see
+[Background](BACKGROUND.md)
 

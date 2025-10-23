@@ -45,14 +45,14 @@
         <javax.inject.version>1</javax.inject.version>
 
         <slf4j.version>2.0.17</slf4j.version>
-        <logback.version>1.5.18</logback.version>
-        <commons-io.version>2.17.0</commons-io.version>
+        <logback.version>1.5.20</logback.version>
+        <commons-io.version>2.20.0</commons-io.version>
 
         <nashorn.version>15.7</nashorn.version>
         <junit5.version>5.7.0</junit5.version>
-        <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>3.6.0</mockito.version>
-        <hsql.version>2.7.2</hsql.version>
+        <hamcrest.version>3.0</hamcrest.version>
+        <mockito.version>5.20.0</mockito.version>
+        <hsql.version>2.7.4</hsql.version>
 
         <jsonassert.version>1.5.0</jsonassert.version>
     </properties>
