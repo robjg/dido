@@ -49,7 +49,7 @@
         <commons-io.version>2.20.0</commons-io.version>
 
         <nashorn.version>15.7</nashorn.version>
-        <junit5.version>5.7.0</junit5.version>
+        <junit5.version>6.0.0</junit5.version>
         <hamcrest.version>3.0</hamcrest.version>
         <mockito.version>5.20.0</mockito.version>
         <hsql.version>2.7.4</hsql.version>
@@ -350,6 +350,12 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.14.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.5.3</version>
                 </plugin>
@@ -486,6 +492,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- So Mockito doesn't complain -->
+                    <argLine>-XX:+EnableDynamicAgentLoading</argLine>
+                </configuration>
             </plugin>
 
             <!-- Create Aggregate Javadocs.
