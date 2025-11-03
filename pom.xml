@@ -39,8 +39,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
 
-        <oddjob.version>1.7.0-SNAPSHOT</oddjob.version>
-        <oj-doc.version>1.7.0-SNAPSHOT</oj-doc.version>
+        <oddjob.version>1.7.0</oddjob.version>
 
         <javax.inject.version>1</javax.inject.version>
 
@@ -307,12 +306,12 @@
                                         <tagletArtifact>
                                             <groupId>uk.co.rgordon</groupId>
                                             <artifactId>oj-doc</artifactId>
-                                            <version>${oj-doc.version}</version>
+                                            <version>${oddjob.version}</version>
                                         </tagletArtifact>
                                         <tagletArtifact>
                                             <groupId>uk.co.rgordon</groupId>
                                             <artifactId>arooa</artifactId>
-                                            <version>${oj-doc.version}</version>
+                                            <version>${oddjob.version}</version>
                                         </tagletArtifact>
                                     </tagletArtifacts>
                                     <tagletpath>${project.basedir}/src/test/resources</tagletpath>
@@ -348,6 +347,12 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.6.2</version>
+                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -404,7 +409,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
@@ -450,23 +454,23 @@
                     <dependency>
                         <groupId>uk.co.rgordon</groupId>
                         <artifactId>oddjob</artifactId>
-                        <version>1.7.0-SNAPSHOT</version>
+                        <version>${oddjob.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>uk.co.rgordon</groupId>
                         <artifactId>oj-resolve</artifactId>
-                        <version>1.7.0-SNAPSHOT</version>
+                        <version>${oddjob.version}</version>
                     </dependency>
                     <!-- required to override plugins version. Test still required when updating plugin. -->
                     <dependency>
                         <groupId>org.apache.maven.resolver</groupId>
                         <artifactId>maven-resolver-util</artifactId>
-                        <version>1.9.22</version>
+                        <version>1.9.24</version>
                     </dependency>
                     <dependency>
                         <groupId>uk.co.rgordon</groupId>
                         <artifactId>oj-doc</artifactId>
-                        <version>1.7.0-SNAPSHOT</version>
+                        <version>${oddjob.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>ch.qos.logback</groupId>
@@ -537,12 +541,12 @@
                                 <tagletArtifact>
                                     <groupId>uk.co.rgordon</groupId>
                                     <artifactId>oj-doc</artifactId>
-                                    <version>${oj-doc.version}</version>
+                                    <version>${oddjob.version}</version>
                                 </tagletArtifact>
                                 <tagletArtifact>
                                     <groupId>uk.co.rgordon</groupId>
                                     <artifactId>arooa</artifactId>
-                                    <version>${oj-doc.version}</version>
+                                    <version>${oddjob.version}</version>
                                 </tagletArtifact>
                             </tagletArtifacts>
                             <tagletpath>${project.basedir}/src/test/resources</tagletpath>

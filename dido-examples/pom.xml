@@ -131,12 +131,12 @@
                     <dependency>
                         <groupId>uk.co.rgordon</groupId>
                         <artifactId>oddjob</artifactId>
-                        <version>1.7.0-SNAPSHOT</version>
+                        <version>${oddjob.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>uk.co.rgordon</groupId>
                         <artifactId>oj-doc</artifactId>
-                        <version>1.7.0-SNAPSHOT</version>
+                        <version>${oddjob.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>ch.qos.logback</groupId>
