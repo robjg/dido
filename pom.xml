@@ -4,7 +4,7 @@
 
     <groupId>uk.co.rgordon</groupId>
     <artifactId>dido</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Dido</name>
@@ -19,11 +19,6 @@
         </license>
     </licenses>
 
-    <scm>
-        <url>https://github.com/robjg/dido</url>
-        <connection>scm:git:git://github.com/robjg/dido.git</connection>
-    </scm>
-
     <developers>
         <developer>
             <id>rob</id>
@@ -31,30 +26,6 @@
             <email>contact@rgordon.co.uk</email>
         </developer>
     </developers>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-
-        <oddjob.version>1.7.0</oddjob.version>
-
-        <javax.inject.version>1</javax.inject.version>
-
-        <slf4j.version>2.0.17</slf4j.version>
-        <logback.version>1.5.20</logback.version>
-        <commons-io.version>2.20.0</commons-io.version>
-
-        <nashorn.version>15.7</nashorn.version>
-        <junit5.version>6.0.0</junit5.version>
-        <hamcrest.version>3.0</hamcrest.version>
-        <mockito.version>5.20.0</mockito.version>
-        <hsql.version>2.7.4</hsql.version>
-
-        <jsonassert.version>1.5.0</jsonassert.version>
-    </properties>
 
     <modules>
         <module>dido-test</module>
@@ -73,6 +44,35 @@
         <module>dido-replay</module>
         <module>dido-examples</module>
     </modules>
+
+    <scm>
+        <url>https://github.com/robjg/dido</url>
+        <connection>scm:git:git://github.com/robjg/dido.git</connection>
+    </scm>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+
+        <oddjob.version>1.7.0</oddjob.version>
+
+        <javax.inject.version>1</javax.inject.version>
+
+        <slf4j.version>2.0.17</slf4j.version>
+        <logback.version>1.5.20</logback.version>
+        <commons-io.version>2.20.0</commons-io.version>
+
+        <nashorn.version>15.7</nashorn.version>
+        <junit5.version>6.0.1</junit5.version>
+        <hamcrest.version>3.0</hamcrest.version>
+        <mockito.version>5.20.0</mockito.version>
+        <hsql.version>2.7.4</hsql.version>
+
+        <jsonassert.version>1.5.0</jsonassert.version>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -253,85 +253,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                                <configuration>
-                                    <quiet/>
-                                    <additionalOptions>--ignore-source-errors,-Xdoclint:none</additionalOptions>
-                                    <taglets>
-                                        <taglet>
-                                            <tagletClass>org.oddjob.doc.taglet.PropertyTaglet</tagletClass>
-                                        </taglet>
-                                        <taglet>
-                                            <tagletClass>org.oddjob.doc.taglet.DescriptionTaglet</tagletClass>
-                                        </taglet>
-                                        <taglet>
-                                            <tagletClass>org.oddjob.doc.taglet.ExampleTaglet</tagletClass>
-                                        </taglet>
-                                        <taglet>
-                                            <tagletClass>org.oddjob.doc.taglet.RequiredTaglet</tagletClass>
-                                        </taglet>
-                                        <taglet>
-                                            <tagletClass>org.oddjob.doc.taglet.XmlResourceTaglet</tagletClass>
-                                        </taglet>
-                                        <taglet>
-                                            <tagletClass>org.oddjob.doc.taglet.PlainTextResourceTaglet</tagletClass>
-                                        </taglet>
-                                    </taglets>
-                                    <tagletArtifacts>
-                                        <tagletArtifact>
-                                            <groupId>uk.co.rgordon</groupId>
-                                            <artifactId>oj-doc</artifactId>
-                                            <version>${oddjob.version}</version>
-                                        </tagletArtifact>
-                                        <tagletArtifact>
-                                            <groupId>uk.co.rgordon</groupId>
-                                            <artifactId>arooa</artifactId>
-                                            <version>${oddjob.version}</version>
-                                        </tagletArtifact>
-                                    </tagletArtifacts>
-                                    <tagletpath>${project.basedir}/src/test/resources</tagletpath>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- Enable in you setting.xml if you have the protoc toolchain installed. Used in dido-proto -->
-        <profile>
-            <id>protoc</id>
-        </profile>
-    </profiles>
 
     <build>
         <pluginManagement>
@@ -555,5 +476,84 @@
 
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <quiet/>
+                                    <additionalOptions>--ignore-source-errors,-Xdoclint:none</additionalOptions>
+                                    <taglets>
+                                        <taglet>
+                                            <tagletClass>org.oddjob.doc.taglet.PropertyTaglet</tagletClass>
+                                        </taglet>
+                                        <taglet>
+                                            <tagletClass>org.oddjob.doc.taglet.DescriptionTaglet</tagletClass>
+                                        </taglet>
+                                        <taglet>
+                                            <tagletClass>org.oddjob.doc.taglet.ExampleTaglet</tagletClass>
+                                        </taglet>
+                                        <taglet>
+                                            <tagletClass>org.oddjob.doc.taglet.RequiredTaglet</tagletClass>
+                                        </taglet>
+                                        <taglet>
+                                            <tagletClass>org.oddjob.doc.taglet.XmlResourceTaglet</tagletClass>
+                                        </taglet>
+                                        <taglet>
+                                            <tagletClass>org.oddjob.doc.taglet.PlainTextResourceTaglet</tagletClass>
+                                        </taglet>
+                                    </taglets>
+                                    <tagletArtifacts>
+                                        <tagletArtifact>
+                                            <groupId>uk.co.rgordon</groupId>
+                                            <artifactId>oj-doc</artifactId>
+                                            <version>${oddjob.version}</version>
+                                        </tagletArtifact>
+                                        <tagletArtifact>
+                                            <groupId>uk.co.rgordon</groupId>
+                                            <artifactId>arooa</artifactId>
+                                            <version>${oddjob.version}</version>
+                                        </tagletArtifact>
+                                    </tagletArtifacts>
+                                    <tagletpath>${project.basedir}/src/test/resources</tagletpath>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Enable in you setting.xml if you have the protoc toolchain installed. Used in dido-proto -->
+        <profile>
+            <id>protoc</id>
+        </profile>
+    </profiles>
 
 </project>
