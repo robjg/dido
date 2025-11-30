@@ -2,6 +2,7 @@ package dido.text;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.SchemaField;
 import dido.data.util.TypeUtil;
 import dido.how.DataException;
 import dido.how.DataOut;
@@ -20,6 +21,7 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -145,22 +147,14 @@ public class DataOutTextTable implements DataOutHow<Appendable> {
             this.schema = schema;
             this.output = output;
 
-            this.table = new Table(schema.lastIndex(),
+            Collection<SchemaField> fields = schema.getSchemaFields();
+
+            this.table = new Table(fields.size(),
                     borderStyle,
                     shownBorders);
 
-            for (int i = 1; i > 0; i = schema.nextIndex(i)) {
-                String value = schema.getFieldNameAt(i);
-
-                if (value != null) {
-                    table.addCell(value,
-                            styleFor(schema.getTypeAt(i)));
-                }
-                else {
-                    table.addCell("[" + i + "]",
-                            styleFor(schema.getTypeAt(i)));
-                }
-            }
+            fields.forEach(field ->
+                    table.addCell(field.getName(), styleFor(field.getType())));
         }
 
         @Override
@@ -171,15 +165,14 @@ public class DataOutTextTable implements DataOutHow<Appendable> {
                     output.append(row)
                             .append(lineSeparator);
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw DataException.of(e);
             }
         }
 
         @Override
         public void accept(DidoData data) {
-            for (int i = 1; i > 0; i = schema.nextIndex(i)) {
+            for (int i = schema.firstIndex(); i > 0; i = schema.nextIndex(i)) {
                 Object value = data.getAt(i);
                 if (value != null) {
                     table.addCell(value.toString(), styleFor(schema.getTypeAt(i)));
@@ -221,8 +214,7 @@ public class DataOutTextTable implements DataOutHow<Appendable> {
         if (TypeUtil.isPrimitive(Primitives.unwrap(type))) {
             return new CellStyle(CellStyle.HorizontalAlign.RIGHT,
                     CellStyle.AbbreviationStyle.DOTS, CellStyle.NullStyle.EMPTY_STRING, false);
-        }
-        else {
+        } else {
             return new CellStyle(CellStyle.HorizontalAlign.LEFT,
                     CellStyle.AbbreviationStyle.DOTS, CellStyle.NullStyle.EMPTY_STRING, false);
         }
