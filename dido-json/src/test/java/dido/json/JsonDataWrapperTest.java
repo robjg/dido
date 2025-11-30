@@ -2,10 +2,7 @@ package dido.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dido.data.DataSchema;
-import dido.data.DidoData;
-import dido.data.IndexedData;
-import dido.data.RepeatingData;
+import dido.data.*;
 import dido.data.immutable.ArrayData;
 import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
@@ -198,12 +195,13 @@ class JsonDataWrapperTest {
     @Test
     void testNestedData() {
 
-        String json = "{ \"OrderId\": \"A123\", \n" +
-                "    \"OrderLines\": [ \n" +
-                "      {\"Fruit\": \"Apple\", \"Qty\": 4}, \n" +
-                "      {\"Fruit\": \"Pear\", \"Qty\": 5}\n" +
-                "    ]\n" +
-                "  }";
+        String json = """
+                { "OrderId": "A123",\s
+                    "OrderLines": [\s
+                      {"Fruit": "Apple", "Qty": 4},\s
+                      {"Fruit": "Pear", "Qty": 5}
+                    ]
+                  }""";
 
 
         DataSchema nestedSchema = SchemaBuilder.newInstance()
@@ -230,5 +228,29 @@ class JsonDataWrapperTest {
 
         assertThat(result, is(expectedData));
 
+    }
+
+    @Test
+    void getters() {
+
+        DataSchema schema = DataSchema.builder()
+                .addNamed("Fruit", String.class)
+                .addNamed("Colour", String.class)
+                .build();
+
+        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+                .create();
+
+        String json = "{'Colour':'Red', 'Fruit':'Apple'}";
+
+        DidoData data = gson.fromJson(json, DidoData.class);
+
+        ReadSchema readSchema = (ReadSchema) data.getSchema();
+
+        FieldGetter getter1 = readSchema.getFieldGetterAt(1);
+        FieldGetter getter2 = readSchema.getFieldGetterAt(2);
+
+        assertThat(getter1.get(data), is("Apple"));
+        assertThat(getter2.get(data), is("Red"));
     }
 }

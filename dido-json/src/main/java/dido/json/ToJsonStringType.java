@@ -1,9 +1,13 @@
 package dido.json;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -47,6 +51,14 @@ public class ToJsonStringType {
      */
     private Strictness strictness;
 
+    /**
+     * @oddjob.description Configure the Gson Builder directly. This property specifies any number of Consumers of
+     * the Gson Builder. See the examples for using this with JavaScript.
+     *
+     * @oddjob.required No.
+     */
+    private final List<Consumer<? super GsonBuilder>> gsonBuilder = new ArrayList<>();
+
 
     public Function<DidoData, String> toFunction() {
 
@@ -60,6 +72,10 @@ public class ToJsonStringType {
 
         if (serializeNulls) {
             settings.serializeNulls();
+        }
+
+        for (Consumer<? super GsonBuilder> builder : gsonBuilder) {
+            settings.gsonBuilder(builder);
         }
 
         return settings.mapToString();

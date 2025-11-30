@@ -2,6 +2,7 @@ package dido.json;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
+import com.google.gson.ToNumberPolicy;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.how.DataException;
@@ -43,6 +44,17 @@ public class DataInJson implements DataInHow<Reader> {
 
         public Settings strictness(Strictness strictness) {
             gsonBuilder.setStrictness(strictness == null ? Strictness.LEGACY_STRICT : strictness);
+            return this;
+        }
+
+        public Settings objectToNumberStrategy(ToNumberPolicy toNumberPolicy) {
+            gsonBuilder.setObjectToNumberStrategy(toNumberPolicy);
+            return this;
+        }
+
+        @SuppressWarnings("UnusedReturnValue")
+        public Settings numberToNumberStrategy(ToNumberPolicy toNumberPolicy) {
+            gsonBuilder.setNumberToNumberStrategy(toNumberPolicy);
             return this;
         }
 

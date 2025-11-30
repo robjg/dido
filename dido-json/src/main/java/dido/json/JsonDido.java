@@ -1,6 +1,8 @@
 package dido.json;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
+import com.google.gson.ToNumberPolicy;
 import dido.data.DataSchema;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
@@ -10,7 +12,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Provide a {@link DataInHow} and a {@link DataOutHow} for JSON.
@@ -24,14 +30,23 @@ import java.util.Objects;
  *
  * @oddjob.example From JSON Array and back again.
  * {@oddjob.xml.resource dido/json/FromToJsonArrayExample.xml}
+ * The output in results is:
+ * {@oddjob.text.resource expected/FromToJsonArrayExample.json}
  *
  * @oddjob.example Json with Nulls and Special Floating Point Numbers. Without setting the properties
  * the jobs would fail.
  * {@oddjob.xml.resource dido/json/FromToJsonNullsAndNans.xml}
  * The captured data is:
- * {@oddjob.text.resource expected/FromToJsonNullsAndNans.txt}
+ * {@oddjob.text.resource expected/FromToJsonNullsAndNansData.txt}
  * The output in results is:
  * {@oddjob.text.resource expected/FromToJsonNullsAndNans.json}
+ *
+ * @oddjob.example Configuring the Gson Builder directly using JavaScript.
+ * {@oddjob.xml.resource dido/json/FromToWithGsonBuilder.xml}
+ * The captured data is:
+ * {@oddjob.text.resource expected/FromToWithGsonBuilderData.txt}
+ * The output Json is:
+ * {@oddjob.text.resource expected/FromToWithGsonBuilder.json}
  *
  */
 public class JsonDido {
@@ -75,10 +90,34 @@ public class JsonDido {
     private boolean serializeSpecialFloatingPointValues;
 
     /**
+     * @oddjob.description Configures Gson to apply a specific number strategy during deserialization of
+     * number type primitives. This is what will be used when no conversion is specified for a field.
+     *
+     * @oddjob.required No, defaults numbers as doubles.
+     */
+    private ToNumberPolicy objectToNumberStrategy;
+
+    /**
+     * @oddjob.description Configures Gson to apply a specific number strategy during deserialization of
+     * number type primitives when a conversion to {@link Number} is specified.
+     *
+     * @oddjob.required No, defaults numbers as doubles.
+     */
+    private ToNumberPolicy numberToNumberStrategy;
+
+    /**
      * @oddjob.description Gson Strictness passed through to underlying Gson builder.
-     * @oddjob.required No, defaults to false.
+     * @oddjob.required No, defaults to LEGACY_STRICT.
      */
     private Strictness strictness;
+
+    /**
+     * @oddjob.description Configure the Gson Builder directly. This property specifies any number of Consumers of
+     * the Gson Builder. See the examples for using this with JavaScript.
+     *
+     * @oddjob.required No.
+     */
+    private final List<Consumer<? super GsonBuilder>> gsonBuilder = new ArrayList<>();
 
     public DataOutHow<OutputStream> toStreamOut() {
 
@@ -102,6 +141,10 @@ public class JsonDido {
             settings.serializeNulls();
         }
 
+        for (Consumer<? super GsonBuilder> builder : gsonBuilder) {
+            settings.gsonBuilder(builder);
+        }
+
         return settings.make();
     }
 
@@ -113,12 +156,20 @@ public class JsonDido {
 
         JsonDidoFormat format = Objects.requireNonNullElse(this.format, JsonDidoFormat.LINES);
 
-        return DataInJson.with()
+        DataInJson.Settings settings = DataInJson.with()
                 .inFormat(format)
                 .strictness(strictness)
                 .schema(schema)
-                .partialSchema(partialSchema)
-                .make();
+                .partialSchema(partialSchema);
+
+        Optional.ofNullable(objectToNumberStrategy).ifPresent(settings::objectToNumberStrategy);
+        Optional.ofNullable(numberToNumberStrategy).ifPresent(settings::numberToNumberStrategy);
+
+        for (Consumer<? super GsonBuilder> builder : gsonBuilder) {
+            settings.gsonBuilder(builder);
+        }
+
+        return settings.make();
     }
 
     public DataSchema getSchema() {
@@ -161,12 +212,37 @@ public class JsonDido {
         this.serializeSpecialFloatingPointValues = serializeSpecialFloatingPointValues;
     }
 
+    public ToNumberPolicy getObjectToNumberStrategy() {
+        return objectToNumberStrategy;
+    }
+
+    public void setObjectToNumberStrategy(ToNumberPolicy objectToNumberStrategy) {
+        this.objectToNumberStrategy = objectToNumberStrategy;
+    }
+
+    public ToNumberPolicy getNumberToNumberStrategy() {
+        return numberToNumberStrategy;
+    }
+
+    public void setNumberToNumberStrategy(ToNumberPolicy numberToNumberStrategy) {
+        this.numberToNumberStrategy = numberToNumberStrategy;
+    }
+
     public Strictness getStrictness() {
         return strictness;
     }
 
     public void setStrictness(Strictness strictness) {
         this.strictness = strictness;
+    }
+
+    public void setGsonBuilder(int index, Consumer<? super GsonBuilder> withBuilder) {
+        if (withBuilder == null) {
+            gsonBuilder.remove(index);
+        }
+        else {
+            gsonBuilder.add(index, withBuilder);
+        }
     }
 
     @Override

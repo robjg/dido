@@ -1,0 +1,2 @@
+{[1:Fruit]=Apple, [2:Qty]=5, [3:Price]=24.5}
+{[1:Fruit]=Pear, [2:Qty]=3, [3:Price]=35.5}

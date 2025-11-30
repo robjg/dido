@@ -23,6 +23,7 @@ of a single JSON Object per line. An array of JSON Objects, or A single JSON Obj
 | [Example 1](#example1) | From JSON Lines and back again. |
 | [Example 2](#example2) | From JSON Array and back again. |
 | [Example 3](#example3) | Json with Nulls and Special Floating Point Numbers. |
+| [Example 4](#example4) | Configuring the Gson Builder directly using JavaScript. |
 
 
 ### Property Detail
@@ -88,7 +89,7 @@ setting Strictness to LENIENT.
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
       <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
-      <tr><td><i>Required</i></td><td>No, defaults to false.</td></tr>
+      <tr><td><i>Required</i></td><td>No, defaults to LEGACY_STRICT.</td></tr>
 </table>
 
 Gson Strictness passed through to underlying Gson builder.
@@ -180,6 +181,15 @@ From JSON Array and back again.
 </oddjob>
 ```
 
+The output in results is:
+```
+[
+  { "Fruit":"Apple", "Qty":5, "Price":27.2 },
+  { "Fruit":"Orange", "Qty":10, "Price":31.6 },
+  { "Fruit":"Pear", "Qty":7, "Price":22.1 }
+]
+```
+
 
 #### Example 3 <a name="example3"></a>
 
@@ -247,6 +257,78 @@ The output in results is:
 {"Fruit":"Apple","Price":Infinity}
 {"Fruit":null,"Price":31.6}
 {"Fruit":"Pear","Price":NaN}
+```
+
+
+#### Example 4 <a name="example4"></a>
+
+Configuring the Gson Builder directly using JavaScript.
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <properties>
+                    <values>
+                        <file file="${java.io.tmpdir}" key="work.dir"/>
+                    </values>
+                </properties>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:json format="LINES">
+                                    <gsonBuilder>
+                                        <value value="#{new (Java.extend(Java.type('java.util.function.Consumer'), { accept: function(gson) { gson.setObjectToNumberStrategy(Java.type('com.google.gson.ToNumberPolicy').LONG_OR_DOUBLE); } } ))() }"/>
+                                    </gsonBuilder>
+                                </dido:json>
+                            </how>
+                            <from>
+                                <buffer><![CDATA[{ "Fruit":"Apple", "Qty":5, "Price":24.5  }
+{ "Fruit":"Pear", "Qty":3, "Price":35.5 }
+]]></buffer>
+                            </from>
+                        </dido:data-in>
+                        <bus:bus name="Wire Tap">
+                            <of>
+                                <bus:collect>
+                                    <output>
+                                        <file file="${work.dir}/FromToWithGsonBuilderData.txt"/>
+                                    </output>
+                                </bus:collect>
+                            </of>
+                        </bus:bus>
+                        <dido:data-out xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:json>
+                                    <gsonBuilder>
+                                        <value value="#{new (Java.extend(Java.type('java.util.function.Consumer'), { accept: function(gson) { gson.setFieldNamingStrategy(Java.type('com.google.gson.FieldNamingPolicy').UPPER_CASE_WITH_UNDERSCORES); } } ))() }"/>
+                                    </gsonBuilder>
+                                </dido:json>
+                            </how>
+                            <to>
+                                <file file="${work.dir}/FromToWithGsonBuilderOut.json"/>
+                            </to>
+                        </dido:data-out>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>
+```
+
+The captured data is:
+```
+{[1:Fruit]=Apple, [2:Qty]=5, [3:Price]=24.5}
+{[1:Fruit]=Pear, [2:Qty]=3, [3:Price]=35.5}
+```
+
+The output Json is:
+```
+{"Fruit":"Apple","Qty":5,"Price":24.5}
+{"Fruit":"Pear","Qty":3,"Price":35.5}
 ```
 
 

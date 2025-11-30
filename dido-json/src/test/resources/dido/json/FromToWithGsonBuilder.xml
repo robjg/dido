@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <properties>
+                    <values>
+                        <file file="${java.io.tmpdir}" key="work.dir"/>
+                    </values>
+                </properties>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:json format="LINES">
+                                    <gsonBuilder>
+                                        <value value="#{new (Java.extend(Java.type('java.util.function.Consumer'), { accept: function(gson) { gson.setObjectToNumberStrategy(Java.type('com.google.gson.ToNumberPolicy').LONG_OR_DOUBLE); } } ))() }"/>
+                                    </gsonBuilder>
+                                </dido:json>
+                            </how>
+                            <from>
+                                <buffer><![CDATA[{ "Fruit":"Apple", "Qty":5, "Price":24.5  }
+{ "Fruit":"Pear", "Qty":3, "Price":35.5 }
+]]></buffer>
+                            </from>
+                        </dido:data-in>
+                        <bus:bus name="Wire Tap">
+                            <of>
+                                <bus:collect>
+                                    <output>
+                                        <file file="${work.dir}/FromToWithGsonBuilderData.txt"/>
+                                    </output>
+                                </bus:collect>
+                            </of>
+                        </bus:bus>
+                        <dido:data-out xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:json>
+                                    <gsonBuilder>
+                                        <value value="#{new (Java.extend(Java.type('java.util.function.Consumer'), { accept: function(gson) { gson.setFieldNamingStrategy(Java.type('com.google.gson.FieldNamingPolicy').UPPER_CASE_WITH_UNDERSCORES); } } ))() }"/>
+                                    </gsonBuilder>
+                                </dido:json>
+                            </how>
+                            <to>
+                                <file file="${work.dir}/FromToWithGsonBuilderOut.json"/>
+                            </to>
+                        </dido:data-out>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>

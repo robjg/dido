@@ -2,8 +2,7 @@ package dido.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonStreamParser;
+import com.google.gson.ToNumberPolicy;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.RepeatingData;
@@ -18,22 +17,11 @@ import static org.hamcrest.Matchers.is;
 
 class JsonDataPartialCopyTest {
 
-    @Test
-    void assumptions() {
-
-        Gson gson = new Gson();
-
-        JsonElement element = new JsonStreamParser("'Foo'").next();
-
-        Object result = gson.fromJson(element, Object.class);
-
-        assertThat(result, is("Foo"));
-    }
 
     @Test
     void primitives() {
 
-        String json = "{ 'String': 'foo', 'Boolean': true, 'Double': 22.5 }";
+        String json = "{ 'String': 'foo', 'Boolean': true, 'Double': 22.5, 'Long':5 }";
 
         DidoData data = DataInJson.mapFromString().apply(json);
 
@@ -41,10 +29,32 @@ class JsonDataPartialCopyTest {
                 .addNamed("String", String.class)
                 .addNamed("Boolean", boolean.class)
                 .addNamed("Double", double.class)
+                .addNamed("Long", double.class)
                 .build();
 
         assertThat(data.getSchema(), is(expectedSchema));
-        assertThat(data, is(DidoData.of("foo", true, 22.5)));
+        assertThat(data, is(DidoData.of("foo", true, 22.5, 5.0)));
+    }
+
+    @Test
+    void primitivesObjectLongOrDouble() {
+
+        String json = "{ 'String': 'foo', 'Boolean': true, 'Double': 22.5, 'Long':5 }";
+
+        DidoData data = DataInJson.with()
+                .objectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
+                .mapFromString()
+                .apply(json);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("String", String.class)
+                .addNamed("Boolean", boolean.class)
+                .addNamed("Double", double.class)
+                .addNamed("Long", long.class)
+                .build();
+
+        assertThat(data.getSchema(), is(expectedSchema));
+        assertThat(data, is(DidoData.of("foo", true, 22.5, 5L)));
     }
 
     @Test
@@ -60,6 +70,23 @@ class JsonDataPartialCopyTest {
 
         assertThat(data.getSchema(), is(expectedSchema));
         assertThat(data.getNamed("Point"), is(Map.of("x", 10.0, "y", 5.0)));
+    }
+
+    @Test
+    void objectsNumberLongOrDouble() {
+
+        String json = "{ 'Point': { 'x': 10, 'y': 5 } }";
+
+        DidoData data = DataInJson.with()
+                .objectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
+                .mapFromString().apply(json);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamed("Point", Map.class)
+                .build();
+
+        assertThat(data.getSchema(), is(expectedSchema));
+        assertThat(data.getNamed("Point"), is(Map.of("x", 10L, "y", 5L)));
     }
 
     @Test

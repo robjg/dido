@@ -2,6 +2,8 @@ package dido.operators.transform;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.FieldGetter;
+import dido.data.ReadSchema;
 import dido.data.immutable.ArrayData;
 import dido.data.schema.SchemaBuilder;
 import org.junit.jupiter.api.Test;
@@ -305,6 +307,36 @@ class ViewTransformBuilderTest {
 
         DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
+                .forSchema(schema)
+                .addFieldView(FieldViews.removeNamed("Fruit"))
+                .addFieldView(FieldViews.removeNamed("Price"))
+                .build();
+
+        DidoData result = transformation.apply(data);
+
+        DataSchema expectedSchema = DataSchema.builder()
+                .addNamedAt(2, "Qty", int.class)
+                .build();
+
+        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+
+        DidoData expectedData = ArrayData.withSchema(expectedSchema)
+                .of(10);
+
+        assertThat(result, is(expectedData));
+
+        ReadSchema readSchema = (ReadSchema) transformation.getResultantSchema();
+
+        FieldGetter qtyGetter = readSchema.getFieldGetterAt(2);
+
+        assertThat(qtyGetter.get(result), is(10));
+    }
+
+    @Test
+    void removeNamedReIndex() {
+
+        DidoTransform transformation = ViewTransformBuilder.with()
+                .existingFields(true)
                 .reIndex(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.removeNamed("Fruit"))
@@ -323,6 +355,12 @@ class ViewTransformBuilderTest {
                 .of(10);
 
         assertThat(result, is(expectedData));
+
+        ReadSchema readSchema = (ReadSchema) transformation.getResultantSchema();
+
+        FieldGetter qtyGetter = readSchema.getFieldGetterNamed("Qty");
+
+        assertThat(qtyGetter.get(result), is(10));
     }
 
     @Test

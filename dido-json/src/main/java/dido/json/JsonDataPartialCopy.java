@@ -136,7 +136,8 @@ public class JsonDataPartialCopy {
         if (element.isJsonPrimitive()) {
 
             processPrimitive(data, fieldName,
-                    element.getAsJsonPrimitive());
+                    element.getAsJsonPrimitive(),
+                    context);
         } else if (element.isJsonNull()) {
 
             data.setNamed(fieldName, null, void.class);
@@ -155,14 +156,16 @@ public class JsonDataPartialCopy {
 
     protected void processPrimitive(MalleableData data,
                                     String field,
-                                    JsonPrimitive jsonPrimitive) {
+                                    JsonPrimitive jsonPrimitive,
+                                    JsonDeserializationContext context) {
 
-        if (jsonPrimitive.isString()) {
-            data.setStringNamed(field, jsonPrimitive.getAsString());
-        } else if (jsonPrimitive.isBoolean()) {
-            data.setBooleanNamed(field, jsonPrimitive.getAsBoolean());
-        } else {
-            data.setDoubleNamed(field, jsonPrimitive.getAsDouble());
+        Object o = context.deserialize(jsonPrimitive, Object.class);
+        switch (o) {
+            case String s -> data.setStringNamed(field, s);
+            case Boolean b -> data.setBooleanNamed(field, b);
+            case Double d -> data.setDoubleNamed(field, d);
+            case Long l -> data.setLongNamed(field, l);
+            default -> data.setNamed(field, o);
         }
     }
 

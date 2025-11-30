@@ -9,7 +9,7 @@ Export and Import with SQL.
 | -------- | ----------- |
 | [batchSize](#propertybatchsize) | Batch size. | 
 | [classLoader](#propertyclassloader) | The classloader used to derive the schema from a query. | 
-| [schema](#propertyschema) | An override schema that supplies a desired type to the underlying `java.sql.ResultSet` method. | 
+| [schema](#propertyschema) | An override schema that supplies a desired type to the underlying [java.sql.ResultSet](https://docs.oracle.com/en/java/javase/11/docs/api/java.sql/java/sql/ResultSet.html) method. | 
 | [sql](#propertysql) | The SQL that will extract or insert the data. | 
 
 
@@ -51,7 +51,7 @@ table include custom data types.
 </table>
 
 An override schema that supplies a desired type to the underlying
-`java.sql.ResultSet` method. Weather this is honoured is
+[java.sql.ResultSet](https://docs.oracle.com/en/java/javase/11/docs/api/java.sql/java/sql/ResultSet.html) method. Weather this is honoured is
 dependent on the JDBC implementation.
 
 #### sql <a name="propertysql"></a>
