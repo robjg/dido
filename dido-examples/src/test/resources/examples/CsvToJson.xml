@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<oddjob>
+<oddjob id="oddjob">
     <job>
         <sequential>
             <jobs>
@@ -10,7 +10,7 @@
                                 <dido:csv/>
                             </how>
                             <from>
-                                <file file="Fruit.csv"/>
+                                <file file="${oddjob.dir}/../data/FruitNoHeader.csv"/>
                             </from>
                         </dido:data-in>
                         <dido:data-out xmlns:dido="oddjob:dido">

@@ -86,7 +86,7 @@
                         </resolve:dependencies>
                     </dependencies>
                 </resolve:resolve>
-                <bean class="org.oddjob.doc.doclet.ReferenceMain" classPath="${didoResolve.resolvedFilesArray}"
+                <bean class="org.oddjob.util.ReferenceMain" classPath="${didoResolve.resolvedFilesArray}"
                       directory="${reference.dir}" docletPath="${docletResolve.resolvedFilesArray}" packages="dido"
                       sourcepath="${vars.sources}" writerFactory="org.oddjob.doc.markdown.MdReferenceWriterFactory"
                       loaderPath="${vars.loaderPath}">

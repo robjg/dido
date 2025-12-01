@@ -2,7 +2,8 @@ Dido
 ====
 
 - [Overview](#overview)
-- [Some Examples](#some-examples)
+- [Some Java Examples](#some-java-examples)
+- [No Code Dido](#no-code-dido)
 - [More Info](#more-info)
 - [Building](#building)
 - [Background](#background)
@@ -15,7 +16,7 @@ look the same so that it can be copied, processed and compared.
 Dido is available in Maven. To get started simply include [dido-all](https://mvnrepository.com/artifact/uk.co.rgordon/dido-all)
 which will provide all the stable modules in one dependency.
 
-### Some Examples
+### Some Java Examples
 
 Given this CSV:
 ```
@@ -86,6 +87,19 @@ We get:
 ```
 
 
+### No Code Dido
+
+Dido comes with Jobs and Types for creating Data Processing Pipelines in [Oddjob](https://github.com/robjg/oddjob/)
+without code using Oddjob's UI - *Oddjob Explorer*
+
+Here is Oddjob Explorer running the first example above.
+
+![Csv to Json in Oddjob](docs/images/OddjobCsvJson.jpg)
+
+See [Dido in Oddjob](docs/DIDO-ODDJOB.md) for getting started with Dido in Oddjob.
+
+See [The Reference](docs/reference/README.md) for details of all the Oddjob configurations in Dido. 
+
 ### More Info
 
 [dido-data](docs/DIDO-DATA.md) provides the definition of Data on which the rest of Dido is based.
@@ -100,7 +114,6 @@ For Reading Data in and Out in different formats:
 
 [dido-objects](docs/DIDO-OBJECTS.md) for converting to and from Java Objects.
 
-For using Dido in [Oddjob](http://rgordon.co.uk/oddjob) there is [dido-oddball](docs/DIDO-ODDBALL.md) .
 
 ### Building
 

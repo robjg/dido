@@ -4,3 +4,4 @@ work
 **/*.iml
 /.idea/
 target/
+/dido-examples/explorer/
