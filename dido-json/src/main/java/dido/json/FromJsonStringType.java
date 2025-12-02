@@ -20,7 +20,11 @@ import java.util.function.Function;
  * See also {@link ToJsonStringType}
  *
  * @oddjob.example From JSON Strings using a Mapping function and back again.
+ * The {@code objectToNumberPolicy} is set so that the Qty is a long otherwise with no
+ * schema it would be a double.
  * {@oddjob.xml.resource dido/json/FromJsonMapExample.xml}
+ * The output Json is:
+ * {@oddjob.text.resource dido/json/FromJsonMapExampleOut.json}
  *
  */
 public class FromJsonStringType {
@@ -45,23 +49,13 @@ public class FromJsonStringType {
      */
     private Strictness strictness;
 
-
-
     /**
      * @oddjob.description Configures Gson to apply a specific number strategy during deserialization of
-     * number type primitives. This is what will be used when no conversion is specified for a field.
+     * number type primitives. This is what will be used for a partial or no schema when converting numbers.
      *
      * @oddjob.required No, defaults numbers as doubles.
      */
-    private ToNumberPolicy objectToNumberStrategy;
-
-    /**
-     * @oddjob.description Configures Gson to apply a specific number strategy during deserialization of
-     * number type primitives when a conversion to {@link Number} is specified.
-     *
-     * @oddjob.required No, defaults numbers as doubles.
-     */
-    private ToNumberPolicy numberToNumberStrategy;
+    private ToNumberPolicy objectToNumberPolicy;
 
     /**
      * @oddjob.description Configure the Gson Builder directly. This property specifies any number of Consumers of
@@ -79,8 +73,7 @@ public class FromJsonStringType {
                 .partialSchema(partialSchema)
                 .strictness(strictness);
 
-        Optional.ofNullable(objectToNumberStrategy).ifPresent(settings::objectToNumberStrategy);
-        Optional.ofNullable(numberToNumberStrategy).ifPresent(settings::numberToNumberStrategy);
+        Optional.ofNullable(objectToNumberPolicy).ifPresent(settings::objectToNumberStrategy);
 
         for (Consumer<? super GsonBuilder> builder : gsonBuilder) {
             settings.gsonBuilder(builder);
@@ -113,24 +106,21 @@ public class FromJsonStringType {
         this.strictness = strictness;
     }
 
-    public ToNumberPolicy getObjectToNumberStrategy() {
-        return objectToNumberStrategy;
+    public ToNumberPolicy getObjectToNumberPolicy() {
+        return objectToNumberPolicy;
     }
 
-    public void setObjectToNumberStrategy(ToNumberPolicy objectToNumberStrategy) {
-        this.objectToNumberStrategy = objectToNumberStrategy;
+    public void setObjectToNumberPolicy(ToNumberPolicy objectToNumberPolicy) {
+        this.objectToNumberPolicy = objectToNumberPolicy;
     }
 
-    public ToNumberPolicy getNumberToNumberStrategy() {
-        return numberToNumberStrategy;
-    }
-
-    public void setNumberToNumberStrategy(ToNumberPolicy numberToNumberStrategy) {
-        this.numberToNumberStrategy = numberToNumberStrategy;
-    }
-
-    public List<Consumer<? super GsonBuilder>> getGsonBuilder() {
-        return gsonBuilder;
+    public void setGsonBuilder(int index, Consumer<? super GsonBuilder> withBuilder) {
+        if (withBuilder == null) {
+            gsonBuilder.remove(index);
+        }
+        else {
+            gsonBuilder.add(index, withBuilder);
+        }
     }
 
     @Override

@@ -17,6 +17,8 @@ import java.util.function.Function;
  *
  * @oddjob.example From JSON Strings using a Mapping function and back again.
  * {@oddjob.xml.resource dido/json/FromJsonMapExample.xml}
+ * The output Json is:
+ * {@oddjob.text.resource dido/json/FromJsonMapExampleOut.json}
  *
  */
 public class ToJsonStringType {
@@ -111,6 +113,15 @@ public class ToJsonStringType {
 
     public void setStrictness(Strictness strictness) {
         this.strictness = strictness;
+    }
+
+    public void setGsonBuilder(int index, Consumer<? super GsonBuilder> withBuilder) {
+        if (withBuilder == null) {
+            gsonBuilder.remove(index);
+        }
+        else {
+            gsonBuilder.add(index, withBuilder);
+        }
     }
 
     @Override

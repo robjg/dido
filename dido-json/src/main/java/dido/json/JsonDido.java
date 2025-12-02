@@ -91,19 +91,11 @@ public class JsonDido {
 
     /**
      * @oddjob.description Configures Gson to apply a specific number strategy during deserialization of
-     * number type primitives. This is what will be used when no conversion is specified for a field.
+     * number type primitives. This is what will be used for a partial or no schema when converting numbers.
      *
      * @oddjob.required No, defaults numbers as doubles.
      */
-    private ToNumberPolicy objectToNumberStrategy;
-
-    /**
-     * @oddjob.description Configures Gson to apply a specific number strategy during deserialization of
-     * number type primitives when a conversion to {@link Number} is specified.
-     *
-     * @oddjob.required No, defaults numbers as doubles.
-     */
-    private ToNumberPolicy numberToNumberStrategy;
+    private ToNumberPolicy objectToNumberPolicy;
 
     /**
      * @oddjob.description Gson Strictness passed through to underlying Gson builder.
@@ -162,8 +154,7 @@ public class JsonDido {
                 .schema(schema)
                 .partialSchema(partialSchema);
 
-        Optional.ofNullable(objectToNumberStrategy).ifPresent(settings::objectToNumberStrategy);
-        Optional.ofNullable(numberToNumberStrategy).ifPresent(settings::numberToNumberStrategy);
+        Optional.ofNullable(objectToNumberPolicy).ifPresent(settings::objectToNumberStrategy);
 
         for (Consumer<? super GsonBuilder> builder : gsonBuilder) {
             settings.gsonBuilder(builder);
@@ -212,20 +203,12 @@ public class JsonDido {
         this.serializeSpecialFloatingPointValues = serializeSpecialFloatingPointValues;
     }
 
-    public ToNumberPolicy getObjectToNumberStrategy() {
-        return objectToNumberStrategy;
+    public ToNumberPolicy getObjectToNumberPolicy() {
+        return objectToNumberPolicy;
     }
 
-    public void setObjectToNumberStrategy(ToNumberPolicy objectToNumberStrategy) {
-        this.objectToNumberStrategy = objectToNumberStrategy;
-    }
-
-    public ToNumberPolicy getNumberToNumberStrategy() {
-        return numberToNumberStrategy;
-    }
-
-    public void setNumberToNumberStrategy(ToNumberPolicy numberToNumberStrategy) {
-        this.numberToNumberStrategy = numberToNumberStrategy;
+    public void setObjectToNumberPolicy(ToNumberPolicy objectToNumberPolicy) {
+        this.objectToNumberPolicy = objectToNumberPolicy;
     }
 
     public Strictness getStrictness() {

@@ -61,6 +61,8 @@ Gson Strictness passed through to underlying Gson builder.
 #### Example 1 <a name="example1"></a>
 
 From JSON Strings using a Mapping function and back again.
+The `objectToNumberPolicy` is set so that the Qty is a long otherwise with no
+schema it would be a double.
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <oddjob>
@@ -69,17 +71,15 @@ From JSON Strings using a Mapping function and back again.
             <of>
                 <bus:driver>
                     <values>
-                        <buffer>
-                            <![CDATA[{ "Fruit"="Apple", "Qty"=5, "Price"=27.2 }
-{ "Fruit"="Orange", "Qty"=10, "Price"=31.6 }
-{ "Fruit"="Pear", "Qty"=7, "Price"=22.1 }
-]]>
-                        </buffer>
+                        <buffer><![CDATA[{ "Fruit":"Apple", "Qty":5, "Price":27.2 }
+{ "Fruit":"Orange", "Qty":10, "Price":31.6 }
+{ "Fruit":"Pear", "Qty":7, "Price":22.1 }
+]]></buffer>
                     </values>
                 </bus:driver>
                 <bus:map>
                     <function>
-                        <dido:from-json xmlns:dido="oddjob:dido"/>
+                        <dido:from-json objectToNumberPolicy="LONG_OR_DOUBLE" xmlns:dido="oddjob:dido"/>
                     </function>
                 </bus:map>
                 <bus:map>
@@ -87,17 +87,20 @@ From JSON Strings using a Mapping function and back again.
                         <dido:to-json xmlns:dido="oddjob:dido"/>
                     </function>
                     <to>
-                        <identify id="results">
-                            <value>
-                                <buffer/>
-                            </value>
-                        </identify>
+                        <stdout/>
                     </to>
                 </bus:map>
             </of>
         </bus:bus>
     </job>
 </oddjob>
+```
+
+The output Json is:
+```
+{"Fruit":"Apple","Qty":5,"Price":27.2}
+{"Fruit":"Orange","Qty":10,"Price":31.6}
+{"Fruit":"Pear","Qty":7,"Price":22.1}
 ```
 
 

@@ -120,7 +120,6 @@ public class JsonExamplesTest {
         Path workDir = Path.of("target/work");
         Files.createDirectories(workDir);
 
-
         Oddjob oddjob = new Oddjob();
         oddjob.setFile(new File(Objects.requireNonNull(
                 getClass().getResource("FromToWithGsonBuilder.xml")).getFile()));
