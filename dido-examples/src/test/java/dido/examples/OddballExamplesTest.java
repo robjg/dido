@@ -18,6 +18,7 @@ import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OddballExamplesTest {
 
@@ -88,5 +89,33 @@ class OddballExamplesTest {
         oddjob.run();
 
         return oddjob;
+    }
+
+    @Test
+    void transformWithSchema() throws JSONException, IOException {
+
+        File file = new File(Objects.requireNonNull(getClass().getResource(
+                "/examples/JsonTransformWithSchema.xml")).getFile());
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setFile(file);
+
+        ConsoleCapture console = new ConsoleCapture();
+        try (ConsoleCapture.Close ignored = console.captureConsole()) {
+
+            oddjob.run();
+        }
+
+        assertTrue(oddjob.lastStateEvent().getState().isComplete());
+
+        String actual = console.getAll();
+
+        String expected = new String(Objects.requireNonNull(
+                getClass().getResourceAsStream("/data/FruitWithTransformation.jsonl")).readAllBytes(),
+                StandardCharsets.UTF_8);
+
+        JSONAssert.assertEquals(expected, actual, JSONCompareMode.LENIENT);
+
+        oddjob.destroy();
     }
 }

@@ -56,6 +56,22 @@ Here's the second example from the README configured for Oddjob. This is where w
 specify a schema.  
 {@oddjob.xml.file src/test/resources/examples/CsvToJsonWithSchema.xml}
 
+### Transformations
+
+Dido provides a number of configurable types to allow simple transformations
+to be applied to the data. Here we take some JSON lines:
+{@oddjob.xml.file src/test/resources/data/FruitElementsRandom.jsonl}
+The element order is random demonstrating that when a Schema is provided, Dido 
+does not care about the order of the elements.
+
+This configuration will read the JSON, remove the Colour field, Multiply the Price
+to create a new MarkupPrice field and as a constant BestBeforeDate. The date
+demonstrates using a ConversionProvider defined with JavaScript to perform the
+conversion to and from the `LocalDate` Java type.
+{@oddjob.xml.file src/test/resources/examples/JsonTransformWithSchema.xml}
+The following JSON lines are created:
+{@oddjob.xml.file src/test/resources/data/FruitWithTransformation.jsonl}
+
 ### Further Information
 
 For more on how to configure the Dido components in Oddjob the best place to start

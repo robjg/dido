@@ -2,15 +2,12 @@ package dido.json;
 
 import com.google.gson.FormattingStyle;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
 import com.google.gson.stream.JsonWriter;
-import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
-import dido.how.conversion.DidoConversionProvider;
 import dido.how.util.IoUtil;
 
 import java.io.*;
@@ -18,7 +15,6 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 
@@ -30,26 +26,12 @@ public class DataOutJson implements DataOutHow<Writer> {
         this.delegate = delegate;
     }
 
-    public static class Settings {
-
-        private JsonDidoFormat didoFormat;
+    public static class Settings extends InOutSettings<Settings> {
 
         private FormattingStyle formattingStyle = FormattingStyle.COMPACT;
 
-        private DataSchema schema;
-
-        private final GsonBuilder gsonBuilder = new GsonBuilder();
-
-        private final DidoConversionAdaptorFactory.Settings didoConversion =
-                DidoConversionAdaptorFactory.with();
-
-        public Settings gsonBuilder(Consumer<? super GsonBuilder> withBuilder) {
-            withBuilder.accept(gsonBuilder);
-            return this;
-        }
-
-        public Settings strictness(Strictness strictness) {
-            gsonBuilder.setStrictness(strictness == null ? Strictness.LEGACY_STRICT : strictness);
+        @Override
+        Settings self() {
             return this;
         }
 
@@ -91,16 +73,7 @@ public class DataOutJson implements DataOutHow<Writer> {
             return this;
         }
 
-        public Settings schema(DataSchema schema) {
-            this.schema = schema;
-            return this;
-        }
-
-        public Settings conversionProvider(DidoConversionProvider conversionProvider) {
-            didoConversion.conversionProvider(conversionProvider);
-            return this;
-        }
-
+        @Override
         public Settings didoConversion(Type from, Type to) {
             didoConversion.register(to, from);
             return this;
@@ -128,10 +101,7 @@ public class DataOutJson implements DataOutHow<Writer> {
 
         private JsonWriterWrapperProvider writerProvider() {
 
-            DidoConversionAdaptorFactory didoConversionAdaptorFactory = didoConversion.make();
-            if (!didoConversionAdaptorFactory.isEmpty()) {
-                gsonBuilder.registerTypeAdapterFactory(didoConversionAdaptorFactory);
-            }
+            registerGsonBuilderDefaults();
 
             Gson gson = gsonBuilder.create();
 

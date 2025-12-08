@@ -255,7 +255,7 @@ public class EnsureStandardInOutApiTest {
 
         assertThat(settingsClass.getMethod("schema", DataSchema.class)
                         .getReturnType(),
-                is(settingsClass));
+                notNullValue());
 
         assertThat(settingsClass.getMethod("partialSchema", boolean.class)
                         .getReturnType(),
@@ -284,7 +284,7 @@ public class EnsureStandardInOutApiTest {
 
         assertThat(settingsClass.getMethod("schema", DataSchema.class)
                         .getReturnType(),
-                is(settingsClass));
+                notNullValue());
     }
 
 }

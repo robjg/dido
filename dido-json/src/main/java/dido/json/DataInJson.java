@@ -1,20 +1,16 @@
 package dido.json;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.Strictness;
 import com.google.gson.ToNumberPolicy;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
-import dido.how.conversion.DidoConversionProvider;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -24,47 +20,21 @@ public class DataInJson implements DataInHow<Reader> {
 
     private final DataInHow<Reader> delegate;
 
-    public static class Settings {
-
-        private JsonDidoFormat didoFormat;
-
-        private DataSchema schema;
+    public static class Settings extends InOutSettings<Settings> {
 
         private boolean partialSchema;
 
-        private final GsonBuilder gsonBuilder = new GsonBuilder();
-
-        private final DidoConversionAdaptorFactory.Settings didoConversion =
-                DidoConversionAdaptorFactory.with();
-
+        @Override
+        Settings self() {
+            return this;
+        }
         public Settings inFormat(JsonDidoFormat didoFormat) {
             this.didoFormat = didoFormat;
             return this;
         }
 
-        public Settings strictness(Strictness strictness) {
-            gsonBuilder.setStrictness(strictness == null ? Strictness.LEGACY_STRICT : strictness);
-            return this;
-        }
-
         public Settings objectToNumberStrategy(ToNumberPolicy toNumberPolicy) {
             gsonBuilder.setObjectToNumberStrategy(toNumberPolicy);
-            return this;
-        }
-
-        @SuppressWarnings("UnusedReturnValue")
-        public Settings numberToNumberStrategy(ToNumberPolicy toNumberPolicy) {
-            gsonBuilder.setNumberToNumberStrategy(toNumberPolicy);
-            return this;
-        }
-
-        public Settings gsonBuilder(Consumer<? super GsonBuilder> withBuilder) {
-            withBuilder.accept(gsonBuilder);
-            return this;
-        }
-
-        public Settings schema(DataSchema schema) {
-            this.schema = schema;
             return this;
         }
 
@@ -79,11 +49,7 @@ public class DataInJson implements DataInHow<Reader> {
             return this;
         }
 
-        public Settings conversionProvider(DidoConversionProvider conversionProvider) {
-            didoConversion.conversionProvider(conversionProvider);
-            return this;
-        }
-
+        @Override
         public Settings didoConversion(Type from, Type to) {
             didoConversion.register(from, to);
             return this;
@@ -103,14 +69,6 @@ public class DataInJson implements DataInHow<Reader> {
 
         public DataIn fromReader(Reader reader) {
             return make().inFrom(reader);
-        }
-
-        private void registerGsonBuilderDefaults() {
-
-            DidoConversionAdaptorFactory didoConversionAdaptorFactory = didoConversion.make();
-            if (!didoConversionAdaptorFactory.isEmpty()) {
-                gsonBuilder.registerTypeAdapterFactory(didoConversionAdaptorFactory);
-            }
         }
 
         public DataInJson make() {

@@ -230,6 +230,13 @@ public class ViewTransformBuilder {
         public DidoData apply(DidoData data) {
             return new ViewData(schema, data);
         }
+
+        @Override
+        public String toString() {
+            return "ViewTransform{" +
+                    "schema=" + schema +
+                    '}';
+        }
     }
 
     public static class ViewDataSchema extends DataSchemaImpl

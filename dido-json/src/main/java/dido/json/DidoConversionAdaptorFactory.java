@@ -16,10 +16,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * Provides a Type Adaptor between what can be parsed/serialised by Gson and what can be converted by Dido.
+ */
 public class DidoConversionAdaptorFactory implements TypeAdapterFactory {
 
     private final DidoConversionProvider conversionProvider;
 
+    /** Conversion map from a Gson Parseable Type to a convertible with Dido type */
     private final Map<Type, Type> tos;
 
     protected DidoConversionAdaptorFactory(Settings settings) {
@@ -42,8 +46,11 @@ public class DidoConversionAdaptorFactory implements TypeAdapterFactory {
         /**
          * Conversions supported relative to the read side.
          */
-        public Settings register(Type from, Type to) {
-            tos.put(to, from);
+        public Settings register(Type gsonType, Type didoType) {
+            if (Objects.requireNonNull(gsonType) == Objects.requireNonNull(didoType)) {
+                throw new IllegalArgumentException("Can't register conversion of identical types:" + gsonType);
+            }
+            tos.put(didoType, gsonType);
             return this;
         }
 
@@ -61,69 +68,76 @@ public class DidoConversionAdaptorFactory implements TypeAdapterFactory {
     }
 
     @Override
-    public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-        Type from = tos.get(type.getType());
+    public <D> TypeAdapter<D> create(Gson gson, TypeToken<D> didoTypeToken) {
+        Type didoType = tos.get(didoTypeToken.getType());
 
-        if (from == null) {
+        if (didoType == null) {
             return null;
         }
 
-        return infer(gson, TypeToken.get(from), type);
+        return infer(gson, TypeToken.get(didoType), didoTypeToken);
     }
 
-    protected  <F, T> TypeAdapter<T> infer(Gson gson, TypeToken<F> original, TypeToken<T> type) {
+    protected  <G, D> TypeAdapter<D> infer(Gson gson,
+                                           TypeToken<G> gsonTypeToken,
+                                           TypeToken<D> didoTypeToken) {
 
-        TypeAdapter<F> fromAdaptor = gson.getAdapter(original);
+        TypeAdapter<G> fromAdaptor = gson.getAdapter(gsonTypeToken);
 
-        Function<F, T> readConversion = conversionProvider.conversionFor(original.getType(), type.getType());
-        Function<T, F> writeConversion = conversionProvider.conversionFor(type.getType(), original.getType());
+        if (fromAdaptor == null) {
+            throw new IllegalArgumentException("No TypeAdaptor for " + gsonTypeToken +
+                    ", can only provide a conversion on top of something Gson knows about.");
+        }
 
-        return new DidoAdaptor<>(original.getType(), type.getType(),
+        Function<G, D> readConversion = conversionProvider.conversionFor(gsonTypeToken.getType(), didoTypeToken.getType());
+        Function<D, G> writeConversion = conversionProvider.conversionFor(didoTypeToken.getType(), gsonTypeToken.getType());
+
+        return new DidoAdaptor<>(gsonTypeToken.getType(), didoTypeToken.getType(),
                 fromAdaptor, readConversion, writeConversion);
     }
 
 
-    static class DidoAdaptor<F, T> extends TypeAdapter<T> {
+    static class DidoAdaptor<G, D> extends TypeAdapter<D> {
 
-        private final Type from;
+        private final Type gsonType;
 
-        private final Type to;
+        private final Type didoType;
 
-        private final TypeAdapter<F> typeAdapter;
+        private final TypeAdapter<G> gsonTypeAdapter;
 
-        private final Function<F, T> readConversion;
+        private final Function<G, D> readConversion;
 
-        private final Function<T, F> writeConversion;
+        private final Function<D, G> writeConversion;
 
-        DidoAdaptor(Type from,
-                    Type to,
-                    TypeAdapter<F> typeAdapter,
-                    Function<F, T> readConversion,
-                    Function<T, F> writeConversion) {
-            this.from = from;
-            this.to = to;
-            this.typeAdapter = typeAdapter;
+        DidoAdaptor(Type gsonType,
+                    Type didoType,
+                    TypeAdapter<G> gsonTypeAdapter,
+                    Function<G, D> readConversion,
+                    Function<D, G> writeConversion) {
+            this.gsonType = gsonType;
+            this.didoType = didoType;
+            this.gsonTypeAdapter = gsonTypeAdapter;
             this.readConversion = readConversion;
             this.writeConversion = writeConversion;
         }
 
         @Override
-        public void write(JsonWriter out, T value) throws IOException {
+        public void write(JsonWriter out, D value) throws IOException {
 
-            F original = Objects.requireNonNull(writeConversion,
-                    "No Dido Conversion to " + from + " from " + to)
+            G original = Objects.requireNonNull(writeConversion,
+                    "No Dido Conversion to " + gsonType + " from " + didoType)
                     .apply(value);
 
-            typeAdapter.write(out, original);
+            gsonTypeAdapter.write(out, original);
         }
 
         @Override
-        public T read(JsonReader in) throws IOException {
+        public D read(JsonReader in) throws IOException {
 
-            F original = typeAdapter.read(in);
+            G original = gsonTypeAdapter.read(in);
 
             return Objects.requireNonNull(readConversion,
-                            "No Dido Conversion from " + from + " to " + to)
+                            "No Dido Conversion from " + gsonType + " to " + didoType)
                     .apply(original);
         }
     }

@@ -629,7 +629,13 @@ public class FieldViews {
                                 conversionProvider,
                                 DefaultConversionProvider.defaultInstance());
 
-                        return conversionProviderOrDefault.conversionFor(value.getClass(), type).apply(value);
+                        Type fromType = value.getClass();
+                        Function<Object, ?> conversion = conversionProviderOrDefault.conversionFor(fromType, type);
+                        if (conversion == null) {
+                            throw new IllegalArgumentException("No conversion from " + fromType + " to " + type);
+                        }
+
+                        return conversion.apply(value);
                     }
                 }
 

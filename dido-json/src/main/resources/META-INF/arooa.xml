@@ -8,7 +8,50 @@
     </conversions>
     <values>
         <arooa:bean-def element='json'
-                        className='dido.json.JsonDido'/>
+                        className='dido.json.JsonDido'>
+            <design>
+                <design:form xmlns:design="arooa:design">
+                    <formItems>
+                        <design:group bordered="true">
+                            <formItems>
+                                <design:tabs>
+                                    <formItems>
+                                        <design:group title="In/Out">
+                                            <formItems>
+                                                <design:single property="schema" title="Schema"/>
+                                                <design:text property="format" title="Format"/>
+                                                <design:text property="strictness" title="Strictness"/>
+                                            </formItems>
+                                        </design:group>
+                                        <design:group title="In Only">
+                                            <formItems>
+                                                <design:text property="partialSchema" title="Partial Schema"/>
+                                                <design:text property="objectToNumberPolicy" title="Object To Number Policy"/>
+                                            </formItems>
+                                        </design:group>
+                                        <design:group title="Out Only">
+                                            <formItems>
+                                                <design:text property="serializeNulls" title="Serialize Nulls"/>
+                                                <design:text property="serializeSpecialFloatingPointValues"
+                                                             title="Serialize Special FP Values"/>
+                                            </formItems>
+                                        </design:group>
+                                        <design:group title="Advanced">
+                                            <formItems>
+                                                <design:single property="conversionProvider" title="conversionProvider"/>
+                                                <design:single property="classLoader" title="classLoader"/>
+                                                <design:mapped property="didoConversion" title="Mapped"/>
+                                                <design:indexed property="gsonBuilder" title="Gson Builder"/>
+                                            </formItems>
+                                        </design:group>
+                                    </formItems>
+                                </design:tabs>
+                            </formItems>
+                        </design:group>
+                    </formItems>
+                </design:form>
+            </design>
+        </arooa:bean-def>
         <arooa:bean-def element="from-json"
                         className="dido.json.FromJsonStringType"/>
         <arooa:bean-def element="to-json"

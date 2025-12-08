@@ -198,5 +198,14 @@ public class WriteTransformBuilder {
             }
             return dataFactory.toData();
         }
+
+        @Override
+        public String toString() {
+            return "WriteTransform{" +
+                    "schema=" + schema +
+                    ", dataFactory=" + dataFactory +
+                    ", ops=" + ops.size() +
+                    '}';
+        }
     }
 }

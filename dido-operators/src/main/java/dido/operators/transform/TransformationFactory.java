@@ -218,4 +218,14 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         return transformationManager.build();
     }
 
+    @Override
+    public String toString() {
+        return "TransformationFactory{" +
+                "of=" + of.size() + " FieldViews" +
+                ", withExisting=" + withExisting +
+                ", reIndex=" + reIndex +
+                ", copy=" + copy +
+                ", dataFactoryProvider=" + dataFactoryProvider +
+                '}';
+    }
 }

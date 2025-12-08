@@ -17,6 +17,7 @@
 						</design:group>
 						<design:group bordered="true" title="Optional">
 							<formItems>
+                                <design:single property="schema" title="Schema"/>
 								<design:text property="batchSize" title="Batch Size"/>
 								<design:single property="classLoader" title="Class Loader"/>
 							</formItems>
