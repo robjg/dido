@@ -1,6 +1,5 @@
 package dido.oddjob.util;
 
-import dido.data.util.TypeUtil;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 import org.oddjob.arooa.ArooaSession;
@@ -152,9 +151,8 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
 
         @Override
         public <F, T> Function<F, T> conversionFor(Type from, Type to) {
-            @SuppressWarnings("unchecked") ConversionPath<F, T> conversionPath =
-                    (ConversionPath<F, T>) arooaConverter.findConversion(
-                            TypeUtil.classOf(from), TypeUtil.classOf(to));
+            ConversionPath<F, T> conversionPath =
+                    arooaConverter.findConversion(from, to);
             if (conversionPath == null) {
                 return null;
             }
