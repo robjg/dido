@@ -11,6 +11,7 @@ import org.oddjob.arooa.life.SimpleArooaClass;
 import org.oddjob.arooa.reflect.ArooaClass;
 import org.oddjob.arooa.reflect.BeanOverview;
 import org.oddjob.arooa.reflect.PropertyAccessor;
+import org.oddjob.arooa.utils.ClassUtils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -125,7 +126,7 @@ public class ToBeanArooa {
                     continue;
                 }
 
-                Class<?> type = beanOverview.getPropertyType(propertyName);
+                Class<?> type = ClassUtils.rawType(beanOverview.getPropertyType(propertyName));
 
                 SchemaField schemaField = schema.getSchemaFieldAt(index);
 

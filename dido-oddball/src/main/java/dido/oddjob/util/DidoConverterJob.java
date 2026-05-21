@@ -117,7 +117,7 @@ public class DidoConverterJob implements Runnable, ServiceProvider, ArooaSession
         }
 
         @Override
-        public String serviceNameFor(Class<?> theClass, String flavour) {
+        public String serviceNameFor(Type theClass, String flavour) {
             if (theClass == DidoConversionProvider.class) {
                 return DIDO_CONVERSION_PROVIDER_SERVICE_NAME;
             } else {
