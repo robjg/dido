@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  * See any of the formatters for examples of how to use.
  *
  * @oddjob.example Read lines in.
- * {@oddjob.xml.resource dido/oddjob/stream/StreamInOut.xml}
+ * {@oddjob.xml.resource dido/oddjob/beanbus/StreamInOut.xml}
  *
  *
  * @param <I> The Input type.

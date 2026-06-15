@@ -1,4 +1,4 @@
-package dido.oddjob.stream;
+package dido.oddjob.beanbus;
 
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
@@ -12,14 +12,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.is;
 
-class StreamInOutBusTest {
+class MapInOutBusTest {
 
     @Test
     void testInOddjob() throws ArooaConversionException {
 
         Oddjob oddjob = new Oddjob();
         oddjob.setFile(new File(Objects.requireNonNull(
-                getClass().getResource("StreamInOut.xml")).getFile()));
+                getClass().getResource("MapInOut.xml")).getFile()));
 
         oddjob.run();
 
@@ -27,7 +27,6 @@ class StreamInOutBusTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        @SuppressWarnings("unchecked")
         String[] results = lookup.lookup("vars.results", String[].class);
 
         assertThat(results, arrayContaining(

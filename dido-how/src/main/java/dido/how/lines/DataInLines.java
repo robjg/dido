@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -56,6 +57,11 @@ public class DataInLines implements DataInHow<Reader> {
                     new InputStreamReader(inputStream)));
         }
 
+        public Function<String, DidoData> mapFromString() {
+
+            return make().singleDataType::of;
+        }
+
         public DataInLines make() {
             return new DataInLines(this);
         }
@@ -72,6 +78,11 @@ public class DataInLines implements DataInHow<Reader> {
     public static DataIn fromInputStream(InputStream inputStream) {
 
         return with().fromInputStream(inputStream);
+    }
+
+    public static Function<String, DidoData> mapFromString() {
+
+        return with().mapFromString();
     }
 
     public static Settings with() {

@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
 import com.google.gson.ToNumberPolicy;
 import dido.data.DataSchema;
+import dido.data.DidoData;
 import dido.data.util.ClassUtils;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
@@ -17,6 +18,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Provide a {@link DataInHow} and a {@link DataOutHow} for JSON.
@@ -154,10 +156,22 @@ public class JsonDido {
 
         JsonDidoFormat format = Objects.requireNonNullElse(this.format, JsonDidoFormat.LINES);
 
+        return settingsOut()
+                .outFormat(format)
+                .make();
+    }
+
+    public Function<DidoData, String> toMapToString() {
+
+        return settingsOut()
+                .mapToString();
+    }
+
+    private DataOutJson.Settings settingsOut() {
+
         DataOutJson.Settings settings = DataOutJson.with()
                 .schema(schema)
-                .strictness(strictness)
-                .outFormat(format);
+                .strictness(strictness);
 
         loadConversions(settings);
 
@@ -173,7 +187,7 @@ public class JsonDido {
             settings.gsonBuilder(builder);
         }
 
-        return settings.make();
+        return settings;
     }
 
     public DataInHow<InputStream> toStreamIn() {
@@ -181,6 +195,19 @@ public class JsonDido {
     }
 
     public DataInHow<Reader> toReaderIn() {
+
+        JsonDidoFormat format = Objects.requireNonNullElse(this.format, JsonDidoFormat.LINES);
+
+        return settingsIn().inFormat(format)
+                .make();
+    }
+
+    public Function<String, DidoData> toMapFromString() {
+
+        return settingsIn().mapFromString();
+    }
+
+    private DataInJson.Settings settingsIn() {
 
         JsonDidoFormat format = Objects.requireNonNullElse(this.format, JsonDidoFormat.LINES);
 
@@ -198,7 +225,7 @@ public class JsonDido {
             settings.gsonBuilder(builder);
         }
 
-        return settings.make();
+        return settings;
     }
 
     void loadConversions(InOutSettings<?> settings) {

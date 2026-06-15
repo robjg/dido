@@ -12,6 +12,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Streams  out from Dido data of a single field defaulting to the name of 'Line'.
@@ -67,6 +68,11 @@ public class DataOutLines implements DataOutHow<Appendable> {
             return make().outTo(new OutputStreamWriter(outputStream));
         }
 
+        public Function<DidoData, String> mapToString() {
+
+            return make().asFunc();
+        }
+
         public DataOutLines make() {
             return new DataOutLines(this);
         }
@@ -87,6 +93,11 @@ public class DataOutLines implements DataOutHow<Appendable> {
     public static DataOut toOutputStream(OutputStream outputStream) {
 
         return with().toOutputStream(outputStream);
+    }
+
+    public static Function<DidoData, String> mapToString() {
+
+        return with().mapToString();
     }
 
     public static Settings with() {
@@ -110,13 +121,20 @@ public class DataOutLines implements DataOutHow<Appendable> {
                 new KnownOut(fieldGetter, outTo);
     }
 
+    Function<DidoData, String> asFunc() {
+
+        return fieldGetter == null ?
+                new UnKnownOut(fieldName, null) :
+                new KnownOut(fieldGetter, null);
+    }
+
     static FieldGetter fieldGetterFrom(DataSchema schema,
                                        String fieldName) {
         ReadStrategy readStrategy = ReadStrategy.fromSchema(schema);
         return readStrategy.getFieldGetterNamed(fieldName);
     }
 
-    static class KnownOut implements DataOut {
+    static class KnownOut implements DataOut, Function<DidoData, String> {
 
         private final FieldGetter fieldGetter;
 
@@ -141,20 +159,31 @@ public class DataOutLines implements DataOutHow<Appendable> {
         }
 
         @Override
-        public void accept(DidoData data) {
+        public void accept(DidoData didoData) {
 
             try {
-                if (fieldGetter.has(data)) {
-                    out.append(fieldGetter.get(data).toString());
+                String s = apply(didoData);
+                if (s != null) {
+                    out.append(s);
                 }
                 out.append(System.lineSeparator());
             } catch (IOException e) {
                 throw DataException.of(e);
             }
         }
+
+        @Override
+        public String apply(DidoData didoData) {
+            if (fieldGetter.has(didoData)) {
+                return fieldGetter.get(didoData).toString();
+            }
+            else {
+                return null;
+            }
+        }
     }
 
-    static class UnKnownOut implements DataOut {
+    static class UnKnownOut implements DataOut, Function<DidoData, String> {
 
         private final String fieldName;
 
@@ -162,7 +191,7 @@ public class DataOutLines implements DataOutHow<Appendable> {
 
         private DataSchema lastSchema;
 
-        private DataOut known;
+        private KnownOut known;
 
         UnKnownOut(String fieldName,
                    Appendable out) {
@@ -182,15 +211,25 @@ public class DataOutLines implements DataOutHow<Appendable> {
         }
 
         @Override
-        public void accept(DidoData data) {
-            DataSchema schema = data.getSchema();
+        public void accept(DidoData didoData) {
+            ensureKnown(didoData);
+            known.accept(didoData);
+        }
+
+        @Override
+        public String apply(DidoData didoData) {
+            ensureKnown(didoData);
+            return known.apply(didoData);
+        }
+
+        public void ensureKnown(DidoData didoData) {
+            DataSchema schema = didoData.getSchema();
             if (!schema.equals(lastSchema)) {
                 known = new KnownOut(
                         fieldGetterFrom(schema, fieldName),
                         out);
                 lastSchema = schema;
             }
-            known.accept(data);
         }
     }
 }

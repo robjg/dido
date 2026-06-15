@@ -9,6 +9,7 @@ import dido.how.lines.DataOutLines;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.function.Function;
 
 /**
  * @oddjob.description Creates an In or Out for Lines of Text. The {@link DidoData} is created or expected to have
@@ -41,9 +42,31 @@ public class LinesDido {
         return StreamHows.fromReaderHow(dataInLines);
     }
 
+    public Function<DidoData, String> toMapToString() {
+
+        return DataOutLines.with()
+                .fieldName(fieldName)
+                .mapToString();
+    }
+
+    public Function<String, DidoData> toMapFromString() {
+
+        return DataInLines.with()
+                .fieldName(fieldName)
+                .mapFromString();
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
     @Override
     public String toString() {
-        return "LinesHowType{" +
+        return "LinesDido{" +
                 "fieldName='" + fieldName + '\'' +
                 '}';
     }

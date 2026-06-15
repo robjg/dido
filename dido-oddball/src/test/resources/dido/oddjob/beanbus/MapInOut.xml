@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob>
+    <job>
+        <sequential>
+            <jobs>
+                <variables id="vars">
+                    <results>
+                        <buffer/>
+                    </results>
+                    <how>
+                        <dido:lines fieldName="stuff" xmlns:dido="oddjob:dido"/>
+                    </how>
+                </variables>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <copy>
+                            <input>
+                                <buffer><![CDATA[The
+Quick
+Brown
+Fox
+Jumped
+Over
+The
+Lazy
+Dog]]></buffer>
+                            </input>
+                        </copy>
+                        <dido:to-dido xmlns:dido="oddjob:dido">
+                            <function>
+                                <value value="${vars.how}"/>
+                            </function>
+                        </dido:to-dido>
+                        <dido:from-dido xmlns:dido="oddjob:dido">
+                            <function>
+                                <value value="${vars.how}"/>
+                            </function>
+                        </dido:from-dido>
+                        <bus:collect>
+                            <output>
+                                <value value="${vars.results}"/>
+                            </output>
+                        </bus:collect>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>

@@ -43,4 +43,32 @@ class FromJsonStringTypeTest {
 
         oddjob.destroy();
     }
+
+    @Test
+    void example2() throws IOException, JSONException {
+
+        File file = new File(Objects.requireNonNull(getClass().getResource(
+                "FromJsonMapExample2.xml")).getFile());
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setFile(file);
+
+        ConsoleCapture console = new ConsoleCapture();
+        try (ConsoleCapture.Close ignored = console.captureConsole()) {
+
+            oddjob.run();
+        }
+
+        assertTrue(oddjob.lastStateEvent().getState().isComplete());
+
+        String actual = console.getAll();
+
+        String expected = new String(Objects.requireNonNull(
+                getClass().getResourceAsStream("FromJsonMapExampleOut.json")).readAllBytes(),
+                StandardCharsets.UTF_8);
+
+        JSONAssert.assertEquals(expected, actual, JSONCompareMode.LENIENT);
+
+        oddjob.destroy();
+    }
 }

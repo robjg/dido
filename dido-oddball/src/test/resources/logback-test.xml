@@ -15,6 +15,7 @@
   <logger name="dido" level="DEBUG"/>
   <logger name="org.oddjob" level="DEBUG"/>
   <logger name="org.oddjob.arooa" level="INFO"/>
+  <logger name="org.oddjob.arooa.convert" level="INFO"/>
   <logger name="org.oddjob.schedules" level="INFO"/>
   
 </configuration>

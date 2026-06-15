@@ -1,10 +1,12 @@
 <arooa:descriptor xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
                   prefix="dido" namespace="oddjob:dido">
     <conversions>
-        <arooa:conversion className="dido.json.JsonDido" methodName="toStreamOut"/>
-        <arooa:conversion className="dido.json.JsonDido" methodName="toStreamIn"/>
-        <arooa:conversion className="dido.json.FromJsonStringType" methodName="toFunction"/>
-        <arooa:conversion className="dido.json.ToJsonStringType" methodName="toFunction"/>
+        <arooa:conversion className="dido.json.JsonDido" methodName="toStreamOut" arooaValue="true"/>
+        <arooa:conversion className="dido.json.JsonDido" methodName="toStreamIn" arooaValue="true"/>
+        <arooa:conversion className="dido.json.JsonDido" methodName="toMapToString" arooaValue="true"/>
+        <arooa:conversion className="dido.json.JsonDido" methodName="toMapFromString" arooaValue="true"/>
+        <arooa:conversion className="dido.json.FromJsonStringType" methodName="toFunction" arooaValue="true"/>
+        <arooa:conversion className="dido.json.ToJsonStringType" methodName="toFunction" arooaValue="true"/>
     </conversions>
     <values>
         <arooa:bean-def element='json'

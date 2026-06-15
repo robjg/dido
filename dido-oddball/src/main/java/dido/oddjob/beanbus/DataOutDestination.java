@@ -25,7 +25,7 @@ import java.util.function.Consumer;
  * See any of the formatters for examples of how to use.
  *
  * @oddjob.example Writes lines out.
- * {@oddjob.xml.resource dido/oddjob/stream/StreamInOut.xml}
+ * {@oddjob.xml.resource dido/oddjob/beanbus/StreamInOut.xml}
  *
  * @param <O> The type of the output.
  */
