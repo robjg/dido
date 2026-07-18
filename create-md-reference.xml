@@ -6,21 +6,22 @@
                 <properties>
                     <values>
                         <file file="${oddjob.dir}/docs/reference" key="reference.dir"/>
-                        <value key="oddjob.version" value="1.7.0-SNAPSHOT"/>
-                        <value key="project.version" value="2.0.0-SNAPSHOT"/>
+                        <value key="oddjob.version" value="1.8.0-SNAPSHOT"/>
+                        <value key="project.version" value="2.1.0-SNAPSHOT"/>
                     </values>
                 </properties>
                 <variables id="vars">
                     <descriptorUrls>
                         <list>
                             <values>
-                                <value value="file:${oddjob.dir}/dido-csv/src/main/resources/META-INF/arooa.xml"/>
-                                <value value="file:${oddjob.dir}/dido-json/src/main/resources/META-INF/arooa.xml"/>
-                                <value value="file:${oddjob.dir}/dido-sql/src/main/resources/META-INF/arooa.xml"/>
-                                <value value="file:${oddjob.dir}/dido-text/src/main/resources/META-INF/arooa.xml"/>
-                                <value value="file:${oddjob.dir}/dido-poi/src/main/resources/META-INF/arooa.xml"/>
-                                <value value="file:${oddjob.dir}/dido-operators/src/main/resources/META-INF/arooa.xml"/>
-                                <value value="file:${oddjob.dir}/dido-oddball/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="#{oddjob.getDir().toURI()}/dido-csv/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="#{oddjob.getDir().toURI()}/dido-json/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="#{oddjob.getDir().toURI()}/dido-sql/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="#{oddjob.getDir().toURI()}/dido-text/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="#{oddjob.getDir().toURI()}/dido-poi/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="#{oddjob.getDir().toURI()}/dido-operators/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="#{oddjob.getDir().toURI()}/dido-oddball/src/main/resources/META-INF/arooa.xml"/>
+                                <value value="#{oddjob.getDir().toURI()}/dido-replay/src/main/resources/META-INF/arooa.xml"/>
                             </values>
                         </list>
                     </descriptorUrls>
@@ -36,6 +37,7 @@
                                 <file file="${oddjob.dir}/dido-poi/src/main/java"/>
                                 <file file="${oddjob.dir}/dido-operators/src/main/java"/>
                                 <file file="${oddjob.dir}/dido-oddball/src/main/java"/>
+                                <file file="${oddjob.dir}/dido-replay/src/main/java"/>
                             </list>
                         </files>
                     </sources>
@@ -56,6 +58,8 @@
                                 <file file="${oddjob.dir}/dido-operators/src/test/java"/>
                                 <file file="${oddjob.dir}/dido-oddball/src/test/resources"/>
                                 <file file="${oddjob.dir}/dido-oddball/src/test/java"/>
+                                <file file="${oddjob.dir}/dido-replay/src/test/resources"/>
+                                <file file="${oddjob.dir}/dido-replay/src/test/java"/>
                             </list>
                         </files>
                     </loaderPath>

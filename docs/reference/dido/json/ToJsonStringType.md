@@ -8,6 +8,7 @@ into a JSON String. See also [dido:from-json](../../dido/json/FromJsonStringType
 
 | Property | Description |
 | -------- | ----------- |
+| [gsonBuilder](#propertygsonbuilder) | Configure the Gson Builder directly. | 
 | [schema](#propertyschema) | The schema to use. | 
 | [serializeNulls](#propertyserializenulls) | Serialize null values. | 
 | [serializeSpecialFloatingPointValues](#propertyserializespecialfloatingpointvalues) | Serialize NaN and Infinity values. | 
@@ -22,6 +23,17 @@ into a JSON String. See also [dido:from-json](../../dido/json/FromJsonStringType
 
 
 ### Property Detail
+#### gsonBuilder <a name="propertygsonbuilder"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>WRITE_ONLY</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
+</table>
+
+Configure the Gson Builder directly. This property specifies any number of Consumers of
+the Gson Builder. See the examples for using this with JavaScript.
+
 #### schema <a name="propertyschema"></a>
 
 <table style='font-size:smaller'>

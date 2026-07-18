@@ -8,7 +8,12 @@ of a single JSON Object per line. An array of JSON Objects, or A single JSON Obj
 
 | Property | Description |
 | -------- | ----------- |
+| [classLoader](#propertyclassloader) | The class loader used to create the types for the specified dido conversions. | 
+| [conversionProvider](#propertyconversionprovider) | A Conversion Provider used when Dido conversions are specified. | 
+| [didoConversion](#propertydidoconversion) | Specify a Dido Conversion is to be used for the given transformation pair of types. | 
 | [format](#propertyformat) | The format of the data. | 
+| [gsonBuilder](#propertygsonbuilder) | Configure the Gson Builder directly. | 
+| [objectToNumberPolicy](#propertyobjecttonumberpolicy) | Configures Gson to apply a specific number strategy during deserialization of number type primitives. | 
 | [partialSchema](#propertypartialschema) | When reading data in, indicates that the provided Schema is partial. | 
 | [schema](#propertyschema) | The schema to use. | 
 | [serializeNulls](#propertyserializenulls) | Serialize null values. | 
@@ -27,6 +32,43 @@ of a single JSON Object per line. An array of JSON Objects, or A single JSON Obj
 
 
 ### Property Detail
+#### classLoader <a name="propertyclassloader"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No. Set automatically by the framework.</td></tr>
+</table>
+
+The class loader used to create the types for the specified
+dido conversions.
+
+#### conversionProvider <a name="propertyconversionprovider"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
+</table>
+
+A Conversion Provider used when Dido conversions are specified.
+
+#### didoConversion <a name="propertydidoconversion"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>WRITE_ONLY</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
+</table>
+
+Specify a Dido Conversion is to be used for the given
+transformation pair of types. When reading in the key is given as the
+type that Gson will provide from the JSON element, Typically, this will be
+String, Double, Boolean, or Map. The value is the type Dido
+will convert to, and will be the more complicated type. When writing
+Data out, the key is the complex Dido type and the value is the simpler Gson
+aware type.
+
 #### format <a name="propertyformat"></a>
 
 <table style='font-size:smaller'>
@@ -36,6 +78,28 @@ of a single JSON Object per line. An array of JSON Objects, or A single JSON Obj
 </table>
 
 The format of the data. LINES, ARRAY, SINGLE.
+
+#### gsonBuilder <a name="propertygsonbuilder"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>WRITE_ONLY</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
+</table>
+
+Configure the Gson Builder directly. This property specifies any number of Consumers of
+the Gson Builder. See the examples for using this with JavaScript.
+
+#### objectToNumberPolicy <a name="propertyobjecttonumberpolicy"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No, defaults numbers as doubles.</td></tr>
+</table>
+
+Configures Gson to apply a specific number strategy during deserialization of
+number type primitives. This is what will be used for a partial or no schema when converting numbers.
 
 #### partialSchema <a name="propertypartialschema"></a>
 

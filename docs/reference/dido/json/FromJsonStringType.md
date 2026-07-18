@@ -11,6 +11,8 @@ See also [dido:to-json](../../dido/json/ToJsonStringType.md)
 
 | Property | Description |
 | -------- | ----------- |
+| [gsonBuilder](#propertygsonbuilder) | Configure the Gson Builder directly. | 
+| [objectToNumberPolicy](#propertyobjecttonumberpolicy) | Configures Gson to apply a specific number strategy during deserialization of number type primitives. | 
 | [partialSchema](#propertypartialschema) | Indicates that the provided Schema is partial. | 
 | [schema](#propertyschema) | The schema to use. | 
 | [strictness](#propertystrictness) | Gson Strictness passed through to underlying Gson builder. | 
@@ -24,6 +26,28 @@ See also [dido:to-json](../../dido/json/ToJsonStringType.md)
 
 
 ### Property Detail
+#### gsonBuilder <a name="propertygsonbuilder"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>WRITE_ONLY</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
+</table>
+
+Configure the Gson Builder directly. This property specifies any number of Consumers of
+the Gson Builder. See the examples for using this with JavaScript.
+
+#### objectToNumberPolicy <a name="propertyobjecttonumberpolicy"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No, defaults numbers as doubles.</td></tr>
+</table>
+
+Configures Gson to apply a specific number strategy during deserialization of
+number type primitives. This is what will be used for a partial or no schema when converting numbers.
+
 #### partialSchema <a name="propertypartialschema"></a>
 
 <table style='font-size:smaller'>

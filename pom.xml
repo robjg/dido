@@ -62,7 +62,7 @@
         <javax.inject.version>1</javax.inject.version>
 
         <slf4j.version>2.0.17</slf4j.version>
-        <logback.version>1.5.20</logback.version>
+        <logback.version>1.5.34</logback.version>
         <commons-io.version>2.20.0</commons-io.version>
 
         <nashorn.version>15.7</nashorn.version>
@@ -373,6 +373,11 @@
                         <groupId>ch.qos.logback</groupId>
                         <artifactId>logback-classic</artifactId>
                         <version>${logback.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openjdk.nashorn</groupId>
+                        <artifactId>nashorn-core</artifactId>
+                        <version>${nashorn.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
