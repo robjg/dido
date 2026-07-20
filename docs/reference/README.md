@@ -6,8 +6,8 @@
 - [dido:data-in](dido/oddjob/beanbus/DataInDriver.md) - A Bean Bus Driver that reads data from the 'from' according to the given 'how'.
 - [dido:data-out](dido/oddjob/beanbus/DataOutDestination.md) - A Bean Bus Destination that accepts `dido.data.DidoData` and writes it out to the given 'to' according to the given 'how'.
 - [dido:from-dido](dido/oddjob/beanbus/FromDido.md) - Provide a BeanBus component that uses a mapper to convert from a `dido.data.DidoData` to some other data type.
-- [dido:play](dido/replay/DataPlayerJob.md) - 
-- [dido:record](dido/replay/DataRecorderService.md) - 
+- [dido:play](dido/replay/DataPlayerJob.md) - Plays back Data.
+- [dido:record](dido/replay/DataRecorderService.md) - Records data it receives to files.
 - [dido:stream-join](dido/operators/join/StreamJoinService.md) - A service that Joins two sources of `dido.data.DidoData` into a single destination.
 - [dido:to-dido](dido/oddjob/beanbus/ToDido.md) - Provide a BeanBus component that uses a mapper to convert to `dido.data.DidoData` from some other data type.
 

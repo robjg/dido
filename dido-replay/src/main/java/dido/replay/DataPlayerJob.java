@@ -11,34 +11,95 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+/**
+ * @oddjob.description Plays back Data. Data is expected to be from three inputs for
+ * data, schema and time such as those recorded with {@link DataRecorderService}.
+ *
+ * @oddjob.example Plays back data.
+ * {@oddjob.xml.resource dido/replay/RecordPlayExample.xml}
+ */
 public class DataPlayerJob implements Runnable, AutoCloseable {
 
+    /**
+     * @oddjob.description The name of the component.
+     * @oddjob.required No.
+     */
     private volatile String name;
 
+    /**
+     * @oddjob.description Directory where the files are to be found.
+     * @oddjob.required No.
+     */
     private volatile Path dir;
 
+    /**
+     * @oddjob.description Optional file name prefix.
+     * @oddjob.required No.
+     */
     private volatile String filesPrefix;
 
+    /**
+     * @oddjob.description Override where the data will be sourced from.
+     * @oddjob.required No.
+     */
     private volatile InputStream dataIn;
 
+    /**
+     * @oddjob.description Override where the schema will be sourced from.
+     * @oddjob.required No.
+     */
     private volatile InputStream schemaIn;
 
+    /**
+     * @oddjob.description Override where the time will be sourced from.
+     * @oddjob.required No.
+     */
     private volatile InputStream timeIn;
 
+    /**
+     * @oddjob.description If specified the player will skip forward to
+     * this time or after.
+     * @oddjob.required No.
+     */
     private volatile Instant fromTime;
 
+    /**
+     * @oddjob.description If specified the player will stop replaying
+     * after this time.
+     * @oddjob.required No.
+     */
     private volatile Instant toTime;
 
-    private volatile int playBackSpeed;
+    /**
+     * @oddjob.description Allows time to be speeded up.
+     * @oddjob.required No, defaults to 1.0.
+     */
+    private volatile double playBackSpeed;
 
+    /**
+     * @oddjob.description Where the data will be sent to.
+     * @oddjob.required No. Automatically set in BeanBus.
+     */
     private volatile Consumer<? super DidoData> to;
 
+    /**
+     * @oddjob.description The number of data items played.
+     * @oddjob.required Read Only.
+     */
     private final AtomicInteger count = new AtomicInteger();
 
     private final AtomicReference<Thread> currentThread = new AtomicReference<>();
 
+    /**
+     * @oddjob.description The timestamp of the last data item played.
+     * @oddjob.required Read Only.
+     */
     private volatile Instant lastTime;
 
+    /**
+     * @oddjob.description The number of milliseconds until the next item is played.
+     * @oddjob.required Read Only.
+     */
     private volatile long wait;
 
     @Override
@@ -84,8 +145,8 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
                     break;
                 }
                 wait = ChronoUnit.MILLIS.between(lastTime, timestamp);
-                if (playBackSpeed != 0) {
-                    wait = wait / playBackSpeed;
+                if (playBackSpeed > 0.0) {
+                    wait = (long) (wait / playBackSpeed);
                 }
                 if (wait > 0) {
                     try {
@@ -172,11 +233,11 @@ public class DataPlayerJob implements Runnable, AutoCloseable {
         this.toTime = toTime;
     }
 
-    public int getPlayBackSpeed() {
+    public double getPlayBackSpeed() {
         return playBackSpeed;
     }
 
-    public void setPlayBackSpeed(int playBackSpeed) {
+    public void setPlayBackSpeed(double playBackSpeed) {
         this.playBackSpeed = playBackSpeed;
     }
 

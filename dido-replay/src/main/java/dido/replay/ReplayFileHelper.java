@@ -4,11 +4,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+/**
+ * Help with the paths of the 3 files.
+ */
 public class ReplayFileHelper {
 
-    public static final String DATA_FILE_NAME = "data.json";
+    public static final String DATA_FILE_NAME = "data.jsonl";
 
-    public static final String SCHEMA_FILE_NAME = "schema.json";
+    public static final String SCHEMA_FILE_NAME = "schema.jsonl";
 
     public static final String TIME_FILE_NAME = "time.txt";
 

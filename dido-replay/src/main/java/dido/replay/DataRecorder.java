@@ -17,12 +17,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.InstantSource;
 import java.util.Objects;
 
+/**
+ * Records Dido Data.
+ *
+ * @see DataRecorderService
+ */
 public class DataRecorder implements CloseableConsumer<DidoData> {
 
     private static final Logger logger = LoggerFactory.getLogger(DataRecorder.class);
-    private final Clock clock;
+
+    private final InstantSource clock;
 
     private final CloseableConsumer<? super DidoData> dataConsumer;
 
@@ -30,7 +37,7 @@ public class DataRecorder implements CloseableConsumer<DidoData> {
 
     private final CloseableConsumer<? super Instant> timeConsumer;
 
-    private DataRecorder(Outputs outputs, Clock clock) {
+    private DataRecorder(Outputs outputs, InstantSource clock) {
 
         this.clock = Objects.requireNonNullElse(clock, Clock.systemUTC());
 
@@ -74,7 +81,7 @@ public class DataRecorder implements CloseableConsumer<DidoData> {
 
         private volatile OutputStream timeOut;
 
-        private Clock clock;
+        private InstantSource clock;
 
         public Settings dir(Path dir) {
             this.dir = dir;
@@ -101,7 +108,7 @@ public class DataRecorder implements CloseableConsumer<DidoData> {
             return this;
         }
 
-        public Settings clock(Clock clock) {
+        public Settings clock(InstantSource clock) {
             this.clock = clock;
             return this;
         }

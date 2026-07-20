@@ -18,8 +18,8 @@ class ReplayFileHelperTest {
                 .dir(Path.of("SomeDir"))
                 .make();
 
-        assertThat(fileHelper.getDataFile().toString(), is("SomeDir" + File.separator + "data.json"));
-        assertThat(fileHelper.getSchemaFile().toString(), is("SomeDir" + File.separator + "schema.json"));
+        assertThat(fileHelper.getDataFile().toString(), is("SomeDir" + File.separator + "data.jsonl"));
+        assertThat(fileHelper.getSchemaFile().toString(), is("SomeDir" + File.separator + "schema.jsonl"));
         assertThat(fileHelper.getTimeFile().toString(), is("SomeDir" + File.separator + "time.txt"));
     }
 
@@ -31,8 +31,8 @@ class ReplayFileHelperTest {
                 .filesPrefix("our.")
                 .make();
 
-        assertThat(fileHelper.getDataFile().toString(), is("." + File.separator + "our.data.json"));
-        assertThat(fileHelper.getSchemaFile().toString(), is("." + File.separator + "our.schema.json"));
+        assertThat(fileHelper.getDataFile().toString(), is("." + File.separator + "our.data.jsonl"));
+        assertThat(fileHelper.getSchemaFile().toString(), is("." + File.separator + "our.schema.jsonl"));
         assertThat(fileHelper.getTimeFile().toString(), is("." + File.separator + "our.time.txt"));
 
     }
