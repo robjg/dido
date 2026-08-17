@@ -12,7 +12,12 @@
 					<formItems>
 						<design:group bordered="true" title="Required">
 							<formItems>
-								<design:text property="sql" title="SQL"/>
+								<design:radio>
+									<formItems>
+										<design:text property="sql" title="SQL"/>
+										<design:text property="table" title="Table"/>
+									</formItems>
+								</design:radio>
 							</formItems>
 						</design:group>
 						<design:group bordered="true" title="Optional">

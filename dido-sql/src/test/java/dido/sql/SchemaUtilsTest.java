@@ -1,6 +1,9 @@
 package dido.sql;
 
 import dido.data.DataSchema;
+import dido.data.SchemaField;
+import dido.sql.dialect.SqlTypes;
+import dido.sql.dialect.hsql.HsqlSqlTypes;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
@@ -8,6 +11,7 @@ import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.state.ParentState;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.Objects;
 
@@ -67,6 +71,8 @@ class SchemaUtilsTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
+        SqlTypes sqlTypes = new HsqlSqlTypes();
+
         try (Connection connection = lookup.lookup("vars.connection", Connection.class);
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("select * from All_Types")) {
@@ -76,30 +82,15 @@ class SchemaUtilsTest {
 //            System.out.println(schema);
 //            {[1:BIT]=[B, [2:TINYINT]=java.lang.Integer, [3:SMALLINT]=java.lang.Integer, [4:INTEGER]=java.lang.Integer, [5:BIGINT]=java.lang.Long, [6:FLOAT]=java.lang.Double, [7:REAL]=java.lang.Double, [8:DOUBLE]=java.lang.Double, [9:NUMERIC]=java.math.BigDecimal, [10:DECIMAL]=java.math.BigDecimal, [11:CHAR]=java.lang.String, [12:VARCHAR]=java.lang.String, [13:LONGVARCHAR]=java.lang.String, [14:DATE]=java.sql.Date, [15:TIME]=java.sql.Time, [16:TIMESTAMP]=java.sql.Timestamp, [17:BINARY]=[B, [18:VARBINARY]=[B, [19:OTHER]=java.lang.Object, [20:BLOB]=java.sql.Blob, [21:CLOB]=java.sql.Clob, [22:BOOLEAN]=java.lang.Boolean, [23:TIME_WITH_TIMEZONE]=java.time.OffsetTime, [24:TIMESTAMP_WITH_TIMEZONE]=java.time.OffsetDateTime}
 
-            assertThat(schema.getTypeNamed("BIT"), is(byte[].class));
-            assertThat(schema.getTypeNamed("TINYINT"), is(java.lang.Integer.class));
-            assertThat(schema.getTypeNamed("SMALLINT"), is(java.lang.Integer.class));
-            assertThat(schema.getTypeNamed("INTEGER"), is(java.lang.Integer.class));
-            assertThat(schema.getTypeNamed("BIGINT"), is(java.lang.Long.class));
-            assertThat(schema.getTypeNamed("FLOAT"), is(java.lang.Double.class));
-            assertThat(schema.getTypeNamed("REAL"), is(java.lang.Double.class));
-            assertThat(schema.getTypeNamed("DOUBLE"), is(java.lang.Double.class));
-            assertThat(schema.getTypeNamed("NUMERIC"), is(java.math.BigDecimal.class));
-            assertThat(schema.getTypeNamed("DECIMAL"), is(java.math.BigDecimal.class));
-            assertThat(schema.getTypeNamed("CHAR"), is(java.lang.String.class));
-            assertThat(schema.getTypeNamed("VARCHAR"), is(java.lang.String.class));
-            assertThat(schema.getTypeNamed("LONGVARCHAR"), is(java.lang.String.class));
-            assertThat(schema.getTypeNamed("DATE"), is(java.sql.Date.class));
-            assertThat(schema.getTypeNamed("TIME"), is(java.sql.Time.class));
-            assertThat(schema.getTypeNamed("TIMESTAMP"), is(java.sql.Timestamp.class));
-            assertThat(schema.getTypeNamed("BINARY"), is(byte[].class));
-            assertThat(schema.getTypeNamed("VARBINARY"), is(byte[].class));
-            assertThat(schema.getTypeNamed("OTHER"), is(java.lang.Object.class));
-            assertThat(schema.getTypeNamed("BLOB"), is(java.sql.Blob.class));
-            assertThat(schema.getTypeNamed("CLOB"), is(java.sql.Clob.class));
-            assertThat(schema.getTypeNamed("BOOLEAN"), is(java.lang.Boolean.class));
-            assertThat(schema.getTypeNamed("TIME_WITH_TIMEZONE"), is(java.time.OffsetTime.class));
-            assertThat(schema.getTypeNamed("TIMESTAMP_WITH_TIMEZONE"), is(java.time.OffsetDateTime.class));
+            for (SchemaField field : schema.getSchemaFields()) {
+
+                JDBCType jdbcType = JDBCType.valueOf(field.getName());
+                int type = jdbcType.getVendorTypeNumber();
+                Type expected = sqlTypes.getJavaType(type);
+                assertThat("Expect type for " + field.getName() + " to be " + expected,
+                         field.getType(), is(expected));
+
+            }
         }
 
         oddjob.destroy();

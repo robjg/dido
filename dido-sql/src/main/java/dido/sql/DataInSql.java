@@ -2,6 +2,8 @@ package dido.sql;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.schema.SchemaAware;
+import dido.data.schema.SchemaListeners;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -16,7 +18,7 @@ import java.util.Objects;
 /**
  * @author rob
  */
-public class DataInSql implements DataInHow<Connection> {
+public class DataInSql implements DataInHow<Connection>, dido.data.schema.SchemaNotifier {
 
     private final String sql;
 
@@ -25,6 +27,8 @@ public class DataInSql implements DataInHow<Connection> {
     private final ClassLoader classLoader;
 
     private final DataSchema schema;
+
+    private final SchemaListeners schemaListeners = new SchemaListeners();
 
     public static class Settings {
 
@@ -102,7 +106,7 @@ public class DataInSql implements DataInHow<Connection> {
                             try {
                                 return resultSet.next();
                             } catch (SQLException e) {
-                                throw DataException.of(e);
+                                throw new DataException(e);
                             }
                         }
 
@@ -119,12 +123,22 @@ public class DataInSql implements DataInHow<Connection> {
                     try (connection) {
                         stmt.close();
                     } catch (SQLException e) {
-                        throw DataException.of(e);
+                        throw new DataException(e);
                     }
                 }
             };
         } catch (SQLException | ClassNotFoundException e) {
-            throw DataException.of(e);
+            throw new DataException(e);
         }
+    }
+
+    @Override
+    public void addSchemaListener(SchemaAware schemaAware) {
+        schemaListeners.addSchemaListener(schemaAware);
+    }
+
+    @Override
+    public void removeSchemaListener(SchemaAware schemaAware) {
+        schemaListeners.removeSchemaListener(schemaAware);
     }
 }

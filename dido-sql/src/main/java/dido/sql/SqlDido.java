@@ -18,12 +18,18 @@ import java.sql.Connection;
  */
 public class SqlDido {
 
-
     /**
      * @oddjob.description The SQL that will extract or insert the data.
      * @oddjob.required Yes.
      */
     private String sql;
+
+    /**
+     * @oddjob.description The table name. If specified the insert will be
+     * automatically generated.
+     * @oddjob.required No.
+     */
+    private String table;
 
     /**
      * @oddjob.description The classloader used to derive the schema from a query. Only required if the
@@ -58,6 +64,7 @@ public class SqlDido {
     public DataOutHow<Connection> toOut() {
         return DataOutSql.with()
                 .sql(sql)
+                .table(table)
                 .classLoader(classLoader)
                 .batchSize(batchSize)
                 .make();
@@ -69,6 +76,14 @@ public class SqlDido {
 
     public void setSql(String sql) {
         this.sql = sql;
+    }
+
+    public String getTable() {
+        return table;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
     }
 
     public ClassLoader getClassLoader() {

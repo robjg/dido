@@ -39,4 +39,29 @@ class SqlDidoTest {
 
         oddjob.destroy();
     }
+
+    @Test
+    void testTableInOddjob() throws ArooaConversionException {
+
+        Oddjob oddjob = new Oddjob();
+        oddjob.setFile(new File(Objects.requireNonNull(
+                getClass().getResource("WithTableExample.xml")).getFile()));
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        @SuppressWarnings("unchecked")
+        List<DidoData> results = lookup.lookup("results.beans", List.class);
+
+        assertThat(results.get(0), is(MapData.of("TYPE", "Apple", "QUANTITY", 20)));
+        assertThat(results.get(1), is(MapData.of("TYPE", "Orange", "QUANTITY", 30)));
+        assertThat(results.get(2), is(MapData.of("TYPE", "Pear", "QUANTITY", 40)));
+        assertThat(results.get(3), is(MapData.of("TYPE", "Grape", "QUANTITY", 55)));
+
+        oddjob.destroy();
+    }
+
 }

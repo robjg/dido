@@ -17,7 +17,20 @@ public class ClassUtils {
 	 */
 	private static final Map<String, Class<?>> primitiveNameToTypeMap =
 			new HashMap<>(9);
-	
+
+	/**
+	 * Primitive type to wrapper class type.
+	 */
+	public static final Map<Class<?>, Class<?>> primitiveTypeToWrapperMap =
+			Map.of(void.class, Void.class,
+					boolean.class, Boolean.class,
+					byte.class, Byte.class,
+					char.class, Character.class,
+					double.class, Double.class,
+					float.class, Float.class,
+					int.class, Integer.class,
+					long.class, Long.class,
+					short.class, Short.class);
 
 	static {
 		Class<?>[] primitives = {
@@ -51,5 +64,17 @@ public class ClassUtils {
 		else {
 			return theClass;
 		}
+	}
+
+	/**
+	 * Provide the wrapper class for a primitive type.
+	 *
+	 * @param primitiveType The class.
+	 *
+	 * @return The wrapper class or null if the provided class is not
+	 * a primitive type.
+	 */
+	public static Class<?> wrapperClassForPrimitive(Class<?> primitiveType) {
+		return primitiveTypeToWrapperMap.get(primitiveType);
 	}
 }

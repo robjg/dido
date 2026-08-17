@@ -5,6 +5,10 @@ import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
+import dido.how.SchemaListener;
+import dido.sql.dialect.std.StdInsertDml;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ParameterMetaData;
@@ -17,11 +21,22 @@ import java.util.Objects;
  */
 public class DataOutSql implements DataOutHow<Connection> {
 
-    private final String sql;
+    private static final Logger logger = LoggerFactory.getLogger(DataOutSql.class);
+
+    private final DmlStrategy dmlStrategy;
 
     private final int batchSize;
 
     private final ClassLoader classLoader;
+
+    private DataOutSql(DmlStrategy dmlStrategy,
+                       int batchSize,
+                       ClassLoader classLoader) {
+        this.dmlStrategy = dmlStrategy;
+        this.batchSize = batchSize;
+        this.classLoader = Objects.requireNonNullElse(classLoader,
+                getClass().getClassLoader());
+    }
 
     public static class Settings {
 
@@ -29,13 +44,14 @@ public class DataOutSql implements DataOutHow<Connection> {
 
         private int batchSize;
 
+        private String table;
+
         private ClassLoader classLoader;
 
-        Settings(String sql) {
-            this.sql = sql;
-        }
+        private dido.data.schema.SchemaNotifier schemaNotifier;
 
-        Settings() {}
+        Settings() {
+        }
 
         public Settings sql(String sql) {
             this.sql = sql;
@@ -47,28 +63,47 @@ public class DataOutSql implements DataOutHow<Connection> {
             return this;
         }
 
+        public Settings table(String table) {
+            this.table = table;
+            return this;
+        }
+
         public Settings classLoader(ClassLoader classLoader) {
             this.classLoader = classLoader;
             return this;
         }
 
+        public Settings schemaNotifier(dido.data.schema.SchemaNotifier schemaNotifier) {
+            this.schemaNotifier = schemaNotifier;
+            return this;
+        }
+
         public DataOut toConnection(Connection connection) {
-            return make().outTo(connection);
+            return make()
+                    .outTo(connection);
         }
 
         public DataOutSql make() {
-            return new DataOutSql(this);
+
+            DmlStrategy dmlStrategy;
+
+            if (sql == null) {
+                if (table == null) {
+                    throw new IllegalArgumentException("Table name or statement required");
+                } else {
+                    dmlStrategy = new InsertDmlStrategy(table, new StdInsertDml());
+                }
+            } else {
+                dmlStrategy = new StatementDmlStrategy(sql);
+            }
+
+            return new DataOutSql(dmlStrategy,
+                    batchSize, classLoader);
         }
     }
 
     public static Settings with() {
         return new Settings();
-    }
-
-    private DataOutSql(Settings settings) {
-        this.sql = Objects.requireNonNull(settings.sql);
-        this.batchSize = settings.batchSize;
-        this.classLoader = Objects.requireNonNullElse(settings.classLoader, getClass().getClassLoader());
     }
 
     @Override
@@ -88,74 +123,108 @@ public class DataOutSql implements DataOutHow<Connection> {
 
     protected DataOut outToWithExceptions(Connection connection) throws SQLException, ClassNotFoundException {
 
-        PreparedStatement stmt = connection.prepareStatement(sql);
+        return new DataOutImpl(connection);
+    }
 
-        ParameterMetaData metaData = stmt.getParameterMetaData();
+    class DataOutImpl implements DataOut, SchemaListener {
 
-        int paramCount = metaData.getParameterCount();
+        private final Connection connection;
 
-        Class<?>[] columnTypes = new Class<?>[paramCount];
-        int[] sqlTypes = new int[paramCount];
+        private DmlStrategy.Prepared prepared;
 
-        for (int i = 1; i <= paramCount; ++i) {
+        private int[] sqlTypes;
 
-            String className = metaData.getParameterClassName(i);
+        private int count = 0;
 
-            Class<?> type = Class.forName(
-                    className, true, classLoader);
-
-            columnTypes[i - 1] = type;
-            sqlTypes[i - 1] = metaData.getParameterType(i);
+        DataOutImpl(Connection connection) {
+            this.connection = connection;
         }
 
-        return new DataOut() {
+        @Override
+        public void schemaAvailable(DataSchema schema) {
 
-            int count = 0;
+            if (prepared != null) {
+                logger.info("Schema already known. Ignoring {}", schema);
+            }
 
-            @Override
-            public void accept(DidoData data) {
+            try {
+                prepared = dmlStrategy.prepare(connection, schema);
 
-                DataSchema schema = data.getSchema();
+                ParameterMetaData metaData = prepared.statement()
+                        .getParameterMetaData();
 
-                    for (int index = schema.firstIndex(); index != 0; index = schema.nextIndex(index)) {
+                int paramCount = metaData.getParameterCount();
 
-                        Object item = data.getAt(index);
-                        try {
-                            if (item == null) {
-                                stmt.setNull(index, sqlTypes[index - 1]);
-                            } else {
-                                stmt.setObject(index, item);
-                            }
-                        } catch (SQLException e) {
-                            throw DataException.of("Failed setting column " + index + " with ["
-                                    + item + "]", e);
-                        }
-                    }
+                Class<?>[] columnTypes = new Class<?>[paramCount];
+                sqlTypes = new int[paramCount];
 
+                for (int i = 1; i <= paramCount; ++i) {
+
+                    String className = metaData.getParameterClassName(i);
+
+                    Class<?> type = Class.forName(
+                            className, true, classLoader);
+
+                    columnTypes[i - 1] = type;
+                    sqlTypes[i - 1] = metaData.getParameterType(i);
+                }
+
+            } catch (SQLException | ClassNotFoundException e) {
+                throw new DataException(e);
+            }
+
+        }
+
+        @Override
+        public void accept(DidoData data) {
+
+            if (prepared == null) {
+                schemaAvailable(data.getSchema());
+            }
+
+            PreparedStatement stmt = prepared.statement();
+
+            for (int i = 0; i < prepared.indices().length; ++i) {
+
+                int index = prepared.indices()[i];
+
+                Object item = data.getAt(index);
                 try {
-                    if (batchSize > 0) {
-                        stmt.addBatch();
-                        if (++count % batchSize == 0) {
-                            stmt.executeBatch();
-                        }
+                    if (item == null) {
+                        stmt.setNull(index, sqlTypes[index - 1]);
                     } else {
-                        stmt.executeUpdate();
+                        stmt.setObject(index, item);
                     }
                 } catch (SQLException e) {
-                    throw DataException.of(e);
+                    throw DataException.of("Failed setting column " + index + " with ["
+                            + item + "]", e);
                 }
             }
 
-            @Override
-            public void close()  {
-                try (connection) {
-                    stmt.close();
+            try {
+                if (batchSize > 0) {
+                    stmt.addBatch();
+                    if (++count % batchSize == 0) {
+                        stmt.executeBatch();
+                    }
+                } else {
+                    stmt.executeUpdate();
                 }
-                catch (SQLException e) {
-                    throw DataException.of(e);
-                }
+            } catch (SQLException e) {
+                throw DataException.of(e);
             }
-        };
+        }
+
+        @Override
+        public void close() {
+            try (connection) {
+                if (prepared != null) {
+                    prepared.statement().close();
+                }
+            } catch (SQLException e) {
+                throw new DataException(e);
+            }
+        }
     }
 
 }

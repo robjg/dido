@@ -91,7 +91,7 @@ public interface SchemaField {
 
     SchemaField mapTo(int toIndex, String toName);
 
-    static SchemaField of(int index, String name, Type type) {
+    static SchemaField  of(int index, String name, Type type) {
         return SchemaFields.of(index, name, type);
     }
 

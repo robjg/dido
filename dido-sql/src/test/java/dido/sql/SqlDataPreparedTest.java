@@ -26,7 +26,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
-public class SqlDataHowTest {
+class SqlDataPreparedTest {
 
     static final long SECOND = 1000L;
 
@@ -35,10 +35,10 @@ public class SqlDataHowTest {
     static final long HOUR = 60 * MINUTE;
 
     private static final Logger logger = LoggerFactory.getLogger(
-            SqlDataHowTest.class);
+            SqlDataPreparedTest.class);
 
     @Test
-    public void testSimpleWriteRead() throws Exception {
+    void simpleWriteRead() throws Exception {
 
         String config = Objects.requireNonNull(getClass().getResource(
                 "create_fruit_table.xml")).getFile();
@@ -57,12 +57,18 @@ public class SqlDataHowTest {
                 .sql("insert into fruit (type, quantity) values (?, ?)")
                 .make();
 
-        DataInHow<Connection> inHow
+        DataInSql inHow
                 = DataInSql.with()
                 .sql("select type as \"type\", quantity as \"quantity\" from fruit order by type")
                 .make();
 
-        logger.info("** Writing **");
+        DataOutHow<Connection> copyHow
+                = DataOutSql.with()
+                .sql("insert into fruit (type, quantity) values (?, ?)")
+                .schemaNotifier(inHow)
+                .make();
+
+        logger.info("** simpleWriteRead - Writing **");
 
         Connection connectionOut = lookup.lookup("vars.connection", Connection.class);
 
@@ -74,7 +80,7 @@ public class SqlDataHowTest {
 
         writer.close();
 
-        logger.info("** Reading **");
+        logger.info("** simpleWriteRead - Reading **");
 
         Connection connectionIn = lookup.lookup("vars.connection", Connection.class);
 

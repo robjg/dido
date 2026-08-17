@@ -1,12 +1,15 @@
 package dido.sql;
 
 import dido.data.DataSchema;
+import dido.data.SchemaFactory;
 import dido.data.SchemaField;
 import dido.data.schema.DataSchemaFactory;
 import dido.data.util.ClassUtils;
+import dido.how.DataException;
+import dido.sql.dialect.SqlTypes;
+import dido.sql.dialect.std.StdSqlTypes;
 
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class SchemaUtils {
 
@@ -71,5 +74,32 @@ public class SchemaUtils {
         return ClassUtils.classFor(
                 columnClassName, classLoader);
 
+    }
+
+    public DataSchema schemaForTable(Connection connection,
+                                     String tableName) {
+
+        SqlTypes sqlTypes = new StdSqlTypes();
+
+        SchemaFactory schemaFactory = SchemaFactory.newInstance();
+
+        try {
+            DatabaseMetaData databaseMetaData = connection.getMetaData();
+
+            try (ResultSet columns = databaseMetaData.getColumns(
+                    null, null, tableName, null)) {
+                while (columns.next()) {
+                    String columnName = columns.getString("COLUMN_NAME");
+                    int datatype = columns.getInt("DATA_TYPE");
+                    schemaFactory.addSchemaField(
+                            SchemaField.of(0, columnName,
+                                    sqlTypes.getJavaType(datatype)));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataException(e);
+        }
+
+        return schemaFactory.toSchema();
     }
 }
