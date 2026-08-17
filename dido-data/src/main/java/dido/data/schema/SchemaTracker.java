@@ -5,7 +5,8 @@ import dido.data.DataSchema;
 /**
  * Something that wishes to be notified that a new {@link DataSchema} is available.
  */
-public interface SchemaAware {
+@FunctionalInterface
+public interface SchemaTracker {
 
     void schemaAvailable(DataSchema schema);
 

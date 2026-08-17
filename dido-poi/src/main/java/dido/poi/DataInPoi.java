@@ -2,10 +2,12 @@ package dido.poi;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.schema.SchemaNotifier;
+import dido.data.schema.SchemaTracker;
+import dido.data.schema.SchemaTrackers;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
-import dido.how.SchemaListener;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 import dido.poi.data.DataCell;
@@ -65,8 +67,6 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
     private final List<DataCell> columns;
 
-    private final SchemaListener schemaListener;
-
     private DataInPoi(Settings settings) {
         this.firstRow = Math.max(settings.firstRow, 1);
         this.firstColumn = Math.max(settings.firstColumn, 1);
@@ -77,7 +77,6 @@ public class DataInPoi implements DataInHow<BookInProvider> {
         this.conversionProvider = settings.conversionProvider;
         this.columns = settings.columns == null || settings.columns.isEmpty()
                 ? null : new ArrayList<>(settings.columns);
-        this.schemaListener = settings.schemaListener;
     }
 
     public static class Settings {
@@ -110,8 +109,6 @@ public class DataInPoi implements DataInHow<BookInProvider> {
         private DidoConversionProvider conversionProvider;
 
         private Collection<? extends DataCell> columns;
-
-        private SchemaListener schemaListener;
 
         public Settings sheetName(String sheetName) {
             this.sheetName = sheetName;
@@ -156,11 +153,6 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
         public Settings columns(Collection<? extends DataCell> columns) {
             this.columns = columns;
-            return this;
-        }
-
-        public Settings schemaListener(SchemaListener schemaListener) {
-            this.schemaListener = schemaListener;
             return this;
         }
 
@@ -218,11 +210,13 @@ public class DataInPoi implements DataInHow<BookInProvider> {
         return BookInProvider.class;
     }
 
-    class MainReader implements DataIn {
+    class MainReader implements DataIn, SchemaNotifier {
 
         private final RowsIn rowsIn;
 
         private final DataRowFactory dataRowFactory;
+
+        private final SchemaTrackers schemaTrackers = new SchemaTrackers();
 
         int lastRow;
 
@@ -262,6 +256,16 @@ public class DataInPoi implements DataInHow<BookInProvider> {
         public void close() {
 
             logger.debug("[{}] closed reader at row [{}]", DataInPoi.this, lastRow);
+        }
+
+        @Override
+        public void addSchemaTracker(SchemaTracker schemaTracker) {
+            schemaTrackers.addSchemaTracker(schemaTracker);
+        }
+
+        @Override
+        public void removeSchemaTracker(SchemaTracker schemaTracker) {
+            schemaTrackers.removeSchemaTracker(schemaTracker);
         }
     }
 
@@ -318,13 +322,12 @@ public class DataInPoi implements DataInHow<BookInProvider> {
             // No schema, no cells and no data.
             return DataIn.of();
         } else {
-            if (schemaListener != null) {
-                schemaListener.schemaAvailable(schemaAndCells.getSchema());
-            }
-            return new MainReader(rowsIn, DataRowFactory.newInstance(
+            MainReader dataIn =  new MainReader(rowsIn, DataRowFactory.newInstance(
                     schemaAndCells.getSchema(), schemaAndCells.getDataCells(),
                     Objects.requireNonNullElseGet(conversionProvider,
                             DefaultConversionProvider::defaultInstance)));
+            dataIn.schemaTrackers.schemaAvailable(schemaAndCells.getSchema());
+            return dataIn;
         }
     }
 

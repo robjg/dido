@@ -5,7 +5,7 @@ package dido.data.schema;
  */
 public interface SchemaNotifier {
 
-    void addSchemaListener(SchemaAware schemaAware);
+    void addSchemaTracker(SchemaTracker schemaTracker);
 
-    void removeSchemaListener(SchemaAware schemaAware);
+    void removeSchemaTracker(SchemaTracker schemaTracker);
 }

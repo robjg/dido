@@ -1,6 +1,8 @@
 package dido.oddjob.beanbus;
 
 import dido.data.DidoData;
+import dido.data.schema.SchemaNotifier;
+import dido.data.schema.SchemaTracker;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import org.oddjob.arooa.ArooaSession;
@@ -75,6 +77,18 @@ public class DataInDriver<I> implements Runnable, Closeable, ArooaSessionAware {
         this.session = session;
     }
 
+    AutoCloseable schemaBind(Object to, Object how) {
+
+        if (to instanceof SchemaTracker schemaTracker &&
+                how instanceof SchemaNotifier schemaNotifier) {
+            schemaNotifier.addSchemaTracker(schemaTracker);
+            return () -> schemaNotifier.removeSchemaTracker(schemaTracker);
+        }
+        else {
+            return () -> {};
+        }
+    }
+
     @Override
     public void run() {
 
@@ -94,7 +108,8 @@ public class DataInDriver<I> implements Runnable, Closeable, ArooaSessionAware {
             throw new IllegalArgumentException(e);
         }
 
-        try (DataIn supplier = how.inFrom(from)) {
+        try (DataIn supplier = how.inFrom(from);
+            AutoCloseable ignored = schemaBind(to, supplier)) {
 
             Iterator<DidoData> iterator = supplier.iterator();
 

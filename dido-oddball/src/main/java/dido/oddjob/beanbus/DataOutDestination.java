@@ -1,6 +1,9 @@
 package dido.oddjob.beanbus;
 
+import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.schema.SchemaTracker;
+import dido.data.schema.SchemaTrackers;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
 import org.oddjob.arooa.ArooaSession;
@@ -14,6 +17,8 @@ import org.oddjob.framework.adapt.Stop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,7 +35,7 @@ import java.util.function.Consumer;
  * @param <O> The type of the output.
  */
 public class DataOutDestination<O>
-        implements Runnable, AutoCloseable, Consumer<DidoData>, ArooaSessionAware {
+        implements Runnable, AutoCloseable, Consumer<DidoData>, ArooaSessionAware, SchemaTracker {
 
     private static final Logger logger = LoggerFactory.getLogger(DataOutDestination.class);
 
@@ -69,10 +74,27 @@ public class DataOutDestination<O>
      */
     private final AtomicInteger count = new AtomicInteger();
 
+    private final SchemaTrackers schemaTrackers = new SchemaTrackers();
+
+    private final List<Runnable> closeTasks = new ArrayList<>();
+
     @ArooaHidden
     @Override
     public void setArooaSession(ArooaSession session) {
         this.session = session;
+    }
+
+    @Override
+    public void schemaAvailable(DataSchema schema) {
+        schemaTrackers.schemaAvailable(schema);
+    }
+
+    void schemaBind(Object maybe) {
+
+        if (maybe instanceof SchemaTracker schemaTracker) {
+            schemaTrackers.addSchemaTracker(schemaTracker);
+            closeTasks.add(() -> schemaTrackers.removeSchemaTracker(schemaTracker));
+        }
     }
 
     @Start
@@ -94,10 +116,13 @@ public class DataOutDestination<O>
         }
 
         try {
-            this.consumer =how.outTo(to);
+            this.consumer = how.outTo(to);
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
+
+        schemaBind(this.consumer);
+        schemaBind(this.next);
     }
 
     @Override
@@ -122,6 +147,10 @@ public class DataOutDestination<O>
             logger.error("Failed to close {}", consumer, e);
         }
         consumer = null;
+
+        while (!closeTasks.isEmpty()) {
+            closeTasks.removeFirst().run();
+        }
     }
 
     public String getName() {

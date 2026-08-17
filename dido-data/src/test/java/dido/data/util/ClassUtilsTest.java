@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 class ClassUtilsTest {
 
@@ -18,5 +19,11 @@ class ClassUtilsTest {
     Class<?> classFor(Class<?> in) throws ClassNotFoundException {
 
         return ClassUtils.classFor(in.getName(), getClass().getClassLoader());
+    }
+
+    @Test
+    void primitiveType() {
+        assertThat(ClassUtils.wrapperClassForPrimitive(int.class), is(Integer.class));
+        assertThat(ClassUtils.wrapperClassForPrimitive(String.class), nullValue());
     }
 }

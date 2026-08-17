@@ -179,7 +179,6 @@ public class DataRows implements DataInHow<BookInProvider>, DataOutHow<BookOutPr
                 .firstRow(this.firstRow)
                 .firstColumn(this.firstColumn)
                 .columns(this.of)
-                .schemaListener(schema -> this.headings = schema.getFieldNames().toArray(new String[0]))
                 .header(this.withHeader)
                 .schema(this.schema)
                 .partialSchema(this.partialSchema)

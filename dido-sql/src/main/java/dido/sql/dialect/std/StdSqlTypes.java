@@ -82,7 +82,7 @@ public class StdSqlTypes implements SqlTypes {
     @Override
     public int getSqlType(Type javaType) {
 
-        if (javaType instanceof Class<?> cl) {
+        if (javaType instanceof Class<?> cl && cl.isPrimitive()) {
             javaType = ClassUtils.wrapperClassForPrimitive(cl);
         }
 

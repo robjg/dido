@@ -23,7 +23,7 @@ class StdTableDdlTest {
         String ddl = test.createTableDdl(schema, "Fruit");
 
         assertThat(ddl, containsString(
-                "create table Fruit (Fruit OTHER, Qty INTEGER, Price DOUBLE)"));
+                "create table Fruit (Fruit VARCHAR(128), Qty INTEGER, Price DOUBLE)"));
     }
 
 }

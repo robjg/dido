@@ -2,10 +2,10 @@ package dido.sql;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.schema.SchemaTracker;
 import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
-import dido.how.SchemaListener;
 import dido.sql.dialect.std.StdInsertDml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +48,6 @@ public class DataOutSql implements DataOutHow<Connection> {
 
         private ClassLoader classLoader;
 
-        private dido.data.schema.SchemaNotifier schemaNotifier;
-
         Settings() {
         }
 
@@ -70,11 +68,6 @@ public class DataOutSql implements DataOutHow<Connection> {
 
         public Settings classLoader(ClassLoader classLoader) {
             this.classLoader = classLoader;
-            return this;
-        }
-
-        public Settings schemaNotifier(dido.data.schema.SchemaNotifier schemaNotifier) {
-            this.schemaNotifier = schemaNotifier;
             return this;
         }
 
@@ -126,7 +119,7 @@ public class DataOutSql implements DataOutHow<Connection> {
         return new DataOutImpl(connection);
     }
 
-    class DataOutImpl implements DataOut, SchemaListener {
+    class DataOutImpl implements DataOut, SchemaTracker {
 
         private final Connection connection;
 
@@ -145,7 +138,10 @@ public class DataOutSql implements DataOutHow<Connection> {
 
             if (prepared != null) {
                 logger.info("Schema already known. Ignoring {}", schema);
+                return;
             }
+
+            logger.info("Schema available {}", schema);
 
             try {
                 prepared = dmlStrategy.prepare(connection, schema);

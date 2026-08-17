@@ -4,7 +4,11 @@ import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.immutable.ArrayData;
 import dido.data.schema.SchemaBuilder;
+import dido.data.schema.SchemaNotifier;
+import dido.data.schema.SchemaTracker;
 import dido.how.*;
+import dido.sql.dialect.hsql.HsqlSqlTypes;
+import dido.sql.dialect.std.StdTableDdl;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
@@ -15,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
@@ -64,8 +70,7 @@ class SqlDataPreparedTest {
 
         DataOutHow<Connection> copyHow
                 = DataOutSql.with()
-                .sql("insert into fruit (type, quantity) values (?, ?)")
-                .schemaNotifier(inHow)
+                .table("copy")
                 .make();
 
         logger.info("** simpleWriteRead - Writing **");
@@ -86,7 +91,21 @@ class SqlDataPreparedTest {
 
         DataIn reader = inHow.inFrom(connectionIn);
 
+        Connection connectionCopy = lookup.lookup("vars.connection", Connection.class);
+
+        ((SchemaNotifier) reader).addSchemaTracker(schema -> {
+            try (Statement stmt = connectionCopy.createStatement()) {
+                stmt.execute(new StdTableDdl(new HsqlSqlTypes()).createTableDdl(schema, "copy"));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        DataOut copy = copyHow.outTo(connectionCopy);
+        ((SchemaNotifier) reader).addSchemaTracker((SchemaTracker) copy);
+
         List<DidoData> results = reader.stream()
+                .peek(copy)
                 .map(ArrayData::copy)
                 .collect(Collectors.toList());
 
@@ -108,7 +127,22 @@ class SqlDataPreparedTest {
 
         assertThat(results.size(), is(3));
 
+        logger.info("** simpleWriteRead - Reading copy **");
+
+        try (DataIn copyIn =
+                     DataInSql.with()
+                             .sql("select type as \"type\", quantity as \"quantity\" from copy order by type")
+                             .fromConnection(lookup.lookup("vars.connection", Connection.class))) {
+
+            List<DidoData> results2 = copyIn.stream()
+                    .map(DidoData::copy)
+                    .toList();
+
+            assertThat(results2, is(results));
+        }
+
         reader.close();
+        copy.close();
     }
 
     @Test
