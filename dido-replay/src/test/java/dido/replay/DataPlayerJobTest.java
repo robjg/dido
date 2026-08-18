@@ -19,7 +19,7 @@ class DataPlayerJobTest {
     @Test
     void whenFromToTimeSet() throws Exception {
 
-        Path dir = new File(Objects.requireNonNull(getClass().getResource("/data/stuff-data.json")).getFile())
+        Path dir = new File(Objects.requireNonNull(getClass().getResource("/data/stuff-data.jsonl")).getFile())
                 .getParentFile().toPath();
 
         List<DidoData> results = new ArrayList<>();
