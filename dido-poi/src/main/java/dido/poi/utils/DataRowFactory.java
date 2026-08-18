@@ -1,7 +1,8 @@
 package dido.poi.utils;
 
-import dido.data.NoSuchFieldException;
 import dido.data.*;
+import dido.data.NoSuchFieldException;
+import dido.data.schema.HasSchema;
 import dido.data.useful.AbstractData;
 import dido.how.DataException;
 import dido.how.conversion.DidoConversionProvider;
@@ -16,7 +17,7 @@ import java.util.Objects;
 /**
  * Create {@link DidoData} by wrapping an {@link RowIn}.
  */
-public class DataRowFactory {
+public class DataRowFactory implements HasSchema {
 
     private final ReadSchema schema;
 
@@ -61,6 +62,10 @@ public class DataRowFactory {
         return new DataRowFactory(schema, getters);
     }
 
+    @Override
+    public DataSchema getSchema() {
+        return schema;
+    }
 
     class CellReadStrategy implements ReadStrategy {
 

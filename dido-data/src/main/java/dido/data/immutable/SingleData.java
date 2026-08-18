@@ -2,6 +2,7 @@ package dido.data.immutable;
 
 import dido.data.*;
 import dido.data.NoSuchFieldException;
+import dido.data.schema.HasSchema;
 import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractDataSchema;
 import dido.data.useful.AbstractFieldGetter;
@@ -302,9 +303,21 @@ public abstract class SingleData extends AbstractData implements DidoData {
         }
     }
 
-    public static class ObjectType<T> {
+    abstract static class SingleDataType implements HasSchema {
 
-        private final Schema schema;
+        final Schema schema;
+
+        SingleDataType(Schema schema) {
+            this.schema = schema;
+        }
+
+        @Override
+        public DataSchema getSchema() {
+            return schema;
+        }
+    }
+
+    public static class ObjectType<T> extends SingleDataType {
 
         ObjectType(Class<?> type) {
             this(type, null);
@@ -312,10 +325,10 @@ public abstract class SingleData extends AbstractData implements DidoData {
 
         ObjectType(Class<?> type,
                    String name) {
-            this.schema = new Schema(SchemaField.of(1,
+            super(new Schema(SchemaField.of(1,
                     name == null ? DataSchema.defaultNameForIndex(1) : name,
                     type),
-                    new ObjectGetter());
+                    new ObjectGetter()));
         }
 
         public SingleData of(T t) {
@@ -348,19 +361,17 @@ public abstract class SingleData extends AbstractData implements DidoData {
 
     // Boolean
 
-    public static class BooleanType {
-
-        private final Schema schema;
+    public static class BooleanType extends SingleDataType {
 
         BooleanType() {
             this(null);
         }
 
         BooleanType(String name) {
-            this.schema = new Schema(SchemaField.of(1,
+            super(new Schema(SchemaField.of(1,
                     name == null ? DataSchema.defaultNameForIndex(1) : name,
                     boolean.class),
-                    new BooleanGetter());
+                    new BooleanGetter()));
         }
 
         public SingleData of(boolean value) {
@@ -398,19 +409,17 @@ public abstract class SingleData extends AbstractData implements DidoData {
 
     // Byte
 
-    public static class ByteType {
-
-        private final Schema schema;
+    public static class ByteType extends SingleDataType {
 
         ByteType() {
             this(null);
         }
 
         ByteType(String name) {
-            this.schema = new Schema(SchemaField.of(1,
+            super(new Schema(SchemaField.of(1,
                     name == null ? DataSchema.defaultNameForIndex(1) : name,
                     byte.class),
-                    new ByteGetter());
+                    new ByteGetter()));
         }
 
         public SingleData of(byte value) {
@@ -448,19 +457,17 @@ public abstract class SingleData extends AbstractData implements DidoData {
 
     // Char
 
-    public static class CharType {
-
-        private final Schema schema;
+    public static class CharType extends SingleDataType {
 
         CharType() {
             this(null);
         }
 
         CharType(String name) {
-            this.schema = new Schema(SchemaField.of(1,
+            super(new Schema(SchemaField.of(1,
                     name == null ? DataSchema.defaultNameForIndex(1) : name,
                     char.class),
-                    new CharGetter());
+                    new CharGetter()));
         }
 
         public SingleData of(char value) {
@@ -498,19 +505,17 @@ public abstract class SingleData extends AbstractData implements DidoData {
 
     // Short
 
-    public static class ShortType {
-
-        private final Schema schema;
+    public static class ShortType extends SingleDataType{
 
         ShortType() {
             this(null);
         }
 
         ShortType(String name) {
-            this.schema = new Schema(SchemaField.of(1,
+            super(new Schema(SchemaField.of(1,
                     name == null ? DataSchema.defaultNameForIndex(1) : name,
                     short.class),
-                    new ShortGetter());
+                    new ShortGetter()));
         }
 
         public SingleData of(short value) {
@@ -548,19 +553,17 @@ public abstract class SingleData extends AbstractData implements DidoData {
 
     // Integer
 
-    public static class IntType {
-
-        private final Schema schema;
+    public static class IntType extends SingleDataType {
 
         IntType() {
             this(null);
         }
 
         IntType(String name) {
-            this.schema = new Schema(SchemaField.of(1,
+            super(new Schema(SchemaField.of(1,
                     name == null ? DataSchema.defaultNameForIndex(1) : name,
                     int.class),
-                    new IntGetter());
+                    new IntGetter()));
         }
 
         public SingleData of(int value) {
@@ -598,19 +601,17 @@ public abstract class SingleData extends AbstractData implements DidoData {
 
     // Long
 
-    public static class LongType {
-
-        private final Schema schema;
+    public static class LongType extends SingleDataType {
 
         LongType() {
             this(null);
         }
 
         LongType(String name) {
-            this.schema = new Schema(SchemaField.of(1,
+            super(new Schema(SchemaField.of(1,
                     name == null ? DataSchema.defaultNameForIndex(1) : name,
                     long.class),
-                    new LongGetter());
+                    new LongGetter()));
         }
 
         public SingleData of(long value) {
@@ -648,19 +649,17 @@ public abstract class SingleData extends AbstractData implements DidoData {
 
     // Double
 
-    public static class DoubleType {
-
-        private final Schema schema;
+    public static class DoubleType extends SingleDataType {
 
         DoubleType() {
             this(null);
         }
 
         DoubleType(String name) {
-            this.schema = new Schema(SchemaField.of(1,
+            super(new Schema(SchemaField.of(1,
                     name == null ? DataSchema.defaultNameForIndex(1) : name,
                     double.class),
-                    new DoubleGetter());
+                    new DoubleGetter()));
         }
 
         public SingleData of(double value) {
@@ -701,19 +700,17 @@ public abstract class SingleData extends AbstractData implements DidoData {
         }
     }
 
-    public static class FloatType {
-
-        private final Schema schema;
+    public static class FloatType extends SingleDataType {
 
         FloatType() {
             this(null);
         }
 
         FloatType(String name) {
-            this.schema = new Schema(SchemaField.of(1,
+            super(new Schema(SchemaField.of(1,
                     name == null ? DataSchema.defaultNameForIndex(1) : name,
                     float.class),
-                    new FloatGetter());
+                    new FloatGetter()));
         }
 
         public SingleData of(float value) {

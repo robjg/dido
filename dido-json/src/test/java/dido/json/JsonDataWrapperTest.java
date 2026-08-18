@@ -49,7 +49,8 @@ class JsonDataWrapperTest {
                 .addNamed("aNumber", Number.class)
                 .build();
 
-        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+        JsonDataWrapper jsonDataWrapper = JsonDataWrapper.forSchema(schema);
+        Gson gson = jsonDataWrapper.init(new GsonBuilder())
                 .create();
 
         String json = gson.toJson(new AllFields());
@@ -85,7 +86,8 @@ class JsonDataWrapperTest {
                 .addNamed("aDouble", double.class)
                 .build();
 
-        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+        JsonDataWrapper jsonDataWrapper = JsonDataWrapper.forSchema(schema);
+        Gson gson = jsonDataWrapper.init(new GsonBuilder())
                 .serializeSpecialFloatingPointValues()
                 .create();
 
@@ -110,7 +112,8 @@ class JsonDataWrapperTest {
                 .addNamed("aDouble", Double.class)
                 .build();
 
-        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+        JsonDataWrapper jsonDataWrapper = JsonDataWrapper.forSchema(schema);
+        Gson gson = jsonDataWrapper.init(new GsonBuilder())
                 .create();
 
         String json = gson.toJson(new AllFields());
@@ -140,7 +143,8 @@ class JsonDataWrapperTest {
                 .addNamed("aNumber", Number.class)
                 .build();
 
-        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+        JsonDataWrapper jsonDataWrapper = JsonDataWrapper.forSchema(schema);
+        Gson gson = jsonDataWrapper.init(new GsonBuilder())
                 .create();
 
         String json = gson.toJson(new AllFields());
@@ -173,7 +177,8 @@ class JsonDataWrapperTest {
                 .addNamed("aNumber", Number.class)
                 .build();
 
-        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+        JsonDataWrapper jsonDataWrapper = JsonDataWrapper.forSchema(schema);
+        Gson gson = jsonDataWrapper.init(new GsonBuilder())
                 .create();
 
         String json = "{}";
@@ -214,7 +219,8 @@ class JsonDataWrapperTest {
                 .addRepeatingNamed("OrderLines", nestedSchema)
                 .build();
 
-        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+        JsonDataWrapper jsonDataWrapper = JsonDataWrapper.forSchema(schema);
+        Gson gson = jsonDataWrapper.init(new GsonBuilder())
                 .create();
 
         DidoData result = gson.fromJson(json, DidoData.class);
@@ -238,7 +244,8 @@ class JsonDataWrapperTest {
                 .addNamed("Colour", String.class)
                 .build();
 
-        Gson gson = JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
+        JsonDataWrapper jsonDataWrapper = JsonDataWrapper.forSchema(schema);
+        Gson gson = jsonDataWrapper.init(new GsonBuilder())
                 .create();
 
         String json = "{'Colour':'Red', 'Fruit':'Apple'}";

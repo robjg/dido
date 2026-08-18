@@ -2,6 +2,7 @@ package dido.json;
 
 import com.google.gson.*;
 import dido.data.*;
+import dido.data.schema.HasSchema;
 
 import java.lang.reflect.Type;
 import java.util.LinkedList;
@@ -12,7 +13,7 @@ import java.util.LinkedList;
  * {@link DataInJson} but is here in case useful one day.
  *
  */
-public class JsonDataCopy {
+public class JsonDataCopy implements HasSchema {
 
     private final LinkedList<DataFactory> stack = new LinkedList<>();
 
@@ -24,14 +25,17 @@ public class JsonDataCopy {
         this.dataFactoryProvider = dataFactoryProvider;
     }
 
-    public static GsonBuilder registerSchema(GsonBuilder gsonBuilder,
-                                                                  DataSchema schema,
-                                                                  DataFactoryProvider dataFactoryProvider) {
-        return new JsonDataCopy(schema, dataFactoryProvider)
-                .init(gsonBuilder);
+    public static JsonDataCopy registerSchema(DataSchema schema,
+                                              DataFactoryProvider dataFactoryProvider) {
+        return new JsonDataCopy(schema, dataFactoryProvider);
     }
 
-    private GsonBuilder init(GsonBuilder gsonBuilder) {
+    @Override
+    public DataSchema getSchema() {
+        return stack.getFirst().getSchema();
+    }
+
+    public GsonBuilder init(GsonBuilder gsonBuilder) {
         return gsonBuilder
                 .registerTypeAdapter(DidoData.class, new DataDeserializer())
                 .registerTypeAdapter(SchemaField.NESTED_REPEATING_TYPE, new RepeatingDeserializer());

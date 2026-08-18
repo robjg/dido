@@ -4,6 +4,7 @@ import com.google.gson.*;
 import dido.data.*;
 import dido.data.NoSuchFieldException;
 import dido.data.schema.DataSchemaImpl;
+import dido.data.schema.HasSchema;
 import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractFieldGetter;
 
@@ -13,7 +14,7 @@ import java.util.Objects;
 /**
  * Provide a wrapper around a {@link JsonObject} so that it can be accessed as an {@link DidoData}.
  */
-public class JsonDataWrapper {
+public class JsonDataWrapper implements HasSchema {
 
     private static final Object NONE = new Object();
 
@@ -23,12 +24,16 @@ public class JsonDataWrapper {
         this.deserializer = new DataDeserializer(schema);
     }
 
-    public static GsonBuilder registerSchema(GsonBuilder gsonBuilder,
-                                             DataSchema schema) {
-        return new JsonDataWrapper(schema).init(gsonBuilder);
+    public static JsonDataWrapper forSchema(DataSchema schema) {
+        return new JsonDataWrapper(schema);
     }
 
-    private GsonBuilder init(GsonBuilder gsonBuilder) {
+    @Override
+    public DataSchema getSchema() {
+        return deserializer.schema;
+    }
+
+    public GsonBuilder init(GsonBuilder gsonBuilder) {
         return gsonBuilder
                 .registerTypeAdapter(SchemaField.NESTED_TYPE, deserializer)
                 .registerTypeAdapter(SchemaField.NESTED_REPEATING_TYPE, new RepeatingDeserializer());

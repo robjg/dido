@@ -8,6 +8,7 @@ import dido.data.schema.DataSchemaFactory;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
+import dido.how.MapperFrom;
 import dido.how.conversion.DefaultConversionProvider;
 import dido.how.conversion.DidoConversionProvider;
 import org.apache.commons.csv.CSVFormat;
@@ -159,7 +160,7 @@ public class DataInCsv implements DataInHow<Reader> {
         CSVParser csvParser;
         Iterator<CSVRecord> iterator;
 
-        final Function<CSVRecord, CsvData> wrapperFunction;
+        final MapperFrom<CSVRecord> wrapperFunction;
 
         try {
 
@@ -179,7 +180,7 @@ public class DataInCsv implements DataInHow<Reader> {
                         CSVRecord record = iterator.next();
                         schema = schemaNoHeader(record);
                         // We've read a row already, now we need an iterator that will return it again for the data
-                        iterator = new OneAheadIterator<>(iterator, record);
+                        iterator = new dido.how.util.OneAheadIterator<>(iterator, record);
                     } else {
                         schema = DataSchema.emptySchema();
                     }
@@ -204,6 +205,11 @@ public class DataInCsv implements DataInHow<Reader> {
         final Iterator<CSVRecord> finalIterator = iterator;
 
         return new DataIn() {
+
+            @Override
+            public DataSchema getSchema() {
+                return wrapperFunction.getSchema();
+            }
 
             @Override
             public Iterator<DidoData> iterator() {
@@ -250,36 +256,6 @@ public class DataInCsv implements DataInHow<Reader> {
             schemaBuilder.merge(partialSchema);
         }
         return schemaBuilder.toSchema();
-    }
-
-    static class OneAheadIterator<E> implements Iterator<E> {
-
-        private final Iterator<E> original;
-
-        private E current;
-
-        OneAheadIterator(Iterator<E> original, E current) {
-            this.original = original;
-            this.current = current;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return current != null;
-        }
-
-        @Override
-        public E next() {
-            try {
-                return current;
-            } finally {
-                if (original.hasNext()) {
-                    current = original.next();
-                } else {
-                    current = null;
-                }
-            }
-        }
     }
 
     @Override

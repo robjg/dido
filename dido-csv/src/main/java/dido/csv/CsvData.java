@@ -6,6 +6,7 @@ import dido.data.schema.DataSchemaImpl;
 import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractFieldGetter;
 import dido.data.util.TypeUtil;
+import dido.how.MapperFrom;
 import dido.how.conversion.DidoConversionProvider;
 import org.apache.commons.csv.CSVRecord;
 
@@ -226,24 +227,24 @@ public class CsvData extends AbstractData {
                 .stream().mapToInt(Integer::intValue).findFirst();
     }
 
-    public static Function<CSVRecord, CsvData> wrapperFunctionFor(DataSchema schema,
-                                                                  DidoConversionProvider conversionProvider) {
+    public static MapperFrom<CSVRecord> wrapperFunctionFor(DataSchema schema,
+                                                           DidoConversionProvider conversionProvider) {
         return wrapperFunctionFor(schema,
                 name -> OptionalInt.of(schema.getIndexNamed(name) - 1),
                 conversionProvider);
     }
 
-    public static Function<CSVRecord, CsvData> wrapperFunctionFor(DataSchema schema,
-                                                                  String[] header,
-                                                                  DidoConversionProvider conversionProvider) {
+    public static MapperFrom<CSVRecord> wrapperFunctionFor(DataSchema schema,
+                                                           String[] header,
+                                                           DidoConversionProvider conversionProvider) {
         return wrapperFunctionFor(schema,
                 fromHeader(header),
                 conversionProvider);
     }
 
-    public static Function<CSVRecord, CsvData> wrapperFunctionFor(DataSchema schema,
-                                                                  ColumnMapping columnMapping,
-                                                                  DidoConversionProvider conversionProvider) {
+    public static MapperFrom<CSVRecord> wrapperFunctionFor(DataSchema schema,
+                                                           ColumnMapping columnMapping,
+                                                           DidoConversionProvider conversionProvider) {
 
         FieldGetter[] getters = new FieldGetter[schema.lastIndex()];
 
@@ -280,7 +281,17 @@ public class CsvData extends AbstractData {
                 new Schema((DataSchemaImpl) schema, getters) :
                 new Schema(schema.getSchemaFields(), schema.firstIndex(), schema.lastIndex(), getters);
 
-        return record -> new CsvData(csvSchema, record);
+        return new MapperFrom<>() {
+            @Override
+            public DataSchema getSchema() {
+                return csvSchema;
+            }
+
+            @Override
+            public CsvData apply(CSVRecord record) {
+                return new CsvData(csvSchema, record);
+            }
+        };
     }
 
 

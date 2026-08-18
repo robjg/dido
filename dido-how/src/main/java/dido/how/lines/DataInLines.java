@@ -1,5 +1,6 @@
 package dido.how.lines;
 
+import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.immutable.SingleData;
 import dido.how.DataException;
@@ -116,6 +117,11 @@ public class DataInLines implements DataInHow<Reader> {
 
         In(BufferedReader bufferedReader) {
             this.reader = bufferedReader;
+        }
+
+        @Override
+        public DataSchema getSchema() {
+            return singleDataType.getSchema();
         }
 
         @Override

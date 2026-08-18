@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import dido.data.DataFactoryProvider;
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.how.MapperFrom;
 
 import java.util.function.Function;
 
@@ -17,8 +18,10 @@ public class JsonStringToData {
 
     public static Function<String, DidoData> asWrapperWithSchema(DataSchema schema) {
 
-        return new Known(JsonDataWrapper.registerSchema(new GsonBuilder(), schema)
-                .create(),
+        JsonDataWrapper jsonDataWrapper = JsonDataWrapper.forSchema(schema);
+
+        return new Known(jsonDataWrapper.init(new GsonBuilder()).create(),
+                jsonDataWrapper.getSchema(),
                 "ToWrapper, schema=" + schema);
     }
 
@@ -59,8 +62,10 @@ public class JsonStringToData {
                         schema == null ? DataSchema.emptySchema() : schema);
             } else {
 
-                return new Known(JsonDataWrapper.registerSchema(gsonBuilder, schema)
-                        .create(),
+                JsonDataWrapper jsonDataWrapper = JsonDataWrapper.forSchema(schema);
+
+                return new Known(jsonDataWrapper.init(gsonBuilder).create(),
+                        jsonDataWrapper.getSchema(),
                         "ToWrapper, schema=" + schema);
             }
         }
@@ -93,16 +98,18 @@ public class JsonStringToData {
             if (schema == null || partial) {
                 DataSchema partialSchema = schema == null ? DataSchema.emptySchema() : schema;
 
-                return new Known(
+                return new UnKnownCopy(
                         JsonDataPartialCopy.registerPartialSchema(
                                         gsonBuilder, partialSchema)
                                 .create(),
                         "toCopy, partialSchema=" + partialSchema);
             } else {
 
-                return new Known(JsonDataCopy.registerSchema(gsonBuilder, schema,
-                                dataFactoryProvider)
-                        .create(),
+                JsonDataCopy jsonDataCopy = JsonDataCopy.registerSchema(schema,
+                        dataFactoryProvider);
+
+                return new Known(jsonDataCopy.init(gsonBuilder).create(),
+                        jsonDataCopy.getSchema(),
                         "ToCopy, schema=" + schema);
             }
         }
@@ -129,8 +136,12 @@ public class JsonStringToData {
                         .registerPartialSchema(gsonBuilder.create().newBuilder(), partialSchema)
                         .create()
                         .fromJson(s, DataSchema.class);
-                Gson gson = JsonDataWrapper.registerSchema(gsonBuilder.create().newBuilder(), schema).create();
-                known = new Known(gson, toString());
+
+                JsonDataWrapper jsonDataWrapper = JsonDataWrapper.forSchema(schema);
+                Gson gson = jsonDataWrapper.init(gsonBuilder.create().newBuilder()).create();
+
+                known = new Known(gson, jsonDataWrapper.getSchema(),
+                        toString());
             }
             return known.apply(s);
         }
@@ -141,15 +152,48 @@ public class JsonStringToData {
         }
     }
 
-    static class Known implements Function<String, DidoData> {
+    static class UnKnownCopy implements Function<String, DidoData> {
 
         private final Gson gson;
 
         private final String toString;
 
-        Known(Gson gson, String toString) {
+        UnKnownCopy(Gson gson,
+              String toString) {
             this.gson = gson;
             this.toString = toString;
+        }
+
+        @Override
+        public DidoData apply(String s) {
+            return gson.fromJson(s, DidoData.class);
+        }
+
+        @Override
+        public String toString() {
+            return toString;
+        }
+    }
+
+    static class Known implements MapperFrom<String> {
+
+        private final Gson gson;
+
+        private final DataSchema schema;
+
+        private final String toString;
+
+        Known(Gson gson,
+              DataSchema schema,
+              String toString) {
+            this.gson = gson;
+            this.schema = schema;
+            this.toString = toString;
+        }
+
+        @Override
+        public DataSchema getSchema() {
+            return schema;
         }
 
         @Override

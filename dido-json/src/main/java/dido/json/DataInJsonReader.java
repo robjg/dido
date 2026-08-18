@@ -9,6 +9,7 @@ import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
+import dido.how.util.OneAheadIterator;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -27,10 +28,15 @@ public class DataInJsonReader implements DataInHow<Reader> {
 
     private final Gson gson;
 
+    private final DataSchema schema;
+
     private final boolean isArray;
 
-    private DataInJsonReader(Gson gson, boolean isArray) {
+    private DataInJsonReader(Gson gson,
+                             DataSchema schema,
+                             boolean isArray) {
         this.gson = gson;
+        this.schema = schema;
         this.isArray = isArray;
     }
 
@@ -72,9 +78,11 @@ public class DataInJsonReader implements DataInHow<Reader> {
 
         public DataInHow<Reader> make(GsonBuilder gsonBuilder) {
 
+            JsonDataWrapper jsonDataWrapper = JsonDataWrapper.forSchema(schema);
+
             return new DataInJsonReader(
-                    JsonDataWrapper.registerSchema(gsonBuilder, schema)
-                            .create(),
+                    jsonDataWrapper.init(gsonBuilder).create(),
+                    jsonDataWrapper.getSchema(),
                     isArray);
         }
     }
@@ -116,13 +124,15 @@ public class DataInJsonReader implements DataInHow<Reader> {
                         JsonDataPartialCopy.registerPartialSchema(gsonBuilder,
                                         schema)
                                 .create(),
+                        null,
                         isArray);
             } else {
 
+                JsonDataCopy jsonDataCopy = JsonDataCopy.registerSchema(schema, dataFactoryProvider);
+
                 return new DataInJsonReader(
-                        JsonDataCopy.registerSchema(gsonBuilder,
-                                        schema, dataFactoryProvider)
-                                .create(),
+                        jsonDataCopy.init(gsonBuilder).create(),
+                        jsonDataCopy.getSchema(),
                         isArray);
             }
         }
@@ -147,25 +157,53 @@ public class DataInJsonReader implements DataInHow<Reader> {
             }
         }
 
+        Iterator<DidoData> originalIterator = new Iterator<>() {
+
+            @Override
+            public boolean hasNext() {
+                try {
+                    return reader.hasNext();
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+
+            @Override
+            public DidoData next() {
+                return gson.fromJson(reader, DidoData.class);
+            }
+        };
+
+        Iterator<DidoData> iterator;
+        DataSchema schema;
+
+        if (this.schema == null) {
+
+            if (originalIterator.hasNext()) {
+
+                DidoData didoData = originalIterator.next();
+                iterator = new OneAheadIterator<>(originalIterator, didoData);
+                schema = didoData.getSchema();
+            }
+            else {
+                return DataIn.empty();
+            }
+        }
+        else {
+            iterator = originalIterator;
+            schema = this.schema;
+        }
+
         return new DataIn() {
 
             @Override
-            public Iterator<DidoData> iterator() {
-                return new Iterator<>() {
-                    @Override
-                    public boolean hasNext() {
-                        try {
-                            return reader.hasNext();
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                    }
+            public DataSchema getSchema() {
+                return schema;
+            }
 
-                    @Override
-                    public DidoData next() {
-                        return gson.fromJson(reader, DidoData.class);
-                    }
-                };
+            @Override
+            public Iterator<DidoData> iterator() {
+                return iterator;
             }
 
             @Override

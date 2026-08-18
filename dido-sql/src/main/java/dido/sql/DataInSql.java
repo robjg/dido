@@ -2,9 +2,7 @@ package dido.sql;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.schema.SchemaNotifier;
-import dido.data.schema.SchemaTracker;
-import dido.data.schema.SchemaTrackers;
+import dido.data.schema.HasSchema;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -101,9 +99,9 @@ public class DataInSql implements DataInHow<Connection> {
         }
     }
 
-    class DataInImpl implements DataIn, SchemaNotifier {
+    class DataInImpl implements DataIn, HasSchema {
 
-        private final SchemaTrackers schemaTrackers = new SchemaTrackers();
+        private final DataSchema outSchema;
 
         private final Connection connection;
 
@@ -128,7 +126,12 @@ public class DataInSql implements DataInHow<Connection> {
 
             logger.info("Created schema {}", wrapper.getSchema());
 
-            schemaTrackers.schemaAvailable(wrapper.getSchema());
+            this.outSchema = wrapper.getSchema();
+        }
+
+        @Override
+        public DataSchema getSchema() {
+            return outSchema;
         }
 
         @Override
@@ -160,16 +163,5 @@ public class DataInSql implements DataInHow<Connection> {
                 throw new DataException(e);
             }
         }
-
-        @Override
-        public void addSchemaTracker(SchemaTracker schemaTracker) {
-            schemaTrackers.addSchemaTracker(schemaTracker);
-        }
-
-        @Override
-        public void removeSchemaTracker(SchemaTracker schemaTracker) {
-            schemaTrackers.removeSchemaTracker(schemaTracker);
-        }
     }
-
 }

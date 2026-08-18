@@ -2,9 +2,6 @@ package dido.poi;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.schema.SchemaNotifier;
-import dido.data.schema.SchemaTracker;
-import dido.data.schema.SchemaTrackers;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -210,19 +207,22 @@ public class DataInPoi implements DataInHow<BookInProvider> {
         return BookInProvider.class;
     }
 
-    class MainReader implements DataIn, SchemaNotifier {
+    class MainReader implements DataIn {
 
         private final RowsIn rowsIn;
 
         private final DataRowFactory dataRowFactory;
-
-        private final SchemaTrackers schemaTrackers = new SchemaTrackers();
 
         int lastRow;
 
         public MainReader(RowsIn rowsIn, DataRowFactory dataRowFactory) {
             this.rowsIn = rowsIn;
             this.dataRowFactory = dataRowFactory;
+        }
+
+        @Override
+        public DataSchema getSchema() {
+            return dataRowFactory.getSchema();
         }
 
         @Override
@@ -256,16 +256,6 @@ public class DataInPoi implements DataInHow<BookInProvider> {
         public void close() {
 
             logger.debug("[{}] closed reader at row [{}]", DataInPoi.this, lastRow);
-        }
-
-        @Override
-        public void addSchemaTracker(SchemaTracker schemaTracker) {
-            schemaTrackers.addSchemaTracker(schemaTracker);
-        }
-
-        @Override
-        public void removeSchemaTracker(SchemaTracker schemaTracker) {
-            schemaTrackers.removeSchemaTracker(schemaTracker);
         }
     }
 
@@ -320,14 +310,12 @@ public class DataInPoi implements DataInHow<BookInProvider> {
 
         if (schemaAndCells == null) {
             // No schema, no cells and no data.
-            return DataIn.of();
+            return DataIn.empty();
         } else {
-            MainReader dataIn =  new MainReader(rowsIn, DataRowFactory.newInstance(
+            return new MainReader(rowsIn, DataRowFactory.newInstance(
                     schemaAndCells.getSchema(), schemaAndCells.getDataCells(),
                     Objects.requireNonNullElseGet(conversionProvider,
                             DefaultConversionProvider::defaultInstance)));
-            dataIn.schemaTrackers.schemaAvailable(schemaAndCells.getSchema());
-            return dataIn;
         }
     }
 

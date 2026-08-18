@@ -5,6 +5,7 @@ import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
+import dido.how.MapperFrom;
 import dido.objects.izers.DestructionStrategySerializer;
 import dido.objects.stratagy.BeanStrategies;
 import dido.objects.stratagy.DestructionStrategy;
@@ -28,7 +29,7 @@ public class DataInObjects<T> implements DataInHow<Iterable<T>> {
 
     private final Type typeOfT;
 
-    private final Function<T, DidoData> mapperFunc;
+    private final MapperFrom<T> mapperFunc;
 
     private DataInObjects(Type typeOfT,
                           Settings settings) {
@@ -73,14 +74,25 @@ public class DataInObjects<T> implements DataInHow<Iterable<T>> {
             };
         }
 
-        public <T> Function<T, DidoData> mapperOf(Type typeOfT) {
+        public <T> MapperFrom<T> mapperOf(Type typeOfT) {
             SerializationCache cache = builder.create();
             DidoDataSerializer serializer = cache.dataSerializerFor(typeOfT);
             if (serializer == null) {
                 throw DataException.of("No way of serializing " + typeOfT);
             }
 
-            return serializer::serialize;
+            return new MapperFrom<>() {
+
+                @Override
+                public DataSchema getSchema() {
+                    return serializer.getSchema();
+                }
+
+                @Override
+                public DidoData apply(T t) {
+                    return serializer.serialize(t);
+                }
+            };
         }
 
         public <T> DataIn inFrom(Stream<T> dataIn, Type typeOfT) {
@@ -202,8 +214,15 @@ public class DataInObjects<T> implements DataInHow<Iterable<T>> {
         Iterator<T> it = dataIn.iterator();
 
         return new DataIn() {
+
+            @Override
+            public DataSchema getSchema() {
+                return mapperFunc.getSchema();
+            }
+
             @Override
             public Iterator<DidoData> iterator() {
+
                 return new Iterator<>() {
                     @Override
                     public boolean hasNext() {
