@@ -1,6 +1,7 @@
 package dido.oddjob.schema;
 
 import dido.data.DataSchema;
+import dido.data.NoSuchFieldException;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 
@@ -70,14 +71,14 @@ class SchemaFromBeanTest {
         schemaFromBean.setFrom(schema);
         schemaFromBean.setInclude(new String[] { "Foo" });
 
-        IllegalArgumentException thrown = assertThrows(
-                IllegalArgumentException.class,
+        NoSuchFieldException thrown = assertThrows(
+                NoSuchFieldException.class,
                 schemaFromBean::toSchema,
                 "Expected to throw, but it didn't"
         );
 
         assertThat(thrown.getMessage(), is(
-                "No schema field to include named 'Foo' found in schema {}"));
+                "No such field named [Foo], schema is {}"));
     }
 
     @Test
@@ -89,13 +90,13 @@ class SchemaFromBeanTest {
         schemaFromBean.setFrom(schema);
         schemaFromBean.setExclude(new String[] { "Foo" });
 
-        IllegalArgumentException thrown = assertThrows(
-                IllegalArgumentException.class,
+        NoSuchFieldException thrown = assertThrows(
+                NoSuchFieldException.class,
                 schemaFromBean::toSchema,
                 "Expected to throw, but it didn't"
         );
 
         assertThat(thrown.getMessage(), is(
-                "No schema field to exclude named 'Foo' found in schema {}"));
+                "No such field named [Foo], schema is {}"));
     }
 }

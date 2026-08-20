@@ -1,6 +1,7 @@
 package dido.oddjob.schema;
 
 import dido.data.DataSchema;
+import dido.data.NoSuchFieldException;
 import dido.data.SchemaFactory;
 import dido.data.SchemaField;
 import dido.data.schema.SchemaDefs;
@@ -107,8 +108,7 @@ public class SchemaFromBean implements NestedSchema, ArooaValue {
             for (String name : include) {
                 SchemaField field = from.getSchemaFieldNamed(name);
                 if (field == null) {
-                    throw new IllegalArgumentException("No schema field to include named '" + name +
-                            "' found in schema " + from);
+                    throw new NoSuchFieldException(name, from);
                 }
                 factory.addSchemaField(field);
             }
@@ -126,11 +126,10 @@ public class SchemaFromBean implements NestedSchema, ArooaValue {
         }
 
         if (exclude != null) {
-            for (String remove : exclude) {
-                SchemaField removed = factory.removeNamed(remove);
+            for (String name : exclude) {
+                SchemaField removed = factory.removeNamed(name);
                 if (removed == null) {
-                    throw new IllegalArgumentException("No schema field to exclude named '" + remove +
-                            "' found in schema " + from);
+                    throw new NoSuchFieldException(name, from);
                 }
             }
         }
