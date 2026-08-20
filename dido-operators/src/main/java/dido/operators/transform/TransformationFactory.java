@@ -132,8 +132,8 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
 
 
         @Override
-        public DataSchema getResultantSchema() {
-            return delegate == null ? null : delegate.getResultantSchema();
+        public DataSchema getSchema() {
+            return delegate == null ? null : delegate.getSchema();
         }
 
         @Override

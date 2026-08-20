@@ -222,7 +222,7 @@ public class ViewTransformBuilder {
         }
 
         @Override
-        public DataSchema getResultantSchema() {
+        public DataSchema getSchema() {
             return schema;
         }
 

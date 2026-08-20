@@ -1,5 +1,6 @@
 package dido.oddjob.schema;
 
+import dido.data.DataSchema;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 
@@ -8,6 +9,7 @@ import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SchemaFromBeanTest {
 
@@ -57,5 +59,43 @@ class SchemaFromBeanTest {
         oddjob.run();
 
         assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+    }
+
+    @Test
+    void noIncludeField() {
+
+        DataSchema schema = DataSchema.builder().build();
+
+        SchemaFromBean schemaFromBean = new SchemaFromBean();
+        schemaFromBean.setFrom(schema);
+        schemaFromBean.setInclude(new String[] { "Foo" });
+
+        IllegalArgumentException thrown = assertThrows(
+                IllegalArgumentException.class,
+                schemaFromBean::toSchema,
+                "Expected to throw, but it didn't"
+        );
+
+        assertThat(thrown.getMessage(), is(
+                "No schema field to include named 'Foo' found in schema {}"));
+    }
+
+    @Test
+    void noExcludeField() {
+
+        DataSchema schema = DataSchema.builder().build();
+
+        SchemaFromBean schemaFromBean = new SchemaFromBean();
+        schemaFromBean.setFrom(schema);
+        schemaFromBean.setExclude(new String[] { "Foo" });
+
+        IllegalArgumentException thrown = assertThrows(
+                IllegalArgumentException.class,
+                schemaFromBean::toSchema,
+                "Expected to throw, but it didn't"
+        );
+
+        assertThat(thrown.getMessage(), is(
+                "No schema field to exclude named 'Foo' found in schema {}"));
     }
 }

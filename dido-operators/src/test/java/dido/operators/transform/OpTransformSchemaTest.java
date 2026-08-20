@@ -36,7 +36,7 @@ class OpTransformSchemaTest {
 
         DidoTransform didoTransform = transformationBuilder.build();
 
-        DataSchema result = didoTransform.getResultantSchema();
+        DataSchema result = didoTransform.getSchema();
 
         DataSchema expected = SchemaBuilder.newInstance()
                 .addNamed("One", int.class)
@@ -71,7 +71,7 @@ class OpTransformSchemaTest {
 
         DidoTransform didoTransform = transformationBuilder.build();
 
-        DataSchema result = didoTransform.getResultantSchema();
+        DataSchema result = didoTransform.getSchema();
 
         DataSchema expected = SchemaBuilder.newInstance()
                 .addNamed("One", int.class)
@@ -102,7 +102,7 @@ class OpTransformSchemaTest {
 
         DidoTransform didoTransform = transformationBuilder.build();
 
-        DataSchema result = didoTransform.getResultantSchema();
+        DataSchema result = didoTransform.getSchema();
 
         DataSchema expected = SchemaBuilder.newInstance()
                 .addNamedAt(10, "Here", String.class)
@@ -133,7 +133,7 @@ class OpTransformSchemaTest {
 
         DidoTransform didoTransform = transformationBuilder.build();
 
-        DataSchema result = didoTransform.getResultantSchema();
+        DataSchema result = didoTransform.getSchema();
 
         DataSchema expected = SchemaBuilder.newInstance()
                 .addNamedAt(10, "Now", String.class)
@@ -164,7 +164,7 @@ class OpTransformSchemaTest {
 
         DidoTransform didoTransform = transformationBuilder.build();
 
-        DataSchema result = didoTransform.getResultantSchema();
+        DataSchema result = didoTransform.getSchema();
 
         DataSchema expected = SchemaBuilder.newInstance()
                 .addNamedAt(20, "Here", String.class)
@@ -200,7 +200,7 @@ class OpTransformSchemaTest {
 
         DidoTransform didoTransform = transformationBuilder.build();
 
-        DataSchema result = didoTransform.getResultantSchema();
+        DataSchema result = didoTransform.getSchema();
 
         DataSchema expected = SchemaBuilder.newInstance()
                 .addNamedAt(1, "Here", int.class)
@@ -246,7 +246,7 @@ class OpTransformSchemaTest {
 
         DidoTransform didoTransform = transformationBuilder.build();
 
-        DataSchema result = didoTransform.getResultantSchema();
+        DataSchema result = didoTransform.getSchema();
 
         DataSchema expected = SchemaBuilder.newInstance()
                 .addNamedAt(10, "Three", Double.class)
@@ -293,7 +293,7 @@ class OpTransformSchemaTest {
 
         DidoTransform didoTransform = transformationBuilder.build();
 
-        DataSchema result = didoTransform.getResultantSchema();
+        DataSchema result = didoTransform.getSchema();
 
         DataSchema expected = SchemaBuilder.newInstance()
                 .addNamedAt(1, "Three", Double.class)

@@ -51,7 +51,7 @@ class CsvSchemaExampleTest {
                 .build();
 
         String csv2 = DataOutCsv.with()
-                .schema(transform.getResultantSchema())
+                .schema(transform.getSchema())
                 .mapToString()
                 .apply(transform.apply(data));
 

@@ -40,7 +40,7 @@ class FieldViewsTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(10, 23.5);
@@ -67,7 +67,7 @@ class FieldViewsTest {
                 .addNamed("Price", String.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Apple", "10", "23.5");
@@ -92,7 +92,7 @@ class FieldViewsTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(10, 23.5);
@@ -117,7 +117,7 @@ class FieldViewsTest {
                 .addNamed("Qty", int.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(23.5, 10);
@@ -142,7 +142,7 @@ class FieldViewsTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Apple", 23.5);
@@ -166,7 +166,7 @@ class FieldViewsTest {
                 .addNamedAt(3, "Price", double.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Apple", 23.5);
@@ -186,7 +186,7 @@ class FieldViewsTest {
 
         DidoData result = transformation.apply(data);
 
-        assertThat(transformation.getResultantSchema(), is(schema));
+        assertThat(transformation.getSchema(), is(schema));
 
         assertThat(result, is(data));
     }
@@ -207,7 +207,7 @@ class FieldViewsTest {
                 .addNamed("Fruit", String.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData result = transformation.apply(data);
 
@@ -233,7 +233,7 @@ class FieldViewsTest {
                 .addNamedAt(3, "ThePrice", double.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData result = transformation.apply(data);
 
@@ -261,7 +261,7 @@ class FieldViewsTest {
                 .addNamedAt(3, "ThePrice", double.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData result = transformation.apply(data);
 
@@ -291,7 +291,7 @@ class FieldViewsTest {
                 .addNamed("InStock", boolean.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Orange", 1234L, 23.5, true);
@@ -323,7 +323,7 @@ class FieldViewsTest {
                 .addNamed("InStock", boolean.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = DidoData.of(54.3, 5, "Orange", true);
 
@@ -352,7 +352,7 @@ class FieldViewsTest {
                 .addNamed("InStock", java.lang.Boolean.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Orange", 1234L, 23.5, null, true);
@@ -377,7 +377,7 @@ class FieldViewsTest {
                 .addNamed("Qty", int.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(10);
@@ -401,7 +401,7 @@ class FieldViewsTest {
                 .addNamedAt(2, "Qty", int.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(10);
@@ -442,7 +442,7 @@ class FieldViewsTest {
                 .addNamed("DisplayPrice", String.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(schema)
                 .of("APPLE", 25.0, "£23.5");
@@ -463,7 +463,7 @@ class FieldViewsTest {
 
         DidoData result = transformation.apply(data);
 
-        assertThat(transformation.getResultantSchema(), is(schema));
+        assertThat(transformation.getSchema(), is(schema));
 
         DidoData expectedData = ArrayData.withSchema(schema)
                 .of("Apple", 20, 23.5);
@@ -491,7 +491,7 @@ class FieldViewsTest {
                 .addNamed("Extra", int.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Apple", 10, 23.5, 20);
@@ -521,7 +521,7 @@ class FieldViewsTest {
                 .addNamed("Price", double.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Apple", 20, 23.5);
@@ -542,7 +542,7 @@ class FieldViewsTest {
 
         DidoData result = transformation.apply(data);
 
-        assertThat(transformation.getResultantSchema(), is(schema));
+        assertThat(transformation.getSchema(), is(schema));
 
         DidoData expectedData = ArrayData.withSchema(schema)
                 .of("Apple", 20, 23.5);
@@ -563,7 +563,7 @@ class FieldViewsTest {
 
         DidoData result = transformation.apply(data);
 
-        assertThat(transformation.getResultantSchema(), is(schema));
+        assertThat(transformation.getSchema(), is(schema));
 
         DidoData expectedData = ArrayData.withSchema(schema)
                 .of("Apple", 20, 23.5);
@@ -601,7 +601,7 @@ class FieldViewsTest {
                 .addNamedAt(20, "BigNumber", long.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of(2000L, 2000L);
@@ -622,7 +622,7 @@ class FieldViewsTest {
 
         DidoData result = transformation.apply(data);
 
-        assertThat(transformation.getResultantSchema(), is(schema));
+        assertThat(transformation.getSchema(), is(schema));
 
         DidoData expectedData = ArrayData.withSchema(schema)
                 .of("Apple", 10, 47.0);

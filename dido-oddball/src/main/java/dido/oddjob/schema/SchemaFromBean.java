@@ -105,7 +105,12 @@ public class SchemaFromBean implements NestedSchema, ArooaValue {
         if (include != null && include.length > 0) {
             factory = SchemaFactory.newInstance();
             for (String name : include) {
-                factory.addSchemaField(from.getSchemaFieldNamed(name));
+                SchemaField field = from.getSchemaFieldNamed(name);
+                if (field == null) {
+                    throw new IllegalArgumentException("No schema field to include named '" + name +
+                            "' found in schema " + from);
+                }
+                factory.addSchemaField(field);
             }
         }
         else {
@@ -122,7 +127,11 @@ public class SchemaFromBean implements NestedSchema, ArooaValue {
 
         if (exclude != null) {
             for (String remove : exclude) {
-                factory.removeNamed(remove);
+                SchemaField removed = factory.removeNamed(remove);
+                if (removed == null) {
+                    throw new IllegalArgumentException("No schema field to exclude named '" + remove +
+                            "' found in schema " + from);
+                }
             }
         }
 

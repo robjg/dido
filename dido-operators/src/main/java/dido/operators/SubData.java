@@ -39,7 +39,7 @@ public class SubData extends AbstractData implements DidoData {
                     new Read(subSchema, ReadSchema.from(original)));
             return new DidoTransform() {
                 @Override
-                public DataSchema getResultantSchema() {
+                public DataSchema getSchema() {
                     return readSchema;
                 }
 

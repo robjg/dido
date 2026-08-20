@@ -25,7 +25,7 @@ public class FlexibleSubData {
         @Override
         public DidoData apply(DidoData original) {
 
-            if (mappingFunc == null || !mappingFunc.getResultantSchema().equals(original.getSchema())) {
+            if (mappingFunc == null || !mappingFunc.getSchema().equals(original.getSchema())) {
                 mappingFunc = SubData.asMappingFrom(original.getSchema()).withIndices(indices);
             }
 
@@ -46,7 +46,7 @@ public class FlexibleSubData {
         @Override
         public DidoData apply(DidoData original) {
 
-            if (mappingFunc == null || !mappingFunc.getResultantSchema().equals(original.getSchema())) {
+            if (mappingFunc == null || !mappingFunc.getSchema().equals(original.getSchema())) {
                 mappingFunc = SubData.asMappingFrom(original.getSchema()).withNames(fields);
             }
 

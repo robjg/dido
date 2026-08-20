@@ -82,7 +82,7 @@ public class FieldViewsMaybeTest {
 
         DidoData result = transformation.apply(data);
 
-        assertThat(transformation.getResultantSchema(), is(schema));
+        assertThat(transformation.getSchema(), is(schema));
 
         DidoData expectedData = ArrayData.withSchema(schema)
                 .of("Apple", 20, 23.5);
@@ -102,7 +102,7 @@ public class FieldViewsMaybeTest {
 
         DidoData result = transformation.apply(data);
 
-        assertThat(transformation.getResultantSchema(), is(schema));
+        assertThat(transformation.getSchema(), is(schema));
 
         DidoData expectedData = ArrayData.withSchema(schema)
                 .of("Apple", 20, 23.5);
@@ -128,7 +128,7 @@ public class FieldViewsMaybeTest {
                 .addNamed("QtyDoubled", int.class)
                 .build();
 
-        assertThat(transformation.getResultantSchema(), is(expectedSchema));
+        assertThat(transformation.getSchema(), is(expectedSchema));
 
         DidoData expectedData = ArrayData.withSchema(expectedSchema)
                 .of("Apple", 10, 23.5, 20);

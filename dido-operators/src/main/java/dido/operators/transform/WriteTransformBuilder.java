@@ -186,7 +186,7 @@ public class WriteTransformBuilder {
         }
 
         @Override
-        public DataSchema getResultantSchema() {
+        public DataSchema getSchema() {
             return schema;
         }
 
