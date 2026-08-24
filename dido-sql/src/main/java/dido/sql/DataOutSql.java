@@ -2,7 +2,8 @@ package dido.sql;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.schema.SchemaTracker;
+import dido.data.FieldGetter;
+import dido.data.ReadSchema;
 import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
@@ -116,32 +117,49 @@ public class DataOutSql implements DataOutHow<Connection> {
 
     protected DataOut outToWithExceptions(Connection connection) throws SQLException, ClassNotFoundException {
 
-        return new DataOutImpl(connection);
+        return new UnknownDataOut(connection);
     }
 
-    class DataOutImpl implements DataOut, SchemaTracker {
+    @Override
+    public DataOutHow<Connection> forSchema(DataSchema schema) {
+
+        logger.info("Schema available {}", schema);
+
+        return new DataOutHow<>() {
+
+            @Override
+            public DataOutHow<Connection> forSchema(DataSchema schema) {
+                return DataOutSql.this.forSchema(schema);
+            }
+
+            @Override
+            public DataOut outTo(Connection outTo) {
+                return new KnownDataOut(schema, outTo);
+            }
+
+            @Override
+            public Class<Connection> getOutType() {
+                return DataOutSql.this.getOutType();
+            }
+        };
+    }
+
+    class KnownDataOut implements DataOut {
 
         private final Connection connection;
 
-        private DmlStrategy.Prepared prepared;
+        private final DmlStrategy.Prepared prepared;
 
-        private int[] sqlTypes;
+        private final int[] sqlTypes;
+
+        private final FieldGetter[] getters;
 
         private int count = 0;
 
-        DataOutImpl(Connection connection) {
+        KnownDataOut(DataSchema schema,
+                     Connection connection) {
+
             this.connection = connection;
-        }
-
-        @Override
-        public void schemaAvailable(DataSchema schema) {
-
-            if (prepared != null) {
-                logger.info("Schema already known. Ignoring {}", schema);
-                return;
-            }
-
-            logger.info("Schema available {}", schema);
 
             try {
                 prepared = dmlStrategy.prepare(connection, schema);
@@ -165,6 +183,16 @@ public class DataOutSql implements DataOutHow<Connection> {
                     sqlTypes[i - 1] = metaData.getParameterType(i);
                 }
 
+                ReadSchema readSchema = ReadSchema.from(schema);
+
+                getters = new FieldGetter[prepared.indices().length];
+                for (int i = 0; i < prepared.indices().length; ++i) {
+
+                    int index = prepared.indices()[i];
+
+                    getters[i] = readSchema.getFieldGetterAt(index);
+                }
+
             } catch (SQLException | ClassNotFoundException e) {
                 throw new DataException(e);
             }
@@ -174,25 +202,19 @@ public class DataOutSql implements DataOutHow<Connection> {
         @Override
         public void accept(DidoData data) {
 
-            if (prepared == null) {
-                schemaAvailable(data.getSchema());
-            }
-
             PreparedStatement stmt = prepared.statement();
 
-            for (int i = 0; i < prepared.indices().length; ++i) {
+            for (int i = 0; i < getters.length; ++i) {
 
-                int index = prepared.indices()[i];
-
-                Object item = data.getAt(index);
+                Object item = getters[i].get(data);
                 try {
                     if (item == null) {
-                        stmt.setNull(index, sqlTypes[index - 1]);
+                        stmt.setNull(i + 1, sqlTypes[i]);
                     } else {
-                        stmt.setObject(index, item);
+                        stmt.setObject(i + 1, item);
                     }
                 } catch (SQLException e) {
-                    throw DataException.of("Failed setting column " + index + " with ["
+                    throw DataException.of("Failed setting column " + (i + 1)  + " with ["
                             + item + "]", e);
                 }
             }
@@ -221,6 +243,35 @@ public class DataOutSql implements DataOutHow<Connection> {
                 throw new DataException(e);
             }
         }
+    }
+
+    class UnknownDataOut implements DataOut {
+
+        private final Connection connection;
+
+        private DataOut knownDataOut;
+
+        UnknownDataOut(Connection connection) {
+            this.connection = connection;
+        }
+
+
+        @Override
+        public void accept(DidoData didoData) {
+            if (knownDataOut == null) {
+                knownDataOut = forSchema(didoData.getSchema())
+                        .outTo(connection);
+            }
+            knownDataOut.accept(didoData);
+        }
+
+        @Override
+        public void close() {
+            if (knownDataOut != null) {
+                knownDataOut.close();
+            }
+        }
+
     }
 
 }

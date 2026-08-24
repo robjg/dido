@@ -3,7 +3,6 @@ package dido.how;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.schema.HasSchema;
 
 import java.io.BufferedReader;
 import java.util.Iterator;
@@ -27,8 +26,19 @@ import java.util.stream.StreamSupport;
  *
  * @author rob
  */
-public interface DataIn extends Iterable<DidoData>, AutoCloseable, HasSchema {
-    
+public interface DataIn extends Iterable<DidoData>, AutoCloseable {
+
+    DataSchema getSchema();
+
+    default Stream<DidoData> stream() {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+                iterator(), Spliterator.ORDERED | Spliterator.NONNULL), false);
+    }
+
+    @Override
+    default void close() {
+    }
+
     static DataIn of(DidoData... data) {
         return new DataIn() {
             int index = 0;
@@ -64,12 +74,4 @@ public interface DataIn extends Iterable<DidoData>, AutoCloseable, HasSchema {
         return DataIn.of();
     }
 
-    default Stream<DidoData> stream() {
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
-                iterator(), Spliterator.ORDERED | Spliterator.NONNULL), false);
-    }
-
-    @Override
-    default void close() {
-    }
 }

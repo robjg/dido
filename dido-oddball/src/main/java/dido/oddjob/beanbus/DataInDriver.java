@@ -1,7 +1,7 @@
 package dido.oddjob.beanbus;
 
 import dido.data.DidoData;
-import dido.data.schema.SchemaTracker;
+import dido.data.schema.SchemaAware;
 import dido.how.DataIn;
 import dido.how.DataInHow;
 import org.oddjob.arooa.ArooaSession;
@@ -97,8 +97,8 @@ public class DataInDriver<I> implements Runnable, Closeable, ArooaSessionAware {
 
         try (DataIn dataIn = how.inFrom(from)) {
 
-            if (to instanceof SchemaTracker schemaTracker) {
-                schemaTracker.schemaAvailable(dataIn.getSchema());
+            if (to instanceof SchemaAware schemaAware) {
+                schemaAware.setSchema(dataIn.getSchema());
             }
             Iterator<DidoData> iterator = dataIn.iterator();
 

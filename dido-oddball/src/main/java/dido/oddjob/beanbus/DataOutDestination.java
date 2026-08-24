@@ -2,8 +2,7 @@ package dido.oddjob.beanbus;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.data.schema.SchemaTracker;
-import dido.data.schema.SchemaTrackers;
+import dido.data.schema.SchemaAware;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
 import org.oddjob.arooa.ArooaSession;
@@ -35,7 +34,7 @@ import java.util.function.Consumer;
  * @param <O> The type of the output.
  */
 public class DataOutDestination<O>
-        implements Runnable, AutoCloseable, Consumer<DidoData>, ArooaSessionAware, SchemaTracker {
+        implements Runnable, AutoCloseable, Consumer<DidoData>, ArooaSessionAware, SchemaAware {
 
     private static final Logger logger = LoggerFactory.getLogger(DataOutDestination.class);
 
@@ -74,7 +73,7 @@ public class DataOutDestination<O>
      */
     private final AtomicInteger count = new AtomicInteger();
 
-    private final SchemaTrackers schemaTrackers = new SchemaTrackers();
+    private final SchemaTracker schemaTracker = new SchemaTracker();
 
     private final List<Runnable> closeTasks = new ArrayList<>();
 
@@ -85,16 +84,8 @@ public class DataOutDestination<O>
     }
 
     @Override
-    public void schemaAvailable(DataSchema schema) {
-        schemaTrackers.schemaAvailable(schema);
-    }
-
-    void schemaBind(Object maybe) {
-
-        if (maybe instanceof SchemaTracker schemaTracker) {
-            schemaTrackers.addSchemaTracker(schemaTracker);
-            closeTasks.add(() -> schemaTrackers.removeSchemaTracker(schemaTracker));
-        }
+    public void setSchema(DataSchema schema) {
+        schemaTracker.setSchema(schema);
     }
 
     @Start
@@ -105,28 +96,39 @@ public class DataOutDestination<O>
 
         DataOutHow<O> how = Objects.requireNonNull(this.how, "No How");
 
-        O to;
-        try {
-            to = session.getTools().getArooaConverter().convert(
-                    Objects.requireNonNull(this.to, "Nothing to Read From."),
-                    how.getOutType());
-        }
-        catch (ArooaConversionException e) {
-            throw new IllegalArgumentException(e);
-        }
+        schemaTracker.onSchema(
+                schema -> {
 
-        try {
-            this.consumer = how.outTo(to);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
+                    logger.info("Setting schema to {}", schema);
 
-        schemaBind(this.consumer);
-        schemaBind(this.next);
+                    O to;
+                    try {
+                        to = session.getTools().getArooaConverter().convert(
+                                Objects.requireNonNull(this.to, "Nothing to Read From."),
+                                how.getOutType());
+                    }
+                    catch (ArooaConversionException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+
+                    try {
+                        this.consumer = how.forSchema(schema).outTo(to);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException(e);
+                    }
+
+                    if (this.next instanceof SchemaAware schemaAware) {
+                        schemaAware.setSchema(schema);
+                    }
+                });
     }
 
     @Override
     public void accept(DidoData data) {
+
+        if (consumer == null) {
+            schemaTracker.setSchema(data.getSchema());
+        }
 
         consumer.accept(data);
         count.incrementAndGet();
@@ -139,6 +141,10 @@ public class DataOutDestination<O>
     @Stop
     @Override
     public void close() {
+
+        if (consumer == null) {
+            schemaTracker.setSchema(DataSchema.emptySchema());
+        }
 
         try {
             consumer.close();

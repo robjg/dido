@@ -4,7 +4,6 @@ import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.immutable.ArrayData;
 import dido.data.schema.SchemaBuilder;
-import dido.data.schema.SchemaTracker;
 import dido.how.*;
 import dido.sql.dialect.hsql.HsqlSqlTypes;
 import dido.sql.dialect.std.StdTableDdl;
@@ -99,8 +98,8 @@ class SqlDataPreparedTest {
             throw new RuntimeException(e);
         }
 
-        DataOut copy = copyHow.outTo(connectionCopy);
-        ((SchemaTracker) copy).schemaAvailable(reader.getSchema());
+        DataOut copy = copyHow.forSchema(reader.getSchema())
+                .outTo(connectionCopy);
 
         List<DidoData> results = reader.stream()
                 .peek(copy)
