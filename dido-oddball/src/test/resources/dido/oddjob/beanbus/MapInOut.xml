@@ -23,12 +23,12 @@ Lazy
 Dog]]></buffer>
                             </input>
                         </copy>
-                        <dido:map xmlns:dido="oddjob:dido">
+                        <dido:map id="map-in" xmlns:dido="oddjob:dido">
                             <function>
                                 <dido:lines-in fieldName="stuff" xmlns:dido="oddjob:dido"/>
                             </function>
                         </dido:map>
-                        <dido:map xmlns:dido="oddjob:dido">
+                        <dido:map id="map-out" xmlns:dido="oddjob:dido">
                             <function>
                                 <dido:lines-out fieldName="stuff" xmlns:dido="oddjob:dido"/>
                             </function>

@@ -10,12 +10,15 @@ import org.oddjob.framework.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.ExceptionListener;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
+ * @param <F> The type of data being mapped from.
+ * @param <T> The type of data being mapped to.
  * @oddjob.description Provide a BeanBus component that will work specifically
  * with Schema Aware Functions to initialise them and propagate any resultant
  * schema to the next component if it is Schema Aware.
@@ -23,30 +26,59 @@ import java.util.function.Function;
  * This is functionally equivalent to {@code bus:map} but providing access to schemas
  * may be beneficial as mappers don't need to wait for data for a schema to initialise
  * with.
- *
  * @oddjob.example From and To lines of text.
  * {@oddjob.xml.resource dido/oddjob/beanbus/MapInOut.xml}
-
- * @param <F> The type of data being mapped from.
- * @param <T> The type of data being mapped to.
  */
 public class DataMapper<F, T>
         implements Consumer<F>, Resettable, Outbound<T>, Service, SchemaAware {
 
     private static final Logger logger = LoggerFactory.getLogger(DataMapper.class);
 
+    /**
+     * @oddjob.property
+     * @oddjob.description The name of the component as seen in Oddjob.
+     * @oddjob.required No.
+     */
     private String name;
 
+    /**
+     * @oddjob.property
+     * @oddjob.description The function to apply to data on the bus.
+     * @oddjob.required Yes.
+     */
     private Function<F, T> function;
 
+    /**
+     * @oddjob.property
+     * @oddjob.description The next component in the bus.
+     * @oddjob.required No.
+     */
     private Consumer<? super T> to;
 
+    private ExceptionListener exceptionListener;
+
+    /**
+     * @oddjob.property
+     * @oddjob.description The number of items provided to the function.
+     * @oddjob.required Read Only.
+     */
     private final AtomicInteger count = new AtomicInteger(0);
 
+    /**
+     * @oddjob.property
+     * @oddjob.description The number of items returned by the function.
+     * @oddjob.required Read Only.
+     */
     private final AtomicInteger sent = new AtomicInteger(0);
 
+    /** Internal */
     private final SchemaTracker schemaTracker = new SchemaTracker();
 
+    /**
+     * @oddjob.property
+     * @oddjob.description The resultant schema if the function is able to provide it.
+     * @oddjob.required Read Only.
+     */
     private volatile DataSchema schema;
 
     @Override
@@ -75,14 +107,15 @@ public class DataMapper<F, T>
                         this.function = refinableOutHow.forSchema(schema);
                     }
 
-                    if (function instanceof HasSchema hasSchema) {
-                        this.schema = hasSchema.getSchema();
-
-                        if (this.to instanceof SchemaAware schemaAware) {
-                            schemaAware.setSchema(this.schema);
-                        }
-                    }
                 });
+
+        if (function instanceof HasSchema hasSchema) {
+            this.schema = hasSchema.getSchema();
+
+            if (this.to instanceof SchemaAware schemaAware) {
+                schemaAware.setSchema(this.schema);
+            }
+        }
     }
 
     @Override
@@ -97,7 +130,17 @@ public class DataMapper<F, T>
 
         count.incrementAndGet();
 
-        T transformed = function.apply(from);
+        T transformed;
+        try {
+            transformed = function.apply(from);
+        } catch (RuntimeException e) {
+            if (exceptionListener != null) {
+                exceptionListener.exceptionThrown(e);
+                return;
+            } else {
+                throw e;
+            }
+        }
 
         if (transformed != null && to != null) {
             to.accept(transformed);
@@ -138,6 +181,14 @@ public class DataMapper<F, T>
 
     public void setFunction(Function<F, T> function) {
         this.function = function;
+    }
+
+    public ExceptionListener getExceptionListener() {
+        return exceptionListener;
+    }
+
+    public void setExceptionListener(ExceptionListener exceptionListener) {
+        this.exceptionListener = exceptionListener;
     }
 
     public AtomicInteger getCount() {
