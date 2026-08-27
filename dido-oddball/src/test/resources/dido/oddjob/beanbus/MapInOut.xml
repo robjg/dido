@@ -7,9 +7,6 @@
                     <results>
                         <buffer/>
                     </results>
-                    <how>
-                        <dido:lines fieldName="stuff" xmlns:dido="oddjob:dido"/>
-                    </how>
                 </variables>
                 <bus:bus xmlns:bus="oddjob:beanbus">
                     <of>
@@ -26,16 +23,16 @@ Lazy
 Dog]]></buffer>
                             </input>
                         </copy>
-                        <dido:to-dido xmlns:dido="oddjob:dido">
+                        <dido:map xmlns:dido="oddjob:dido">
                             <function>
-                                <value value="${vars.how}"/>
+                                <dido:lines-in fieldName="stuff" xmlns:dido="oddjob:dido"/>
                             </function>
-                        </dido:to-dido>
-                        <dido:from-dido xmlns:dido="oddjob:dido">
+                        </dido:map>
+                        <dido:map xmlns:dido="oddjob:dido">
                             <function>
-                                <value value="${vars.how}"/>
+                                <dido:lines-out fieldName="stuff" xmlns:dido="oddjob:dido"/>
                             </function>
-                        </dido:from-dido>
+                        </dido:map>
                         <bus:collect>
                             <output>
                                 <value value="${vars.results}"/>

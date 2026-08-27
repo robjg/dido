@@ -66,7 +66,7 @@ class SqlDataPreparedTest {
                 .sql("select type as \"type\", quantity as \"quantity\" from fruit order by type")
                 .make();
 
-        DataOutHow<Connection> copyHow
+        RefinableOutHow<Connection> copyHow
                 = DataOutSql.with()
                 .table("copy")
                 .make();

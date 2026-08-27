@@ -3,6 +3,7 @@ package dido.how.lines;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.immutable.SingleData;
+import dido.data.schema.HasSchema;
 import dido.how.DataException;
 import dido.how.DataIn;
 import dido.how.DataInHow;
@@ -60,7 +61,7 @@ public class DataInLines implements DataInHow<Reader> {
 
         public Function<String, DidoData> mapFromString() {
 
-            return make().singleDataType::of;
+            return make().mapFromString();
         }
 
         public DataInLines make() {
@@ -81,9 +82,9 @@ public class DataInLines implements DataInHow<Reader> {
         return with().fromInputStream(inputStream);
     }
 
-    public static Function<String, DidoData> mapFromString() {
+    public Function<String, DidoData> mapFromString() {
 
-        return with().mapFromString();
+        return new InFunction();
     }
 
     public static Settings with() {
@@ -108,6 +109,19 @@ public class DataInLines implements DataInHow<Reader> {
         }
         else {
             return new In(new BufferedReader(reader));
+        }
+    }
+
+    class InFunction implements Function<String, DidoData>, HasSchema {
+
+        @Override
+        public DataSchema getSchema() {
+            return singleDataType.getSchema();
+        }
+
+        @Override
+        public DidoData apply(String s) {
+            return singleDataType.of(s);
         }
     }
 

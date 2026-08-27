@@ -5,14 +5,16 @@
 		<arooa:conversion className="dido.oddjob.bean.FromBeanTransformer$Conversions"/>
 		<arooa:conversion className="dido.oddjob.schema.SchemaBean$Conversions"/>
         <arooa:conversion className="dido.oddjob.schema.SchemaFromBean$Conversions"/>
-		<arooa:conversion className="dido.oddjob.util.LinesDido" methodName="toStreamOut" arooaValue="true"/>
-		<arooa:conversion className="dido.oddjob.util.LinesDido" methodName="toStreamIn" arooaValue="true"/>
-		<arooa:conversion className="dido.oddjob.util.LinesDido" methodName="toMapToString" arooaValue="true"/>
-		<arooa:conversion className="dido.oddjob.util.LinesDido" methodName="toMapFromString" arooaValue="true"/>
+		<arooa:conversion className="dido.oddjob.util.LinesOutBean" methodName="toStreamOut" arooaValue="true"/>
+		<arooa:conversion className="dido.oddjob.util.LinesInBean" methodName="toStreamIn" arooaValue="true"/>
+		<arooa:conversion className="dido.oddjob.util.LinesOutBean" methodName="toMapToString" arooaValue="true"/>
+		<arooa:conversion className="dido.oddjob.util.LinesInBean" methodName="toMapFromString" arooaValue="true"/>
 	</conversions>
 	<values>
-		<arooa:bean-def element='lines'
-						className='dido.oddjob.util.LinesDido'/>
+		<arooa:bean-def element='lines-in'
+						className='dido.oddjob.util.LinesInBean'/>
+		<arooa:bean-def element='lines-out'
+		                className='dido.oddjob.util.LinesOutBean'/>
 		<arooa:bean-def element='schema'
 						className='dido.oddjob.schema.SchemaBean'>
 			<design>
@@ -140,28 +142,8 @@
 				</design:form>
 			</design>
 		</arooa:bean-def>
-		<arooa:bean-def element="to-dido"
-		                className="dido.oddjob.beanbus.ToDido">
-			<design>
-				<design:form xmlns:design="arooa:design">
-					<formItems>
-						<design:group bordered="true" title="Required">
-							<formItems>
-								<design:single property="mapper" title="Mapper"/>
-							</formItems>
-						</design:group>
-						<design:group bordered="true" title="Optional">
-							<formItems>
-								<design:text property="name" title="Name"/>
-								<design:single property="to" title="To"/>
-							</formItems>
-						</design:group>
-					</formItems>
-				</design:form>
-			</design>
-		</arooa:bean-def>
-		<arooa:bean-def element="from-dido"
-		                className="dido.oddjob.beanbus.FromDido">
+		<arooa:bean-def element="map"
+		                className="dido.oddjob.beanbus.DataMapper">
 			<design>
 				<design:form xmlns:design="arooa:design">
 					<formItems>

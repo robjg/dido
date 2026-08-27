@@ -27,7 +27,6 @@ class StreamInOutBusTest {
 
         OddjobLookup lookup = new OddjobLookup(oddjob);
 
-        @SuppressWarnings("unchecked")
         String[] results = lookup.lookup("vars.results", String[].class);
 
         assertThat(results, arrayContaining(

@@ -15,7 +15,7 @@ import java.util.function.Function;
  * @oddjob.description Creates an In or Out for Lines of Text. The {@link DidoData} is created or expected to have
  * a field with the give field name or the name 'Line'.
  */
-public class LinesDido {
+public class LinesBeanBase {
 
     /**
      * @oddjob.property

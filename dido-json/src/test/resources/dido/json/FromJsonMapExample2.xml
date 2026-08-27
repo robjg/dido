@@ -11,19 +11,19 @@
 ]]></buffer>
                     </values>
                 </bus:driver>
-                <dido:to-dido xmlns:dido="oddjob:dido">
+                <dido:map xmlns:dido="oddjob:dido">
                     <function>
-                        <dido:json objectToNumberPolicy="LONG_OR_DOUBLE" xmlns:dido="oddjob:dido"/>
+                        <dido:from-json objectToNumberPolicy="LONG_OR_DOUBLE" xmlns:dido="oddjob:dido"/>
                     </function>
-                </dido:to-dido>
-                <dido:from-dido xmlns:dido="oddjob:dido">
+                </dido:map>
+                <dido:map xmlns:dido="oddjob:dido">
                     <function>
-                        <dido:json xmlns:dido="oddjob:dido"/>
+                        <dido:to-json xmlns:dido="oddjob:dido"/>
                     </function>
                     <to>
                         <stdout/>
                     </to>
-                </dido:from-dido>
+                </dido:map>
             </of>
         </bus:bus>
     </job>

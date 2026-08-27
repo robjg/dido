@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -31,7 +30,7 @@ public class DataLinesTest {
 
         try (DataIn in = DataInLines.fromReader(reader)) {
 
-            lines = in.stream().collect(Collectors.toList());
+            lines = in.stream().toList();
         }
 
         assertThat(lines.size(), is(3));
@@ -55,4 +54,46 @@ public class DataLinesTest {
 
     }
 
+    @Test
+    void linesWithSchemaAndFieldName() {
+
+        String string = "Apple" + System.lineSeparator() +
+                "Orange" + System.lineSeparator() +
+                "Pear" + System.lineSeparator();
+
+        StringReader reader = new StringReader(string);
+
+        StringBuilder builder = new StringBuilder();
+
+        try (DataIn in = DataInLines.with()
+                .fieldName("Foo")
+                .fromReader(reader);
+             DataOut out = DataOutLines.with()
+                     .fieldName("Foo")
+                     .forSchema(in.getSchema())
+                     .toAppendable(builder)) {
+
+            in.stream().forEach(out);
+        }
+
+        assertThat(builder.toString(), is(string));
+    }
+
+    @Test
+    void asFunc() {
+
+        List<String> strings = List.of("Apple",
+                "Orange", "Pear");
+
+        List<String> results = strings.stream()
+                .map(DataInLines.with()
+                        .fieldName("Foo")
+                        .mapFromString())
+                .map(DataOutLines.with()
+                        .fieldName("Foo")
+                        .mapToString())
+                .toList();
+
+        assertThat(results, is(strings));
+    }
 }

@@ -5,6 +5,7 @@ import dido.data.DidoData;
 import dido.data.schema.SchemaAware;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
+import dido.how.RefinableOutHow;
 import org.oddjob.arooa.ArooaSession;
 import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;
@@ -16,22 +17,18 @@ import org.oddjob.framework.adapt.Stop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
+ * @param <O> The type of the output.
  * @oddjob.description A Bean Bus Destination that accepts {@link DidoData} and writes it out to the given
  * 'to' according to the given 'how'.
  * See any of the formatters for examples of how to use.
- *
  * @oddjob.example Writes lines out.
  * {@oddjob.xml.resource dido/oddjob/beanbus/StreamInOut.xml}
- *
- * @param <O> The type of the output.
  */
 public class DataOutDestination<O>
         implements Runnable, AutoCloseable, Consumer<DidoData>, ArooaSessionAware, SchemaAware {
@@ -64,7 +61,9 @@ public class DataOutDestination<O>
      */
     private Consumer<? super DidoData> next;
 
-    /** Consumer created by applying the how. */
+    /**
+     * Consumer created by applying the how.
+     */
     private DataOut consumer;
 
     /**
@@ -74,8 +73,6 @@ public class DataOutDestination<O>
     private final AtomicInteger count = new AtomicInteger();
 
     private final SchemaTracker schemaTracker = new SchemaTracker();
-
-    private final List<Runnable> closeTasks = new ArrayList<>();
 
     @ArooaHidden
     @Override
@@ -96,25 +93,24 @@ public class DataOutDestination<O>
 
         DataOutHow<O> how = Objects.requireNonNull(this.how, "No How");
 
+        O to;
+        try {
+            to = session.getTools().getArooaConverter().convert(
+                    Objects.requireNonNull(this.to, "Nothing to Read From."),
+                    how.getOutType());
+        } catch (ArooaConversionException e) {
+            throw new IllegalArgumentException(e);
+        }
+
         schemaTracker.onSchema(
                 schema -> {
 
                     logger.info("Setting schema to {}", schema);
 
-                    O to;
-                    try {
-                        to = session.getTools().getArooaConverter().convert(
-                                Objects.requireNonNull(this.to, "Nothing to Read From."),
-                                how.getOutType());
-                    }
-                    catch (ArooaConversionException e) {
-                        throw new IllegalArgumentException(e);
-                    }
-
-                    try {
-                        this.consumer = how.forSchema(schema).outTo(to);
-                    } catch (Exception e) {
-                        throw new IllegalArgumentException(e);
+                    if (how instanceof RefinableOutHow<O> refinableOutHow) {
+                        this.consumer = refinableOutHow.forSchema(schema).outTo(to);
+                    } else {
+                        this.consumer = how.outTo(to);
                     }
 
                     if (this.next instanceof SchemaAware schemaAware) {
@@ -148,15 +144,10 @@ public class DataOutDestination<O>
 
         try {
             consumer.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Failed to close {}", consumer, e);
         }
         consumer = null;
-
-        while (!closeTasks.isEmpty()) {
-            closeTasks.removeFirst().run();
-        }
     }
 
     public String getName() {

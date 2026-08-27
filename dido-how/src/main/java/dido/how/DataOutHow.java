@@ -1,7 +1,5 @@
 package dido.how;
 
-import dido.data.DataSchema;
-
 /**
  * Something that can create a {@link DataOut}. This is the starting
  * point for writing data.
@@ -24,8 +22,4 @@ public interface DataOutHow<O> {
 	 * 
 	 */
 	DataOut outTo(O outTo);
-
-	default DataOutHow<O> forSchema(DataSchema schema) {
-		return this;
-	}
 }

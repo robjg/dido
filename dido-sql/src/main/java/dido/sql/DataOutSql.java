@@ -7,6 +7,7 @@ import dido.data.ReadSchema;
 import dido.how.DataException;
 import dido.how.DataOut;
 import dido.how.DataOutHow;
+import dido.how.RefinableOutHow;
 import dido.sql.dialect.std.StdInsertDml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ import java.util.Objects;
 /**
  * @author rob
  */
-public class DataOutSql implements DataOutHow<Connection> {
+public class DataOutSql implements RefinableOutHow<Connection> {
 
     private static final Logger logger = LoggerFactory.getLogger(DataOutSql.class);
 
@@ -120,28 +121,36 @@ public class DataOutSql implements DataOutHow<Connection> {
         return new UnknownDataOut(connection);
     }
 
+    public class KnownOutHow implements DataOutHow<Connection> {
+
+        private final DataSchema schema;
+
+        KnownOutHow(DataSchema schema) {
+            this.schema = schema;
+        }
+
+        @Override
+        public Class<Connection> getOutType() {
+            return DataOutSql.this.getOutType();
+        }
+
+        @Override
+        public DataOut outTo(Connection outTo) {
+            return new KnownDataOut(schema, outTo);
+        }
+
+        @Override
+        public String toString() {
+            return DataOutSql.this.toString();
+        }
+    }
+
     @Override
     public DataOutHow<Connection> forSchema(DataSchema schema) {
 
         logger.info("Schema available {}", schema);
 
-        return new DataOutHow<>() {
-
-            @Override
-            public DataOutHow<Connection> forSchema(DataSchema schema) {
-                return DataOutSql.this.forSchema(schema);
-            }
-
-            @Override
-            public DataOut outTo(Connection outTo) {
-                return new KnownDataOut(schema, outTo);
-            }
-
-            @Override
-            public Class<Connection> getOutType() {
-                return DataOutSql.this.getOutType();
-            }
-        };
+        return new KnownOutHow(schema);
     }
 
     class KnownDataOut implements DataOut {

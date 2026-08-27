@@ -4,9 +4,14 @@ import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.FieldGetter;
 import dido.data.ReadStrategy;
+import dido.data.schema.HasSchema;
 import dido.how.DataException;
 import dido.how.DataOut;
-import dido.how.DataOutHow;
+import dido.how.RefinableFunction;
+import dido.how.RefinableOutHow;
+import dido.how.useful.AppendableOutHow;
+import dido.how.useful.UnknownDataOut;
+import dido.how.useful.UnknownFunction;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -17,33 +22,22 @@ import java.util.function.Function;
 /**
  * Streams  out from Dido data of a single field defaulting to the name of 'Line'.
  */
-public class DataOutLines implements DataOutHow<Appendable> {
+public class DataOutLines implements RefinableOutHow<Appendable> {
 
     private static final String LINE = "Line";
 
     private final String fieldName;
 
-    private final FieldGetter fieldGetter;
-
     private DataOutLines(Settings settings) {
         this.fieldName = Objects.requireNonNullElse(settings.fieldName, LINE);
-        this.fieldGetter = settings.schema == null ? null :
-                fieldGetterFrom(settings.schema, this.fieldName);
     }
 
     public static class Settings {
 
         private String fieldName;
 
-        private DataSchema schema;
-
         public Settings fieldName(String fieldName) {
             this.fieldName = fieldName;
-            return this;
-        }
-
-        public Settings schema(DataSchema schema) {
-            this.schema = schema;
             return this;
         }
 
@@ -52,7 +46,7 @@ public class DataOutLines implements DataOutHow<Appendable> {
         }
 
         public DataOut toWriter(Writer writer) {
-            return make().outTo((writer));
+            return make().outTo(writer);
         }
 
         public DataOut toPath(Path path) {
@@ -68,14 +62,31 @@ public class DataOutLines implements DataOutHow<Appendable> {
             return make().outTo(new OutputStreamWriter(outputStream));
         }
 
-        public Function<DidoData, String> mapToString() {
+        public RefinableFunction<DidoData, String> mapToString() {
 
-            return make().asFunc();
+            return make().mapToStringHow();
         }
 
         public DataOutLines make() {
             return new DataOutLines(this);
         }
+
+        public KnownOutHow forSchema(DataSchema schema) {
+            return make().forSchema(schema);
+        }
+    }
+
+    public static Function<DidoData, String> mapToString() {
+
+        return with().mapToString();
+    }
+
+    public static Settings with() {
+        return new Settings();
+    }
+
+    public static DataOutLines withDefaults() {
+        return with().make();
     }
 
     public static DataOut toAppendable(Appendable appendable) {
@@ -95,17 +106,37 @@ public class DataOutLines implements DataOutHow<Appendable> {
         return with().toOutputStream(outputStream);
     }
 
-    public static Function<DidoData, String> mapToString() {
+    public class KnownOutHow extends AppendableOutHow {
 
-        return with().mapToString();
+        private final DataSchema schema;
+
+        KnownOutHow(DataSchema schema) {
+            this.schema = schema;
+        }
+
+        @Override
+        public Class<Appendable> getOutType() {
+            return DataOutLines.this.getOutType();
+        }
+
+        @Override
+        public DataOut outTo(Appendable outTo) {
+            return new KnownOut(schema, fieldName, outTo);
+        }
+
+        @Override
+        public String toString() {
+            return DataOutLines.this.toString();
+        }
+
+        public Function<DidoData, String> mapToStringHow() {
+            return DataOutLines.this.mapToStringHow().forSchema(schema);
+        }
     }
 
-    public static Settings with() {
-        return new Settings();
-    }
-
-    public static DataOutLines withDefaults() {
-        return with().make();
+    @Override
+    public KnownOutHow forSchema(DataSchema schema) {
+        return new KnownOutHow(schema);
     }
 
     @Override
@@ -116,35 +147,37 @@ public class DataOutLines implements DataOutHow<Appendable> {
     @Override
     public DataOut outTo(Appendable outTo) {
 
-        return fieldGetter == null ?
-                new UnKnownOut(fieldName, outTo) :
-                new KnownOut(fieldGetter, outTo);
+        return UnknownDataOut.outToOf(outTo, this);
     }
 
-    Function<DidoData, String> asFunc() {
+    public RefinableFunction<DidoData, String> mapToStringHow() {
 
-        return fieldGetter == null ?
-                new UnKnownOut(fieldName, null) :
-                new KnownOut(fieldGetter, null);
+        return UnknownFunction.of(
+                schema -> new KnownOut(schema, fieldName, null));
     }
 
-    static FieldGetter fieldGetterFrom(DataSchema schema,
-                                       String fieldName) {
-        ReadStrategy readStrategy = ReadStrategy.fromSchema(schema);
-        return readStrategy.getFieldGetterNamed(fieldName);
-    }
+    static class KnownOut implements DataOut,
+            Function<DidoData, String>, HasSchema {
 
-    static class KnownOut implements DataOut, Function<DidoData, String> {
+        private final DataSchema schema;
 
         private final FieldGetter fieldGetter;
 
         private final Appendable out;
 
-        KnownOut(FieldGetter fieldGetter,
+        KnownOut(DataSchema schema,
+                 String fieldName,
                  Appendable outputStream) {
 
-            this.fieldGetter = fieldGetter;
+            this.schema = schema;
+            ReadStrategy readStrategy = ReadStrategy.fromSchema(schema);
+            this.fieldGetter = readStrategy.getFieldGetterNamed(fieldName);
             this.out = outputStream;
+        }
+
+        @Override
+        public DataSchema getSchema() {
+            return schema;
         }
 
         @Override
@@ -179,56 +212,6 @@ public class DataOutLines implements DataOutHow<Appendable> {
             }
             else {
                 return null;
-            }
-        }
-    }
-
-    static class UnKnownOut implements DataOut, Function<DidoData, String> {
-
-        private final String fieldName;
-
-        private final Appendable out;
-
-        private DataSchema lastSchema;
-
-        private KnownOut known;
-
-        UnKnownOut(String fieldName,
-                   Appendable out) {
-            this.fieldName = fieldName;
-            this.out = out;
-        }
-
-        @Override
-        public void close() {
-            if (out instanceof Closeable) {
-                try {
-                    ((Closeable) out).close();
-                } catch (IOException e) {
-                    throw DataException.of(e);
-                }
-            }
-        }
-
-        @Override
-        public void accept(DidoData didoData) {
-            ensureKnown(didoData);
-            known.accept(didoData);
-        }
-
-        @Override
-        public String apply(DidoData didoData) {
-            ensureKnown(didoData);
-            return known.apply(didoData);
-        }
-
-        public void ensureKnown(DidoData didoData) {
-            DataSchema schema = didoData.getSchema();
-            if (!schema.equals(lastSchema)) {
-                known = new KnownOut(
-                        fieldGetterFrom(schema, fieldName),
-                        out);
-                lastSchema = schema;
             }
         }
     }
