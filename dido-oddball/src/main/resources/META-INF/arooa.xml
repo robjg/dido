@@ -149,7 +149,7 @@
 					<formItems>
 						<design:group bordered="true" title="Required">
 							<formItems>
-								<design:single property="mapper" title="Mapper"/>
+								<design:single property="function" title="Function"/>
 							</formItems>
 						</design:group>
 						<design:group bordered="true" title="Optional">

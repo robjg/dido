@@ -35,10 +35,10 @@ class ToJsonStringTypeTest {
 
         assertThat(gson.toJson(element), is("NaN"));
 
-        ToJsonStringType test = new ToJsonStringType();
+        JsonDataOutBean test = new JsonDataOutBean();
         test.setSerializeSpecialFloatingPointValues(true);
 
-        Function<DidoData, String> func = test.toFunction();
+        Function<DidoData, String> func = test.toMapToString();
 
         assertThat(func.apply(DidoData.of(Double.NaN)),
                 is("{\"f_1\":NaN}"));

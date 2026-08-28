@@ -2,23 +2,15 @@ package dido.json;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
-import com.google.gson.ToNumberPolicy;
 import dido.data.DataSchema;
-import dido.data.DidoData;
 import dido.data.util.ClassUtils;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
-import dido.how.StreamHows;
 import dido.how.conversion.DidoConversionProvider;
 
 import javax.inject.Inject;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Provide a {@link DataInHow} and a {@link DataOutHow} for JSON.
@@ -107,128 +99,10 @@ public class JsonDido {
      *
      * @oddjob.required No.
      */
-    private final List<Consumer<? super GsonBuilder>> gsonBuilder = new ArrayList<>();
+    protected final List<Consumer<? super GsonBuilder>> gsonBuilder = new ArrayList<>();
 
-    // In Only Properties.
 
-    /**
-     * @oddjob.description When reading data in, indicates that the provided Schema is partial. The
-     * rest of the schema will be taken from the data.
-     * @oddjob.required No, defaults to false.
-     */
-    private boolean partialSchema;
-
-    /**
-     * @oddjob.description Configures Gson to apply a specific number strategy during deserialization of
-     * number type primitives. This is what will be used for a partial or no schema when converting numbers.
-     *
-     * @oddjob.required No, defaults numbers as doubles.
-     */
-    private ToNumberPolicy objectToNumberPolicy;
-
-    // Out Only Properties
-
-    /**
-     * @oddjob.description Serialize null values. True to serialize null to the JSON,
-     * false and they will be ignored and no field will be written.
-     * @oddjob.required No, defaults to false.
-     */
-    private boolean serializeNulls;
-
-    /**
-     * @oddjob.description Serialize NaN and Infinity values. True to serialize, false
-     * and these values in data will result in an Exception. Note that because of an
-     * oversight in the underlying Gson implementation, this has the same effect as
-     * setting Strictness to LENIENT.
-     *
-     * @oddjob.required No, defaults to false.
-     */
-    private boolean serializeSpecialFloatingPointValues;
-
-    // // // //
-
-    public DataOutHow<OutputStream> toStreamOut() {
-
-        return StreamHows.fromWriterHow(toWriterOut());
-    }
-
-    public DataOutHow<Writer> toWriterOut() {
-
-        JsonDidoFormat format = Objects.requireNonNullElse(this.format, JsonDidoFormat.LINES);
-
-        return settingsOut()
-                .outFormat(format)
-                .make();
-    }
-
-    public Function<DidoData, String> toMapToString() {
-
-        return settingsOut()
-                .mapToString();
-    }
-
-    private DataOutJson.Settings settingsOut() {
-
-        DataOutJson.Settings settings = DataOutJson.with()
-                .schema(schema)
-                .strictness(strictness);
-
-        loadConversions(settings);
-
-        if (serializeSpecialFloatingPointValues) {
-            settings.serializeSpecialFloatingPointValues();
-        }
-
-        if (serializeNulls) {
-            settings.serializeNulls();
-        }
-
-        for (Consumer<? super GsonBuilder> builder : gsonBuilder) {
-            settings.gsonBuilder(builder);
-        }
-
-        return settings;
-    }
-
-    public DataInHow<InputStream> toStreamIn() {
-        return StreamHows.fromReaderHow(toReaderIn());
-    }
-
-    public DataInHow<Reader> toReaderIn() {
-
-        JsonDidoFormat format = Objects.requireNonNullElse(this.format, JsonDidoFormat.LINES);
-
-        return settingsIn().inFormat(format)
-                .make();
-    }
-
-    public Function<String, DidoData> toMapFromString() {
-
-        return settingsIn().mapFromString();
-    }
-
-    private DataInJson.Settings settingsIn() {
-
-        JsonDidoFormat format = Objects.requireNonNullElse(this.format, JsonDidoFormat.LINES);
-
-        DataInJson.Settings settings = DataInJson.with()
-                .inFormat(format)
-                .strictness(strictness)
-                .schema(schema)
-                .partialSchema(partialSchema);
-
-        Optional.ofNullable(objectToNumberPolicy).ifPresent(settings::objectToNumberStrategy);
-
-        loadConversions(settings);
-
-        for (Consumer<? super GsonBuilder> builder : gsonBuilder) {
-            settings.gsonBuilder(builder);
-        }
-
-        return settings;
-    }
-
-    void loadConversions(InOutSettings<?> settings) {
+    protected void loadConversions(InOutSettings<?> settings) {
         if (!didoConversion.isEmpty()) {
             ClassLoader classLoader = Objects.requireNonNullElseGet(this.classLoader,
                     () -> getClass().getClassLoader());
@@ -298,16 +172,6 @@ public class JsonDido {
         }
     }
 
-
-
-    public boolean isPartialSchema() {
-        return partialSchema;
-    }
-
-    public void setPartialSchema(boolean partialSchema) {
-        this.partialSchema = partialSchema;
-    }
-
     public JsonDidoFormat getFormat() {
         return format;
     }
@@ -316,36 +180,4 @@ public class JsonDido {
         this.format = format;
     }
 
-    public boolean isSerializeNulls() {
-        return serializeNulls;
-    }
-
-    public void setSerializeNulls(boolean serializeNulls) {
-        this.serializeNulls = serializeNulls;
-    }
-
-    public boolean isSerializeSpecialFloatingPointValues() {
-        return serializeSpecialFloatingPointValues;
-    }
-
-    public void setSerializeSpecialFloatingPointValues(boolean serializeSpecialFloatingPointValues) {
-        this.serializeSpecialFloatingPointValues = serializeSpecialFloatingPointValues;
-    }
-
-    public ToNumberPolicy getObjectToNumberPolicy() {
-        return objectToNumberPolicy;
-    }
-
-    public void setObjectToNumberPolicy(ToNumberPolicy objectToNumberPolicy) {
-        this.objectToNumberPolicy = objectToNumberPolicy;
-    }
-
-    @Override
-    public String toString() {
-        return "JsonHow{" +
-                "format=" + format +
-                ", partialSchema=" + partialSchema +
-                ", schema=" + schema +
-                '}';
-    }
 }

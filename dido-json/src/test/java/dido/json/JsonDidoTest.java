@@ -20,16 +20,19 @@ import static org.hamcrest.Matchers.is;
 
 class JsonDidoTest {
 
-    static final String JSON_1 = "{" +
-            "    \"type\": \"apple\",\n" +
-            "    \"qty\": 2,\n" +
-            "    \"price\": 26.3\n" +
-            "}";
-    static final String JSON_2 = "{" +
-            "    \"type\": \"orange\",\n" +
-            "    \"qty\": 3,\n" +
-            "    \"price\": 31.4\n" +
-            "}";
+    static final String JSON_1 = """
+            {\
+                "type": "apple",
+                "qty": 2,
+                "price": 26.3
+            }""";
+
+    static final String JSON_2 = """
+            {\
+                "type": "orange",
+                "qty": 3,
+                "price": 31.4
+            }""";
 
     @Test
     void testToJsonAndBackFixedSchema() throws Exception {
@@ -51,13 +54,13 @@ class JsonDidoTest {
                 .addNamed("price", double.class)
                 .build();
 
-        JsonDido test = new JsonDido();
-        test.setSchema(schema);
-        test.setFormat(JsonDidoFormat.ARRAY);
+        JsonDataOutBean testOut = new JsonDataOutBean();
+        testOut.setSchema(schema);
+        testOut.setFormat(JsonDidoFormat.ARRAY);
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
-        try (DataOut consumer = test.toStreamOut().outTo(results)) {
+        try (DataOut consumer = testOut.toStreamOut().outTo(results)) {
 
             consumer.accept(data1);
             consumer.accept(data2);
@@ -68,7 +71,11 @@ class JsonDidoTest {
                 "[" + JSON_1 + "," + JSON_2 + "]",
                 JSONCompareMode.LENIENT);
 
-        List<DidoData> copy = test.toStreamIn().inFrom(
+        JsonDataInBean testIn = new JsonDataInBean();
+        testIn.setSchema(schema);
+        testIn.setFormat(JsonDidoFormat.ARRAY);
+
+        List<DidoData> copy = testIn.toStreamIn().inFrom(
                         new ByteArrayInputStream(results.toByteArray()))
                 .stream()
                 .collect(Collectors.toList());
@@ -94,24 +101,25 @@ class JsonDidoTest {
                 .addNamed("qty", int.class)
                 .build();
 
-        JsonDido test = new JsonDido();
+        JsonDataOutBean testOut = new JsonDataOutBean();
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
-        try (DataOut consumer = test.toStreamOut().outTo(results)) {
+        try (DataOut consumer = testOut.toStreamOut().outTo(results)) {
 
             consumer.accept(data1);
             consumer.accept(data2);
         }
 
-        test.setSchema(schema);
-        test.setPartialSchema(true);
+        JsonDataInBean testIn = new JsonDataInBean();
+        testIn.setSchema(schema);
+        testIn.setPartialSchema(true);
 
         List<DidoData> copy =
-                test.toStreamIn().inFrom(
+                testIn.toStreamIn().inFrom(
                 new ByteArrayInputStream(results.toByteArray()))
                 .stream()
-                .collect(Collectors.toList());
+                .toList();
 
         assertThat(copy.size(), is(2));
 

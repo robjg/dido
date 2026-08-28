@@ -7,7 +7,7 @@
                     <of>
                         <dido:data-in xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json strictness="LENIENT">
+                                <dido:json-in strictness="LENIENT">
                                     <schema>
                                         <dido:schema>
                                             <of>
@@ -16,7 +16,7 @@
                                             </of>
                                         </dido:schema>
                                     </schema>
-                                </dido:json>
+                                </dido:json-in>
                             </how>
                             <from>
                                 <buffer><![CDATA[{ "Fruit":"Apple", "Price":Infinity }
@@ -28,7 +28,7 @@
                         <bus:collect id="capture"/>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json serializeNulls="true" serializeSpecialFloatingPointValues="true"/>
+                                <dido:json-out serializeNulls="true" serializeSpecialFloatingPointValues="true"/>
                             </how>
                             <to>
                                 <identify id="results">

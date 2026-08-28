@@ -12,7 +12,7 @@
                         </bus:driver>
                         <bus:map>
                             <function>
-                                <dido:to-json xmlns:dido="oddjob:dido" serializeSpecialFloatingPointValues="true" serializeNulls="true"/>
+                                <dido:json-out xmlns:dido="oddjob:dido" serializeSpecialFloatingPointValues="true" serializeNulls="true"/>
                             </function>
                         </bus:map>
                         <bus:collect>
@@ -36,7 +36,7 @@
                         </bus:driver>
                         <bus:map>
                             <function>
-                                <dido:from-json xmlns:dido="oddjob:dido" partialSchema="true" strictness="LENIENT">
+                                <dido:json-in xmlns:dido="oddjob:dido" partialSchema="true" strictness="LENIENT">
                                     <schema>
                                         <dido:schema>
                                             <of>
@@ -44,7 +44,7 @@
                                             </of>
                                         </dido:schema>
                                     </schema>
-                                </dido:from-json>
+                                </dido:json-in>
                             </function>
                         </bus:map>
                         <bus:collect id="capture"/>

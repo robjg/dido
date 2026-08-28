@@ -13,12 +13,12 @@
                 </bus:driver>
                 <dido:map xmlns:dido="oddjob:dido">
                     <function>
-                        <dido:from-json objectToNumberPolicy="LONG_OR_DOUBLE" xmlns:dido="oddjob:dido"/>
+                        <dido:json-in objectToNumberPolicy="LONG_OR_DOUBLE" xmlns:dido="oddjob:dido"/>
                     </function>
                 </dido:map>
                 <dido:map xmlns:dido="oddjob:dido">
                     <function>
-                        <dido:to-json xmlns:dido="oddjob:dido"/>
+                        <dido:json-out xmlns:dido="oddjob:dido"/>
                     </function>
                     <to>
                         <stdout/>

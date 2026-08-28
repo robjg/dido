@@ -35,7 +35,7 @@ var conversionProvider =
                     <of>
                         <dido:data-in xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json format="LINES">
+                                <dido:json-in format="LINES">
                                     <schema>
                                         <value value="${ourVars.ourSchema}"/>
                                     </schema>
@@ -45,7 +45,7 @@ var conversionProvider =
                                     <didoConversion>
                                         <value key="java.lang.String" value="java.time.LocalDate"/>
                                     </didoConversion>
-                                </dido:json>
+                                </dido:json-in>
                             </how>
                             <from>
                                 <file file="${oddjob.dir}/../data/FruitElementsRandom.jsonl"/>
@@ -81,14 +81,14 @@ var conversionProvider =
                         </bus:map>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json>
+                                <dido:json-out>
                                     <conversionProvider>
                                         <value value="${js.variable(conversionProvider)}"/>
                                     </conversionProvider>
                                     <didoConversion>
                                         <value key="java.time.LocalDate" value="java.lang.String"/>
                                     </didoConversion>
-                                </dido:json>
+                                </dido:json-out>
                             </how>
                             <to>
                                 <stdout/>
