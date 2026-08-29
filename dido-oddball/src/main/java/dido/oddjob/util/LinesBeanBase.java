@@ -1,15 +1,6 @@
 package dido.oddjob.util;
 
 import dido.data.DidoData;
-import dido.how.DataInHow;
-import dido.how.DataOutHow;
-import dido.how.StreamHows;
-import dido.how.lines.DataInLines;
-import dido.how.lines.DataOutLines;
-
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.function.Function;
 
 /**
  * @oddjob.description Creates an In or Out for Lines of Text. The {@link DidoData} is created or expected to have
@@ -23,38 +14,6 @@ public class LinesBeanBase {
      * @oddjob.required No. defaults to Line.
      */
     private String fieldName;
-
-    public DataOutHow<OutputStream> toStreamOut() {
-
-        DataOutLines dataOutLines = DataOutLines.with()
-                .fieldName(fieldName)
-                .make();
-
-        return StreamHows.fromWriterHow(dataOutLines);
-    }
-
-    public DataInHow<InputStream> toStreamIn() {
-
-        DataInLines dataInLines =  DataInLines.with()
-                .fieldName(fieldName)
-                .make();
-
-        return StreamHows.fromReaderHow(dataInLines);
-    }
-
-    public Function<DidoData, String> toMapToString() {
-
-        return DataOutLines.with()
-                .fieldName(fieldName)
-                .mapToString();
-    }
-
-    public Function<String, DidoData> toMapFromString() {
-
-        return DataInLines.with()
-                .fieldName(fieldName)
-                .mapFromString();
-    }
 
     public String getFieldName() {
         return fieldName;

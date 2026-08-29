@@ -20,9 +20,9 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * Streams  out from Dido data of a single field defaulting to the name of 'Line'.
+ * Streams out from Dido data of a single field defaulting to the name of 'Line'.
  */
-public class DataOutLines implements RefinableOutHow<Appendable> {
+public class DataOutLines {
 
     private static final String LINE = "Line";
 
@@ -64,11 +64,11 @@ public class DataOutLines implements RefinableOutHow<Appendable> {
 
         public RefinableFunction<DidoData, String> mapToString() {
 
-            return make().mapToStringHow();
+            return make().mapToString();
         }
 
-        public DataOutLines make() {
-            return new DataOutLines(this);
+        public UnknownOutHow make() {
+            return new DataOutLines(this).new UnknownOutHow();
         }
 
         public KnownOutHow forSchema(DataSchema schema) {
@@ -85,8 +85,8 @@ public class DataOutLines implements RefinableOutHow<Appendable> {
         return new Settings();
     }
 
-    public static DataOutLines withDefaults() {
-        return with().make();
+    public static KnownOutHow forSchema(DataSchema schema) {
+        return with().forSchema(schema);
     }
 
     public static DataOut toAppendable(Appendable appendable) {
@@ -106,6 +106,31 @@ public class DataOutLines implements RefinableOutHow<Appendable> {
         return with().toOutputStream(outputStream);
     }
 
+    public class UnknownOutHow extends AppendableOutHow implements RefinableOutHow<Appendable> {
+
+        @Override
+        public KnownOutHow forSchema(DataSchema schema) {
+            return new KnownOutHow(schema);
+        }
+
+        @Override
+        public Class<Appendable> getOutType() {
+            return Appendable.class;
+        }
+
+        @Override
+        public DataOut outTo(Appendable outTo) {
+
+            return UnknownDataOut.outToOf(outTo, this);
+        }
+
+        public RefinableFunction<DidoData, String> mapToString() {
+
+            return UnknownFunction.of(
+                    schema -> new KnownOut(schema, fieldName, null));
+        }
+    }
+
     public class KnownOutHow extends AppendableOutHow {
 
         private final DataSchema schema;
@@ -116,7 +141,7 @@ public class DataOutLines implements RefinableOutHow<Appendable> {
 
         @Override
         public Class<Appendable> getOutType() {
-            return DataOutLines.this.getOutType();
+            return Appendable.class;
         }
 
         @Override
@@ -130,30 +155,8 @@ public class DataOutLines implements RefinableOutHow<Appendable> {
         }
 
         public Function<DidoData, String> mapToStringHow() {
-            return DataOutLines.this.mapToStringHow().forSchema(schema);
+            return new KnownOut(schema, fieldName, null);
         }
-    }
-
-    @Override
-    public KnownOutHow forSchema(DataSchema schema) {
-        return new KnownOutHow(schema);
-    }
-
-    @Override
-    public Class<Appendable> getOutType() {
-        return Appendable.class;
-    }
-
-    @Override
-    public DataOut outTo(Appendable outTo) {
-
-        return UnknownDataOut.outToOf(outTo, this);
-    }
-
-    public RefinableFunction<DidoData, String> mapToStringHow() {
-
-        return UnknownFunction.of(
-                schema -> new KnownOut(schema, fieldName, null));
     }
 
     static class KnownOut implements DataOut,

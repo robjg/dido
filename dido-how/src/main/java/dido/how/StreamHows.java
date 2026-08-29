@@ -1,5 +1,7 @@
 package dido.how;
 
+import dido.data.DataSchema;
+
 import java.io.*;
 
 /**
@@ -10,6 +12,32 @@ public class StreamHows {
     public static DataOutHow<OutputStream> fromWriterHow(DataOutHow<? super Writer> writerHow) {
 
         return new DataOutHow<>() {
+            @Override
+            public Class<OutputStream> getOutType() {
+                return OutputStream.class;
+            }
+
+            @Override
+            public DataOut outTo(OutputStream outTo) {
+                return writerHow.outTo(new OutputStreamWriter(outTo));
+            }
+
+            @Override
+            public String toString() {
+                return writerHow.toString();
+            }
+        };
+    }
+
+    public static RefinableOutHow<OutputStream> fromRefinableWriterHow(RefinableOutHow<? super Writer> writerHow) {
+
+        return new RefinableOutHow<>() {
+
+            @Override
+            public DataOutHow<OutputStream> forSchema(DataSchema schema) {
+                return fromWriterHow(writerHow.forSchema(schema));
+            }
+
             @Override
             public Class<OutputStream> getOutType() {
                 return OutputStream.class;

@@ -40,7 +40,7 @@ public class SchemaAsJson {
         try (DataIn in = inHow.inFrom(input)) {
 
             DidoData data = in.stream()
-                    .findFirst().orElseThrow(() -> new IOException("No Data in Input") );
+                    .findFirst().orElseThrow(() -> new IOException("No Data in Input"));
 
             return schemaFromData(data);
         }
@@ -60,9 +60,9 @@ public class SchemaAsJson {
 
         DidoData data = DataSchemaSchema.schemaToData(schema);
 
-        try (DataOut out = DataOutJson.with()
-                .schema(data.getSchema())
-             .toAppendable(output)) {
+        try (DataOut out = DataOutJson
+                .forSchema(data.getSchema())
+                .toAppendable(output)) {
 
             out.accept(data);
         }

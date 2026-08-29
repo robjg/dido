@@ -2,7 +2,6 @@ package dido.json;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
-import dido.data.DataSchema;
 import dido.data.util.ClassUtils;
 import dido.how.DataInHow;
 import dido.how.DataOutHow;
@@ -43,17 +42,9 @@ import java.util.function.Consumer;
  * {@oddjob.text.resource expected/FromToWithGsonBuilder.json}
  *
  */
-public class JsonDido {
+public class JsonDidoBase {
 
     // In and Out Properties
-
-    /**
-     * @oddjob.description The schema to use. When reading in, if one is not provided a simple schema will be
-     * created based on the JSON primitive type. When writing out the schema will be used to limit the number
-     * of fields written.
-     * @oddjob.required No.
-     */
-    private DataSchema schema;
 
     /**
      * @oddjob.description The format of the data. LINES, ARRAY, SINGLE.
@@ -121,15 +112,6 @@ public class JsonDido {
             }
         }
 
-    }
-
-
-    public DataSchema getSchema() {
-        return schema;
-    }
-
-    public void setSchema(DataSchema schema) {
-        this.schema = schema;
     }
 
     public Strictness getStrictness() {

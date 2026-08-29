@@ -2,6 +2,7 @@ package dido.json;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.ToNumberPolicy;
+import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.how.DataInHow;
 import dido.how.StreamHows;
@@ -44,8 +45,15 @@ import java.util.function.Function;
  * {@oddjob.text.resource expected/FromToWithGsonBuilder.json}
  *
  */
-public class JsonDataInBean extends JsonDido {
+public class JsonDataInBean extends JsonDidoBase {
 
+
+    /**
+     * @oddjob.description The schema to use. If one is not provided a simple schema will be
+     * created based on the JSON primitive type.
+     * @oddjob.required No.
+     */
+    private DataSchema schema;
 
     /**
      * @oddjob.description When reading data in, indicates that the provided Schema is partial. The
@@ -86,7 +94,7 @@ public class JsonDataInBean extends JsonDido {
         DataInJson.Settings settings = DataInJson.with()
                 .inFormat(format)
                 .strictness(getStrictness())
-                .schema(getSchema())
+                .schema(schema)
                 .partialSchema(partialSchema);
 
         Optional.ofNullable(objectToNumberPolicy).ifPresent(settings::objectToNumberStrategy);
@@ -100,7 +108,13 @@ public class JsonDataInBean extends JsonDido {
         return settings;
     }
 
+    public DataSchema getSchema() {
+        return schema;
+    }
 
+    public void setSchema(DataSchema schema) {
+        this.schema = schema;
+    }
 
     public boolean isPartialSchema() {
         return partialSchema;

@@ -22,6 +22,8 @@ public class DataInJson implements DataInHow<Reader> {
 
     public static class Settings extends InOutSettings<Settings> {
 
+        private DataSchema schema;
+
         private boolean partialSchema;
 
         @Override
@@ -46,6 +48,11 @@ public class DataInJson implements DataInHow<Reader> {
         public Settings partialSchema(DataSchema schema) {
             this.schema = schema;
             this.partialSchema = true;
+            return this;
+        }
+
+        public Settings schema(DataSchema schema) {
+            this.schema = schema;
             return this;
         }
 

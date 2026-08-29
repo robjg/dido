@@ -4,62 +4,41 @@ import com.google.gson.stream.JsonWriter;
 import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataOut;
-import dido.how.DataOutHow;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * Provide an {@link DataOut} that writes an array of JSON records.
  */
-public class DataOutJsonWriter implements DataOutHow<Writer> {
+public class DataOutJsonWriter implements DataOut {
 
-    private final JsonWriterWrapperProvider wrapperProvider;
+    private final JsonWriterWrapper writerWrapper;
 
     final private boolean array;
 
-    DataOutJsonWriter(JsonWriterWrapperProvider wrapperProvider, boolean array) {
+    public DataOutJsonWriter(JsonWriterWrapper writerWrapper, boolean array) throws IOException {
         this.array = array;
-        this.wrapperProvider = wrapperProvider;
+        this.writerWrapper = writerWrapper;
+        if (array) {
+            writerWrapper.getWrappedWriter().beginArray();
+        }
     }
 
     @Override
-    public Class<Writer> getOutType() {
-        return Writer.class;
-    }
-
-    @Override
-    public DataOut outTo(Writer outTo) {
-
-        try {
-            final JsonWriterWrapper writerWrapper = wrapperProvider.writerFor(outTo);
-
+    public void close() {
+        try (JsonWriter writer = writerWrapper.getWrappedWriter()) {
             if (array) {
-                writerWrapper.getWrappedWriter().beginArray();
+                writer.endArray();
             }
+        } catch (IOException e) {
+            throw DataException.of(e);
+        }
+    }
 
-            return new DataOut() {
-
-                @Override
-                public void close() {
-                    try (JsonWriter writer = writerWrapper.getWrappedWriter()) {
-                        if (array) {
-                            writer.endArray();
-                        }
-                    } catch (IOException e) {
-                        throw DataException.of(e);
-                    }
-                }
-
-                @Override
-                public void accept(DidoData data) {
-                    try {
-                        writerWrapper.write(data);
-                    } catch (IOException e) {
-                        throw new DataException(e);
-                    }
-                }
-            };
+    @Override
+    public void accept(DidoData data) {
+        try {
+            writerWrapper.write(data);
         } catch (IOException e) {
             throw new DataException(e);
         }

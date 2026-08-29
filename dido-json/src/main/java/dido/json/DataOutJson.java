@@ -4,10 +4,13 @@ import com.google.gson.FormattingStyle;
 import com.google.gson.Gson;
 import com.google.gson.Strictness;
 import com.google.gson.stream.JsonWriter;
+import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.how.DataException;
 import dido.how.DataOut;
-import dido.how.DataOutHow;
+import dido.how.RefinableFunction;
+import dido.how.RefinableOutHow;
+import dido.how.useful.WriterOutHow;
 import dido.how.util.IoUtil;
 
 import java.io.*;
@@ -18,12 +21,20 @@ import java.nio.file.Path;
 import java.util.function.Function;
 
 
-public class DataOutJson implements DataOutHow<Writer> {
+public class DataOutJson {
 
-    private final DataOutHow<Writer> delegate;
+    private final Gson gson;
 
-    private DataOutJson(DataOutHow<Writer> delegate) {
-        this.delegate = delegate;
+    private final JsonDidoFormat didoFormat;
+
+    private final FormattingStyle formattingStyle;
+
+    private DataOutJson(Gson gson,
+                        JsonDidoFormat didoFormat,
+                        FormattingStyle formattingStyle) {
+        this.gson = gson;
+        this.didoFormat = didoFormat;
+        this.formattingStyle = formattingStyle;
     }
 
     public static class Settings extends InOutSettings<Settings> {
@@ -99,76 +110,22 @@ public class DataOutJson implements DataOutHow<Writer> {
             return make().outTo(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
         }
 
-        private JsonWriterWrapperProvider writerProvider() {
+        public UnknownHow make() {
 
             registerGsonBuilderDefaults();
 
-            Gson gson = gsonBuilder.create();
-
-            DidoJsonWriter didoWriter = schema == null
-                    ? DidoJsonWriters.forUnknownSchema(gson)
-                    : DidoJsonWriters.forSchema(schema, gson);
-
-            return writer -> {
-                JsonWriter jsonWriter = gson.newJsonWriter(writer);
-                return new JsonWriterWrapper() {
-                    @Override
-                    public void write(DidoData data) throws IOException {
-                        didoWriter.write(data, jsonWriter);
-                    }
-
-                    @Override
-                    public void close() throws IOException {
-                        jsonWriter.close();
-                    }
-
-                    @Override
-                    public JsonWriter getWrappedWriter() {
-                        return jsonWriter;
-                    }
-                };
-            };
-        }
-
-        public DataOutJson make() {
-
-            if (didoFormat == JsonDidoFormat.LINES) {
-
-                String lineSeparator = this.formattingStyle.getNewline();
-                if (lineSeparator.isEmpty()) {
-                    lineSeparator = "\n";
-                }
-                FormattingStyle formattingStyle = this.formattingStyle.withNewline("");
-                gsonBuilder.setFormattingStyle(formattingStyle);
-
-                return new DataOutJson(new DataOutJsonLines(writerProvider(), lineSeparator));
-            }
-
             gsonBuilder.setFormattingStyle(formattingStyle);
 
-            if (didoFormat == JsonDidoFormat.ARRAY) {
-                return new DataOutJson(new DataOutJsonWriter(writerProvider(), true));
-            } else {
-                return new DataOutJson(new DataOutJsonWriter(writerProvider(), false));
-            }
+            return new DataOutJson(gsonBuilder.create(), didoFormat, formattingStyle)
+                    .new UnknownHow();
+        }
+
+        public KnownOutHow forSchema(DataSchema schema) {
+            return make().forSchema(schema);
         }
 
         public Function<DidoData, String> mapToString() {
-
-            FormattingStyle formattingStyle = this.formattingStyle.withNewline("");
-            gsonBuilder.setFormattingStyle(formattingStyle);
-
-            JsonWriterWrapperProvider wrapperProvider = writerProvider();
-
-            return data -> {
-                Writer writer = new StringWriter();
-                try {
-                    wrapperProvider.writerFor(writer).write(data);
-                } catch (IOException e) {
-                    throw new DataException(e);
-                }
-                return writer.toString();
-            };
+            return make().mapToString();
         }
     }
 
@@ -189,29 +146,169 @@ public class DataOutJson implements DataOutHow<Writer> {
         return with().toOutputStream(outputStream);
     }
 
-    public static Function<DidoData, String> mapToString() {
-        return with().mapToString();
-    }
-
     public static Settings with() {
         return new Settings();
     }
 
-
-    @Override
-    public Class<Writer> getOutType() {
-        return Writer.class;
+    public static KnownOutHow forSchema(DataSchema schema) {
+        return with().forSchema(schema);
     }
 
-    @Override
-    public DataOut outTo(Writer outTo) {
 
-        return delegate.outTo(outTo);
+    abstract public class OutHow extends WriterOutHow {
+
+        abstract protected DidoJsonWriter didoWriter(Gson gson);
+
+        @Override
+        public Class<Writer> getOutType() {
+            return Writer.class;
+        }
+
+        @Override
+        public DataOut outTo(Writer outTo) {
+            try {
+
+                if (didoFormat == JsonDidoFormat.LINES) {
+                    Gson gson = DataOutJson.this.gson;
+                    String lineSeparator = formattingStyle.getNewline();
+                        if (lineSeparator.isEmpty()) {
+                            lineSeparator = "\n";
+                        }
+                        else {
+                            FormattingStyle replacementStyle = formattingStyle.withNewline("");
+                            gson = gson.newBuilder().setFormattingStyle(replacementStyle).create();
+                    }
+
+                    return new DataOutJsonLines(outTo, didoWriter(gson), gson, lineSeparator);
+                } else {
+
+                    JsonWriterWrapper writerWrapper = jsonWriter(didoWriter(gson), outTo);
+
+                    if (didoFormat == JsonDidoFormat.ARRAY) {
+                        return new DataOutJsonWriter(writerWrapper, true);
+                    } else {
+                        return new DataOutJsonWriter(writerWrapper, false);
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return DataOutJson.this.toString();
+        }
+
+        public Function<DidoData, String> mapToString() {
+
+            final Gson gson;
+
+            String lineSeparator = formattingStyle.getNewline();
+            if (lineSeparator.isEmpty()) {
+                gson = DataOutJson.this.gson;
+            }
+            else {
+                FormattingStyle replacementStyle = formattingStyle.withNewline("");
+                gson = DataOutJson.this.gson.newBuilder()
+                        .setFormattingStyle(replacementStyle).create();
+            }
+
+            DidoJsonWriter didoJsonWriter = didoWriter(gson);
+
+            return data -> {
+                Writer writer = new StringWriter();
+                try {
+                    JsonWriter jsonWriter = gson.newJsonWriter(writer);
+                    didoJsonWriter.write(data, jsonWriter);
+                } catch (IOException e) {
+                    throw new DataException(e);
+                }
+                return writer.toString();
+            };
+        }
+    }
+
+    public class UnknownHow extends OutHow implements RefinableOutHow<Writer> {
+
+        @Override
+        protected DidoJsonWriter didoWriter(Gson gson) {
+            return DidoJsonWriters.forUnknownSchema(gson);
+        }
+
+        @Override
+        public KnownOutHow forSchema(DataSchema schema) {
+            return new KnownOutHow(schema);
+        }
+
+        public RefinableFunction<DidoData, String> mapToString() {
+
+            Function<DidoData, String> mapToString = super.mapToString();
+
+            return new RefinableFunction<>() {
+
+                @Override
+                public Function<DidoData, String> forSchema(DataSchema schema) {
+                    return new KnownOutHow(schema).mapToString();
+                }
+
+                @Override
+                public String apply(DidoData didoData) {
+                    return mapToString.apply(didoData);
+                }
+            };
+        }
+    }
+
+    public class KnownOutHow extends OutHow {
+
+        final DataSchema schema;
+
+        KnownOutHow(DataSchema schema) {
+            this.schema = schema ;
+        }
+
+        @Override
+        protected DidoJsonWriter didoWriter(Gson gson) {
+            return DidoJsonWriters.forSchema(schema, gson);
+        }
+    }
+
+    public static Function<DidoData, String> mapToString() {
+        return with().mapToString();
+    }
+
+    private JsonWriterWrapper jsonWriter(DidoJsonWriter didoWriter,
+                                         Writer writer) throws IOException {
+
+        JsonWriter jsonWriter = gson.newJsonWriter(writer);
+
+        return new JsonWriterWrapper() {
+            @Override
+            public void write(DidoData data) throws IOException {
+                didoWriter.write(data, jsonWriter);
+            }
+
+            @Override
+            public void close() throws IOException {
+                jsonWriter.close();
+            }
+
+            @Override
+            public JsonWriter getWrappedWriter() {
+                return jsonWriter;
+            }
+
+            @Override
+            public Writer getWriter() {
+                return writer;
+            }
+        };
     }
 
     @Override
     public String toString() {
-        return delegate.toString();
+        return "JsonOut " + didoFormat;
     }
 }
 

@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
-class JsonDidoTest {
+class JsonDidoBaseTest {
 
     static final String JSON_1 = """
             {\
@@ -55,12 +55,12 @@ class JsonDidoTest {
                 .build();
 
         JsonDataOutBean testOut = new JsonDataOutBean();
-        testOut.setSchema(schema);
         testOut.setFormat(JsonDidoFormat.ARRAY);
 
         ByteArrayOutputStream results = new ByteArrayOutputStream();
 
-        try (DataOut consumer = testOut.toStreamOut().outTo(results)) {
+        try (DataOut consumer = testOut.toStreamOut()
+                .forSchema(schema).outTo(results)) {
 
             consumer.accept(data1);
             consumer.accept(data2);

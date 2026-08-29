@@ -129,7 +129,6 @@ class JsonExamplesTest {
 
         // #nullDidoFieldOut{
         String json = DataOutJson.with()
-                .schema(schema)
                 .mapToString()
                 .apply(data);
 
@@ -139,7 +138,6 @@ class JsonExamplesTest {
 
         // #serializeNulls{
         String jsonWithNull = DataOutJson.with()
-                .schema(schema)
                 .serializeNulls()
                 .mapToString()
                 .apply(data);
@@ -160,7 +158,6 @@ class JsonExamplesTest {
 
         // #serializeNans{
         String jsonWithNan = DataOutJson.with()
-                .schema(schema)
                 .serializeSpecialFloatingPointValues()
                 .mapToString()
                 .apply(DidoData.withSchema(schema)

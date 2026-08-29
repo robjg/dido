@@ -3,6 +3,7 @@ package dido.json;
 import com.google.gson.GsonBuilder;
 import dido.data.DidoData;
 import dido.how.DataOutHow;
+import dido.how.RefinableOutHow;
 import dido.how.StreamHows;
 
 import java.io.OutputStream;
@@ -42,7 +43,7 @@ import java.util.function.Function;
  * {@oddjob.text.resource expected/FromToWithGsonBuilder.json}
  *
  */
-public class JsonDataOutBean extends JsonDido {
+public class JsonDataOutBean extends JsonDidoBase {
 
 
     /**
@@ -64,12 +65,12 @@ public class JsonDataOutBean extends JsonDido {
 
     // // // //
 
-    public DataOutHow<OutputStream> toStreamOut() {
+    public RefinableOutHow<OutputStream> toStreamOut() {
 
-        return StreamHows.fromWriterHow(toWriterOut());
+        return StreamHows.fromRefinableWriterHow(toWriterOut());
     }
 
-    public DataOutHow<Writer> toWriterOut() {
+    public RefinableOutHow<Writer> toWriterOut() {
 
         JsonDidoFormat format = Objects.requireNonNullElse(getFormat(), JsonDidoFormat.LINES);
 
@@ -87,7 +88,6 @@ public class JsonDataOutBean extends JsonDido {
     private DataOutJson.Settings settingsOut() {
 
         DataOutJson.Settings settings = DataOutJson.with()
-                .schema(getSchema())
                 .strictness(getStrictness());
 
         loadConversions(settings);
@@ -127,7 +127,6 @@ public class JsonDataOutBean extends JsonDido {
     public String toString() {
         return "JsonHow{" +
                 "format=" + getFormat() +
-                ", schema=" + getSchema() +
                 '}';
     }
 }

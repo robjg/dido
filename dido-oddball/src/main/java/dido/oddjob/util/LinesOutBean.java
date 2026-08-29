@@ -1,7 +1,7 @@
 package dido.oddjob.util;
 
 import dido.data.DidoData;
-import dido.how.DataOutHow;
+import dido.how.RefinableOutHow;
 import dido.how.StreamHows;
 import dido.how.lines.DataOutLines;
 
@@ -14,13 +14,13 @@ import java.util.function.Function;
  */
 public class LinesOutBean extends LinesBeanBase {
 
-    public DataOutHow<OutputStream> toStreamOut() {
+    public RefinableOutHow<OutputStream> toStreamOut() {
 
-        DataOutLines dataOutLines = DataOutLines.with()
+        RefinableOutHow<Appendable> dataOutLines = DataOutLines.with()
                 .fieldName(getFieldName())
                 .make();
 
-        return StreamHows.fromWriterHow(dataOutLines);
+        return StreamHows.fromRefinableWriterHow(dataOutLines);
     }
 
     public Function<DidoData, String> toMapToString() {

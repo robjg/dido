@@ -6,6 +6,7 @@ import dido.data.DataSchema;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.how.conversion.DidoConversionProvider;
+import dido.how.lines.DataOutLines;
 import dido.json.DataInJson;
 import dido.json.DataOutJson;
 import dido.poi.DataInPoi;
@@ -20,6 +21,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.function.Function;
 
@@ -269,7 +272,6 @@ public class EnsureStandardInOutApiTest {
     @ParameterizedTest
     @ValueSource(classes = {
             DataOutCsv.class,
-            DataOutJson.class,
             DataOutPoi.class,
             DataOutTextTable.class
     })
@@ -287,4 +289,28 @@ public class EnsureStandardInOutApiTest {
                 notNullValue());
     }
 
+    @ParameterizedTest
+    @ValueSource(classes = {
+            DataOutJson.class,
+            DataOutLines.class,
+    })
+    void ensureOutSettingsAreConsistentNew(Class<?> howClass) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Method forSchema = howClass.getMethod("forSchema", DataSchema.class);
+        assertThat(Modifier.isStatic(forSchema.getModifiers()), is(true));
+
+        assertThat(forSchema.getReturnType(),
+                notNullValue());
+
+        Object settings = howClass.getMethod("with")
+                .invoke(null);
+
+        Class<?> settingsClass = settings.getClass();
+
+        assertThat(settingsClass.getSimpleName(), is("Settings"));
+
+        assertThat(settingsClass.getMethod("forSchema", DataSchema.class)
+                        .getReturnType(),
+                notNullValue());
+    }
 }

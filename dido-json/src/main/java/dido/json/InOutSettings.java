@@ -2,7 +2,6 @@ package dido.json;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
-import dido.data.DataSchema;
 import dido.how.conversion.DidoConversionProvider;
 
 import java.lang.reflect.Type;
@@ -17,8 +16,6 @@ abstract public class InOutSettings<B extends InOutSettings<B>> {
 
     JsonDidoFormat didoFormat;
 
-    DataSchema schema;
-
     final GsonBuilder gsonBuilder = new GsonBuilder();
 
     final DidoConversionAdaptorFactory.Settings didoConversion =
@@ -31,11 +28,6 @@ abstract public class InOutSettings<B extends InOutSettings<B>> {
 
     public B strictness(Strictness strictness) {
         gsonBuilder.setStrictness(strictness == null ? Strictness.LEGACY_STRICT : strictness);
-        return self();
-    }
-
-    public B schema(DataSchema schema) {
-        this.schema = schema;
         return self();
     }
 

@@ -15,7 +15,7 @@
                         </dido:data-in>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json/>
+                                <dido:json-out/>
                             </how>
                             <to>
                                 <stdout/>
