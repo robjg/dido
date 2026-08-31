@@ -27,7 +27,7 @@
                     <of>
                         <dido:data-in xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv>
+                                <dido:csv-in>
                                     <schema>
                                         <dido:schema>
                                             <of>
@@ -36,7 +36,7 @@
                                             </of>
                                         </dido:schema>
                                     </schema>
-                                </dido:csv>
+                                </dido:csv-in>
                             </how>
                             <from>
                                 <buffer>

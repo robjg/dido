@@ -18,11 +18,11 @@
                     <of>
                         <dido:data-in xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv>
+                                <dido:csv-in>
                                     <schema>
                                         <value value="${ourVars.ourSchema}"/>
                                     </schema>
-                                </dido:csv>
+                                </dido:csv-in>
                             </how>
                             <from>
                                 <file file="Fruit.csv"/>

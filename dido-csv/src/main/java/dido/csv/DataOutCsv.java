@@ -3,17 +3,13 @@ package dido.csv;
 import dido.data.DataSchema;
 import dido.data.DidoData;
 import dido.data.util.FieldValuesOut;
-import dido.how.CloseableConsumer;
-import dido.how.DataException;
-import dido.how.DataOut;
-import dido.how.DataOutHow;
+import dido.how.*;
+import dido.how.useful.AppendableOutHow;
+import dido.how.useful.UnknownFunction;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -23,17 +19,14 @@ import java.util.function.Function;
 /**
  * How to write CSV Data Out.
  */
-public class DataOutCsv implements DataOutHow<Appendable> {
+public class DataOutCsv {
 
     private final CSVFormat csvFormat;
-
-    private final DataSchema schema;
 
     private final boolean withHeader;
 
     private DataOutCsv(Settings settings) {
         this.csvFormat = Objects.requireNonNullElse(settings.csvFormat, CSVFormat.DEFAULT);
-        this.schema = settings.schema;
         this.withHeader = settings.withHeader;
     }
 
@@ -41,17 +34,10 @@ public class DataOutCsv implements DataOutHow<Appendable> {
 
         private CSVFormat csvFormat;
 
-        private DataSchema schema;
-
         private boolean withHeader;
 
         public Settings csvFormat(CSVFormat csvFormat) {
             this.csvFormat = csvFormat;
-            return this;
-        }
-
-        public Settings schema(DataSchema schema) {
-            this.schema = schema;
             return this;
         }
 
@@ -81,28 +67,17 @@ public class DataOutCsv implements DataOutHow<Appendable> {
             return make().outTo(new OutputStreamWriter(outputStream));
         }
 
-        public DataOutCsv make() {
-            return new DataOutCsv(this);
+        public UnknownHow make() {
+            return new DataOutCsv(this).new UnknownHow();
         }
 
-        public Function<DidoData, String> mapToString() {
+        public KnownHow forSchema(DataSchema schema) {
+            return new DataOutCsv(this).new KnownHow(schema);
+        }
 
-            DataOutCsv dataOutCsv =
-                    csvFormat(Objects.requireNonNullElse(csvFormat, CSVFormat.DEFAULT)
-                            .builder()
-                            .setRecordSeparator("")
-                            .get())
-                            .make();
+        public RefinableFunction<DidoData, String> mapToString() {
 
-            return data -> {
-                StringBuilder result = new StringBuilder();
-
-                try (DataOut out = dataOutCsv.outTo(result)) {
-                    out.accept(data);
-                }
-
-                return result.toString();
-            };
+            return make().mapToString();
         }
     }
 
@@ -127,47 +102,111 @@ public class DataOutCsv implements DataOutHow<Appendable> {
         return with().mapToString();
     }
 
+    public static KnownHow forSchema(DataSchema schema) {
+        return with().forSchema(schema);
+    }
+
     public static Settings with() {
         return new Settings();
     }
 
-    public static DataOutHow<Appendable> withDefaults() {
-        return new Settings().make();
-    }
+    public class UnknownHow extends AppendableOutHow implements RefinableOutHow<Appendable> {
 
-    @Override
-    public Class<Appendable> getOutType() {
-        return Appendable.class;
-    }
+        @Override
+        public DataOutHow<Appendable> forSchema(DataSchema schema) {
+            return new KnownHow(schema);
+        }
 
-    @Override
-    public DataOut outTo(Appendable outTo) {
+        @Override
+        public Class<Appendable> getOutType() {
+            return Appendable.class;
+        }
 
-        if (schema == null) {
+        @Override
+        public DataOut outTo(Appendable outTo) {
             return new UnknownSchemaConsumer(outTo);
-        } else {
-            return consumerWhenSchemaKnown(outTo, schema);
+        }
+
+        public RefinableFunction<DidoData, String> mapToString() {
+
+            return UnknownFunction.of(schema -> new KnownHow(schema).mapToString());
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder("CSV with no schema");
+            if (withHeader) {
+                builder.append(" and header");
+            } else {
+                builder.append(" and no header");
+            }
+            return builder.toString();
         }
     }
 
-    protected DataOut consumerWhenSchemaKnown(Appendable appendable,
-                                              DataSchema schema) {
-        CSVFormat csvFormat = this.csvFormat;
-        if (this.withHeader) {
-            csvFormat = csvFormat.builder()
-                    .setHeader(headerFrom(schema))
-                    .get();
+    public class KnownHow extends AppendableOutHow {
+
+        private final DataSchema schema;
+
+        public KnownHow(DataSchema schema) {
+            this.schema = schema;
         }
 
-        final CSVPrinter printer;
-        try {
-            printer = csvFormat.print(appendable);
-        } catch (IOException e) {
-            throw DataException.of(e);
+        @Override
+        public Class<Appendable> getOutType() {
+            return Appendable.class;
         }
 
-        return new KnownSchemaConsumer(printer,
-                FieldValuesOut.forSchema(schema));
+        @Override
+        public DataOut outTo(Appendable outTo) {
+            CSVFormat csvFormat = DataOutCsv.this.csvFormat;
+            if (withHeader) {
+                csvFormat = csvFormat.builder()
+                        .setHeader(headerFrom(schema))
+                        .get();
+            }
+
+            final CSVPrinter printer;
+            try {
+                printer = csvFormat.print(outTo);
+            } catch (IOException e) {
+                throw DataException.of(e);
+            }
+
+            return new KnownSchemaConsumer(printer,
+                    FieldValuesOut.forSchema(schema));
+        }
+
+        public Function<DidoData, String> mapToString() {
+
+            CSVFormat functionFormat = csvFormat.builder()
+                            .setRecordSeparator("")
+                            .get();
+
+            FieldValuesOut valuesOut = FieldValuesOut.forSchema(schema);
+
+            return data -> {
+                final StringWriter out = new StringWriter();
+                try (CSVPrinter csvPrinter = new CSVPrinter(out, functionFormat)) {
+                    csvPrinter.printRecord(valuesOut.toCollection(data));
+                    return out.toString();
+                }
+                catch (IOException e) {
+                    throw new DataException(e);
+                }
+            };
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder("CSV with schema");
+            if (withHeader) {
+                builder.append(" and header");
+            } else {
+                builder.append(" and no header");
+            }
+            return builder.toString();
+        }
     }
 
     static class KnownSchemaConsumer implements DataOut {
@@ -203,18 +242,18 @@ public class DataOutCsv implements DataOutHow<Appendable> {
 
     class UnknownSchemaConsumer implements DataOut {
 
-        private final Appendable outputStream;
+        private final Appendable outTo;
 
         private CloseableConsumer<DidoData> schemaKnownConsumer;
 
-        UnknownSchemaConsumer(Appendable outputStream) {
-            this.outputStream = outputStream;
+        UnknownSchemaConsumer(Appendable outTo) {
+            this.outTo = outTo;
         }
 
         @Override
         public void accept(DidoData data) {
             if (schemaKnownConsumer == null) {
-                schemaKnownConsumer = consumerWhenSchemaKnown(outputStream, data.getSchema());
+                schemaKnownConsumer = new KnownHow(data.getSchema()).outTo(outTo);
             }
             schemaKnownConsumer.accept(data);
         }
@@ -244,20 +283,4 @@ public class DataOutCsv implements DataOutHow<Appendable> {
         return headers;
     }
 
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder("CSV");
-        if (this.schema != null) {
-            builder.append(", with schema");
-        } else {
-            builder.append(", with no schema");
-        }
-        if (withHeader) {
-            builder.append(" and header");
-        } else {
-            builder.append(" and no header");
-        }
-        return builder.toString();
-    }
 }

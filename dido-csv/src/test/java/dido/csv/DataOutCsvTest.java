@@ -44,7 +44,7 @@ class DataOutCsvTest {
         try (DataOut out = DataOutCsv.with()
                 .csvFormat(CSVFormat.DEFAULT.builder()
                         .setRecordSeparator("")
-                        .build())
+                        .get())
                 .toAppendable(result)) {
 
             out.accept(data);
@@ -69,8 +69,8 @@ class DataOutCsvTest {
 
         DataOut dataOut =
                 DataOutCsv.with()
-                        .schema(schema)
                         .header(true)
+                        .forSchema(schema)
                         .toOutputStream(output);
 
         dataOut.accept(values.of("Apple", null, 5, 19.50));

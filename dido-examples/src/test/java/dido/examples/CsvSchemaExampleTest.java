@@ -34,7 +34,7 @@ class CsvSchemaExampleTest {
 
         // #usingIndicesOut{
         String csv = DataOutCsv.with()
-                .schema(schema)
+                .forSchema(data.getSchema())
                 .mapToString()
                 .apply(data);
 
@@ -51,7 +51,7 @@ class CsvSchemaExampleTest {
                 .build();
 
         String csv2 = DataOutCsv.with()
-                .schema(transform.getSchema())
+                .forSchema(transform.getSchema())
                 .mapToString()
                 .apply(transform.apply(data));
 

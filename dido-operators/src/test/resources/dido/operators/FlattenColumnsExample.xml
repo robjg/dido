@@ -37,7 +37,7 @@
                         <bus:collect id="results"/>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv/>
+                                <dido:csv-out/>
                             </how>
                             <to>
                                 <stdout/>

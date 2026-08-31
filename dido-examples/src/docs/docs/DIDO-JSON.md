@@ -73,4 +73,5 @@ This will be deprecated at some point in future releases.
 
 ### Oddjob
 
-For examples of using Dido JSON in Oddjob, see [dido:json](reference/dido/json/JsonDido.md)
+For examples of using Dido JSON in Oddjob, see [dido:json-in](reference/dido/json/JsonDataInBean.md)
+and [dido:json-out](reference/dido/json/JsonDataOutBean.md)

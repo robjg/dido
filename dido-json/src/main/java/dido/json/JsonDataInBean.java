@@ -45,7 +45,7 @@ import java.util.function.Function;
  * {@oddjob.text.resource expected/FromToWithGsonBuilder.json}
  *
  */
-public class JsonDataInBean extends JsonDidoBase {
+public class JsonDataInBean extends JsonBeanBase {
 
 
     /**

@@ -7,7 +7,7 @@ Orange,10,31.6
 Pear,7,22.1</buffer>
             </from>
             <how>
-                <dido:csv xmlns:dido="oddjob:dido">
+                <dido:csv-in xmlns:dido="oddjob:dido">
                     <schema>
                         <dido:schema>
                             <of>
@@ -17,7 +17,7 @@ Pear,7,22.1</buffer>
                             </of>
                         </dido:schema>
                     </schema>
-                </dido:csv>
+                </dido:csv-in>
             </how>
             <to>
                 <list/>

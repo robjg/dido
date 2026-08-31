@@ -38,7 +38,7 @@ Banana,2013-11-21,,7,175.5
                                 </buffer>
                             </from>
                             <how>
-                                <dido:csv withHeader="true" partialSchema="true">
+                                <dido:csv-in withHeader="true" partialSchema="true">
                                     <schema>
                                         <dido:schema xmlns:dido="oddjob:dido">
                                             <of>
@@ -46,7 +46,7 @@ Banana,2013-11-21,,7,175.5
                                             </of>
                                         </dido:schema>
                                     </schema>
-                                </dido:csv>
+                                </dido:csv-in>
                             </how>
                         </dido:data-in>
                         <dido:data-out id="data-book-write" xmlns:dido="oddjob:dido">

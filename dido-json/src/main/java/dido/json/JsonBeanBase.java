@@ -3,8 +3,6 @@ package dido.json;
 import com.google.gson.GsonBuilder;
 import com.google.gson.Strictness;
 import dido.data.util.ClassUtils;
-import dido.how.DataInHow;
-import dido.how.DataOutHow;
 import dido.how.conversion.DidoConversionProvider;
 
 import javax.inject.Inject;
@@ -12,39 +10,9 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * Provide a {@link DataInHow} and a {@link DataOutHow} for JSON.
- * Designed to be used as a bean in Oddjob.
- *
- * @oddjob.description Creates an In or an Out for JSON data. Data can either be in the format
- * of a single JSON Object per line. An array of JSON Objects, or A single JSON Object.
- *
- * @oddjob.example From JSON Lines and back again.
- * {@oddjob.xml.resource dido/json/FromToJsonExample.xml}
- *
- * @oddjob.example From JSON Array and back again.
- * {@oddjob.xml.resource dido/json/FromToJsonArrayExample.xml}
- * The output in results is:
- * {@oddjob.text.resource expected/FromToJsonArrayExample.json}
- *
- * @oddjob.example Json with Nulls and Special Floating Point Numbers. Without setting the properties
- * the jobs would fail.
- * {@oddjob.xml.resource dido/json/FromToJsonNullsAndNans.xml}
- * The captured data is:
- * {@oddjob.text.resource expected/FromToJsonNullsAndNansData.txt}
- * The output in results is:
- * {@oddjob.text.resource expected/FromToJsonNullsAndNans.json}
- *
- * @oddjob.example Configuring the Gson Builder directly using JavaScript.
- * {@oddjob.xml.resource dido/json/FromToWithGsonBuilder.xml}
- * The captured data is:
- * {@oddjob.text.resource expected/FromToWithGsonBuilderData.txt}
- * The output Json is:
- * {@oddjob.text.resource expected/FromToWithGsonBuilder.json}
- *
+ *  Base class for shared properties for JSON In and Out Beans.
  */
-public class JsonDidoBase {
-
-    // In and Out Properties
+public class JsonBeanBase {
 
     /**
      * @oddjob.description The format of the data. LINES, ARRAY, SINGLE.
@@ -75,7 +43,6 @@ public class JsonDidoBase {
      * @oddjob.required No.
      */
     private final Map<String, String> didoConversion = new HashMap<>();
-
 
     /**
      * @oddjob.description The class loader used to create the types for the specified

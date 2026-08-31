@@ -6,6 +6,7 @@ import dido.data.DataSchema;
 import dido.how.DataIn;
 import dido.how.DataOut;
 import dido.how.conversion.DidoConversionProvider;
+import dido.how.lines.DataInLines;
 import dido.how.lines.DataOutLines;
 import dido.json.DataInJson;
 import dido.json.DataOutJson;
@@ -80,7 +81,9 @@ public class EnsureStandardInOutApiTest {
     @ParameterizedTest
     @ValueSource(classes = {
             DataInCsv.class,
-            DataInJson.class})
+            DataInJson.class,
+            DataInLines.class,
+    })
     void ensureMapFromStringAreConsistent(Class<?> howClass) throws NoSuchMethodException {
 
         assertThat(Function.class.isAssignableFrom(
@@ -160,7 +163,8 @@ public class EnsureStandardInOutApiTest {
     @ParameterizedTest
     @ValueSource(classes = {
             DataOutCsv.class,
-            DataOutJson.class
+            DataOutJson.class,
+            DataOutLines.class
     })
     void ensureMapToStringAreConsistent(Class<?> howClass) throws NoSuchMethodException {
 
@@ -271,7 +275,6 @@ public class EnsureStandardInOutApiTest {
 
     @ParameterizedTest
     @ValueSource(classes = {
-            DataOutCsv.class,
             DataOutPoi.class,
             DataOutTextTable.class
     })
@@ -291,6 +294,7 @@ public class EnsureStandardInOutApiTest {
 
     @ParameterizedTest
     @ValueSource(classes = {
+            DataOutCsv.class,
             DataOutJson.class,
             DataOutLines.class,
     })

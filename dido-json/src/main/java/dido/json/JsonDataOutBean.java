@@ -43,7 +43,7 @@ import java.util.function.Function;
  * {@oddjob.text.resource expected/FromToWithGsonBuilder.json}
  *
  */
-public class JsonDataOutBean extends JsonDidoBase {
+public class JsonDataOutBean extends JsonBeanBase {
 
 
     /**

@@ -1,13 +1,17 @@
 <arooa:descriptor  xmlns:arooa="http://rgordon.co.uk/oddjob/arooa"
         prefix="dido" namespace="oddjob:dido">
 	<conversions>
-		<arooa:conversion className="dido.csv.CsvDido" methodName="toStreamOut"/>
-		<arooa:conversion className="dido.csv.CsvDido" methodName="toStreamIn"/>
-		<arooa:conversion className="dido.csv.CsvFormatType" methodName="get"/>
+		<arooa:conversion className="dido.csv.CsvDataInBean" methodName="toStreamIn" arooaValue="true"/>
+		<arooa:conversion className="dido.csv.CsvDataInBean" methodName="toMapFromString" arooaValue="true"/>
+		<arooa:conversion className="dido.csv.CsvDataOutBean" methodName="toStreamOut" arooaValue="true"/>
+		<arooa:conversion className="dido.csv.CsvDataOutBean" methodName="toMapToString" arooaValue="true"/>
+		<arooa:conversion className="dido.csv.CsvFormatType" methodName="get" arooaValue="true"/>
 	</conversions>
 	<values>
-		<arooa:bean-def element='csv'
-		    className='dido.csv.CsvDido'/>
+		<arooa:bean-def element='csv-in'
+		    className='dido.csv.CsvDataInBean'/>
+		<arooa:bean-def element='csv-out'
+		                className='dido.csv.CsvDataOutBean'/>
 		<arooa:bean-def element='csv-format'
 						className='dido.csv.CsvFormatType'>
 			<properties>

@@ -7,7 +7,7 @@
                     <of>
                         <dido:data-in xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv/>
+                                <dido:csv-in/>
                             </how>
                             <from>
                                 <file file="${oddjob.dir}/../data/FruitNoHeader.csv"/>

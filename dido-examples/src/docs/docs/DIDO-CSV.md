@@ -42,4 +42,5 @@ When reading:
 
 ### Oddjob
 
-For examples of using Dido CSV in Oddjob, see [dido:csv](reference/dido/csv/CsvDido.md)
+For examples of using Dido CSV in Oddjob, see [dido:csv-in](reference/dido/csv/CsvDataInBean.md)
+and [dido:csv-out](reference/dido/csv/CsvDataOutBean.md)
