@@ -1,20 +1,26 @@
 [HOME](../../../README.md)
-# dido:to-dido
+# dido:map
 
-Provide a BeanBus component that uses a mapper to convert to
-`dido.data.DidoData` from some other data type.
+Provide a BeanBus component that will work specifically
+with Schema Aware Functions to initialise them and propagate any resultant
+schema to the next component if it is Schema Aware.
 
 
+This is functionally equivalent to `bus:map` but providing access to schemas
+may be beneficial as mappers don't need to wait for data for a schema to initialise
+with.
 
 ### Property Summary
 
 | Property | Description |
 | -------- | ----------- |
-| [count](#propertycount) |  | 
-| [function](#propertyfunction) |  | 
-| [name](#propertyname) |  | 
-| [sent](#propertysent) |  | 
-| [to](#propertyto) |  | 
+| [count](#propertycount) | The number of items provided to the function. | 
+| [exceptionListener](#propertyexceptionlistener) |  | 
+| [function](#propertyfunction) | The function to apply to data on the bus. | 
+| [name](#propertyname) | The name of the component as seen in Oddjob. | 
+| [schema](#propertyschema) | The resultant schema if the function is able to provide it. | 
+| [sent](#propertysent) | The number of items returned by the function. | 
+| [to](#propertyto) | The next component in the bus. | 
 
 
 ### Example Summary
@@ -29,6 +35,16 @@ Provide a BeanBus component that uses a mapper to convert to
 
 <table style='font-size:smaller'>
       <tr><td><i>Access</i></td><td>READ_ONLY</td></tr>
+      <tr><td><i>Required</i></td><td>Read Only.</td></tr>
+</table>
+
+The number of items provided to the function.
+
+#### exceptionListener <a name="propertyexceptionlistener"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
 </table>
 
 
@@ -38,35 +54,49 @@ Provide a BeanBus component that uses a mapper to convert to
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
       <tr><td><i>Access</i></td><td>WRITE_ONLY</td></tr>
+      <tr><td><i>Required</i></td><td>Yes.</td></tr>
 </table>
 
-
+The function to apply to data on the bus.
 
 #### name <a name="propertyname"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
       <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
 </table>
 
+The name of the component as seen in Oddjob.
 
+#### schema <a name="propertyschema"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>Read Only.</td></tr>
+</table>
+
+The resultant schema if the function is able to provide it.
 
 #### sent <a name="propertysent"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Access</i></td><td>READ_ONLY</td></tr>
+      <tr><td><i>Required</i></td><td>Read Only.</td></tr>
 </table>
 
-
+The number of items returned by the function.
 
 #### to <a name="propertyto"></a>
 
 <table style='font-size:smaller'>
       <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
       <tr><td><i>Access</i></td><td>WRITE_ONLY</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
 </table>
 
-
+The next component in the bus.
 
 
 ### Examples
@@ -83,9 +113,6 @@ From and To lines of text.
                     <results>
                         <buffer/>
                     </results>
-                    <how>
-                        <dido:lines fieldName="stuff" xmlns:dido="oddjob:dido"/>
-                    </how>
                 </variables>
                 <bus:bus xmlns:bus="oddjob:beanbus">
                     <of>
@@ -102,16 +129,16 @@ Lazy
 Dog]]></buffer>
                             </input>
                         </copy>
-                        <dido:to-dido xmlns:dido="oddjob:dido">
+                        <dido:map id="map-in" xmlns:dido="oddjob:dido">
                             <function>
-                                <value value="${vars.how}"/>
+                                <dido:lines-in fieldName="stuff" xmlns:dido="oddjob:dido"/>
                             </function>
-                        </dido:to-dido>
-                        <dido:from-dido xmlns:dido="oddjob:dido">
+                        </dido:map>
+                        <dido:map id="map-out" xmlns:dido="oddjob:dido">
                             <function>
-                                <value value="${vars.how}"/>
+                                <dido:lines-out fieldName="stuff" xmlns:dido="oddjob:dido"/>
                             </function>
-                        </dido:from-dido>
+                        </dido:map>
                         <bus:collect>
                             <output>
                                 <value value="${vars.results}"/>

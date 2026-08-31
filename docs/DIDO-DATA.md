@@ -207,7 +207,6 @@ the `dido-json` module.
         StringWriter output = new StringWriter();
 
         try (DataOut out = DataOutJson.with()
-                .schema(schemaAsData.getSchema())
                 .pretty()
                 .toAppendable(output)) {
 

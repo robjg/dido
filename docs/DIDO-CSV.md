@@ -42,7 +42,7 @@ If there is no header, then the schema indices are used to pick the columns.
 Indices are not used when writing data. Just the order of the fields in the schema is important.
 ```java
         String csv = DataOutCsv.with()
-                .schema(schema)
+                .forSchema(data.getSchema())
                 .mapToString()
                 .apply(data);
 
@@ -60,7 +60,7 @@ Adding blank columns can be achieved by using a Transformer.
                 .build();
 
         String csv2 = DataOutCsv.with()
-                .schema(transform.getResultantSchema())
+                .forSchema(transform.getSchema())
                 .mapToString()
                 .apply(transform.apply(data));
 
@@ -134,4 +134,5 @@ When reading:
 
 ### Oddjob
 
-For examples of using Dido CSV in Oddjob, see [dido:csv](reference/dido/csv/CsvDido.md)
+For examples of using Dido CSV in Oddjob, see [dido:csv-in](reference/dido/csv/CsvDataInBean.md)
+and [dido:csv-out](reference/dido/csv/CsvDataOutBean.md)

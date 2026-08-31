@@ -125,9 +125,9 @@ improve performance.
                 .addNamed("BestBefore", LocalDate.class)
                 .build();
 
-        assertThat(transform.getResultantSchema(), is(resultantSchema));
+        assertThat(transform.getSchema(), is(resultantSchema));
 
-        assertThat(transform.getResultantSchema(), instanceOf(ReadStrategy.class));
+        assertThat(transform.getSchema(), instanceOf(ReadStrategy.class));
 ```
 
 

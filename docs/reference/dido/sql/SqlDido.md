@@ -11,6 +11,7 @@ Export and Import with SQL.
 | [classLoader](#propertyclassloader) | The classloader used to derive the schema from a query. | 
 | [schema](#propertyschema) | An override schema that supplies a desired type to the underlying [java.sql.ResultSet](https://docs.oracle.com/en/java/javase/11/docs/api/java.sql/java/sql/ResultSet.html) method. | 
 | [sql](#propertysql) | The SQL that will extract or insert the data. | 
+| [table](#propertytable) | The table name. | 
 
 
 ### Example Summary
@@ -64,6 +65,17 @@ dependent on the JDBC implementation.
 
 The SQL that will extract or insert the data.
 
+#### table <a name="propertytable"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
+      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
+      <tr><td><i>Required</i></td><td>No.</td></tr>
+</table>
+
+The table name. If specified the insert will be
+automatically generated.
+
 
 ### Examples
 #### Example 1 <a name="example1"></a>
@@ -101,7 +113,7 @@ Insert and Extract data.
                     <of>
                         <dido:data-in xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv>
+                                <dido:csv-in>
                                     <schema>
                                         <dido:schema>
                                             <of>
@@ -110,7 +122,7 @@ Insert and Extract data.
                                             </of>
                                         </dido:schema>
                                     </schema>
-                                </dido:csv>
+                                </dido:csv-in>
                             </how>
                             <from>
                                 <buffer>

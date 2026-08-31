@@ -13,6 +13,7 @@ See any of the formatters for examples of how to use.
 | [how](#propertyhow) | How to write the data out. | 
 | [name](#propertyname) | The name of the component. | 
 | [next](#propertynext) | If set, data will be forwarded here. | 
+| [schema](#propertyschema) |  | 
 | [to](#propertyto) | Where to write data to. | 
 
 
@@ -63,6 +64,15 @@ The name of the component.
 
 If set, data will be forwarded here. Set automatically by BeanBus.
 
+#### schema <a name="propertyschema"></a>
+
+<table style='font-size:smaller'>
+      <tr><td><i>Configured By</i></td><td>ELEMENT</td></tr>
+      <tr><td><i>Access</i></td><td>WRITE_ONLY</td></tr>
+</table>
+
+
+
 #### to <a name="propertyto"></a>
 
 <table style='font-size:smaller'>
@@ -106,7 +116,7 @@ Dog]]>
                                 </buffer>
                             </from>
                             <how>
-                                <dido:lines/>
+                                <dido:lines-in/>
                             </how>
                         </dido:data-in>
                         <dido:data-out xmlns:dido="oddjob:dido">
@@ -114,7 +124,7 @@ Dog]]>
                                 <value value="${vars.results}"/>
                             </to>
                             <how>
-                                <dido:lines/>
+                                <dido:lines-out/>
                             </how>
                         </dido:data-out>
                     </of>

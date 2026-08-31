@@ -5,24 +5,25 @@
 - [dido:converter](dido/oddjob/util/DidoConverterJob.md) - Provides a `dido.how.conversion.DidoConversionProvider` using Oddjob's conversions.
 - [dido:data-in](dido/oddjob/beanbus/DataInDriver.md) - A Bean Bus Driver that reads data from the 'from' according to the given 'how'.
 - [dido:data-out](dido/oddjob/beanbus/DataOutDestination.md) - A Bean Bus Destination that accepts `dido.data.DidoData` and writes it out to the given 'to' according to the given 'how'.
-- [dido:from-dido](dido/oddjob/beanbus/FromDido.md) - Provide a BeanBus component that uses a mapper to convert from a `dido.data.DidoData` to some other data type.
+- [dido:map](dido/oddjob/beanbus/DataMapper.md) - Provide a BeanBus component that will work specifically with Schema Aware Functions to initialise them and propagate any resultant schema to the next component if it is Schema Aware.
 - [dido:play](dido/replay/DataPlayerJob.md) - Plays back Data.
 - [dido:record](dido/replay/DataRecorderService.md) - Records data it receives to files.
 - [dido:stream-join](dido/operators/join/StreamJoinService.md) - A service that Joins two sources of `dido.data.DidoData` into a single destination.
-- [dido:to-dido](dido/oddjob/beanbus/ToDido.md) - Provide a BeanBus component that uses a mapper to convert to `dido.data.DidoData` from some other data type.
 
 ### Types
 
 - [dido:copy](dido/operators/transform/ValueCopyFactory.md) - Copy a field from one position and/or field and/or type to another.
-- [dido:csv](dido/csv/CsvDido.md) - Reads and write CSV format from Dido Data.
 - [dido:csv-format](dido/csv/CsvFormatType.md) - A wrapper around Apache's <a href="https://commons.apache.org/proper/commons-csv/apidocs/org/apache/commons/csv/CSVFormat.html">CSVFormat</a>
+- [dido:csv-in](dido/csv/CsvDataInBean.md) - Reads CSV format data to Dido Data.
+- [dido:csv-out](dido/csv/CsvDataOutBean.md) - Writes CSV format from Dido Data.
 - [dido:field](dido/oddjob/schema/SchemaFieldBean.md) - Define the field of a Schema.
 - [dido:flatten](dido/operators/FlattenType.md) - Provides a mapping function that either flattens fields that are collections or arrays or a nested repeating schema.
 - [dido:from-bean](dido/oddjob/bean/FromBeanTransformer.md) - Transform a Bean to Dido Data.
-- [dido:from-json](dido/json/FromJsonStringType.md) - Provides a Mapping Function that will convert a GSON String into Dido Data.
-- [dido:json](dido/json/JsonDido.md) - Creates an In or an Out for JSON data.
+- [dido:json-in](dido/json/JsonDataInBean.md) - Creates an In for JSON data.
+- [dido:json-out](dido/json/JsonDataOutBean.md) - Creates an Out for JSON data.
 - [dido:left-join](dido/operators/join/LeftStreamJoinType.md) - A join operation that performs a full left join.
-- [dido:lines](dido/oddjob/util/LinesDido.md) - Creates an In or Out for Lines of Text.
+- [dido:lines-in](dido/oddjob/util/LinesInBean.md) - Creates an In for Lines of Text.
+- [dido:lines-out](dido/oddjob/util/LinesOutBean.md) - Creates an Out for Lines of Text.
 - [dido:remove](dido/operators/transform/ValueRemoveFactory.md) - Remove the value for a field or index.
 - [dido:schema](dido/oddjob/schema/SchemaBean.md) - Define a Schema.
 - [dido:schema-defs](dido/oddjob/schema/SchemaDefsBean.md) - Define Schema Definitions that will be referenced elsewhere.
@@ -31,7 +32,6 @@
 - [dido:sql](dido/sql/SqlDido.md) - Export and Import with SQL.
 - [dido:table](dido/text/TextTableDido.md) - Creates an Out that write data to a text table.
 - [dido:to-bean](dido/oddjob/bean/ToBeanTransformer.md) - 
-- [dido:to-json](dido/json/ToJsonStringType.md) - Provides a Mapping Function that will convert a Dido Data into a JSON String.
 - [dido:transform](dido/operators/transform/TransformationFactory.md) - Create a transformation of data by applying field transformations.
 - [dido-poi:blank](dido/poi/layouts/BlankCell.md) - Create a column cells that are blank.
 - [dido-poi:boolean](dido/poi/layouts/BooleanCell.md) - Define a column of Boolean cells.

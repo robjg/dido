@@ -181,7 +181,7 @@ Plays back data.
                     <of>
                         <dido:data-in id="csv" xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv>
+                                <dido:csv-in>
                                     <schema>
                                         <dido:schema>
                                             <of>
@@ -191,7 +191,7 @@ Plays back data.
                                             </of>
                                         </dido:schema>
                                     </schema>
-                                </dido:csv>
+                                </dido:csv-in>
                             </how>
                             <from>
                                 <buffer>

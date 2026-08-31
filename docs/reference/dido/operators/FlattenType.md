@@ -68,7 +68,7 @@ Flatten a nested schema.
                     <of>
                         <dido:data-in name="Data" xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json format="ARRAY" partialSchema="true">
+                                <dido:json-in format="ARRAY" partialSchema="true">
                                     <schema>
                                         <dido:schema>
                                             <of>
@@ -84,7 +84,7 @@ Flatten a nested schema.
                                             </of>
                                         </dido:schema>
                                     </schema>
-                                </dido:json>
+                                </dido:json-in>
                             </how>
                             <from>
                                 <buffer>
@@ -108,7 +108,7 @@ Flatten a nested schema.
                         <bus:collect id="results"/>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv/>
+                                <dido:csv-out/>
                             </how>
                             <to>
                                 <stdout/>
@@ -136,7 +136,7 @@ Flatten columns that are arrays.
                     <of>
                         <dido:data-in name="Data" xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json format="ARRAY" partialSchema="true">
+                                <dido:json-in format="ARRAY" partialSchema="true">
                                     <schema>
                                         <dido:schema>
                                             <of>
@@ -144,7 +144,7 @@ Flatten columns that are arrays.
                                             </of>
                                         </dido:schema>
                                     </schema>
-                                </dido:json>
+                                </dido:json-in>
                             </how>
                             <from>
                                 <buffer>
@@ -166,7 +166,7 @@ Flatten columns that are arrays.
                         <bus:collect id="results"/>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv/>
+                                <dido:csv-out/>
                             </how>
                             <to>
                                 <stdout/>

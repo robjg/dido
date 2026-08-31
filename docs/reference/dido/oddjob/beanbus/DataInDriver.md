@@ -116,7 +116,7 @@ Dog]]>
                                 </buffer>
                             </from>
                             <how>
-                                <dido:lines/>
+                                <dido:lines-in/>
                             </how>
                         </dido:data-in>
                         <dido:data-out xmlns:dido="oddjob:dido">
@@ -124,7 +124,7 @@ Dog]]>
                                 <value value="${vars.results}"/>
                             </to>
                             <how>
-                                <dido:lines/>
+                                <dido:lines-out/>
                             </how>
                         </dido:data-out>
                     </of>

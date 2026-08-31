@@ -1,8 +1,8 @@
 [HOME](../../../README.md)
-# dido:lines
+# dido:lines-out
 
-Creates an In or Out for Lines of Text. The `dido.data.DidoData` is created or expected to have
-a field with the give field name or the name 'Line'.
+Creates an Out for Lines of Text. The line is created from
+a field of the `dido.data.DidoData` with the given field name or the name 'Line'.
 
 ### Property Summary
 

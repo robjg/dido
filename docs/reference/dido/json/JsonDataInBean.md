@@ -1,7 +1,7 @@
 [HOME](../../README.md)
-# dido:json
+# dido:json-in
 
-Creates an In or an Out for JSON data. Data can either be in the format
+Creates an In for JSON data. Data can either be in the format
 of a single JSON Object per line. An array of JSON Objects, or A single JSON Object.
 
 ### Property Summary
@@ -16,8 +16,6 @@ of a single JSON Object per line. An array of JSON Objects, or A single JSON Obj
 | [objectToNumberPolicy](#propertyobjecttonumberpolicy) | Configures Gson to apply a specific number strategy during deserialization of number type primitives. | 
 | [partialSchema](#propertypartialschema) | When reading data in, indicates that the provided Schema is partial. | 
 | [schema](#propertyschema) | The schema to use. | 
-| [serializeNulls](#propertyserializenulls) | Serialize null values. | 
-| [serializeSpecialFloatingPointValues](#propertyserializespecialfloatingpointvalues) | Serialize NaN and Infinity values. | 
 | [strictness](#propertystrictness) | Gson Strictness passed through to underlying Gson builder. | 
 
 
@@ -120,33 +118,8 @@ rest of the schema will be taken from the data.
       <tr><td><i>Required</i></td><td>No.</td></tr>
 </table>
 
-The schema to use. When reading in, if one is not provided a simple schema will be
-created based on the JSON primitive type. When writing out the schema will be used to limit the number
-of fields written.
-
-#### serializeNulls <a name="propertyserializenulls"></a>
-
-<table style='font-size:smaller'>
-      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
-      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
-      <tr><td><i>Required</i></td><td>No, defaults to false.</td></tr>
-</table>
-
-Serialize null values. True to serialize null to the JSON,
-false and they will be ignored and no field will be written.
-
-#### serializeSpecialFloatingPointValues <a name="propertyserializespecialfloatingpointvalues"></a>
-
-<table style='font-size:smaller'>
-      <tr><td><i>Configured By</i></td><td>ATTRIBUTE</td></tr>
-      <tr><td><i>Access</i></td><td>READ_WRITE</td></tr>
-      <tr><td><i>Required</i></td><td>No, defaults to false.</td></tr>
-</table>
-
-Serialize NaN and Infinity values. True to serialize, false
-and these values in data will result in an Exception. Note that because of an
-oversight in the underlying Gson implementation, this has the same effect as
-setting Strictness to LENIENT.
+The schema to use. If one is not provided a simple schema will be
+created based on the JSON primitive type.
 
 #### strictness <a name="propertystrictness"></a>
 
@@ -171,7 +144,7 @@ From JSON Lines and back again.
             <of>
                 <dido:data-in xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:json/>
+                        <dido:json-in/>
                     </how>
                     <from>
                         <buffer>
@@ -184,7 +157,7 @@ From JSON Lines and back again.
                 </dido:data-in>
                 <dido:data-out xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:json/>
+                        <dido:json-out/>
                     </how>
                     <to>
                         <identify id="results">
@@ -212,7 +185,7 @@ From JSON Array and back again.
             <of>
                 <dido:data-in xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:json format="ARRAY"/>
+                        <dido:json-in format="ARRAY"/>
                     </how>
                     <from>
                         <buffer>
@@ -229,7 +202,7 @@ From JSON Array and back again.
                 </dido:data-in>
                 <dido:data-out xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:json format="ARRAY"/>
+                        <dido:json-out format="ARRAY"/>
                     </how>
                     <to>
                         <identify id="results">
@@ -269,7 +242,7 @@ the jobs would fail.
                     <of>
                         <dido:data-in xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json strictness="LENIENT">
+                                <dido:json-in strictness="LENIENT">
                                     <schema>
                                         <dido:schema>
                                             <of>
@@ -278,7 +251,7 @@ the jobs would fail.
                                             </of>
                                         </dido:schema>
                                     </schema>
-                                </dido:json>
+                                </dido:json-in>
                             </how>
                             <from>
                                 <buffer><![CDATA[{ "Fruit":"Apple", "Price":Infinity }
@@ -290,7 +263,7 @@ the jobs would fail.
                         <bus:collect id="capture"/>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json serializeNulls="true" serializeSpecialFloatingPointValues="true"/>
+                                <dido:json-out serializeNulls="true" serializeSpecialFloatingPointValues="true"/>
                             </how>
                             <to>
                                 <identify id="results">
@@ -342,11 +315,11 @@ Configuring the Gson Builder directly using JavaScript.
                     <of>
                         <dido:data-in xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json format="LINES">
+                                <dido:json-in format="LINES">
                                     <gsonBuilder>
                                         <value value="#{new (Java.extend(Java.type('java.util.function.Consumer'), { accept: function(gson) { gson.setObjectToNumberStrategy(Java.type('com.google.gson.ToNumberPolicy').LONG_OR_DOUBLE); } } ))() }"/>
                                     </gsonBuilder>
-                                </dido:json>
+                                </dido:json-in>
                             </how>
                             <from>
                                 <buffer><![CDATA[{ "Fruit":"Apple", "Qty":5, "Price":24.5  }
@@ -365,11 +338,11 @@ Configuring the Gson Builder directly using JavaScript.
                         </bus:bus>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json>
+                                <dido:json-out>
                                     <gsonBuilder>
                                         <value value="#{new (Java.extend(Java.type('java.util.function.Consumer'), { accept: function(gson) { gson.setFieldNamingStrategy(Java.type('com.google.gson.FieldNamingPolicy').UPPER_CASE_WITH_UNDERSCORES); } } ))() }"/>
                                     </gsonBuilder>
-                                </dido:json>
+                                </dido:json-out>
                             </how>
                             <to>
                                 <file file="${work.dir}/FromToWithGsonBuilderOut.json"/>

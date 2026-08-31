@@ -36,7 +36,7 @@ This is the configuration it used:
                     <of>
                         <dido:data-in xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv/>
+                                <dido:csv-in/>
                             </how>
                             <from>
                                 <file file="${oddjob.dir}/../data/FruitNoHeader.csv"/>
@@ -44,7 +44,7 @@ This is the configuration it used:
                         </dido:data-in>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json/>
+                                <dido:json-out/>
                             </how>
                             <to>
                                 <stdout/>
@@ -120,11 +120,11 @@ specify a schema.
                     <of>
                         <dido:data-in xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv>
+                                <dido:csv-in>
                                     <schema>
                                         <value value="${ourVars.ourSchema}"/>
                                     </schema>
-                                </dido:csv>
+                                </dido:csv-in>
                             </how>
                             <from>
                                 <file file="Fruit.csv"/>
@@ -132,7 +132,7 @@ specify a schema.
                         </dido:data-in>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:json/>
+                                <dido:json-out/>
                             </how>
                             <to>
                                 <stdout/>
@@ -144,6 +144,136 @@ specify a schema.
         </sequential>
     </job>
 </oddjob>
+```
+
+
+### Transformations
+
+Dido provides a number of configurable types to allow simple transformations
+to be applied to the data. Here we take some JSON lines:
+```xml
+{"Colour": "Red", "Fruit": "Apple", "Qty":5, "Price":19.5}
+{"Qty": 2, "Fruit":"Orange", "Colour": "Orange", "Price":35.24}
+{"Qty":3, "Price":26.84, "Colour": "Orange", "Fruit":"Pear"}
+```
+
+The element order is random demonstrating that when a Schema is provided, Dido 
+does not care about the order of the elements.
+
+This configuration will read the JSON, remove the Colour field, Multiply the Price
+to create a new MarkupPrice field and as a constant BestBeforeDate. The date
+demonstrates using a ConversionProvider defined with JavaScript to perform the
+conversion to and from the `LocalDate` Java type.
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<oddjob id="oddjob">
+    <job>
+        <sequential>
+            <jobs>
+                <variables id="ourVars">
+                    <ourSchema>
+                        <dido:schema xmlns:dido="oddjob:dido">
+                            <of>
+                                <dido:field name="Fruit" type="java.lang.String"/>
+                                <dido:field name="Colour" type="java.lang.String"/>
+                                <dido:field name="Qty" type="int"/>
+                                <dido:field name="Price" type="double"/>
+                            </of>
+                        </dido:schema>
+                    </ourSchema>
+                </variables>
+                <script id="js" name="Define Conversion Provider"><![CDATA[
+function toDate(s) { 
+	return Java.type("java.time.LocalDate")
+		.parse(s) 
+}
+
+function fromDate(d) { 
+	return d.format(Java.type("java.time.format.DateTimeFormatter")
+		.ofPattern("yyyyMMdd")) 
+}
+
+var conversionProvider = 
+	Java.type("dido.how.conversion.DefaultConversionProvider").with()
+                .conversion(java.lang.String.class, Java.type("java.time.LocalDate").class, toDate)
+                .conversion(Java.type("java.time.LocalDate").class, java.lang.String.class, fromDate)
+                .make();]]></script>
+                <bus:bus xmlns:bus="oddjob:beanbus">
+                    <of>
+                        <dido:data-in xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:json-in format="LINES">
+                                    <schema>
+                                        <value value="${ourVars.ourSchema}"/>
+                                    </schema>
+                                    <conversionProvider>
+                                        <value value="${js.variable(conversionProvider)}"/>
+                                    </conversionProvider>
+                                    <didoConversion>
+                                        <value key="java.lang.String" value="java.time.LocalDate"/>
+                                    </didoConversion>
+                                </dido:json-in>
+                            </how>
+                            <from>
+                                <file file="${oddjob.dir}/../data/FruitElementsRandom.jsonl"/>
+                            </from>
+                        </dido:data-in>
+                        <bus:map>
+                            <function>
+                                <dido:transform withExisting="true" xmlns:dido="oddjob:dido">
+                                    <of>
+                                        <dido:remove field="Colour"/>
+                                        <dido:copy field="Price" to="MarkupPrice">
+                                            <type>
+                                                <class name="double"/>
+                                            </type>
+                                            <function>
+                                                <value value="#{function(x) { return x * 1.5 } }"/>
+                                            </function>
+                                        </dido:copy>
+                                        <dido:set field="BestBefore">
+                                            <value>
+                                                <value value="2025-12-15"/>
+                                            </value>
+                                            <type>
+                                                <class name="java.time.LocalDate"/>
+                                            </type>
+                                            <conversionProvider>
+                                                <value value="${js.variable(conversionProvider)}"/>
+                                            </conversionProvider>
+                                        </dido:set>
+                                    </of>
+                                </dido:transform>
+                            </function>
+                        </bus:map>
+                        <dido:data-out xmlns:dido="oddjob:dido">
+                            <how>
+                                <dido:json-out>
+                                    <conversionProvider>
+                                        <value value="${js.variable(conversionProvider)}"/>
+                                    </conversionProvider>
+                                    <didoConversion>
+                                        <value key="java.time.LocalDate" value="java.lang.String"/>
+                                    </didoConversion>
+                                </dido:json-out>
+                            </how>
+                            <to>
+                                <stdout/>
+                            </to>
+                        </dido:data-out>
+                    </of>
+                </bus:bus>
+            </jobs>
+        </sequential>
+    </job>
+</oddjob>
+```
+
+The following JSON lines are created:
+```xml
+{"Fruit":"Apple","Qty":5,"Price":19.5,"MarkupPrice":29.25,"BestBefore":"20251215"}
+{"Fruit":"Orange","Qty":2,"Price":35.24,"MarkupPrice":52.86,"BestBefore":"20251215"}
+{"Fruit":"Pear","Qty":3,"Price":26.84,"MarkupPrice":40.26,"BestBefore":"20251215"}
 ```
 
 

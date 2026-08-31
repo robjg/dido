@@ -106,7 +106,7 @@ Join based on indices.
                             <jobs>
                                 <dido:data-in id="fruit" name="Fruit Data" xmlns:dido="oddjob:dido">
                                     <how>
-                                        <dido:csv>
+                                        <dido:csv-in>
                                             <schema>
                                                 <dido:schema>
                                                     <of>
@@ -116,7 +116,7 @@ Join based on indices.
                                                     </of>
                                                 </dido:schema>
                                             </schema>
-                                        </dido:csv>
+                                        </dido:csv-in>
                                     </how>
                                     <from>
                                         <buffer>
@@ -132,7 +132,7 @@ Carrots,15,2
                                 </dido:data-in>
                                 <dido:data-in id="farmers" name="Farmer Data" xmlns:dido="oddjob:dido">
                                     <how>
-                                        <dido:csv>
+                                        <dido:csv-in>
                                             <schema>
                                                 <dido:schema>
                                                     <of>
@@ -141,7 +141,7 @@ Carrots,15,2
                                                     </of>
                                                 </dido:schema>
                                             </schema>
-                                        </dido:csv>
+                                        </dido:csv-in>
                                     </how>
                                     <from>
                                         <buffer>
@@ -164,7 +164,7 @@ Carrots,15,2
                         <bus:collect id="results"/>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv/>
+                                <dido:csv-out/>
                             </how>
                             <to>
                                 <stdout/>
@@ -194,7 +194,7 @@ Join based on field names.
                             <jobs>
                                 <dido:data-in id="fruit" name="Fruit Data" xmlns:dido="oddjob:dido">
                                     <how>
-                                        <dido:csv>
+                                        <dido:csv-in>
                                             <schema>
                                                 <dido:schema>
                                                     <of>
@@ -204,7 +204,7 @@ Join based on field names.
                                                     </of>
                                                 </dido:schema>
                                             </schema>
-                                        </dido:csv>
+                                        </dido:csv-in>
                                     </how>
                                     <from>
                                         <buffer>
@@ -220,7 +220,7 @@ Carrots,15,2
                                 </dido:data-in>
                                 <dido:data-in id="farmers" name="Farmer Data" xmlns:dido="oddjob:dido">
                                     <how>
-                                        <dido:csv>
+                                        <dido:csv-in>
                                             <schema>
                                                 <dido:schema>
                                                     <of>
@@ -229,7 +229,7 @@ Carrots,15,2
                                                     </of>
                                                 </dido:schema>
                                             </schema>
-                                        </dido:csv>
+                                        </dido:csv-in>
                                     </how>
                                     <from>
                                         <buffer>
@@ -252,7 +252,7 @@ Carrots,15,2
                         <bus:collect id="results"/>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv/>
+                                <dido:csv-out/>
                             </how>
                             <to>
                                 <stdout/>
@@ -282,7 +282,7 @@ A more complicated Join.
                             <jobs>
                                 <dido:data-in id="fruit" name="Fruit Data" xmlns:dido="oddjob:dido">
                                     <how>
-                                        <dido:csv>
+                                        <dido:csv-in>
                                             <schema>
                                                 <dido:schema>
                                                     <of>
@@ -294,7 +294,7 @@ A more complicated Join.
                                                     </of>
                                                 </dido:schema>
                                             </schema>
-                                        </dido:csv>
+                                        </dido:csv-in>
                                     </how>
                                     <from>
                                         <buffer>
@@ -310,7 +310,7 @@ Carrots,,15,2,UK
                                 </dido:data-in>
                                 <dido:data-in id="farmers" name="Farmer Data" xmlns:dido="oddjob:dido">
                                     <how>
-                                        <dido:csv>
+                                        <dido:csv-in>
                                             <schema>
                                                 <dido:schema>
                                                     <of>
@@ -320,7 +320,7 @@ Carrots,,15,2,UK
                                                     </of>
                                                 </dido:schema>
                                             </schema>
-                                        </dido:csv>
+                                        </dido:csv-in>
                                     </how>
                                     <from>
                                         <buffer>
@@ -343,7 +343,7 @@ Carrots,,15,2,UK
                         <bus:collect id="results"/>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:csv/>
+                                <dido:csv-out/>
                             </how>
                             <to>
                                 <stdout/>

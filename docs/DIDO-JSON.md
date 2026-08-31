@@ -197,7 +197,6 @@ Dido Data.
 And any null fields are not written out by default.
 ```java
         String json = DataOutJson.with()
-                .schema(schema)
                 .mapToString()
                 .apply(data);
 
@@ -208,7 +207,6 @@ And any null fields are not written out by default.
 To write null field values out use `serializeNulls`
 ```java
         String jsonWithNull = DataOutJson.with()
-                .schema(schema)
                 .serializeNulls()
                 .mapToString()
                 .apply(data);
@@ -224,7 +222,6 @@ JSON with null fields can be read in as before. No extra configuration is needed
 To serialize special floating point values (NaN/Infinity) use `serializeSpecialFloatingPointValues`
 ```java
         String jsonWithNan = DataOutJson.with()
-                .schema(schema)
                 .serializeSpecialFloatingPointValues()
                 .mapToString()
                 .apply(DidoData.withSchema(schema)
@@ -245,4 +242,5 @@ This will be deprecated at some point in future releases.
 
 ### Oddjob
 
-For examples of using Dido JSON in Oddjob, see [dido:json](reference/dido/json/JsonDido.md)
+For examples of using Dido JSON in Oddjob, see [dido:json-in](reference/dido/json/JsonDataInBean.md)
+and [dido:json-out](reference/dido/json/JsonDataOutBean.md)

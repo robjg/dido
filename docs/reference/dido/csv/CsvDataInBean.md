@@ -1,7 +1,7 @@
 [HOME](../../README.md)
-# dido:csv
+# dido:csv-in
 
-Reads and write CSV format from Dido Data.
+Reads CSV format data to Dido Data.
 <a href="https://commons.apache.org/proper/commons-csv/">Apache Commons CSV</a>
 is used for this using the DEFAULT format. Please see their documentation
 for more details.
@@ -95,7 +95,7 @@ From CSV data and back again.
             <of>
                 <dido:data-in xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:csv withHeader="true"/>
+                        <dido:csv-in withHeader="true"/>
                     </how>
                     <from>
                         <buffer>
@@ -108,7 +108,7 @@ Pear,7,22.1]]>
                 </dido:data-in>
                 <dido:data-out xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:csv withHeader="true"/>
+                        <dido:csv-out withHeader="true"/>
                     </how>
                     <to>
                         <identify id="results">
@@ -136,11 +136,11 @@ Using a Custom Format.
             <of>
                 <dido:data-in xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:csv withHeader="true">
+                        <dido:csv-in withHeader="true">
                             <csvFormat>
                                 <dido:csv-format delimiter="|" formatFrom="RFC4180" nullString="null"/>
                             </csvFormat>
-                        </dido:csv>
+                        </dido:csv-in>
                     </how>
                     <from>
                         <buffer><![CDATA[Fruit|Qty|Price
@@ -151,11 +151,11 @@ Pear|7|22.1]]></buffer>
                 </dido:data-in>
                 <dido:data-out xmlns:dido="oddjob:dido">
                     <how>
-                        <dido:csv withHeader="true">
+                        <dido:csv-out withHeader="true">
                             <csvFormat>
                                 <dido:csv-format formatFrom="TDF" nullString="blank"/>
                             </csvFormat>
-                        </dido:csv>
+                        </dido:csv-out>
                     </how>
                     <to>
                         <identify id="results">
