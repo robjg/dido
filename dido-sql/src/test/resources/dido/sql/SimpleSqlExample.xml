@@ -49,7 +49,7 @@ Grape,55]]>
                         </dido:data-in>
                         <dido:data-out xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:sql sql="insert into fruit (type, quantity) values (?,?)"/>
+                                <dido:sql-out sql="insert into fruit (type, quantity) values (?,?)"/>
                             </how>
                             <to>
                                 <value value="${vars.connection}"/>
@@ -61,7 +61,7 @@ Grape,55]]>
                     <of>
                         <dido:data-in xmlns:dido="oddjob:dido">
                             <how>
-                                <dido:sql sql="select * from fruit"/>
+                                <dido:sql-in sql="select * from fruit"/>
                             </how>
                             <from>
                                 <value value="${vars.connection}"/>

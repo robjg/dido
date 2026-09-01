@@ -14,7 +14,7 @@ import java.util.Objects;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-class SqlDidoTest {
+class SqlBeanBaseTest {
 
     @Test
     void testSimpleInOddjob() throws ArooaConversionException {
