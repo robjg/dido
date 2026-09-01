@@ -2,6 +2,7 @@ package dido.sql;
 
 import dido.how.DataOutHow;
 
+import java.beans.ExceptionListener;
 import java.sql.Connection;
 
 /**
@@ -28,10 +29,19 @@ public class SqlDataOutBean extends SqlBeanBase {
      */
     private String table;
 
+    /**
+     * @oddjob.description An Exception Listener. If specified it will be call
+     * if the dml fails to execute. It won't be called if it fails to parse. That
+     * will still result in an Exception being passed out to the framework.
+     * @oddjob.required No.
+     */
+    private ExceptionListener exceptionListener;
+
     public DataOutHow<Connection> toOut() {
         return DataOutSql.with()
                 .sql(sql)
                 .table(table)
+                .exceptionListener(exceptionListener)
                 .classLoader(getClassLoader())
                 .batchSize(getBatchSize())
                 .make();
@@ -51,6 +61,14 @@ public class SqlDataOutBean extends SqlBeanBase {
 
     public void setTable(String table) {
         this.table = table;
+    }
+
+    public ExceptionListener getExceptionListener() {
+        return exceptionListener;
+    }
+
+    public void setExceptionListener(ExceptionListener exceptionListener) {
+        this.exceptionListener = exceptionListener;
     }
 
     @Override

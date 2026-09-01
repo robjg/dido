@@ -12,6 +12,7 @@ import dido.sql.dialect.std.StdInsertDml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.ExceptionListener;
 import java.sql.Connection;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
@@ -27,14 +28,18 @@ public class DataOutSql implements RefinableOutHow<Connection> {
 
     private final DmlStrategy dmlStrategy;
 
+    private final ExceptionListener exceptionListener;
+
     private final int batchSize;
 
     private final ClassLoader classLoader;
 
     private DataOutSql(DmlStrategy dmlStrategy,
+                       ExceptionListener exceptionListener,
                        int batchSize,
                        ClassLoader classLoader) {
         this.dmlStrategy = dmlStrategy;
+        this.exceptionListener = exceptionListener;
         this.batchSize = batchSize;
         this.classLoader = Objects.requireNonNullElse(classLoader,
                 getClass().getClassLoader());
@@ -43,6 +48,8 @@ public class DataOutSql implements RefinableOutHow<Connection> {
     public static class Settings {
 
         private String sql;
+
+        private ExceptionListener exceptionListener;
 
         private int batchSize;
 
@@ -55,6 +62,11 @@ public class DataOutSql implements RefinableOutHow<Connection> {
 
         public Settings sql(String sql) {
             this.sql = sql;
+            return this;
+        }
+
+        public Settings exceptionListener(ExceptionListener exceptionListener) {
+            this.exceptionListener = exceptionListener;
             return this;
         }
 
@@ -93,7 +105,9 @@ public class DataOutSql implements RefinableOutHow<Connection> {
             }
 
             return new DataOutSql(dmlStrategy,
-                    batchSize, classLoader);
+                    exceptionListener,
+                    batchSize,
+                    classLoader);
         }
     }
 
@@ -238,7 +252,11 @@ public class DataOutSql implements RefinableOutHow<Connection> {
                     stmt.executeUpdate();
                 }
             } catch (SQLException e) {
-                throw DataException.of(e);
+                if (exceptionListener == null) {
+                    throw new DataException(e);
+                } else {
+                    exceptionListener.exceptionThrown(e);
+                }
             }
         }
 
