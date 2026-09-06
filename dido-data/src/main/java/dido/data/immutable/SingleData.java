@@ -7,6 +7,7 @@ import dido.data.useful.AbstractData;
 import dido.data.useful.AbstractDataSchema;
 import dido.data.useful.AbstractFieldGetter;
 
+import java.lang.reflect.Type;
 import java.util.Objects;
 
 public abstract class SingleData extends AbstractData implements DidoData {
@@ -22,7 +23,7 @@ public abstract class SingleData extends AbstractData implements DidoData {
         return new Named(name);
     }
 
-    public static <T> ObjectType<T> type(Class<T> type) {
+    public static <T> ObjectType<T> type(Type type) {
         return new ObjectType<>(type);
     }
 
@@ -319,11 +320,11 @@ public abstract class SingleData extends AbstractData implements DidoData {
 
     public static class ObjectType<T> extends SingleDataType {
 
-        ObjectType(Class<?> type) {
+        ObjectType(Type type) {
             this(type, null);
         }
 
-        ObjectType(Class<?> type,
+        ObjectType(Type type,
                    String name) {
             super(new Schema(SchemaField.of(1,
                     name == null ? DataSchema.defaultNameForIndex(1) : name,
