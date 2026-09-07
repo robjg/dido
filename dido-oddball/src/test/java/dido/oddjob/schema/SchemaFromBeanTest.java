@@ -4,6 +4,9 @@ import dido.data.DataSchema;
 import dido.data.NoSuchFieldException;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
+import org.oddjob.OddjobLookup;
+import org.oddjob.Resettable;
+import org.oddjob.arooa.convert.ArooaConversionException;
 
 import java.io.File;
 import java.util.Objects;
@@ -39,7 +42,7 @@ class SchemaFromBeanTest {
     }
 
     @Test
-    void merge() {
+    void merge() throws ArooaConversionException {
 
         Oddjob oddjob = new Oddjob();
         oddjob.setFile(new File(Objects.requireNonNull(
@@ -48,10 +51,23 @@ class SchemaFromBeanTest {
         oddjob.run();
 
         assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        // Bug where reset caused NPE
+        Resettable resettable = lookup.lookup("all", Resettable.class);
+
+        resettable.hardReset();
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+
+        oddjob.destroy();
     }
 
     @Test
-    void concat() {
+    void concat() throws ArooaConversionException {
 
         Oddjob oddjob = new Oddjob();
         oddjob.setFile(new File(Objects.requireNonNull(
@@ -60,6 +76,19 @@ class SchemaFromBeanTest {
         oddjob.run();
 
         assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+
+        OddjobLookup lookup = new OddjobLookup(oddjob);
+
+        // Bug where reset caused NPE
+        Resettable resettable = lookup.lookup("all", Resettable.class);
+
+        resettable.hardReset();
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
+
+        oddjob.destroy();
     }
 
     @Test

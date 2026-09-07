@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * @oddjob.description Define a Schema.
+ *
  * @oddjob.example Define a simple schema.
  * {@oddjob.xml.resource dido/oddjob/schema/SimpleSchema.xml}
  * @oddjob.example Define a nested schema.

@@ -6,6 +6,7 @@ import dido.test.OurDirs;
 import org.junit.jupiter.api.Test;
 import org.oddjob.Oddjob;
 import org.oddjob.OddjobLookup;
+import org.oddjob.Resettable;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.tools.CompileJob;
 
@@ -67,6 +68,15 @@ class SchemaBeanTest {
 
         DataSchema drinkSchema = schema.getSchemaNamed("Drink");
         assertThat(drinkSchema.getTypeNamed("Volume"), is(double.class));
+
+        // Bug where reset caused NPE
+        Resettable resettable = lookup.lookup("vars", Resettable.class);
+
+        resettable.hardReset();
+
+        oddjob.run();
+
+        assertThat(oddjob.lastStateEvent().getState().isComplete(), is(true));
 
         oddjob.destroy();
     }

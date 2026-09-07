@@ -9,6 +9,7 @@ import org.oddjob.arooa.ArooaValue;
 import org.oddjob.arooa.convert.ArooaConversionException;
 import org.oddjob.arooa.convert.ConversionProvider;
 import org.oddjob.arooa.convert.ConversionRegistry;
+import org.oddjob.arooa.utils.ListSetterHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,7 +104,7 @@ public class SchemaFromBean implements NestedSchema, ArooaValue {
 
         SchemaFactory factory;
 
-        if (include != null && include.length > 0) {
+        if (include != null && include.length > 0 && !include[0].isBlank()) {
             factory = SchemaFactory.newInstance();
             for (String name : include) {
                 SchemaField field = from.getSchemaFieldNamed(name);
@@ -125,7 +126,7 @@ public class SchemaFromBean implements NestedSchema, ArooaValue {
             factory.concat(schema);
         }
 
-        if (exclude != null) {
+        if (exclude != null && exclude.length > 0 && !exclude[0].isBlank()) {
             for (String name : exclude) {
                 SchemaField removed = factory.removeNamed(name);
                 if (removed == null) {
@@ -172,7 +173,7 @@ public class SchemaFromBean implements NestedSchema, ArooaValue {
     }
 
     public void setMerge(int index, DataSchema merge) {
-        this.merge.add(index, merge);
+        new ListSetterHelper<>(this.merge).set(index, merge);
     }
 
     public DataSchema getConcat(int index) {
@@ -180,7 +181,7 @@ public class SchemaFromBean implements NestedSchema, ArooaValue {
     }
 
     public void setConcat(int index, DataSchema concat) {
-        this.concat.add(index, concat);
+        new ListSetterHelper<> (this.concat).set(index, concat);
     }
 
     public String[] getExclude() {
