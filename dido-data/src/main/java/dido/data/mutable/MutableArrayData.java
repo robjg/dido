@@ -14,6 +14,7 @@ import dido.data.util.FieldValuesIn;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.BiFunction;
 
 /**
  * An implementation of {@link MutableData} backed by an Array.
@@ -90,14 +91,42 @@ public class MutableArrayData extends AbstractMutableData implements MutableData
         if (from instanceof MutableArrayData mutableArrayData) {
             Object[] copy = Arrays.copyOf(mutableArrayData.data, mutableArrayData.data.length);
             return new MutableArrayData((ArrayDataSchema) from.getSchema(), copy);
-        }
-        else {
+        } else {
             return (MutableArrayData) withSchema(from.getSchema()).copy(from);
         }
     }
 
     public static MutableArrayData newInstance(ArrayDataSchema fromSchema) {
         return new MutableArrayData(fromSchema);
+    }
+
+    public static BiFunction<DidoData, MutableArrayData, int[]>
+    updateFunction(DataSchema fromSchema,
+                   DataSchema toSchema) {
+
+        ReadSchema readSchema = ReadSchema.from(fromSchema);
+
+        int[] indices = fromSchema.getIndices();
+        FieldCopy[] copies = new FieldCopy[indices.length];
+
+        for (int i = 0; i < indices.length; i++) {
+
+            int index = indices[i];
+            copies[i] = new FieldCopy(index - 1, readSchema.getFieldGetterAt(index));
+        }
+
+        return (from, to) -> {
+
+            int modCount = 0;
+            int[] modified = new int[indices.length];
+            for (FieldCopy fieldCopy : copies) {
+                if (fieldCopy.copy(from, to)) {
+                    modified[modCount++] = fieldCopy.loc + 1;
+                }
+            }
+            return Arrays.copyOf(modified, modCount);
+        };
+
     }
 
     @Override
@@ -109,8 +138,7 @@ public class MutableArrayData extends AbstractMutableData implements MutableData
     public Object getAt(int index) {
         try {
             return data[index - 1];
-        }
-        catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             throw new NoSuchFieldException(index, schema);
         }
     }
@@ -125,8 +153,7 @@ public class MutableArrayData extends AbstractMutableData implements MutableData
         int index = getSchema().getIndexNamed(name);
         if (index > 0) {
             clearAt(index);
-        }
-        else {
+        } else {
             throw new NoSuchFieldException(name, getSchema());
         }
     }
@@ -134,9 +161,8 @@ public class MutableArrayData extends AbstractMutableData implements MutableData
     @Override
     public void setAt(int index, Object value) {
         try {
-            data[index -1] = value;
-        }
-        catch (IndexOutOfBoundsException e) {
+            data[index - 1] = value;
+        } catch (IndexOutOfBoundsException e) {
             throw new NoSuchFieldException(index, schema);
         }
     }
@@ -257,6 +283,31 @@ public class MutableArrayData extends AbstractMutableData implements MutableData
         @Override
         protected ArrayDataSchema create(Collection<SchemaField> fields, int firstIndex, int lastIndex) {
             return new ArrayDataSchema(fields, firstIndex, lastIndex);
+        }
+    }
+
+    static class FieldCopy {
+
+        final int loc;
+
+        final FieldGetter getter;
+
+        FieldCopy(int loc, FieldGetter getter) {
+            this.loc = loc;
+            this.getter = getter;
+        }
+
+        boolean copy(DidoData from, MutableArrayData to) {
+
+            Object existing = to.data[loc];
+            Object in = getter.get(from);
+            if (Objects.equals(existing, in)) {
+                return false;
+            }
+            else {
+                to.data[loc] = in;
+                return true;
+            }
         }
     }
 }
