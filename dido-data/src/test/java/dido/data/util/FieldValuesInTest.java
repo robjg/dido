@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -161,5 +162,31 @@ class FieldValuesInTest {
                         .build());
 
         assertThat(many, is(expected));
+    }
+
+    @Test
+    void copyFunction() {
+
+        DataSchema schema = DataSchema.builder()
+                .add(boolean.class)
+                .add(byte.class)
+                .add(short.class)
+                .add(char.class)
+                .add(int.class)
+                .add(long.class)
+                .add(float.class)
+                .add(double.class)
+                .add(String.class)
+                .build();
+
+        DidoData data = DidoData.withSchema(schema).of(
+                true, (byte) 32, (short) 256, 'A', 1000, 5000L, 2.4F, 42.24, "Foo");
+
+        Function<DidoData, DidoData> copyFunc = FieldValuesIn.withDataFactory(
+                DidoData.factoryForSchema(schema)).toCopyFunction(data.getSchema());
+
+        DidoData copy = copyFunc.apply(data);
+
+        assertThat(copy, is(data));
     }
 }

@@ -2,6 +2,7 @@ package dido.data.util;
 
 import dido.data.*;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -84,9 +85,37 @@ public class FieldValuesIn implements FromValues {
         return dataFactory.toData();
     }
 
+    public Function<DidoData, DidoData> toCopyFunction(DataSchema fromSchema) {
+
+        ReadSchema readSchema = ReadSchema.from(fromSchema);
+
+        int[] indices = readSchema.getIndices();
+        int min = Math.min(indices.length, setters.length);
+
+        @SuppressWarnings("unchecked")
+        BiConsumer<DidoData, WritableData>[] copies = new BiConsumer[min];
+
+        for (int i = 0; i < min; i++) {
+
+            FieldGetter getter = readSchema.getFieldGetterAt(indices[i]);
+
+            Type type = fromSchema.getTypeAt(indices[i]);
+
+            copies[i] = FieldOps.copyOpFor(getter, setters[i], type);
+        }
+
+        return didoData -> {
+            WritableData writableData = dataFactory.getWritableData();
+            for (BiConsumer<DidoData, WritableData> copy : copies) {
+                copy.accept(didoData, writableData);
+            }
+            return dataFactory.toData();
+        };
+    }
+
     @Override
     public DidoData copy(DidoData from) {
-        return ofCollection(FieldValuesOut.collectionOf(from));
+        return toCopyFunction(from.getSchema()).apply(from);
     }
 
     @Override

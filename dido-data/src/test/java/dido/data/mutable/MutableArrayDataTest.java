@@ -75,9 +75,33 @@ class MutableArrayDataTest {
 
         // Probably not what we want!
         assertThat(didoData, contains(
-                DidoData.of("Pear", 3, 26.84),
-                DidoData.of("Pear", 3, 26.84),
+                DidoData.of("Apple", 5, 19.50),
+                DidoData.of("Orange", 2, 35.24),
                 DidoData.of("Pear", 3, 26.84)));
     }
 
+    @Test
+    void newInstance() {
+
+        MutableArrayData.ArrayDataSchema fromSchema = (MutableArrayData.ArrayDataSchema)
+                MutableArrayData.schemaBuilder()
+                        .addNamed("Fruit", String.class)
+                        .addNamed("Quantity", int.class)
+                        .addNamed("Price", double.class)
+                        .build();
+
+        FieldSetter fruitSetter = fromSchema.getFieldSetterNamed("Fruit");
+        FieldSetter qtySetter = fromSchema.getFieldSetterNamed("Quantity");
+        FieldSetter priceSetter = fromSchema.getFieldSetterNamed("Price");
+
+        MutableData data = MutableArrayData.newInstance(fromSchema);
+
+        fruitSetter.set(data, "Pear");
+        qtySetter.setInt(data, 3);
+        priceSetter.setDouble(data, 26.84);
+
+        assertThat(data, is(
+                DidoData.of("Pear", 3, 26.84)));
+
+    }
 }

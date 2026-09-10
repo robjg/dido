@@ -77,7 +77,7 @@ public class MutableArrayData extends AbstractMutableData implements MutableData
     }
 
     public static DataFactory factoryForSchema(DataSchema schema) {
-        return new MutableArrayData(asArrayDataSchema(schema)).new ArrayDataFactory();
+        return asArrayDataSchema(schema).dataFactory();
     }
 
     public static FromValues withSchema(DataSchema schema) {
@@ -94,6 +94,10 @@ public class MutableArrayData extends AbstractMutableData implements MutableData
         else {
             return (MutableArrayData) withSchema(from.getSchema()).copy(from);
         }
+    }
+
+    public static MutableArrayData newInstance(ArrayDataSchema fromSchema) {
+        return new MutableArrayData(fromSchema);
     }
 
     @Override
@@ -137,22 +141,33 @@ public class MutableArrayData extends AbstractMutableData implements MutableData
         }
     }
 
-    class ArrayDataFactory implements DataFactory {
+    static class ArrayDataFactory implements DataFactory {
+
+        private final ArrayDataSchema schema;
+
+        private MutableArrayData current;
+
+        ArrayDataFactory(ArrayDataSchema schema) {
+            this.schema = schema;
+            current = new MutableArrayData(schema);
+        }
 
         @Override
         public ArrayDataSchema getSchema() {
 
-            return MutableArrayData.this.getSchema();
+            return schema;
         }
 
         @Override
         public WritableData getWritableData() {
-            return MutableArrayData.this;
+            return current;
         }
 
         @Override
         public MutableArrayData toData() {
-            return MutableArrayData.this;
+            MutableArrayData out = current;
+            current = new MutableArrayData(schema);
+            return out;
         }
     }
 
@@ -199,7 +214,7 @@ public class MutableArrayData extends AbstractMutableData implements MutableData
         }
 
         public DataFactory dataFactory() {
-            return new MutableArrayData(this).new ArrayDataFactory();
+            return new ArrayDataFactory(this);
         }
 
         @Override
