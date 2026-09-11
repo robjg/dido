@@ -101,8 +101,7 @@ public class MutableArrayData extends AbstractMutableData implements MutableData
     }
 
     public static BiFunction<DidoData, MutableArrayData, int[]>
-    updateFunction(DataSchema fromSchema,
-                   DataSchema toSchema) {
+    updateFunction(DataSchema fromSchema) {
 
         ReadSchema readSchema = ReadSchema.from(fromSchema);
 
@@ -126,7 +125,6 @@ public class MutableArrayData extends AbstractMutableData implements MutableData
             }
             return Arrays.copyOf(modified, modCount);
         };
-
     }
 
     @Override

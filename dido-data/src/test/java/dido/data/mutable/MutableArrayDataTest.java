@@ -121,7 +121,7 @@ class MutableArrayDataTest {
         FromValues fromValues = ArrayData.withSchema(schema);
 
         BiFunction<DidoData, MutableArrayData, int[]> updateFunction =
-                MutableArrayData.updateFunction(fromValues.getSchema(), mutableData.getSchema());
+                MutableArrayData.updateFunction(fromValues.getSchema());
 
         int[] update1 = updateFunction.apply(fromValues.of("Apple", 6, 20.50),
                 mutableData);
@@ -161,7 +161,7 @@ class MutableArrayDataTest {
         FromValues fromValues = ArrayData.withSchema(schema);
 
         BiFunction<DidoData, MutableArrayData, int[]> updateFunction =
-                MutableArrayData.updateFunction(fromValues.getSchema(), mutableData.getSchema());
+                MutableArrayData.updateFunction(fromValues.getSchema());
 
         int[] update1 = updateFunction.apply(fromValues.of("Apple", 6, 20.50),
                 mutableData);
