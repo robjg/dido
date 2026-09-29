@@ -34,7 +34,7 @@ class OpTransformSchemaTest {
                     };
                 });
 
-        DidoTransform didoTransform = transformationBuilder.build();
+        dido.data.DidoTransform didoTransform = transformationBuilder.build();
 
         DataSchema result = didoTransform.getSchema();
 
@@ -69,7 +69,7 @@ class OpTransformSchemaTest {
                     };
                 });
 
-        DidoTransform didoTransform = transformationBuilder.build();
+        dido.data.DidoTransform didoTransform = transformationBuilder.build();
 
         DataSchema result = didoTransform.getSchema();
 
@@ -100,7 +100,7 @@ class OpTransformSchemaTest {
                     };
                 });
 
-        DidoTransform didoTransform = transformationBuilder.build();
+        dido.data.DidoTransform didoTransform = transformationBuilder.build();
 
         DataSchema result = didoTransform.getSchema();
 
@@ -131,7 +131,7 @@ class OpTransformSchemaTest {
                     };
                 });
 
-        DidoTransform didoTransform = transformationBuilder.build();
+        dido.data.DidoTransform didoTransform = transformationBuilder.build();
 
         DataSchema result = didoTransform.getSchema();
 
@@ -162,7 +162,7 @@ class OpTransformSchemaTest {
                     };
                 });
 
-        DidoTransform didoTransform = transformationBuilder.build();
+        dido.data.DidoTransform didoTransform = transformationBuilder.build();
 
         DataSchema result = didoTransform.getSchema();
 
@@ -198,7 +198,7 @@ class OpTransformSchemaTest {
                     };
                 });
 
-        DidoTransform didoTransform = transformationBuilder.build();
+        dido.data.DidoTransform didoTransform = transformationBuilder.build();
 
         DataSchema result = didoTransform.getSchema();
 
@@ -244,7 +244,7 @@ class OpTransformSchemaTest {
                 });
 
 
-        DidoTransform didoTransform = transformationBuilder.build();
+        dido.data.DidoTransform didoTransform = transformationBuilder.build();
 
         DataSchema result = didoTransform.getSchema();
 
@@ -291,7 +291,7 @@ class OpTransformSchemaTest {
                 });
 
 
-        DidoTransform didoTransform = transformationBuilder.build();
+        dido.data.DidoTransform didoTransform = transformationBuilder.build();
 
         DataSchema result = didoTransform.getSchema();
 

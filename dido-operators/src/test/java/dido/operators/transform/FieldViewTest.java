@@ -83,7 +83,7 @@ class FieldViewTest {
                 .withString("colour", "red")
                 .build();
 
-        DidoTransform transform = WriteTransformBuilder.with()
+        dido.data.DidoTransform transform = WriteTransformBuilder.with()
                 .existingFields(true).forSchema(data.getSchema()).addFieldWrite(fieldView.asFieldWrite()).build();
 
         DidoData result = transform.apply(data);

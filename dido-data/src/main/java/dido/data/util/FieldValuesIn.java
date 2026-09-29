@@ -85,7 +85,7 @@ public class FieldValuesIn implements FromValues {
         return dataFactory.toData();
     }
 
-    public Function<DidoData, DidoData> toCopyFunction(DataSchema fromSchema) {
+    public DidoTransform toCopyFunction(DataSchema fromSchema) {
 
         ReadSchema readSchema = ReadSchema.from(fromSchema);
 
@@ -104,12 +104,21 @@ public class FieldValuesIn implements FromValues {
             copies[i] = FieldOps.copyOpFor(getter, setters[i], type);
         }
 
-        return didoData -> {
-            WritableData writableData = dataFactory.getWritableData();
-            for (BiConsumer<DidoData, WritableData> copy : copies) {
-                copy.accept(didoData, writableData);
+        return new DidoTransform() {
+
+            @Override
+            public DataSchema getSchema() {
+                return dataFactory.getSchema();
             }
-            return dataFactory.toData();
+
+            @Override
+            public DidoData apply(DidoData didoData) {
+                WritableData writableData = dataFactory.getWritableData();
+                for (BiConsumer<DidoData, WritableData> copy : copies) {
+                    copy.accept(didoData, writableData);
+                }
+                return dataFactory.toData();
+            }
         };
     }
 

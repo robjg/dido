@@ -26,7 +26,7 @@ class FieldViewsTest {
     @Test
     void copyWithFieldLocBuilder() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.copy().index(3).with().view()) // copies index 3 to index 3
@@ -51,7 +51,7 @@ class FieldViewsTest {
     @Test
     void copyWithConversion() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .reIndex(true)
                 .forSchema(schema)
@@ -78,7 +78,7 @@ class FieldViewsTest {
     @Test
     void copyAt() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyAt(3))
@@ -103,7 +103,7 @@ class FieldViewsTest {
     @Test
     void copyIndexAt() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyAt(3, 1))
@@ -128,7 +128,7 @@ class FieldViewsTest {
     @Test
     void copyNamed() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyNamed("Price"))
@@ -153,7 +153,7 @@ class FieldViewsTest {
     @Test
     void copyNamedFromTo() {
 
-        DidoTransform transformation = WriteTransformBuilder
+        dido.data.DidoTransform transformation = WriteTransformBuilder
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyNamed("Fruit", "Type"))
                 .addFieldView(FieldViews.copyNamed("Price", "Price"))
@@ -177,7 +177,7 @@ class FieldViewsTest {
     @Test
     void copySameName() {
 
-        DidoTransform transformation = WriteTransformBuilder
+        dido.data.DidoTransform transformation = WriteTransformBuilder
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyNamed("Qty", "Qty"))
                 .addFieldView(FieldViews.copyNamed("Price", "Price"))
@@ -194,7 +194,7 @@ class FieldViewsTest {
     @Test
     void copyNamedAt() {
 
-        DidoTransform transformation = WriteTransformBuilder
+        dido.data.DidoTransform transformation = WriteTransformBuilder
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyNamedAt("Qty", 0))
                 .addFieldView(FieldViews.copyNamedAt("Price", 0))
@@ -220,7 +220,7 @@ class FieldViewsTest {
     @Test
     void copyNamedAtTo() {
 
-        DidoTransform transformation = WriteTransformBuilder
+        dido.data.DidoTransform transformation = WriteTransformBuilder
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyNamedAt("Qty", 5, "Quantity"))
                 .addFieldView(FieldViews.copyNamedAt("Price", 3, "ThePrice"))
@@ -246,7 +246,7 @@ class FieldViewsTest {
     @Test
     void rename() {
 
-        DidoTransform transformation = WriteTransformBuilder
+        dido.data.DidoTransform transformation = WriteTransformBuilder
                 .with()
                 .existingFields(true)
                 .forSchema(schema)
@@ -274,7 +274,7 @@ class FieldViewsTest {
     @Test
     void setNamedWithCopy() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.setNamed("Fruit", "Orange"))
@@ -302,7 +302,7 @@ class FieldViewsTest {
     @Test
     void setWithFieldLocBuilder() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .forSchema(schema)
                 .addFieldView(FieldViews.set().at(3).with()
                         .value(54.3).view()) // copies index 3 to index 3
@@ -333,7 +333,7 @@ class FieldViewsTest {
     @Test
     void setAtWithCopy() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.setAt(1, "Orange"))
@@ -363,7 +363,7 @@ class FieldViewsTest {
     @Test
     void removeNamed() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .reIndex(true)
                 .forSchema(schema)
@@ -388,7 +388,7 @@ class FieldViewsTest {
     @Test
     void removeAt() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.removeAt(1))
@@ -416,7 +416,7 @@ class FieldViewsTest {
         Function<Integer, Double> qtyOp = qty -> (double) qty * 2.5;
         Function<Double, String> priceOp = price -> "£" + price;
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
                         .index(1)
@@ -453,7 +453,7 @@ class FieldViewsTest {
     @Test
     void mapNamed() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
@@ -474,7 +474,7 @@ class FieldViewsTest {
     @Test
     void unaryMapNewField() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
@@ -502,7 +502,7 @@ class FieldViewsTest {
     @Test
     void unaryMapSameIndexNewName() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
@@ -532,7 +532,7 @@ class FieldViewsTest {
     @Test
     void mapIntToIntNamed() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
@@ -553,7 +553,7 @@ class FieldViewsTest {
     @Test
     void mapIntToIntAt() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
@@ -581,7 +581,7 @@ class FieldViewsTest {
         DidoData data = DidoData.withSchema(schema)
                 .of(1000L);
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
@@ -612,7 +612,7 @@ class FieldViewsTest {
     @Test
     void mapDoubleToDoubleAt() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()

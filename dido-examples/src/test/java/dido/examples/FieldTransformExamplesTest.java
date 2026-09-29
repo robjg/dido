@@ -2,11 +2,11 @@ package dido.examples;
 
 import dido.data.DataSchema;
 import dido.data.DidoData;
+import dido.data.DidoTransform;
 import dido.data.ReadStrategy;
 import dido.data.util.DataBuilder;
 import dido.operators.Concatenator;
 import dido.operators.SubData;
-import dido.operators.transform.DidoTransform;
 import dido.operators.transform.FieldViews;
 import dido.operators.transform.ViewTransformBuilder;
 import dido.operators.transform.WriteTransformBuilder;

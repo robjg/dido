@@ -112,7 +112,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         this.dataFactoryProvider = dataFactoryProvider;
     }
 
-    abstract static class TransformerFunctionInitial implements DidoTransform {
+    abstract static class TransformerFunctionInitial implements dido.data.DidoTransform {
 
         protected final List<FieldView> transformerFactories;
 
@@ -122,7 +122,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
 
         private DataSchema lastSchema;
 
-        private DidoTransform delegate;
+        private dido.data.DidoTransform delegate;
 
         TransformerFunctionInitial(TransformationFactory config) {
             this.transformerFactories = new ArrayList<>(config.of);
@@ -145,7 +145,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
             return delegate.apply(dataIn);
         }
 
-        abstract DidoTransform createTransform(DataSchema schema);
+        abstract dido.data.DidoTransform createTransform(DataSchema schema);
     }
 
 
@@ -160,7 +160,7 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         }
 
         @Override
-        DidoTransform createTransform(DataSchema lastSchema) {
+        dido.data.DidoTransform createTransform(DataSchema lastSchema) {
             return functionForCopy(transformerFactories, lastSchema,
                     withExisting, reIndex, dataFactoryProvider);
         }
@@ -174,16 +174,16 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         }
 
         @Override
-        DidoTransform createTransform(DataSchema schema) {
+        dido.data.DidoTransform createTransform(DataSchema schema) {
             return functionForView(transformerFactories, schema,
                     withExisting, reIndex);
         }
     }
 
-    static DidoTransform functionForView(List<FieldView> definitions,
-                                         DataSchema schemaFrom,
-                                         boolean withExisting,
-                                         boolean reIndex) {
+    static dido.data.DidoTransform functionForView(List<FieldView> definitions,
+                                                   DataSchema schemaFrom,
+                                                   boolean withExisting,
+                                                   boolean reIndex) {
 
         ViewTransformBuilder transformationManager = ViewTransformBuilder.with()
                 .existingFields(withExisting)
@@ -198,11 +198,11 @@ public class TransformationFactory implements Supplier<Function<DidoData, DidoDa
         return transformationManager.build();
     }
 
-    static DidoTransform functionForCopy(List<FieldView> definitions,
-                                         DataSchema schemaFrom,
-                                         boolean withExisting,
-                                         boolean reIndex,
-                                         DataFactoryProvider dataFactoryProvider) {
+    static dido.data.DidoTransform functionForCopy(List<FieldView> definitions,
+                                                   DataSchema schemaFrom,
+                                                   boolean withExisting,
+                                                   boolean reIndex,
+                                                   DataFactoryProvider dataFactoryProvider) {
 
         WriteTransformBuilder transformationManager = WriteTransformBuilder.with()
                 .existingFields(withExisting)

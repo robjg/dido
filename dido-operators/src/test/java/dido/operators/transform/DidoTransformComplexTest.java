@@ -67,7 +67,7 @@ public class DidoTransformComplexTest {
     @Test
     void complicated() {
 
-        DidoTransform didoTransform = WriteTransformBuilder.with()
+        dido.data.DidoTransform didoTransform = WriteTransformBuilder.with()
                 .reIndex(true)
                 .existingFields(true)
                 .dataFactoryProvider(new ArrayDataDataFactoryProvider())

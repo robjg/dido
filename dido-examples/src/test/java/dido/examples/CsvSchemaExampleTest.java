@@ -4,7 +4,7 @@ import dido.csv.DataInCsv;
 import dido.csv.DataOutCsv;
 import dido.data.DataSchema;
 import dido.data.DidoData;
-import dido.operators.transform.DidoTransform;
+import dido.data.DidoTransform;
 import dido.operators.transform.FieldViews;
 import dido.operators.transform.ViewTransformBuilder;
 import org.junit.jupiter.api.Test;

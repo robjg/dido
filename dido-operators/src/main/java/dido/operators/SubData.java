@@ -6,7 +6,6 @@ import dido.data.schema.SubSchema;
 import dido.data.useful.AbstractData;
 import dido.data.useful.FieldGetterDelegate;
 import dido.data.util.FieldSelectionFactory;
-import dido.operators.transform.DidoTransform;
 
 /**
  * Provide data that is a subset of some other data.

@@ -1,7 +1,7 @@
 package dido.operators;
 
 import dido.data.DidoData;
-import dido.operators.transform.DidoTransform;
+import dido.data.DidoTransform;
 
 import java.util.function.Function;
 

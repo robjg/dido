@@ -70,7 +70,7 @@ public class FieldViewsMaybeTest {
     @Test
     void computeInPlaceWithGetter() {
 
-        DidoTransform transformation = WriteTransformBuilder.with()
+        dido.data.DidoTransform transformation = WriteTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldWrite(computeNamedGetter("Qty",

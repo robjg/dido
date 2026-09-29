@@ -1,6 +1,5 @@
-package dido.operators.transform;
+package dido.data;
 
-import dido.data.DidoData;
 import dido.data.schema.HasSchema;
 
 import java.util.function.UnaryOperator;

@@ -28,7 +28,7 @@ class ViewTransformBuilderTest {
     @Test
     void copyWithFieldLocBuilder() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.copy().index(3).with().view()) // copies index 3 to index 3
@@ -53,7 +53,7 @@ class ViewTransformBuilderTest {
     @Test
     void copyAt() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyAt(3))
@@ -78,7 +78,7 @@ class ViewTransformBuilderTest {
     @Test
     void copyIndexAt() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyAt(3, 1))
@@ -103,7 +103,7 @@ class ViewTransformBuilderTest {
     @Test
     void copyNamed() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .reIndex(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyNamed("Price"))
@@ -128,7 +128,7 @@ class ViewTransformBuilderTest {
     @Test
     void copyNamedFromTo() {
 
-        DidoTransform transformation = ViewTransformBuilder
+        dido.data.DidoTransform transformation = ViewTransformBuilder
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyNamed("Fruit", "Type"))
                 .addFieldView(FieldViews.copyNamed("Price", "Price"))
@@ -152,7 +152,7 @@ class ViewTransformBuilderTest {
     @Test
     void copySameName() {
 
-        DidoTransform transformation = ViewTransformBuilder
+        dido.data.DidoTransform transformation = ViewTransformBuilder
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyNamed("Qty", "Qty"))
                 .addFieldView(FieldViews.copyNamed("Price", "Price"))
@@ -169,7 +169,7 @@ class ViewTransformBuilderTest {
     @Test
     void copyNamedAt() {
 
-        DidoTransform transformation = ViewTransformBuilder
+        dido.data.DidoTransform transformation = ViewTransformBuilder
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyNamedAt("Qty", 0))
                 .addFieldView(FieldViews.copyNamedAt("Price", 0))
@@ -195,7 +195,7 @@ class ViewTransformBuilderTest {
     @Test
     void copyNamedAtTo() {
 
-        DidoTransform transformation = ViewTransformBuilder
+        dido.data.DidoTransform transformation = ViewTransformBuilder
                 .forSchema(schema)
                 .addFieldView(FieldViews.copyNamedAt("Qty", 5, "Quantity"))
                 .addFieldView(FieldViews.copyNamedAt("Price", 3, "ThePrice"))
@@ -221,7 +221,7 @@ class ViewTransformBuilderTest {
     @Test
     void rename() {
 
-        DidoTransform transformation = ViewTransformBuilder
+        dido.data.DidoTransform transformation = ViewTransformBuilder
                 .with()
                 .existingFields(true)
                 .forSchema(schema)
@@ -249,7 +249,7 @@ class ViewTransformBuilderTest {
     @Test
     void setNamedWithCopy() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.setNamed("Fruit", "Orange"))
@@ -277,7 +277,7 @@ class ViewTransformBuilderTest {
     @Test
     void setAtWithCopy() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.setAt(1, "Orange"))
@@ -305,7 +305,7 @@ class ViewTransformBuilderTest {
     @Test
     void removeNamed() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.removeNamed("Fruit"))
@@ -335,7 +335,7 @@ class ViewTransformBuilderTest {
     @Test
     void removeNamedReIndex() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
                 .reIndex(true)
                 .forSchema(schema)
@@ -366,7 +366,7 @@ class ViewTransformBuilderTest {
     @Test
     void removeAt() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.removeAt(1))
@@ -394,7 +394,7 @@ class ViewTransformBuilderTest {
         Function<Integer, Double> qtyOp = qty -> (double) qty * 2.5;
         Function<Double, String> priceOp = price -> "£" + price;
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
                         .index(1)
@@ -431,7 +431,7 @@ class ViewTransformBuilderTest {
     @Test
     void mapNamed() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
@@ -452,7 +452,7 @@ class ViewTransformBuilderTest {
     @Test
     void unaryMapNewField() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
@@ -480,7 +480,7 @@ class ViewTransformBuilderTest {
     @Test
     void unaryMapSameIndexNewName() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
@@ -510,7 +510,7 @@ class ViewTransformBuilderTest {
     @Test
     void mapIntToIntNamed() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
@@ -531,7 +531,7 @@ class ViewTransformBuilderTest {
     @Test
     void mapIntToIntAt() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
@@ -559,7 +559,7 @@ class ViewTransformBuilderTest {
         DidoData data = DidoData.withSchema(schema)
                 .of(1000L);
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()
@@ -590,7 +590,7 @@ class ViewTransformBuilderTest {
     @Test
     void mapDoubleToDoubleAt() {
 
-        DidoTransform transformation = ViewTransformBuilder.with()
+        dido.data.DidoTransform transformation = ViewTransformBuilder.with()
                 .existingFields(true)
                 .forSchema(schema)
                 .addFieldView(FieldViews.map()

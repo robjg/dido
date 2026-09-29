@@ -8,7 +8,7 @@ import dido.data.WriteSchema;
 import java.util.function.BiConsumer;
 
 /**
- * Defines an Operation that will set data and can become part of a {@link DidoTransform}.
+ * Defines an Operation that will set data and can become part of a {@link dido.data.DidoTransform}.
  * The implementation is a two-step process. A {@link dido.data.DataFactory} is required for last step, but
  * it can't be created until the final schema is known. This is why this creates
  * a {@link Prepare} as the intermediate step.

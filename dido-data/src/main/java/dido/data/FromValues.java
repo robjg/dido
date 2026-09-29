@@ -5,7 +5,6 @@ import dido.data.util.DataBuilder;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -24,7 +23,7 @@ public interface FromValues {
 
     DidoData copy(DidoData from);
 
-    Function<DidoData, DidoData> toCopyFunction(DataSchema fromSchema);
+    DidoTransform toCopyFunction(DataSchema fromSchema);
 
     DataBuilder asBuilder();
 

@@ -136,7 +136,7 @@ public class WriteTransformBuilder {
         return this;
     }
 
-    public DidoTransform build() {
+    public dido.data.DidoTransform build() {
 
         SchemaFactory schemaFactory ;
         NavigableMap<Integer, FieldWrite.Prepare> opsByIndex;
